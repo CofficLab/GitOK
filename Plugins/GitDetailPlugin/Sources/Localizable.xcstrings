@@ -1,28 +1,34 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "GitDetailPlugin" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git Detail"
+  "sourceLanguage": "en",
+  "strings": {
+    "GitDetailPlugin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git Detail"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 详情"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 详情"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 詳情"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 詳情"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 详情"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

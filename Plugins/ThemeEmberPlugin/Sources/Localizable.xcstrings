@@ -1,40 +1,52 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Ember Theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ember Theme"
+  "sourceLanguage": "en",
+  "strings": {
+    "Ember Theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ember Theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "余烬主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "余烬主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "余烬主题"
           }
         }
       }
     },
-    "Warm orange dark theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Warm orange dark theme"
+    "Warm orange dark theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warm orange dark theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "温暖橙色深色主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "温暖橙色深色主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "温暖橙色深色主题"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

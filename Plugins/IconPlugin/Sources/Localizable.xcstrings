@@ -1,521 +1,647 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "add-icon-button" : {
-      "comment" : "Button to add icons to a category",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加图标…"
+  "sourceLanguage": "en",
+  "strings": {
+    "add-icon-button": {
+      "comment": "Button to add icons to a category",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加图标…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加圖示…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加圖示…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加图标…"
           }
         }
       }
     },
-    "add-image-button" : {
-      "comment" : "Button to add images",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加图片"
+    "add-image-button": {
+      "comment": "Button to add images",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加图片"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加圖片"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加圖片"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加图片"
           }
         }
       }
     },
-    "adjust-colors-style" : {
-      "comment" : "Edit feature description",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "调整颜色和样式"
+    "adjust-colors-style": {
+      "comment": "Edit feature description",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调整颜色和样式"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調整顏色和樣式"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調整顏色和樣式"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调整颜色和样式"
           }
         }
       }
     },
-    "Both Xcode icon set formats saved to Downloads" : {
-
-    },
-    "delete-icon-button" : {
-      "comment" : "Button to delete icons",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "删除图标…"
+    "Both Xcode icon set formats saved to Downloads": {},
+    "delete-icon-button": {
+      "comment": "Button to delete icons",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除图标…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刪除圖示…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除圖示…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除图标…"
           }
         }
       }
     },
-    "delete-selected-button" : {
-      "comment" : "Button to delete selected items",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "删除所选"
+    "delete-selected-button": {
+      "comment": "Button to delete selected items",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除所选"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刪除所選"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除所選"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除所选"
           }
         }
       }
     },
-    "Download Xcode Format" : {
-
-    },
-    "draft" : {
-      "comment" : "Draft feature title",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "草稿"
+    "Download Xcode Format": {},
+    "draft": {
+      "comment": "Draft feature title",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "草稿"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "草稿"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "草稿"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "草稿"
           }
         }
       }
     },
-    "edit" : {
-      "comment" : "Edit feature title",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编辑"
+    "edit": {
+      "comment": "Edit feature title",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "編輯"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑"
           }
         }
       }
     },
-    "export" : {
-      "comment" : "Export feature title",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "导出"
+    "export": {
+      "comment": "Export feature title",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "匯出"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "匯出"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出"
           }
         }
       }
     },
-    "Generating Xcode Icon Set..." : {
-
-    },
-    "icon-count" : {
-      "comment" : "Number of icons with count placeholder",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个图标"
+    "Generating Xcode Icon Set...": {},
+    "icon-count": {
+      "comment": "Number of icons with count placeholder",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个图标"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 個圖示"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個圖示"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个图标"
           }
         }
       }
     },
-    "icon-not-found" : {
-      "comment" : "Error message when icon not found",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到图标：%@"
+    "icon-not-found": {
+      "comment": "Error message when icon not found",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到图标：%@"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到圖示：%@"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到圖示：%@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到图标：%@"
           }
         }
       }
     },
-    "icon-workshop" : {
-      "comment" : "Icon workshop title",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "图标制作工坊"
+    "icon-workshop": {
+      "comment": "Icon workshop title",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图标制作工坊"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "圖示製作工坊"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圖示製作工坊"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图标制作工坊"
           }
         }
       }
     },
-    "load-icon-failed" : {
-      "comment" : "Error message when icon loading fails",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "加载图标失败：%@"
+    "load-icon-failed": {
+      "comment": "Error message when icon loading fails",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载图标失败：%@"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "載入圖示失敗：%@"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入圖示失敗：%@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载图标失败：%@"
           }
         }
       }
     },
-    "loading-categories" : {
-      "comment" : "Loading categories message",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "加载分类中..."
+    "loading-categories": {
+      "comment": "Loading categories message",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载分类中..."
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "載入分類中..."
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入分類中..."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载分类中..."
           }
         }
       }
     },
-    "loading-failed" : {
-      "comment" : "Loading failed title",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "加载失败"
+    "loading-failed": {
+      "comment": "Loading failed title",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载失败"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "載入失敗"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入失敗"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载失败"
           }
         }
       }
     },
-    "loading-icons" : {
-      "comment" : "Loading icons message",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "加载图标中..."
+    "loading-icons": {
+      "comment": "Loading icons message",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载图标中..."
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "載入圖示中..."
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入圖示中..."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载图标中..."
           }
         }
       }
     },
-    "multiple-formats" : {
-      "comment" : "Export feature description",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多种格式下载"
+    "multiple-formats": {
+      "comment": "Export feature description",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "多种格式下载"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多種格式下載"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "多種格式下載"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "多种格式下载"
           }
         }
       }
     },
-    "No access to downloads folder" : {
-
-    },
-    "No available icon assets" : {
-
-    },
-    "No available icon data" : {
-
-    },
-    "no-categories-available" : {
-      "comment" : "Message when no categories are available",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "没有可用的分类"
+    "No access to downloads folder": {},
+    "No available icon assets": {},
+    "No available icon data": {},
+    "no-categories-available": {
+      "comment": "Message when no categories are available",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可用的分类"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "沒有可用的分類"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有可用的分類"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可用的分类"
           }
         }
       }
     },
-    "no-icons-in-source" : {
-      "comment" : "Message when no icons in source",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "该来源下没有可用的图标"
+    "no-icons-in-source": {
+      "comment": "Message when no icons in source",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该来源下没有可用的图标"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "該來源下沒有可用的圖示"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "該來源下沒有可用的圖示"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该来源下没有可用的图标"
           }
         }
       }
     },
-    "no-matching-categories" : {
-      "comment" : "Message when no categories match search",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "没有找到匹配的分类"
+    "no-matching-categories": {
+      "comment": "Message when no categories match search",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有找到匹配的分类"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "沒有找到匹配的分類"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有找到匹配的分類"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有找到匹配的分类"
           }
         }
       }
     },
-    "open-cache-directory" : {
-      "comment" : "Button to open cache directory",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开缓存目录"
+    "open-cache-directory": {
+      "comment": "Button to open cache directory",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开缓存目录"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打開快取目錄"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開快取目錄"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开缓存目录"
           }
         }
       }
     },
-    "plugin-description" : {
-      "comment" : "Plugin description",
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "图标详情视图"
+    "plugin-description": {
+      "comment": "Plugin description",
+      "extractionState": "stale",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图标详情视图"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "圖示詳情視圖"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圖示詳情視圖"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图标详情视图"
           }
         }
       }
     },
-    "plugin-display-name" : {
-      "comment" : "Plugin display name",
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Icon Detail"
+    "plugin-display-name": {
+      "comment": "Plugin display name",
+      "extractionState": "stale",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon Detail"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Icon Detail"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon Detail"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon Detail"
           }
         }
       }
     },
-    "retry" : {
-      "comment" : "Retry button",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重试"
+    "retry": {
+      "comment": "Retry button",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重試"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
           }
         }
       }
     },
-    "save-progress" : {
-      "comment" : "Draft feature description",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存制作进度"
+    "save-progress": {
+      "comment": "Draft feature description",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存制作进度"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存製作進度"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存製作進度"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存制作进度"
           }
         }
       }
     },
-    "search-categories" : {
-      "comment" : "Search placeholder for categories",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "搜索分类..."
+    "search-categories": {
+      "comment": "Search placeholder for categories",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索分类..."
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "搜尋分類..."
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜尋分類..."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索分类..."
           }
         }
       }
     },
-    "select-category-prompt" : {
-      "comment" : "Prompt to select a category",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请选择一个分类"
+    "select-category-prompt": {
+      "comment": "Prompt to select a category",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请选择一个分类"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "請選擇一個分類"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請選擇一個分類"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请选择一个分类"
           }
         }
       }
     },
-    "select-icon-to-start" : {
-      "comment" : "Prompt to select icon",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择一个图标开始制作，或创建新的设计"
+    "select-icon-to-start": {
+      "comment": "Prompt to select icon",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个图标开始制作，或创建新的设计"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇一個圖示開始製作，或創建新的設計"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇一個圖示開始製作，或創建新的設計"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个图标开始制作，或创建新的设计"
           }
         }
       }
     },
-    "Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置" : {
-
-    },
-    "内边距 %@" : {
-
-    },
-    "删除「%@」" : {
-
-    },
-    "图标工坊" : {
-
-    },
-    "圆角 %lld" : {
-
-    },
-    "在这里，您可以轻松为您的 macOS 和 iOS 应用创建精美的图标。" : {
-
-    },
-    "换图" : {
-
-    },
-    "新建 Icon" : {
-
-    },
-    "缩放 %@" : {
-
-    },
-    "背景透明度 %@" : {
-
-    },
-    "请先选择一个图标" : {
-
-    },
-    "重试" : {
-
-    }
+    "Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置": {},
+    "内边距 %@": {},
+    "删除「%@」": {},
+    "图标工坊": {},
+    "圆角 %lld": {},
+    "在这里，您可以轻松为您的 macOS 和 iOS 应用创建精美的图标。": {},
+    "换图": {},
+    "新建 Icon": {},
+    "缩放 %@": {},
+    "背景透明度 %@": {},
+    "请先选择一个图标": {},
+    "重试": {}
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

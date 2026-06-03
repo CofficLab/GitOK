@@ -1,52 +1,64 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Banner" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Banner"
+  "sourceLanguage": "en",
+  "strings": {
+    "Banner": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "横幅"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "横幅"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "橫幅"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "橫幅"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "横幅"
           }
         }
       }
     },
-    "Banner tab entry" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Banner tab entry"
+    "Banner tab entry": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner tab entry"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Banner 标签页入口"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner 标签页入口"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Banner 標籤頁入口"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner 標籤頁入口"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner 标签页入口"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

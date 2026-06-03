@@ -1,52 +1,64 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Monitor .git directory changes" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Monitor .git directory changes"
+  "sourceLanguage": "en",
+  "strings": {
+    "Monitor .git directory changes": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monitor .git directory changes"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "监听 .git 目录变化"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "监听 .git 目录变化"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "監聽 .git 目錄變化"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "監聽 .git 目錄變化"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "监听 .git 目录变化"
           }
         }
       }
     },
-    "监听 .git 目录变化" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Watch .git directory changes"
+    "监听 .git 目录变化": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Watch .git directory changes"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "监听 .git 目录变化"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "监听 .git 目录变化"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "監聽 .git 目錄變化"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "監聽 .git 目錄變化"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "监听 .git 目录变化"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

@@ -1,40 +1,52 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Summer Theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Summer Theme"
+  "sourceLanguage": "en",
+  "strings": {
+    "Summer Theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summer Theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "夏日主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夏日主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夏日主题"
           }
         }
       }
     },
-    "Warm golden light theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Warm golden light theme"
+    "Warm golden light theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warm golden light theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "温暖的金色浅色主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "温暖的金色浅色主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "温暖的金色浅色主题"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

@@ -1,57 +1,75 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Open Antigravity" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open Antigravity"
+  "sourceLanguage": "en",
+  "strings": {
+    "Open Antigravity": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Antigravity"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开 Antigravity"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 Antigravity"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 Antigravity"
           }
         }
       }
     },
-    "Open in Antigravity" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open in Antigravity"
+    "Open in Antigravity": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in Antigravity"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Antigravity 中打开"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Antigravity 中打开"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Antigravity 中打开"
           }
         }
       }
     },
-    "Open the current project folder in Antigravity." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open the current project folder in Antigravity."
+    "Open the current project folder in Antigravity.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the current project folder in Antigravity."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Antigravity 中打开当前项目目录。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Antigravity 中打开当前项目目录。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Antigravity 中打开当前项目目录。"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

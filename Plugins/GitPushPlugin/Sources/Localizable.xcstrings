@@ -20,6 +20,12 @@
             "state": "translated",
             "value": "分支已是最新，點擊擷取檢查遠端更新"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分支已是最新，点击获取检查远程更新"
+          }
         }
       }
     },
@@ -38,6 +44,12 @@
           }
         },
         "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "取消"
@@ -64,6 +76,12 @@
             "state": "translated",
             "value": "遠端分支有本地沒有的提交，無法直接推送。請先擷取，再拉取或變基後重試。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程分支有本地没有的提交，无法直接推送。请先获取，再拉取或变基后重试。"
+          }
         }
       }
     },
@@ -82,6 +100,12 @@
           }
         },
         "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有提交待推送"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "有提交待推送"
@@ -108,6 +132,12 @@
             "state": "translated",
             "value": "擷取"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获取"
+          }
         }
       }
     },
@@ -130,6 +160,12 @@
             "state": "translated",
             "value": "擷取 origin"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获取 origin"
+          }
         }
       }
     },
@@ -148,6 +184,12 @@
           }
         },
         "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 同步"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "Git 同步"
@@ -174,6 +216,12 @@
             "state": "translated",
             "value": "Git 同步失敗"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 同步失败"
+          }
         }
       }
     },
@@ -195,6 +243,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "遠端有新提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程有新提交"
           }
         }
       }
@@ -218,6 +272,12 @@
             "state": "translated",
             "value": "遠端有新提交，點擊拉取；擷取或推送可在選單中選擇"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程有新提交，点击拉取；获取或推送可在菜单中选择"
+          }
         }
       }
     },
@@ -240,6 +300,12 @@
             "state": "translated",
             "value": "發布分支"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发布分支"
+          }
         }
       }
     },
@@ -258,6 +324,12 @@
           }
         },
         "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取 origin"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "拉取 origin"
@@ -284,6 +356,12 @@
             "state": "translated",
             "value": "推送 origin"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送 origin"
+          }
         }
       }
     },
@@ -305,6 +383,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "根據分支狀態執行擷取、拉取或推送"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根据分支状态执行获取、拉取或推送"
           }
         }
       }

@@ -1,248 +1,314 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Cancel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
+  "sourceLanguage": "en",
+  "strings": {
+    "Cancel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
           }
         }
       }
     },
-    "Checking Remote Status…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Checking Remote Status…"
+    "Checking Remote Status…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking Remote Status…"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "检查远程状态…"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查远程状态…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "檢查遠端狀態…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檢查遠端狀態…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查远程状态…"
           }
         }
       }
     },
-    "Network connection error, auto-retry failed. You can try:" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Network connection error, auto-retry failed. You can try:"
+    "Network connection error, auto-retry failed. You can try:": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network connection error, auto-retry failed. You can try:"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "网络连接错误，自动重试失败。你可以尝试："
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络连接错误，自动重试失败。你可以尝试："
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "網絡連線錯誤，自動重試失敗。你可以嘗試："
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "網絡連線錯誤，自動重試失敗。你可以嘗試："
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络连接错误，自动重试失败。你可以尝试："
           }
         }
       }
     },
-    "Network fluctuation, retrying (%lld/%lld)…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Network fluctuation, retrying (%lld/%lld)…"
+    "Network fluctuation, retrying (%lld/%lld)…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network fluctuation, retrying (%lld/%lld)…"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "网络波动，正在重试（%lld/%lld）…"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络波动，正在重试（%lld/%lld）…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "網絡波動，正在重試（%lld/%lld）…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "網絡波動，正在重試（%lld/%lld）…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络波动，正在重试（%lld/%lld）…"
           }
         }
       }
     },
-    "Pulling…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pulling…"
+    "Pulling…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulling…"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拉取中…"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取中…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拉取中…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取中…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取中…"
           }
         }
       }
     },
-    "Push Failed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Push Failed"
+    "Push Failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Push Failed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送失败"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失败"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送失敗"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失敗"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失败"
           }
         }
       }
     },
-    "Pushing via system Git…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pushing via system Git…"
+    "Pushing via system Git…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pushing via system Git…"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通过系统 Git 推送中…"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过系统 Git 推送中…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "透過系統 Git 推送中…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "透過系統 Git 推送中…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过系统 Git 推送中…"
           }
         }
       }
     },
-    "Pushing…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pushing…"
+    "Pushing…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pushing…"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送中…"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送中…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送中…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送中…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送中…"
           }
         }
       }
     },
-    "Refresh File List…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Refresh File List…"
+    "Refresh File List…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh File List…"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刷新文件列表…"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新文件列表…"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重新整理檔案列表…"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新整理檔案列表…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新文件列表…"
           }
         }
       }
     },
-    "Retry" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retry"
+    "Retry": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重试"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重試"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
           }
         }
       }
     },
-    "Toggle SSH Push" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toggle SSH Push"
+    "Toggle SSH Push": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle SSH Push"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "切换 SSH 推送"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换 SSH 推送"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "切換 SSH 推送"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換 SSH 推送"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换 SSH 推送"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
