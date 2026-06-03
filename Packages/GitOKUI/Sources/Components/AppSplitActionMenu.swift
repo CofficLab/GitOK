@@ -45,26 +45,23 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
                             .transition(.opacity.combined(with: .scale(scale: 0.86)))
                     }
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(title)
-                            .font(DesignTokens.Typography.subheadline.weight(.semibold))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.85)
+                    Text(title)
+                        .font(DesignTokens.Typography.subheadline.weight(.semibold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
 
-                        if let detail {
-                            Text(detail)
-                                .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                                .lineLimit(1)
-                                .contentTransition(.numericText())
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                        }
+                    if let detail {
+                        Text(detail)
+                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                            .lineLimit(1)
+                            .contentTransition(.numericText())
+                            .transition(.opacity.combined(with: .move(edge: .trailing)))
                     }
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundStyle(.white)
                 .padding(.horizontal, 12)
-                .frame(height: 48)
-                .frame(minWidth: 112)
+                .frame(height: 40)
+                .frame(minWidth: 150)
                 .background(
                     UnevenRoundedRectangle(
                         topLeadingRadius: DesignTokens.Radius.sm,
@@ -86,7 +83,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
                 Image(systemName: "chevron.down")
                     .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(.white.opacity(0.92))
-                    .frame(width: 34, height: 48)
+                    .frame(width: 34, height: 40)
                     .background(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 3,

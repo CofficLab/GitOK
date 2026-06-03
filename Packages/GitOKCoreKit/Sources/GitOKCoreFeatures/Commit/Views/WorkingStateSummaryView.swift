@@ -57,17 +57,22 @@ public struct WorkingStateSummaryView: View {
     }
 
     public var body: some View {
-        HStack(spacing: 14) {
-            statusIcon
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 14) {
+                statusIcon
 
-            statusText
+                statusText
+            }
 
-            Spacer()
+            HStack {
+                Spacer()
 
-            trailingAction
+                trailingAction
+            }
         }
         .padding(.horizontal, 16)
-        .frame(height: 72)
+        .padding(.vertical, 12)
+        .frame(minHeight: 112)
         .background(
             state.isSelected
                 ? Color.accentColor.opacity(0.1)
