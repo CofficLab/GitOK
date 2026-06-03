@@ -802,7 +802,6 @@
 				GitDetailPlugin,
 				GitIgnorePlugin,
 				GitLFSPlugin,
-				GitPushPlugin,
 				GitTabPlugin,
 				GitWatcherPlugin,
 				IconPlugin,

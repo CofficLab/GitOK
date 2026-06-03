@@ -11,7 +11,6 @@ import FileInfoPlugin
 import GitDetailPlugin
 import GitIgnorePlugin
 import GitLFSPlugin
-import GitPushPlugin
 import GitTabPlugin
 import GitWatcherPlugin
 import IconPlugin
@@ -82,7 +81,6 @@ public enum GeneratedPluginRegistry {
         if GitDetailPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitDetailPlugin.shared)) }
         if GitIgnorePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitIgnorePlugin.shared)) }
         if GitLFSPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitLFSPlugin.shared)) }
-        if GitPushPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitPushPlugin.shared)) }
         if GitTabPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitTabPlugin.shared)) }
         if GitWatcherPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitWatcherPlugin.shared)) }
         if IconPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: IconPlugin.shared)) }

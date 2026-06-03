@@ -8,11 +8,14 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
     private let isRefreshing: Bool
     private let isPulling: Bool
     private let isPushing: Bool
+    private let trackingStatus: GitOKRemoteTrackingStatus
+    private let isSyncWorking: Bool
     @Binding private var showCredentialInput: Bool
     @Binding private var showSSHHelp: Bool
     private let credentialHost: String
     private let credentialRetryOperation: CommitRemoteSyncRules.RetryOperation?
     private let sshHelpContent: () -> SSHHelpContent
+    private let onFetch: () -> Void
     private let onPull: () -> Void
     private let onPush: () -> Void
     private let onTap: () -> Void
@@ -27,11 +30,14 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
         isRefreshing: Bool,
         isPulling: Bool,
         isPushing: Bool,
+        trackingStatus: GitOKRemoteTrackingStatus,
+        isSyncWorking: Bool,
         showCredentialInput: Binding<Bool>,
         showSSHHelp: Binding<Bool>,
         credentialHost: String,
         credentialRetryOperation: CommitRemoteSyncRules.RetryOperation?,
         @ViewBuilder sshHelpContent: @escaping () -> SSHHelpContent,
+        onFetch: @escaping () -> Void,
         onPull: @escaping () -> Void,
         onPush: @escaping () -> Void,
         onTap: @escaping () -> Void,
@@ -45,11 +51,14 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
         self.isRefreshing = isRefreshing
         self.isPulling = isPulling
         self.isPushing = isPushing
+        self.trackingStatus = trackingStatus
+        self.isSyncWorking = isSyncWorking
         _showCredentialInput = showCredentialInput
         _showSSHHelp = showSSHHelp
         self.credentialHost = credentialHost
         self.credentialRetryOperation = credentialRetryOperation
         self.sshHelpContent = sshHelpContent
+        self.onFetch = onFetch
         self.onPull = onPull
         self.onPush = onPush
         self.onTap = onTap
@@ -68,6 +77,9 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
                 isPulling: isPulling,
                 isPushing: isPushing
             ),
+            trackingStatus: trackingStatus,
+            isSyncWorking: isSyncWorking,
+            onFetch: onFetch,
             onPull: onPull,
             onPush: onPush
         )

@@ -46,6 +46,20 @@ struct WorkingStateView: View, SuperLog {
             loadUnpulledCount: { project in
                 try project.getUnPulledCount()
             },
+            loadRemoteTrackingStatus: { project in
+                let status = try project.aheadBehind()
+                return GitOKRemoteTrackingStatus(
+                    ahead: status.ahead,
+                    behind: status.behind,
+                    hasUpstream: status.hasUpstream
+                )
+            },
+            updateRemoteTrackingStatus: { status, fetchedAt in
+                vm.updateRemoteTracking(status, fetchedAt: fetchedAt)
+            },
+            fetch: { project in
+                try project.fetch()
+            },
             pull: { project in
                 try project.pull()
             },
@@ -176,11 +190,19 @@ private extension WorkingStateView {
             logError(CommitRemoteSyncRules.unpushedCountFailureLogMessage(errorDescription: String(describing: error)))
         case let .unpulledCountFailure(error):
             logError(CommitRemoteSyncRules.unpulledCountFailureLogMessage(errorDescription: String(describing: error)))
+        case let .remoteTrackingFailure(error):
+            logError("❌ Failed to load remote tracking status: \(String(describing: error))")
         case let .syncStatusUpdated(unpushedCount, unpulledCount):
             logVerbose(CommitRemoteSyncRules.syncStatusUpdatedLogMessage(
                 unpushedCount: unpushedCount,
                 unpulledCount: unpulledCount
             ))
+        case let .fetchStart(projectPath):
+            logVerbose("<\(projectPath)>Performing git fetch")
+        case .fetchSuccess:
+            logAlways("✅ Git fetch succeeded")
+        case let .fetchFailure(error):
+            logError("❌ Git fetch failed: \(String(describing: error))")
         case let .pullStart(projectPath):
             logVerbose(CommitRemoteSyncRules.pullOperationLogMessage(projectPath: projectPath))
         case let .pushStart(projectPath):

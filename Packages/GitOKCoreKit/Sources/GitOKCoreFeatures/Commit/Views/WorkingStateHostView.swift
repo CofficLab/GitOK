@@ -8,7 +8,11 @@ public enum WorkingStateHostLogEvent {
     case syncStatusLoad(projectPath: String)
     case unpushedCountFailure(Error)
     case unpulledCountFailure(Error)
+    case remoteTrackingFailure(Error)
     case syncStatusUpdated(unpushedCount: Int, unpulledCount: Int)
+    case fetchStart(projectPath: String)
+    case fetchSuccess
+    case fetchFailure(Error)
     case pullStart(projectPath: String)
     case pushStart(projectPath: String)
     case pullSuccess
@@ -38,6 +42,9 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     private let loadChangedFileCount: @MainActor (Project) async throws -> Int
     private let loadUnpushedCommits: @MainActor (Project) async throws -> [Commit]
     private let loadUnpulledCount: @MainActor (Project) async throws -> Int
+    private let loadRemoteTrackingStatus: @MainActor (Project) async throws -> GitOKRemoteTrackingStatus
+    private let updateRemoteTrackingStatus: @MainActor (GitOKRemoteTrackingStatus?, Date?) -> Void
+    private let fetch: @MainActor (Project) async throws -> Void
     private let pull: @MainActor (Project) async throws -> Void
     private let push: @MainActor (Project) async throws -> Void
     private let pushErrorClassification: @MainActor (Error) -> CommitRemoteSyncRules.PushErrorClassification
@@ -59,8 +66,10 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     @State private var isRefreshingFileList = false
     @State private var unpushedCount = 0
     @State private var unpulledCount = 0
+    @State private var remoteTrackingStatus = GitOKRemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
     @State private var isSyncLoading = false
     @State private var timerCancellable: AnyCancellable?
+    @State private var isFetching = false
     @State private var isPulling = false
     @State private var isPushing = false
     @State private var showCredentialInput = false
@@ -82,6 +91,9 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         loadChangedFileCount: @MainActor @escaping (Project) async throws -> Int,
         loadUnpushedCommits: @MainActor @escaping (Project) async throws -> [Commit],
         loadUnpulledCount: @MainActor @escaping (Project) async throws -> Int,
+        loadRemoteTrackingStatus: @MainActor @escaping (Project) async throws -> GitOKRemoteTrackingStatus,
+        updateRemoteTrackingStatus: @MainActor @escaping (GitOKRemoteTrackingStatus?, Date?) -> Void = { _, _ in },
+        fetch: @MainActor @escaping (Project) async throws -> Void,
         pull: @MainActor @escaping (Project) async throws -> Void,
         push: @MainActor @escaping (Project) async throws -> Void,
         pushErrorClassification: @MainActor @escaping (Error) -> CommitRemoteSyncRules.PushErrorClassification,
@@ -109,6 +121,9 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         self.loadChangedFileCount = loadChangedFileCount
         self.loadUnpushedCommits = loadUnpushedCommits
         self.loadUnpulledCount = loadUnpulledCount
+        self.loadRemoteTrackingStatus = loadRemoteTrackingStatus
+        self.updateRemoteTrackingStatus = updateRemoteTrackingStatus
+        self.fetch = fetch
         self.pull = pull
         self.push = push
         self.pushErrorClassification = pushErrorClassification
@@ -135,6 +150,8 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
             isRefreshing: isRefreshing,
             isPulling: isPulling,
             isPushing: isPushing,
+            trackingStatus: remoteTrackingStatus,
+            isSyncWorking: isSyncLoading || isFetching || isPulling || isPushing,
             showCredentialInput: $showCredentialInput,
             showSSHHelp: $showSSHHelp,
             credentialHost: credentialHost,
@@ -150,6 +167,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
                     )
                 }
             },
+            onFetch: performFetch,
             onPull: performPull,
             onPush: performPush,
             onTap: onTap,
@@ -295,6 +313,20 @@ private extension WorkingStateHostView {
                 eventHandler(.log(.unpulledCountFailure(error)))
             }
 
+            do {
+                let trackingStatus = try await loadRemoteTrackingStatus(command.project)
+                remoteTrackingStatus = trackingStatus
+                updateRemoteTrackingStatus(trackingStatus, Date())
+            } catch {
+                remoteTrackingStatus = GitOKRemoteTrackingStatus(
+                    ahead: unpushedCount,
+                    behind: unpulledCount,
+                    hasUpstream: unpushedCount > 0 || unpulledCount > 0
+                )
+                updateRemoteTrackingStatus(remoteTrackingStatus, Date())
+                eventHandler(.log(.remoteTrackingFailure(error)))
+            }
+
             let resultState = CommitRemoteSyncRules.syncStatusResultState(
                 unpushedCount: unpushedCount,
                 unpulledCount: unpulledCount
@@ -317,6 +349,39 @@ private extension WorkingStateHostView {
     func setStatus(_ text: String?) {
         Task { @MainActor in
             setActivityStatus(text)
+        }
+    }
+
+    func performFetch() {
+        CommitRemoteSyncRules.performRequiredProjectSyncStatusCommand(
+            project: project,
+            projectPath: projectPath,
+            logMissing: {
+                eventHandler(.log(.missingProject))
+            }
+        ) { command in
+            performFetch(command)
+        }
+    }
+
+    func performFetch(_ command: CommitRemoteSyncRules.ProjectSyncStatusRequest<Project>) {
+        eventHandler(.log(.fetchStart(projectPath: command.request.projectPath)))
+
+        Task { @MainActor in
+            isFetching = true
+            setStatus(CommitLocalization.string("Fetching"))
+
+            do {
+                try await fetch(command.project)
+                eventHandler(.log(.fetchSuccess))
+                isFetching = false
+                loadSyncStatus(command)
+            } catch {
+                eventHandler(.log(.fetchFailure(error)))
+                isFetching = false
+                setStatus(nil)
+                eventHandler(.showError(error))
+            }
         }
     }
 

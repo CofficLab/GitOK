@@ -3,15 +3,24 @@ import SwiftUI
 
 public struct WorkingStateSummaryView: View {
     private let state: CommitRemoteSyncRules.WorkingStatePresentationState
+    private let trackingStatus: GitOKRemoteTrackingStatus
+    private let isSyncWorking: Bool
+    private let onFetch: () -> Void
     private let onPull: () -> Void
     private let onPush: () -> Void
 
     public init(
         state: CommitRemoteSyncRules.WorkingStatePresentationState,
+        trackingStatus: GitOKRemoteTrackingStatus = GitOKRemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false),
+        isSyncWorking: Bool = false,
+        onFetch: @escaping () -> Void = {},
         onPull: @escaping () -> Void,
         onPush: @escaping () -> Void
     ) {
         self.state = state
+        self.trackingStatus = trackingStatus
+        self.isSyncWorking = isSyncWorking
+        self.onFetch = onFetch
         self.onPull = onPull
         self.onPush = onPush
     }
@@ -23,6 +32,9 @@ public struct WorkingStateSummaryView: View {
         isRefreshing: Bool,
         isPulling: Bool,
         isPushing: Bool,
+        trackingStatus: GitOKRemoteTrackingStatus = GitOKRemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false),
+        isSyncWorking: Bool = false,
+        onFetch: @escaping () -> Void = {},
         onPull: @escaping () -> Void,
         onPush: @escaping () -> Void
     ) {
@@ -34,6 +46,9 @@ public struct WorkingStateSummaryView: View {
             isPulling: isPulling,
             isPushing: isPushing
         )
+        self.trackingStatus = trackingStatus
+        self.isSyncWorking = isSyncWorking
+        self.onFetch = onFetch
         self.onPull = onPull
         self.onPush = onPush
     }
@@ -97,44 +112,12 @@ public struct WorkingStateSummaryView: View {
 
     @ViewBuilder
     private var trailingAction: some View {
-        switch state.trailingAction {
-        case .refreshing:
-            HStack(spacing: 4) {
-                ProgressView()
-                    .controlSize(.small)
-                    .scaleEffect(0.8)
-                Text(CommitLocalization.string("Refreshing"))
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.secondary)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(Color.secondary.opacity(0.1))
-            .cornerRadius(6)
-        case .pull:
-            Button {
-                onPull()
-            } label: {
-                Label(
-                    state.isPulling ? CommitLocalization.string("Pulling...") : CommitLocalization.string("Pull"),
-                    systemImage: "arrow.down.circle.fill"
-                )
-            }
-            .disabled(state.isPulling)
-            .help(CommitLocalization.string("Click to run git pull and fetch remote commits"))
-        case .push:
-            Button {
-                onPush()
-            } label: {
-                Label(
-                    state.isPushing ? CommitLocalization.string("Pushing...") : CommitLocalization.string("Push"),
-                    systemImage: "arrow.up.circle.fill"
-                )
-            }
-            .disabled(state.isPushing)
-            .help(CommitLocalization.string("Click to run git push and push local commits"))
-        case .none:
-            EmptyView()
-        }
+        WorkspaceSyncButton(
+            trackingStatus: trackingStatus,
+            isWorking: isSyncWorking,
+            onFetch: onFetch,
+            onPull: onPull,
+            onPush: onPush
+        )
     }
 }

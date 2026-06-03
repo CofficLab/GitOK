@@ -53,5 +53,10 @@ let package = Package(
             dependencies: ["GitOKCoreKit"],
             path: "Tests"
         ),
+        .testTarget(
+            name: "GitOKCoreFeaturesTests",
+            dependencies: ["GitOKCoreFeatures"],
+            path: "FeatureTests"
+        ),
     ]
 )
