@@ -1,40 +1,52 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Deep blue water theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deep blue water theme"
+  "sourceLanguage": "en",
+  "strings": {
+    "Deep blue water theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deep blue water theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "深蓝水色主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深蓝水色主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深蓝水色主题"
           }
         }
       }
     },
-    "Harbor Theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Harbor Theme"
+    "Harbor Theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Harbor Theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "港湾主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "港湾主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "港湾主题"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

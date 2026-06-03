@@ -1,40 +1,52 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Nebula Theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nebula Theme"
+  "sourceLanguage": "en",
+  "strings": {
+    "Nebula Theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nebula Theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "星云主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "星云主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "星云主题"
           }
         }
       }
     },
-    "Violet atmospheric dark theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Violet atmospheric dark theme"
+    "Violet atmospheric dark theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Violet atmospheric dark theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "紫色氛围深色主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紫色氛围深色主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紫色氛围深色主题"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

@@ -1,216 +1,268 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "" : {
-
-    },
-    "Failed to load branches" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failed to load branches"
+  "sourceLanguage": "en",
+  "strings": {
+    "": {},
+    "Failed to load branches": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed to load branches"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "加载分支失败"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载分支失败"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "載入分支失敗"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入分支失敗"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载分支失败"
           }
         }
       }
     },
-    "Merge" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merge"
+    "Merge": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并"
           }
         }
       }
     },
-    "Merge branches" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merge branches"
+    "Merge branches": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge branches"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并分支"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并分支"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併分支"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併分支"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并分支"
           }
         }
       }
     },
-    "Merge complete" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merge complete"
+    "Merge complete": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge complete"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并完成"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并完成"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併完成"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併完成"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并完成"
           }
         }
       }
     },
-    "Merge failed" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merge failed"
+    "Merge failed": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge failed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并失败"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并失败"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併失敗"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併失敗"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并失败"
           }
         }
       }
     },
-    "Merged %@ into %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merged %@ into %@"
+    "Merged %@ into %@": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merged %@ into %@"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已将 %@ 合并到 %@"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已将 %@ 合并到 %@"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已將 %@ 合併到 %@"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已將 %@ 合併到 %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已将 %@ 合并到 %@"
           }
         }
       }
     },
-    "SmartMerge" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SmartMerge"
+    "SmartMerge": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SmartMerge"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "智能合并"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能合并"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "智能合併"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能合併"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能合并"
           }
         }
       }
     },
-    "to" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "to"
+    "to": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "to"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "到"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "到"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "到"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "到"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "到"
           }
         }
       }
     },
-    "智能合并工具" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Smart merge tool"
+    "智能合并工具": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart merge tool"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "智能合并工具"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能合并工具"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "智能合併工具"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能合併工具"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能合并工具"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

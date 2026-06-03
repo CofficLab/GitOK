@@ -1,49 +1,55 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "No themes available" : {
-
-    },
-    "Switch theme" : {
-
-    },
-    "Switch themes from the status bar" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Switch themes from the status bar"
+  "sourceLanguage": "en",
+  "strings": {
+    "No themes available": {},
+    "Switch theme": {},
+    "Switch themes from the status bar": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch themes from the status bar"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "从状态栏切换主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从状态栏切换主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从状态栏切换主题"
           }
         }
       }
     },
-    "Theme" : {
-
-    },
-    "Theme Status" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Theme Status"
+    "Theme": {},
+    "Theme Status": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theme Status"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "主题状态"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主题状态"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主题状态"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

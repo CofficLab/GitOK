@@ -1,52 +1,64 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Git" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git"
+  "sourceLanguage": "en",
+  "strings": {
+    "Git": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git"
           }
         }
       }
     },
-    "Git version control" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git version control"
+    "Git version control": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git version control"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 版本控制"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 版本控制"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 版本控制"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 版本控制"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 版本控制"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

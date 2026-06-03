@@ -1,40 +1,52 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Classic vivid dark theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Classic vivid dark theme"
+  "sourceLanguage": "en",
+  "strings": {
+    "Classic vivid dark theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classic vivid dark theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "经典鲜明的深色主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "经典鲜明的深色主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "经典鲜明的深色主题"
           }
         }
       }
     },
-    "Dracula Theme" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dracula Theme"
+    "Dracula Theme": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dracula Theme"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dracula 主题"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dracula 主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dracula 主题"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
