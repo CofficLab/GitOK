@@ -11,19 +11,12 @@ public struct BranchStatusTile: View {
 
     public var body: some View {
         if context.projectURL != nil, context.isGitRepository {
-            Button {
+            AppStatusBarTile(systemImage: "arrow.branch", action: {
                 isPresented.toggle()
-            } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "arrow.branch")
-                    Text(displayBranchName)
-                        .lineLimit(1)
-                }
-                .font(.footnote)
-                .frame(height: 22)
-                .contentShape(Rectangle())
+            }) {
+                Text(displayBranchName)
+                    .lineLimit(1)
             }
-            .buttonStyle(.plain)
             .help(BranchPluginLocalization.string("Manage Branches"))
             .popover(isPresented: $isPresented) {
                 BranchManagementView(context: context)

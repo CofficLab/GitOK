@@ -19,20 +19,11 @@ struct GitLFSStatusTile: View {
     }
 
     var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: iconName, action: {
             isPresented.toggle()
-        } label: {
-            HStack(spacing: 4) {
-                Image(systemName: iconName)
-                    .font(.system(size: 11))
-
-                content
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .contentShape(Rectangle())
+        }) {
+            content
         }
-        .buttonStyle(.plain)
         .help(helpText)
         .popover(isPresented: $isPresented) {
             popoverContent

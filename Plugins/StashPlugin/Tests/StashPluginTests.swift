@@ -1,3 +1,4 @@
+import GitCoreKit
 import GitOKCoreKit
 @testable import StashPlugin
 import Testing

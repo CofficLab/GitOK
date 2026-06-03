@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import SwiftUI
 
 struct LicenseStatusIcon: View {
@@ -11,16 +12,9 @@ struct LicenseStatusIcon: View {
     }
 
     var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: "doc.plaintext", action: {
             isSheetPresented.toggle()
-        } label: {
-            Image(systemName: "doc.plaintext")
-                .font(.system(size: 11))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+        })
         .help(hasLicense ? LicensePluginLocalization.string("View or edit LICENSE") : LicensePluginLocalization.string("LICENSE not found, click to create"))
         .sheet(isPresented: $isSheetPresented) {
             LicenseViewer(projectURL: projectURL)

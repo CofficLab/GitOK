@@ -1,4 +1,5 @@
 import AppKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct FileInfoTile: View {
@@ -13,19 +14,11 @@ public struct FileInfoTile: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: "doc.text", action: {
             isPopoverPresented.toggle()
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: "doc.text")
-                    .font(.system(size: 11, weight: .semibold))
-                pathComponentsView()
-            }
-            .padding(.horizontal, 8)
-            .frame(height: 24)
-            .contentShape(Rectangle())
+        }) {
+            pathComponentsView()
         }
-        .buttonStyle(.plain)
         .help(selectedFilePath)
         .popover(isPresented: $isPopoverPresented) {
             popoverContent

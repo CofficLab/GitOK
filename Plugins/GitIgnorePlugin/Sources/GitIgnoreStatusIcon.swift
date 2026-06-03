@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import SwiftUI
 
 struct GitIgnoreStatusIcon: View {
@@ -11,18 +12,11 @@ struct GitIgnoreStatusIcon: View {
     }
 
     var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: "doc.text.fill", action: {
             if hasGitIgnore {
                 isSheetPresented.toggle()
             }
-        } label: {
-            Image(systemName: "doc.text.fill")
-                .font(.system(size: 11))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+        })
         .help(hasGitIgnore ? GitIgnorePluginLocalization.string("View .gitignore file") : GitIgnorePluginLocalization.string("No .gitignore file found"))
         .sheet(isPresented: $isSheetPresented) {
             GitIgnoreViewer(projectURL: projectURL)

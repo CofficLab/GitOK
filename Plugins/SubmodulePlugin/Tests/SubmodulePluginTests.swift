@@ -1,3 +1,4 @@
+import GitCoreKit
 import GitOKCoreKit
 import XCTest
 @testable import SubmodulePlugin

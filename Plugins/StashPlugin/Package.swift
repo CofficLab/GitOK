@@ -24,7 +24,10 @@ let package = Package(
         ),
         .testTarget(
             name: "StashPluginTests",
-            dependencies: ["StashPlugin"],
+            dependencies: [
+                "GitCoreKit",
+                "StashPlugin",
+            ],
             path: "Tests"
         ),
     ]

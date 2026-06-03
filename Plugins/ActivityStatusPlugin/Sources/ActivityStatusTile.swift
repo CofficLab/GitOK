@@ -10,16 +10,10 @@ public struct ActivityStatusTile: View {
 
     public var body: some View {
         if let status = activityStatus, status.isEmpty == false {
-            HStack(spacing: 6) {
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.system(size: 11, weight: .semibold))
+            AppStatusBarTile(systemImage: "arrow.triangle.2.circlepath") {
                 Text(status)
-                    .font(.footnote)
                     .lineLimit(1)
             }
-            .padding(.horizontal, 8)
-            .frame(height: 24)
-            .contentShape(Rectangle())
             .help(ActivityStatusPluginLocalization.string("Current activity"))
         }
     }

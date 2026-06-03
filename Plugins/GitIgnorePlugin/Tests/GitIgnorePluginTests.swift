@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import XCTest
 @testable import GitIgnorePlugin
 
@@ -21,7 +22,8 @@ final class GitIgnorePluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(GitIgnorePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"))
+        XCTAssertNotNil(GitIgnorePlugin.shared.statusBarTrailingView(context: context))
     }
 
     func testXcodeTemplateMergeIsStable() {

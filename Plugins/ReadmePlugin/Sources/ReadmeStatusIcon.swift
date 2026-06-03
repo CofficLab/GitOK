@@ -13,18 +13,11 @@ struct ReadmeStatusIcon: View {
     }
 
     var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: "doc.text.magnifyingglass", action: {
             if hasReadme {
                 isSheetPresented.toggle()
             }
-        } label: {
-            Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 11))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+        })
         .help(hasReadme ? ReadmePluginLocalization.string("View README.md document") : ReadmePluginLocalization.string("README.md file not found"))
         .sheet(isPresented: $isSheetPresented) {
             ReadmeViewer(projectURL: projectURL)

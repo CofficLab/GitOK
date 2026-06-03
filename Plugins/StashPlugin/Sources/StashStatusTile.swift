@@ -15,19 +15,11 @@ public struct StashStatusTile: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: "archivebox", action: {
             isPresented.toggle()
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: "archivebox")
-                    .font(.system(size: 11, weight: .semibold))
-                content
-            }
-            .padding(.horizontal, 8)
-            .frame(height: 24)
-            .contentShape(Rectangle())
+        }) {
+            content
         }
-        .buttonStyle(.plain)
         .help(helpText)
         .popover(isPresented: $isPresented) {
             StashListView(projectURL: projectURL, refreshToken: refreshToken) {

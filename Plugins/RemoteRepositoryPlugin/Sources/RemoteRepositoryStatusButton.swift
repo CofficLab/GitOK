@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import SwiftUI
 
 public struct RemoteRepositoryStatusButton: View {
@@ -12,15 +13,9 @@ public struct RemoteRepositoryStatusButton: View {
 
     public var body: some View {
         if isGitRepository {
-            Button {
+            AppStatusBarTile(systemImage: "network", action: {
                 showRemoteManagement = true
-            } label: {
-                Image(systemName: "network")
-                    .font(.system(size: 12, weight: .semibold))
-                    .frame(width: 22, height: 22)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
+            })
             .help(RemoteRepositoryPluginLocalization.string("Manage Remote Repositories"))
             .sheet(isPresented: $showRemoteManagement) {
                 RemoteRepositoryView(projectURL: projectURL)

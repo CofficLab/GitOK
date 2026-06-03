@@ -24,7 +24,10 @@ let package = Package(
         ),
         .testTarget(
             name: "SubmodulePluginTests",
-            dependencies: ["SubmodulePlugin"],
+            dependencies: [
+                "GitCoreKit",
+                "SubmodulePlugin",
+            ],
             path: "Tests"
         ),
     ]

@@ -19,19 +19,11 @@ public struct SubmoduleStatusTile: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: iconName, action: {
             isPresented.toggle()
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: iconName)
-                    .font(.system(size: 11, weight: .semibold))
-                content
-            }
-            .padding(.horizontal, 8)
-            .frame(height: 24)
-            .contentShape(Rectangle())
+        }) {
+            content
         }
-        .buttonStyle(.plain)
         .help(helpText)
         .popover(isPresented: $isPresented) {
             popoverContent

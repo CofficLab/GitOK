@@ -16,16 +16,10 @@ struct ThemeStatusBarView: View {
             popoverWidth: 340,
             id: "gitok-theme-picker"
         ) {
-            HStack(spacing: 4) {
-                Image(systemName: "paintbrush")
-                    .font(.system(size: 11))
-
+            AppStatusBarTile(systemImage: "paintbrush") {
                 Text(registry.selectedContribution?.compactName ?? "Theme")
-                    .font(.system(size: 11))
                     .lineLimit(1)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
         }
         .help("Switch theme")
     }

@@ -16,28 +16,23 @@ public struct ConflictStatusTile: View {
     }
 
     public var body: some View {
-        Button {
-            isPresented.toggle()
-        } label: {
-            HStack(spacing: 4) {
-                Image(systemName: isMerging ? "exclamationmark.triangle.fill" : "checkmark.circle")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(isMerging ? .red : .secondary)
-
-                if isLoading {
-                    ProgressView()
-                        .controlSize(.small)
-                } else {
-                    Text(isMerging ? ConflictResolverPluginLocalization.string("Conflicts \(conflictCount)") : ConflictResolverPluginLocalization.string("Merge OK"))
-                        .font(.footnote.weight(.medium))
-                        .foregroundStyle(isMerging ? .red : .secondary)
-                        .monospacedDigit()
-                }
+        AppStatusBarTile(
+            systemImage: isMerging ? "exclamationmark.triangle.fill" : "checkmark.circle",
+            tint: isMerging ? .red : .secondary,
+            action: {
+                isPresented.toggle()
             }
-            .frame(height: 22)
-            .contentShape(Rectangle())
+        ) {
+            if isLoading {
+                ProgressView()
+                    .controlSize(.small)
+            } else {
+                Text(isMerging ? ConflictResolverPluginLocalization.string("Conflicts \(conflictCount)") : ConflictResolverPluginLocalization.string("Merge OK"))
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(isMerging ? .red : .secondary)
+                    .monospacedDigit()
+            }
         }
-        .buttonStyle(.plain)
         .help(helpText)
         .popover(isPresented: $isPresented) {
             ConflictResolverList(projectURL: projectURL)

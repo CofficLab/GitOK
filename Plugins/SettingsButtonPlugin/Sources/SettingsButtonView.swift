@@ -1,19 +1,14 @@
 import Foundation
+import GitOKCoreKit
 import SwiftUI
 
 public struct SettingsButtonView: View {
     nonisolated public init() {}
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(systemImage: "gearshape", action: {
             NotificationCenter.default.post(name: .gitOKOpenSettings, object: nil)
-        } label: {
-            Image(systemName: "gearshape")
-                .font(.system(size: 12, weight: .semibold))
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+        })
         .help(SettingsButtonPluginLocalization.string("Open Settings"))
     }
 }

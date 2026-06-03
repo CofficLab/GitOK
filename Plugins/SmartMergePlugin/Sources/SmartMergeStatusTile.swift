@@ -15,15 +15,9 @@ public struct SmartMergeStatusTile: View {
 
     public var body: some View {
         if isGitRepository {
-            Button {
+            AppStatusBarTile(systemImage: "arrow.trianglehead.merge", action: {
                 isPresented.toggle()
-            } label: {
-                Image(systemName: "arrow.trianglehead.merge")
-                    .font(.system(size: 12, weight: .semibold))
-                    .frame(width: 22, height: 22)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
+            })
             .help(SmartMergePluginLocalization.string("Merge branches"))
             .popover(isPresented: $isPresented) {
                 SmartMergeForm(projectURL: projectURL)

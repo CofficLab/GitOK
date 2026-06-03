@@ -18,8 +18,7 @@ public struct FileInfoPlugin: GitOKPlugin {
 
     @MainActor
     public func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
-        guard let selectedFilePath = context.selectedFilePath, !selectedFilePath.isEmpty,
-              let projectURL = context.projectURL else { return nil }
+        guard let selectedFilePath = context.selectedFilePath, !selectedFilePath.isEmpty else { return nil }
         return AnyView(FileInfoTile(selectedFilePath: selectedFilePath, projectPath: context.projectPath))
     }
 }

@@ -21,16 +21,13 @@ public struct AutoPushStatusIcon: View {
     }
 
     public var body: some View {
-        Button {
-            isSheetPresented.toggle()
-        } label: {
-            Image(systemName: isAutoPushEnabled ? "arrow.up.circle.fill" : "arrow.up.circle")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(isAutoPushEnabled ? .green : .secondary)
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+        AppStatusBarTile(
+            systemImage: isAutoPushEnabled ? "arrow.up.circle.fill" : "arrow.up.circle",
+            tint: isAutoPushEnabled ? .green : .secondary,
+            action: {
+                isSheetPresented.toggle()
+            }
+        )
         .help(isAutoPushEnabled ? AutoPushPluginLocalization.string("Auto-push is enabled - Click to manage") : AutoPushPluginLocalization.string("Auto-push is disabled - Click to configure"))
         .sheet(isPresented: $isSheetPresented) {
             AutoPushConfigView(projectPath: projectPath, projectTitle: projectTitle, branchName: branchName, isGitRepository: isGitRepository)

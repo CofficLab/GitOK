@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import ProjectSupportKit
 import XCTest
 @testable import LicensePlugin
 

@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import XCTest
 @testable import FileInfoPlugin
 
@@ -21,7 +22,12 @@ final class FileInfoPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarLeadingContributionIsAvailable() {
-        XCTAssertNotNil(FileInfoPlugin.shared.statusBarLeadingView(context: GitOKPluginContext()))
+        let context = GitOKPluginContext(
+            projectPath: "/tmp/GitOK",
+            selectedFilePath: "Sources/App/main.swift"
+        )
+
+        XCTAssertNotNil(FileInfoPlugin.shared.statusBarLeadingView(context: context))
     }
 
     func testPathComponents() {
