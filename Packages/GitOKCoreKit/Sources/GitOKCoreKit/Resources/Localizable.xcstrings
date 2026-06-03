@@ -1094,6 +1094,12 @@
             "state" : "translated",
             "value" : "正在合併"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要 SSH 凭据"
+          }
         }
       }
     },
@@ -1117,6 +1123,12 @@
             "state" : "translated",
             "value" : "遠端有新提交"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 无法在当前 Git 操作中直接读取 SSH passphrase。请把密钥加入 ssh-agent 或 macOS Keychain，然后重试。"
+          }
         }
       }
     },
@@ -1139,6 +1151,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "遠端有新提交，點擊拉取；擷取或推送可在選單中選擇"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程地址"
           }
         }
       }
@@ -1169,6 +1187,12 @@
             "state" : "translated",
             "value" : "開啟 .ssh 目錄"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SSH 主机"
+          }
         }
       }
     },
@@ -1197,6 +1221,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在編輯器中開啟"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加密钥"
           }
         }
       }
@@ -1227,6 +1257,12 @@
             "state" : "translated",
             "value" : "發布分支"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新 known_hosts"
+          }
         }
       }
     },
@@ -1255,6 +1291,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拉取"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "执行 known_hosts 命令前，请先确认远程服务商公布的主机指纹可信。"
           }
         }
       }
@@ -1285,6 +1327,12 @@
             "state" : "translated",
             "value" : "拉取 origin"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 .ssh 目录"
+          }
         }
       }
     },
@@ -1313,6 +1361,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拉取中..."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制"
           }
         }
       }
@@ -1343,6 +1397,12 @@
             "state" : "translated",
             "value" : "推送"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
         }
       }
     },
@@ -1371,6 +1431,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送 origin"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
           }
         }
       }
@@ -1401,6 +1467,12 @@
             "state" : "translated",
             "value" : "推送中..."
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld) 未提交"
+          }
         }
       }
     },
@@ -1429,6 +1501,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可暫存"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交"
           }
         }
       }
@@ -1459,6 +1537,12 @@
             "state" : "translated",
             "value" : "重新整理中"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emoji Style"
+          }
         }
       }
     },
@@ -1487,6 +1571,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "遠端地址"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 提交管理"
           }
         }
       }
@@ -1517,6 +1607,12 @@
             "state" : "translated",
             "value" : "繼續前請先解決所有衝突"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载"
+          }
         }
       }
     },
@@ -1545,6 +1641,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "解決合併衝突"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未知"
           }
         }
       }
@@ -1575,6 +1677,12 @@
             "state" : "translated",
             "value" : "重試"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为提交 %@ 创建 annotated tag。"
+          }
         }
       }
     },
@@ -1603,6 +1711,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在 Finder 中顯示"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为提交 %@ 创建 lightweight tag。"
           }
         }
       }
@@ -1633,6 +1747,12 @@
             "state" : "translated",
             "value" : "需要 SSH 憑據"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换 SSH 推送"
+          }
         }
       }
     },
@@ -1661,6 +1781,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSH 主機"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建"
           }
         }
       }
@@ -1691,6 +1817,12 @@
             "state" : "translated",
             "value" : "暫存已解決檔案"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建标签"
+          }
         }
       }
     },
@@ -1719,6 +1851,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "繼續前請先暫存已解決檔案"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建附注标签"
           }
         }
       }
@@ -1749,6 +1887,12 @@
             "state" : "translated",
             "value" : "已暫存"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除"
+          }
         }
       }
     },
@@ -1777,6 +1921,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未知"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除标签"
           }
         }
       }
@@ -1807,6 +1957,12 @@
             "state" : "translated",
             "value" : "未解決"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除远端标签"
+          }
         }
       }
     },
@@ -1835,6 +1991,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新 known_hosts"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新中"
           }
         }
       }
@@ -1865,6 +2027,12 @@
             "state" : "translated",
             "value" : "使用我們的版本"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新文件列表…"
+          }
         }
       }
     },
@@ -1893,6 +2061,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用對方版本"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
           }
         }
       }
@@ -1923,6 +2097,12 @@
             "state" : "translated",
             "value" : "工作區乾淨"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将删除 origin 上的标签 %@，本地标签不会受影响。"
+          }
         }
       }
     },
@@ -1951,6 +2131,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "為提交 %@ 建立 annotated tag。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将删除本地标签 %@，远程标签不会受影响。"
           }
         }
       }
@@ -1981,6 +2167,12 @@
             "state" : "translated",
             "value" : "為提交 %@ 建立 lightweight tag。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作区干净"
+          }
         }
       }
     },
@@ -2009,6 +2201,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切換 SSH 推送"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已创建标签: %@"
           }
         }
       }
@@ -2039,6 +2237,12 @@
             "state" : "translated",
             "value" : "建立"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已删除标签: %@"
+          }
         }
       }
     },
@@ -2067,6 +2271,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "建立標籤"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已删除远端标签: %@"
           }
         }
       }
@@ -2097,6 +2307,12 @@
             "state" : "translated",
             "value" : "建立附註標籤"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已推送到远程"
+          }
         }
       }
     },
@@ -2125,6 +2341,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刪除"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已推送标签: %@"
           }
         }
       }
@@ -2155,6 +2377,12 @@
             "state" : "translated",
             "value" : "刪除標籤"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前提交尚未推送到远程"
+          }
         }
       }
     },
@@ -2183,6 +2411,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刪除遠端標籤"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前状态"
           }
         }
       }
@@ -2213,6 +2447,12 @@
             "state" : "translated",
             "value" : "重新整理中"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有更改已提交"
+          }
         }
       }
     },
@@ -2241,6 +2481,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重新整理檔案列表…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取中…"
           }
         }
       }
@@ -2271,6 +2517,12 @@
             "state" : "translated",
             "value" : "取消"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送"
+          }
         }
       }
     },
@@ -2299,6 +2551,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "將刪除 origin 上的標籤 %@，本地標籤不會受影響。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送中..."
           }
         }
       }
@@ -2329,6 +2587,12 @@
             "state" : "translated",
             "value" : "將刪除本地標籤 %@，遠端標籤不會受影響。"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送到远程"
+          }
         }
       }
     },
@@ -2357,6 +2621,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "工作區乾淨"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失败"
           }
         }
       }
@@ -2387,6 +2657,12 @@
             "state" : "translated",
             "value" : "已建立標籤: %@"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送标签"
+          }
         }
       }
     },
@@ -2415,6 +2691,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已刪除標籤: %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交已推送"
           }
         }
       }
@@ -2445,6 +2727,12 @@
             "state" : "translated",
             "value" : "已刪除遠端標籤: %@"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂未推送到远程"
+          }
         }
       }
     },
@@ -2473,6 +2761,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已推送到遠端"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到用户信息"
           }
         }
       }
@@ -2503,6 +2797,12 @@
             "state" : "translated",
             "value" : "已推送標籤: %@"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未配置用户信息"
+          }
         }
       }
     },
@@ -2531,6 +2831,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "目前提交尚未推送到遠端"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签名称"
           }
         }
       }
@@ -2561,6 +2867,12 @@
             "state" : "translated",
             "value" : "目前狀態"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签名称不能为空"
+          }
         }
       }
     },
@@ -2589,6 +2901,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所有更改已提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签说明"
           }
         }
       }
@@ -2619,6 +2937,12 @@
             "state" : "translated",
             "value" : "擷取中…~"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签说明不能为空"
+          }
         }
       }
     },
@@ -2647,6 +2971,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查远程状态…"
           }
         }
       }
@@ -2677,6 +3007,12 @@
             "state" : "translated",
             "value" : "推送中..."
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载"
+          }
         }
       }
     },
@@ -2705,6 +3041,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送到遠端"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在推送中..."
           }
         }
       }
@@ -2735,6 +3077,12 @@
             "state" : "translated",
             "value" : "推送失敗"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击执行 git pull 拉取远程提交"
+          }
         }
       }
     },
@@ -2763,6 +3111,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送標籤"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击执行 git push 推送本地提交"
           }
         }
       }
@@ -2793,6 +3147,12 @@
             "state" : "translated",
             "value" : "提交已推送"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击推送到远程仓库"
+          }
         }
       }
     },
@@ -2821,6 +3181,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暫未推送到遠端~"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击查看用户信息"
           }
         }
       }
@@ -2851,6 +3217,12 @@
             "state" : "translated",
             "value" : "未找到用戶資訊"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认删除标签？"
+          }
         }
       }
     },
@@ -2879,6 +3251,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未配置用戶資訊"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认删除远端标签？"
           }
         }
       }
@@ -2909,6 +3287,12 @@
             "state" : "translated",
             "value" : "標籤名稱"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理预设..."
+          }
         }
       }
     },
@@ -2937,6 +3321,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "標籤名稱不能為空"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plain Text Lowercase"
           }
         }
       }
@@ -2967,6 +3357,12 @@
             "state" : "translated",
             "value" : "標籤說明"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plain Text Style"
+          }
         }
       }
     },
@@ -2995,6 +3391,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "標籤說明不能為空"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络连接异常，已自动重试但仍未成功。你可以尝试以下方案："
           }
         }
       }
@@ -3025,6 +3427,12 @@
             "state" : "translated",
             "value" : "檢查遠端狀態…"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程有 %lld 个提交可拉取"
+          }
         }
       }
     },
@@ -3053,6 +3461,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在載入"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
           }
         }
       }
@@ -3083,6 +3497,12 @@
             "state" : "translated",
             "value" : "正在推送中..."
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目不可用"
+          }
         }
       }
     },
@@ -3111,6 +3531,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "點擊執行 git pull 擷取遠端提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 详情"
           }
         }
       }
@@ -3141,6 +3567,12 @@
             "state" : "translated",
             "value" : "點擊執行 git push 推送本地提交"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作区干净"
+          }
         }
       }
     },
@@ -3169,6 +3601,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "點擊推送至遠端倉庫"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有更改已提交"
           }
         }
       }
@@ -3199,6 +3637,12 @@
             "state" : "translated",
             "value" : "點擊查看使用者資訊"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前状态"
+          }
         }
       }
     },
@@ -3227,6 +3671,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "確認刪除標籤？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程有 %lld 个提交可拉取"
           }
         }
       }
@@ -3257,6 +3707,12 @@
             "state" : "translated",
             "value" : "確認刪除遠端標籤？"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld) 未提交"
+          }
         }
       }
     },
@@ -3285,6 +3741,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "管理預設..."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新中"
           }
         }
       }
@@ -3315,6 +3777,12 @@
             "state" : "translated",
             "value" : "纯文本小写"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取"
+          }
         }
       }
     },
@@ -3343,6 +3811,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "纯文本风格"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取中..."
           }
         }
       }
@@ -3373,6 +3847,12 @@
             "state" : "translated",
             "value" : "網路連線異常，已自動重試但仍未成功。你可以嘗試以下方案："
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送"
+          }
         }
       }
     },
@@ -3401,6 +3881,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "遠程有 %lld 個提交可拉取"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送中..."
           }
         }
       }
@@ -3431,6 +3917,12 @@
             "state" : "translated",
             "value" : "重試"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击执行 git pull 拉取远程提交"
+          }
         }
       }
     },
@@ -3459,6 +3951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "專案不可用"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击执行 git push 推送本地提交"
           }
         }
       }
