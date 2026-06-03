@@ -58,8 +58,6 @@ public struct WorkingStateSummaryView: View {
 
     public var body: some View {
         HStack(spacing: 14) {
-            statusIcon
-
             statusText
 
             Spacer()
@@ -76,15 +74,6 @@ public struct WorkingStateSummaryView: View {
         .animation(summaryAnimation, value: state.changedFileCount)
         .animation(summaryAnimation, value: state.unpulledCount)
         .animation(summaryAnimation, value: isSyncWorking)
-    }
-
-    private var statusIcon: some View {
-        Image(systemName: state.changedFileCount == 0 ? "checkmark.circle" : "clock.arrow.circlepath")
-            .font(.system(size: 18, weight: .semibold))
-            .foregroundStyle(statusColor)
-            .frame(width: 34, height: 34)
-            .background(statusColor.opacity(0.13), in: Circle())
-            .contentTransition(.symbolEffect(.replace))
     }
 
     private var statusText: some View {
