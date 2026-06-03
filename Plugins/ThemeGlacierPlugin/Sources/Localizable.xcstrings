@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "冰川主题"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冰川主题"
+          }
         }
       }
     },
@@ -40,6 +46,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冰蓝浅色主题"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "冰蓝浅色主题"

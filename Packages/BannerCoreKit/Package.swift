@@ -15,7 +15,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "BannerCoreKit"
+            name: "BannerCoreKit",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "BannerCoreKitTests",

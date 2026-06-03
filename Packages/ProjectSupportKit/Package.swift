@@ -17,7 +17,8 @@ let package = Package(
     targets: [
         .target(
             name: "ProjectSupportKit",
-            dependencies: []
+            dependencies: [],
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "ProjectSupportKitTests",

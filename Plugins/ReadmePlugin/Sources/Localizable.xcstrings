@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "关闭"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭"
+          }
         }
       }
     },
@@ -40,6 +46,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载文档..."
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "正在加载文档..."
@@ -67,6 +79,12 @@
             "state": "translated",
             "value": "当前项目中未找到 README.md 文件"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前项目中未找到 README.md 文件"
+          }
         }
       }
     },
@@ -90,6 +108,12 @@
             "state": "translated",
             "value": "在状态栏提供 README 入口"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏提供 README 入口"
+          }
         }
       }
     },
@@ -109,6 +133,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Readme"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "Readme"
@@ -137,6 +167,12 @@
             "state": "translated",
             "value": "未找到 README.md 文件"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到 README.md 文件"
+          }
         }
       }
     },
@@ -160,6 +196,12 @@
             "state": "translated",
             "value": "未找到 README.md"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到 README.md"
+          }
         }
       }
     },
@@ -179,6 +221,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看 README.md 文档"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "查看 README.md 文档"

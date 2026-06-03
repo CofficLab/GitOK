@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "活动状态"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活动状态"
+          }
         }
       }
     },
@@ -44,6 +50,12 @@
             "state": "translated",
             "value": "当前活动"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前活动"
+          }
         }
       }
     },
@@ -63,6 +75,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏显示当前长耗时操作。"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "在状态栏显示当前长耗时操作。"

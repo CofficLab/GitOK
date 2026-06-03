@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "GitOK 默认深色主题"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 默认深色主题"
+          }
         }
       }
     },
@@ -40,6 +46,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 主题"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "GitOK 主题"

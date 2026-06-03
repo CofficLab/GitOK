@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "在 VS Code 中打开"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 VS Code 中打开"
+          }
         }
       }
     },
@@ -44,6 +50,12 @@
             "state": "translated",
             "value": "在 VS Code 中打开当前项目目录。"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 VS Code 中打开当前项目目录。"
+          }
         }
       }
     },
@@ -63,6 +75,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 VS Code"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "打开 VS Code"

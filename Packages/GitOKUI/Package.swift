@@ -16,7 +16,8 @@ let package = Package(
     targets: [
         .target(
             name: "GitOKUI",
-            path: "Sources"
+            path: "Sources",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitOKUITests",

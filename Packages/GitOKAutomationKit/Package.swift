@@ -15,7 +15,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GitOKAutomationKit"
+            name: "GitOKAutomationKit",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitOKAutomationKitTests",

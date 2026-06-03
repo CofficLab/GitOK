@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "在终端中打开"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在终端中打开"
+          }
         }
       }
     },
@@ -44,6 +50,12 @@
             "state": "translated",
             "value": "打开终端"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开终端"
+          }
         }
       }
     },
@@ -63,6 +75,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在终端中打开当前项目目录。"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "在终端中打开当前项目目录。"

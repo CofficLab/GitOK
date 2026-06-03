@@ -23,6 +23,12 @@
             "state": "translated",
             "value": "从状态栏切换主题"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从状态栏切换主题"
+          }
         }
       }
     },
@@ -43,6 +49,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主题状态"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "主题状态"

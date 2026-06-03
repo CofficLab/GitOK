@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "打开设置"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开设置"
+          }
         }
       }
     },
@@ -44,6 +50,12 @@
             "state": "translated",
             "value": "设置按钮"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置按钮"
+          }
         }
       }
     },
@@ -63,6 +75,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏显示设置按钮。"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "在状态栏显示设置按钮。"

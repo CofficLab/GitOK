@@ -22,6 +22,12 @@
             "state": "translated",
             "value": "已添加 %@"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已添加 %@"
+          }
         }
       }
     },
@@ -41,6 +47,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加忽略"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "添加忽略"
@@ -68,6 +80,12 @@
             "state": "translated",
             "value": "关闭"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭"
+          }
         }
       }
     },
@@ -87,6 +105,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写入 .gitignore 失败：%@"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "写入 .gitignore 失败：%@"
@@ -114,6 +138,12 @@
             "state": "translated",
             "value": "Flutter 模板"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flutter 模板"
+          }
         }
       }
     },
@@ -133,6 +163,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gitignore"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "Gitignore"
@@ -160,6 +196,12 @@
             "state": "translated",
             "value": "正在加载 .gitignore..."
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载 .gitignore..."
+          }
         }
       }
     },
@@ -179,6 +221,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到 .gitignore 文件"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "未找到 .gitignore 文件"
@@ -206,6 +254,12 @@
             "state": "translated",
             "value": "当前项目中未找到 .gitignore 文件"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前项目中未找到 .gitignore 文件"
+          }
         }
       }
     },
@@ -225,6 +279,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "整理失败：%@"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "整理失败：%@"
@@ -252,6 +312,12 @@
             "state": "translated",
             "value": "整理分组"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "整理分组"
+          }
         }
       }
     },
@@ -271,6 +337,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已整理分组"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "已整理分组"
@@ -298,6 +370,12 @@
             "state": "translated",
             "value": "在状态栏提供 .gitignore 查看器"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏提供 .gitignore 查看器"
+          }
         }
       }
     },
@@ -321,6 +399,12 @@
             "state": "translated",
             "value": "查看 .gitignore 文件"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看 .gitignore 文件"
+          }
         }
       }
     },
@@ -340,6 +424,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xcode 模板"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "Xcode 模板"

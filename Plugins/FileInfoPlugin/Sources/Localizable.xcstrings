@@ -21,6 +21,12 @@
             "state": "translated",
             "value": ">"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ">"
+          }
         }
       }
     },
@@ -40,6 +46,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制路径"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "复制路径"
@@ -67,6 +79,12 @@
             "state": "translated",
             "value": "文件操作"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件操作"
+          }
         }
       }
     },
@@ -86,6 +104,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件信息"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "文件信息"
@@ -113,6 +137,12 @@
             "state": "translated",
             "value": "在 VS Code 中打开"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 VS Code 中打开"
+          }
         }
       }
     },
@@ -136,6 +166,12 @@
             "state": "translated",
             "value": "在 Finder 中显示"
           }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Finder 中显示"
+          }
         }
       }
     },
@@ -155,6 +191,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏显示当前选中文件信息。"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "在状态栏显示当前选中文件信息。"

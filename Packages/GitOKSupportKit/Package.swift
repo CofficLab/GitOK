@@ -26,7 +26,8 @@ let package = Package(
             dependencies: [
                 .product(name: "MagicAlert", package: "MagicAlert"),
             ],
-            path: "Sources/GitOKFoundationKit"
+            path: "Sources/GitOKFoundationKit",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .target(
             name: "GitOKDesignKit",

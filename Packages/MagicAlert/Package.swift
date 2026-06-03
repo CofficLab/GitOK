@@ -18,7 +18,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "MagicAlert"
+            name: "MagicAlert",
+            resources: [.process("Localizable.xcstrings")]
         )
     ]
 )

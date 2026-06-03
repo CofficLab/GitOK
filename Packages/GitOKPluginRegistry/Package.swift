@@ -132,7 +132,8 @@ let package = Package(
                 "ThemeXcodeLightPlugin",
                 "UnpushedStatusPlugin",
             ],
-            path: "Sources"
+            path: "Sources",
+            resources: [.process("Localizable.xcstrings")]
         ),
     ]
 )

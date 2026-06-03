@@ -22,7 +22,8 @@ let package = Package(
             dependencies: [
                 .product(name: "LibGit2Swift", package: "LibGit2Swift"),
             ],
-            path: "Sources"
+            path: "Sources",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitCoreKitTests",
