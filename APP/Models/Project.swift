@@ -702,6 +702,10 @@ extension Project {
         try gitCLI.statusEntries()
     }
 
+    func lightweightStatusEntries() throws -> [GitStatusEntry] {
+        try gitCLI.lightweightStatusEntries()
+    }
+
     func hasStagedChanges() throws -> Bool {
         try statusEntries().contains { entry in
             entry.indexStatus != " " && entry.indexStatus != "?"
@@ -966,21 +970,31 @@ extension Project {
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
-        // Get both staged and unstaged changes to show all uncommitted changes
-        let stagedFiles = try gitCLI.diffFileList(staged: true)
-        let unstagedFiles = try gitCLI.diffFileList(staged: false)
-
-        // Merge the two lists, removing duplicates by file path
-        var mergedFiles: [String: GitDiffFile] = [:]
-        for file in stagedFiles + unstagedFiles {
-            // If the same file appears in both, prefer the staged version
-            if mergedFiles[file.file] == nil {
-                mergedFiles[file.file] = file
+        try lightweightStatusEntries()
+            .map { entry in
+                GitDiffFile(
+                    id: entry.path,
+                    file: entry.path,
+                    changeType: Self.displayChangeType(for: entry),
+                    diff: ""
+                )
             }
+    }
+
+    private static func displayChangeType(for entry: GitStatusEntry) -> String {
+        if entry.indexStatus == "?" || entry.workTreeStatus == "?" {
+            return "?"
         }
 
-        // 按文件路径排序，确保顺序稳定
-        return Array(mergedFiles.values).sorted { $0.file < $1.file }
+        if entry.workTreeStatus != " " {
+            return String(entry.workTreeStatus)
+        }
+
+        if entry.indexStatus != " " {
+            return String(entry.indexStatus)
+        }
+
+        return "M"
     }
 
     func stagedDiffFileList() async throws -> [GitDiffFile] {

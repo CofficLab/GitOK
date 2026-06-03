@@ -19,4 +19,12 @@ struct AppButtonTests {
         #expect(button.metrics.horizontalPadding == 14)
         #expect(button.metrics.verticalPadding == 10)
     }
+
+    @Test
+    @MainActor
+    func loadingStateIsStored() {
+        let button = AppButton("Run", isLoading: true, action: {})
+
+        #expect(button.isLoading)
+    }
 }

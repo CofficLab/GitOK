@@ -1601,7 +1601,45 @@ public struct GitRepositoryCLI {
         entries += try LibGit2.getDiffFileList(at: repositoryURL.path, staged: false).map {
             GitStatusEntry(path: $0.file, indexStatus: " ", workTreeStatus: Character($0.changeType))
         }
-        return entries
+        return mergedStatusEntries(entries)
+    }
+
+    public func lightweightStatusEntries() throws -> [GitStatusEntry] {
+        try LibGit2.getStatus(at: repositoryURL.path, verbose: false)
+            .split(separator: "\n")
+            .compactMap { line -> GitStatusEntry? in
+                guard line.count >= 4 else { return nil }
+                let indexStatus = line[line.startIndex]
+                let workTreeStatus = line[line.index(after: line.startIndex)]
+                let pathStartIndex = line.index(line.startIndex, offsetBy: 3)
+                let path = String(line[pathStartIndex...])
+                guard path.isEmpty == false else { return nil }
+                return GitStatusEntry(
+                    path: path,
+                    indexStatus: indexStatus,
+                    workTreeStatus: workTreeStatus
+                )
+            }
+            .sorted { $0.path < $1.path }
+    }
+
+    private func mergedStatusEntries(_ entries: [GitStatusEntry]) -> [GitStatusEntry] {
+        var entriesByPath: [String: GitStatusEntry] = [:]
+
+        for entry in entries {
+            guard let existingEntry = entriesByPath[entry.path] else {
+                entriesByPath[entry.path] = entry
+                continue
+            }
+
+            entriesByPath[entry.path] = GitStatusEntry(
+                path: entry.path,
+                indexStatus: existingEntry.indexStatus == " " ? entry.indexStatus : existingEntry.indexStatus,
+                workTreeStatus: existingEntry.workTreeStatus == " " ? entry.workTreeStatus : existingEntry.workTreeStatus
+            )
+        }
+
+        return entriesByPath.values.sorted { $0.path < $1.path }
     }
 
     public func mergeFileContent(path: String, version: GitMergeFileVersion) throws -> String {

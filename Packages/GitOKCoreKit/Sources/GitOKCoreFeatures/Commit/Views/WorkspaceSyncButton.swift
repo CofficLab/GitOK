@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public struct WorkspaceSyncButton: View {
@@ -22,27 +23,16 @@ public struct WorkspaceSyncButton: View {
     }
 
     public var body: some View {
-        HStack(spacing: 0) {
-            Button {
+        AppSplitActionMenu(
+            title: primaryAction.title,
+            detail: syncMetricText,
+            systemImage: primaryAction.systemImage,
+            isLoading: isWorking,
+            action: {
                 perform(primaryAction)
-            } label: {
-                HStack(spacing: 6) {
-                    actionIcon
-
-                    Text(primaryAction.title)
-                        .font(.caption)
-                        .lineLimit(1)
-
-                    if let badgeText {
-                        Text(badgeText)
-                            .font(.caption2.monospacedDigit())
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .frame(maxWidth: .infinity)
             }
-
-            Menu {
+        ) {
+            Group {
                 Button {
                     onFetch()
                 } label: {
@@ -61,20 +51,9 @@ public struct WorkspaceSyncButton: View {
                 } label: {
                     Label(pushTitle, systemImage: "arrow.up")
                 }
-            } label: {
-                Image(systemName: "chevron.down")
-                    .font(.caption2.weight(.semibold))
-                    .frame(width: 18)
             }
-            .menuStyle(.borderlessButton)
-            .menuIndicator(.hidden)
-            .fixedSize()
         }
-        .padding(.leading, 10)
-        .padding(.trailing, 6)
-        .frame(width: 148)
         .fixedSize(horizontal: true, vertical: false)
-        .disabled(isWorking)
         .help(primaryAction.help)
     }
 
@@ -88,19 +67,8 @@ public struct WorkspaceSyncButton: View {
             : CommitLocalization.string("Publish branch")
     }
 
-    private var badgeText: String? {
+    private var syncMetricText: String? {
         WorkspaceSyncPrimaryAction.badgeText(for: trackingStatus)
-    }
-
-    @ViewBuilder
-    private var actionIcon: some View {
-        if isWorking {
-            SpinningSyncIcon()
-        } else {
-            primaryAction.icon
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 16, height: 16)
-        }
     }
 
     private func perform(_ action: WorkspaceSyncPrimaryAction) {
@@ -112,22 +80,6 @@ public struct WorkspaceSyncButton: View {
         case .push:
             onPush()
         }
-    }
-}
-
-private struct SpinningSyncIcon: View {
-    @State private var isRotating = false
-
-    var body: some View {
-        Image(systemName: "arrow.triangle.2.circlepath")
-            .font(.system(size: 14, weight: .semibold))
-            .frame(width: 16, height: 16)
-            .rotationEffect(.degrees(isRotating ? 360 : 0))
-            .onAppear {
-                withAnimation(.linear(duration: 0.85).repeatForever(autoreverses: false)) {
-                    isRotating = true
-                }
-            }
     }
 }
 
@@ -166,14 +118,14 @@ public enum WorkspaceSyncPrimaryAction: Equatable, Sendable {
         return nil
     }
 
-    var icon: Image {
+    var systemImage: String {
         switch self {
         case .fetch:
-            Image(systemName: "arrow.clockwise")
+            "arrow.clockwise"
         case .pull:
-            Image(systemName: "arrow.down")
+            "arrow.down"
         case .push:
-            Image(systemName: "arrow.up")
+            "arrow.up"
         }
     }
 

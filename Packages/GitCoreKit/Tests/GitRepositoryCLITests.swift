@@ -960,6 +960,23 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: " ", workTreeStatus: "M")])
     }
 
+    func testLightweightStatusEntriesReportsStagedAndUnstagedStateWithoutDiffs() throws {
+        let repo = try TestGitRepository()
+        try repo.write("notes.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.write("notes.txt", content: "staged\n")
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.addFiles(["notes.txt"])
+        try repo.write("notes.txt", content: "unstaged\n")
+
+        XCTAssertEqual(
+            try client.lightweightStatusEntries(),
+            [GitStatusEntry(path: "notes.txt", indexStatus: "M", workTreeStatus: "M")]
+        )
+    }
+
     func testUnstageFilesHandlesInitialRepositoryWithoutHead() throws {
         let destinationRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

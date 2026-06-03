@@ -1,7 +1,10 @@
 import ProjectRulesKit
+import GitOKUI
 import SwiftUI
 
 public struct WorkingStateSummaryView: View {
+    @GitOKMotionPreferenceReader private var motionPreference
+
     private let state: CommitRemoteSyncRules.WorkingStatePresentationState
     private let trackingStatus: GitOKRemoteTrackingStatus
     private let isSyncWorking: Bool
@@ -54,7 +57,7 @@ public struct WorkingStateSummaryView: View {
     }
 
     public var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
             statusIcon
 
             statusText
@@ -64,50 +67,40 @@ public struct WorkingStateSummaryView: View {
             trailingAction
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .frame(height: 72)
         .background(
             state.isSelected
                 ? Color.accentColor.opacity(0.1)
                 : Color(.controlBackgroundColor)
         )
+        .animation(summaryAnimation, value: state.changedFileCount)
+        .animation(summaryAnimation, value: state.unpulledCount)
+        .animation(summaryAnimation, value: isSyncWorking)
     }
 
     private var statusIcon: some View {
         Image(systemName: state.changedFileCount == 0 ? "checkmark.circle" : "clock.arrow.circlepath")
-            .font(.system(size: 16, weight: .medium))
-            .foregroundColor(state.changedFileCount == 0 ? .green : .orange)
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundStyle(statusColor)
+            .frame(width: 34, height: 34)
+            .background(statusColor.opacity(0.13), in: Circle())
+            .contentTransition(.symbolEffect(.replace))
     }
 
     private var statusText: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            if state.changedFileCount == 0 {
-                Text(CommitLocalization.string("Working Tree Clean"))
-                    .font(.system(size: 14, weight: .medium))
+        VStack(alignment: .leading, spacing: 4) {
+            Text(statusTitle)
+                .font(.system(size: 14, weight: .semibold))
+                .lineLimit(1)
+                .contentTransition(.opacity)
 
-                if state.unpulledCount > 0 {
-                    Text(String.localizedStringWithFormat(
-                        CommitLocalization.string("%lld remote commits available to pull"),
-                        state.unpulledCount
-                    ))
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                } else {
-                    Text(CommitLocalization.string("All Changes Committed"))
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                }
-            } else {
-                Text(CommitLocalization.string("Current Status"))
-                    .font(.system(size: 14, weight: .medium))
-
-                Text(String.localizedStringWithFormat(
-                    CommitLocalization.string("(%lld) Uncommitted"),
-                    state.changedFileCount
-                ))
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
+            Text(statusSubtitle)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .contentTransition(.numericText())
         }
+        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder
@@ -119,5 +112,39 @@ public struct WorkingStateSummaryView: View {
             onPull: onPull,
             onPush: onPush
         )
+    }
+
+    private var statusTitle: String {
+        if state.changedFileCount == 0 {
+            CommitLocalization.string("Working Tree Clean")
+        } else {
+            CommitLocalization.string("Changes Pending")
+        }
+    }
+
+    private var statusSubtitle: String {
+        if state.changedFileCount > 0 {
+            return String.localizedStringWithFormat(
+                CommitLocalization.string("(%lld) Uncommitted"),
+                state.changedFileCount
+            )
+        }
+
+        if state.unpulledCount > 0 {
+            return String.localizedStringWithFormat(
+                CommitLocalization.string("%lld remote commits available to pull"),
+                state.unpulledCount
+            )
+        }
+
+        return CommitLocalization.string("All Changes Committed")
+    }
+
+    private var statusColor: Color {
+        state.changedFileCount == 0 ? .green : .orange
+    }
+
+    private var summaryAnimation: Animation? {
+        motionPreference.allowsMotion ? .easeInOut(duration: 0.20) : nil
     }
 }

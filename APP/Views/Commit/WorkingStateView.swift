@@ -38,16 +38,24 @@ struct WorkingStateView: View, SuperLog {
             updateCleanState: { vm.updateIsClean($0) },
             projectPath: \.path,
             loadChangedFileCount: { project in
-                try await project.untrackedFiles().count
+                try await runDetached {
+                    try await project.untrackedFiles().count
+                }
             },
             loadUnpushedCommits: { project in
-                try await project.getUnPushedCommits()
+                try await runDetached {
+                    try await project.getUnPushedCommits()
+                }
             },
             loadUnpulledCount: { project in
-                try project.getUnPulledCount()
+                try await runOffMain {
+                    try project.getUnPulledCount()
+                }
             },
             loadRemoteTrackingStatus: { project in
-                let status = try project.aheadBehind()
+                let status = try await runOffMain {
+                    try project.aheadBehind()
+                }
                 return GitOKRemoteTrackingStatus(
                     ahead: status.ahead,
                     behind: status.behind,
@@ -58,13 +66,19 @@ struct WorkingStateView: View, SuperLog {
                 vm.updateRemoteTracking(status, fetchedAt: fetchedAt)
             },
             fetch: { project in
-                try project.fetch()
+                try await runOffMain {
+                    try project.fetch()
+                }
             },
             pull: { project in
-                try project.pull()
+                try await runOffMain {
+                    try project.pull()
+                }
             },
             push: { project in
-                try project.push()
+                try await runOffMain {
+                    try project.push()
+                }
             },
             pushErrorClassification: pushErrorClassification,
             runNetworkFallback: runNetworkFallback,
@@ -167,6 +181,24 @@ private extension WorkingStateView {
 }
 
 private extension WorkingStateView {
+    func runOffMain<T>(_ operation: @escaping () throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    continuation.resume(returning: try operation())
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    func runDetached<T>(_ operation: @escaping () async throws -> T) async throws -> T {
+        try await Task.detached(priority: .userInitiated) {
+            try await operation()
+        }.value
+    }
+
     func handleEvent(_ event: WorkingStateHostEvent) {
         switch event {
         case let .showError(error):

@@ -40,6 +40,7 @@ let package = Package(
             name: "GitOKCoreFeatures",
             dependencies: [
                 "GitOKCoreKit",
+                "GitOKUI",
                 "ProjectRulesKit",
                 "ProjectSupportKit",
                 "GitCoreKit",

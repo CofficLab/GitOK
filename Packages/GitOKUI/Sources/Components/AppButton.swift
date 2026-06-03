@@ -30,6 +30,7 @@ public struct AppButton: View {
     let size: Size
     let fillsWidth: Bool
     let isDisabled: Bool
+    let isLoading: Bool
     let action: () -> Void
 
     public init(
@@ -38,6 +39,7 @@ public struct AppButton: View {
         style: Style = .secondary,
         size: Size = .medium,
         fillsWidth: Bool = false,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = Text(title)
@@ -47,6 +49,7 @@ public struct AppButton: View {
         self.showsTitle = true
         self.fillsWidth = fillsWidth
         self.isDisabled = false
+        self.isLoading = isLoading
         self.action = action
     }
 
@@ -56,6 +59,7 @@ public struct AppButton: View {
         style: Style = .secondary,
         size: Size = .medium,
         fillsWidth: Bool = false,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = Text(title)
@@ -65,6 +69,7 @@ public struct AppButton: View {
         self.showsTitle = true
         self.fillsWidth = fillsWidth
         self.isDisabled = false
+        self.isLoading = isLoading
         self.action = action
     }
 
@@ -76,6 +81,7 @@ public struct AppButton: View {
         style: Style = .secondary,
         size: Size = .medium,
         fillsWidth: Bool = false,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = Text(String(localized: String.LocalizationValue(title), table: table))
@@ -85,6 +91,7 @@ public struct AppButton: View {
         self.size = size
         self.fillsWidth = fillsWidth
         self.isDisabled = false
+        self.isLoading = isLoading
         self.action = action
     }
 
@@ -102,6 +109,7 @@ public struct AppButton: View {
         self.size = size
         self.fillsWidth = false
         self.isDisabled = false
+        self.isLoading = false
         self.action = action
     }
 
@@ -113,6 +121,7 @@ public struct AppButton: View {
         size: Size,
         fillsWidth: Bool,
         isDisabled: Bool,
+        isLoading: Bool,
         action: @escaping () -> Void
     ) {
         self.title = title
@@ -122,13 +131,16 @@ public struct AppButton: View {
         self.size = size
         self.fillsWidth = fillsWidth
         self.isDisabled = isDisabled
+        self.isLoading = isLoading
         self.action = action
     }
 
     public var body: some View {
         Button(action: action) {
             HStack(spacing: 6) {
-                if let systemImage {
+                if isLoading {
+                    AppSpinningIcon(systemImage: systemImage ?? "arrow.triangle.2.circlepath", size: loadingIconSize)
+                } else if let systemImage {
                     Image(systemName: systemImage)
                 }
                 if showsTitle {
@@ -145,7 +157,7 @@ public struct AppButton: View {
             .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous))
         }
         .buttonStyle(.plain)
-        .disabled(isDisabled)
+        .disabled(isDisabled || isLoading)
         .opacity(isDisabled ? 0.5 : 1.0)
         .scaleEffect(isEffectivelyHovered && motionPreference.allowsMotion ? AppUI.Motion.hoverScale : 1.0)
         .onHover { hovering in
@@ -165,6 +177,7 @@ public struct AppButton: View {
             size: size,
             fillsWidth: fillsWidth,
             isDisabled: isDisabled,
+            isLoading: isLoading,
             action: action
         )
     }
@@ -184,6 +197,15 @@ public struct AppButton: View {
             DesignTokens.Typography.caption1
         case .medium:
             DesignTokens.Typography.bodyEmphasized
+        }
+    }
+
+    private var loadingIconSize: CGFloat {
+        switch size {
+        case .small:
+            12
+        case .medium:
+            14
         }
     }
 
