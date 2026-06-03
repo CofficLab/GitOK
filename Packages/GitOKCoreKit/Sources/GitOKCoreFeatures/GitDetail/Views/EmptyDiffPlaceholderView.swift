@@ -38,7 +38,7 @@ public struct EmptyDiffPlaceholderView: View {
                 .font(.system(size: 34))
                 .foregroundColor(issueMessage == nil ? .secondary : .orange)
 
-            Text(issueMessage == nil ? String(localized: "No differences to display") : String(localized: "Unable to display differences"))
+            Text(issueMessage == nil ? GitDetailLocalization.string("No differences to display") : GitDetailLocalization.string("Unable to display differences"))
                 .font(.headline)
                 .foregroundColor(.primary)
 
@@ -52,30 +52,30 @@ public struct EmptyDiffPlaceholderView: View {
                 .padding(.horizontal, 24)
 
             if let issueMessage, issueMessage.isEmpty == false {
-                Text(String(localized: "Reason: \(issueMessage)"))
+                Text(GitDetailLocalization.string("Reason: \(issueMessage)"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
             }
 
-            Text(String(localized: "File Status: \(GitDetailDiffDisplayRules.changeTypeLabel(changeType))"))
+            Text(GitDetailLocalization.string("File Status: \(GitDetailDiffDisplayRules.changeTypeLabel(changeType))"))
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             HStack(spacing: 10) {
-                Button(String(localized: "Refresh"), action: onRefresh)
+                Button(GitDetailLocalization.string("Refresh"), action: onRefresh)
 
                 if canShowBeforeText {
-                    Button(String(localized: "View Original Text"), action: onShowBeforeText)
+                    Button(GitDetailLocalization.string("View Original Text"), action: onShowBeforeText)
                 }
 
                 if canShowAfterText {
-                    Button(String(localized: "View New Text"), action: onShowAfterText)
+                    Button(GitDetailLocalization.string("View New Text"), action: onShowAfterText)
                 }
 
                 if let issueMessage, issueMessage.isEmpty == false {
-                    Button(String(localized: "Copy Reason"), action: onCopyReason)
+                    Button(GitDetailLocalization.string("Copy Reason"), action: onCopyReason)
                 }
             }
             .buttonStyle(.bordered)

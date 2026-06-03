@@ -10,10 +10,10 @@ public enum GitDetailImageDiffMode: String, CaseIterable, Identifiable {
 
     public var title: String {
         switch self {
-        case .twoUp: return String(localized: "Side by Side")
-        case .swipe: return String(localized: "Swipe")
-        case .onion: return String(localized: "Overlay")
-        case .difference: return String(localized: "Difference")
+        case .twoUp: return GitDetailLocalization.string("Side by Side")
+        case .swipe: return GitDetailLocalization.string("Swipe")
+        case .onion: return GitDetailLocalization.string("Overlay")
+        case .difference: return GitDetailLocalization.string("Difference")
         }
     }
 
@@ -29,9 +29,9 @@ public enum GitDetailImageDiffMode: String, CaseIterable, Identifiable {
     public var sliderAccessibilityLabel: String {
         switch self {
         case .swipe:
-            return String(localized: "Swipe divider position")
+            return GitDetailLocalization.string("Swipe divider position")
         case .onion:
-            return String(localized: "Modified image opacity")
+            return GitDetailLocalization.string("Modified image opacity")
         case .twoUp, .difference:
             return ""
         }
@@ -40,26 +40,26 @@ public enum GitDetailImageDiffMode: String, CaseIterable, Identifiable {
     public var accessibilityLabel: String {
         switch self {
         case .twoUp:
-            return String(localized: "Image side-by-side comparison")
+            return GitDetailLocalization.string("Image side-by-side comparison")
         case .swipe:
-            return String(localized: "Image swipe comparison")
+            return GitDetailLocalization.string("Image swipe comparison")
         case .onion:
-            return String(localized: "Image overlay comparison")
+            return GitDetailLocalization.string("Image overlay comparison")
         case .difference:
-            return String(localized: "Image difference blend comparison")
+            return GitDetailLocalization.string("Image difference blend comparison")
         }
     }
 
     public var accessibilityHint: String {
         switch self {
         case .twoUp:
-            return String(localized: "Shows the before and after images side by side")
+            return GitDetailLocalization.string("Shows the before and after images side by side")
         case .swipe:
-            return String(localized: "Use the slider to adjust the position where the modified image overlays the original")
+            return GitDetailLocalization.string("Use the slider to adjust the position where the modified image overlays the original")
         case .onion:
-            return String(localized: "Use the slider to adjust the opacity of the modified image overlaid on the original")
+            return GitDetailLocalization.string("Use the slider to adjust the opacity of the modified image overlaid on the original")
         case .difference:
-            return String(localized: "Uses difference blend mode to highlight areas where the two images differ")
+            return GitDetailLocalization.string("Uses difference blend mode to highlight areas where the two images differ")
         }
     }
 

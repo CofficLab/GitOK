@@ -9,11 +9,11 @@ public struct BinaryFilePlaceholderView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
 
-            Text(String(localized: "Binary File"))
+            Text(GitDetailLocalization.string("Binary File"))
                 .font(.headline)
                 .foregroundColor(.primary)
 
-            Text(String(localized: "Differences cannot be shown as text for this file"))
+            Text(GitDetailLocalization.string("Differences cannot be shown as text for this file"))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

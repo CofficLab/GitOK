@@ -31,7 +31,7 @@ public struct FileListToolbarView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.uturn.backward")
                                 .font(.system(size: 12))
-                            Text(String(localized: "Discard All Changes"))
+                            Text(GitDetailLocalization.string("Discard All Changes"))
                                 .font(.caption)
                         }
                         .padding(.horizontal, 8)
@@ -44,7 +44,7 @@ public struct FileListToolbarView: View {
                     }
                     .buttonStyle(.borderless)
                     .foregroundColor(discardButtonHovered ? .white : .red)
-                    .help(String(localized: "Discard changes of all files"))
+                    .help(GitDetailLocalization.string("Discard changes of all files"))
                     .onHover { hovering in
                         withAnimation(.easeInOut(duration: 0.2)) {
                             discardButtonHovered = hovering
@@ -58,7 +58,7 @@ public struct FileListToolbarView: View {
                     HStack(spacing: 4) {
                         ProgressView()
                             .controlSize(.small)
-                        Text(String(localized: "Loading..."))
+                        Text(GitDetailLocalization.string("Loading..."))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -68,7 +68,7 @@ public struct FileListToolbarView: View {
                             .foregroundColor(.secondary)
                             .font(.system(size: 12))
 
-                        Text("\(fileCount) \(String(localized: "files"))")
+                        Text("\(fileCount) \(GitDetailLocalization.string("files"))")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -80,7 +80,7 @@ public struct FileListToolbarView: View {
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
 
-                TextField(String(localized: "Filter files"), text: $filterText)
+                TextField(GitDetailLocalization.string("Filter files"), text: $filterText)
                     .textFieldStyle(.plain)
                     .font(.caption)
 
@@ -93,7 +93,7 @@ public struct FileListToolbarView: View {
                             .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .help(String(localized: "Clear filter"))
+                    .help(GitDetailLocalization.string("Clear filter"))
                 }
             }
             .padding(.horizontal, 8)

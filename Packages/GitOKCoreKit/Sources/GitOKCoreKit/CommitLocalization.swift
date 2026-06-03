@@ -5,6 +5,6 @@ public enum CommitLocalization {
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {
-        NSLocalizedString(key, bundle: bundle, value: key, comment: "")
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
     }
 }

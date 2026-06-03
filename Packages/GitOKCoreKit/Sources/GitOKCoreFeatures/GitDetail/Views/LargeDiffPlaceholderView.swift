@@ -32,24 +32,24 @@ public struct LargeDiffPlaceholderView: View {
                 .font(.system(size: 36))
                 .foregroundColor(.orange)
 
-            Text(String(localized: "Diff is too large, rendering skipped"))
+            Text(GitDetailLocalization.string("Diff is too large, rendering skipped"))
                 .font(.headline)
 
-            Text(String(localized: "The current diff is approximately \(characterCount.formatted()) characters. To avoid UI lag, GitOK does not render oversized patches directly; you can still copy the raw diff or view the file text."))
+            Text(GitDetailLocalization.string("The current diff is approximately \(characterCount.formatted()) characters. To avoid UI lag, GitOK does not render oversized patches directly; you can still copy the raw diff or view the file text."))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
 
             HStack(spacing: 10) {
-                Button(String(localized: "Copy Raw Diff"), action: onCopyRawDiff)
+                Button(GitDetailLocalization.string("Copy Raw Diff"), action: onCopyRawDiff)
 
                 if canShowBeforeText {
-                    Button(String(localized: "View Original Text"), action: onShowBeforeText)
+                    Button(GitDetailLocalization.string("View Original Text"), action: onShowBeforeText)
                 }
 
                 if canShowAfterText {
-                    Button(String(localized: "View New Text"), action: onShowAfterText)
+                    Button(GitDetailLocalization.string("View New Text"), action: onShowAfterText)
                 }
             }
             .buttonStyle(.bordered)

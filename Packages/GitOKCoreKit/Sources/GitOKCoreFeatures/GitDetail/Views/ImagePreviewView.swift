@@ -27,7 +27,7 @@ public struct ImagePreviewView: View {
                 Image(systemName: "photo.badge.exclamationmark")
                     .font(.system(size: 32))
                     .foregroundColor(.secondary)
-                Text(String(localized: "Unable to load image"))
+                Text(GitDetailLocalization.string("Unable to load image"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

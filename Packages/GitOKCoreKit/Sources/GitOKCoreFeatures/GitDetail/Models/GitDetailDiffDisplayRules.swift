@@ -263,11 +263,11 @@ public enum GitDetailDiffDisplayRules {
     public static func imagePreviewTitle(for mode: ImageDisplayMode) -> String {
         switch mode {
         case .new:
-            return String(localized: "New Image")
+            return GitDetailLocalization.string("New Image")
         case .deleted:
-            return String(localized: "Deleted Image")
+            return GitDetailLocalization.string("Deleted Image")
         case .comparison:
-            return String(localized: "Image Comparison")
+            return GitDetailLocalization.string("Image Comparison")
         }
     }
 
@@ -859,16 +859,16 @@ public enum GitDetailDiffDisplayRules {
 
     public static func emptyDiffExplanation(changeType: String, issueMessage: String?) -> String {
         if let issueMessage, issueMessage.isEmpty == false {
-            return String(localized: "Diff data could not be generated. You can check whether the file still exists, verify it is text-encoded, or refresh the current view.")
+            return GitDetailLocalization.string("Diff data could not be generated. You can check whether the file still exists, verify it is text-encoded, or refresh the current view.")
         }
 
         switch changeType.uppercased() {
         case "A", "?":
-            return String(localized: "No parseable text diff was generated for this new file. Common causes include an empty file, non-text content, or Git not returning a patch. You can still view the new text directly.")
+            return GitDetailLocalization.string("No parseable text diff was generated for this new file. Common causes include an empty file, non-text content, or Git not returning a patch. You can still view the new text directly.")
         case "D":
-            return String(localized: "No displayable patch was retrieved for this deleted file. Common causes include an empty file or Git not returning a deletion diff. You can still view the text before deletion.")
+            return GitDetailLocalization.string("No displayable patch was retrieved for this deleted file. Common causes include an empty file or Git not returning a deletion diff. You can still view the text before deletion.")
         default:
-            return String(localized: "No text differences to display for this file. It may be unchanged, empty, or the diff output is empty. You can view the original and new text directly to confirm.")
+            return GitDetailLocalization.string("No text differences to display for this file. It may be unchanged, empty, or the diff output is empty. You can view the original and new text directly to confirm.")
         }
     }
 
@@ -887,13 +887,13 @@ public enum GitDetailDiffDisplayRules {
 
     public static func changeTypeLabel(_ changeType: String) -> String {
         switch changeType.uppercased() {
-        case "A": return String(localized: "Staged New")
-        case "?": return String(localized: "Untracked New")
-        case "M": return String(localized: "Modified")
-        case "D": return String(localized: "Deleted")
-        case "R": return String(localized: "Renamed")
-        case "C": return String(localized: "Copied")
-        case "T": return String(localized: "Type Changed")
+        case "A": return GitDetailLocalization.string("Staged New")
+        case "?": return GitDetailLocalization.string("Untracked New")
+        case "M": return GitDetailLocalization.string("Modified")
+        case "D": return GitDetailLocalization.string("Deleted")
+        case "R": return GitDetailLocalization.string("Renamed")
+        case "C": return GitDetailLocalization.string("Copied")
+        case "T": return GitDetailLocalization.string("Type Changed")
         default: return changeType
         }
     }
@@ -919,9 +919,9 @@ public enum GitDetailDiffDisplayRules {
     public static func textPreviewBaseTitle(for version: TextVersion) -> String {
         switch version {
         case .before:
-            return String(localized: "Original Text")
+            return GitDetailLocalization.string("Original Text")
         case .after:
-            return String(localized: "New Text")
+            return GitDetailLocalization.string("New Text")
         }
     }
 
@@ -1132,7 +1132,7 @@ public enum GitDetailDiffDisplayRules {
 
     public static func textPreviewLoadErrorMessage(for version: TextVersion, errorDescription: String) -> String {
         let versionLabel = version == .before ? "original" : "new"
-        return String(localized: "Unable to load \(versionLabel) text: \(errorDescription)")
+        return GitDetailLocalization.string("Unable to load \(versionLabel) text: \(errorDescription)")
     }
 
     public static func textPreviewFailureState(
@@ -1292,7 +1292,7 @@ public enum GitDetailDiffDisplayRules {
     }
 
     public static func textContentOrEmptyPlaceholder(_ content: String) -> String {
-        content.isEmpty ? String(localized: "/* Empty file */") : content
+        content.isEmpty ? GitDetailLocalization.string("/* Empty file */") : content
     }
 
     public static func textContent(

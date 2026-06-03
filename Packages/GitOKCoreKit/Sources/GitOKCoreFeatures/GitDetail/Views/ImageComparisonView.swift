@@ -26,14 +26,14 @@ public struct ImageComparisonView: View {
             switch mode {
             case .twoUp:
                 HStack(spacing: 0) {
-                    ImagePreviewSectionView(title: String(localized: "Before"), image: before)
+                    ImagePreviewSectionView(title: GitDetailLocalization.string("Before"), image: before)
 
                     Divider()
 
-                    ImagePreviewSectionView(title: String(localized: "After"), image: after)
+                    ImagePreviewSectionView(title: GitDetailLocalization.string("After"), image: after)
                 }
                 .accessibilityElement(children: .contain)
-                .accessibilityLabel(String(localized: "Image side-by-side comparison"))
+                .accessibilityLabel(GitDetailLocalization.string("Image side-by-side comparison"))
             case .swipe:
                 overlayComparison(mode: .swipe)
             case .onion:
@@ -46,14 +46,14 @@ public struct ImageComparisonView: View {
 
     private var toolbar: some View {
         HStack(spacing: 12) {
-            Picker(String(localized: "Image Comparison Mode"), selection: $mode) {
+            Picker(GitDetailLocalization.string("Image Comparison Mode"), selection: $mode) {
                 ForEach(GitDetailImageDiffMode.allCases) { mode in
                     Text(mode.title).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
             .frame(width: 360)
-            .accessibilityLabel(String(localized: "Image Comparison Mode"))
+            .accessibilityLabel(GitDetailLocalization.string("Image Comparison Mode"))
 
             if mode.usesBlendAmount {
                 Slider(value: $blendAmount, in: 0...1)

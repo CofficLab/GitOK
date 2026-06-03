@@ -604,37 +604,37 @@ public enum CommitTagRules {
     }
 
     public static func tagNameRequiredMessage() -> String {
-        String(localized: "Tag name cannot be empty")
+        CommitLocalization.string("Tag name cannot be empty")
     }
 
     public static func tagMessageRequiredMessage() -> String {
-        String(localized: "Tag message cannot be empty")
+        CommitLocalization.string("Tag message cannot be empty")
     }
 
     public static func createdMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Tag created: %@"),
+            CommitLocalization.string("Tag created: %@"),
             tagName
         )
     }
 
     public static func deletedMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Tag deleted: %@"),
+            CommitLocalization.string("Tag deleted: %@"),
             tagName
         )
     }
 
     public static func pushedMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Tag pushed: %@"),
+            CommitLocalization.string("Tag pushed: %@"),
             tagName
         )
     }
 
     public static func remoteDeletedMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Remote tag deleted: %@"),
+            CommitLocalization.string("Remote tag deleted: %@"),
             tagName
         )
     }

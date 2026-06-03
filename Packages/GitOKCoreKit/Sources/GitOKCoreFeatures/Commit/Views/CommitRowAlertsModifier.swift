@@ -103,75 +103,75 @@ private struct CommitRowAlertsModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .alert(String(localized: "Confirm Undo Commit?"), isPresented: $showUndoConfirmation) {
-                Button(String(localized: "Cancel"), role: .cancel) {}
-                Button(String(localized: "Undo"), role: .destructive, action: onUndo)
+            .alert(CommitLocalization.string("Confirm Undo Commit?"), isPresented: $showUndoConfirmation) {
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
+                Button(CommitLocalization.string("Undo"), role: .destructive, action: onUndo)
             } message: {
-                Text(String(localized: "After undoing, the file changes from this commit will be kept in the working directory for re-editing and committing."))
+                Text(CommitLocalization.string("After undoing, the file changes from this commit will be kept in the working directory for re-editing and committing."))
             }
-            .alert(String(localized: "Confirm Revert This Commit?"), isPresented: $showRevertConfirmation) {
-                Button(String(localized: "Cancel"), role: .cancel) {}
+            .alert(CommitLocalization.string("Confirm Revert This Commit?"), isPresented: $showRevertConfirmation) {
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
                 Button("Revert", action: onRevert)
                     .disabled(isRunningHistoryOperation)
             } message: {
-                Text(String(localized: "GitOK will create a new reverse commit to undo the changes. Suitable for pushed commits. If there are conflicts, resolve them manually before continuing."))
+                Text(CommitLocalization.string("GitOK will create a new reverse commit to undo the changes. Suitable for pushed commits. If there are conflicts, resolve them manually before continuing."))
             }
-            .alert(String(localized: "Confirm Soft Reset?"), isPresented: $showResetSoftConfirmation) {
-                Button(String(localized: "Cancel"), role: .cancel) {}
+            .alert(CommitLocalization.string("Confirm Soft Reset?"), isPresented: $showResetSoftConfirmation) {
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
                 Button("Soft Reset") {
                     onReset(.soft)
                 }
                 .disabled(isRunningHistoryOperation)
             } message: {
-                Text(String(localized: "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area."))
+                Text(CommitLocalization.string("HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area."))
             }
-            .alert(String(localized: "Confirm Mixed Reset?"), isPresented: $showResetMixedConfirmation) {
-                Button(String(localized: "Cancel"), role: .cancel) {}
+            .alert(CommitLocalization.string("Confirm Mixed Reset?"), isPresented: $showResetMixedConfirmation) {
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
                 Button("Mixed Reset") {
                     onReset(.mixed)
                 }
                 .disabled(isRunningHistoryOperation)
             } message: {
-                Text(String(localized: "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged."))
+                Text(CommitLocalization.string("HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged."))
             }
-            .alert(String(localized: "Confirm Hard Reset?"), isPresented: $showResetHardConfirmation) {
-                Button(String(localized: "Cancel"), role: .cancel) {}
+            .alert(CommitLocalization.string("Confirm Hard Reset?"), isPresented: $showResetHardConfirmation) {
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
                 Button("Hard Reset", role: .destructive) {
                     onReset(.hard)
                 }
                 .disabled(isRunningHistoryOperation)
             } message: {
-                Text(String(localized: "HEAD, staging area, and working directory will all revert to this commit. Local commits and uncommitted changes after this commit will be discarded."))
+                Text(CommitLocalization.string("HEAD, staging area, and working directory will all revert to this commit. Local commits and uncommitted changes after this commit will be discarded."))
             }
-            .alert(String(localized: "Confirm Squash Commits?"), isPresented: $showSquashConfirmation) {
-                TextField(String(localized: "Squash commit message"), text: $squashMessage)
-                Button(String(localized: "Cancel"), role: .cancel) {}
+            .alert(CommitLocalization.string("Confirm Squash Commits?"), isPresented: $showSquashConfirmation) {
+                TextField(CommitLocalization.string("Squash commit message"), text: $squashMessage)
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
                 Button("Squash", action: onSquash)
                     .disabled(squashMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isRunningHistoryOperation)
             } message: {
-                Text(String(localized: "This will combine \(commitIndex + 1) commits from HEAD to this commit into one. Only recommended for unpushed commits."))
+                Text(CommitLocalization.string("This will combine \(commitIndex + 1) commits from HEAD to this commit into one. Only recommended for unpushed commits."))
             }
-            .alert(String(localized: "Create Tag"), isPresented: $showCreateTagAlert) {
-                TextField(String(localized: "Tag Name"), text: $newTagName)
-                Button(String(localized: "Cancel"), role: .cancel) {
+            .alert(CommitLocalization.string("Create Tag"), isPresented: $showCreateTagAlert) {
+                TextField(CommitLocalization.string("Tag Name"), text: $newTagName)
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {
                     newTagName = ""
                 }
-                Button(String(localized: "Create"), action: onCreateLightweightTag)
+                Button(CommitLocalization.string("Create"), action: onCreateLightweightTag)
                     .disabled(CommitTagRules.canCreateLightweightTag(name: newTagName) == false || isCreatingTag)
             } message: {
                 Text(String.localizedStringWithFormat(
-                    String(localized: "Create a lightweight tag for commit %@."),
+                    CommitLocalization.string("Create a lightweight tag for commit %@."),
                     CommitTagRules.shortHash(commitHash)
                 ))
             }
-            .alert(String(localized: "Create Annotated Tag"), isPresented: $showCreateAnnotatedTagAlert) {
-                TextField(String(localized: "Tag Name"), text: $newAnnotatedTagName)
-                TextField(String(localized: "Tag Message"), text: $newAnnotatedTagMessage)
-                Button(String(localized: "Cancel"), role: .cancel) {
+            .alert(CommitLocalization.string("Create Annotated Tag"), isPresented: $showCreateAnnotatedTagAlert) {
+                TextField(CommitLocalization.string("Tag Name"), text: $newAnnotatedTagName)
+                TextField(CommitLocalization.string("Tag Message"), text: $newAnnotatedTagMessage)
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {
                     newAnnotatedTagName = ""
                     newAnnotatedTagMessage = ""
                 }
-                Button(String(localized: "Create"), action: onCreateAnnotatedTag)
+                Button(CommitLocalization.string("Create"), action: onCreateAnnotatedTag)
                     .disabled(
                         CommitTagRules.canCreateAnnotatedTag(
                             name: newAnnotatedTagName,
@@ -181,27 +181,27 @@ private struct CommitRowAlertsModifier: ViewModifier {
                     )
             } message: {
                 Text(String.localizedStringWithFormat(
-                    String(localized: "Create an annotated tag for commit %@."),
+                    CommitLocalization.string("Create an annotated tag for commit %@."),
                     CommitTagRules.shortHash(commitHash)
                 ))
             }
-            .alert(String(localized: "Confirm Delete Tag?"), isPresented: $showDeleteTagConfirmation) {
-                Button(String(localized: "Cancel"), role: .cancel) {}
-                Button(String(localized: "Delete"), role: .destructive, action: onDeleteLocalTag)
+            .alert(CommitLocalization.string("Confirm Delete Tag?"), isPresented: $showDeleteTagConfirmation) {
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
+                Button(CommitLocalization.string("Delete"), role: .destructive, action: onDeleteLocalTag)
                     .disabled(isDeletingTag)
             } message: {
                 Text(String.localizedStringWithFormat(
-                    String(localized: "This will delete the local tag %@. Remote tags will not be affected."),
+                    CommitLocalization.string("This will delete the local tag %@. Remote tags will not be affected."),
                     tag
                 ))
             }
-            .alert(String(localized: "Confirm Delete Remote Tag?"), isPresented: $showDeleteRemoteTagConfirmation) {
-                Button(String(localized: "Cancel"), role: .cancel) {}
-                Button(String(localized: "Delete"), role: .destructive, action: onDeleteRemoteTag)
+            .alert(CommitLocalization.string("Confirm Delete Remote Tag?"), isPresented: $showDeleteRemoteTagConfirmation) {
+                Button(CommitLocalization.string("Cancel"), role: .cancel) {}
+                Button(CommitLocalization.string("Delete"), role: .destructive, action: onDeleteRemoteTag)
                     .disabled(isDeletingRemoteTag)
             } message: {
                 Text(String.localizedStringWithFormat(
-                    String(localized: "This will delete the tag %@ on origin. Local tags will not be affected."),
+                    CommitLocalization.string("This will delete the tag %@ on origin. Local tags will not be affected."),
                     tag
                 ))
             }

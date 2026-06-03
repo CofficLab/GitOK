@@ -59,63 +59,63 @@ public struct CommitRowContextMenu: View {
 
     public var body: some View {
         Button(action: onCreateTag) {
-            Label(String(localized: "Create Tag"), systemImage: "tag")
+            Label(CommitLocalization.string("Create Tag"), systemImage: "tag")
         }
 
         Button(action: onCreateAnnotatedTag) {
-            Label(String(localized: "Create Annotated Tag"), systemImage: "tag.fill")
+            Label(CommitLocalization.string("Create Annotated Tag"), systemImage: "tag.fill")
         }
 
         if hasTag {
             Button(action: onPushTag) {
-                Label(String(localized: "Push Tag"), systemImage: "arrow.up.circle")
+                Label(CommitLocalization.string("Push Tag"), systemImage: "arrow.up.circle")
             }
             .disabled(isPushingTag)
 
             Button(role: .destructive, action: onDeleteRemoteTag) {
-                Label(String(localized: "Delete Remote Tag"), systemImage: "icloud.slash")
+                Label(CommitLocalization.string("Delete Remote Tag"), systemImage: "icloud.slash")
             }
             .disabled(isDeletingRemoteTag)
 
             Button(role: .destructive, action: onDeleteTag) {
-                Label(String(localized: "Delete Tag"), systemImage: "tag.slash")
+                Label(CommitLocalization.string("Delete Tag"), systemImage: "tag.slash")
             }
         }
 
         if canUndo {
             Button(role: .destructive, action: onUndo) {
-                Label(String(localized: "Undo Commit"), systemImage: "arrow.uturn.backward")
+                Label(CommitLocalization.string("Undo Commit"), systemImage: "arrow.uturn.backward")
             }
         }
 
         Divider()
 
         Button(action: onRevert) {
-            Label(String(localized: "Revert This Commit"), systemImage: "arrow.counterclockwise")
+            Label(CommitLocalization.string("Revert This Commit"), systemImage: "arrow.counterclockwise")
         }
         .disabled(isRunningHistoryOperation)
 
         if canSquashThroughHead {
             Button(action: onSquash) {
-                Label(String(localized: "Squash to Here"), systemImage: "arrow.triangle.merge")
+                Label(CommitLocalization.string("Squash to Here"), systemImage: "arrow.triangle.merge")
             }
             .disabled(isRunningHistoryOperation)
         }
 
         Menu {
             Button(action: onSoftReset) {
-                Label(String(localized: "Soft Reset"), systemImage: "text.badge.checkmark")
+                Label(CommitLocalization.string("Soft Reset"), systemImage: "text.badge.checkmark")
             }
 
             Button(action: onMixedReset) {
-                Label(String(localized: "Mixed Reset"), systemImage: "list.bullet.rectangle")
+                Label(CommitLocalization.string("Mixed Reset"), systemImage: "list.bullet.rectangle")
             }
 
             Button(role: .destructive, action: onHardReset) {
-                Label(String(localized: "Hard Reset"), systemImage: "trash")
+                Label(CommitLocalization.string("Hard Reset"), systemImage: "trash")
             }
         } label: {
-            Label(String(localized: "Reset to Here"), systemImage: "arrow.down.to.line")
+            Label(CommitLocalization.string("Reset to Here"), systemImage: "arrow.down.to.line")
         }
         .disabled(isRunningHistoryOperation)
     }

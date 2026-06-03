@@ -38,35 +38,35 @@ public struct FileBatchActionBarView: View {
 
     public var body: some View {
         HStack(spacing: 8) {
-            Text("\(String(localized: "Selected")) \(selectedCount)")
+            Text("\(GitDetailLocalization.string("Selected")) \(selectedCount)")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .monospacedDigit()
 
-            Button(String(localized: "Stage"), action: onStage)
+            Button(GitDetailLocalization.string("Stage"), action: onStage)
                 .disabled(canStage == false)
                 .keyboardShortcut("s", modifiers: [.command, .shift])
-                .accessibilityHint(String(localized: "Stage files that can still be staged in the batch selection"))
+                .accessibilityHint(GitDetailLocalization.string("Stage files that can still be staged in the batch selection"))
 
-            Button(String(localized: "Unstage"), action: onUnstage)
+            Button(GitDetailLocalization.string("Unstage"), action: onUnstage)
                 .disabled(canUnstage == false)
                 .keyboardShortcut("u", modifiers: [.command, .shift])
-                .accessibilityHint(String(localized: "Unstage already staged files in the batch selection"))
+                .accessibilityHint(GitDetailLocalization.string("Unstage already staged files in the batch selection"))
 
-            Button(String(localized: "Discard"), role: .destructive, action: onDiscard)
+            Button(GitDetailLocalization.string("Discard"), role: .destructive, action: onDiscard)
                 .disabled(canDiscard == false)
                 .keyboardShortcut(.delete, modifiers: [.command])
-                .accessibilityHint(String(localized: "Discard changes of files in the batch selection"))
+                .accessibilityHint(GitDetailLocalization.string("Discard changes of files in the batch selection"))
 
             Spacer()
 
-            Button(String(localized: "Select All Current"), action: onSelectAll)
+            Button(GitDetailLocalization.string("Select All Current"), action: onSelectAll)
                 .disabled(canSelectAll == false)
                 .keyboardShortcut("a", modifiers: [.command, .shift])
-                .accessibilityHint(String(localized: "Select all files in the current filter result"))
+                .accessibilityHint(GitDetailLocalization.string("Select all files in the current filter result"))
 
-            Button(String(localized: "Clear Selection"), action: onClearSelection)
-                .accessibilityHint(String(localized: "Clear current batch selection"))
+            Button(GitDetailLocalization.string("Clear Selection"), action: onClearSelection)
+                .accessibilityHint(GitDetailLocalization.string("Clear current batch selection"))
         }
         .font(.caption)
         .buttonStyle(.borderless)

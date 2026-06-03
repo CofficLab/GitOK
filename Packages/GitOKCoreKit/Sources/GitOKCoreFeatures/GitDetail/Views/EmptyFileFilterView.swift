@@ -13,7 +13,7 @@ public struct EmptyFileFilterView: View {
                 .font(.system(size: 28))
                 .foregroundColor(.secondary)
 
-            Text(isFiltering ? String(localized: "No matching files") : String(localized: "No files changed"))
+            Text(isFiltering ? GitDetailLocalization.string("No matching files") : GitDetailLocalization.string("No files changed"))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

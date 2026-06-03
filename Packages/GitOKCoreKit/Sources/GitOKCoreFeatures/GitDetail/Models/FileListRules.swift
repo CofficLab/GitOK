@@ -97,11 +97,11 @@ public enum FileListRules {
         public var title: String {
             switch self {
             case .changes:
-                return String(localized: "Changes")
+                return GitDetailLocalization.string("Changes")
             case .stagedChanges:
-                return String(localized: "Staged Changes")
+                return GitDetailLocalization.string("Staged Changes")
             case .historyFiles:
-                return String(localized: "History Files")
+                return GitDetailLocalization.string("History Files")
             }
         }
     }
@@ -895,18 +895,18 @@ public enum FileListRules {
         untrackedCount: Int
     ) -> String {
         if untrackedCount > 0 {
-            return String(localized: "Are you sure you want to discard changes for \(selectedCount) files? \(untrackedCount) untracked files will be deleted. This action cannot be undone.")
+            return GitDetailLocalization.string("Are you sure you want to discard changes for \(selectedCount) files? \(untrackedCount) untracked files will be deleted. This action cannot be undone.")
         }
 
-        return String(localized: "Are you sure you want to discard changes for \(selectedCount) files? This action cannot be undone.")
+        return GitDetailLocalization.string("Are you sure you want to discard changes for \(selectedCount) files? This action cannot be undone.")
     }
 
     public static func discardFileAlertMessage(path: String, isUntracked: Bool) -> String {
         if isUntracked {
-            return String(localized: "Are you sure you want to discard changes for \(path)? This untracked file will be deleted. This action cannot be undone.")
+            return GitDetailLocalization.string("Are you sure you want to discard changes for \(path)? This untracked file will be deleted. This action cannot be undone.")
         }
 
-        return String(localized: "Are you sure you want to discard changes for \(path)? This action cannot be undone.")
+        return GitDetailLocalization.string("Are you sure you want to discard changes for \(path)? This action cannot be undone.")
     }
 
     public static func discardFileAlertMessage(path: String, untrackedPaths: Set<String>) -> String {
@@ -939,40 +939,40 @@ public enum FileListRules {
     ) -> String {
         var details: [String] = []
         if stagedCount > 0 {
-            details.append(String(localized: "\(stagedCount) staged files"))
+            details.append(GitDetailLocalization.string("\(stagedCount) staged files"))
         }
         if unstagedCount > 0 {
-            details.append(String(localized: "\(unstagedCount) unstaged files"))
+            details.append(GitDetailLocalization.string("\(unstagedCount) unstaged files"))
         }
         if untrackedCount > 0 {
-            details.append(String(localized: "\(untrackedCount) untracked files will be deleted"))
+            details.append(GitDetailLocalization.string("\(untrackedCount) untracked files will be deleted"))
         }
 
-        let summary = details.isEmpty ? String(localized: "\(totalFileCount) files") : details.joined(separator: ", ")
-        return String(localized: "Are you sure you want to discard all changes? This will affect \(summary). This action cannot be undone.")
+        let summary = details.isEmpty ? GitDetailLocalization.string("\(totalFileCount) files") : details.joined(separator: ", ")
+        return GitDetailLocalization.string("Are you sure you want to discard all changes? This will affect \(summary). This action cannot be undone.")
     }
 
     public static func discardAllAlertText() -> DiscardAlertText {
         DiscardAlertText(
-            title: String(localized: "Confirm Discard All Changes"),
-            cancelButtonTitle: String(localized: "Cancel"),
-            destructiveButtonTitle: String(localized: "Discard All")
+            title: GitDetailLocalization.string("Confirm Discard All Changes"),
+            cancelButtonTitle: GitDetailLocalization.string("Cancel"),
+            destructiveButtonTitle: GitDetailLocalization.string("Discard All")
         )
     }
 
     public static func discardSelectedAlertText() -> DiscardAlertText {
         DiscardAlertText(
-            title: String(localized: "Confirm Discard Selected Changes"),
-            cancelButtonTitle: String(localized: "Cancel"),
-            destructiveButtonTitle: String(localized: "Discard Selected")
+            title: GitDetailLocalization.string("Confirm Discard Selected Changes"),
+            cancelButtonTitle: GitDetailLocalization.string("Cancel"),
+            destructiveButtonTitle: GitDetailLocalization.string("Discard Selected")
         )
     }
 
     public static func discardFileAlertText() -> DiscardAlertText {
         DiscardAlertText(
-            title: String(localized: "Confirm Discard File Changes"),
-            cancelButtonTitle: String(localized: "Cancel"),
-            destructiveButtonTitle: String(localized: "Discard File")
+            title: GitDetailLocalization.string("Confirm Discard File Changes"),
+            cancelButtonTitle: GitDetailLocalization.string("Cancel"),
+            destructiveButtonTitle: GitDetailLocalization.string("Discard File")
         )
     }
 
@@ -1077,31 +1077,31 @@ public enum FileListRules {
     }
 
     public static func stagedFileMessage(path: String) -> String {
-        String(localized: "Staged: \(path)")
+        GitDetailLocalization.string("Staged: \(path)")
     }
 
     public static func stagedFilesMessage(count: Int) -> String {
-        String(localized: "Staged \(count) files")
+        GitDetailLocalization.string("Staged \(count) files")
     }
 
     public static func unstagedFileMessage(path: String) -> String {
-        String(localized: "Unstaged: \(path)")
+        GitDetailLocalization.string("Unstaged: \(path)")
     }
 
     public static func unstagedFilesMessage(count: Int) -> String {
-        String(localized: "Unstaged \(count) files")
+        GitDetailLocalization.string("Unstaged \(count) files")
     }
 
     public static func discardedFileChangesMessage(path: String) -> String {
-        String(localized: "Discarded file changes: \(path)")
+        GitDetailLocalization.string("Discarded file changes: \(path)")
     }
 
     public static func discardedAllChangesMessage() -> String {
-        String(localized: "Discarded all file changes")
+        GitDetailLocalization.string("Discarded all file changes")
     }
 
     public static func discardedSelectedChangesMessage(count: Int) -> String {
-        String(localized: "Discarded changes for \(count) files")
+        GitDetailLocalization.string("Discarded changes for \(count) files")
     }
 
     public static func stageFileSuccessState(path: String) -> OperationSuccessState {

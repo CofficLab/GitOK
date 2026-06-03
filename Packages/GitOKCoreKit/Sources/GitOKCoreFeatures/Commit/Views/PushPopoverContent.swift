@@ -26,7 +26,7 @@ public struct PushPopoverContent: View {
             HStack {
                 Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.orange)
-                Text(String(localized: "Push to Remote"))
+                Text(CommitLocalization.string("Push to Remote"))
                     .font(.headline)
                 Spacer()
             }
@@ -48,7 +48,7 @@ public struct PushPopoverContent: View {
         VStack(spacing: 12) {
             ProgressView()
                 .controlSize(.regular)
-            Text(String(localized: "Pushing..."))
+            Text(CommitLocalization.string("Pushing..."))
                 .font(.body)
                 .foregroundColor(.secondary)
         }
@@ -60,7 +60,7 @@ public struct PushPopoverContent: View {
             HStack(spacing: 8) {
                 Image(systemName: "info.circle.fill")
                     .foregroundColor(.orange)
-                Text(String(localized: "Current commit has not been pushed to remote"))
+                Text(CommitLocalization.string("Current commit has not been pushed to remote"))
                     .font(.body)
             }
 
@@ -69,12 +69,12 @@ public struct PushPopoverContent: View {
             }
 
             HStack(spacing: 12) {
-                Button(String(localized: "Cancel")) {
+                Button(CommitLocalization.string("Cancel")) {
                     onCancel()
                 }
                 .keyboardShortcut(.cancelAction)
 
-                Button(pushError == nil ? String(localized: "Push") : String(localized: "Retry")) {
+                Button(pushError == nil ? CommitLocalization.string("Push") : CommitLocalization.string("Retry")) {
                     Task {
                         do {
                             isPushing = true
@@ -101,13 +101,13 @@ public struct PushPopoverContent: View {
             HStack(spacing: 4) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.red)
-                Text(String(localized: "Push failed"))
+                Text(CommitLocalization.string("Push failed"))
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.red)
             }
 
-            Text(String(localized: "Push failed: \(error.localizedDescription)"))
+            Text(CommitLocalization.string("Push failed: \(error.localizedDescription)"))
                 .font(.caption)
                 .foregroundColor(.red)
         }

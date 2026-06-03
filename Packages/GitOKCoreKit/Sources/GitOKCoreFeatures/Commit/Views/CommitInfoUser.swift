@@ -32,7 +32,7 @@ public struct CommitInfoUser: View {
             Button {
                 showingPopup = true
             } label: {
-                Label(avatarUser?.name ?? String(localized: "Unknown"), systemImage: "person.circle")
+                Label(avatarUser?.name ?? CommitLocalization.string("Unknown"), systemImage: "person.circle")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.secondary)
                     .padding(8)
@@ -42,7 +42,7 @@ public struct CommitInfoUser: View {
                     )
             }
             .buttonStyle(.plain)
-            .help(String(localized: "Click to view user info"))
+            .help(CommitLocalization.string("Click to view user info"))
             .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
                 /// 直接使用 avatarUser
                 if let user = avatarUser {

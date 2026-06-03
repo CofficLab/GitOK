@@ -64,8 +64,8 @@ public final class GitOKPluginRuntime {
             .map { plugin in
                 return PluginInfo(
                     id: plugin.instanceLabel,
-                    name: String(localized: .init(stringLiteral: plugin.pluginDisplayName)),
-                    description: String(localized: .init(stringLiteral: plugin.pluginDescription)),
+                    name: String(localized: .init(stringLiteral: plugin.pluginDisplayName), bundle: .module),
+                    description: String(localized: .init(stringLiteral: plugin.pluginDescription), bundle: .module),
                     icon: plugin.pluginIconName,
                     defaultEnabled: plugin.pluginPolicy.defaultEnabled,
                     isDeveloperEnabled: { plugin.pluginPolicy.shouldRegister }
