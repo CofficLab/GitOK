@@ -28,7 +28,7 @@ public enum SubmodulePluginLocalization {
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {
-        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
     }
 
     public static func string(_ key: String, _ arguments: CVarArg...) -> String {
