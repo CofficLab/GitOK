@@ -9,6 +9,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
     private let detail: String?
     private let systemImage: String
     private let showsTitle: Bool
+    private let showsMenu: Bool
     private let isLoading: Bool
     private let isDisabled: Bool
     private let action: () -> Void
@@ -19,6 +20,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
         detail: String? = nil,
         systemImage: String,
         showsTitle: Bool = true,
+        showsMenu: Bool = true,
         isLoading: Bool = false,
         isDisabled: Bool = false,
         action: @escaping () -> Void,
@@ -28,6 +30,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
         self.detail = detail
         self.systemImage = systemImage
         self.showsTitle = showsTitle
+        self.showsMenu = showsMenu
         self.isLoading = isLoading
         self.isDisabled = isDisabled
         self.action = action
@@ -68,13 +71,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
                 .frame(height: 40)
                 .frame(minWidth: showsTitle ? 150 : 76)
                 .background(
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: DesignTokens.Radius.sm,
-                        bottomLeadingRadius: DesignTokens.Radius.sm,
-                        bottomTrailingRadius: 3,
-                        topTrailingRadius: 3,
-                        style: .continuous
-                    )
+                    primaryShape
                     .fill(primaryFill)
                 )
                 .contentShape(Rectangle())
@@ -83,29 +80,31 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
             .disabled(isDisabled || isLoading)
             .accessibilityLabel(Text(title))
 
-            Menu {
-                menuContent()
-            } label: {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(.white.opacity(0.92))
-                    .frame(width: 34, height: 40)
-                    .background(
-                        UnevenRoundedRectangle(
-                            topLeadingRadius: 3,
-                            bottomLeadingRadius: 3,
-                            bottomTrailingRadius: DesignTokens.Radius.sm,
-                            topTrailingRadius: DesignTokens.Radius.sm,
-                            style: .continuous
+            if showsMenu {
+                Menu {
+                    menuContent()
+                } label: {
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.92))
+                        .frame(width: 34, height: 40)
+                        .background(
+                            UnevenRoundedRectangle(
+                                topLeadingRadius: 3,
+                                bottomLeadingRadius: 3,
+                                bottomTrailingRadius: DesignTokens.Radius.sm,
+                                topTrailingRadius: DesignTokens.Radius.sm,
+                                style: .continuous
+                            )
+                            .fill(menuFill)
                         )
-                        .fill(menuFill)
-                    )
-                    .contentShape(Rectangle())
+                        .contentShape(Rectangle())
+                }
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden)
+                .fixedSize()
+                .disabled(isDisabled || isLoading)
             }
-            .menuStyle(.borderlessButton)
-            .menuIndicator(.hidden)
-            .fixedSize()
-            .disabled(isDisabled || isLoading)
         }
         .opacity(isDisabled ? 0.55 : 1)
         .scaleEffect(isHovered && !isDisabled && !isLoading && motionPreference.allowsMotion ? 1.015 : 1)
@@ -135,6 +134,26 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
         isHovered && !isDisabled && !isLoading
             ? theme.primary.opacity(0.72)
             : theme.primary.opacity(0.56)
+    }
+
+    private var primaryShape: some Shape {
+        if showsMenu {
+            UnevenRoundedRectangle(
+                topLeadingRadius: DesignTokens.Radius.sm,
+                bottomLeadingRadius: DesignTokens.Radius.sm,
+                bottomTrailingRadius: 3,
+                topTrailingRadius: 3,
+                style: .continuous
+            )
+        } else {
+            UnevenRoundedRectangle(
+                topLeadingRadius: DesignTokens.Radius.sm,
+                bottomLeadingRadius: DesignTokens.Radius.sm,
+                bottomTrailingRadius: DesignTokens.Radius.sm,
+                topTrailingRadius: DesignTokens.Radius.sm,
+                style: .continuous
+            )
+        }
     }
 
     private var animation: Animation? {

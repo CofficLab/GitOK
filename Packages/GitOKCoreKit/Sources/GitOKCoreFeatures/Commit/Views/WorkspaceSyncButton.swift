@@ -24,48 +24,32 @@ public struct WorkspaceSyncButton: View {
 
     public var body: some View {
         AppSplitActionMenu(
-            title: primaryAction.title,
+            title: primaryActionTitle,
             detail: syncMetricText,
             systemImage: primaryAction.systemImage,
             showsTitle: false,
+            showsMenu: false,
             isLoading: isWorking,
             action: {
                 perform(primaryAction)
             }
         ) {
-            Group {
-                Button {
-                    onFetch()
-                } label: {
-                    Label(CommitLocalization.string("Fetch origin"), systemImage: "arrow.clockwise")
-                }
-
-                Button {
-                    onPull()
-                } label: {
-                    Label(CommitLocalization.string("Pull origin"), systemImage: "arrow.down")
-                }
-                .disabled(trackingStatus.hasUpstream != true)
-
-                Button {
-                    onPush()
-                } label: {
-                    Label(pushTitle, systemImage: "arrow.up")
-                }
-            }
+            EmptyView()
         }
         .fixedSize(horizontal: true, vertical: false)
-        .help(primaryAction.help)
+        .help(primaryActionHelp)
     }
 
     private var primaryAction: WorkspaceSyncPrimaryAction {
         WorkspaceSyncPrimaryAction.primaryAction(for: trackingStatus)
     }
 
-    private var pushTitle: String {
-        trackingStatus.hasUpstream
-            ? CommitLocalization.string("Push origin")
-            : CommitLocalization.string("Publish branch")
+    private var primaryActionTitle: String {
+        WorkspaceSyncPrimaryAction.title(for: trackingStatus)
+    }
+
+    private var primaryActionHelp: String {
+        WorkspaceSyncPrimaryAction.help(for: trackingStatus)
     }
 
     private var syncMetricText: String? {
@@ -117,6 +101,24 @@ public enum WorkspaceSyncPrimaryAction: Equatable, Sendable {
         }
 
         return nil
+    }
+
+    public static func title(for status: GitOKRemoteTrackingStatus) -> String {
+        let action = primaryAction(for: status)
+        if action == .push, !status.hasUpstream {
+            return CommitLocalization.string("Publish branch")
+        }
+
+        return action.title
+    }
+
+    public static func help(for status: GitOKRemoteTrackingStatus) -> String {
+        let action = primaryAction(for: status)
+        if action == .pull {
+            return CommitLocalization.string("New commits on remote")
+        }
+
+        return action.help
     }
 
     var systemImage: String {

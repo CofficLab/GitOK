@@ -19,4 +19,10 @@ struct WorkspaceSyncButtonTests {
         #expect(WorkspaceSyncPrimaryAction.badgeText(for: .init(ahead: 2, behind: 3, hasUpstream: true)) == "↑2 ↓3")
         #expect(WorkspaceSyncPrimaryAction.badgeText(for: .init(ahead: 2, behind: 3, hasUpstream: false)) == nil)
     }
+
+    @Test("primary title distinguishes unpublished branches")
+    func primaryTitle() {
+        #expect(WorkspaceSyncPrimaryAction.title(for: .init(ahead: 1, behind: 0, hasUpstream: true)) == "Push origin")
+        #expect(WorkspaceSyncPrimaryAction.title(for: .init(ahead: 0, behind: 0, hasUpstream: false)) == "Publish branch")
+    }
 }
