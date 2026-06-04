@@ -15,7 +15,7 @@ public enum FileListHostEvent {
     case log(FileListHostLogEvent)
 }
 
-public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View where FileItem: Hashable {
+public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View where FileItem: Hashable & Sendable, StatusEntry: Sendable {
     private let project: Project?
     private let selectedCommit: Commit?
     private let projectURL: (Project) -> URL?
@@ -520,6 +520,20 @@ private extension FileListHostView {
 }
 
 private extension FileListHostView {
+    struct RefreshApplicationResult: Sendable {
+        let items: [FileItem]
+        let filePaths: [String]
+        let filesByPath: [String: FileItem]
+        let refreshState: FileListRules.RefreshState
+        let refreshedSelection: FileItem?
+        let presentationState: FileListRules.PresentationState
+        let filteredFiles: [FileItem]
+    }
+
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+
     func refresh(reason: String) async {
         let requestState = FileListRules.refreshRequestState(lastRefreshTime: lastRefreshTime)
         let didStartRefresh = FileListRules.performRefreshRequestState(
@@ -579,47 +593,21 @@ private extension FileListHostView {
                 try Task.checkCancellation()
                 let latestCommitHash = selectedCommit.map(commitHash)
                 let preferredPath = selection.map(filePath) ?? scrollTarget.map(filePath)
-                let applicationState = FileListRules.refreshResultApplicationState(
+                let applicationResult = await refreshApplicationResultInBackground(
                     expectedCommitHash: expectedCommitHash,
                     currentCommitHash: latestCommitHash,
                     preferredPath: preferredPath,
-                    newItems: loadedFiles,
-                    itemPath: filePath,
+                    loadedFiles: loadedFiles,
                     statusEntries: statusEntries,
-                    statusPath: statusPath,
-                    indexStatus: statusIndexStatus,
-                    workTreeStatus: statusWorkTreeStatus,
                     selectedBatchPaths: selectedBatchFilePaths
                 )
 
-                FileListRules.performRefreshResultApplicationState(
-                    applicationState,
-                    newItems: loadedFiles,
-                    itemPath: filePath,
-                    apply: { items, refreshState, refreshedSelection in
-                        FileListRules.performRefreshResultState(
-                            items: items,
-                            refreshState: refreshState,
-                            refreshedSelection: refreshedSelection,
-                            setItems: { items in
-                                self.files = items
-                                self.filePaths = items.map(filePath)
-                                self.filesByPath = FileListRules.itemLookup(from: items, path: filePath)
-                            },
-                            setStagedPaths: { self.stagedFilePaths = $0 },
-                            setUnstagedPaths: { self.unstagedFilePaths = $0 },
-                            setUntrackedPaths: { self.untrackedFilePaths = $0 },
-                            setSelectedBatchPaths: { self.selectedBatchFilePaths = $0 },
-                            setSelection: { self.selection = $0 },
-                            syncSelection: self.syncSelection,
-                            applyLifecycleState: self.applyRefreshLifecycleState
-                        )
-                        rebuildPresentationCache()
-                    },
-                    skip: {
-                        eventHandler(.log(.commitChangedDuringRefresh))
-                    }
-                )
+                guard let applicationResult else {
+                    eventHandler(.log(.commitChangedDuringRefresh))
+                    return
+                }
+
+                applyRefreshApplicationResult(applicationResult)
             }
 
             refreshWorkerTask = worker
@@ -632,6 +620,88 @@ private extension FileListHostView {
             applyRefreshLifecycleState(FileListRules.refreshFailedState(errorMessage: message))
             eventHandler(.log(.refreshFailure(message: message)))
         }
+    }
+
+    func refreshApplicationResultInBackground(
+        expectedCommitHash: String?,
+        currentCommitHash: String?,
+        preferredPath: String?,
+        loadedFiles: [FileItem],
+        statusEntries: [StatusEntry],
+        selectedBatchPaths: Set<String>
+    ) async -> RefreshApplicationResult? {
+        let filterText = appliedFilterText
+        let historyMode = isHistoryMode
+        let loadedFilesTransfer = UnsafeTransfer(value: loadedFiles)
+        let statusEntriesTransfer = UnsafeTransfer(value: statusEntries)
+        let itemPathTransfer = UnsafeTransfer(value: filePath)
+        let statusPathTransfer = UnsafeTransfer(value: statusPath)
+        let indexStatusTransfer = UnsafeTransfer(value: statusIndexStatus)
+        let workTreeStatusTransfer = UnsafeTransfer(value: statusWorkTreeStatus)
+
+        return await Task.detached(priority: .userInitiated) {
+            let loadedFiles = loadedFilesTransfer.value
+            let statusEntries = statusEntriesTransfer.value
+            let itemPath = itemPathTransfer.value
+            let statusPath = statusPathTransfer.value
+            let indexStatus = indexStatusTransfer.value
+            let workTreeStatus = workTreeStatusTransfer.value
+
+            let applicationState = FileListRules.refreshResultApplicationState(
+                expectedCommitHash: expectedCommitHash,
+                currentCommitHash: currentCommitHash,
+                preferredPath: preferredPath,
+                newItems: loadedFiles,
+                itemPath: itemPath,
+                statusEntries: statusEntries,
+                statusPath: statusPath,
+                indexStatus: indexStatus,
+                workTreeStatus: workTreeStatus,
+                selectedBatchPaths: selectedBatchPaths
+            )
+
+            guard applicationState.shouldApply,
+                  let refreshState = applicationState.refreshState else {
+                return nil
+            }
+
+            let filePaths = loadedFiles.map(itemPath)
+            let filesByPath = FileListRules.itemLookup(from: loadedFiles, path: itemPath)
+            let presentationState = FileListRules.presentationState(
+                allPaths: filePaths,
+                filterText: filterText,
+                isHistoryMode: historyMode,
+                stagedPaths: refreshState.stagedPaths,
+                unstagedPaths: refreshState.unstagedPaths,
+                untrackedPaths: refreshState.untrackedPaths,
+                selectedBatchPaths: refreshState.selectedBatchPaths
+            )
+
+            return RefreshApplicationResult(
+                items: loadedFiles,
+                filePaths: filePaths,
+                filesByPath: filesByPath,
+                refreshState: refreshState,
+                refreshedSelection: FileListRules.selectedItem(from: refreshState, in: loadedFiles, path: itemPath),
+                presentationState: presentationState,
+                filteredFiles: FileListRules.items(from: filesByPath, matching: presentationState.visiblePaths)
+            )
+        }.value
+    }
+
+    func applyRefreshApplicationResult(_ result: RefreshApplicationResult) {
+        files = result.items
+        filePaths = result.filePaths
+        filesByPath = result.filesByPath
+        stagedFilePaths = result.refreshState.stagedPaths
+        unstagedFilePaths = result.refreshState.unstagedPaths
+        untrackedFilePaths = result.refreshState.untrackedPaths
+        selectedBatchFilePaths = result.refreshState.selectedBatchPaths
+        selection = result.refreshedSelection
+        syncSelection(result.refreshedSelection)
+        applyRefreshLifecycleState(FileListRules.refreshStoppedState())
+        cachedPresentationState = result.presentationState
+        cachedFilteredFiles = result.filteredFiles
     }
 }
 
