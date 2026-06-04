@@ -101,15 +101,7 @@ struct IconMaker: View {
  */
 struct LoadingStateView: View {
     var body: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.5)
-                .frame(width: 60, height: 60)
-
-            Text(IconLocalization.string("loading-icons"))
-                .font(.headline)
-                .foregroundColor(.secondary)
-        }
+        AppLoadingOverlay(message: IconLocalization.string("loading-icons"), size: .large)
     }
 }
 
@@ -136,10 +128,13 @@ struct ErrorStateView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            Button(IconLocalization.string("retry")) {
+            AppButton(
+                IconLocalization.string("retry"),
+                systemImage: "arrow.clockwise",
+                style: .primary
+            ) {
                 onRetry()
             }
-            .buttonStyle(.borderedProminent)
         }
         .padding(24)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))

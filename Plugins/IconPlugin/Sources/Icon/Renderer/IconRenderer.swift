@@ -99,7 +99,7 @@ struct IconRenderView: View {
                 AsyncImage(url: imageURL) { phase in
                     switch phase {
                     case .empty:
-                        ProgressView()
+                        AppLoadingOverlay(size: .small)
                             .frame(width: 50, height: 50)
                     case let .success(image):
                         image
@@ -127,7 +127,7 @@ struct IconRenderView: View {
                     .scaledToFit()
                     .scaleEffect(iconData.scale ?? 1.0)
             } else if isLoading {
-                ProgressView()
+                AppLoadingOverlay(size: .small)
                     .frame(width: 50, height: 50)
             } else {
                 // 占位符

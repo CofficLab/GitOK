@@ -8,7 +8,7 @@ struct BtnChangeImage: View {
     @EnvironmentObject var i: IconProvider
 
     var body: some View {
-        Button("换图") {
+        AppButton("换图", systemImage: "photo", style: .secondary, size: .small) {
             let panel = NSOpenPanel()
             panel.allowsMultipleSelection = false
             panel.canChooseDirectories = false

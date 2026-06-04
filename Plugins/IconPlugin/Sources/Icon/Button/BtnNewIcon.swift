@@ -13,7 +13,7 @@ struct BtnNewIcon: View {
 
     var body: some View {
         if let projectURL {
-            Button {
+            AppButton("新建 Icon", systemImage: "plus.circle", style: .secondary, size: .small) {
                 do {
                     let model = try IconData.new(projectURL: projectURL)
                     alert_info("新建 Icon(\(model.title)) 成功")
@@ -21,8 +21,6 @@ struct BtnNewIcon: View {
                     os_log(.error, "❌ 创建 Icon 失败: \(error.localizedDescription)")
                     alert_error(error.localizedDescription)
                 }
-            } label: {
-                Label("新建 Icon", systemImage: "plus.circle")
             }
         }
     }
