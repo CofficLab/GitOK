@@ -215,9 +215,12 @@ struct CoAuthorQuickSelectButton: View {
     let onSelect: () -> Void
 
     var body: some View {
-        Button {
-            onSelect()
-        } label: {
+        AppSelectionTile(
+            isSelected: isSelected,
+            cornerRadius: 6,
+            selectedBackgroundColor: Color.blue.opacity(0.1),
+            action: onSelect
+        ) {
             HStack(spacing: 6) {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(isSelected ? .blue : .secondary)
@@ -236,10 +239,7 @@ struct CoAuthorQuickSelectButton: View {
                 Spacer()
             }
             .padding(8)
-            .background(isSelected ? Color.blue.opacity(0.1) : Color.clear)
-            .cornerRadius(6)
         }
-        .buttonStyle(.plain)
     }
 }
 
