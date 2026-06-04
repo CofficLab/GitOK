@@ -4,6 +4,12 @@ import GitOKSupportKit
 import OSLog
 import SwiftUI
 
+private enum CurrentUserConfigBackgroundRunner {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 /// 显示当前项目 Git 用户配置的视图组件
 struct CurrentUserConfigView: View, SuperLog {
     /// emoji 标识符
@@ -66,29 +72,36 @@ struct CurrentUserConfigView: View, SuperLog {
     // MARK: - Load Data
 
     private func loadUserInfo() {
-        nonisolated(unsafe) let project = project
+        let projectTransfer = CurrentUserConfigBackgroundRunner.UnsafeTransfer(value: project)
         isLoading = true
 
-        Task(priority: .utility) { @MainActor in
+        Task.detached(priority: .utility) {
             do {
-                let loadedName = try await project.getUserNameAsync()
-                let loadedEmail = try await project.getUserEmailAsync()
-                userName = loadedName
-                userEmail = loadedEmail
+                let loadedName = try await projectTransfer.value.getUserNameAsync()
+                let loadedEmail = try await projectTransfer.value.getUserEmailAsync()
 
-                if Self.verbose {
-                    os_log("\(Self.t)Loaded Git user config - name: \(loadedName), email: \(loadedEmail)")
+                Task { @MainActor in
+                    userName = loadedName
+                    userEmail = loadedEmail
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log("\(Self.t)Loaded Git user config - name: \(loadedName), email: \(loadedEmail)")
+                    }
                 }
             } catch {
-                userName = ""
-                userEmail = ""
+                let message = error.localizedDescription
 
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)Failed to load Git user config: \(error)")
+                Task { @MainActor in
+                    userName = ""
+                    userEmail = ""
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)Failed to load Git user config: \(message)")
+                    }
                 }
             }
-
-            isLoading = false
         }
     }
 }

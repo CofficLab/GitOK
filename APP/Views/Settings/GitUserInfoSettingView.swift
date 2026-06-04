@@ -4,6 +4,12 @@ import GitOKSupportKit
 import OSLog
 import SwiftUI
 
+private enum GitUserInfoBackgroundRunner {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 /// Git 用户信息设置视图
 struct GitUserInfoSettingView: View, SuperLog {
     /// emoji 标识符
@@ -183,32 +189,40 @@ struct GitUserInfoSettingView: View, SuperLog {
 
     private func saveUserConfig() {
         guard let loadedProject = vm.project else { return }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = GitUserInfoBackgroundRunner.UnsafeTransfer(value: loadedProject)
         let trimmedName = userName.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedEmail = userEmail.trimmingCharacters(in: .whitespacesAndNewlines)
 
         isLoading = true
         errorMessage = nil
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                try await project.setUserConfigAsync(name: trimmedName, email: trimmedEmail)
-                hasChanges = false
+                try await projectTransfer.value.setUserConfigAsync(name: trimmedName, email: trimmedEmail)
 
-                if Self.verbose {
-                    os_log("\(Self.t)Saved user config - name: \(trimmedName), email: \(trimmedEmail)")
+                Task { @MainActor in
+                    hasChanges = false
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log("\(Self.t)Saved user config - name: \(trimmedName), email: \(trimmedEmail)")
+                    }
+
+                    // 保存成功后发送通知
+                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }
-
-                // 保存成功后发送通知
-                NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
             } catch {
-                errorMessage = String.localizedStringWithFormat(NSLocalizedString("Save failed: %@", comment: ""), error.localizedDescription)
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)Failed to save user config: \(error)")
+                let message = String.localizedStringWithFormat(NSLocalizedString("Save failed: %@", comment: ""), error.localizedDescription)
+
+                Task { @MainActor in
+                    errorMessage = message
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)Failed to save user config: \(message)")
+                    }
                 }
             }
-
-            isLoading = false
         }
     }
 
@@ -266,30 +280,38 @@ struct GitUserInfoSettingView: View, SuperLog {
 
     private func loadCurrentUserInfo() {
         guard let loadedProject = vm.project else { return }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = GitUserInfoBackgroundRunner.UnsafeTransfer(value: loadedProject)
 
         isLoading = true
         errorMessage = nil
 
-        Task(priority: .utility) { @MainActor in
+        Task.detached(priority: .utility) {
             do {
-                let loadedName = try await project.getUserNameAsync()
-                let loadedEmail = try await project.getUserEmailAsync()
-                userName = loadedName
-                userEmail = loadedEmail
-                hasChanges = false
+                let loadedName = try await projectTransfer.value.getUserNameAsync()
+                let loadedEmail = try await projectTransfer.value.getUserEmailAsync()
 
-                if Self.verbose {
-                    os_log("\(Self.t)Loaded user info - name: \(loadedName), email: \(loadedEmail)")
+                Task { @MainActor in
+                    userName = loadedName
+                    userEmail = loadedEmail
+                    hasChanges = false
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log("\(Self.t)Loaded user info - name: \(loadedName), email: \(loadedEmail)")
+                    }
                 }
             } catch {
-                errorMessage = String.localizedStringWithFormat(NSLocalizedString("Unable to load current user info: %@", comment: ""), error.localizedDescription)
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)Failed to load user info: \(error)")
+                let message = String.localizedStringWithFormat(NSLocalizedString("Unable to load current user info: %@", comment: ""), error.localizedDescription)
+
+                Task { @MainActor in
+                    errorMessage = message
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)Failed to load user info: \(message)")
+                    }
                 }
             }
-
-            isLoading = false
         }
     }
 

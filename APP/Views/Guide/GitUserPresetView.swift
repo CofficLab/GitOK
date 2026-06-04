@@ -4,6 +4,12 @@ import GitOKSupportKit
 import OSLog
 import SwiftUI
 
+private enum GitUserPresetBackgroundRunner {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 /// Git 用户预设管理视图组件
 struct GitUserPresetView: View, SuperLog {
     /// emoji 标识符
@@ -139,7 +145,7 @@ struct GitUserPresetView: View, SuperLog {
         }
 
         guard let loadedProject = vm.project else { return }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = GitUserPresetBackgroundRunner.UnsafeTransfer(value: loadedProject)
         let configName = config.name
         let configEmail = config.email
 
@@ -150,23 +156,30 @@ struct GitUserPresetView: View, SuperLog {
 
         isApplying = true
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                try await project.setUserConfigAsync(name: configName, email: configEmail)
-                currentUserName = configName
-                currentUserEmail = configEmail
-                isApplying = false
+                try await projectTransfer.value.setUserConfigAsync(name: configName, email: configEmail)
 
-                if Self.verbose {
-                    os_log("\(Self.t)✅ Applied config: \(configName) <\(configEmail)>")
+                Task { @MainActor in
+                    currentUserName = configName
+                    currentUserEmail = configEmail
+                    isApplying = false
+
+                    if Self.verbose {
+                        os_log("\(Self.t)✅ Applied config: \(configName) <\(configEmail)>")
+                    }
+
+                    // 发送通知，让其他视图更新
+                    NotificationCenter.default.post(name: .didUpdateGitUserConfig, object: nil)
                 }
-
-                // 发送通知，让其他视图更新
-                NotificationCenter.default.post(name: .didUpdateGitUserConfig, object: nil)
             } catch {
-                isApplying = false
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)❌ Failed to apply config: \(error)")
+                let message = error.localizedDescription
+
+                Task { @MainActor in
+                    isApplying = false
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)❌ Failed to apply config: \(message)")
+                    }
                 }
             }
         }
@@ -195,29 +208,36 @@ struct GitUserPresetView: View, SuperLog {
 
     private func loadCurrentUserInfo() {
         guard let loadedProject = vm.project else { return }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = GitUserPresetBackgroundRunner.UnsafeTransfer(value: loadedProject)
 
-        Task(priority: .utility) { @MainActor in
+        Task.detached(priority: .utility) {
             do {
-                let loadedName = try await project.getUserNameAsync()
-                let loadedEmail = try await project.getUserEmailAsync()
-                currentUserName = loadedName
-                currentUserEmail = loadedEmail
+                let loadedName = try await projectTransfer.value.getUserNameAsync()
+                let loadedEmail = try await projectTransfer.value.getUserEmailAsync()
 
-                if Self.verbose {
-                    os_log("\(Self.t)Current user info: \(loadedName) <\(loadedEmail)>")
-                }
+                Task { @MainActor in
+                    currentUserName = loadedName
+                    currentUserEmail = loadedEmail
 
-                // 如果当前用户信息不为空，且不在预设列表中，自动添加
-                if !loadedName.isEmpty && !loadedEmail.isEmpty {
-                    addCurrentUserToPresetsIfNeeded()
+                    if Self.verbose {
+                        os_log("\(Self.t)Current user info: \(loadedName) <\(loadedEmail)>")
+                    }
+
+                    // 如果当前用户信息不为空，且不在预设列表中，自动添加
+                    if !loadedName.isEmpty && !loadedEmail.isEmpty {
+                        addCurrentUserToPresetsIfNeeded()
+                    }
                 }
             } catch {
-                currentUserName = ""
-                currentUserEmail = ""
+                let message = error.localizedDescription
 
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)Failed to load user info: \(error)")
+                Task { @MainActor in
+                    currentUserName = ""
+                    currentUserEmail = ""
+
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)Failed to load user info: \(message)")
+                    }
                 }
             }
         }
