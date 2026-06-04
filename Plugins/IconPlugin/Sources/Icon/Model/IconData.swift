@@ -143,7 +143,7 @@ extension IconData {
 // MARK: - 保存
 
 extension IconData {
-    func saveToDisk() throws {
+    private func writeToDisk() throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         let data = try encoder.encode(self)
@@ -153,7 +153,21 @@ extension IconData {
             withIntermediateDirectories: true
         )
         try data.write(to: fileURL, options: .atomic)
-        self.emit(.iconDidSave)
+    }
+
+    func saveToDisk() throws {
+        try writeToDisk()
+        emit(.iconDidSave)
+    }
+
+    func saveToDiskAsync() async throws {
+        try await Task.detached(priority: .utility) {
+            try self.writeToDisk()
+        }.value
+
+        await MainActor.run {
+            emit(.iconDidSave)
+        }
     }
 
     static func fromJSONFile(_ jsonFile: URL) throws -> Self {

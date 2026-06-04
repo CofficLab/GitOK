@@ -100,10 +100,33 @@ public class IconProvider: NSObject, ObservableObject, SuperLog {
 
         // 如果当前有图标模型，同时更新模型
         if var model = self.currentData {
+            model.iconId = iconId
+            self.currentData = model
+
+            Task {
+                do {
+                    try await model.saveToDiskAsync()
+                } catch {
+                    os_log(.error, "\(self.t)Failed to update model iconId: \(error)")
+                }
+            }
+        }
+    }
+
+    func updateImageURL(_ url: URL) {
+        guard var model = self.currentData else {
+            os_log(.error, "\(self.t)Failed to update image URL: missing current model")
+            return
+        }
+
+        model.imageURL = url
+        self.currentData = model
+
+        Task {
             do {
-                try model.updateIconId(iconId)
+                try await model.saveToDiskAsync()
             } catch {
-                os_log(.error, "\(self.t)Failed to update model iconId: \(error)")
+                os_log(.error, "\(self.t)Failed to update image URL: \(error)")
             }
         }
     }
