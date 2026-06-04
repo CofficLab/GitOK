@@ -24,8 +24,8 @@ public struct ConflictStatusTile: View {
             }
         ) {
             if isLoading {
-                ProgressView()
-                    .controlSize(.small)
+                AppLoadingOverlay(size: .small)
+                    .frame(width: 24, height: 20)
             } else {
                 Text(isMerging ? ConflictResolverPluginLocalization.string("Conflicts \(conflictCount)") : ConflictResolverPluginLocalization.string("Merge OK"))
                     .font(.footnote.weight(.medium))

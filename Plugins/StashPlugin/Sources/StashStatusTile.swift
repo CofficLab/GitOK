@@ -43,8 +43,8 @@ public struct StashStatusTile: View {
     @ViewBuilder
     private var content: some View {
         if isLoading {
-            ProgressView()
-                .controlSize(.small)
+            AppLoadingOverlay(size: .small)
+                .frame(width: 24, height: 20)
         } else if stashCount > 0 {
             Text("\(StashPluginLocalization.string("Stash")) \(stashCount)")
                 .font(.footnote.weight(.medium))

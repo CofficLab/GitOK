@@ -1,4 +1,5 @@
 import AppKit
+import GitOKCoreKit
 import SwiftUI
 
 /// 自动推送配置视图的标题栏
@@ -40,11 +41,15 @@ struct AutoPushConfigHeaderView: View {
     private var headerActions: some View {
         HStack(spacing: 12) {
             if isLoading {
-                ProgressView()
-                    .controlSize(.small)
+                AppLoadingOverlay(size: .small)
+                    .frame(width: 28, height: 28)
             }
 
-            Button(AutoPushPluginLocalization.string("Close")) {
+            AppButton(
+                AutoPushPluginLocalization.string("Close"),
+                style: .secondary,
+                size: .small
+            ) {
                 onClose()
             }
             .keyboardShortcut(.cancelAction)

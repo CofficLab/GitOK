@@ -17,15 +17,14 @@ struct GitNetworkSettingView: View {
         .navigationTitle("网络")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button {
+                AppButton(
+                    "保存",
+                    systemImage: "square.and.arrow.down",
+                    style: .secondary,
+                    size: .small,
+                    isLoading: settings.isSaving
+                ) {
                     settings.save()
-                } label: {
-                    if settings.isSaving {
-                        ProgressView()
-                            .controlSize(.small)
-                    } else {
-                        Text("保存")
-                    }
                 }
                 .disabled(settings.isSaving || settings.isLoading)
             }
@@ -38,27 +37,17 @@ struct GitNetworkSettingView: View {
     private var proxySection: some View {
         GitOKUI.AppSettingsSection(title: "代理") {
             VStack(alignment: .leading, spacing: 14) {
-                TextField("http://127.0.0.1:7890", text: $settings.httpProxy)
-                    .textFieldStyle(.roundedBorder)
-                    .disabled(settings.isLoading || settings.isSaving)
-                    .overlay(alignment: .topLeading) {
-                        Text("HTTP proxy")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .offset(y: -18)
-                    }
-                    .padding(.top, 18)
+                labeledInput(
+                    title: "HTTP proxy",
+                    placeholder: "http://127.0.0.1:7890",
+                    text: $settings.httpProxy
+                )
 
-                TextField("http://127.0.0.1:7890", text: $settings.httpsProxy)
-                    .textFieldStyle(.roundedBorder)
-                    .disabled(settings.isLoading || settings.isSaving)
-                    .overlay(alignment: .topLeading) {
-                        Text("HTTPS proxy")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .offset(y: -18)
-                    }
-                    .padding(.top, 18)
+                labeledInput(
+                    title: "HTTPS proxy",
+                    placeholder: "http://127.0.0.1:7890",
+                    text: $settings.httpsProxy
+                )
 
                 Text("会写入 Git 全局配置 `http.proxy` 和 `https.proxy`。如果代理需要认证，可使用 `http://user:password@host:port` 格式。")
                     .font(.caption)
@@ -72,20 +61,23 @@ struct GitNetworkSettingView: View {
     private var certificateSection: some View {
         GitOKUI.AppSettingsSection(title: "证书") {
             VStack(alignment: .leading, spacing: 14) {
-                Toggle("启用 Git SSL 证书验证", isOn: $settings.sslVerify)
+                AppToggleRow(
+                    title: "启用 Git SSL 证书验证",
+                    systemImage: "lock.shield",
+                    isOn: $settings.sslVerify
+                )
                     .disabled(settings.isLoading || settings.isSaving)
 
                 HStack(spacing: 8) {
-                    TextField("/path/to/company-ca.pem", text: $settings.sslCAInfo)
-                        .textFieldStyle(.roundedBorder)
+                    AppInputField("/path/to/company-ca.pem", text: $settings.sslCAInfo)
                         .disabled(settings.isLoading || settings.isSaving)
 
-                    Button("选择") {
+                    AppButton("选择", systemImage: "folder", style: .secondary, size: .small) {
                         chooseCertificateFile()
                     }
                     .disabled(settings.isLoading || settings.isSaving)
 
-                    Button("清除") {
+                    AppButton("清除", systemImage: "xmark", style: .tonal, size: .small) {
                         settings.sslCAInfo = ""
                     }
                     .disabled(settings.isLoading || settings.isSaving || settings.sslCAInfo.isEmpty)
@@ -96,11 +88,9 @@ struct GitNetworkSettingView: View {
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Button("打开钥匙串访问") {
+                AppButton("打开钥匙串访问", systemImage: "key", style: .secondary, size: .small) {
                     openKeychainAccess()
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
             }
             .padding()
         }
@@ -109,22 +99,25 @@ struct GitNetworkSettingView: View {
     @ViewBuilder
     private var statusSection: some View {
         if settings.isLoading {
-            HStack(spacing: 8) {
-                ProgressView()
-                    .controlSize(.small)
-                Text("正在读取 Git 网络配置…")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+            AppLoadingOverlay(message: "正在读取 Git 网络配置…", size: .small)
+                .frame(maxWidth: .infinity, minHeight: 48)
         } else if let errorMessage = settings.errorMessage {
-            Text(errorMessage)
-                .font(.caption)
-                .foregroundColor(.red)
+            AppErrorBanner(message: errorMessage)
                 .textSelection(.enabled)
         } else if let message = settings.message {
             Text(message)
                 .font(.caption)
                 .foregroundColor(.secondary)
+        }
+    }
+
+    private func labeledInput(title: String, placeholder: String, text: Binding<String>) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+            AppInputField(placeholder, text: text)
+                .disabled(settings.isLoading || settings.isSaving)
         }
     }
 

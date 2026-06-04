@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import GitOKSupportKit
 import SwiftUI
 import Sparkle
@@ -54,7 +55,13 @@ struct UpdaterView: View, SuperLog {
     }
 
     var body: some View {
-        Button(isChecking ? "正在检查更新..." : "检查更新") {
+        AppButton(
+            isChecking ? "正在检查更新..." : "检查更新",
+            systemImage: "arrow.down.circle",
+            style: .secondary,
+            size: .small,
+            isLoading: isChecking
+        ) {
             isChecking = true
             updater.checkForUpdates()
 

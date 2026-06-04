@@ -52,8 +52,8 @@ public struct SubmoduleStatusTile: View {
     @ViewBuilder
     private var content: some View {
         if isLoading {
-            ProgressView()
-                .controlSize(.small)
+            AppLoadingOverlay(size: .small)
+                .frame(width: 24, height: 20)
         } else if submodules.isEmpty {
             Text(SubmodulePluginLocalization.string("Submodule"))
                 .foregroundStyle(.secondary)
@@ -195,7 +195,6 @@ public struct SubmoduleStatusTile: View {
                         updateSubmodules(paths: [submodule.path])
                     }
                 }
-                .disabled(projectURL == nil)
             }
         }
     }

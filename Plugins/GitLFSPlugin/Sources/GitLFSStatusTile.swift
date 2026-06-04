@@ -46,8 +46,8 @@ struct GitLFSStatusTile: View {
     @ViewBuilder
     private var content: some View {
         if isLoading {
-            ProgressView()
-                .controlSize(.small)
+            AppLoadingOverlay(size: .small)
+                .frame(width: 24, height: 20)
         } else if issueCount > 0 {
             Text("LFS \(issueCount)")
                 .font(.footnote.weight(.medium))
@@ -99,7 +99,12 @@ struct GitLFSStatusTile: View {
                     .foregroundColor(.secondary)
             }
             Spacer()
-            Button(GitLFSPluginLocalization.string("Initialize")) {
+            AppButton(
+                GitLFSPluginLocalization.string("Initialize"),
+                systemImage: "square.and.arrow.down",
+                style: .secondary,
+                size: .small
+            ) {
                 initializeLFS()
             }
         }
@@ -200,10 +205,14 @@ struct GitLFSStatusTile: View {
                 .font(.caption)
                 .foregroundColor(message.isError ? .red : .secondary)
             Spacer()
-            Button(GitLFSPluginLocalization.string("Clear")) {
+            AppButton(
+                GitLFSPluginLocalization.string("Clear"),
+                systemImage: "xmark",
+                style: .tonal,
+                size: .small
+            ) {
                 self.message = nil
             }
-            .font(.caption)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
