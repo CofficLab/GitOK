@@ -101,33 +101,33 @@ struct ImageSetDownloadButton: View {
     }
 
     @MainActor private func generateContentJson(folderPath: URL, tag: String) async {
-        let images: [[String: Any]] = [
-            ["filename": "\(tag)-1x.png", "idiom": "universal", "scale": "1x"],
-            ["filename": "\(tag)-2x.png", "idiom": "universal", "scale": "2x"],
-            ["filename": "\(tag)-3x.png", "idiom": "universal", "scale": "3x"],
-        ]
-
-        let jsonData = try! JSONSerialization.data(
-            withJSONObject: [
-                "images": images,
-                "info": [
-                    "author": "xcode",
-                    "version": 1,
-                ],
-            ],
-            options: [.prettyPrinted]
-        )
-
         do {
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                try jsonString.write(
-                    to: folderPath.appendingPathComponent("Contents.json"),
-                    atomically: true,
-                    encoding: .utf8
-                )
-            }
+            try await Self.writeContentJson(folderPath: folderPath, tag: tag)
         } catch {
             MagicMessageProvider.shared.error("生成 Contents.json 失败：\(error)")
         }
+    }
+
+    nonisolated private static func writeContentJson(folderPath: URL, tag: String) async throws {
+        try await Task.detached(priority: .userInitiated) {
+            let images: [[String: Any]] = [
+                ["filename": "\(tag)-1x.png", "idiom": "universal", "scale": "1x"],
+                ["filename": "\(tag)-2x.png", "idiom": "universal", "scale": "2x"],
+                ["filename": "\(tag)-3x.png", "idiom": "universal", "scale": "3x"],
+            ]
+
+            let jsonData = try JSONSerialization.data(
+                withJSONObject: [
+                    "images": images,
+                    "info": [
+                        "author": "xcode",
+                        "version": 1,
+                    ],
+                ],
+                options: [.prettyPrinted]
+            )
+
+            try jsonData.write(to: folderPath.appendingPathComponent("Contents.json"), options: .atomic)
+        }.value
     }
 }

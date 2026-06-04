@@ -216,42 +216,8 @@ struct XcodeDownloadButton: View {
     }
 
     @MainActor private func generateContentJson(folderPath: URL, tag: String, isLegacy: Bool) async {
-        let imageSet: [[String: Any]] = [
-            // macOS 1x
-            ["filename": "\(tag)-macOS-16x16.png", "idiom": "mac", "scale": "1x", "size": "16x16"],
-            ["filename": "\(tag)-macOS-32x32.png", "idiom": "mac", "scale": "1x", "size": "32x32"],
-            ["filename": "\(tag)-macOS-128x128.png", "idiom": "mac", "scale": "1x", "size": "128x128"],
-            ["filename": "\(tag)-macOS-256x256.png", "idiom": "mac", "scale": "1x", "size": "256x256"],
-            ["filename": "\(tag)-macOS-512x512.png", "idiom": "mac", "scale": "1x", "size": "512x512"],
-            // macOS @2x
-            ["filename": "\(tag)-macOS-16x16@2x.png", "idiom": "mac", "scale": "2x", "size": "16x16"],
-            ["filename": "\(tag)-macOS-32x32@2x.png", "idiom": "mac", "scale": "2x", "size": "32x32"],
-            ["filename": "\(tag)-macOS-128x128@2x.png", "idiom": "mac", "scale": "2x", "size": "128x128"],
-            ["filename": "\(tag)-macOS-256x256@2x.png", "idiom": "mac", "scale": "2x", "size": "256x256"],
-            ["filename": "\(tag)-macOS-512x512@2x.png", "idiom": "mac", "scale": "2x", "size": "512x512"],
-            // iOS
-            ["filename": "\(tag)-iOS-1024x1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"],
-        ]
-
-        let jsonData = try! JSONSerialization.data(
-            withJSONObject: [
-                "images": imageSet,
-                "info": [
-                    "author": "xcode",
-                    "version": 1,
-                ],
-            ],
-            options: [.prettyPrinted]
-        )
-
         do {
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                try jsonString.write(
-                    to: folderPath.appendingPathComponent("Contents.json"),
-                    atomically: true,
-                    encoding: .utf8
-                )
-            }
+            try await Self.writeContentJson(folderPath: folderPath, tag: tag)
         } catch {
             MagicMessageProvider.shared.error("生成 Contents.json 失败：\(error)")
         }
@@ -317,9 +283,46 @@ struct XcodeDownloadButton: View {
         """
 
         do {
-            try readmeContent.write(to: saveTo, atomically: true, encoding: .utf8)
+            try await Self.writeReadme(readmeContent, to: saveTo)
         } catch {
             MagicMessageProvider.shared.error("生成 README.md 失败：\(error)")
         }
+    }
+
+    nonisolated private static func writeContentJson(folderPath: URL, tag: String) async throws {
+        try await Task.detached(priority: .userInitiated) {
+            let imageSet: [[String: Any]] = [
+                ["filename": "\(tag)-macOS-16x16.png", "idiom": "mac", "scale": "1x", "size": "16x16"],
+                ["filename": "\(tag)-macOS-32x32.png", "idiom": "mac", "scale": "1x", "size": "32x32"],
+                ["filename": "\(tag)-macOS-128x128.png", "idiom": "mac", "scale": "1x", "size": "128x128"],
+                ["filename": "\(tag)-macOS-256x256.png", "idiom": "mac", "scale": "1x", "size": "256x256"],
+                ["filename": "\(tag)-macOS-512x512.png", "idiom": "mac", "scale": "1x", "size": "512x512"],
+                ["filename": "\(tag)-macOS-16x16@2x.png", "idiom": "mac", "scale": "2x", "size": "16x16"],
+                ["filename": "\(tag)-macOS-32x32@2x.png", "idiom": "mac", "scale": "2x", "size": "32x32"],
+                ["filename": "\(tag)-macOS-128x128@2x.png", "idiom": "mac", "scale": "2x", "size": "128x128"],
+                ["filename": "\(tag)-macOS-256x256@2x.png", "idiom": "mac", "scale": "2x", "size": "256x256"],
+                ["filename": "\(tag)-macOS-512x512@2x.png", "idiom": "mac", "scale": "2x", "size": "512x512"],
+                ["filename": "\(tag)-iOS-1024x1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"],
+            ]
+
+            let jsonData = try JSONSerialization.data(
+                withJSONObject: [
+                    "images": imageSet,
+                    "info": [
+                        "author": "xcode",
+                        "version": 1,
+                    ],
+                ],
+                options: [.prettyPrinted]
+            )
+
+            try jsonData.write(to: folderPath.appendingPathComponent("Contents.json"), options: .atomic)
+        }.value
+    }
+
+    nonisolated private static func writeReadme(_ content: String, to url: URL) async throws {
+        try await Task.detached(priority: .userInitiated) {
+            try content.write(to: url, atomically: true, encoding: .utf8)
+        }.value
     }
 }
