@@ -239,15 +239,22 @@ struct StashListView: View {
         guard let projectURL, isPerformingAction == false else { return }
 
         if skipCleanCheck == false, action.requiresCleanWorkingTree {
-            do {
-                if try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty == false {
-                    pendingDirtyAction = action
-                    return
+            Task(priority: .userInitiated) {
+                do {
+                    let hasChanges = try await Task.detached(priority: .userInitiated) {
+                        try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty == false
+                    }.value
+
+                    if hasChanges {
+                        pendingDirtyAction = action
+                    } else {
+                        performStashAction(action, skipCleanCheck: true)
+                    }
+                } catch {
+                    errorMessage = error.localizedDescription
                 }
-            } catch {
-                errorMessage = error.localizedDescription
-                return
             }
+            return
         }
 
         switch action {
