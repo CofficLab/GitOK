@@ -11,6 +11,7 @@ let package = Package(
     dependencies: [
         .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
         .target(
@@ -18,6 +19,7 @@ let package = Package(
             dependencies: [
                 "GitCoreKit",
                 "GitOKCoreKit",
+                "GitOKUI",
             ],
             path: "Sources",
             resources: [.process("Localizable.xcstrings")]

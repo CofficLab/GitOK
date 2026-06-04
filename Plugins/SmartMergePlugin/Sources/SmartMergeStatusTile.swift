@@ -1,6 +1,7 @@
 import AppKit
 import GitCoreKit
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 public struct SmartMergeStatusTile: View {
@@ -58,11 +59,16 @@ public struct SmartMergeForm: View {
                 }
             }
 
-            Button(SmartMergePluginLocalization.string("Merge")) {
+            AppButton(
+                SmartMergePluginLocalization.string("Merge"),
+                systemImage: "arrow.trianglehead.merge",
+                style: .primary,
+                fillsWidth: true,
+                isLoading: isWorking
+            ) {
                 merge()
             }
             .disabled(sourceBranch == nil || targetBranch == nil || sourceBranch == targetBranch || isWorking)
-            .frame(maxWidth: .infinity)
         }
         .onAppear(perform: loadBranches)
     }

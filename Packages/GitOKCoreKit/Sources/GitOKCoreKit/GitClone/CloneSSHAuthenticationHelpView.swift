@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import GitOKUI
 import SwiftUI
 
 public struct CloneSSHAuthenticationHelpView: View {
@@ -73,23 +74,35 @@ public struct CloneSSHAuthenticationHelpView: View {
                 }
             }
 
-            HStack {
-                Button(GitAuthenticationLocalization.string("Open .ssh Folder")) {
+            HStack(spacing: 8) {
+                AppButton(
+                    GitAuthenticationLocalization.string("Open .ssh Folder"),
+                    systemImage: "folder",
+                    style: .secondary,
+                    size: .small
+                ) {
                     openSSHDirectory()
                 }
-                .buttonStyle(.bordered)
 
                 Spacer()
 
-                Button(GitAuthenticationLocalization.string("Cancel")) {
+                AppButton(
+                    GitAuthenticationLocalization.string("Cancel"),
+                    style: .secondary,
+                    size: .small
+                ) {
                     dismiss()
                 }
 
-                Button(GitAuthenticationLocalization.string("Retry")) {
+                AppButton(
+                    GitAuthenticationLocalization.string("Retry"),
+                    systemImage: "arrow.clockwise",
+                    style: .primary,
+                    size: .small
+                ) {
                     dismiss()
                     onRetry()
                 }
-                .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
             }
         }
@@ -125,10 +138,14 @@ public struct CloneSSHAuthenticationHelpView: View {
 
                 Spacer()
 
-                Button(GitAuthenticationLocalization.string("Copy")) {
+                AppButton(
+                    GitAuthenticationLocalization.string("Copy"),
+                    systemImage: "doc.on.doc",
+                    style: .secondary,
+                    size: .small
+                ) {
                     copy(command)
                 }
-                .controlSize(.small)
             }
             .padding(8)
             .background(Color.secondary.opacity(0.08))
