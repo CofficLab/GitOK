@@ -467,54 +467,64 @@ private extension FileListHostView {
     }
 
     func performFileOperation(_ projectCommand: FileListRules.ProjectFileOperationCommand<Project>) {
-        Task { @MainActor in
-            await performFileOperation(command: projectCommand)
-        }
-    }
+        let commandTransfer = UnsafeTransfer(value: projectCommand.command)
+        let projectTransfer = UnsafeTransfer(value: projectCommand.project)
+        let addFilesTransfer = UnsafeTransfer(value: addFiles)
+        let unstageFilesTransfer = UnsafeTransfer(value: unstageFiles)
+        let discardFileChangesTransfer = UnsafeTransfer(value: discardFileChanges)
+        let discardAllChangesTransfer = UnsafeTransfer(value: discardAllChanges)
+        let eventHandlerTransfer = UnsafeTransfer(value: eventHandler)
 
-    func performFileOperation(command projectCommand: FileListRules.ProjectFileOperationCommand<Project>) async {
-        let command = projectCommand.command
-        nonisolated(unsafe) let project = projectCommand.project
+        Task.detached(priority: .userInitiated) {
+            let command = commandTransfer.value
+            let project = projectTransfer.value
 
-        do {
-            let successState: FileListRules.OperationSuccessState?
-            switch command.kind {
-            case .stage:
-                guard command.request.canPerform else { return }
-                try await addFiles(project, command.request.paths)
-                successState = command.request.paths.count == 1 && command.request.primaryPath != nil
-                    ? FileListRules.stageFileSuccessState(path: command.request.primaryPath ?? "")
-                    : FileListRules.stageSelectedFilesSuccessState(paths: command.request.paths)
-            case .unstage:
-                guard command.request.canPerform else { return }
-                try await unstageFiles(project, command.request.paths)
-                successState = command.request.paths.count == 1 && command.request.primaryPath != nil
-                    ? FileListRules.unstageFileSuccessState(path: command.request.primaryPath ?? "")
-                    : FileListRules.unstageSelectedFilesSuccessState(paths: command.request.paths)
-            case .discardFile:
-                guard let path = command.request.primaryPath else { return }
-                try await discardFileChanges(project, path)
-                successState = FileListRules.discardFileChangesSuccessState(path: path)
-            case .discardAll:
-                try await discardAllChanges(project)
-                successState = FileListRules.discardAllChangesSuccessState()
-            case .discardSelected:
-                guard command.request.canPerform else { return }
-                for path in command.request.paths {
-                    try await discardFileChanges(project, path)
+            do {
+                let successState: FileListRules.OperationSuccessState?
+                switch command.kind {
+                case .stage:
+                    guard command.request.canPerform else { return }
+                    try await addFilesTransfer.value(project, command.request.paths)
+                    successState = command.request.paths.count == 1 && command.request.primaryPath != nil
+                        ? FileListRules.stageFileSuccessState(path: command.request.primaryPath ?? "")
+                        : FileListRules.stageSelectedFilesSuccessState(paths: command.request.paths)
+                case .unstage:
+                    guard command.request.canPerform else { return }
+                    try await unstageFilesTransfer.value(project, command.request.paths)
+                    successState = command.request.paths.count == 1 && command.request.primaryPath != nil
+                        ? FileListRules.unstageFileSuccessState(path: command.request.primaryPath ?? "")
+                        : FileListRules.unstageSelectedFilesSuccessState(paths: command.request.paths)
+                case .discardFile:
+                    guard let path = command.request.primaryPath else { return }
+                    try await discardFileChangesTransfer.value(project, path)
+                    successState = FileListRules.discardFileChangesSuccessState(path: path)
+                case .discardAll:
+                    try await discardAllChangesTransfer.value(project)
+                    successState = FileListRules.discardAllChangesSuccessState()
+                case .discardSelected:
+                    guard command.request.canPerform else { return }
+                    for path in command.request.paths {
+                        try await discardFileChangesTransfer.value(project, path)
+                    }
+                    successState = FileListRules.discardSelectedChangesSuccessState(paths: command.request.paths)
                 }
-                successState = FileListRules.discardSelectedChangesSuccessState(paths: command.request.paths)
-            }
 
-            guard let successState else { return }
-            applyOperationSuccessState(successState)
-            await refresh(reason: successState.refreshReason)
-        } catch {
-            eventHandler(.log(.fileOperationFailure(
-                failureLogMessage: command.failureLogMessage,
-                error: error
-            )))
-            eventHandler(.showError(error))
+                guard let successState else { return }
+                await MainActor.run {
+                    applyOperationSuccessState(successState)
+                    Task {
+                        await refresh(reason: successState.refreshReason)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    eventHandlerTransfer.value(.log(.fileOperationFailure(
+                        failureLogMessage: command.failureLogMessage,
+                        error: error
+                    )))
+                    eventHandlerTransfer.value(.showError(error))
+                }
+            }
         }
     }
 }
