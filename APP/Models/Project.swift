@@ -1003,7 +1003,7 @@ extension Project {
 
     /// 获取 HEAD 提交的哈希值
     func headCommitHash() -> String? {
-        guard let commits = try? gitCLI.commitList(),
+        guard let commits = try? gitCLI.commitList(page: 0, size: 1),
               let first = commits.first else {
             return nil
         }

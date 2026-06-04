@@ -164,6 +164,20 @@ private extension CommitListHostView {
         CommitListPaginationRules.performCommitSelection(item, select: selectItem)
     }
 
+    func loadItemsInBackground(project: Project, page: Int, limit: Int) async throws -> [Item] {
+        nonisolated(unsafe) let project = project
+        nonisolated(unsafe) let loadItems = loadItems
+        return try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    continuation.resume(returning: try loadItems(project, page, limit))
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     func loadMoreItems() {
         let requestState = CommitListPaginationRules.loadMoreRequestState(
             isLoading: loading,
@@ -189,7 +203,7 @@ private extension CommitListHostView {
 
         Task(priority: .userInitiated) { @MainActor in
             do {
-                let loadedItems = try loadItems(project, page, limit)
+                let loadedItems = try await loadItemsInBackground(project: project, page: page, limit: limit)
                 let uniqueItems = loadedItems.filter { existingIDs.contains(itemID($0)) == false }
                 let appendState = CommitListPaginationRules.appendResultState(
                     existingIDs: existingItems.map(itemID),
@@ -243,8 +257,12 @@ private extension CommitListHostView {
             do {
                 try Task.checkCancellation()
                 logEvent(.refresh(reason: request.request.reason))
-                let refreshedItems = try loadItems(project, CommitListPaginationRules.initialPage, limit)
-                let unpushedIDs = try await loadUnpushedItems(project).map(unpushedID)
+                let refreshedItems = try await loadItemsInBackground(
+                    project: project,
+                    page: CommitListPaginationRules.initialPage,
+                    limit: limit
+                )
+                let unpushedIDs = try await loadUnpushedItems(request.project).map(unpushedID)
                 try Task.checkCancellation()
                 CommitListPaginationRules.performRefreshSuccessResultState(
                     CommitListPaginationRules.refreshSuccessResultState(unpushedIDs: unpushedIDs),
@@ -315,7 +333,7 @@ private extension CommitListHostView {
 
         Task(priority: .userInitiated) { @MainActor in
             do {
-                let loadedItems = try loadItems(project, page, limit)
+                let loadedItems = try await loadItemsInBackground(project: project, page: page, limit: limit)
                 let uniqueItems = loadedItems.filter { existingIDs.contains(itemID($0)) == false }
                 let appendState = CommitListPaginationRules.appendResultState(
                     existingIDs: existingItems.map(itemID),

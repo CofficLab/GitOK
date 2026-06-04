@@ -40,8 +40,13 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
     @State private var showTextPreview = false
     @State private var textPreviewTitle = ""
     @State private var textPreviewContent = ""
+    @State private var beforeImage: NSImage?
+    @State private var afterImage: NSImage?
     @State private var imageDiffMode: GitDetailImageDiffMode = .twoUp
     @State private var imageBlendAmount = GitDetailDiffDisplayRules.defaultImageBlendAmount
+    @State private var imageLoadGeneration = 0
+    @State private var diffLoadGeneration = 0
+    @State private var textPreviewGeneration = 0
 
     public init(
         project: Project?,
@@ -107,8 +112,8 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
                     changeType: changeType(file),
                     diffText: unifiedDiffText,
                     issueMessage: diffIssueMessage,
-                    beforeImage: loadImageBefore(file: file),
-                    afterImage: loadImageFromCommit(file: file),
+                    beforeImage: beforeImage,
+                    afterImage: afterImage,
                     imageDiffMode: $imageDiffMode,
                     imageBlendAmount: $imageBlendAmount,
                     onRefresh: refreshDiff,
@@ -128,12 +133,15 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
             }
         }
         .onChange(of: fileChangeToken) {
+            refreshImages()
             GitDetailDiffDisplayRules.performFileDidChange(performRefreshAction: performDiffRefreshAction)
         }
         .onChange(of: commitChangeToken) {
+            refreshImages()
             GitDetailDiffDisplayRules.performCommitDidChange(performRefreshAction: performDiffRefreshAction)
         }
         .onAppear {
+            refreshImages()
             GitDetailDiffDisplayRules.performFileDetailAppear(performRefreshAction: performDiffRefreshAction)
         }
         .sheet(isPresented: $showTextPreview) {
@@ -144,33 +152,51 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
 }
 
 private extension FileDetailHostView {
-    func loadImageFromCommit(file: File) -> NSImage? {
-        GitDetailImageFactory.image(from: GitDetailDiffDisplayRules.optionalProjectCurrentImageData(
-            project: project,
-            selectedCommit: selectedCommit,
-            commitHash: selectedCommitHash,
-            loadCommitData: { project, hash in
-                try loadCurrentCommitData(project, file, hash)
-            },
-            loadWorktreeData: { project in
-                try loadCurrentWorktreeData(project, file)
-            }
-        ))
-    }
+    func refreshImages() {
+        imageLoadGeneration += 1
+        let generation = imageLoadGeneration
 
-    func loadImageBefore(file: File) -> NSImage? {
-        GitDetailImageFactory.image(from: GitDetailDiffDisplayRules.optionalProjectPreviousImageData(
-            project: project,
-            selectedCommit: selectedCommit,
-            commitHash: selectedCommitHash,
-            loadCommits: loadCommits,
-            loadedCommitHash: loadedCommitHash,
-            loadedParentHashes: loadedParentHashes,
-            loadHeadHash: loadHeadHash,
-            loadCommitData: { project, hash in
-                try loadPreviousCommitData(project, file, hash)
+        guard let file, isImage(file) else {
+            beforeImage = nil
+            afterImage = nil
+            return
+        }
+
+        let project = project
+        let selectedCommit = selectedCommit
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let nextAfterImage = GitDetailImageFactory.image(from: GitDetailDiffDisplayRules.optionalProjectCurrentImageData(
+                project: project,
+                selectedCommit: selectedCommit,
+                commitHash: selectedCommitHash,
+                loadCommitData: { project, hash in
+                    try loadCurrentCommitData(project, file, hash)
+                },
+                loadWorktreeData: { project in
+                    try loadCurrentWorktreeData(project, file)
+                }
+            ))
+
+            let nextBeforeImage = GitDetailImageFactory.image(from: GitDetailDiffDisplayRules.optionalProjectPreviousImageData(
+                project: project,
+                selectedCommit: selectedCommit,
+                commitHash: selectedCommitHash,
+                loadCommits: loadCommits,
+                loadedCommitHash: loadedCommitHash,
+                loadedParentHashes: loadedParentHashes,
+                loadHeadHash: loadHeadHash,
+                loadCommitData: { project, hash in
+                    try loadPreviousCommitData(project, file, hash)
+                }
+            ))
+
+            DispatchQueue.main.async {
+                guard generation == imageLoadGeneration else { return }
+                beforeImage = nextBeforeImage
+                afterImage = nextAfterImage
             }
-        ))
+        }
     }
 
     func refreshDiff() {
@@ -184,12 +210,23 @@ private extension FileDetailHostView {
     }
 
     func presentTextPreview(kind: GitDetailDiffDisplayRules.TextVersion, for file: File) {
-        Task(priority: .userInitiated) { @MainActor in
+        textPreviewGeneration += 1
+        let generation = textPreviewGeneration
+
+        let project = project
+        let selectedCommit = selectedCommit
+        let path = filePath(file)
+        let missingError = missingProjectError()
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            var previewState: GitDetailDiffDisplayRules.TextPreviewState?
+            var failureState: GitDetailDiffDisplayRules.TextPreviewFailureState?
+
             GitDetailDiffDisplayRules.performProjectTextPreviewLoad(
                 version: kind,
-                path: filePath(file),
+                path: path,
                 project: project,
-                missingError: missingProjectError(),
+                missingError: missingError,
                 selectedCommit: selectedCommit,
                 commitHash: selectedCommitHash,
                 loadCommitContent: { project, hash in
@@ -198,15 +235,27 @@ private extension FileDetailHostView {
                 loadWorktreeContent: { project in
                     try loadWorktreeContent(project, file)
                 },
-                applyPreview: { previewState in
+                applyPreview: { state in
+                    previewState = state
+                },
+                applyFailure: { state in
+                    failureState = state
+                }
+            )
+
+            DispatchQueue.main.async {
+                guard generation == textPreviewGeneration else { return }
+
+                if let previewState {
                     GitDetailDiffDisplayRules.performTextPreviewState(
                         previewState,
                         setTitle: { textPreviewTitle = $0 },
                         setContent: { textPreviewContent = $0 },
                         setPresented: { showTextPreview = $0 }
                     )
-                },
-                applyFailure: { failureState in
+                }
+
+                if let failureState {
                     handleEvent(.textPreviewFailure(issueMessage: failureState.issueMessage))
                     GitDetailDiffDisplayRules.performTextPreviewFailureState(
                         failureState,
@@ -214,7 +263,7 @@ private extension FileDetailHostView {
                         showError: { handleEvent(.error($0)) }
                     )
                 }
-            )
+            }
         }
     }
 
@@ -229,20 +278,41 @@ private extension FileDetailHostView {
     func updateDiffView(reason: String) {
         handleEvent(.update(reason: reason))
 
-        GitDetailDiffDisplayRules.performRequiredDiffTextRefresh(
-            file: file,
-            project: project,
-            selectedCommit: selectedCommit,
-            isBinary: isBinary,
-            existingPatch: existingPatch,
-            commitHash: selectedCommitHash,
-            loadCommitDiff: loadCommitDiff,
-            loadWorktreeDiff: loadWorktreeDiff,
-            applyDiffTextState: applyDiffTextState,
-            handleFailure: { errorDescription in
-                handleEvent(.diffFailure(errorDescription: errorDescription))
-                handleEvent(.error(errorDescription))
+        diffLoadGeneration += 1
+        let generation = diffLoadGeneration
+        let file = file
+        let project = project
+        let selectedCommit = selectedCommit
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            var nextState: GitDetailDiffDisplayRules.DiffTextState?
+            var failureDescription: String?
+
+            GitDetailDiffDisplayRules.performRequiredDiffTextRefresh(
+                file: file,
+                project: project,
+                selectedCommit: selectedCommit,
+                isBinary: isBinary,
+                existingPatch: existingPatch,
+                commitHash: selectedCommitHash,
+                loadCommitDiff: loadCommitDiff,
+                loadWorktreeDiff: loadWorktreeDiff,
+                applyDiffTextState: { nextState = $0 },
+                handleFailure: { failureDescription = $0 }
+            )
+
+            DispatchQueue.main.async {
+                guard generation == diffLoadGeneration else { return }
+
+                if let failureDescription {
+                    handleEvent(.diffFailure(errorDescription: failureDescription))
+                    handleEvent(.error(failureDescription))
+                }
+
+                if let nextState {
+                    applyDiffTextState(nextState)
+                }
             }
-        )
+        }
     }
 }
