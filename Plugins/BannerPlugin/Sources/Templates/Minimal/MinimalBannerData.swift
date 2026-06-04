@@ -71,34 +71,11 @@ struct MinimalBannerData: Codable {
     ///   - url: 新图片的URL
     ///   - projectURL: 项目URL
     /// - Returns: 更新后的数据
-    mutating func changeImage(_ url: URL, projectURL: URL) throws -> Self {
+    mutating func changeImageAsync(_ url: URL, projectURL: URL) async throws -> Self {
         // 保存图片并获取新的imageId
-        let newImageId = try saveImage(url, projectURL: projectURL)
+        let newImageId = try await BannerImageFileOperations.saveImportedImage(url, projectURL: projectURL)
         self.imageId = newImageId
 
         return self
-    }
-
-    /// 保存图片到项目目录
-    /// - Parameters:
-    ///   - url: 图片URL
-    ///   - projectURL: 项目URL
-    /// - Returns: 保存后的图片相对路径
-    private func saveImage(_ url: URL, projectURL: URL) throws -> String {
-        let ext = url.pathExtension
-        let bannerRootURL = projectURL.appendingPathComponent(BannerRepo.bannerStoragePath)
-        let imagesFolder = bannerRootURL.appendingPathComponent("images")
-        let storeURL = imagesFolder.appendingPathComponent("\(Date.nowCompact).\(ext)")
-
-        do {
-            // 确保图片目录存在
-            try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true, attributes: nil)
-
-            // 复制图片到新位置
-            try FileManager.default.copyItem(at: url, to: storeURL)
-            return storeURL.relativePath.replacingOccurrences(of: projectURL.path, with: "")
-        } catch {
-            throw error
-        }
     }
 }
