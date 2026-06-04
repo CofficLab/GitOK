@@ -1,5 +1,6 @@
 import GitOKCoreKit
 import GitCoreKit
+import GitOKUI
 import SwiftUI
 
 struct BranchRowView: View {
@@ -58,8 +59,10 @@ struct BranchRowView: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
-        .cornerRadius(4)
+        .gitOKUISurface(
+            style: isSelected ? .listRowSelected : .custom(.clear),
+            cornerRadius: 4
+        )
         .alert(BranchPluginLocalization.string("Confirm Delete Branch"), isPresented: $showDeleteAlert) {
             Button(BranchPluginLocalization.string("Cancel"), role: .cancel) {}
             Button(BranchPluginLocalization.string("Delete"), role: .destructive, action: onDelete)
