@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import GitOKSupportKit
 import OSLog
 import SwiftUI
@@ -133,7 +134,7 @@ struct SettingView: View, SuperLog {
                 Image(nsImage: appIcon)
                     .resizable()
                     .frame(width: 64, height: 64)
-                    .cornerRadius(14)
+                    .gitOKUIClipRounded(14)
                     .shadow(radius: 3)
             }
 

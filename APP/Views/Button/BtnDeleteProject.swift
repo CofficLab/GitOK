@@ -1,4 +1,5 @@
 
+import GitOKUI
 import GitOKSupportKit
 import OSLog
 import SwiftUI
@@ -17,7 +18,7 @@ struct BtnDeleteProject: View, SuperLog {
     var project: Project
 
     var body: some View {
-        Image.trash.inButtonWithAction {
+        AppIconButton(systemImage: "trash", tint: .red, size: .regular) {
             deleteItem(project)
         }
     }
