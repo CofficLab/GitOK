@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 struct LicenseViewer: View {
@@ -94,7 +95,7 @@ struct LicenseViewer: View {
             .keyboardShortcut(.cancelAction)
         }
         .padding()
-        .background(Color(NSColor.controlBackgroundColor))
+        .gitOKUISurface(style: .toolbar, cornerRadius: 0)
     }
 
     private var loadingView: some View {

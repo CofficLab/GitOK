@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 struct GitIgnoreViewer: View {
@@ -81,7 +82,7 @@ struct GitIgnoreViewer: View {
             }
         }
         .padding()
-        .background(Color(NSColor.controlBackgroundColor))
+        .gitOKUISurface(style: .toolbar, cornerRadius: 0)
         .overlay(
             Rectangle()
                 .frame(height: 1)
