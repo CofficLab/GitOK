@@ -90,14 +90,7 @@ struct StashRow: View {
     }
 
     private func actionButton(icon: String, tint: Color = .secondary, help: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(tint)
-                .frame(width: 26, height: 26)
-                .background(.quaternary.opacity(0.30), in: RoundedRectangle(cornerRadius: 6))
-        }
-        .buttonStyle(.plain)
+        AppIconButton(systemImage: icon, tint: tint, action: action)
         .help(help)
     }
 }

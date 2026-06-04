@@ -9,7 +9,7 @@ public struct AppLoadingOverlay: View {
         case large
     }
 
-    let message: LocalizedStringKey?
+    let message: Text?
     let size: Size
 
     public init(size: Size = .medium) {
@@ -18,7 +18,12 @@ public struct AppLoadingOverlay: View {
     }
 
     public init(message: LocalizedStringKey, size: Size = .medium) {
-        self.message = message
+        self.message = Text(message)
+        self.size = size
+    }
+
+    public init(message: String, size: Size = .medium) {
+        self.message = Text(message)
         self.size = size
     }
 
@@ -28,7 +33,7 @@ public struct AppLoadingOverlay: View {
                 .scaleEffect(scaleEffect)
 
             if let message {
-                Text(message)
+                message
                     .font(AppUI.Typography.caption1)
                     .foregroundColor(theme.textSecondary)
             }

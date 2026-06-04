@@ -5,9 +5,9 @@ public struct AppEmptyState: View {
     @GitOKTheme private var theme
 
     let icon: String
-    let title: LocalizedStringKey
-    let description: LocalizedStringKey?
-    let actionTitle: LocalizedStringKey?
+    let title: Text
+    let description: Text?
+    let actionTitle: Text?
     let action: (() -> Void)?
 
     @State private var isHovering = false
@@ -18,8 +18,20 @@ public struct AppEmptyState: View {
         description: LocalizedStringKey? = nil
     ) {
         self.icon = icon
-        self.title = title
-        self.description = description
+        self.title = Text(title)
+        self.description = description.map { Text($0) }
+        self.actionTitle = nil
+        self.action = nil
+    }
+
+    public init(
+        icon: String,
+        title: String,
+        description: String? = nil
+    ) {
+        self.icon = icon
+        self.title = Text(title)
+        self.description = description.map { Text($0) }
         self.actionTitle = nil
         self.action = nil
     }
@@ -32,9 +44,23 @@ public struct AppEmptyState: View {
         action: @escaping () -> Void
     ) {
         self.icon = icon
-        self.title = title
-        self.description = description
-        self.actionTitle = actionTitle
+        self.title = Text(title)
+        self.description = description.map { Text($0) }
+        self.actionTitle = Text(actionTitle)
+        self.action = action
+    }
+
+    public init(
+        icon: String,
+        title: String,
+        description: String? = nil,
+        actionTitle: String,
+        action: @escaping () -> Void
+    ) {
+        self.icon = icon
+        self.title = Text(title)
+        self.description = description.map { Text($0) }
+        self.actionTitle = Text(actionTitle)
         self.action = action
     }
 
@@ -51,19 +77,19 @@ public struct AppEmptyState: View {
                     }
                 }
 
-            Text(title)
+            title
                 .font(AppUI.Typography.bodyEmphasized)
                 .foregroundColor(theme.textSecondary)
 
             if let description {
-                Text(description)
+                description
                     .font(AppUI.Typography.caption1)
                     .foregroundColor(theme.textTertiary)
                     .multilineTextAlignment(.center)
             }
 
             if let actionTitle, let action {
-                AppButton(actionTitle, style: .secondary, size: .small, action: action)
+                AppButton(title: actionTitle, style: .secondary, size: .small, action: action)
                     .padding(.top, AppUI.Spacing.xs)
             }
         }

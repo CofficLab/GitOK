@@ -3,9 +3,9 @@ import SwiftUI
 public struct AppToggleRow: View {
     @GitOKTheme private var theme
 
-    let title: LocalizedStringKey
+    let title: Text
     let systemImage: String?
-    let description: LocalizedStringKey?
+    let description: Text?
     @Binding var isOn: Bool
 
     public init(
@@ -14,9 +14,21 @@ public struct AppToggleRow: View {
         description: LocalizedStringKey? = nil,
         isOn: Binding<Bool>
     ) {
-        self.title = title
+        self.title = Text(title)
         self.systemImage = systemImage
-        self.description = description
+        self.description = description.map { Text($0) }
+        self._isOn = isOn
+    }
+
+    public init(
+        title: String,
+        systemImage: String? = nil,
+        description: String? = nil,
+        isOn: Binding<Bool>
+    ) {
+        self.title = Text(title)
+        self.systemImage = systemImage
+        self.description = description.map { Text($0) }
         self._isOn = isOn
     }
 
@@ -30,12 +42,12 @@ public struct AppToggleRow: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(title)
+                title
                     .font(AppUI.Typography.body)
                     .foregroundColor(theme.textPrimary)
 
                 if let description {
-                    Text(description)
+                    description
                         .font(AppUI.Typography.caption1)
                         .foregroundColor(theme.textSecondary)
                 }

@@ -17,16 +17,16 @@ struct CurrentProjectSectionView: View {
                 Spacer()
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            AppSettingsRow(verticalPadding: 12) {
+                VStack(alignment: .leading, spacing: 8) {
                 projectInfo
                 Divider()
                 toggleSection
                 Text(AutoPushPluginLocalization.string("Enable auto-push will automatically push to remote repository every 30 seconds."))
                     .font(.caption)
                     .foregroundColor(.secondary)
+                }
             }
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .controlBackgroundColor)))
         }
     }
 
@@ -57,24 +57,20 @@ struct CurrentProjectSectionView: View {
                 }
 
                 if !project.isGitRepository {
-                    Label(AutoPushPluginLocalization.string("Not a Git repository"), systemImage: "exclamationmark.triangle")
-                        .font(.caption)
-                        .foregroundColor(.red)
+                    AppTag(AutoPushPluginLocalization.string("Not a Git repository"), systemImage: "exclamationmark.triangle")
                 } else if !hasRemoteBranch {
-                    Label(AutoPushPluginLocalization.string("No remote repository"), systemImage: "cloud")
-                        .font(.caption)
-                        .foregroundColor(.orange)
+                    AppTag(AutoPushPluginLocalization.string("No remote repository"), systemImage: "cloud")
                 }
             }
         }
     }
 
     private var toggleSection: some View {
-        Toggle(isOn: $isEnabled) {
-            Text(AutoPushPluginLocalization.string("Enable auto-push"))
-                .fontWeight(.medium)
-        }
-        .toggleStyle(.switch)
+        AppToggleRow(
+            title: AutoPushPluginLocalization.string("Enable auto-push"),
+            systemImage: "arrow.up.circle",
+            isOn: $isEnabled
+        )
         .disabled(!project.isGitRepository || project.branchName == nil)
         .onChange(of: isEnabled) { _, newValue in
             onToggle(newValue)

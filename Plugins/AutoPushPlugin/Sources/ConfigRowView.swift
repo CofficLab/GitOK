@@ -10,33 +10,15 @@ struct ConfigRowView: View {
     let onToggle: (ProjectBranchAutoPushConfig) -> Void
     let onDelete: (ProjectBranchAutoPushConfig) -> Void
 
-    @State private var isHovering = false
-
     var body: some View {
-        HStack(spacing: 12) {
-            // 状态指示器
-            statusIndicator
-
-            // 项目信息
-            projectInfo
-
-            Spacer()
-
-            // 最后推送时间
-            lastPushedTime
-
-            // 切换开关
-            toggleButton
-
-            // 删除按钮
-            deleteButton
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(backgroundStyle)
-        .onHover { hovering in
-            withAnimation {
-                isHovering = hovering
+        AppSettingsRow(isHighlighted: isCurrentProject, verticalPadding: 8) {
+            HStack(spacing: 12) {
+                statusIndicator
+                projectInfo
+                Spacer()
+                lastPushedTime
+                toggleButton
+                deleteButton
             }
         }
     }
@@ -64,9 +46,7 @@ struct ConfigRowView: View {
                     .foregroundColor(.purple)
 
                 if isCurrentProject {
-                    Label("Current", systemImage: "star.fill")
-                        .font(.caption)
-                        .foregroundColor(.orange)
+                    AppTag("Current", systemImage: "star.fill", style: .accent)
                 }
             }
 
@@ -98,17 +78,9 @@ struct ConfigRowView: View {
     }
 
     private var deleteButton: some View {
-        Button(action: { onDelete(config) }) {
-            Image(systemName: "trash")
-                .foregroundColor(.red)
+        AppIconButton(systemImage: "trash", tint: .red) {
+            onDelete(config)
         }
-        .buttonStyle(.borderless)
-        .opacity(isHovering ? 1 : 0)
-    }
-
-    private var backgroundStyle: some View {
-        RoundedRectangle(cornerRadius: 6)
-            .fill(isHovering ? Color(NSColor.controlBackgroundColor) : Color.clear)
     }
 
     private func formatDate(_ date: Date) -> String {

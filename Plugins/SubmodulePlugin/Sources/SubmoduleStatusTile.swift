@@ -92,10 +92,7 @@ public struct SubmoduleStatusTile: View {
             }
 
             if let errorMessage {
-                Text(errorMessage)
-                    .font(.caption)
-                    .foregroundStyle(.red)
-                    .textSelection(.enabled)
+                AppErrorBanner(message: errorMessage)
             }
 
             ScrollView {
@@ -131,12 +128,12 @@ public struct SubmoduleStatusTile: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Button(SubmodulePluginLocalization.string("Initialize All")) {
+            AppButton(SubmodulePluginLocalization.string("Initialize All"), systemImage: "square.and.arrow.down", style: .secondary, size: .small) {
                 initializeSubmodules()
             }
             .disabled(submodules.isEmpty)
 
-            Button(SubmodulePluginLocalization.string("Update All")) {
+            AppButton(SubmodulePluginLocalization.string("Update All"), systemImage: "arrow.triangle.2.circlepath", style: .secondary, size: .small) {
                 updateSubmodules()
             }
             .disabled(submodules.isEmpty)
@@ -154,13 +151,16 @@ public struct SubmoduleStatusTile: View {
     }
 
     private var emptyState: some View {
-        Text(SubmodulePluginLocalization.string("No Git submodules configured in this repository."))
-            .font(.caption)
-            .foregroundStyle(.secondary)
+        AppEmptyState(
+            icon: "shippingbox",
+            title: SubmodulePluginLocalization.string("Submodule"),
+            description: SubmodulePluginLocalization.string("No Git submodules configured in this repository.")
+        )
+        .frame(minHeight: 160)
     }
 
     private func submoduleRow(_ submodule: GitRepositoryCLI.GitSubmodule) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        AppSettingsRow(verticalPadding: 8) {
             HStack(alignment: .top, spacing: 8) {
                 Image(systemName: SubmodulePresentation.statusIcon(for: submodule.status))
                     .foregroundStyle(statusColor(for: submodule.status))
@@ -179,11 +179,16 @@ public struct SubmoduleStatusTile: View {
 
                 Spacer()
 
-                Button(SubmodulePluginLocalization.string("Diff")) {
+                AppButton(SubmodulePluginLocalization.string("Diff"), systemImage: "doc.text.magnifyingglass", style: .tonal, size: .small) {
                     loadDiff(for: submodule.path)
                 }
 
-                Button(submodule.status == .uninitialized ? SubmodulePluginLocalization.string("Initialize") : SubmodulePluginLocalization.string("Update")) {
+                AppButton(
+                    submodule.status == .uninitialized ? SubmodulePluginLocalization.string("Initialize") : SubmodulePluginLocalization.string("Update"),
+                    systemImage: submodule.status == .uninitialized ? "square.and.arrow.down" : "arrow.triangle.2.circlepath",
+                    style: .secondary,
+                    size: .small
+                ) {
                     if submodule.status == .uninitialized {
                         initializeSubmodules(paths: [submodule.path])
                     } else {
@@ -193,7 +198,6 @@ public struct SubmoduleStatusTile: View {
                 .disabled(projectURL == nil)
             }
         }
-        .padding(.vertical, 4)
     }
 
     @ViewBuilder
@@ -205,15 +209,15 @@ public struct SubmoduleStatusTile: View {
                     .lineLimit(1)
                     .truncationMode(.middle)
                 Spacer()
-                Button(SubmodulePluginLocalization.string("Close")) {
+                AppButton(SubmodulePluginLocalization.string("Close"), systemImage: "xmark", style: .ghost, size: .small) {
                     diffPath = nil
                     diffText = nil
                 }
             }
 
             if isDiffLoading {
-                ProgressView()
-                    .controlSize(.small)
+                AppLoadingOverlay(message: SubmodulePluginLocalization.string("Loading..."), size: .small)
+                    .frame(height: 60)
             } else if let diffText, diffText.isEmpty == false {
                 Text(diffText)
                     .font(.system(.caption, design: .monospaced))

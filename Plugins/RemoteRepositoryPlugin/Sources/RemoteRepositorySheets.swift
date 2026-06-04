@@ -135,30 +135,17 @@ private struct RemoteForm: View {
             }
 
             if let errorMessage {
-                HStack {
-                    Image(systemName: "exclamationmark.triangle")
-                        .foregroundColor(.red)
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                    Spacer()
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color.red.opacity(0.1))
-                .cornerRadius(8)
+                AppErrorBanner(message: errorMessage)
             }
 
             Spacer()
 
             HStack {
-                Button(RemoteRepositoryPluginLocalization.string("Cancel"), action: onCancel)
-                    .buttonStyle(.bordered)
+                AppButton(RemoteRepositoryPluginLocalization.string("Cancel"), style: .secondary, action: onCancel)
 
                 Spacer()
 
-                Button(primaryTitle, action: onSubmit)
-                    .buttonStyle(.borderedProminent)
+                AppButton(primaryTitle, systemImage: "checkmark", style: .primary, action: onSubmit)
                     .disabled(isPrimaryDisabled)
             }
         }
@@ -172,8 +159,7 @@ private struct RemoteForm: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
 
-            TextField(placeholder, text: text)
-                .textFieldStyle(.roundedBorder)
+            AppInputField(placeholder, text: text)
         }
     }
 }

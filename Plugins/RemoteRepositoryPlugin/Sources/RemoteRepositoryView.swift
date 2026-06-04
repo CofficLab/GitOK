@@ -77,29 +77,16 @@ public struct RemoteRepositoryView: View {
         VStack(spacing: 20) {
             Group {
                 if isLoading {
-                    VStack {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                        Text(RemoteRepositoryPluginLocalization.string("Loading..."))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    AppLoadingOverlay(
+                        message: RemoteRepositoryPluginLocalization.string("Loading..."),
+                        size: .small
+                    )
                 } else if remotes.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "externaldrive.badge.wifi")
-                            .font(.system(size: 40))
-                            .foregroundColor(.secondary)
-
-                        Text(RemoteRepositoryPluginLocalization.string("No Remote Repositories"))
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-
-                        Text(RemoteRepositoryPluginLocalization.string("Click the button below to add your first remote repository"))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    AppEmptyState(
+                        icon: "externaldrive.badge.wifi",
+                        title: RemoteRepositoryPluginLocalization.string("No Remote Repositories"),
+                        description: RemoteRepositoryPluginLocalization.string("Click the button below to add your first remote repository")
+                    )
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 8) {
@@ -121,15 +108,29 @@ public struct RemoteRepositoryView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             if let errorMessage {
-                messageView(systemImage: "exclamationmark.triangle", color: .orange, message: errorMessage) {
+                AppErrorBanner(
+                    message: errorMessage,
+                    retryTitle: RemoteRepositoryPluginLocalization.string("Clear")
+                ) {
                     self.errorMessage = nil
                 }
             }
 
             if let postRemoteActionMessage {
                 VStack(alignment: .leading, spacing: 8) {
-                    messageView(systemImage: "arrow.up.circle", color: .blue, message: postRemoteActionMessage) {
-                        self.postRemoteActionMessage = nil
+                    AppSettingsRow {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "arrow.up.circle")
+                                .foregroundStyle(.blue)
+                            Text(postRemoteActionMessage)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .textSelection(.enabled)
+                            Spacer()
+                            AppButton(RemoteRepositoryPluginLocalization.string("Clear"), style: .ghost, size: .small) {
+                                self.postRemoteActionMessage = nil
+                            }
+                        }
                     }
 
                     if canPublishCurrentBranch {
@@ -143,10 +144,13 @@ public struct RemoteRepositoryView: View {
 
     private var footer: some View {
         HStack {
-            Button(RemoteRepositoryPluginLocalization.string("Add Remote Repository")) {
+            AppButton(
+                RemoteRepositoryPluginLocalization.string("Add Remote Repository"),
+                systemImage: "plus",
+                style: .primary
+            ) {
                 showAddRemoteSheet = true
             }
-            .buttonStyle(.borderedProminent)
 
             if canPublishCurrentBranch {
                 publishButton(prominent: false)
@@ -154,57 +158,26 @@ public struct RemoteRepositoryView: View {
 
             Spacer()
 
-            Button(RemoteRepositoryPluginLocalization.string("Close")) {
+            AppButton(RemoteRepositoryPluginLocalization.string("Close"), style: .secondary) {
                 dismiss()
             }
-            .buttonStyle(.bordered)
             .keyboardShortcut(.escape)
         }
         .padding()
         .background(Color(.controlBackgroundColor))
     }
 
-    private func messageView(systemImage: String, color: Color, message: String, onClear: @escaping () -> Void) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(systemName: systemImage)
-                .foregroundColor(color)
-            Text(message)
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .textSelection(.enabled)
-            Spacer()
-            Button(RemoteRepositoryPluginLocalization.string("Clear"), action: onClear)
-                .font(.caption)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(color.opacity(0.08))
-        .cornerRadius(8)
-    }
-
     @ViewBuilder
     private func publishButton(prominent: Bool) -> some View {
-        if prominent {
-            publishButtonContent
-                .buttonStyle(.borderedProminent)
-        } else {
-            publishButtonContent
-                .buttonStyle(.bordered)
-        }
-    }
-
-    private var publishButtonContent: some View {
-        Button {
+        AppButton(
+            RemoteRepositoryPluginLocalization.string("Publish Current Branch"),
+            systemImage: "arrow.up.circle",
+            style: prominent ? .primary : .secondary,
+            size: .small,
+            isLoading: isPublishingCurrentBranch
+        ) {
             publishCurrentBranch()
-        } label: {
-            if isPublishingCurrentBranch {
-                ProgressView()
-                    .controlSize(.small)
-            } else {
-                Text(RemoteRepositoryPluginLocalization.string("Publish Current Branch"))
-            }
         }
-        .controlSize(.small)
         .disabled(isPublishingCurrentBranch)
     }
 }

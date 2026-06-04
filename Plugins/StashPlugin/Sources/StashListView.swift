@@ -43,9 +43,11 @@ struct StashListView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {
                     if isLoading {
-                        ProgressView(StashPluginLocalization.string("Loading stash list…"))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 36)
+                        AppLoadingOverlay(
+                            message: StashPluginLocalization.string("Loading stash list…"),
+                            size: .small
+                        )
+                        .frame(minHeight: 120)
                     } else if stashes.isEmpty {
                         emptyState
                     } else {
@@ -113,10 +115,13 @@ struct StashListView: View {
 
             Spacer()
 
-            Button {
+            AppButton(
+                StashPluginLocalization.string("New Stash"),
+                systemImage: "plus",
+                style: .secondary,
+                size: .small
+            ) {
                 showStashForm = true
-            } label: {
-                Label(StashPluginLocalization.string("New Stash"), systemImage: "plus")
             }
             .disabled(projectURL == nil || isPerformingAction)
         }
@@ -134,19 +139,12 @@ struct StashListView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "archivebox")
-                .font(.system(size: 38))
-                .foregroundStyle(.tertiary)
-            Text(StashPluginLocalization.string("No Stashes Yet"))
-                .font(.subheadline.weight(.semibold))
-            Text(StashPluginLocalization.string("Click \"New Stash\" above to temporarily store your current changes."))
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 42)
+        AppEmptyState(
+            icon: "archivebox",
+            title: StashPluginLocalization.string("No Stashes Yet"),
+            description: StashPluginLocalization.string("Click \"New Stash\" above to temporarily store your current changes.")
+        )
+        .frame(minHeight: 180)
     }
 
     private var stashFormView: some View {
@@ -154,17 +152,16 @@ struct StashListView: View {
             Text(StashPluginLocalization.string("Create Stash"))
                 .font(.headline)
 
-            TextField(StashPluginLocalization.string("Stash description (optional)"), text: $stashMessage)
-                .textFieldStyle(.roundedBorder)
+            AppInputField(StashPluginLocalization.string("Stash description (optional)"), text: $stashMessage)
                 .frame(width: 320)
 
             HStack {
-                Button(StashPluginLocalization.string("Cancel")) {
+                AppButton(StashPluginLocalization.string("Cancel"), style: .secondary) {
                     stashMessage = ""
                     showStashForm = false
                 }
 
-                Button(StashPluginLocalization.string("Create")) {
+                AppButton(StashPluginLocalization.string("Create"), systemImage: "archivebox", style: .primary) {
                     createStash()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -180,18 +177,17 @@ struct StashListView: View {
             Text(StashPluginLocalization.string("Create Branch from Stash"))
                 .font(.headline)
 
-            TextField(StashPluginLocalization.string("New branch name"), text: $branchName)
-                .textFieldStyle(.roundedBorder)
+            AppInputField(StashPluginLocalization.string("New branch name"), text: $branchName)
                 .frame(width: 340)
 
             HStack {
-                Button(StashPluginLocalization.string("Cancel")) {
+                AppButton(StashPluginLocalization.string("Cancel"), style: .secondary) {
                     branchName = ""
                     branchSourceStashIndex = nil
                     showBranchForm = false
                 }
 
-                Button(StashPluginLocalization.string("Create")) {
+                AppButton(StashPluginLocalization.string("Create"), systemImage: "arrow.triangle.branch", style: .primary) {
                     if let branchSourceStashIndex {
                         performStashAction(.branch(index: branchSourceStashIndex, name: branchName))
                     }
