@@ -147,6 +147,23 @@ fileprivate enum CommitListBackgroundBuilder {
         let value: Value
     }
 
+    static func loadItems<Project, Item>(
+        project: Project,
+        page: Int,
+        limit: Int,
+        loadItems: @escaping (Project, Int, Int) async throws -> [Item]
+    ) async throws -> [Item] {
+        try await loadItems(project, page, limit)
+    }
+
+    static func loadUnpushedIDs<Project, UnpushedItem>(
+        project: Project,
+        loadUnpushedItems: @escaping (Project) async throws -> [UnpushedItem],
+        id: @escaping (UnpushedItem) -> String
+    ) async throws -> [String] {
+        try await loadUnpushedItems(project).map(id)
+    }
+
     static func runOffMainThread<Result: Sendable>(
         _ operation: @escaping () -> Result
     ) async -> Result {
@@ -380,12 +397,6 @@ private extension CommitListHostView {
         CommitListPaginationRules.performCommitSelection(item, select: selectItem)
     }
 
-    func loadItemsInBackground(project: Project, page: Int, limit: Int) async throws -> [Item] {
-        nonisolated(unsafe) let project = project
-        nonisolated(unsafe) let loadItems = loadItems
-        return try await loadItems(project, page, limit)
-    }
-
     func loadMoreItems() {
         let requestState = CommitListPaginationRules.loadMoreRequestState(
             isLoading: loading,
@@ -402,29 +413,42 @@ private extension CommitListHostView {
     }
 
     func performLoadMoreItems(_ request: CommitListPaginationRules.ProjectLoadMoreRequest<Project>) {
-        // Extract project value before Task to avoid Sendable crossing
-        nonisolated(unsafe) let project = request.project
+        let projectTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: request.project)
+        let loadItemsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: loadItems)
+        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
+        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
         let page = currentPage
         let limit = pageSize
         let existingItems = items
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                let loadedItems = try await loadItemsInBackground(project: project, page: page, limit: limit)
-                let applicationResult = await appendApplicationResultInBackground(
+                let loadedItems = try await CommitListBackgroundBuilder.loadItems(
+                    project: projectTransfer.value,
+                    page: page,
+                    limit: limit,
+                    loadItems: loadItemsTransfer.value
+                )
+                let applicationResult = await CommitListBackgroundBuilder.appendResult(
                     existingItems: existingItems,
                     loadedItems: loadedItems,
-                    currentPage: page
+                    currentPage: page,
+                    id: itemIDTransfer.value,
+                    parentIDs: itemParentIDsTransfer.value
                 )
 
-                applyAppendApplicationResult(applicationResult)
+                await MainActor.run {
+                    applyAppendApplicationResult(applicationResult)
+                }
             } catch {
-                logEvent(.loadMoreFailure(error))
-                applyPageState(CommitListPaginationRules.PageState(
-                    isLoading: false,
-                    currentPage: page,
-                    hasMoreCommits: hasMoreItems
-                ))
+                await MainActor.run {
+                    logEvent(.loadMoreFailure(error))
+                    applyPageState(CommitListPaginationRules.PageState(
+                        isLoading: false,
+                        currentPage: page,
+                        hasMoreCommits: hasMoreItems
+                    ))
+                }
             }
         }
     }
@@ -438,8 +462,13 @@ private extension CommitListHostView {
     }
 
     func performRefresh(_ request: CommitListPaginationRules.ProjectRefreshRequest<Project>) {
-        // Extract project value before Task to avoid Sendable crossing
-        nonisolated(unsafe) let project = request.project
+        let projectTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: request.project)
+        let loadItemsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: loadItems)
+        let loadUnpushedItemsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: loadUnpushedItems)
+        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
+        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
+        let unpushedIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: unpushedID)
+        let reason = request.request.reason
 
         CommitListPaginationRules.performRefreshStart(
             cancelPreviousRefreshes: {
@@ -449,31 +478,44 @@ private extension CommitListHostView {
         )
 
         let limit = pageSize
-        currentRefreshTask = Task(priority: .userInitiated) { @MainActor in
+        currentRefreshTask = Task.detached(priority: .userInitiated) {
             do {
                 try Task.checkCancellation()
-                logEvent(.refresh(reason: request.request.reason))
-                let refreshedItems = try await loadItemsInBackground(
-                    project: project,
+                await MainActor.run {
+                    logEvent(.refresh(reason: reason))
+                }
+                let refreshedItems = try await CommitListBackgroundBuilder.loadItems(
+                    project: projectTransfer.value,
                     page: CommitListPaginationRules.initialPage,
-                    limit: limit
+                    limit: limit,
+                    loadItems: loadItemsTransfer.value
                 )
-                let unpushedIDs = try await loadUnpushedItems(request.project).map(unpushedID)
+                let unpushedIDs = try await CommitListBackgroundBuilder.loadUnpushedIDs(
+                    project: projectTransfer.value,
+                    loadUnpushedItems: loadUnpushedItemsTransfer.value,
+                    id: unpushedIDTransfer.value
+                )
                 try Task.checkCancellation()
-                let applicationResult = await refreshApplicationResultInBackground(
+                let applicationResult = await CommitListBackgroundBuilder.refreshResult(
                     items: refreshedItems,
-                    unpushedIDs: unpushedIDs
+                    unpushedIDs: unpushedIDs,
+                    id: itemIDTransfer.value,
+                    parentIDs: itemParentIDsTransfer.value
                 )
-                applyRefreshApplicationResult(applicationResult)
+                await MainActor.run {
+                    applyRefreshApplicationResult(applicationResult)
+                }
             } catch is CancellationError {
                 return
             } catch {
-                CommitListPaginationRules.performRefreshFailureResultState(
-                    CommitListPaginationRules.refreshFailureResultState(),
-                    setItems: { items = $0 },
-                    rebuildGraph: rebuildGraphRows,
-                    applyPageState: applyPageState
-                )
+                await MainActor.run {
+                    CommitListPaginationRules.performRefreshFailureResultState(
+                        CommitListPaginationRules.refreshFailureResultState(),
+                        setItems: { items = $0 },
+                        rebuildGraph: rebuildGraphRows,
+                        applyPageState: applyPageState
+                    )
+                }
             }
         }
     }
@@ -517,85 +559,46 @@ private extension CommitListHostView {
         maxAttempts: Int,
         request: CommitListPaginationRules.ProjectLoadMoreRequest<Project>
     ) {
-        // Extract project value before Task to avoid Sendable crossing
-        nonisolated(unsafe) let project = request.project
+        let projectTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: request.project)
+        let loadItemsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: loadItems)
+        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
+        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
         let page = currentPage
         let limit = pageSize
         let existingItems = items
         let hasMoreItemsForRestore = hasMoreItems
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                let loadedItems = try await loadItemsInBackground(project: project, page: page, limit: limit)
-                let applicationResult = await restoreAppendApplicationResultInBackground(
+                let loadedItems = try await CommitListBackgroundBuilder.loadItems(
+                    project: projectTransfer.value,
+                    page: page,
+                    limit: limit,
+                    loadItems: loadItemsTransfer.value
+                )
+                let applicationResult = await CommitListBackgroundBuilder.restoreAppendResult(
                     existingItems: existingItems,
                     loadedItems: loadedItems,
                     currentPage: page,
                     targetID: targetID,
                     hasMoreItemsForRestore: hasMoreItemsForRestore,
-                    remainingAttempts: maxAttempts - 1
+                    remainingAttempts: maxAttempts - 1,
+                    id: itemIDTransfer.value,
+                    parentIDs: itemParentIDsTransfer.value
                 )
-                applyRestoreAppendApplicationResult(applicationResult, targetID: targetID)
+                await MainActor.run {
+                    applyRestoreAppendApplicationResult(applicationResult, targetID: targetID)
+                }
             } catch {
-                applyPageState(CommitListPaginationRules.PageState(
-                    isLoading: false,
-                    currentPage: page,
-                    hasMoreCommits: hasMoreItems
-                ))
+                await MainActor.run {
+                    applyPageState(CommitListPaginationRules.PageState(
+                        isLoading: false,
+                        currentPage: page,
+                        hasMoreCommits: hasMoreItems
+                    ))
+                }
             }
         }
-    }
-
-    func appendApplicationResultInBackground(
-        existingItems: [Item],
-        loadedItems: [Item],
-        currentPage: Int
-    ) async -> CommitListBackgroundBuilder.AppendApplicationResult<Item> {
-        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
-        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
-        return await CommitListBackgroundBuilder.appendResult(
-            existingItems: existingItems,
-            loadedItems: loadedItems,
-            currentPage: currentPage,
-            id: itemIDTransfer.value,
-            parentIDs: itemParentIDsTransfer.value
-        )
-    }
-
-    func refreshApplicationResultInBackground(
-        items: [Item],
-        unpushedIDs: [String]
-    ) async -> CommitListBackgroundBuilder.RefreshApplicationResult<Item> {
-        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
-        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
-        return await CommitListBackgroundBuilder.refreshResult(
-            items: items,
-            unpushedIDs: unpushedIDs,
-            id: itemIDTransfer.value,
-            parentIDs: itemParentIDsTransfer.value
-        )
-    }
-
-    func restoreAppendApplicationResultInBackground(
-        existingItems: [Item],
-        loadedItems: [Item],
-        currentPage: Int,
-        targetID: String,
-        hasMoreItemsForRestore: Bool,
-        remainingAttempts: Int
-    ) async -> CommitListBackgroundBuilder.RestoreAppendApplicationResult<Item> {
-        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
-        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
-        return await CommitListBackgroundBuilder.restoreAppendResult(
-            existingItems: existingItems,
-            loadedItems: loadedItems,
-            currentPage: currentPage,
-            targetID: targetID,
-            hasMoreItemsForRestore: hasMoreItemsForRestore,
-            remainingAttempts: remainingAttempts,
-            id: itemIDTransfer.value,
-            parentIDs: itemParentIDsTransfer.value
-        )
     }
 
     func applyAppendApplicationResult(_ result: CommitListBackgroundBuilder.AppendApplicationResult<Item>) {
