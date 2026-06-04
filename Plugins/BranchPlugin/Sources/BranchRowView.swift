@@ -36,13 +36,7 @@ struct BranchRowView: View {
                     }
                     .help(BranchPluginLocalization.string("Switch Branch"))
                 } else {
-                    Text(BranchPluginLocalization.string("Current"))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.accentColor.opacity(0.1))
-                        .cornerRadius(4)
+                    AppTag(BranchPluginLocalization.string("Current"), style: .accent)
                 }
 
                 Menu {
