@@ -215,12 +215,21 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     private func handleOpenProject(path: String) {
         guard !path.isEmpty else { return }
 
-        // 检查路径是否存在
-        guard FileManager.default.fileExists(atPath: path) else {
-            os_log(.error, "\(Self.t) Open project path does not exist: \(path)")
-            return
-        }
+        Task {
+            let exists = await Task.detached(priority: .utility) {
+                FileManager.default.fileExists(atPath: path)
+            }.value
 
+            guard exists else {
+                os_log(.error, "\(Self.t) Open project path does not exist: \(path)")
+                return
+            }
+
+            openExistingOrNewProject(path: path)
+        }
+    }
+
+    private func openExistingOrNewProject(path: String) {
         // 在已有项目中查找
         if let existingProject = git.projects.first(where: { $0.path == path }) {
             os_log("\(Self.t)📂 Selecting existing project: \(path)")
