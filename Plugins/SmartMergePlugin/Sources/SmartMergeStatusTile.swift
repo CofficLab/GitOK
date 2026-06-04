@@ -74,16 +74,20 @@ public struct SmartMergeForm: View {
     }
 
     private func loadBranches() {
-        do {
-            let loadedBranches = try GitRepositoryCLI(repositoryURL: projectURL)
-                .branches()
-                .filter { $0.isRemote == false }
+        Task(priority: .userInitiated) {
+            do {
+                let loadedBranches = try await Task.detached(priority: .userInitiated) {
+                    try GitRepositoryCLI(repositoryURL: projectURL)
+                        .branches()
+                        .filter { $0.isRemote == false }
+                }.value
 
-            branches = loadedBranches
-            sourceBranch = loadedBranches.first(where: { $0.isCurrent == false }) ?? loadedBranches.first
-            targetBranch = loadedBranches.first(where: \.isCurrent) ?? loadedBranches.first
-        } catch {
-            showError(error, title: SmartMergePluginLocalization.string("Failed to load branches"))
+                branches = loadedBranches
+                sourceBranch = loadedBranches.first(where: { $0.isCurrent == false }) ?? loadedBranches.first
+                targetBranch = loadedBranches.first(where: \.isCurrent) ?? loadedBranches.first
+            } catch {
+                showError(error, title: SmartMergePluginLocalization.string("Failed to load branches"))
+            }
         }
     }
 

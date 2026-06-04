@@ -179,10 +179,6 @@ public struct RemoteRepositoryView: View {
 }
 
 private extension RemoteRepositoryView {
-    var repository: GitRepositoryCLI {
-        GitRepositoryCLI(repositoryURL: projectURL)
-    }
-
     var canPublishCurrentBranch: Bool {
         remotes.isEmpty == false && aheadBehind.hasUpstream == false
     }
@@ -195,66 +191,93 @@ private extension RemoteRepositoryView {
         isLoading = true
         errorMessage = nil
 
-        do {
-            remotes = try repository.remotes()
-            loadRemoteTrackingState()
-        } catch {
-            errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to load remote repositories: %@"), error.localizedDescription)
-        }
+        Task(priority: .userInitiated) { @MainActor in
+            do {
+                let state = try await loadRemoteState()
+                remotes = state.remotes
+                aheadBehind = state.aheadBehind
+                currentUpstreamRemoteName = state.currentUpstreamRemoteName
+            } catch {
+                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to load remote repositories: %@"), error.localizedDescription)
+            }
 
-        isLoading = false
+            isLoading = false
+        }
     }
 
     func addRemote(name: String, url: String) {
         isLoading = true
         errorMessage = nil
 
-        do {
-            try repository.addRemote(name: name, url: url)
-            loadRemotes()
-            postRemoteActionMessage = firstPushMessage(for: name)
-        } catch {
-            errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to add remote repository: %@"), error.localizedDescription)
-        }
+        Task(priority: .userInitiated) { @MainActor in
+            do {
+                try await runRemoteAction { repository in
+                    try repository.addRemote(name: name, url: url)
+                }
+                let state = try await loadRemoteState()
+                remotes = state.remotes
+                aheadBehind = state.aheadBehind
+                currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                postRemoteActionMessage = firstPushMessage(for: name)
+            } catch {
+                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to add remote repository: %@"), error.localizedDescription)
+            }
 
-        isLoading = false
+            isLoading = false
+        }
     }
 
     func updateRemote(originalName: String, newName: String, newURL: String) {
         isLoading = true
         errorMessage = nil
 
-        do {
-            try repository.updateRemote(originalName: originalName, newName: newName, newURL: newURL)
-            loadRemotes()
-            postRemoteActionMessage = String(format: RemoteRepositoryPluginLocalization.string("Updated remote repository %@. If the branch has no upstream yet, publish the branch or do the first push."), newName)
-        } catch {
-            errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to update remote repository: %@"), error.localizedDescription)
-        }
+        Task(priority: .userInitiated) { @MainActor in
+            do {
+                try await runRemoteAction { repository in
+                    try repository.updateRemote(originalName: originalName, newName: newName, newURL: newURL)
+                }
+                let state = try await loadRemoteState()
+                remotes = state.remotes
+                aheadBehind = state.aheadBehind
+                currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                postRemoteActionMessage = String(format: RemoteRepositoryPluginLocalization.string("Updated remote repository %@. If the branch has no upstream yet, publish the branch or do the first push."), newName)
+            } catch {
+                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to update remote repository: %@"), error.localizedDescription)
+            }
 
-        isLoading = false
+            isLoading = false
+        }
     }
 
     func deleteRemote(_ remote: GitRemoteSummary) {
         isLoading = true
         errorMessage = nil
+        let remoteName = remote.name
+        let remoteID = remote.id
+        let wasUpstreamRemote = remoteName == currentUpstreamRemoteName
 
-        do {
-            let wasUpstreamRemote = remote.name == currentUpstreamRemoteName
-            try repository.removeRemote(name: remote.name)
-            loadRemotes()
-            postRemoteActionMessage = wasUpstreamRemote
-                ? String(format: RemoteRepositoryPluginLocalization.string("Deleted the current upstream remote %@. Re-set upstream before push/pull."), remote.name)
-                : String(format: RemoteRepositoryPluginLocalization.string("Deleted remote repository %@."), remote.name)
+        Task(priority: .userInitiated) { @MainActor in
+            do {
+                try await runRemoteAction { repository in
+                    try repository.removeRemote(name: remoteName)
+                }
+                let state = try await loadRemoteState()
+                remotes = state.remotes
+                aheadBehind = state.aheadBehind
+                currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                postRemoteActionMessage = wasUpstreamRemote
+                    ? String(format: RemoteRepositoryPluginLocalization.string("Deleted the current upstream remote %@. Re-set upstream before push/pull."), remoteName)
+                    : String(format: RemoteRepositoryPluginLocalization.string("Deleted remote repository %@."), remoteName)
 
-            if selectedRemote?.id == remote.id {
-                selectedRemote = nil
+                if selectedRemote?.id == remoteID {
+                    selectedRemote = nil
+                }
+            } catch {
+                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to delete remote repository: %@"), error.localizedDescription)
             }
-        } catch {
-            errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to delete remote repository: %@"), error.localizedDescription)
-        }
 
-        isLoading = false
+            isLoading = false
+        }
     }
 
     func publishCurrentBranch() {
@@ -294,13 +317,34 @@ private extension RemoteRepositoryView {
     }
 
     func loadRemoteTrackingState() {
-        do {
-            aheadBehind = try repository.aheadBehind()
-            currentUpstreamRemoteName = try repository.currentUpstreamRemoteName()
-        } catch {
-            aheadBehind = .noUpstream
-            currentUpstreamRemoteName = nil
+        Task(priority: .userInitiated) { @MainActor in
+            do {
+                let state = try await loadRemoteState()
+                aheadBehind = state.aheadBehind
+                currentUpstreamRemoteName = state.currentUpstreamRemoteName
+            } catch {
+                aheadBehind = .noUpstream
+                currentUpstreamRemoteName = nil
+            }
         }
+    }
+
+    func loadRemoteState() async throws -> (remotes: [GitRemoteSummary], aheadBehind: GitAheadBehind, currentUpstreamRemoteName: String?) {
+        let projectURL = projectURL
+        return try await Task.detached(priority: .userInitiated) {
+            let repository = GitRepositoryCLI(repositoryURL: projectURL)
+            let remotes = try repository.remotes()
+            let aheadBehind = (try? repository.aheadBehind()) ?? .noUpstream
+            let currentUpstreamRemoteName = try? repository.currentUpstreamRemoteName()
+            return (remotes, aheadBehind, currentUpstreamRemoteName)
+        }.value
+    }
+
+    func runRemoteAction(_ action: @escaping @Sendable (GitRepositoryCLI) throws -> Void) async throws {
+        let projectURL = projectURL
+        try await Task.detached(priority: .userInitiated) {
+            try action(GitRepositoryCLI(repositoryURL: projectURL))
+        }.value
     }
 
     func firstPushMessage(for remoteName: String) -> String {
