@@ -50,34 +50,38 @@ final class ProjectImagesRepo: IconSourceProtocol, SuperLog, @unchecked Sendable
     /// 向项目图标库添加一张图片
     func addImage(data: Data, filename: String) async -> Bool {
         guard let imagesURL = currentProjectImagesURL() else { return false }
-        var isDir: ObjCBool = false
-        if !FileManager.default.fileExists(atPath: imagesURL.path, isDirectory: &isDir) {
-            do { try FileManager.default.createDirectory(at: imagesURL, withIntermediateDirectories: true) } catch { return false }
-        }
-        guard IconFileRules.isSupportedImageFile(filename) else { return false }
-        let target = imagesURL.appendingPathComponent(filename)
-        do {
-            try data.write(to: target, options: .atomic)
-            print("[ProjectImagesRepo] addImage saved: \(target.path)")
-            return true
-        } catch {
-            print("[ProjectImagesRepo] addImage error: \(error)")
-            return false
-        }
+        return await Task.detached(priority: .userInitiated) {
+            var isDir: ObjCBool = false
+            if !FileManager.default.fileExists(atPath: imagesURL.path, isDirectory: &isDir) {
+                do { try FileManager.default.createDirectory(at: imagesURL, withIntermediateDirectories: true) } catch { return false }
+            }
+            guard IconFileRules.isSupportedImageFile(filename) else { return false }
+            let target = imagesURL.appendingPathComponent(filename)
+            do {
+                try data.write(to: target, options: .atomic)
+                print("[ProjectImagesRepo] addImage saved: \(target.path)")
+                return true
+            } catch {
+                print("[ProjectImagesRepo] addImage error: \(error)")
+                return false
+            }
+        }.value
     }
 
     /// 从项目图标库删除一张图片
     func deleteImage(filename: String) async -> Bool {
         guard let imagesURL = currentProjectImagesURL() else { return false }
         let fileURL = imagesURL.appendingPathComponent(filename)
-        do {
-            try FileManager.default.removeItem(at: fileURL)
-            print("[ProjectImagesRepo] deleteImage removed: \(fileURL.path)")
-            return true
-        } catch {
-            print("[ProjectImagesRepo] deleteImage error: \(error)")
-            return false
-        }
+        return await Task.detached(priority: .userInitiated) {
+            do {
+                try FileManager.default.removeItem(at: fileURL)
+                print("[ProjectImagesRepo] deleteImage removed: \(fileURL.path)")
+                return true
+            } catch {
+                print("[ProjectImagesRepo] deleteImage error: \(error)")
+                return false
+            }
+        }.value
     }
 
     // MARK: - IconSourceProtocol
