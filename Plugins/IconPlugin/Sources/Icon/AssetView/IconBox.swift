@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 
 /**
  * 图标盒子视图
@@ -40,7 +41,7 @@ struct IconBox: View {
                         selectedSourceIdentifier: currentSourceIdentifier,
                         selectedCategory: iconProvider.selectedCategory
                     )
-                    .background(Color(.controlBackgroundColor))
+                    .gitOKUISurface(style: .panel, cornerRadius: 0)
 
                     // 分隔线
                     Divider()

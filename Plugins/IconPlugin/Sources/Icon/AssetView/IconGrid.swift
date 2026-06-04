@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 
 /**
  * 图标网格视图
@@ -63,7 +64,7 @@ struct IconGrid: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(Color(.controlBackgroundColor))
+                    .gitOKUISurface(style: .toolbar, cornerRadius: 0)
                     .overlay(
                         Rectangle()
                             .frame(height: 1)
@@ -100,7 +101,7 @@ struct IconGrid: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(Color(.controlBackgroundColor))
+                    .gitOKUISurface(style: .toolbar, cornerRadius: 0)
                     .overlay(
                         Rectangle()
                             .frame(height: 1)
