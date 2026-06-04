@@ -51,23 +51,12 @@ struct BannerFile: SuperLog {
     /// 保存图片到项目目录
     /// - Parameter url: 图片URL
     /// - Returns: 保存后的图片相对路径
-    func saveImage(_ url: URL) throws -> String {
-        let ext = url.pathExtension
-        let bannerRootURL = projectURL.appendingPathComponent(BannerRepo.bannerStoragePath)
-        let imagesFolder = bannerRootURL.appendingPathComponent("images")
-        let storeURL = imagesFolder.appendingPathComponent("\(Date.nowCompact).\(ext)")
-
+    func saveImageAsync(_ url: URL) async throws -> String {
         os_log(.info, "\(Self.emoji) 保存图片")
         os_log(.info, "  ➡️ 源: \(url.relativeString)")
-        os_log(.info, "  ➡️ 目标: \(storeURL.relativeString)")
 
         do {
-            // 确保图片目录存在
-            try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true, attributes: nil)
-
-            // 复制图片到新位置
-            try FileManager.default.copyItem(at: url, to: storeURL)
-            return BannerStorageRules.relativeProjectPath(for: storeURL, projectPath: projectURL.path)
+            return try await BannerImageFileOperations.saveImportedImage(url, projectURL: projectURL)
         } catch {
             os_log(.error, "\(Self.emoji) 保存图片失败: \(error.localizedDescription)")
             throw error
