@@ -46,7 +46,8 @@ struct StatusBar: View, SuperLog {
                     projectPath: projectVM.project?.path,
                     projectTitle: projectVM.project?.title,
                     branchName: data.branch?.name,
-                    isGitRepository: projectVM.project?.isGitRepo ?? false
+                    isGitRepository: projectVM.project?.isGitRepo ?? false,
+                    onThemeSelection: { themeProvider.selectTheme($0) }
                 ).enumerated()), id: \.offset) { _, view in
                     view
                 }

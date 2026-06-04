@@ -155,7 +155,8 @@ class PluginVM: ObservableObject {
         projectPath: String? = nil,
         projectTitle: String? = nil,
         branchName: String? = nil,
-        isGitRepository: Bool = false
+        isGitRepository: Bool = false,
+        onThemeSelection: @escaping GitOKThemeSelectionHandler = { _ in }
     ) -> [AnyView] {
         guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
@@ -163,7 +164,8 @@ class PluginVM: ObservableObject {
             projectPath: projectPath,
             projectTitle: projectTitle,
             branchName: branchName,
-            isGitRepository: isGitRepository
+            isGitRepository: isGitRepository,
+            onThemeSelection: onThemeSelection
         )
         return runtime.enabledStatusBarTrailingViews(context: context)
     }
