@@ -1,5 +1,3 @@
-import AppKit
-import GitOKDesignKit
 import GitOKUI
 import SwiftUI
 
@@ -11,14 +9,9 @@ public struct OpenTerminalButton: View {
     }
 
     public var body: some View {
-        AppStatusBarTile(action: {
+        AppStatusBarTile(systemImage: "terminal", action: {
             TerminalLauncher.open(projectURL)
-        }) {
-            Image.terminalRealApp
-                .resizable()
-                .frame(height: 22)
-                .frame(width: 22)
-        }
+        })
         .help(OpenTerminalPluginLocalization.string("Open in Terminal"))
     }
 }
