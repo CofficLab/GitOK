@@ -67,6 +67,16 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     @State private var filterTask: Task<Void, Never>?
     @State private var selectedBatchFilePaths: Set<String> = []
     @State private var showDiscardSelectedAlert = false
+    @State private var cachedPresentationState = FileListRules.presentationState(
+        allPaths: [],
+        filterText: "",
+        isHistoryMode: false,
+        stagedPaths: [],
+        unstagedPaths: [],
+        untrackedPaths: [],
+        selectedBatchPaths: []
+    )
+    @State private var cachedFilteredFiles: [FileItem] = []
 
     public init(
         project: Project?,
@@ -131,7 +141,7 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     }
 
     public var body: some View {
-        let presentationState = filePresentationState
+        let presentationState = cachedPresentationState
 
         FileListRootView(
             filterText: $filterText,
@@ -243,19 +253,11 @@ private extension FileListHostView {
     }
 
     var filteredFiles: [FileItem] {
-        FileListRules.items(from: filesByPath, matching: filePresentationState.visiblePaths)
+        cachedFilteredFiles
     }
 
     var filePresentationState: FileListRules.PresentationState {
-        FileListRules.presentationState(
-            allPaths: filePaths,
-            filterText: appliedFilterText,
-            isHistoryMode: isHistoryMode,
-            stagedPaths: stagedFilePaths,
-            unstagedPaths: unstagedFilePaths,
-            untrackedPaths: untrackedFilePaths,
-            selectedBatchPaths: selectedBatchFilePaths
-        )
+        cachedPresentationState
     }
 
     var isHistoryMode: Bool {
@@ -272,6 +274,20 @@ private extension FileListHostView {
 
     var batchActionState: FileListRules.BatchActionState {
         filePresentationState.batchActionState
+    }
+
+    func rebuildPresentationCache() {
+        let nextPresentationState = FileListRules.presentationState(
+            allPaths: filePaths,
+            filterText: appliedFilterText,
+            isHistoryMode: isHistoryMode,
+            stagedPaths: stagedFilePaths,
+            unstagedPaths: unstagedFilePaths,
+            untrackedPaths: untrackedFilePaths,
+            selectedBatchPaths: selectedBatchFilePaths
+        )
+        cachedPresentationState = nextPresentationState
+        cachedFilteredFiles = FileListRules.items(from: filesByPath, matching: nextPresentationState.visiblePaths)
     }
 
     var discardFileAlertMessage: String {
@@ -297,6 +313,7 @@ private extension FileListHostView {
             showMessage: { eventHandler(.showInfoMessage($0)) },
             setSelectedBatchPaths: { selectedBatchFilePaths = $0 }
         )
+        rebuildPresentationCache()
     }
 
     func toggleBatchSelection(for file: FileItem) {
@@ -305,6 +322,7 @@ private extension FileListHostView {
             path: filePath(file),
             setSelectedBatchPaths: { selectedBatchFilePaths = $0 }
         )
+        rebuildPresentationCache()
     }
 
     func selectFilteredFiles() {
@@ -313,12 +331,14 @@ private extension FileListHostView {
             presentationState: filePresentationState,
             setSelectedBatchPaths: { selectedBatchFilePaths = $0 }
         )
+        rebuildPresentationCache()
     }
 
     func clearBatchSelection() {
         FileListRules.performBatchSelectionClear {
             selectedBatchFilePaths = $0
         }
+        rebuildPresentationCache()
     }
 
     func selectFile(_ file: FileItem?) {
@@ -573,6 +593,7 @@ private extension FileListHostView {
                             syncSelection: self.syncSelection,
                             applyLifecycleState: self.applyRefreshLifecycleState
                         )
+                        rebuildPresentationCache()
                     },
                     skip: {
                         eventHandler(.log(.commitChangedDuringRefresh))
@@ -638,6 +659,7 @@ private extension FileListHostView {
 
         if nextFilterText.isEmpty {
             appliedFilterText = ""
+            rebuildPresentationCache()
             return
         }
 
@@ -645,6 +667,7 @@ private extension FileListHostView {
             try? await Task.sleep(nanoseconds: 200_000_000)
             guard Task.isCancelled == false else { return }
             appliedFilterText = nextFilterText
+            rebuildPresentationCache()
         }
     }
 
