@@ -47,29 +47,25 @@ struct IconBgs: View {
         包含背景预览和选择状态的按钮视图
      */
     func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {
-        Button(action: {
-            if var icon = self.i.currentData {
-                do {
-                    try icon.updateBackgroundId(gradient.rawValue)
-                } catch {
-                    os_log(.error, "❌ 更新图标背景失败: \(error.localizedDescription)")
-                    alert_error(error.localizedDescription)
-                }
-            } else {
-                os_log(.error, "❌ 未选择图标文件")
-                alert_error("先选择一个图标文件")
-            }
-        }) {
-            ZStack {
-                MagicBackgroundGroup(for: gradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                if self.i.currentData?.backgroundId == gradient.rawValue {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.red, lineWidth: 2)
+        AppSelectionTile(
+            isSelected: self.i.currentData?.backgroundId == gradient.rawValue,
+            cornerRadius: 8,
+            selectedBorderColor: .red,
+            action: {
+                if var icon = self.i.currentData {
+                    do {
+                        try icon.updateBackgroundId(gradient.rawValue)
+                    } catch {
+                        os_log(.error, "❌ 更新图标背景失败: \(error.localizedDescription)")
+                        alert_error(error.localizedDescription)
+                    }
+                } else {
+                    os_log(.error, "❌ 未选择图标文件")
+                    alert_error("先选择一个图标文件")
                 }
             }
+        ) {
+            MagicBackgroundGroup(for: gradient)
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }

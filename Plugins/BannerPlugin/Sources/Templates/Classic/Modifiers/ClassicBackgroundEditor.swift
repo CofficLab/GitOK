@@ -72,19 +72,13 @@ private struct BackgroundPreview: View {
     let onSelect: () -> Void
 
     var body: some View {
-        Button(action: onSelect) {
-            ZStack {
-                MagicBackgroundGroup(for: gradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color.accentColor, lineWidth: 2)
-                }
-            }
+        AppSelectionTile(
+            isSelected: isSelected,
+            cornerRadius: 6,
+            selectedScale: 1.1,
+            action: onSelect
+        ) {
+            MagicBackgroundGroup(for: gradient)
         }
-        .buttonStyle(PlainButtonStyle())
-        .scaleEffect(isSelected ? 1.1 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: isSelected)
     }
 }
