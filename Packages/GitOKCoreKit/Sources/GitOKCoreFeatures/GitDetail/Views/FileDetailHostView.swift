@@ -156,6 +156,105 @@ fileprivate enum FileDetailBackgroundLoader {
         let value: Value
     }
 
+    static func currentImageData<Project, File, SelectedCommit>(
+        project: Project?,
+        file: File,
+        selectedCommit: SelectedCommit?,
+        selectedCommitHash: (SelectedCommit) -> String,
+        loadCurrentCommitData: (Project, File, String) async throws -> Data,
+        loadCurrentWorktreeData: (Project, File) async throws -> Data
+    ) async -> Data? {
+        guard let loadedProject = project else { return nil }
+
+        do {
+            switch GitDetailDiffDisplayRules.fileContentSource(
+                selectedCommit: selectedCommit,
+                commitHash: selectedCommitHash
+            ) {
+            case let .commit(hash):
+                return try await loadCurrentCommitData(loadedProject, file, hash)
+            case .worktree:
+                return try await loadCurrentWorktreeData(loadedProject, file)
+            }
+        } catch {
+            return nil
+        }
+    }
+
+    static func previousImageData<Project, File, SelectedCommit, LoadedCommit>(
+        project: Project?,
+        file: File,
+        selectedCommit: SelectedCommit?,
+        selectedCommitHash: (SelectedCommit) -> String,
+        loadCommits: (Project) async throws -> [LoadedCommit],
+        loadedCommitHash: (LoadedCommit) -> String,
+        loadedParentHashes: (LoadedCommit) -> [String],
+        loadHeadHash: (Project) async -> String?,
+        loadPreviousCommitData: (Project, File, String) async throws -> Data
+    ) async -> Data? {
+        guard let loadedProject = project else { return nil }
+
+        let commits = (try? await loadCommits(loadedProject)) ?? []
+        let summaries = GitDetailDiffDisplayRules.commitSummaries(
+            from: commits,
+            commitHash: loadedCommitHash,
+            parentHashes: loadedParentHashes
+        )
+        let source = GitDetailDiffDisplayRules.previousFileContentSource(
+            currentSource: GitDetailDiffDisplayRules.fileContentSource(
+                selectedCommit: selectedCommit,
+                commitHash: selectedCommitHash
+            ),
+            commits: summaries,
+            headHash: await loadHeadHash(loadedProject)
+        )
+
+        guard case let .commit(hash) = source else {
+            return nil
+        }
+
+        return try? await loadPreviousCommitData(loadedProject, file, hash)
+    }
+
+    static func images<Project, File, SelectedCommit, LoadedCommit>(
+        project: Project?,
+        file: File,
+        selectedCommit: SelectedCommit?,
+        selectedCommitHash: (SelectedCommit) -> String,
+        loadCurrentCommitData: (Project, File, String) async throws -> Data,
+        loadCurrentWorktreeData: (Project, File) async throws -> Data,
+        loadCommits: (Project) async throws -> [LoadedCommit],
+        loadedCommitHash: (LoadedCommit) -> String,
+        loadedParentHashes: (LoadedCommit) -> [String],
+        loadHeadHash: (Project) async -> String?,
+        loadPreviousCommitData: (Project, File, String) async throws -> Data
+    ) async -> (before: NSImage?, after: NSImage?) {
+        let afterData = await currentImageData(
+            project: project,
+            file: file,
+            selectedCommit: selectedCommit,
+            selectedCommitHash: selectedCommitHash,
+            loadCurrentCommitData: loadCurrentCommitData,
+            loadCurrentWorktreeData: loadCurrentWorktreeData
+        )
+        let beforeData = await previousImageData(
+            project: project,
+            file: file,
+            selectedCommit: selectedCommit,
+            selectedCommitHash: selectedCommitHash,
+            loadCommits: loadCommits,
+            loadedCommitHash: loadedCommitHash,
+            loadedParentHashes: loadedParentHashes,
+            loadHeadHash: loadHeadHash,
+            loadPreviousCommitData: loadPreviousCommitData
+        )
+
+        return (
+            GitDetailImageFactory.image(from: beforeData),
+            GitDetailImageFactory.image(from: afterData)
+        )
+    }
+
     static func diffTextLoadResult<Project, File, SelectedCommit>(
         file: File?,
         project: Project?,
@@ -223,53 +322,6 @@ private extension FileDetailHostView {
         case failure(GitDetailDiffDisplayRules.TextPreviewFailureState)
     }
 
-    func currentImageData(project: Project?, file: File, selectedCommit: SelectedCommit?) async -> Data? {
-        guard let loadedProject = project else { return nil }
-        nonisolated(unsafe) let project = loadedProject
-        nonisolated(unsafe) let file = file
-
-        do {
-            switch GitDetailDiffDisplayRules.fileContentSource(
-                selectedCommit: selectedCommit,
-                commitHash: selectedCommitHash
-            ) {
-            case let .commit(hash):
-                return try await loadCurrentCommitData(project, file, hash)
-            case .worktree:
-                return try await loadCurrentWorktreeData(project, file)
-            }
-        } catch {
-            return nil
-        }
-    }
-
-    func previousImageData(project: Project?, file: File, selectedCommit: SelectedCommit?) async -> Data? {
-        guard let loadedProject = project else { return nil }
-        nonisolated(unsafe) let project = loadedProject
-        nonisolated(unsafe) let file = file
-
-        let commits = (try? await loadCommits(project)) ?? []
-        let summaries = GitDetailDiffDisplayRules.commitSummaries(
-            from: commits,
-            commitHash: loadedCommitHash,
-            parentHashes: loadedParentHashes
-        )
-        let source = GitDetailDiffDisplayRules.previousFileContentSource(
-            currentSource: GitDetailDiffDisplayRules.fileContentSource(
-                selectedCommit: selectedCommit,
-                commitHash: selectedCommitHash
-            ),
-            commits: summaries,
-            headHash: await loadHeadHash(project)
-        )
-
-        guard case let .commit(hash) = source else {
-            return nil
-        }
-
-        return try? await loadPreviousCommitData(project, file, hash)
-    }
-
     func textPreviewLoadResult(
         version: GitDetailDiffDisplayRules.TextVersion,
         path: String,
@@ -322,63 +374,6 @@ private extension FileDetailHostView {
         }
     }
 
-    func diffTextLoadResult(
-        file: File?,
-        project: Project?,
-        selectedCommit: SelectedCommit?
-    ) async -> GitDetailDiffDisplayRules.DiffTextLoadResult {
-        guard let loadedFile = file, let loadedProject = project else {
-            return GitDetailDiffDisplayRules.DiffTextLoadResult(
-                state: GitDetailDiffDisplayRules.DiffTextState(text: "", issueMessage: nil),
-                errorDescription: nil
-            )
-        }
-        nonisolated(unsafe) let project = loadedProject
-        nonisolated(unsafe) let file = loadedFile
-
-        do {
-            let source = GitDetailDiffDisplayRules.diffSource(
-                isBinary: isBinary(file),
-                selectedCommit: selectedCommit,
-                existingPatch: existingPatch(file)
-            )
-
-            switch source {
-            case .noneForBinary:
-                return GitDetailDiffDisplayRules.DiffTextLoadResult(
-                    state: GitDetailDiffDisplayRules.diffTextStateForBinary(),
-                    errorDescription: nil
-                )
-            case .commit:
-                guard let selectedCommit else {
-                    throw GitDetailError.commitNotFound
-                }
-                let text = try await loadCommitDiff(project, file, selectedCommitHash(selectedCommit))
-                return GitDetailDiffDisplayRules.DiffTextLoadResult(
-                    state: GitDetailDiffDisplayRules.diffTextStateForLoadedText(text),
-                    errorDescription: nil
-                )
-            case let .existingPatch(patch):
-                return GitDetailDiffDisplayRules.DiffTextLoadResult(
-                    state: GitDetailDiffDisplayRules.diffTextStateForLoadedText(patch),
-                    errorDescription: nil
-                )
-            case .worktree:
-                let text = try await loadWorktreeDiff(project, file)
-                return GitDetailDiffDisplayRules.DiffTextLoadResult(
-                    state: GitDetailDiffDisplayRules.diffTextStateForLoadedText(text),
-                    errorDescription: nil
-                )
-            }
-        } catch {
-            let errorDescription = error.localizedDescription
-            return GitDetailDiffDisplayRules.DiffTextLoadResult(
-                state: GitDetailDiffDisplayRules.diffTextStateForFailure(errorDescription: errorDescription),
-                errorDescription: errorDescription
-            )
-        }
-    }
-
     func refreshImages() {
         imageLoadGeneration += 1
         let generation = imageLoadGeneration
@@ -391,30 +386,38 @@ private extension FileDetailHostView {
 
         let project = project
         let selectedCommit = selectedCommit
+        let projectTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: project)
+        let fileTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: file)
+        let selectedCommitTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommit)
+        let selectedCommitHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommitHash)
+        let loadCurrentCommitDataTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCurrentCommitData)
+        let loadCurrentWorktreeDataTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCurrentWorktreeData)
+        let loadCommitsTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCommits)
+        let loadedCommitHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadedCommitHash)
+        let loadedParentHashesTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadedParentHashes)
+        let loadHeadHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadHeadHash)
+        let loadPreviousCommitDataTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadPreviousCommitData)
 
-        Task(priority: .userInitiated) { @MainActor in
-            let afterData = await currentImageData(
-                project: project,
-                file: file,
-                selectedCommit: selectedCommit
+        Task.detached(priority: .userInitiated) {
+            let images = await FileDetailBackgroundLoader.images(
+                project: projectTransfer.value,
+                file: fileTransfer.value,
+                selectedCommit: selectedCommitTransfer.value,
+                selectedCommitHash: selectedCommitHashTransfer.value,
+                loadCurrentCommitData: loadCurrentCommitDataTransfer.value,
+                loadCurrentWorktreeData: loadCurrentWorktreeDataTransfer.value,
+                loadCommits: loadCommitsTransfer.value,
+                loadedCommitHash: loadedCommitHashTransfer.value,
+                loadedParentHashes: loadedParentHashesTransfer.value,
+                loadHeadHash: loadHeadHashTransfer.value,
+                loadPreviousCommitData: loadPreviousCommitDataTransfer.value
             )
 
-            let beforeData = await previousImageData(
-                project: project,
-                file: file,
-                selectedCommit: selectedCommit
-            )
-
-            let (nextBeforeImage, nextAfterImage) = await Task.detached(priority: .userInitiated) {
-                (
-                    GitDetailImageFactory.image(from: beforeData),
-                    GitDetailImageFactory.image(from: afterData)
-                )
-            }.value
-
-            guard generation == imageLoadGeneration else { return }
-            beforeImage = nextBeforeImage
-            afterImage = nextAfterImage
+            await MainActor.run {
+                guard generation == imageLoadGeneration else { return }
+                beforeImage = images.before
+                afterImage = images.after
+            }
         }
     }
 
