@@ -27,10 +27,15 @@ struct BtnPush: View, SuperLog {
     /// 按钮视图主体
     var body: some View {
         AppButton("推送", systemImage: "arrow.up", style: .primary) {
-            do {
-                try vm.project?.push()
-            } catch let error {
-                alert_warning("Push出错", subtitle: error.localizedDescription)
+            guard let project = vm.project else { return }
+            isPushing = true
+            Task {
+                do {
+                    try await project.pushAsync()
+                } catch let error {
+                    alert_warning("Push出错", subtitle: error.localizedDescription)
+                }
+                isPushing = false
             }
         }
         .disabled(isPushing)
