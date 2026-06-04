@@ -100,7 +100,6 @@ final class IconAsset: Identifiable, @unchecked Sendable {
 
     /// 异步获取图标图片（支持远程图标加载）
     /// - Returns: 加载完成的SwiftUI Image
-    @MainActor
     func getImage() async -> Image {
         switch source {
         case .local:
@@ -108,7 +107,9 @@ final class IconAsset: Identifiable, @unchecked Sendable {
         case .remote:
             return await loadRemoteImage()
         case .generated:
-            return loadGeneratedImage()
+            return await MainActor.run {
+                loadGeneratedImage()
+            }
         }
     }
 
@@ -151,7 +152,6 @@ final class IconAsset: Identifiable, @unchecked Sendable {
 
     /// 异步加载远程图标
     /// - Returns: 加载完成的SwiftUI Image
-    @MainActor
     private func loadRemoteImage() async -> Image {
         guard let iconURL = fileURL else {
             return Image(systemName: "exclamationmark.triangle")
