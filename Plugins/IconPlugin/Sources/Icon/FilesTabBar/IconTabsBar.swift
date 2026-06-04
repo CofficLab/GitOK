@@ -1,5 +1,6 @@
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 
 
 /**
@@ -38,8 +39,7 @@ struct IconTabsBar: View {
                                     .scaledToFit()
                                     .frame(width: 14, height: 14)
                                     .padding(4)
-                                    .background(Color.gray.opacity(0.15))
-                                    .cornerRadius(4)
+                                    .gitOKUISurface(style: .subtle, cornerRadius: 4)
 
                                 Text(icon.title)
                                     .font(.callout)

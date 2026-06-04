@@ -1,6 +1,7 @@
 import OSLog
 import MagicAlert
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 struct BtnCreate: View {
@@ -12,7 +13,7 @@ struct BtnCreate: View {
 
     var body: some View {
         if let projectURL {
-            Image.add.inButtonWithAction {
+            AppIconButton(systemImage: "plus", tint: .accentColor, size: .regular) {
                 do {
                     let model = try IconData.new(projectURL: projectURL)
                     alert_info("新建 Icon(\(model.title)) 成功")

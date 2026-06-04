@@ -29,7 +29,7 @@ public struct IconDetailLayout: View {
                     // Left Pane
                     VStack(spacing: 0) {
                         IconTabsBar(icons: icons, selection: $selection)
-                            .background(.gray.opacity(0.1))
+                            .gitOKUISurface(style: .toolbar, cornerRadius: 0)
 
                         IconMaker().frame(maxHeight: .infinity)
                     }
