@@ -177,7 +177,7 @@ struct LicenseViewer: View {
 
         Task {
             do {
-                let text = try LicenseDocument.read(in: projectURL)
+                let text = try await LicenseDocument.readAsync(in: projectURL)
                 await MainActor.run {
                     content = text
                     isLoading = false
@@ -201,7 +201,7 @@ struct LicenseViewer: View {
 
         Task {
             do {
-                try LicenseDocument.write(content, in: projectURL)
+                try await LicenseDocument.writeAsync(content, in: projectURL)
                 await MainActor.run {
                     isSaving = false
                     hasError = false

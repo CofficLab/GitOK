@@ -27,6 +27,9 @@ struct LicenseStatusIcon: View {
     }
 
     private func checkLicenseExistence() {
-        hasLicense = LicenseDocument.exists(in: projectURL)
+        Task {
+            let exists = await LicenseDocument.existsAsync(in: projectURL)
+            hasLicense = exists
+        }
     }
 }
