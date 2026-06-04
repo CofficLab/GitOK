@@ -1,5 +1,6 @@
 import MagicAlert
 import GitOKSupportKit
+import GitOKUI
 import SwiftUI
 
 /// 推送按钮组件
@@ -25,16 +26,13 @@ struct BtnPush: View, SuperLog {
 
     /// 按钮视图主体
     var body: some View {
-        Button(
-            "推送",
-            action: {
-                do {
-                    try vm.project?.push()
-                } catch let error {
-                    alert_warning("Push出错", subtitle: error.localizedDescription)
-                }
+        AppButton("推送", systemImage: "arrow.up", style: .primary) {
+            do {
+                try vm.project?.push()
+            } catch let error {
+                alert_warning("Push出错", subtitle: error.localizedDescription)
             }
-        )
+        }
         .disabled(isPushing)
         //        .onNotification(.gitPushStart, perform: { _ in
         //            isPushing = true
