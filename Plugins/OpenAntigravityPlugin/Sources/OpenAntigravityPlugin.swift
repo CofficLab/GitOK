@@ -18,7 +18,7 @@ public struct OpenAntigravityPlugin: GitOKPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard AntigravityProjectLauncher.isInstalled, let projectURL = context.projectURL else { return nil }
+        guard let projectURL = context.projectURL else { return nil }
         return AnyView(OpenAntigravityButton(projectURL: projectURL))
     }
 }

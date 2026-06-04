@@ -18,7 +18,7 @@ public struct OpenGitHubDesktopPlugin: GitOKPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard GitHubDesktopProjectLauncher.isInstalled, let projectURL = context.projectURL else { return nil }
+        guard let projectURL = context.projectURL else { return nil }
         return AnyView(OpenGitHubDesktopButton(projectURL: projectURL))
     }
 }

@@ -18,7 +18,7 @@ public struct OpenVSCodePlugin: GitOKPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard VSCodeProjectLauncher.isInstalled, let projectURL = context.projectURL else { return nil }
+        guard let projectURL = context.projectURL else { return nil }
         return AnyView(OpenVSCodeButton(projectURL: projectURL))
     }
 }
