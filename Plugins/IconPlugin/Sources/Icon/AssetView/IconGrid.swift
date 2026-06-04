@@ -14,6 +14,7 @@ struct IconGrid: View {
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 8)
     @State private var iconAssets: [IconAsset] = []
     @State private var isLoading: Bool = false
+    @State private var loadTask: Task<Void, Never>?
 
     let selectedCategory: IconCategory?
     let selectedSourceIdentifier: String?
@@ -147,6 +148,9 @@ struct IconGrid: View {
         .onChange(of: selectedSourceIdentifier) {
             loadIconAssets()
         }
+        .onDisappear {
+            loadTask?.cancel()
+        }
     }
 
     /// 更新网格列数
@@ -160,9 +164,13 @@ struct IconGrid: View {
 
     /// 加载图标资源
     private func loadIconAssets() {
+        loadTask?.cancel()
         isLoading = true
 
-        Task {
+        let selectedCategory = selectedCategory
+        let selectedSourceIdentifier = selectedSourceIdentifier
+
+        loadTask = Task.detached(priority: .userInitiated) {
             let assets: [IconAsset]
             if let sid = selectedSourceIdentifier,
                let source = IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid }) {
@@ -176,9 +184,12 @@ struct IconGrid: View {
             } else {
                 assets = []
             }
+
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
                 self.iconAssets = assets
                 self.isLoading = false
+                self.loadTask = nil
             }
         }
     }

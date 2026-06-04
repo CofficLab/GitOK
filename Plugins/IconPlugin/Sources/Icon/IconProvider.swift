@@ -124,41 +124,23 @@ public class IconProvider: NSObject, ObservableObject, SuperLog {
     ///   - data: 图像二进制数据
     ///   - filename: 文件名（包含扩展名）
     /// - Returns: 是否成功
-    func addImageToProjectLibrary(data: Data, filename: String) -> Bool {
+    func addImageToProjectLibrary(data: Data, filename: String) async -> Bool {
         guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
-        let ok = awaitResult { await IconRepo.shared.addImage(data: data, filename: filename, to: sid) }
-        return ok
+        return await IconRepo.shared.addImage(data: data, filename: filename, to: sid)
     }
 
     /// 从项目图标库删除图片
     /// - Parameter filename: 文件名（包含扩展名）
     /// - Returns: 是否成功
-    func deleteImageFromProjectLibrary(filename: String) -> Bool {
+    func deleteImageFromProjectLibrary(filename: String) async -> Bool {
         guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
-        let ok = awaitResult { await IconRepo.shared.deleteImage(filename: filename, from: sid) }
+        let ok = await IconRepo.shared.deleteImage(filename: filename, from: sid)
         if ok {
             if selectedIconId.hasSuffix("/\(filename)") || selectedIconId == filename {
                 selectedIconId = ""
             }
         }
         return ok
-    }
-
-    /// 等待异步操作结果
-    /// - Parameter op: 异步操作
-    /// - Returns: 操作结果
-    private func awaitResult(_ op: @escaping @Sendable () async -> Bool) -> Bool {
-        final class ResultBox: @unchecked Sendable {
-            var value = false
-        }
-        let result = ResultBox()
-        let semaphore = DispatchSemaphore(value: 0)
-        Task {
-            result.value = await op()
-            semaphore.signal()
-        }
-        semaphore.wait()
-        return result.value
     }
 }
 
