@@ -265,6 +265,12 @@ public struct CommitRowHostView<Project, Commit>: View {
     }
 }
 
+fileprivate enum CommitRowBackgroundRunner {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 private extension CommitRowHostView {
     var presentationState: CommitRowAppearanceRules.PresentationState {
         let hash = commitHash(commit)
@@ -326,105 +332,114 @@ private extension CommitRowHostView {
             eventHandler(.showErrorMessage(CommitHistoryActionRules.projectUnavailableMessage()))
             return
         }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: loadedProject)
+        let commandTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: command)
+        let undoCommitTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: undoCommit)
+        let revertCommitTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: revertCommit)
+        let resetToCommitTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: resetToCommit)
+        let squashLastCommitsTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: squashLastCommits)
+        let eventHandlerTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: eventHandler)
 
-        Task { @MainActor in
-            await performHistoryCommand(command, project: project)
+        Task.detached(priority: .userInitiated) {
+            let project = projectTransfer.value
+            let command = commandTransfer.value
+
+            switch command {
+            case let .undo(loadedCommit, hash, parentHashes):
+                let commitTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: loadedCommit)
+                let request = CommitHistoryActionRules.undoRequestState(parentHashes: parentHashes)
+                if let message = CommitHistoryActionRules.validationFailureMessage(for: request) {
+                    await MainActor.run {
+                        eventHandlerTransfer.value(.showErrorMessage(message))
+                    }
+                    return
+                }
+                await MainActor.run {
+                    applyHistoryCompletionState(CommitHistoryActionRules.startState(for: .undo))
+                }
+                do {
+                    try await undoCommitTransfer.value(project, commitTransfer.value)
+                    await MainActor.run {
+                        eventHandlerTransfer.value(.log(.undoSuccess(hash: hash)))
+                        applyHistoryCompletionState(CommitHistoryActionRules.completionState(for: .undo, succeeded: true))
+                    }
+                } catch {
+                    await MainActor.run {
+                        applyHistoryCompletionState(CommitHistoryActionRules.completionState(for: .undo, succeeded: false))
+                        eventHandlerTransfer.value(.showError(error))
+                    }
+                }
+            case let .revert(loadedCommit, hash):
+                let commitTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: loadedCommit)
+                await runSimpleHistoryOperation(
+                    operation: .revert,
+                    hash: hash,
+                    perform: {
+                        try await revertCommitTransfer.value(project, commitTransfer.value)
+                    }
+                )
+            case let .reset(loadedCommit, hash, mode, modeName):
+                let commitTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: loadedCommit)
+                await runSimpleHistoryOperation(
+                    operation: .reset,
+                    hash: hash,
+                    resetMode: modeName,
+                    perform: {
+                        try await resetToCommitTransfer.value(project, commitTransfer.value, mode)
+                    }
+                )
+            case let .squash(hash, loadedValidation):
+                let validation = loadedValidation
+                if let message = CommitHistoryActionRules.validationFailureMessage(for: validation) {
+                    await MainActor.run {
+                        eventHandlerTransfer.value(.showErrorMessage(message))
+                    }
+                    return
+                }
+                await runSimpleHistoryOperation(
+                    operation: .squash,
+                    hash: hash,
+                    squashCount: validation.count,
+                    perform: {
+                        try await squashLastCommitsTransfer.value(project, validation)
+                    }
+                )
+            }
         }
     }
 
-    func performHistoryCommand(
-        _ command: CommitHistoryActionRules.ProjectHistoryCommand<Commit, GitResetMode>,
-        project loadedProject: Project
-    ) async {
-        nonisolated(unsafe) let project = loadedProject
-
-        switch command {
-        case let .undo(loadedCommit, hash, parentHashes):
-            nonisolated(unsafe) let commit = loadedCommit
-            let request = CommitHistoryActionRules.undoRequestState(parentHashes: parentHashes)
-            if let message = CommitHistoryActionRules.validationFailureMessage(for: request) {
-                eventHandler(.showErrorMessage(message))
-                return
-            }
-            applyHistoryCompletionState(CommitHistoryActionRules.startState(for: .undo))
-            do {
-                nonisolated(unsafe) let operationProject = project
-                nonisolated(unsafe) let operationCommit = commit
-                try await undoCommit(operationProject, operationCommit)
-                eventHandler(.log(.undoSuccess(hash: hash)))
-                applyHistoryCompletionState(CommitHistoryActionRules.completionState(for: .undo, succeeded: true))
-            } catch {
-                applyHistoryCompletionState(CommitHistoryActionRules.completionState(for: .undo, succeeded: false))
-                eventHandler(.showError(error))
-            }
-        case let .revert(loadedCommit, hash):
-            nonisolated(unsafe) let commit = loadedCommit
-            await performSimpleHistoryOperation(
-                operation: .revert,
-                hash: hash,
-                perform: {
-                    nonisolated(unsafe) let operationProject = project
-                    nonisolated(unsafe) let operationCommit = commit
-                    try await revertCommit(operationProject, operationCommit)
-                }
-            )
-        case let .reset(loadedCommit, hash, mode, modeName):
-            nonisolated(unsafe) let commit = loadedCommit
-            await performSimpleHistoryOperation(
-                operation: .reset,
-                hash: hash,
-                resetMode: modeName,
-                perform: {
-                    nonisolated(unsafe) let operationProject = project
-                    nonisolated(unsafe) let operationCommit = commit
-                    try await resetToCommit(operationProject, operationCommit, mode)
-                }
-            )
-        case let .squash(hash, loadedValidation):
-            let validation = loadedValidation
-            if let message = CommitHistoryActionRules.validationFailureMessage(for: validation) {
-                eventHandler(.showErrorMessage(message))
-                return
-            }
-            await performSimpleHistoryOperation(
-                operation: .squash,
-                hash: hash,
-                squashCount: validation.count,
-                perform: {
-                    nonisolated(unsafe) let operationProject = project
-                    try await squashLastCommits(operationProject, validation)
-                }
-            )
-        }
-    }
-
-    func performSimpleHistoryOperation(
+    func runSimpleHistoryOperation(
         operation: CommitHistoryActionRules.HistoryOperation,
         hash: String,
         resetMode: String? = nil,
         squashCount: Int? = nil,
         perform: () async throws -> Void
     ) async {
-        applyHistoryCompletionState(CommitHistoryActionRules.startState(for: operation))
+        await MainActor.run {
+            applyHistoryCompletionState(CommitHistoryActionRules.startState(for: operation))
+        }
         do {
             try await perform()
-            applyHistoryOperationResult(CommitHistoryActionRules.operationResult(
-                for: operation,
-                succeeded: true,
-                commitHash: hash,
-                resetMode: resetMode,
-                squashCount: squashCount
-            ))
+            await MainActor.run {
+                applyHistoryOperationResult(CommitHistoryActionRules.operationResult(
+                    for: operation,
+                    succeeded: true,
+                    commitHash: hash,
+                    resetMode: resetMode,
+                    squashCount: squashCount
+                ))
+            }
         } catch {
-            applyHistoryOperationResult(CommitHistoryActionRules.operationResult(
-                for: operation,
-                succeeded: false,
-                commitHash: hash,
-                resetMode: resetMode,
-                squashCount: squashCount
-            ))
-            eventHandler(.showError(error))
+            await MainActor.run {
+                applyHistoryOperationResult(CommitHistoryActionRules.operationResult(
+                    for: operation,
+                    succeeded: false,
+                    commitHash: hash,
+                    resetMode: resetMode,
+                    squashCount: squashCount
+                ))
+                eventHandler(.showError(error))
+            }
         }
     }
 }
@@ -463,42 +478,52 @@ private extension CommitRowHostView {
             eventHandler(.showErrorMessage(CommitHistoryActionRules.projectUnavailableMessage()))
             return
         }
-        nonisolated(unsafe) let project = loadedProject
 
         let request = CommitTagRules.tagRequest(for: operation, tagName: tagName, tagMessage: tagMessage)
-        Task { @MainActor in
-            await performTagOperation(request: request, project: project)
-        }
-    }
-
-    func performTagOperation(request: CommitTagRules.TagOperationRequest, project loadedProject: Project) async {
-        nonisolated(unsafe) let project = loadedProject
-
         if let failureMessage = CommitTagRules.validationFailureMessage(for: request) {
             eventHandler(.showErrorMessage(failureMessage))
             return
         }
 
+        let projectTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: loadedProject)
+        let requestTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: request)
+        let createLightweightTagTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: createLightweightTag)
+        let createAnnotatedTagTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: createAnnotatedTag)
+        let deleteLocalTagTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: deleteLocalTag)
+        let pushTagOperationTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: pushTagOperation)
+        let deleteRemoteTagTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: deleteRemoteTag)
+        let eventHandlerTransfer = CommitRowBackgroundRunner.UnsafeTransfer(value: eventHandler)
+        let targetCommitHash = commitHash(commit)
+
         applyTagCompletionState(request.startState)
 
-        do {
-            switch request.operation {
-            case .createLightweight:
-                try await createLightweightTag(project, request.tagName, commitHash(commit))
-            case .createAnnotated:
-                try await createAnnotatedTag(project, request.tagName, commitHash(commit), request.tagMessage ?? "")
-            case .deleteLocal:
-                try await deleteLocalTag(project, request.tagName)
-            case .push:
-                try await pushTagOperation(project, request.tagName)
-            case .deleteRemote:
-                try await deleteRemoteTag(project, request.tagName)
-            }
+        Task.detached(priority: .userInitiated) {
+            let project = projectTransfer.value
+            let request = requestTransfer.value
 
-            applyTagOperationResult(CommitTagRules.operationResult(request: request, succeeded: true))
-        } catch {
-            applyTagOperationResult(CommitTagRules.operationResult(request: request, succeeded: false))
-            eventHandler(.showError(error))
+            do {
+                switch request.operation {
+                case .createLightweight:
+                    try await createLightweightTagTransfer.value(project, request.tagName, targetCommitHash)
+                case .createAnnotated:
+                    try await createAnnotatedTagTransfer.value(project, request.tagName, targetCommitHash, request.tagMessage ?? "")
+                case .deleteLocal:
+                    try await deleteLocalTagTransfer.value(project, request.tagName)
+                case .push:
+                    try await pushTagOperationTransfer.value(project, request.tagName)
+                case .deleteRemote:
+                    try await deleteRemoteTagTransfer.value(project, request.tagName)
+                }
+
+                await MainActor.run {
+                    applyTagOperationResult(CommitTagRules.operationResult(request: request, succeeded: true))
+                }
+            } catch {
+                await MainActor.run {
+                    applyTagOperationResult(CommitTagRules.operationResult(request: request, succeeded: false))
+                    eventHandlerTransfer.value(.showError(error))
+                }
+            }
         }
     }
 }
