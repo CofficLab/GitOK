@@ -327,17 +327,24 @@ private extension FileDetailHostView {
         let selectedCommit = selectedCommit
 
         Task(priority: .userInitiated) { @MainActor in
-            let nextAfterImage = GitDetailImageFactory.image(from: await currentImageData(
+            let afterData = await currentImageData(
                 project: project,
                 file: file,
                 selectedCommit: selectedCommit
-            ))
+            )
 
-            let nextBeforeImage = GitDetailImageFactory.image(from: await previousImageData(
+            let beforeData = await previousImageData(
                 project: project,
                 file: file,
                 selectedCommit: selectedCommit
-            ))
+            )
+
+            let (nextBeforeImage, nextAfterImage) = await Task.detached(priority: .userInitiated) {
+                (
+                    GitDetailImageFactory.image(from: beforeData),
+                    GitDetailImageFactory.image(from: afterData)
+                )
+            }.value
 
             guard generation == imageLoadGeneration else { return }
             beforeImage = nextBeforeImage
