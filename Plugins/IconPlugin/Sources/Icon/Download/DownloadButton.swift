@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 
 /**
  * 单个下载按钮组件
@@ -48,38 +49,12 @@ struct DownloadButton<Content: View>: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 主下载按钮
-            Button(action: action) {
-                VStack(spacing: 16) {
-                    HStack {
-                        Image(systemName: icon)
-                            .font(.title2)
-                            .foregroundColor(isDisabled ? .secondary : color)
-                            .frame(width: 24)
-
-                        Text(title)
-                            .font(.headline)
-                            .foregroundColor(isDisabled ? .secondary : .primary)
-
-                        Spacer()
-                    }
-
-                    // 自定义内容区域
-                    if let customContent = customContent {
-                        customContent()
-                    }
-                }
-                .padding()
-                .background(isDisabled ? Color.gray.opacity(0.02) : Color.gray.opacity(0.05))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(isDisabled ? Color.gray.opacity(0.2) : color.opacity(0.3), lineWidth: 1)
-                )
+        if let customContent {
+            AppActionCard(title, systemImage: icon, tint: color, isDisabled: isDisabled, action: action) {
+                customContent()
             }
-            .buttonStyle(PlainButtonStyle())
-            .disabled(isDisabled)
+        } else {
+            AppActionCard(title, systemImage: icon, tint: color, isDisabled: isDisabled, action: action)
         }
     }
 }
