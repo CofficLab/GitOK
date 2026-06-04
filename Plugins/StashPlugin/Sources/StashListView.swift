@@ -2,6 +2,27 @@ import GitOKCoreKit
 import GitCoreKit
 import SwiftUI
 
+private enum StashListBackgroundRunner {
+    static func stashList(projectURL: URL) throws -> [GitStashEntry] {
+        try GitRepositoryCLI(repositoryURL: projectURL).stashList()
+    }
+
+    static func stashSave(projectURL: URL, message: String?) throws {
+        try GitRepositoryCLI(repositoryURL: projectURL).stashSave(message: message)
+    }
+
+    static func hasStatusChanges(projectURL: URL) throws -> Bool {
+        try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty == false
+    }
+
+    static func runStashAction(
+        projectURL: URL,
+        operation: @escaping @Sendable (GitRepositoryCLI) throws -> Void
+    ) throws {
+        try operation(GitRepositoryCLI(repositoryURL: projectURL))
+    }
+}
+
 struct StashListView: View {
     let projectURL: URL?
     let refreshToken: Int
@@ -215,16 +236,18 @@ struct StashListView: View {
         activeStashIndex = nil
         clearMessages()
 
-        Task(priority: .userInitiated) {
+        Task.detached(priority: .userInitiated) {
             do {
-                try await Task.detached(priority: .userInitiated) {
-                    try GitRepositoryCLI(repositoryURL: projectURL).stashSave(message: message.isEmpty ? nil : message)
-                }.value
-                finishAction(message: StashPluginLocalization.string("Stash created"))
-                stashMessage = ""
-                showStashForm = false
+                try StashListBackgroundRunner.stashSave(projectURL: projectURL, message: message.isEmpty ? nil : message)
+                await MainActor.run {
+                    finishAction(message: StashPluginLocalization.string("Stash created"))
+                    stashMessage = ""
+                    showStashForm = false
+                }
             } catch {
-                failAction(error)
+                await MainActor.run {
+                    failAction(error)
+                }
             }
         }
     }
@@ -239,19 +262,21 @@ struct StashListView: View {
         guard let projectURL, isPerformingAction == false else { return }
 
         if skipCleanCheck == false, action.requiresCleanWorkingTree {
-            Task(priority: .userInitiated) {
+            Task.detached(priority: .userInitiated) {
                 do {
-                    let hasChanges = try await Task.detached(priority: .userInitiated) {
-                        try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty == false
-                    }.value
+                    let hasChanges = try StashListBackgroundRunner.hasStatusChanges(projectURL: projectURL)
 
-                    if hasChanges {
-                        pendingDirtyAction = action
-                    } else {
-                        performStashAction(action, skipCleanCheck: true)
+                    await MainActor.run {
+                        if hasChanges {
+                            pendingDirtyAction = action
+                        } else {
+                            performStashAction(action, skipCleanCheck: true)
+                        }
                     }
                 } catch {
-                    errorMessage = error.localizedDescription
+                    await MainActor.run {
+                        errorMessage = error.localizedDescription
+                    }
                 }
             }
             return
@@ -302,14 +327,16 @@ struct StashListView: View {
         activeStashIndex = index
         clearMessages()
 
-        Task(priority: .userInitiated) {
+        Task.detached(priority: .userInitiated) {
             do {
-                try await Task.detached(priority: .userInitiated) {
-                    try operation(GitRepositoryCLI(repositoryURL: projectURL))
-                }.value
-                finishAction(message: successMessage)
+                try StashListBackgroundRunner.runStashAction(projectURL: projectURL, operation: operation)
+                await MainActor.run {
+                    finishAction(message: successMessage)
+                }
             } catch {
-                failAction(error)
+                await MainActor.run {
+                    failAction(error)
+                }
             }
         }
     }
@@ -323,19 +350,21 @@ struct StashListView: View {
         }
 
         isLoading = true
-        Task(priority: .userInitiated) {
+        Task.detached(priority: .userInitiated) {
             do {
-                let stashList = try await Task.detached(priority: .userInitiated) {
-                    try GitRepositoryCLI(repositoryURL: projectURL).stashList()
-                }.value
-                stashes = stashList
-                currentBranchName = "main"
-                isLoading = false
+                let stashList = try StashListBackgroundRunner.stashList(projectURL: projectURL)
+                await MainActor.run {
+                    stashes = stashList
+                    currentBranchName = "main"
+                    isLoading = false
+                }
             } catch {
-                stashes = []
-                currentBranchName = "main"
-                isLoading = false
-                errorMessage = error.localizedDescription
+                await MainActor.run {
+                    stashes = []
+                    currentBranchName = "main"
+                    isLoading = false
+                    errorMessage = error.localizedDescription
+                }
             }
         }
     }
