@@ -6,6 +6,10 @@ import GitOKSupportKit
 import OSLog
 import UniformTypeIdentifiers
 
+private struct DecodedBannerPreviewImage: @unchecked Sendable {
+    let image: NSImage?
+}
+
 /**
  经典模板的图片编辑器
  专门为经典布局定制的图片编辑组件
@@ -168,10 +172,12 @@ struct ClassicImageEditor: View {
         let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
 
         Task.detached(priority: .userInitiated) {
-            let data = try? Data(contentsOf: imageURL)
+            let decodedImage = DecodedBannerPreviewImage(
+                image: (try? Data(contentsOf: imageURL)).flatMap(NSImage.init(data:))
+            )
             await MainActor.run {
                 guard classicData?.imageId == imageId, b.banner.projectURL == projectURL else { return }
-                if let data, let nsImage = NSImage(data: data) {
+                if let nsImage = decodedImage.image {
                     previewImage = Image(nsImage: nsImage)
                 } else {
                     previewImage = nil

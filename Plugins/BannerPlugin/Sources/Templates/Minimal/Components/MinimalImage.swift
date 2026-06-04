@@ -4,6 +4,10 @@ import GitOKCoreKit
 import GitOKSupportKit
 import SwiftUI
 
+private struct DecodedMinimalBannerImage: @unchecked Sendable {
+    let image: NSImage?
+}
+
 /**
  简约模板的图片组件
  专门为简约布局设计的图片显示组件
@@ -79,10 +83,12 @@ struct MinimalImage: View {
         let imageURL = ProjectImage.fromImageId(imageId).getImageURL(projectURL)
 
         Task.detached(priority: .userInitiated) {
-            let data = try? Data(contentsOf: imageURL)
+            let decodedImage = DecodedMinimalBannerImage(
+                image: (try? Data(contentsOf: imageURL)).flatMap(NSImage.init(data:))
+            )
             await MainActor.run {
                 guard minimalData?.imageId == imageId, banner.projectURL == projectURL else { return }
-                if let data, let nsImage = NSImage(data: data) {
+                if let nsImage = decodedImage.image {
                     loadedImage = Image(nsImage: nsImage)
                 } else {
                     loadedImage = nil

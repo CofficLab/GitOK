@@ -4,6 +4,10 @@ import GitOKCoreKit
 import GitOKSupportKit
 import SwiftUI
 
+private struct DecodedClassicBannerImage: @unchecked Sendable {
+    let image: NSImage?
+}
+
 /**
  经典模板的图片组件
  专门为经典布局设计的图片显示组件
@@ -75,10 +79,12 @@ struct ClassicImage: View {
         let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
 
         Task.detached(priority: .userInitiated) {
-            let data = try? Data(contentsOf: imageURL)
+            let decodedImage = DecodedClassicBannerImage(
+                image: (try? Data(contentsOf: imageURL)).flatMap(NSImage.init(data:))
+            )
             await MainActor.run {
                 guard classicData?.imageId == imageId, banner.projectURL == projectURL else { return }
-                if let data, let nsImage = NSImage(data: data) {
+                if let nsImage = decodedImage.image {
                     loadedImage = Image(nsImage: nsImage)
                 } else {
                     loadedImage = nil
