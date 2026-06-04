@@ -114,20 +114,26 @@ struct ContentView: View, SuperLog {
         }
         nonisolated(unsafe) let project = loadedProject
 
-        Task(priority: .userInitiated) { @MainActor in
-            g.activityStatus = statusText(for: command)
+        let status = statusText(for: command)
+
+        Task.detached(priority: .userInitiated) {
+            await MainActor.run {
+                g.activityStatus = status
+            }
 
             do {
                 switch command {
                 case .refresh:
-                    project.postEvent(
-                        name: .projectGitDirectoryDidChange,
-                        operation: "menuRefresh"
-                    )
-                    project.postEvent(
-                        name: .projectGitRefsDidChange,
-                        operation: "menuRefresh"
-                    )
+                    await MainActor.run {
+                        project.postEvent(
+                            name: .projectGitDirectoryDidChange,
+                            operation: "menuRefresh"
+                        )
+                        project.postEvent(
+                            name: .projectGitRefsDidChange,
+                            operation: "menuRefresh"
+                        )
+                    }
                 case .fetch:
                     try await project.fetchAsync()
                 case .pull:
@@ -136,10 +142,14 @@ struct ContentView: View, SuperLog {
                     try await project.pushAsync()
                 }
 
-                g.activityStatus = nil
+                await MainActor.run {
+                    g.activityStatus = nil
+                }
             } catch {
-                g.activityStatus = nil
-                alert_error(error)
+                await MainActor.run {
+                    g.activityStatus = nil
+                    alert_error(error)
+                }
             }
         }
     }
