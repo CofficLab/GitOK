@@ -1,6 +1,7 @@
 import AppKit
 import GitCoreKit
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 public struct RemoteRepositoryView: View {
@@ -65,7 +66,7 @@ public struct RemoteRepositoryView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color(.controlBackgroundColor))
+        .gitOKUISurface(style: .toolbar, cornerRadius: 0)
     }
 
     private var content: some View {
@@ -159,7 +160,7 @@ public struct RemoteRepositoryView: View {
             .keyboardShortcut(.escape)
         }
         .padding()
-        .background(Color(.controlBackgroundColor))
+        .gitOKUISurface(style: .toolbar, cornerRadius: 0)
     }
 
     @ViewBuilder
