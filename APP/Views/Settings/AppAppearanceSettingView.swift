@@ -245,13 +245,20 @@ struct AppAppearanceSettingView: View, SuperLog {
     }
 
     private func accentColorButton(_ color: AppAppearanceSettingsStore.AccentColor) -> some View {
-        Button {
-            accentColor = color
-            settings.accentColor = color
-            if Self.verbose {
-                os_log("\(Self.t)✅ Changed accent color to: \(color.displayName)")
+        AppSelectionTile(
+            isSelected: accentColor == color,
+            cornerRadius: 8,
+            selectedScale: 1.03,
+            selectedBackgroundColor: color.color.opacity(0.10),
+            selectedBorderColor: color.color,
+            action: {
+                accentColor = color
+                settings.accentColor = color
+                if Self.verbose {
+                    os_log("\(Self.t)✅ Changed accent color to: \(color.displayName)")
+                }
             }
-        } label: {
+        ) {
             ZStack {
                 Circle()
                     .fill(color.color)
@@ -264,8 +271,9 @@ struct AppAppearanceSettingView: View, SuperLog {
                         .shadow(color: .black.opacity(0.3), radius: 2)
                 }
             }
+            .frame(width: 48, height: 48)
         }
-        .buttonStyle(.plain)
+        .frame(width: 48, height: 48)
     }
 
     /// 字体大小设置
