@@ -128,27 +128,18 @@ struct MinimalImageEditor: View {
     private func changeImage(_ url: URL) {
         let projectURL = b.banner.projectURL
 
-        Task.detached(priority: .userInitiated) {
+        Task {
             do {
-                let imageId = try saveImportedImage(url, projectURL: projectURL)
-                await MainActor.run {
-                    do {
-                        try b.updateBanner { banner in
-                            var minimalData = banner.minimalData ?? MinimalBannerData()
-                            minimalData.imageId = imageId
-                            banner.minimalData = minimalData
-                        }
-                        alert_success("图片更新成功")
-                    } catch {
-                        os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
-                        alert_error("更新图片失败: \(error.localizedDescription)")
-                    }
+                let imageId = try await BannerImageFileOperations.saveImportedImage(url, projectURL: projectURL)
+                try b.updateBanner { banner in
+                    var minimalData = banner.minimalData ?? MinimalBannerData()
+                    minimalData.imageId = imageId
+                    banner.minimalData = minimalData
                 }
+                alert_success("图片更新成功")
             } catch {
-                await MainActor.run {
-                    os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
-                    alert_error("更新图片失败: \(error.localizedDescription)")
-                }
+                os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
+                alert_error("更新图片失败: \(error.localizedDescription)")
             }
         }
     }
@@ -186,13 +177,4 @@ struct MinimalImageEditor: View {
         }
     }
 
-    private nonisolated func saveImportedImage(_ url: URL, projectURL: URL) throws -> String {
-        let ext = url.pathExtension
-        let bannerRootURL = projectURL.appendingPathComponent(BannerRepo.bannerStoragePath)
-        let imagesFolder = bannerRootURL.appendingPathComponent("images")
-        let storeURL = imagesFolder.appendingPathComponent("\(Date.nowCompact).\(ext)")
-        try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
-        try FileManager.default.copyItem(at: url, to: storeURL)
-        return storeURL.relativePath.replacingOccurrences(of: projectURL.path, with: "")
-    }
 }
