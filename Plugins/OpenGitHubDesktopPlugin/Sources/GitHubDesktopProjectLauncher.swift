@@ -30,16 +30,21 @@ public enum GitHubDesktopProjectLauncher {
             return
         }
 
-        guard let appURL = applicationURL(configuration: configuration) else {
-            NSWorkspace.shared.open(projectURL)
-            return
-        }
+        Task.detached(priority: .utility) {
+            let appURL = applicationURL(configuration: configuration)
+            await MainActor.run {
+                guard let appURL else {
+                    NSWorkspace.shared.open(projectURL)
+                    return
+                }
 
-        NSWorkspace.shared.open(
-            [projectURL],
-            withApplicationAt: appURL,
-            configuration: NSWorkspace.OpenConfiguration()
-        )
+                NSWorkspace.shared.open(
+                    [projectURL],
+                    withApplicationAt: appURL,
+                    configuration: NSWorkspace.OpenConfiguration()
+                )
+            }
+        }
     }
 
     public static func localRepositoryURL(for projectURL: URL) -> URL? {

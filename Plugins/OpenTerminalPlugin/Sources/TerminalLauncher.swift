@@ -9,17 +9,21 @@ enum TerminalLauncher {
     }
 
     static func open(_ projectURL: URL) {
-        let terminal = resolvedTerminal()
-        guard let appURL = appURL(bundleIdentifier: terminal.bundleIdentifier, appPaths: terminal.appPaths) else {
-            return
-        }
+        Task.detached(priority: .utility) {
+            let terminal = resolvedTerminal()
+            guard let appURL = appURL(bundleIdentifier: terminal.bundleIdentifier, appPaths: terminal.appPaths) else {
+                return
+            }
 
-        NSWorkspace.shared.open(
-            [projectURL],
-            withApplicationAt: appURL,
-            configuration: NSWorkspace.OpenConfiguration(),
-            completionHandler: nil
-        )
+            await MainActor.run {
+                NSWorkspace.shared.open(
+                    [projectURL],
+                    withApplicationAt: appURL,
+                    configuration: NSWorkspace.OpenConfiguration(),
+                    completionHandler: nil
+                )
+            }
+        }
     }
 
     static func resolvedTerminal(defaults: UserDefaults = .standard) -> ExternalTerminal {

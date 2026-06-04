@@ -26,16 +26,21 @@ public enum KiroProjectLauncher {
 
     @MainActor
     public static func open(_ projectURL: URL, configuration: KiroApplicationConfiguration = configuration) {
-        guard let appURL = applicationURL(configuration: configuration) else {
-            NSWorkspace.shared.open(projectURL)
-            return
-        }
+        Task.detached(priority: .utility) {
+            let appURL = applicationURL(configuration: configuration)
+            await MainActor.run {
+                guard let appURL else {
+                    NSWorkspace.shared.open(projectURL)
+                    return
+                }
 
-        NSWorkspace.shared.open(
-            [projectURL],
-            withApplicationAt: appURL,
-            configuration: NSWorkspace.OpenConfiguration()
-        )
+                NSWorkspace.shared.open(
+                    [projectURL],
+                    withApplicationAt: appURL,
+                    configuration: NSWorkspace.OpenConfiguration()
+                )
+            }
+        }
     }
 
     public static func applicationURL(configuration: KiroApplicationConfiguration = configuration) -> URL? {
