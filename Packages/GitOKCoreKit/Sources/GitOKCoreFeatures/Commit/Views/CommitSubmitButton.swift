@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 /// Commit action button used by the app-level commit workflow.
@@ -17,11 +18,6 @@ public struct CommitSubmitButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
-            Label(title, systemImage: systemImage)
-                .labelStyle(.titleAndIcon)
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.regular)
+        AppButton(title, systemImage: systemImage, style: .primary, action: action)
     }
 }

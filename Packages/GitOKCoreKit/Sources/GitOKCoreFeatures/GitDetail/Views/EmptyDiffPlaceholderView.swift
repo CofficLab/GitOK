@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public struct EmptyDiffPlaceholderView: View {
@@ -64,21 +65,44 @@ public struct EmptyDiffPlaceholderView: View {
                 .foregroundColor(.secondary)
 
             HStack(spacing: 10) {
-                Button(GitDetailLocalization.string("Refresh"), action: onRefresh)
+                AppButton(
+                    GitDetailLocalization.string("Refresh"),
+                    systemImage: "arrow.clockwise",
+                    style: .secondary,
+                    size: .small,
+                    action: onRefresh
+                )
 
                 if canShowBeforeText {
-                    Button(GitDetailLocalization.string("View Original Text"), action: onShowBeforeText)
+                    AppButton(
+                        GitDetailLocalization.string("View Original Text"),
+                        systemImage: "doc.text",
+                        style: .secondary,
+                        size: .small,
+                        action: onShowBeforeText
+                    )
                 }
 
                 if canShowAfterText {
-                    Button(GitDetailLocalization.string("View New Text"), action: onShowAfterText)
+                    AppButton(
+                        GitDetailLocalization.string("View New Text"),
+                        systemImage: "doc.text.fill",
+                        style: .secondary,
+                        size: .small,
+                        action: onShowAfterText
+                    )
                 }
 
                 if let issueMessage, issueMessage.isEmpty == false {
-                    Button(GitDetailLocalization.string("Copy Reason"), action: onCopyReason)
+                    AppButton(
+                        GitDetailLocalization.string("Copy Reason"),
+                        systemImage: "doc.on.doc",
+                        style: .tonal,
+                        size: .small,
+                        action: onCopyReason
+                    )
                 }
             }
-            .buttonStyle(.bordered)
 
             Spacer()
         }

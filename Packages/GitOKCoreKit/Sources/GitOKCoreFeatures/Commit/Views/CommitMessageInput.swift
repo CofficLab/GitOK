@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 /// Commit 消息输入框组件
@@ -34,28 +35,20 @@ public struct CommitMessageInput: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            TextField(placeholder, text: $text)
-                .textFieldStyle(.roundedBorder)
+            AppInputField(placeholder, text: $text)
 
             if completions.isEmpty == false {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(completions) { completion in
-                            Button {
+                            AppIconButton(
+                                systemImage: systemImage(for: completion.kind),
+                                label: completion.title,
+                                tint: .secondary
+                            ) {
                                 text = CommitAutocompleteRules.text(text, applying: completion)
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: systemImage(for: completion.kind))
-                                        .font(.caption2)
-                                    Text(completion.title)
-                                        .font(.caption2.monospaced())
-                                    Text(completion.detail)
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                }
                             }
-                            .buttonStyle(.borderless)
-                            .help("插入 \(completion.title)")
+                            .help("插入 \(completion.title) \(completion.detail)")
                         }
                     }
                     .padding(.vertical, 2)

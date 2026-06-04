@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 /// Popover content for pushing an unpushed commit.
@@ -45,13 +46,7 @@ public struct PushPopoverContent: View {
     }
 
     private var pushingState: some View {
-        VStack(spacing: 12) {
-            ProgressView()
-                .controlSize(.regular)
-            Text(CommitLocalization.string("Pushing..."))
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
+        AppLoadingOverlay(message: CommitLocalization.string("Pushing..."))
         .frame(minHeight: 60)
     }
 
@@ -69,12 +64,22 @@ public struct PushPopoverContent: View {
             }
 
             HStack(spacing: 12) {
-                Button(CommitLocalization.string("Cancel")) {
+                AppButton(
+                    CommitLocalization.string("Cancel"),
+                    style: .secondary,
+                    size: .small
+                ) {
                     onCancel()
                 }
                 .keyboardShortcut(.cancelAction)
 
-                Button(pushError == nil ? CommitLocalization.string("Push") : CommitLocalization.string("Retry")) {
+                AppButton(
+                    pushError == nil ? CommitLocalization.string("Push") : CommitLocalization.string("Retry"),
+                    systemImage: pushError == nil ? "arrow.up.circle" : "arrow.clockwise",
+                    style: .primary,
+                    size: .small,
+                    isLoading: isPushing
+                ) {
                     Task {
                         do {
                             isPushing = true
@@ -89,7 +94,6 @@ public struct PushPopoverContent: View {
                 }
                 .keyboardShortcut(.defaultAction)
                 .disabled(isPushing)
-                .buttonStyle(.borderedProminent)
             }
 
             Spacer()
@@ -97,23 +101,6 @@ public struct PushPopoverContent: View {
     }
 
     private func errorView(_ error: Error) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 4) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundColor(.red)
-                Text(CommitLocalization.string("Push failed"))
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(.red)
-            }
-
-            Text(CommitLocalization.string("Push failed: \(error.localizedDescription)"))
-                .font(.caption)
-                .foregroundColor(.red)
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(Color.red.opacity(0.1))
-        .cornerRadius(6)
+        AppErrorBanner(message: CommitLocalization.string("Push failed: \(error.localizedDescription)"))
     }
 }

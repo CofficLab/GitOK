@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 /// 文件列表错误视图 - 显示错误信息和重试按钮
@@ -31,18 +32,7 @@ public struct FileListErrorView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
 
-            Button(action: onRetry) {
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.clockwise")
-                    Text("重试")
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.accentColor)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-            }
-            .buttonStyle(.plain)
+            AppButton("重试", systemImage: "arrow.clockwise", style: .secondary, action: onRetry)
 
             Spacer()
         }

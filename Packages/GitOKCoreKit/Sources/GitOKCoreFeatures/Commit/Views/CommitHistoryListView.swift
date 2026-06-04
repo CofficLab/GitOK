@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public enum CommitHistoryListMetrics {
@@ -30,11 +31,7 @@ public struct CommitHistoryListView<RowContent: View>: View {
                 rowContent()
 
                 if isLoading && hasRows {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
+                    AppLoadingOverlay(size: .small)
                     .frame(height: CommitHistoryListMetrics.loadingMoreIndicatorHeight)
 
                     Divider()

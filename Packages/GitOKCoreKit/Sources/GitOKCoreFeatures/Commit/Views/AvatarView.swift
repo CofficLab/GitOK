@@ -1,4 +1,5 @@
 import OSLog
+import GitOKUI
 import SwiftUI
 
 /// 头像视图组件
@@ -32,8 +33,7 @@ public struct AvatarView: View {
                         defaultAvatar
                     /// 图片加载中
                     case .empty:
-                        ProgressView()
-                            .controlSize(.small)
+                        AppLoadingOverlay(size: .small)
                     @unknown default:
                         defaultAvatar
                     }

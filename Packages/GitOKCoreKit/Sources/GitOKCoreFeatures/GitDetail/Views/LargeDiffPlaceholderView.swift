@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public struct LargeDiffPlaceholderView: View {
@@ -42,17 +43,34 @@ public struct LargeDiffPlaceholderView: View {
                 .padding(.horizontal, 24)
 
             HStack(spacing: 10) {
-                Button(GitDetailLocalization.string("Copy Raw Diff"), action: onCopyRawDiff)
+                AppButton(
+                    GitDetailLocalization.string("Copy Raw Diff"),
+                    systemImage: "doc.on.doc",
+                    style: .secondary,
+                    size: .small,
+                    action: onCopyRawDiff
+                )
 
                 if canShowBeforeText {
-                    Button(GitDetailLocalization.string("View Original Text"), action: onShowBeforeText)
+                    AppButton(
+                        GitDetailLocalization.string("View Original Text"),
+                        systemImage: "doc.text",
+                        style: .secondary,
+                        size: .small,
+                        action: onShowBeforeText
+                    )
                 }
 
                 if canShowAfterText {
-                    Button(GitDetailLocalization.string("View New Text"), action: onShowAfterText)
+                    AppButton(
+                        GitDetailLocalization.string("View New Text"),
+                        systemImage: "doc.text.fill",
+                        style: .secondary,
+                        size: .small,
+                        action: onShowAfterText
+                    )
                 }
             }
-            .buttonStyle(.bordered)
 
             Spacer()
         }
