@@ -1,6 +1,7 @@
 import AppKit
 import GitCoreKit
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 struct GitLFSStatusTile: View {
@@ -216,8 +217,7 @@ struct GitLFSStatusTile: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background((message.isError ? Color.red : Color.green).opacity(0.10))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .gitOKUISurface(style: .custom((message.isError ? Color.red : Color.green).opacity(0.10)), cornerRadius: 8)
     }
 
     private func refresh() {
