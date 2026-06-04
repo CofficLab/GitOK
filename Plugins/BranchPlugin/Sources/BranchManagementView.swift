@@ -22,6 +22,7 @@ public struct BranchManagementView: View {
     @State private var branchCompare: GitBranchCompare?
     @State private var isComparing = false
     @State private var compareError: String?
+    @State private var pullRequestRemoteURL: String?
 
     public init(context: BranchPluginContext) {
         self.context = context
@@ -60,10 +61,6 @@ public struct BranchManagementView: View {
         .sheet(item: $branchToSetUpstream) { branch in
             upstreamSheet(branch)
         }
-    }
-
-    private var repository: GitRepositoryCLI? {
-        context.projectURL.map(GitRepositoryCLI.init(repositoryURL:))
     }
 
     private var filteredBranches: [GitBranchSummary] {
@@ -395,12 +392,8 @@ private extension BranchManagementView {
     }
 
     func pullRequestLinks() -> RemoteRepositoryFormRules.PullRequestWebLinks? {
-        guard let repository, let base = compareBaseBranch, let head = compareHeadBranch else { return nil }
-        let remotes = (try? repository.remotes()) ?? []
-        let preferredRemote = remotes.first(where: { $0.name == "origin" }) ?? remotes.first
-        let remoteURL = preferredRemote?.url ?? preferredRemote?.fetchURL ?? preferredRemote?.pushURL
-        guard let remoteURL else { return nil }
-        return RemoteRepositoryFormRules.pullRequestWebLinks(remoteURL: remoteURL, baseBranch: base.name, headBranch: head.name)
+        guard let pullRequestRemoteURL, let base = compareBaseBranch, let head = compareHeadBranch else { return nil }
+        return RemoteRepositoryFormRules.pullRequestWebLinks(remoteURL: pullRequestRemoteURL, baseBranch: base.name, headBranch: head.name)
     }
 
     func loadBranches() {
@@ -408,6 +401,7 @@ private extension BranchManagementView {
             branches = []
             remoteBranches = []
             selectedBranch = nil
+            pullRequestRemoteURL = nil
             return
         }
         isLoading = true
@@ -417,9 +411,13 @@ private extension BranchManagementView {
                 let repository = GitRepositoryCLI(repositoryURL: projectURL)
                 let loadedBranches = try repository.branches()
                 let loadedRemoteBranches = (try? repository.remoteBranches()) ?? []
+                let remotes = (try? repository.remotes()) ?? []
+                let preferredRemote = remotes.first(where: { $0.name == "origin" }) ?? remotes.first
+                let remoteURL = preferredRemote?.url ?? preferredRemote?.fetchURL ?? preferredRemote?.pushURL
                 await MainActor.run {
                     branches = loadedBranches
                     remoteBranches = loadedRemoteBranches
+                    pullRequestRemoteURL = remoteURL
                     selectedBranch = loadedBranches.first(where: \.isCurrent)
                     updateCompareSelection(with: loadedBranches)
                     isLoading = false
@@ -429,6 +427,7 @@ private extension BranchManagementView {
                     branches = []
                     remoteBranches = []
                     selectedBranch = nil
+                    pullRequestRemoteURL = nil
                     errorMessage = error.localizedDescription
                     isLoading = false
                 }
