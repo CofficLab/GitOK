@@ -56,21 +56,6 @@ struct MinimalBannerData: Codable {
         try container.encode(opacity, forKey: .opacity)
     }
 
-    // MARK: - 图片处理
-
-    /// 获取图片
-    /// - Parameter projectURL: 项目URL
-    /// - Returns: SwiftUI Image对象
-    func getImage(_ projectURL: URL) -> Image {
-        var image = Image("Snapshot-1")
-
-        if let generatedIcon = getGeneratedIcon() {
-            image = generatedIcon.getImage(projectURL)
-        }
-
-        return image
-    }
-
     /// 获取生成的图标
     /// - Returns: GeneratedIcon对象（如果存在）
     func getGeneratedIcon() -> ProjectImage? {

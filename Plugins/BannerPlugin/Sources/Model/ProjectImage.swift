@@ -20,14 +20,6 @@ class ProjectImage: SuperLog {
         return projectURL.appendingPathComponent(Self.dir).appendingPathComponent(id)
     }
 
-    func getImage(_ projectURL: URL) -> Image {
-        if let nsImage = NSImage(contentsOf: getImageURL(projectURL)) {
-            return Image(nsImage: nsImage)
-        } else {
-            return Image(systemName: "photo")
-        }
-    }
-
     static func fromImageId(_ imageId: String) -> ProjectImage {
         return ProjectImage(id: imageId)
     }

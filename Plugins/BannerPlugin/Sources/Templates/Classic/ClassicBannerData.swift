@@ -70,27 +70,6 @@ struct ClassicBannerData: Codable {
         try container.encode(opacity, forKey: .opacity)
     }
 
-    // MARK: - 图片处理
-
-    /// 获取图片
-    /// - Parameter projectURL: 项目URL
-    /// - Returns: SwiftUI Image对象
-    func getImage(_ projectURL: URL) -> Image {
-        guard let imageId = self.imageId else {
-            return Image(Self.defaultImageId)
-        }
-
-        // 移除路径中的多余转义字符
-        let cleanPath = imageId.replacingOccurrences(of: "\\/", with: "/")
-        let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
-
-        if let nsImage = NSImage(contentsOf: imageURL) {
-            return Image(nsImage: nsImage)
-        }
-
-        return Image(Self.defaultImageId)
-    }
-
     /// 更改图片
     /// - Parameters:
     ///   - url: 新图片的URL
