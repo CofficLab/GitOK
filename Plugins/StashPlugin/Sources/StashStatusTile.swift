@@ -74,16 +74,18 @@ public struct StashStatusTile: View {
         }
 
         isLoading = true
-        Task {
+        Task.detached(priority: .utility) {
             do {
-                let stashes = try await Task.detached(priority: .utility) {
-                    try GitRepositoryCLI(repositoryURL: projectURL).stashList()
-                }.value
-                stashCount = stashes.count
-                isLoading = false
+                let stashes = try GitRepositoryCLI(repositoryURL: projectURL).stashList()
+                await MainActor.run {
+                    stashCount = stashes.count
+                    isLoading = false
+                }
             } catch {
-                stashCount = 0
-                isLoading = false
+                await MainActor.run {
+                    stashCount = 0
+                    isLoading = false
+                }
             }
         }
     }

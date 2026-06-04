@@ -53,18 +53,19 @@ struct CleanStatusRootView: View {
 
         lastProjectURL = projectURL
 
-        Task {
-            let isClean: Bool
+        Task.detached(priority: .userInitiated) {
             do {
-                isClean = try await Task.detached(priority: .userInitiated) {
-                    try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty
-                }.value
+                let isClean = try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty
+                await MainActor.run {
+                    guard lastProjectURL == projectURL else { return }
+                    updateCleanStatus(isClean)
+                }
             } catch {
-                isClean = true
+                await MainActor.run {
+                    guard lastProjectURL == projectURL else { return }
+                    updateCleanStatus(true)
+                }
             }
-
-            guard lastProjectURL == projectURL else { return }
-            updateCleanStatus(isClean)
         }
     }
 }

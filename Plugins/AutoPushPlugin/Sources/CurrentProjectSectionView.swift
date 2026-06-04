@@ -84,12 +84,12 @@ struct CurrentProjectSectionView: View {
 
     private func loadRemoteState() {
         let projectPath = project.projectPath
-        Task {
-            let hasRemote = await Task.detached(priority: .utility) {
-                ((try? GitRepositoryCLI(repositoryURL: URL(fileURLWithPath: projectPath)).remoteNames()) ?? []).isEmpty == false
-            }.value
-            guard project.projectPath == projectPath else { return }
-            hasRemoteBranch = hasRemote
+        Task.detached(priority: .utility) {
+            let hasRemote = ((try? GitRepositoryCLI(repositoryURL: URL(fileURLWithPath: projectPath)).remoteNames()) ?? []).isEmpty == false
+            await MainActor.run {
+                guard project.projectPath == projectPath else { return }
+                hasRemoteBranch = hasRemote
+            }
         }
     }
 }
