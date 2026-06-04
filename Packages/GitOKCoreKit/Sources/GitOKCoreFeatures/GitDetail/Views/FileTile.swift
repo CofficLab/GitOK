@@ -92,7 +92,7 @@ public struct FileTile: View {
         .padding(.horizontal, 8)
         .contentShape(Rectangle())
         .contextMenu {
-            if targetFileExists {
+            if targetFileURL != nil {
                 AppContextMenuRow("在Finder中显示", systemImage: "folder") {
                     revealInFinder()
                 }
@@ -260,7 +260,7 @@ public struct FileTile: View {
     }
 
     private func copyFilePath() {
-        guard let url = targetFileURL, targetFileExists else { return }
+        guard let url = targetFileURL else { return }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(url.path, forType: .string)
     }
