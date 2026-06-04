@@ -28,6 +28,8 @@ public class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 当前选中的图标来源标识（用于无分类来源的增删操作）
     @Published var selectedSourceIdentifier: String? = nil
 
+    private var pendingSaveTask: Task<Void, Never>?
+
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
         return selectedCategory?.name ?? ""
@@ -53,6 +55,7 @@ public class IconProvider: NSObject, ObservableObject, SuperLog {
     }
 
     deinit {
+        pendingSaveTask?.cancel()
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -103,13 +106,7 @@ public class IconProvider: NSObject, ObservableObject, SuperLog {
             model.iconId = iconId
             self.currentData = model
 
-            Task {
-                do {
-                    try await model.saveToDiskAsync()
-                } catch {
-                    os_log(.error, "\(self.t)Failed to update model iconId: \(error)")
-                }
-            }
+            scheduleSave(model, operation: "update model iconId")
         }
     }
 
@@ -122,11 +119,62 @@ public class IconProvider: NSObject, ObservableObject, SuperLog {
         model.imageURL = url
         self.currentData = model
 
-        Task {
+        scheduleSave(model, operation: "update image URL")
+    }
+
+    func updateOpacity(_ opacity: Double) {
+        updateCurrentModelAndSave { model in
+            model.opacity = opacity
+        }
+    }
+
+    func updateScale(_ scale: Double) {
+        updateCurrentModelAndSave { model in
+            model.scale = scale
+        }
+    }
+
+    func updateCornerRadius(_ radius: Double) {
+        updateCurrentModelAndSave { model in
+            model.cornerRadius = max(0, min(radius, 512))
+        }
+    }
+
+    func updatePadding(_ padding: Double) {
+        updateCurrentModelAndSave { model in
+            model.padding = padding
+        }
+    }
+
+    func updateBackgroundId(_ id: String) {
+        updateCurrentModelAndSave { model in
+            model.backgroundId = id
+        }
+    }
+
+    private func updateCurrentModelAndSave(_ update: (inout IconData) -> Void) {
+        guard var model = self.currentData else {
+            os_log(.error, "\(self.t)Failed to update icon model: missing current model")
+            return
+        }
+
+        update(&model)
+        self.currentData = model
+
+        scheduleSave(model, operation: "save icon model")
+    }
+
+    private func scheduleSave(_ model: IconData, operation: String) {
+        pendingSaveTask?.cancel()
+        pendingSaveTask = Task { [weak self, model, operation] in
             do {
+                try await Task.sleep(nanoseconds: 150_000_000)
+                try Task.checkCancellation()
                 try await model.saveToDiskAsync()
+            } catch is CancellationError {
             } catch {
-                os_log(.error, "\(self.t)Failed to update image URL: \(error)")
+                guard let self else { return }
+                os_log(.error, "\(self.t)Failed to \(operation): \(error)")
             }
         }
     }

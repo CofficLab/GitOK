@@ -52,13 +52,8 @@ struct IconBgs: View {
             cornerRadius: 8,
             selectedBorderColor: .red,
             action: {
-                if var icon = self.i.currentData {
-                    do {
-                        try icon.updateBackgroundId(gradient.rawValue)
-                    } catch {
-                        os_log(.error, "❌ 更新图标背景失败: \(error.localizedDescription)")
-                        alert_error(error.localizedDescription)
-                    }
+                if self.i.currentData != nil {
+                    i.updateBackgroundId(gradient.rawValue)
                 } else {
                     os_log(.error, "❌ 未选择图标文件")
                     alert_error("先选择一个图标文件")

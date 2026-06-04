@@ -40,8 +40,6 @@ struct ScaleControl: View {
     }
 
     private func updateScale(_ newValue: Double) {
-        if var icon = i.currentData {
-            try? icon.updateScale(newValue)
-        }
+        i.updateScale(newValue)
     }
 }

@@ -40,8 +40,6 @@ struct OpacityControl: View {
     }
 
     private func updateOpacity(_ newValue: Double) {
-        if var icon = i.currentData {
-            try? icon.updateOpacity(newValue)
-        }
+        i.updateOpacity(newValue)
     }
 }

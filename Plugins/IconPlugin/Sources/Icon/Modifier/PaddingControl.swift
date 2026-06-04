@@ -45,8 +45,6 @@ struct PaddingControl: View {
     }
 
     private func updatePadding(_ newValue: Double) {
-        if var icon = i.currentData {
-            try? icon.updatePadding(newValue)
-        }
+        i.updatePadding(newValue)
     }
 }

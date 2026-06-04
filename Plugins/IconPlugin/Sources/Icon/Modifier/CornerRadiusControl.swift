@@ -40,9 +40,6 @@ struct CornerRadiusControl: View {
     }
 
     private func updateCornerRadius(_ newValue: Double) {
-        if var icon = i.currentData {
-            let clamped = max(0, min(newValue, 512))
-            try? icon.updateCornerRadius(clamped)
-        }
+        i.updateCornerRadius(newValue)
     }
 }
