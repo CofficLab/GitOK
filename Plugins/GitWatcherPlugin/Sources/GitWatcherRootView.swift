@@ -23,6 +23,7 @@ struct GitWatcherRootView: View {
 final class GitWatcherCoordinator: ObservableObject {
     private var projectURL: URL?
     private var watcher: GitDirectoryWatcher?
+    private var setupTask: Task<Void, Never>?
     private var debounceTask: Task<Void, Never>?
     private var lastSnapshot: GitDirectorySnapshot?
     private var watchedGitDirectory: String?
@@ -36,23 +37,44 @@ final class GitWatcherCoordinator: ObservableObject {
         self.projectURL = projectURL
 
         guard let projectURL else { return }
+        let expectedProjectURL = projectURL.standardizedFileURL
 
-        do {
-            let gitDirectory = try GitDirectoryResolver.resolveGitDirectory(for: projectURL)
-            watchedGitDirectory = gitDirectory.path
-            lastSnapshot = GitDirectoryResolver.readSnapshot(gitDirectory: gitDirectory)
+        setupTask = Task { [weak self] in
+            do {
+                let (gitDirectory, snapshot) = try await Task.detached(priority: .utility) {
+                    let gitDirectory = try GitDirectoryResolver.resolveGitDirectory(for: expectedProjectURL)
+                    return (gitDirectory, GitDirectoryResolver.readSnapshot(gitDirectory: gitDirectory))
+                }.value
 
-            watcher = try GitDirectoryWatcher(url: gitDirectory) { [weak self] in
-                Task { @MainActor in
-                    self?.scheduleChangeCheck()
+                await MainActor.run {
+                    guard let self,
+                          self.projectURL?.standardizedFileURL == expectedProjectURL else { return }
+
+                    do {
+                        self.watchedGitDirectory = gitDirectory.path
+                        self.lastSnapshot = snapshot
+
+                        self.watcher = try GitDirectoryWatcher(url: gitDirectory) { [weak self] in
+                            Task { @MainActor in
+                                self?.scheduleChangeCheck()
+                            }
+                        }
+                    } catch {
+                        self.stop()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    guard self?.projectURL?.standardizedFileURL == expectedProjectURL else { return }
+                    self?.stop()
                 }
             }
-        } catch {
-            stop()
         }
     }
 
     func stop() {
+        setupTask?.cancel()
+        setupTask = nil
         debounceTask?.cancel()
         debounceTask = nil
         watcher?.stop()
@@ -65,15 +87,17 @@ final class GitWatcherCoordinator: ObservableObject {
         debounceTask?.cancel()
         debounceTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: 500_000_000)
-            self?.checkForGitDirectoryChange()
+            await self?.checkForGitDirectoryChange()
         }
     }
 
-    private func checkForGitDirectoryChange() {
+    private func checkForGitDirectoryChange() async {
         guard let projectURL, let watchedGitDirectory else { return }
 
         let gitDirectory = URL(fileURLWithPath: watchedGitDirectory, isDirectory: true)
-        let currentSnapshot = GitDirectoryResolver.readSnapshot(gitDirectory: gitDirectory)
+        let currentSnapshot = await Task.detached(priority: .utility) {
+            GitDirectoryResolver.readSnapshot(gitDirectory: gitDirectory)
+        }.value
         let previousSnapshot = lastSnapshot
         let headChanged = currentSnapshot.head != previousSnapshot?.head
         let indexChanged = currentSnapshot.index != previousSnapshot?.index
