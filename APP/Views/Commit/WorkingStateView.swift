@@ -156,14 +156,20 @@ private extension WorkingStateView {
         )
     }
 
-    func currentRemoteAccess() -> CommitRemoteSyncRules.RemoteAccess {
-        CommitRemoteSyncRules.projectRemoteAccess(
-            project: vm.project,
-            loadRemotes: { try $0.remoteList() },
-            name: \.name,
-            url: \.url,
-            fetchURL: \.fetchURL,
-            pushURL: \.pushURL
+    func currentRemoteAccess() async -> CommitRemoteSyncRules.RemoteAccess {
+        guard let project = vm.project,
+              let remotes = try? await project.remoteListAsync() else {
+            return .empty
+        }
+
+        return CommitRemoteSyncRules.remoteAccess(
+            from: CommitRemoteSyncRules.remoteURLs(
+                from: remotes,
+                name: \.name,
+                url: \.url,
+                fetchURL: \.fetchURL,
+                pushURL: \.pushURL
+            )
         )
     }
 

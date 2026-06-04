@@ -58,7 +58,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     private let revealConflictFile: @MainActor (Project, String) -> Void
     private let pushErrorClassification: @MainActor (Error) -> CommitRemoteSyncRules.PushErrorClassification
     private let runNetworkFallback: @MainActor (Project, String, @escaping (String?) -> Void) async -> Bool
-    private let currentRemoteAccess: @MainActor () -> CommitRemoteSyncRules.RemoteAccess
+    private let currentRemoteAccess: @MainActor () async -> CommitRemoteSyncRules.RemoteAccess
     private let showNetworkFallbackSelection: @MainActor (CommitRemoteSyncRules.NetworkFallbackAlertText) -> CommitRemoteSyncRules.NetworkFallbackSelection
     private let eventHandler: @MainActor (WorkingStateHostEvent) -> Void
     private let projectChangeToken: Int
@@ -119,7 +119,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         revealConflictFile: @MainActor @escaping (Project, String) -> Void = { _, _ in },
         pushErrorClassification: @MainActor @escaping (Error) -> CommitRemoteSyncRules.PushErrorClassification,
         runNetworkFallback: @MainActor @escaping (Project, String, @escaping (String?) -> Void) async -> Bool,
-        currentRemoteAccess: @MainActor @escaping () -> CommitRemoteSyncRules.RemoteAccess,
+        currentRemoteAccess: @MainActor @escaping () async -> CommitRemoteSyncRules.RemoteAccess,
         showNetworkFallbackSelection: @MainActor @escaping (CommitRemoteSyncRules.NetworkFallbackAlertText) -> CommitRemoteSyncRules.NetworkFallbackSelection,
         eventHandler: @MainActor @escaping (WorkingStateHostEvent) -> Void = { _ in },
         projectChangeToken: Int = 0,
@@ -507,7 +507,7 @@ private extension WorkingStateHostView {
                         setStatus(nil)
                         return
                     }
-                    presentRemoteFailure(error, operation: .pull)
+                    await presentRemoteFailure(error, operation: .pull)
                 }
             case .push:
                 await performPushOperation(command)
@@ -527,7 +527,7 @@ private extension WorkingStateHostView {
             let classification = pushErrorClassification(error)
             guard classification.isNetworkError else {
                 applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .push, succeeded: false))
-                presentRemoteFailure(error, operation: .push)
+                await presentRemoteFailure(error, operation: .push)
                 return
             }
 
@@ -544,7 +544,7 @@ private extension WorkingStateHostView {
                 } catch {
                     guard pushErrorClassification(error).isRetryablePushError else {
                         applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .push, succeeded: false))
-                        presentRemoteFailure(error, operation: .push)
+                        await presentRemoteFailure(error, operation: .push)
                         return
                     }
                     eventHandler(.log(.pushRetryFailure(retryAttempt: retryAttempt.attempt)))
@@ -558,16 +558,17 @@ private extension WorkingStateHostView {
             }
 
             applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .push, succeeded: false))
-            showNetworkErrorFallback()
+            await showNetworkErrorFallback()
         }
     }
 
-    func showNetworkErrorFallback() {
+    func showNetworkErrorFallback() async {
         let selection = showNetworkFallbackSelection(CommitRemoteSyncRules.networkFallbackAlertText())
+        let remoteAccess = await currentRemoteAccess()
         CommitRemoteSyncRules.performNetworkFallbackSelectionState(
             CommitRemoteSyncRules.networkFallbackSelectionState(
                 selection: selection,
-                remoteURL: currentRemoteAccess().sshRemoteURL,
+                remoteURL: remoteAccess.sshRemoteURL,
                 fallbackErrorMessage: CommitRemoteSyncRules.fallbackErrorDescription()
             ),
             performRetry: performRetryAction,
@@ -575,8 +576,8 @@ private extension WorkingStateHostView {
         )
     }
 
-    func presentRemoteFailure(_ error: Error, operation: CommitRemoteSyncRules.RetryOperation) {
-        let remoteAccess = currentRemoteAccess()
+    func presentRemoteFailure(_ error: Error, operation: CommitRemoteSyncRules.RetryOperation) async {
+        let remoteAccess = await currentRemoteAccess()
         CommitRemoteSyncRules.performRemoteFailurePresentation(
             CommitRemoteSyncRules.remoteFailurePresentation(
                 errorDescription: error.localizedDescription,
