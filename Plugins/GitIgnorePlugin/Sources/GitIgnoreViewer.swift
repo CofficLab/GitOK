@@ -151,7 +151,7 @@ struct GitIgnoreViewer: View {
 
         Task {
             do {
-                let fileContent = try GitIgnoreDocument.read(in: projectURL)
+                let fileContent = try await GitIgnoreDocument.readAsync(in: projectURL)
                 await MainActor.run {
                     content = fileContent
                     isLoading = false
@@ -173,9 +173,9 @@ struct GitIgnoreViewer: View {
 
         Task {
             do {
-                let existing = (try? GitIgnoreDocument.read(in: projectURL)) ?? ""
+                let existing = (try? await GitIgnoreDocument.readAsync(in: projectURL)) ?? ""
                 let merged = GitIgnoreOrganizer.merge(existing: existing, template: template)
-                try GitIgnoreDocument.write(merged, in: projectURL)
+                try await GitIgnoreDocument.writeAsync(merged, in: projectURL)
 
                 await MainActor.run {
                     content = merged
@@ -200,9 +200,9 @@ struct GitIgnoreViewer: View {
 
         Task {
             do {
-                let existing = (try? GitIgnoreDocument.read(in: projectURL)) ?? ""
+                let existing = (try? await GitIgnoreDocument.readAsync(in: projectURL)) ?? ""
                 let organized = GitIgnoreOrganizer.organize(existing: existing)
-                try GitIgnoreDocument.write(organized, in: projectURL)
+                try await GitIgnoreDocument.writeAsync(organized, in: projectURL)
 
                 await MainActor.run {
                     content = organized

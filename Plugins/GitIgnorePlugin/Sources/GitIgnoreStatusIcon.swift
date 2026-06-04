@@ -26,6 +26,9 @@ struct GitIgnoreStatusIcon: View {
     }
 
     private func checkGitIgnoreExistence() {
-        hasGitIgnore = GitIgnoreDocument.exists(in: projectURL)
+        Task {
+            let exists = await GitIgnoreDocument.existsAsync(in: projectURL)
+            hasGitIgnore = exists
+        }
     }
 }
