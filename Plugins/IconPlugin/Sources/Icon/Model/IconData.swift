@@ -192,6 +192,17 @@ extension IconData {
         try FileManager.default.removeItem(atPath: path)
         self.emit(.iconDidDelete, object: nil, userInfo: ["path": self.path])
     }
+
+    func deleteFromDiskAsync() async throws {
+        let deletedPath = path
+        try await Task.detached(priority: .userInitiated) {
+            try FileManager.default.removeItem(atPath: deletedPath)
+        }.value
+
+        await MainActor.run {
+            emit(.iconDidDelete, object: nil, userInfo: ["path": deletedPath])
+        }
+    }
 }
 
 // MARK: - 通知
