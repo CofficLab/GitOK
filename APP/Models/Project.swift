@@ -258,6 +258,13 @@ extension Project {
         try gitCLI.branchList()
     }
 
+    func getBranchesAsync() async throws -> [GitBranch] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).branchList()
+        }.value
+    }
+
     /// 创建新分支并切换到该分支
     /// - Parameter branchName: 分支名称
     /// - Throws: Git操作异常
@@ -333,6 +340,13 @@ extension Project {
 
     func remoteBranches(remote: String? = nil) throws -> [String] {
         try gitCLI.remoteBranches(remote: remote)
+    }
+
+    func remoteBranchesAsync(remote: String? = nil) async throws -> [String] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).remoteBranches(remote: remote)
+        }.value
     }
 
     func setUpstream(localBranch: GitBranch, upstreamBranch: String) throws {
@@ -968,6 +982,13 @@ extension Project {
 
     func getCommitGraphWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
         return try gitCLI.commitGraphList(page: page, size: limit)
+    }
+
+    func getCommitGraphWithPaginationAsync(_ page: Int, limit: Int) async throws -> [GitCommit] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).commitGraphList(page: page, size: limit)
+        }.value
     }
 
     /// 撤销指定的提交（仅限未推送的 HEAD commit）

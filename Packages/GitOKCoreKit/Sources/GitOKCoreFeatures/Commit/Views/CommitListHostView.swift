@@ -9,7 +9,7 @@ public enum CommitListHostLogEvent {
 public struct CommitListHostView<Project, Item, UnpushedItem, WorkingStateContent: View, RowContent: View>: View {
     private let project: Project?
     private let projectPath: (Project) -> String
-    private let loadItems: (Project, Int, Int) throws -> [Item]
+    private let loadItems: (Project, Int, Int) async throws -> [Item]
     private let loadUnpushedItems: (Project) async throws -> [UnpushedItem]
     private let itemID: (Item) -> String
     private let itemParentIDs: (Item) -> [String]
@@ -39,7 +39,7 @@ public struct CommitListHostView<Project, Item, UnpushedItem, WorkingStateConten
     public init(
         project: Project?,
         projectPath: @escaping (Project) -> String,
-        loadItems: @escaping (Project, Int, Int) throws -> [Item],
+        loadItems: @escaping (Project, Int, Int) async throws -> [Item],
         loadUnpushedItems: @escaping (Project) async throws -> [UnpushedItem],
         itemID: @escaping (Item) -> String,
         itemParentIDs: @escaping (Item) -> [String],
@@ -167,15 +167,7 @@ private extension CommitListHostView {
     func loadItemsInBackground(project: Project, page: Int, limit: Int) async throws -> [Item] {
         nonisolated(unsafe) let project = project
         nonisolated(unsafe) let loadItems = loadItems
-        return try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async {
-                do {
-                    continuation.resume(returning: try loadItems(project, page, limit))
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+        return try await loadItems(project, page, limit)
     }
 
     func loadMoreItems() {

@@ -21,7 +21,7 @@ struct CommitList: View, SuperLog {
             project: vm.project,
             projectPath: \.path,
             loadItems: { project, page, limit in
-                try project.getCommitGraphWithPagination(page, limit: limit)
+                try await project.getCommitGraphWithPaginationAsync(page, limit: limit)
             },
             loadUnpushedItems: { project in
                 try await project.getUnPushedCommits()

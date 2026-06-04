@@ -26,11 +26,11 @@ struct CommitForm: View, SuperLog {
                 CoAuthorStore.shared.loadCoAuthors()
             },
             loadLocalBranches: { project in
-                try project.getBranches()
+                try await project.getBranchesAsync()
             },
             localBranchName: \.name,
             loadRemoteBranches: { project in
-                try project.remoteBranches()
+                try await project.remoteBranchesAsync()
             },
             hasStagedChanges: { project in
                 try await project.hasStagedChangesAsync()
