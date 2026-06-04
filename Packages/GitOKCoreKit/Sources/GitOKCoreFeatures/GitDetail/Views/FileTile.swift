@@ -1,4 +1,5 @@
 import AppKit
+import GitOKUI
 import SwiftUI
 
 public struct GitDetailFileItem: Equatable, Sendable {
@@ -92,30 +93,30 @@ public struct FileTile: View {
         .contentShape(Rectangle())
         .contextMenu {
             if targetFileExists {
-                Button("在Finder中显示") {
+                AppContextMenuRow("在Finder中显示", systemImage: "folder") {
                     revealInFinder()
                 }
 
-                Button("复制文件路径") {
+                AppContextMenuRow("复制文件路径", systemImage: "doc.on.doc") {
                     copyFilePath()
                 }
 
             }
 
             if onDiscardChanges != nil {
-                Button("丢弃更改") {
+                AppContextMenuRow("丢弃更改", systemImage: "trash", role: .destructive) {
                     showDiscardAlert = true
                 }
             }
 
             if stageState.canStage, let onStage {
-                Button("暂存文件") {
+                AppContextMenuRow("暂存文件", systemImage: "plus.circle") {
                     onStage()
                 }
             }
 
             if stageState.canUnstage, let onUnstage {
-                Button("取消暂存") {
+                AppContextMenuRow("取消暂存", systemImage: "minus.circle") {
                     onUnstage()
                 }
             }

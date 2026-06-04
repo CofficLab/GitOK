@@ -48,8 +48,8 @@ struct BannerTab: View {
             b.setBanner(latest)
         }
         .contextMenu {
-            Button(action: { deleteBanner() }) {
-                Label(BannerPluginLocalization.string("Delete"), systemImage: "trash")
+            AppContextMenuRow(BannerPluginLocalization.string("Delete"), systemImage: "trash", role: .destructive) {
+                deleteBanner()
             }
         }
     }

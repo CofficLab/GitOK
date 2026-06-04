@@ -261,8 +261,8 @@ private struct WorkingStateConflictFileRow: View {
                 iconButton("folder", CommitLocalization.string("Reveal in Finder"), onReveal)
 
                 Menu {
-                    Button(CommitLocalization.string("Use Ours"), action: onUseOurs)
-                    Button(CommitLocalization.string("Use Theirs"), action: onUseTheirs)
+                    AppContextMenuRow(CommitLocalization.string("Use Ours"), systemImage: "arrow.left.circle", action: onUseOurs)
+                    AppContextMenuRow(CommitLocalization.string("Use Theirs"), systemImage: "arrow.right.circle", action: onUseTheirs)
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                         .frame(width: 26, height: 26)
