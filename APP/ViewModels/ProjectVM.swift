@@ -54,11 +54,11 @@ class ProjectVM: ObservableObject, SuperLog {
         os_log("\(Self.t)✅ Startup step: project exists=\(self.projectExists) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(existsStart)))s")
 
         if let project = project {
-            let gitStart = Date()
-            os_log("\(Self.t)🚀 Startup begin: Project.isGit path=\(project.path)")
-            let isGit = project.isGit()
-            os_log("\(Self.t)✅ Startup end: Project.isGit result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
-            project.updateIsGitRepoCacheSync(isGit)
+            os_log("\(Self.t)🚀 Startup schedule: Project.isGit path=\(project.path)")
+            Task {
+                await project.updateIsGitRepoCache()
+                objectWillChange.send()
+            }
         }
 
         os_log("\(Self.t)✅ Startup end: ProjectVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
@@ -84,12 +84,10 @@ class ProjectVM: ObservableObject, SuperLog {
 
         if let project = p {
             let gitStart = Date()
-            let isGit = project.isGit()
-            os_log("\(self.t)✅ SetProject Project.isGit result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
-            project.updateIsGitRepoCacheSync(isGit)
-
-            Task.detached(priority: .userInitiated) {
+            Task {
                 await project.updateIsGitRepoCache()
+                objectWillChange.send()
+                os_log("\(self.t)✅ SetProject Project.isGit updated=\(project.isGitRepo) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
             }
         }
 
