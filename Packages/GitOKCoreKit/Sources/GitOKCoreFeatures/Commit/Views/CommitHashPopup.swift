@@ -1,4 +1,5 @@
 import AppKit
+import GitOKUI
 import SwiftUI
 
 /// 提交Hash详情弹出组件
@@ -103,7 +104,12 @@ public struct CommitHashPopup: View {
             Spacer()
 
             if showCopyButton {
-                Button {
+                AppIconButton(
+                    systemImage: isCopied ? "checkmark.circle.fill" : "doc.on.doc.fill",
+                    tint: isCopied ? .green : .secondary,
+                    size: .regular,
+                    isActive: isCopied
+                ) {
                     copy(value)
                     withAnimation(.spring()) {
                         isCopied = true
@@ -115,17 +121,7 @@ public struct CommitHashPopup: View {
                             isCopied = false
                         }
                     }
-                } label: {
-                    Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.doc.fill")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(isCopied ? .green : .secondary)
-                        .padding(8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill((isCopied ? Color.green : Color.secondary).opacity(isCopied ? 0.16 : 0.08))
-                        )
                 }
-                .buttonStyle(.plain)
                 .help(isCopied ? "已复制" : "复制到剪贴板")
             }
         }

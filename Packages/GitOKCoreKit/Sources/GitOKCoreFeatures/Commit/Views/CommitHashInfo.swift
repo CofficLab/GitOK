@@ -1,4 +1,5 @@
 import AppKit
+import GitOKUI
 import SwiftUI
 
 /// 提交Hash信息显示组件
@@ -26,7 +27,7 @@ public struct CommitHashInfo: View {
     public var body: some View {
         // Hash 信息
         if !hash.isEmpty {
-            iconButton(
+            AppIconButton(
                 systemImage: "number",
                 label: String(hash.prefix(8))
             ) {
@@ -35,11 +36,11 @@ public struct CommitHashInfo: View {
             .help("点击查看完整 Hash 信息")
             .padding(.trailing, 26)
             .overlay(alignment: .trailing) {
-                iconButton(
+                AppIconButton(
                     systemImage: isCopied ? "checkmark.circle" : "doc.on.doc",
                     tint: isCopied ? .green : .secondary,
-                    isActive: isCopied,
-                    compact: true
+                    size: .compact,
+                    isActive: isCopied
                 ) {
                     copy(hash)
                     withAnimation(.spring()) {
@@ -61,33 +62,6 @@ public struct CommitHashInfo: View {
                     .background(Color(nsColor: .windowBackgroundColor))
             }
         }
-    }
-
-    private func iconButton(
-        systemImage: String,
-        label: String? = nil,
-        tint: Color = .secondary,
-        isActive: Bool = false,
-        compact: Bool = false,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 4) {
-                Image(systemName: systemImage)
-                    .font(.system(size: compact ? 10 : 11, weight: .semibold))
-                if let label {
-                    Text(label)
-                        .font(.system(size: 12, weight: .semibold))
-                }
-            }
-            .foregroundStyle(tint)
-            .padding(compact ? 6 : 8)
-            .background(
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(tint.opacity(isActive ? 0.16 : 0.08))
-            )
-        }
-        .buttonStyle(.plain)
     }
 
     private func copy(_ value: String) {
