@@ -1,5 +1,6 @@
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 
 /**
  * 图标预览组件
@@ -27,8 +28,13 @@ struct IconPreview: View {
 
             ZStack {
                 // 外边框
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color.blue.opacity(0.2), lineWidth: 1)
+                Color.clear
+                    .gitOKUISurface(
+                        style: .custom(.clear),
+                        cornerRadius: 4,
+                        borderColor: .blue.opacity(0.2),
+                        lineWidth: 1
+                    )
                     .frame(width: constrainedSize, height: constrainedSize)
 
                 // 统一的图标渲染视图
