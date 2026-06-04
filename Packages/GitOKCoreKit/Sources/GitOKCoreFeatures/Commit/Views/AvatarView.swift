@@ -11,7 +11,6 @@ public struct AvatarView: View {
 
     private let avatarService = AvatarService.shared
     @State private var avatarURL: URL?
-    @State private var isLoading = true
 
     public init(user: AvatarUser, size: CGFloat = 32) {
         self.user = user
@@ -44,7 +43,9 @@ public struct AvatarView: View {
         }
         .frame(width: size, height: size)
         .clipShape(Circle())
-        .onAppear(perform: handleOnAppear)
+        .task(id: user) {
+            await loadAvatar()
+        }
     }
 }
 
@@ -77,37 +78,13 @@ extension AvatarView {
 extension AvatarView {
     /// 异步加载用户头像
     /// 首先尝试从AvatarService获取头像，失败时回退到Gravatar
-    private func loadAvatar() {
+    private func loadAvatar() async {
         if Self.verbose {
             os_log("开始加载头像: \(user.name) <\(user.email)>")
         }
 
-        Task {
-            /// 设置加载状态
-            isLoading = true
-
-            /// 尝试从AvatarService获取头像URL
-            let url = await avatarService.getAvatarURL(name: user.name, email: user.email)
-
-            /// 在主线程更新UI
-            await MainActor.run {
-                /// 如果头像服务获取失败，使用默认头像
-                if let url = url {
-                    self.avatarURL = url
-                } else {
-                    self.avatarURL = nil // 将显示 defaultAvatar
-                }
-                self.isLoading = false
-            }
-        }
-    }
-}
-
-// MARK: - Event Handlers
-
-extension AvatarView {
-    /// 视图出现时的事件处理
-    public func handleOnAppear() {
-        loadAvatar()
+        let url = await avatarService.getAvatarURL(name: user.name, email: user.email)
+        guard Task.isCancelled == false else { return }
+        avatarURL = url
     }
 }
