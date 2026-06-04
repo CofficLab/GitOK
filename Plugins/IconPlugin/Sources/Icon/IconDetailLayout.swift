@@ -1,5 +1,6 @@
 import OSLog
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 public struct IconDetailLayout: View {
@@ -36,19 +37,25 @@ public struct IconDetailLayout: View {
                     // Right Pane
                     VStack(spacing: 0) {
                         // Custom Tab Bar
-                        HStack(spacing: 0) {
-                            Image.photos.inButtonWithAction {
+                        HStack(spacing: 4) {
+                            AppIconButton(
+                                systemImage: "photo.on.rectangle",
+                                size: .regular,
+                                isActive: selectedRightPaneTab == .icon
+                            ) {
                                 selectedRightPaneTab = .icon
                             }
 
-                            Image.console.inButtonWithAction {
+                            AppIconButton(
+                                systemImage: "keyboard",
+                                size: .regular,
+                                isActive: selectedRightPaneTab == .controls
+                            ) {
                                 selectedRightPaneTab = .controls
                             }
                         }
-                        .frame(height: 24)
                         .padding(4)
-                        .background(Color.primary.opacity(0.05))
-                        .cornerRadius(8)
+                        .gitOKUISurface(style: .subtle, cornerRadius: 8)
                         .padding(.horizontal)
                         .padding(.top, 8)
 
