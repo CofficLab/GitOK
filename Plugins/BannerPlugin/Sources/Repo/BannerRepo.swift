@@ -33,6 +33,12 @@ final class BannerRepo: SuperLog, @unchecked Sendable {
         return getBannerData(from: projectURL)
     }
 
+    func getBannersAsync(from projectURL: URL) async -> [BannerFile] {
+        await Task.detached(priority: .userInitiated) {
+            self.getBanners(from: projectURL)
+        }.value
+    }
+
     /// 根据ID查找Banner
     /// - Parameters:
     ///   - id: Banner的ID
@@ -41,6 +47,12 @@ final class BannerRepo: SuperLog, @unchecked Sendable {
     func getBanner(by id: String, from projectURL: URL) -> BannerFile? {
         let banners = getBanners(from: projectURL)
         return banners.first { $0.id == id }
+    }
+
+    func getBannerAsync(by id: String, from projectURL: URL) async -> BannerFile? {
+        await Task.detached(priority: .userInitiated) {
+            self.getBanner(by: id, from: projectURL)
+        }.value
     }
 
     /// 从项目目录获取所有Banner模型

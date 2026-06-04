@@ -42,11 +42,16 @@ struct BannerTab: View {
                 return
             }
 
-            guard let latest = bannerRepo.getBanner(by: banner.id, from: projectURL) else {
-                return
-            }
+            Task {
+                guard let latest = await bannerRepo.getBannerAsync(by: banner.id, from: projectURL) else {
+                    return
+                }
 
-            b.setBanner(latest)
+                await MainActor.run {
+                    guard self.projectURL == projectURL else { return }
+                    b.setBanner(latest)
+                }
+            }
         }
         .contextMenu {
             AppContextMenuRow(BannerPluginLocalization.string("Delete"), systemImage: "trash", role: .destructive) {

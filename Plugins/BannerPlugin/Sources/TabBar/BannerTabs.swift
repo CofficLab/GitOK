@@ -49,29 +49,30 @@ struct BannerTabs: View {
             refreshBanners()
         }
         .onBannerDidDelete { deletedId in
-            refreshBanners()
-            // 如果删除的是当前选中的banner，选择第一个可用的banner
-            if deletedId == b.banner.id {
-                if let firstBanner = banners.first {
-                    b.setBanner(firstBanner)
-                }
-            }
+            refreshBanners(selectFirstWhenCurrentMissing: deletedId == b.banner.id)
         }
     }
 
     /// 刷新Banner列表
-    private func refreshBanners() {
-        if let projectURL {
-            banners = repo.getBanners(from: projectURL)
+    private func refreshBanners(selectFirstWhenCurrentMissing: Bool = true) {
+        guard let projectURL else {
+            banners = []
+            return
+        }
 
-            // 如果当前banner不在列表中，选择第一个可用的banner
-            if !banners.contains(where: { $0.id == b.banner.id }) {
-                if let firstBanner = banners.first {
+        Task {
+            let loadedBanners = await repo.getBannersAsync(from: projectURL)
+
+            await MainActor.run {
+                guard self.projectURL == projectURL else { return }
+                banners = loadedBanners
+
+                if selectFirstWhenCurrentMissing,
+                   loadedBanners.contains(where: { $0.id == b.banner.id }) == false,
+                   let firstBanner = loadedBanners.first {
                     b.setBanner(firstBanner)
                 }
             }
-        } else {
-            banners = []
         }
     }
 }
