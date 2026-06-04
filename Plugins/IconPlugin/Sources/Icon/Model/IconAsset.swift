@@ -104,7 +104,7 @@ final class IconAsset: Identifiable, @unchecked Sendable {
     func getImage() async -> Image {
         switch source {
         case .local:
-            return loadImage()
+            return await loadLocalImage()
         case .remote:
             return await loadRemoteImage()
         case .generated:
@@ -114,47 +114,27 @@ final class IconAsset: Identifiable, @unchecked Sendable {
 
     // MARK: - 私有实例方法
 
-    /// 加载图片（支持多种格式）
+    /// 加载本地图片（支持多种格式）
     /// - Returns: SwiftUI Image
-    private func loadImage() -> Image {
+    private func loadLocalImage() async -> Image {
         guard let fileURL = fileURL else {
             return Image(systemName: "plus")
         }
 
         let fileExtension = fileURL.pathExtension.lowercased()
-
-        switch fileExtension {
-        case "svg":
-            return loadSVGImage()
-        case "png", "jpg", "jpeg", "gif", "webp":
-            return loadRasterImage()
-        default:
-            return Image(systemName: "plus")
-        }
-    }
-
-    /// 加载SVG图片
-    /// - Returns: SwiftUI Image
-    private func loadSVGImage() -> Image {
-        guard let fileURL = fileURL, let nsImage = NSImage(contentsOf: fileURL) else {
-            return Image.doc
+        let fallback = fileExtension == "svg" ? Image.doc : Image(systemName: "plus")
+        guard ["svg", "png", "jpg", "jpeg", "gif", "webp"].contains(fileExtension) else {
+            return fallback
         }
 
-        return Image(nsImage: nsImage)
-    }
-
-    /// 加载光栅图片（PNG、JPG等）
-    /// - Returns: SwiftUI Image
-    private func loadRasterImage() -> Image {
-        guard let fileURL = fileURL else {
-            return Image(systemName: "plus")
-        }
-
-        if let nsImage = NSImage(contentsOf: fileURL) {
+        let nsImage: NSImage? = await Task.detached(priority: .userInitiated) {
+            guard let data = try? Data(contentsOf: fileURL) else { return nil }
+            return NSImage(data: data)
+        }.value
+        if let nsImage {
             return Image(nsImage: nsImage)
-        } else {
-            return Image(systemName: "plus")
         }
+        return fallback
     }
 
     /// 将生成型视图转为图片
