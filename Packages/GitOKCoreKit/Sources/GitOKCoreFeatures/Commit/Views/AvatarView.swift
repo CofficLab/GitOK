@@ -9,7 +9,7 @@ public struct AvatarView: View {
     let user: AvatarUser
     let size: CGFloat
 
-    @StateObject private var avatarService = AvatarService.shared
+    private let avatarService = AvatarService.shared
     @State private var avatarURL: URL?
     @State private var isLoading = true
 

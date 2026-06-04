@@ -1,16 +1,12 @@
-import Combine
 import Foundation
 import OSLog
 
 /// 头像服务：负责获取用户头像 URL
 /// 优先级：GitHub API > Gravatar > 默认头像
-@MainActor
-public final class AvatarService: ObservableObject {
+public actor AvatarService {
     /// 是否启用详细日志输出
     public nonisolated static let verbose = false
     public static let shared = AvatarService()
-
-    private let logger = OSLog(subsystem: "GitOK.AvatarService", category: "Avatar")
 
     private init() {}
 
@@ -22,6 +18,9 @@ public final class AvatarService: ObservableObject {
     /// 失败缓存：记录获取失败的头像，避免重复请求
     private var failedCache: [String: Date] = [:]
     private let failedCacheTimeout: TimeInterval = 5 * 60 // 5分钟
+
+    /// 正在进行的请求：同一个用户在列表里重复出现时复用同一个网络请求
+    private var pendingFetches: [String: Task<URL?, Never>] = [:]
 
     // MARK: - 公共方法
 
@@ -78,7 +77,8 @@ public final class AvatarService: ObservableObject {
         }
 
         // 尝试获取头像
-        if let avatarURL = await fetchAvatarURL(name: name, email: normalizedEmail) {
+        let avatarURL = await fetchAvatarURL(cacheKey: cacheKey, name: name, email: normalizedEmail)
+        if let avatarURL {
             avatarCache[cacheKey] = avatarURL
             if Self.verbose {
                 os_log("获取头像URL: \(avatarURL.absoluteString)")
@@ -109,7 +109,7 @@ public final class AvatarService: ObservableObject {
     ///   - email: 邮箱地址
     ///   - size: 头像尺寸，默认 64
     /// - Returns: Gravatar URL
-    private func getGravatarURL(email: String, size: Int = 64) -> URL {
+    private nonisolated func getGravatarURL(email: String, size: Int = 64) -> URL {
         let url = AvatarIdentityRules.gravatarURL(email: email, size: size)
         if Self.verbose {
             os_log("生成 Gravatar URL: \(url)")
@@ -121,7 +121,34 @@ public final class AvatarService: ObservableObject {
     // MARK: - 私有方法
 
     /// 获取头像 URL（优先级策略）
-    private func fetchAvatarURL(name: String, email: String, userUseGravatar: Bool = false) async -> URL? {
+    private func fetchAvatarURL(
+        cacheKey: String,
+        name: String,
+        email: String,
+        userUseGravatar: Bool = false
+    ) async -> URL? {
+        if let pendingFetch = pendingFetches[cacheKey] {
+            return await pendingFetch.value
+        }
+
+        let fetchTask = Task.detached(priority: .utility) {
+            await Self.fetchAvatarURLInBackground(
+                name: name,
+                email: email,
+                userUseGravatar: userUseGravatar
+            )
+        }
+        pendingFetches[cacheKey] = fetchTask
+        let url = await fetchTask.value
+        pendingFetches[cacheKey] = nil
+        return url
+    }
+
+    private nonisolated static func fetchAvatarURLInBackground(
+        name: String,
+        email: String,
+        userUseGravatar: Bool
+    ) async -> URL? {
         // 优先级 1: 尝试 GitHub API（需要用户名）
         if !name.isEmpty {
             if Self.verbose {
@@ -143,7 +170,7 @@ public final class AvatarService: ObservableObject {
     /// - Parameters:
     ///   - username: GitHub 用户名
     /// - Returns: 头像 URL，如果获取失败返回 nil
-    private func fetchGitHubAvatarURL(username: String) async -> URL? {
+    private nonisolated static func fetchGitHubAvatarURL(username: String) async -> URL? {
         let urlString = "https://api.github.com/users/\(username)"
 
         guard let url = URL(string: urlString) else {
