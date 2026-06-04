@@ -26,36 +26,40 @@ struct FileDetail: View, SuperLog {
             existingPatch: \.diff,
             selectedCommitHash: \.hash,
             loadCurrentCommitData: { project, file, hash in
-                try project.fileData(at: hash, file: file.file)
+                try await project.fileDataAsync(at: hash, file: file.file)
             },
             loadCurrentWorktreeData: { project, file in
-                try GitDetailDiffDisplayRules.worktreeFileData(
-                    projectPath: project.path,
-                    filePath: file.file
-                )
+                let projectPath = project.path
+                let filePath = file.file
+                return try await Task.detached(priority: .userInitiated) {
+                    try GitDetailDiffDisplayRules.worktreeFileData(
+                        projectPath: projectPath,
+                        filePath: filePath
+                    )
+                }.value
             },
             loadCommits: { project in
-                project.getCommits("Load previous image")
+                await project.getCommitsAsync("Load previous image")
             },
             loadedCommitHash: \.hash,
             loadedParentHashes: \.parentHashes,
             loadHeadHash: { project in
-                project.headCommitHash()
+                await project.headCommitHashAsync()
             },
             loadPreviousCommitData: { project, file, hash in
-                try project.fileData(at: hash, file: file.file)
+                try await project.fileDataAsync(at: hash, file: file.file)
             },
             loadCommitContent: { project, file, hash in
-                try project.fileContentChange(at: hash, file: file.file)
+                try await project.fileContentChangeAsync(at: hash, file: file.file)
             },
             loadWorktreeContent: { project, file in
-                try project.uncommittedFileContentChange(file: file.file)
+                try await project.uncommittedFileContentChangeAsync(file: file.file)
             },
             loadCommitDiff: { project, file, hash in
-                try project.fileDiff(at: hash, file: file.file)
+                try await project.fileDiffAsync(at: hash, file: file.file)
             },
             loadWorktreeDiff: { project, file in
-                try project.uncommittedFileDiff(file: file.file)
+                try await project.uncommittedFileDiffAsync(file: file.file)
             },
             missingProjectError: {
                 GitDetailError.invalidProject

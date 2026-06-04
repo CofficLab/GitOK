@@ -111,6 +111,20 @@ final class Project: SuperLog {
         }
     }
 
+    func getCommitsAsync(_ reason: String) async -> [GitCommit] {
+        let repositoryURL = url
+        do {
+            return try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).commitList()
+            }.value
+        } catch let error {
+            os_log(.error, "\(self.t)GetCommits has error")
+            os_log(.error, "\(error)")
+
+            return []
+        }
+    }
+
     func isExist() -> Bool {
         return FileManager.default.fileExists(atPath: self.path)
     }
@@ -1205,8 +1219,22 @@ extension Project {
         try gitCLI.fileContentChange(atCommit: commit, file: file)
     }
 
+    func fileContentChangeAsync(at commit: String, file: String) async throws -> (before: String?, after: String?) {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).fileContentChange(atCommit: commit, file: file)
+        }.value
+    }
+
     func uncommittedFileContentChange(file: String) throws -> (before: String?, after: String?) {
         try gitCLI.uncommittedFileContentChange(for: file)
+    }
+
+    func uncommittedFileContentChangeAsync(file: String) async throws -> (before: String?, after: String?) {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).uncommittedFileContentChange(for: file)
+        }.value
     }
 
     /// 获取指定提交中文件的 diff 字符串
@@ -1214,14 +1242,35 @@ extension Project {
         return try gitCLI.fileDiff(atCommit: commit, for: file)
     }
 
+    func fileDiffAsync(at commit: String, file: String, ignoreWhitespace: Bool = false) async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).fileDiff(atCommit: commit, for: file)
+        }.value
+    }
+
     /// 获取未提交文件的 diff 字符串
     func uncommittedFileDiff(file: String, ignoreWhitespace: Bool = false) throws -> String {
         return try gitCLI.uncommittedFileDiff(for: file, ignoreWhitespace: ignoreWhitespace)
     }
 
+    func uncommittedFileDiffAsync(file: String, ignoreWhitespace: Bool = false) async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).uncommittedFileDiff(for: file, ignoreWhitespace: ignoreWhitespace)
+        }.value
+    }
+
     /// 获取指定提交中文件的原始二进制数据（支持图片等二进制文件）
     func fileData(at commit: String, file: String) throws -> Data {
         try gitCLI.fileData(atCommit: commit, file: file)
+    }
+
+    func fileDataAsync(at commit: String, file: String) async throws -> Data {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).fileData(atCommit: commit, file: file)
+        }.value
     }
 
     /// 获取 HEAD 提交的哈希值
@@ -1231,6 +1280,13 @@ extension Project {
             return nil
         }
         return first.hash
+    }
+
+    func headCommitHashAsync() async -> String? {
+        let repositoryURL = url
+        return try? await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).commitList(page: 0, size: 1).first?.hash
+        }.value
     }
 
     /// 获取指定提交中文件的 diff 字符串
