@@ -19,14 +19,8 @@ struct ProjectContextMenu: View {
             copyProjectPath()
         }
 
-        if FileManager.default.fileExists(atPath: item.path) {
-            AppContextMenuRow("在Finder中显示", systemImage: "folder") {
-                let url = URL(fileURLWithPath: item.path)
-                NSWorkspace.shared.activateFileViewerSelecting([url])
-            }
-        } else {
-            AppContextMenuRow("项目已不存在", systemImage: "exclamationmark.triangle") {}
-                .disabled(true)
+        AppContextMenuRow("在Finder中显示", systemImage: "folder") {
+            revealInFinder()
         }
 
         Divider()
@@ -40,5 +34,15 @@ struct ProjectContextMenu: View {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(item.path, forType: .string)
         alert_success("已复制项目路径")
+    }
+
+    private func revealInFinder() {
+        guard FileManager.default.fileExists(atPath: item.path) else {
+            alert_error("项目已不存在")
+            return
+        }
+
+        let url = URL(fileURLWithPath: item.path)
+        NSWorkspace.shared.activateFileViewerSelecting([url])
     }
 }
