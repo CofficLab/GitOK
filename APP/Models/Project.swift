@@ -100,17 +100,6 @@ final class Project: SuperLog {
         )
     }
 
-    func getCommits(_ reason: String) -> [GitCommit] {
-        do {
-            return (try gitCLI.commitList())
-        } catch let error {
-            os_log(.error, "\(self.t)GetCommits has error")
-            os_log(.error, "\(error)")
-
-            return []
-        }
-    }
-
     func getCommitsAsync(_ reason: String) async -> [GitCommit] {
         let repositoryURL = url
         do {
@@ -997,14 +986,6 @@ extension Project {
         }
     }
 
-    func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        return try gitCLI.commitList(page: page, size: limit)
-    }
-
-    func getCommitGraphWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        return try gitCLI.commitGraphList(page: page, size: limit)
-    }
-
     func getCommitGraphWithPaginationAsync(_ page: Int, limit: Int) async throws -> [GitCommit] {
         let repositoryURL = url
         return try await Task.detached(priority: .userInitiated) {
@@ -1281,14 +1262,6 @@ extension Project {
     }
 
     /// 获取 HEAD 提交的哈希值
-    func headCommitHash() -> String? {
-        guard let commits = try? gitCLI.commitList(page: 0, size: 1),
-              let first = commits.first else {
-            return nil
-        }
-        return first.hash
-    }
-
     func headCommitHashAsync() async -> String? {
         let repositoryURL = url
         return try? await Task.detached(priority: .userInitiated) {
