@@ -27,6 +27,9 @@ struct ReadmeStatusIcon: View {
     }
 
     private func checkReadmeExistence() {
-        hasReadme = (try? ProjectDocumentResolver.readReadmeContent(in: projectURL)) != nil
+        Task {
+            let exists = (try? await ProjectDocumentResolver.readReadmeContentAsync(in: projectURL)) != nil
+            hasReadme = exists
+        }
     }
 }

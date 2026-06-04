@@ -19,6 +19,15 @@ final class ProjectDocumentResolverTests: XCTestCase {
         }
     }
 
+    func testReadReadmeContentAsyncReadsCandidate() async throws {
+        let repo = try TestWorkspace()
+        try repo.write("README.md", content: "async\n")
+
+        let content = try await ProjectDocumentResolver.readReadmeContentAsync(in: repo.url)
+
+        XCTAssertEqual(content, "async\n")
+    }
+
     func testReadGitignoreContentReadsRootFile() throws {
         let repo = try TestWorkspace()
         try repo.write(".gitignore", content: "DerivedData/\n")

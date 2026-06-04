@@ -104,7 +104,7 @@ struct ReadmeViewer: View {
 
         Task {
             do {
-                let content = try ProjectDocumentResolver.readReadmeContent(in: projectURL)
+                let content = try await ProjectDocumentResolver.readReadmeContentAsync(in: projectURL)
                 await MainActor.run {
                     readmeContent = content
                     isLoading = false

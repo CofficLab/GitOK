@@ -9,6 +9,12 @@ public enum ProjectDocumentResolver {
         return try String(contentsOf: fileURL, encoding: .utf8)
     }
 
+    public static func readReadmeContentAsync(in repositoryURL: URL) async throws -> String {
+        try await Task.detached(priority: .userInitiated) {
+            try readReadmeContent(in: repositoryURL)
+        }.value
+    }
+
     public static func readGitignoreContent(in repositoryURL: URL) throws -> String {
         let fileURL = repositoryURL.appendingPathComponent(".gitignore")
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
