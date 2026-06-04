@@ -17,23 +17,8 @@ public struct AppImagePreviewGrid: View {
             spacing: 8
         ) {
             ForEach(Array(imageDataList.enumerated()), id: \.offset) { _, data in
-                if let nsImage = NSImage(data: data) {
-                    Button {
-                        previewingImage = nsImage
-                    } label: {
-                        Image(nsImage: nsImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 180, height: 120)
-                            .clipped()
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                    .help("点击预览图片")
+                AppImagePreviewGridItem(data: data) { image in
+                    previewingImage = image
                 }
             }
         }
@@ -50,6 +35,41 @@ public struct AppImagePreviewGrid: View {
             if let previewingImage {
                 AppImagePreviewSheet(image: previewingImage)
             }
+        }
+    }
+}
+
+private struct AppImagePreviewGridItem: View {
+    let data: Data
+    let preview: (NSImage) -> Void
+
+    @State private var image: NSImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                Button {
+                    preview(image)
+                } label: {
+                    Image(nsImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 180, height: 120)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+                .help("点击预览图片")
+            }
+        }
+        .task(id: data) {
+            image = await Task.detached(priority: .utility) {
+                NSImage(data: data)
+            }.value
         }
     }
 }
