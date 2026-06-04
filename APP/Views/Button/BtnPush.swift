@@ -29,13 +29,17 @@ struct BtnPush: View, SuperLog {
         AppButton("推送", systemImage: "arrow.up", style: .primary) {
             guard let project = vm.project else { return }
             isPushing = true
-            Task {
+            Task.detached(priority: .userInitiated) {
                 do {
                     try await project.pushAsync()
                 } catch let error {
-                    alert_warning("Push出错", subtitle: error.localizedDescription)
+                    await MainActor.run {
+                        alert_warning("Push出错", subtitle: error.localizedDescription)
+                    }
                 }
-                isPushing = false
+                await MainActor.run {
+                    isPushing = false
+                }
             }
         }
         .disabled(isPushing)
