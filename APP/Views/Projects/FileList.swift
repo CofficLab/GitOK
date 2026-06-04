@@ -45,16 +45,16 @@ struct FileList: View, SuperLog {
                 try await project.lightweightStatusEntriesAsync()
             },
             addFiles: { project, paths in
-                try project.addFiles(paths)
+                try await project.addFilesAsync(paths)
             },
             unstageFiles: { project, paths in
-                try project.unstageFiles(paths)
+                try await project.unstageFilesAsync(paths)
             },
             discardFileChanges: { project, path in
-                try project.discardFileChanges(path)
+                try await project.discardFileChangesAsync(path)
             },
             discardAllChanges: { project in
-                try project.discardAllChanges()
+                try await project.discardAllChangesAsync()
             },
             mapRefreshError: mapRefreshError,
             eventHandler: handleEvent(_:),

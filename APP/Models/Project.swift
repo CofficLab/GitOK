@@ -674,9 +674,57 @@ extension Project {
         }
     }
 
+    func addFilesAsync(_ filePaths: [String]) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).addFiles(filePaths)
+            }.value
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
+            )
+            throw error
+        }
+    }
+
     func unstageFiles(_ filePaths: [String]) throws {
         do {
             try gitCLI.unstageFiles(filePaths)
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "unstageFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "unstageFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
+            )
+            throw error
+        }
+    }
+
+    func unstageFilesAsync(_ filePaths: [String]) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).unstageFiles(filePaths)
+            }.value
             postEvent(
                 name: .projectDidAddFiles,
                 operation: "unstageFiles",
@@ -1022,8 +1070,12 @@ extension Project {
         }
 
         // 使用 Git 运行时获取指定 commit 修改的文件列表，并按文件路径排序
-        return try gitCLI.commitDiffFiles(atCommit: atCommit)
-            .sorted { $0.file < $1.file }
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL)
+                .commitDiffFiles(atCommit: atCommit)
+                .sorted { $0.file < $1.file }
+        }.value
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
@@ -1055,13 +1107,21 @@ extension Project {
     }
 
     func stagedDiffFileList() async throws -> [GitDiffFile] {
-        return try gitCLI.diffFileList(staged: true)
-            .sorted { $0.file < $1.file }
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL)
+                .diffFileList(staged: true)
+                .sorted { $0.file < $1.file }
+        }.value
     }
 
     func unstagedDiffFileList() async throws -> [GitDiffFile] {
-        return try gitCLI.diffFileList(staged: false)
-            .sorted { $0.file < $1.file }
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL)
+                .diffFileList(staged: false)
+                .sorted { $0.file < $1.file }
+        }.value
     }
 
     /// 丢弃文件的更改（恢复到 HEAD 版本）
@@ -1088,12 +1148,60 @@ extension Project {
         }
     }
 
+    func discardFileChangesAsync(_ filePath: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).discardFileChanges(filePath)
+            }.value
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardFileChanges",
+                additionalInfo: ["filePath": filePath]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardFileChanges",
+                success: false,
+                error: error,
+                additionalInfo: ["filePath": filePath]
+            )
+            throw error
+        }
+    }
+
     /// 丢弃所有工作区更改
     /// 将工作区重置为 HEAD 状态，丢弃所有未提交的更改（包括已暂存和未暂存的）
     /// - Throws: Git 操作异常
     func discardAllChanges() throws {
         do {
             try gitCLI.discardAllChanges()
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardAllChanges"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardAllChanges",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    func discardAllChangesAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).discardAllChanges()
+            }.value
 
             postEvent(
                 name: .projectDidCommit,
@@ -1189,14 +1297,20 @@ extension Project {
     /// - Returns: 冲突文件路径列表
     /// - Throws: Git操作异常
     func getMergeConflictFiles() async throws -> [String] {
-        try gitCLI.getMergeConflictFiles()
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).getMergeConflictFiles()
+        }.value
     }
 
     /// 检查是否正在合并状态
     /// - Returns: 如果正在合并返回true
     /// - Throws: Git操作异常
     func isMerging() async throws -> Bool {
-        try gitCLI.isMerging()
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).isMerging()
+        }.value
     }
 
     /// 检查是否有合并冲突
@@ -1226,8 +1340,12 @@ extension Project {
     /// 中止合并操作
     /// - Throws: Git操作异常
     func abortMerge() async throws {
+        let repositoryURL = url
+
         do {
-            try gitCLI.abortMerge()
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).abortMerge()
+            }.value
             postEvent(.abortMergeSuccess())
         } catch {
             postEvent(.abortMergeFailure(error: error))
@@ -1239,8 +1357,12 @@ extension Project {
     /// - Parameter branchName: 要合并的分支名
     /// - Throws: Git操作异常
     func continueMerge(branchName: String) async throws {
+        let repositoryURL = url
+
         do {
-            try gitCLI.continueMerge()
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).continueMerge()
+            }.value
             postEvent(.continueMergeSuccess(branchName: branchName))
         } catch {
             postEvent(.continueMergeFailure(branchName: branchName, error: error))
