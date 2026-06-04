@@ -68,7 +68,7 @@ extension IconSourceProtocol {
  * 图标分类信息结构体
  * 标准化不同来源的分类信息
  */
-struct IconCategory: Identifiable, Hashable {
+struct IconCategory: Identifiable, Hashable, @unchecked Sendable {
     /// 分类唯一标识符
     let id: String
 

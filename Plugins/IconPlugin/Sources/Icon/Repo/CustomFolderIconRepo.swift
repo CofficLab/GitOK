@@ -9,7 +9,7 @@ import OSLog
  * 支持用户指定的本地文件夹作为图标来源
  * 演示如何轻松添加新的图标来源
  */
-class CustomFolderIconRepo: IconSourceProtocol {
+final class CustomFolderIconRepo: IconSourceProtocol, @unchecked Sendable {
     func getAllIcons() async -> [IconAsset] {
         []
     }
@@ -32,9 +32,11 @@ class CustomFolderIconRepo: IconSourceProtocol {
     var isAvailable: Bool {
         get async {
             guard let url = customFolderURL else { return false }
-            var isDirectory: ObjCBool = false
-            let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
-            return exists && isDirectory.boolValue
+            return await Task.detached(priority: .utility) {
+                var isDirectory: ObjCBool = false
+                let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+                return exists && isDirectory.boolValue
+            }.value
         }
     }
 
@@ -44,6 +46,13 @@ class CustomFolderIconRepo: IconSourceProtocol {
             return []
         }
 
+        let sourceIdentifier = sourceIdentifier
+        return await Task.detached(priority: .userInitiated) {
+            Self.scanCategories(from: folderURL, sourceIdentifier: sourceIdentifier)
+        }.value
+    }
+
+    private static func scanCategories(from folderURL: URL, sourceIdentifier: String) -> [IconCategory] {
         do {
             let items = try FileManager.default.contentsOfDirectory(atPath: folderURL.path)
             let categories = items.compactMap { item -> IconCategory? in
@@ -62,7 +71,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
                     id: item,
                     name: item,
                     iconCount: iconCount,
-                    sourceIdentifier: self.sourceIdentifier,
+                    sourceIdentifier: sourceIdentifier,
                     metadata: [
                         "folderURL": categoryURL.path,
                         "parentFolder": folderURL.path
@@ -78,7 +87,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
         }
     }
 
-    private func getIconCount(in categoryURL: URL) -> Int {
+    private static func getIconCount(in categoryURL: URL) -> Int {
         do {
             let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
             let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
@@ -96,22 +105,24 @@ class CustomFolderIconRepo: IconSourceProtocol {
     func getIcons(for categoryId: String) async -> [IconAsset] {
         guard let folderURL = customFolderURL else { return [] }
         let categoryURL = folderURL.appendingPathComponent(categoryId)
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-            let iconFiles = files.filter { filename in
-                let fileExtension = filename.lowercased()
-                return supportedFormats.contains { format in
-                    fileExtension.hasSuffix(".\(format)")
+        return await Task.detached(priority: .userInitiated) {
+            do {
+                let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
+                let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+                let iconFiles = files.filter { filename in
+                    let fileExtension = filename.lowercased()
+                    return supportedFormats.contains { format in
+                        fileExtension.hasSuffix(".\(format)")
+                    }
                 }
+                return iconFiles.map { filename in
+                    let fileURL = categoryURL.appendingPathComponent(filename)
+                    return IconAsset(fileURL: fileURL)
+                }
+            } catch {
+                return []
             }
-            return iconFiles.map { filename in
-                let fileURL = categoryURL.appendingPathComponent(filename)
-                return IconAsset(fileURL: fileURL)
-            }
-        } catch {
-            return []
-        }
+        }.value
     }
 
     func getIconAsset(byId iconId: String) async -> IconAsset? {

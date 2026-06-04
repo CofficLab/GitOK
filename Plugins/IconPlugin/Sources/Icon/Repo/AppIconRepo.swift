@@ -65,13 +65,16 @@ final class AppIconRepo: SuperLog, IconSourceProtocol, @unchecked Sendable {
             throw RemoteIconError.networkError
         }
 
-        return scanCategories(from: iconFolderURL)
+        let sourceIdentifier = sourceIdentifier
+        return await Task.detached(priority: .userInitiated) {
+            Self.scanCategories(from: iconFolderURL, sourceIdentifier: sourceIdentifier)
+        }.value
     }
 
     /// 扫描图标分类
     /// - Parameter folderURL: 图标文件夹URL
     /// - Returns: IconCategoryInfo 分类数组
-    private func scanCategories(from folderURL: URL) -> [IconCategory] {
+    private static func scanCategories(from folderURL: URL, sourceIdentifier: String) -> [IconCategory] {
         do {
             let items = try FileManager.default.contentsOfDirectory(atPath: folderURL.path)
             let categories = items.compactMap { item -> IconCategory? in
@@ -90,7 +93,7 @@ final class AppIconRepo: SuperLog, IconSourceProtocol, @unchecked Sendable {
                     id: item,
                     name: item,
                     iconCount: iconCount,
-                    sourceIdentifier: self.sourceIdentifier,
+                    sourceIdentifier: sourceIdentifier,
                     metadata: ["folderURL": categoryURL.path]
                 )
             }.sorted { $0.name < $1.name }
@@ -105,7 +108,7 @@ final class AppIconRepo: SuperLog, IconSourceProtocol, @unchecked Sendable {
     /// 计算分类下的图标数量
     /// - Parameter categoryURL: 分类文件夹URL
     /// - Returns: 图标数量
-    private func getIconCount(in categoryURL: URL) -> Int {
+    private static func getIconCount(in categoryURL: URL) -> Int {
         do {
             let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
             return IconFileRules.iconCount(in: files)
@@ -124,18 +127,20 @@ final class AppIconRepo: SuperLog, IconSourceProtocol, @unchecked Sendable {
 
         let categoryURL = iconFolderURL.appendingPathComponent(categoryId)
 
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            let iconFiles = files.filter(IconFileRules.isSupportedImageFile)
+        return await Task.detached(priority: .userInitiated) {
+            do {
+                let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
+                let iconFiles = files.filter(IconFileRules.isSupportedImageFile)
 
-            return iconFiles.map { filename in
-                let fileURL = categoryURL.appendingPathComponent(filename)
-                return IconAsset(fileURL: fileURL)
+                return iconFiles.map { filename in
+                    let fileURL = categoryURL.appendingPathComponent(filename)
+                    return IconAsset(fileURL: fileURL)
+                }
+            } catch {
+                os_log(.error, "无法读取分类图标：\(error.localizedDescription)")
+                return []
             }
-        } catch {
-            os_log(.error, "\(self.t)无法读取分类图标：\(error.localizedDescription)")
-            return []
-        }
+        }.value
     }
 
     func getIconAsset(byId iconId: String) async throws -> IconAsset? {

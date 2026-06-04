@@ -36,7 +36,7 @@ final class ProjectImagesRepo: IconSourceProtocol, SuperLog, @unchecked Sendable
         return base.appendingPathComponent(imagesRelativePath)
     }
 
-    private func listImageFiles(in directory: URL) -> [URL] {
+    private static func listImageFiles(in directory: URL) -> [URL] {
         do {
             let items = try FileManager.default.contentsOfDirectory(atPath: directory.path)
             return IconFileRules.imageFileURLs(in: directory, entries: items)
@@ -85,8 +85,10 @@ final class ProjectImagesRepo: IconSourceProtocol, SuperLog, @unchecked Sendable
     var isAvailable: Bool {
         get async {
             guard let imagesURL = currentProjectImagesURL() else { return false }
-            var isDir: ObjCBool = false
-            return FileManager.default.fileExists(atPath: imagesURL.path, isDirectory: &isDir) && isDir.boolValue
+            return await Task.detached(priority: .utility) {
+                var isDir: ObjCBool = false
+                return FileManager.default.fileExists(atPath: imagesURL.path, isDirectory: &isDir) && isDir.boolValue
+            }.value
         }
     }
 
@@ -96,7 +98,9 @@ final class ProjectImagesRepo: IconSourceProtocol, SuperLog, @unchecked Sendable
 
     func getAllIcons() async -> [IconAsset] {
         guard let imagesURL = currentProjectImagesURL() else { return [] }
-        let files = listImageFiles(in: imagesURL)
+        let files = await Task.detached(priority: .userInitiated) {
+            Self.listImageFiles(in: imagesURL)
+        }.value
         return files.map { fileURL in IconAsset(fileURL: fileURL) }
     }
 
