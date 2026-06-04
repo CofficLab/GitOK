@@ -23,30 +23,29 @@ struct ClassicImageEditor: View {
             VStack(spacing: 12) {
                 // 图片预览
                 if let classicData = b.banner.classicData, classicData.imageId != nil {
-                    classicData.getImage(b.banner.projectURL)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 100)
-                        .cornerRadius(8)
-                        .onTapGesture {
-                            showImagePicker = true
-                        }
+                    AppSelectionTile(cornerRadius: 8, action: { showImagePicker = true }) {
+                        classicData.getImage(b.banner.projectURL)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 100)
+                    }
+                    .frame(height: 100)
                 } else {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(height: 100)
-                        .overlay(
-                            VStack {
-                                Image(systemName: "photo")
-                                    .font(.title)
-                                Text("点击选择图片")
-                                    .font(.caption)
-                            }
-                            .foregroundColor(.secondary)
-                        )
-                        .onTapGesture {
-                            showImagePicker = true
-                        }
+                    AppSelectionTile(cornerRadius: 8, action: { showImagePicker = true }) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(height: 100)
+                            .overlay(
+                                VStack {
+                                    Image(systemName: "photo")
+                                        .font(.title)
+                                    Text("点击选择图片")
+                                        .font(.caption)
+                                }
+                                .foregroundColor(.secondary)
+                            )
+                    }
+                    .frame(height: 100)
                 }
 
                 // 控制选项
