@@ -1,11 +1,9 @@
-import AppKit
 import GitOKUI
 import SwiftUI
 
 public struct OpenRemoteButton: View {
     let projectURL: URL
     @State private var webURL: URL?
-    @State private var browserIcon: NSImage?
     @State private var loadTask: Task<Void, Never>?
 
     public init(projectURL: URL) {
@@ -36,15 +34,8 @@ public struct OpenRemoteButton: View {
 
     @ViewBuilder
     private var buttonIcon: some View {
-        if let browserIcon {
-            Image(nsImage: browserIcon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 22, height: 22)
-        } else {
-            Image(systemName: "link")
-                .frame(width: 22, height: 22)
-        }
+        Image(systemName: "link")
+            .frame(width: 22, height: 22)
     }
 
     @MainActor
@@ -57,18 +48,9 @@ public struct OpenRemoteButton: View {
 
             await MainActor.run {
                 webURL = nextURL
-                browserIcon = nextURL.flatMap(Self.browserIcon)
                 loadTask = nil
             }
         }
         await loadTask?.value
-    }
-
-    @MainActor
-    private static func browserIcon(for webURL: URL) -> NSImage? {
-        guard let appURL = NSWorkspace.shared.urlForApplication(toOpen: webURL) else {
-            return nil
-        }
-        return NSWorkspace.shared.icon(forFile: appURL.path)
     }
 }
