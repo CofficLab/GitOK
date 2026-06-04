@@ -958,9 +958,67 @@ extension Project {
         }
     }
 
+    func undoCommitAsync(_ commit: GitCommit) async throws {
+        let repositoryURL = url
+
+        do {
+            if commit.parentHashes.isEmpty {
+                throw NSError(
+                    domain: "GitOK",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "暂不支持撤销初始提交"]
+                )
+            }
+
+            let parentHash = commit.parentHashes[0]
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).reset(to: parentHash, mode: "mixed")
+            }.value
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "undoCommit",
+                additionalInfo: ["commitHash": commit.hash, "parentHash": parentHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "undoCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
     func revertCommit(_ commit: GitCommit) throws {
         do {
             try gitCLI.revertCommit(commit.hash)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "revertCommit",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "revertCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    func revertCommitAsync(_ commit: GitCommit) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).revertCommit(commit.hash)
+            }.value
             postEvent(
                 name: .projectDidCommit,
                 operation: "revertCommit",
@@ -998,9 +1056,57 @@ extension Project {
         }
     }
 
+    func resetAsync(to commit: GitCommit, mode: GitResetMode) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).reset(to: commit.hash, mode: mode)
+            }.value
+            postEvent(
+                name: .projectDidCommit,
+                operation: "reset\(mode.rawValue.capitalized)",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "reset\(mode.rawValue.capitalized)",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
     func squashLastCommits(count: Int, message: String) throws {
         do {
             try gitCLI.squashLastCommits(count: count, message: message)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "squashCommits",
+                additionalInfo: ["commitCount": count]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "squashCommits",
+                success: false,
+                error: error,
+                additionalInfo: ["commitCount": count]
+            )
+            throw error
+        }
+    }
+
+    func squashLastCommitsAsync(count: Int, message: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).squashLastCommits(count: count, message: message)
+            }.value
             postEvent(
                 name: .projectDidCommit,
                 operation: "squashCommits",
@@ -1637,9 +1743,40 @@ extension Project {
         try tags(for: commit)
     }
 
+    func getTagsAsync(commit: String) async throws -> [String] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).tags(for: commit)
+        }.value
+    }
+
     func createLightweightTag(named tagName: String, commitHash: String) throws {
         do {
             try gitCLI.createLightweightTag(named: tagName, commitHash: commitHash)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createLightweightTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createLightweightTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
+    func createLightweightTagAsync(named tagName: String, commitHash: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).createLightweightTag(named: tagName, commitHash: commitHash)
+            }.value
             postEvent(
                 name: .projectGitRefsDidChange,
                 operation: "createLightweightTag",
@@ -1677,9 +1814,58 @@ extension Project {
         }
     }
 
+    func createAnnotatedTagAsync(named tagName: String, commitHash: String, message: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL)
+                    .createAnnotatedTag(named: tagName, commitHash: commitHash, message: message)
+            }.value
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createAnnotatedTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createAnnotatedTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
     func deleteLocalTag(named tagName: String) throws {
         do {
             try gitCLI.deleteLocalTag(named: tagName)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteLocalTag",
+                additionalInfo: ["tagName": tagName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteLocalTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName]
+            )
+            throw error
+        }
+    }
+
+    func deleteLocalTagAsync(named tagName: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).deleteLocalTag(named: tagName)
+            }.value
             postEvent(
                 name: .projectGitRefsDidChange,
                 operation: "deleteLocalTag",
@@ -1717,9 +1903,57 @@ extension Project {
         }
     }
 
+    func pushTagAsync(named tagName: String, remote: String = "origin") async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).pushTag(named: tagName, remote: remote)
+            }.value
+            postEvent(
+                name: .projectDidPush,
+                operation: "pushTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pushTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
     func deleteRemoteTag(named tagName: String, remote: String = "origin") throws {
         do {
             try gitCLI.deleteRemoteTag(named: tagName, remote: remote)
+            postEvent(
+                name: .projectDidPush,
+                operation: "deleteRemoteTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteRemoteTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    func deleteRemoteTagAsync(named tagName: String, remote: String = "origin") async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).deleteRemoteTag(named: tagName, remote: remote)
+            }.value
             postEvent(
                 name: .projectDidPush,
                 operation: "deleteRemoteTag",

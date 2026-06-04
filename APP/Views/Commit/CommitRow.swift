@@ -44,59 +44,37 @@ struct CommitRow: View, SuperLog {
             commitTagCount: { $0.tags.count },
             projectPath: \.path,
             pushProject: { project in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.push()
-                }.value
+                try await project.pushAsync()
             },
             undoCommit: { project, commit in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.undoCommit(commit)
-                }.value
+                try await project.undoCommitAsync(commit)
             },
             revertCommit: { project, commit in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.revertCommit(commit)
-                }.value
+                try await project.revertCommitAsync(commit)
             },
             resetToCommit: { project, commit, mode in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.reset(to: commit, mode: mode)
-                }.value
+                try await project.resetAsync(to: commit, mode: mode)
             },
             squashLastCommits: { project, validation in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.squashLastCommits(count: validation.count, message: validation.message)
-                }.value
+                try await project.squashLastCommitsAsync(count: validation.count, message: validation.message)
             },
             loadTags: { project, hash in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.getTags(commit: hash)
-                }.value
+                try await project.getTagsAsync(commit: hash)
             },
             createLightweightTag: { project, tagName, commitHash in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.createLightweightTag(named: tagName, commitHash: commitHash)
-                }.value
+                try await project.createLightweightTagAsync(named: tagName, commitHash: commitHash)
             },
             createAnnotatedTag: { project, tagName, commitHash, message in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.createAnnotatedTag(named: tagName, commitHash: commitHash, message: message)
-                }.value
+                try await project.createAnnotatedTagAsync(named: tagName, commitHash: commitHash, message: message)
             },
             deleteLocalTag: { project, tagName in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.deleteLocalTag(named: tagName)
-                }.value
+                try await project.deleteLocalTagAsync(named: tagName)
             },
             pushTagOperation: { project, tagName in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.pushTag(named: tagName)
-                }.value
+                try await project.pushTagAsync(named: tagName)
             },
             deleteRemoteTag: { project, tagName in
-                try await Task.detached(priority: .userInitiated) {
-                    try project.deleteRemoteTag(named: tagName)
-                }.value
+                try await project.deleteRemoteTagAsync(named: tagName)
             },
             eventHandler: handleEvent(_:),
             appWillBecomeActiveToken: appWillBecomeActiveToken,
