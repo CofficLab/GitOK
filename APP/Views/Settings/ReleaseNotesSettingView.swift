@@ -105,7 +105,7 @@ struct ReleaseNotesSettingView: View {
 
     private func releaseLinkRow(title: String, description: String, url: String) -> some View {
         settingsRow(title: title, description: description, icon: "doc.text") {
-            Image.safari.inButtonWithAction {
+            AppIconButton(systemImage: "safari", size: .regular) {
                 if let url = URL(string: url) {
                     NSWorkspace.shared.open(url)
                 }

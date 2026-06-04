@@ -99,7 +99,7 @@ struct RepositorySettingView: View, SuperLog {
                     description: project.path,
                     icon: "line.3.horizontal.decrease.circle"
                 ) {
-                    Image.finder.inButtonWithAction {
+                    AppIconButton(systemImage: "folder", size: .regular) {
                         project.url.openFolder()
                     }
                 }
@@ -144,18 +144,18 @@ struct RepositorySettingView: View, SuperLog {
 
                 // 在浏览器中打开（如果是 HTTPS）
                 if let httpsURL = RemoteRepositoryFormRules.remoteWebLink(for: remote.url)?.url {
-                    Image.safari.inButtonWithAction {
+                    AppIconButton(systemImage: "safari", size: .regular) {
                         httpsURL.openInBrowser()
                     }
                 }
 
                 // 复制 URL
-                Image.copyIcon.inButtonWithAction {
+                AppIconButton(systemImage: "doc.on.doc", size: .regular) {
                     remote.url.copy()
                 }
 
                 // 删除按钮
-                Image.trash.inButtonWithAction {
+                AppIconButton(systemImage: "trash", tint: .red, size: .regular) {
                     deleteRemoteRepository(remote)
                 }
             }

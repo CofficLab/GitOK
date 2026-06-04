@@ -27,7 +27,7 @@ struct AboutView: View, SuperLog {
                         Image(nsImage: appIcon)
                             .resizable()
                             .frame(width: 128, height: 128)
-                            .cornerRadius(20)
+                            .gitOKUIClipRounded(20)
                             .shadow(radius: 5)
                     }
 
@@ -137,7 +137,7 @@ struct AboutView: View, SuperLog {
 
     private func linkRow(title: String, url: String, icon: String) -> some View {
         settingsRow(title: title, description: url, icon: icon) {
-            Image.safari.inButtonWithAction {
+            AppIconButton(systemImage: "safari", size: .regular) {
                 if let url = URL(string: url) {
                     NSWorkspace.shared.open(url)
                 }
