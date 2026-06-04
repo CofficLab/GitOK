@@ -98,8 +98,8 @@ struct GitOKTheme: GitOKAppChromeTheme {
 extension GitOKTheme {
     static let repository = GitOKTheme(
         identifier: "repository",
-        displayName: "GitOK",
-        compactName: "GitOK",
+        displayName: "默认",
+        compactName: "默认",
         description: "Default GitOK dark theme with crisp blue, green, and violet accents",
         iconName: "folder.badge.gearshape",
         iconColor: Color.adaptive(light: "2563EB", dark: "58A6FF"),

@@ -21,8 +21,8 @@ final class GitOKThemePluginTests: XCTestCase {
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "repository")
-        XCTAssertEqual(contributions[0].displayName, "GitOK")
-        XCTAssertEqual(contributions[0].compactName, "GitOK")
+        XCTAssertEqual(contributions[0].displayName, "默认")
+        XCTAssertEqual(contributions[0].compactName, "默认")
         XCTAssertEqual(contributions[0].iconName, "folder.badge.gearshape")
         XCTAssertEqual(contributions[0].editorThemeId, "repository")
         XCTAssertEqual(contributions[0].sortKey.pluginOrder, 120)
