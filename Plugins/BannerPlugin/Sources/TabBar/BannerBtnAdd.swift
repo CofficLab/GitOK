@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitOKUI
 import MagicAlert
 import GitOKSupportKit
 import OSLog
@@ -21,7 +22,7 @@ struct BannerBtnAdd: View, SuperThread {
 
     var body: some View {
         if let projectURL {
-            Image.add.inButtonWithAction {
+            AppIconButton(systemImage: "plus", tint: .accentColor, size: .regular) {
                 createBanner(in: projectURL)
             }
         }

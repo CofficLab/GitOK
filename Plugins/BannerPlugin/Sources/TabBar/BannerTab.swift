@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitOKUI
 import MagicAlert
 import OSLog
 import SwiftUI
@@ -36,7 +37,7 @@ struct BannerTab: View {
     }
 
     var body: some View {
-        Image.document.inButtonWithAction {
+        AppIconButton(systemImage: "doc", size: .regular, isActive: isSelected) {
             guard let projectURL else {
                 return
             }
