@@ -32,8 +32,10 @@ public struct BranchManagementView: View {
             VStack(alignment: .leading, spacing: 16) {
                 newBranchSection
                 Divider()
-                TextField(BranchPluginLocalization.string("Search branches"), text: $searchText)
-                    .textFieldStyle(.roundedBorder)
+                AppSearchBar(
+                    text: $searchText,
+                    placeholder: BranchPluginLocalization.string("Search branches")
+                )
                 branchListSection
                 if remoteBranches.isEmpty == false {
                     Divider()
@@ -81,12 +83,16 @@ public struct BranchManagementView: View {
             Text(BranchPluginLocalization.string("New Branch"))
                 .font(.headline)
             HStack(spacing: 8) {
-                TextField(BranchPluginLocalization.string("Branch name"), text: $newBranchName)
-                    .textFieldStyle(.roundedBorder)
-                Button {
+                AppInputField(
+                    BranchPluginLocalization.string("Branch name"),
+                    text: $newBranchName
+                )
+                AppIconButton(
+                    systemImage: "plus",
+                    label: BranchPluginLocalization.string("New Branch"),
+                    tint: .accentColor
+                ) {
                     createBranch()
-                } label: {
-                    Image(systemName: "plus")
                 }
                 .disabled(newBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
             }
@@ -98,12 +104,13 @@ public struct BranchManagementView: View {
             Text(BranchPluginLocalization.string("Switch Branch"))
                 .font(.headline)
             if isLoading {
-                ProgressView()
+                AppLoadingOverlay(message: BranchPluginLocalization.string("Loading branches..."))
                     .frame(maxWidth: .infinity, minHeight: 60)
             } else if filteredBranches.isEmpty {
-                Text(BranchPluginLocalization.string("No branches yet"))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                AppEmptyState(
+                    icon: "arrow.triangle.branch",
+                    title: BranchPluginLocalization.string("No branches yet")
+                )
                     .frame(maxWidth: .infinity, minHeight: 60)
             } else {
                 LazyVStack(spacing: 4) {
@@ -136,12 +143,13 @@ public struct BranchManagementView: View {
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                     Spacer()
-                    Button(role: .destructive) {
+                    AppIconButton(
+                        systemImage: "trash",
+                        tint: DesignTokens.Color.semantic.error
+                    ) {
                         deleteRemoteBranch(branchName)
-                    } label: {
-                        Image(systemName: "trash")
                     }
-                    .buttonStyle(.borderless)
+                    .help(BranchPluginLocalization.string("Delete Remote Branch"))
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -163,15 +171,19 @@ public struct BranchManagementView: View {
                     Text(branch.name).tag(branch as GitBranchSummary?)
                 }
             }
-            Button {
+            AppButton(
+                BranchPluginLocalization.string("Compare"),
+                systemImage: "arrow.left.arrow.right",
+                style: .secondary,
+                size: .small
+            ) {
                 loadCompare()
-            } label: {
-                Label(BranchPluginLocalization.string("Compare"), systemImage: "arrow.left.arrow.right")
             }
             .disabled(compareBaseBranch == nil || compareHeadBranch == nil || compareBaseBranch?.id == compareHeadBranch?.id || isComparing)
 
             if isComparing {
-                ProgressView()
+                AppLoadingOverlay(message: BranchPluginLocalization.string("Comparing branches..."), size: .small)
+                    .frame(maxWidth: .infinity, minHeight: 48)
             } else if let compareError {
                 Text(compareError)
                     .font(.caption)
@@ -221,7 +233,12 @@ public struct BranchManagementView: View {
                 }
             }
             HStack {
-                Button(BranchPluginLocalization.string("Merge Head into Base")) {
+                AppButton(
+                    BranchPluginLocalization.string("Merge Head into Base"),
+                    systemImage: "arrow.triangle.merge",
+                    style: .secondary,
+                    size: .small
+                ) {
                     mergeComparedBranches()
                 }
                 .disabled(compareBaseBranch == nil || compareHeadBranch == nil || compare.ahead == 0)
@@ -233,7 +250,12 @@ public struct BranchManagementView: View {
     @ViewBuilder
     private func pullRequestButton(compare: GitBranchCompare) -> some View {
         if let links = pullRequestLinks() {
-            Button(BranchPluginLocalization.string("Create PR")) {
+            AppButton(
+                BranchPluginLocalization.string("Create PR"),
+                systemImage: "arrow.up.right.square",
+                style: .secondary,
+                size: .small
+            ) {
                 NSWorkspace.shared.open(links.createURL)
             }
             .disabled(compare.ahead == 0)

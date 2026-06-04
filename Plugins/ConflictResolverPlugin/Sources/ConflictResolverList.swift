@@ -56,12 +56,24 @@ public struct ConflictResolverList: View {
 
                     if isMerging {
                         HStack(spacing: DesignTokens.Spacing.sm) {
-                            Button(ConflictResolverPluginLocalization.string("Continue Merge")) {
+                            AppButton(
+                                ConflictResolverPluginLocalization.string("Continue Merge"),
+                                systemImage: "checkmark.circle",
+                                style: .secondary,
+                                size: .small,
+                                isLoading: isPerformingAction
+                            ) {
                                 continueMerge()
                             }
                             .disabled(!resolutionState.canContinueMerge || isPerformingAction)
 
-                            Button(ConflictResolverPluginLocalization.string("Abort Merge"), role: .destructive) {
+                            AppButton(
+                                ConflictResolverPluginLocalization.string("Abort Merge"),
+                                systemImage: "xmark.octagon",
+                                style: .destructive,
+                                size: .small,
+                                isLoading: isPerformingAction
+                            ) {
                                 abortMerge()
                             }
                             .disabled(isPerformingAction)
@@ -97,21 +109,22 @@ public struct ConflictResolverList: View {
                 }
 
                 if isLoading {
-                    ProgressView(ConflictResolverPluginLocalization.string("Checking conflict status..."))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, DesignTokens.Spacing.xl)
+                    AppLoadingOverlay(message: ConflictResolverPluginLocalization.string("Checking conflict status..."))
+                        .frame(maxWidth: .infinity, minHeight: 120)
                 } else if !isMerging {
-                    emptyState(
+                    AppEmptyState(
                         icon: "checkmark.circle",
                         title: ConflictResolverPluginLocalization.string("No merge in progress"),
-                        subtitle: ConflictResolverPluginLocalization.string("When you encounter conflicts during a merge, files needing resolution will appear here")
+                        description: ConflictResolverPluginLocalization.string("When you encounter conflicts during a merge, files needing resolution will appear here")
                     )
+                    .frame(minHeight: 180)
                 } else if mergeFiles.isEmpty {
-                    emptyState(
+                    AppEmptyState(
                         icon: "checkmark.circle.fill",
                         title: ConflictResolverPluginLocalization.string("No files to handle"),
-                        subtitle: ConflictResolverPluginLocalization.string("The current merge left no pending files.")
+                        description: ConflictResolverPluginLocalization.string("The current merge left no pending files.")
                     )
+                    .frame(minHeight: 180)
                 } else {
                     VStack(spacing: DesignTokens.Spacing.sm) {
                         ForEach(mergeFiles) { file in
@@ -174,18 +187,36 @@ public struct ConflictResolverList: View {
                 }
 
                 HStack(spacing: DesignTokens.Spacing.sm) {
-                    Button(ConflictResolverPluginLocalization.string("Use Ours")) {
+                    AppButton(
+                        ConflictResolverPluginLocalization.string("Use Ours"),
+                        systemImage: "arrow.left.square",
+                        style: .secondary,
+                        size: .small,
+                        isLoading: isPerformingAction && activeActionFile == selectedFile
+                    ) {
                         checkoutMergeVersion(.ours, path: selectedFile)
                     }
                     .disabled(isPerformingAction)
 
-                    Button(ConflictResolverPluginLocalization.string("Use Theirs")) {
+                    AppButton(
+                        ConflictResolverPluginLocalization.string("Use Theirs"),
+                        systemImage: "arrow.right.square",
+                        style: .secondary,
+                        size: .small,
+                        isLoading: isPerformingAction && activeActionFile == selectedFile
+                    ) {
                         checkoutMergeVersion(.theirs, path: selectedFile)
                     }
                     .disabled(isPerformingAction)
 
                     if selectedMergeFile?.state != .staged {
-                        Button(ConflictResolverPluginLocalization.string("Mark Resolved")) {
+                        AppButton(
+                            ConflictResolverPluginLocalization.string("Mark Resolved"),
+                            systemImage: "checkmark.circle",
+                            style: .secondary,
+                            size: .small,
+                            isLoading: isPerformingAction && activeActionFile == selectedFile
+                        ) {
                             stageFile(selectedFile)
                         }
                         .disabled(isPerformingAction)
@@ -199,9 +230,8 @@ public struct ConflictResolverList: View {
                 }
 
                 if isLoadingPreview {
-                    ProgressView(ConflictResolverPluginLocalization.string("Loading conflict preview..."))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, DesignTokens.Spacing.lg)
+                    AppLoadingOverlay(message: ConflictResolverPluginLocalization.string("Loading conflict preview..."), size: .small)
+                        .frame(maxWidth: .infinity, minHeight: 96)
                 } else if let previewErrorMessage {
                     Text(previewErrorMessage)
                         .font(DesignTokens.Typography.caption1)
@@ -248,38 +278,14 @@ public struct ConflictResolverList: View {
     }
 
     private func smallToolButton(icon: String, title: String, help: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Label(title, systemImage: icon)
-                .font(DesignTokens.Typography.caption1)
-                .foregroundColor(DesignTokens.Color.semantic.textSecondary)
-                .padding(.horizontal, DesignTokens.Spacing.sm)
-                .padding(.vertical, DesignTokens.Spacing.xs)
-                .background(
-                    RoundedRectangle(cornerRadius: DesignTokens.Radius.sm)
-                        .fill(DesignTokens.Material.glass.opacity(0.08))
-                )
+        AppIconButton(
+            systemImage: icon,
+            label: title,
+            tint: DesignTokens.Color.semantic.textSecondary
+        ) {
+            action()
         }
-        .buttonStyle(.plain)
         .help(help)
-    }
-
-    private func emptyState(icon: String, title: String, subtitle: String) -> some View {
-        VStack(spacing: DesignTokens.Spacing.sm) {
-            Image(systemName: icon)
-                .font(.system(size: 42))
-                .foregroundColor(DesignTokens.Color.semantic.success)
-
-            Text(title)
-                .font(DesignTokens.Typography.bodyEmphasized)
-                .foregroundColor(DesignTokens.Color.semantic.textPrimary)
-
-            Text(subtitle)
-                .font(DesignTokens.Typography.caption1)
-                .foregroundColor(DesignTokens.Color.semantic.textSecondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, DesignTokens.Spacing.xxl)
     }
 }
 

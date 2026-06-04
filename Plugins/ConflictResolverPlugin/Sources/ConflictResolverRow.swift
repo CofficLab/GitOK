@@ -79,17 +79,9 @@ public struct ConflictResolverRow: View {
     }
 
     private func rowAction(icon: String, tint: Color = DesignTokens.Color.semantic.textSecondary, help: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(tint)
-                .frame(width: 28, height: 28)
-                .background(
-                    RoundedRectangle(cornerRadius: DesignTokens.Radius.sm)
-                        .fill(DesignTokens.Material.glass.opacity(0.08))
-                )
+        AppIconButton(systemImage: icon, tint: tint) {
+            action()
         }
-        .buttonStyle(.plain)
         .help(help)
     }
 }

@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import SwiftUI
 
 struct GitIgnoreViewer: View {
@@ -63,13 +64,17 @@ struct GitIgnoreViewer: View {
 
             HStack(spacing: 12) {
                 if isLoading {
-                    ProgressView()
-                        .controlSize(.small)
+                    AppLoadingOverlay(size: .small)
+                        .frame(width: 28, height: 28)
                 }
 
                 organizerControls
 
-                Button(GitIgnorePluginLocalization.string("Close")) {
+                AppButton(
+                    GitIgnorePluginLocalization.string("Close"),
+                    style: .secondary,
+                    size: .small
+                ) {
                     dismiss()
                 }
                 .keyboardShortcut(.cancelAction)
@@ -103,37 +108,32 @@ struct GitIgnoreViewer: View {
             .fixedSize()
             .disabled(isApplyingTemplate || isOrganizing || isLoading)
 
-            Button(GitIgnorePluginLocalization.string("Organize Groups")) {
+            AppButton(
+                GitIgnorePluginLocalization.string("Organize Groups"),
+                systemImage: "line.3.horizontal.decrease.circle",
+                style: .secondary,
+                size: .small,
+                isLoading: isOrganizing
+            ) {
                 organizeGitIgnore()
             }
-            .controlSize(.small)
             .disabled(isApplyingTemplate || isOrganizing || isLoading)
         }
     }
 
     private var loadingView: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .controlSize(.large)
-            Text(GitIgnorePluginLocalization.string("Loading .gitignore..."))
-                .font(.headline)
-                .foregroundColor(.secondary)
-        }
+        AppLoadingOverlay(message: GitIgnorePluginLocalization.string("Loading .gitignore..."), size: .large)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(minHeight: 300)
     }
 
     private var emptyView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "doc.text.below.ecg")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            Text(GitIgnorePluginLocalization.string("No .gitignore file found"))
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Text(GitIgnorePluginLocalization.string("No .gitignore file found in current project"))
-                .font(.caption)
-                .foregroundColor(.secondary)
+        VStack(spacing: 8) {
+            AppEmptyState(
+                icon: "doc.text.below.ecg",
+                title: GitIgnorePluginLocalization.string("No .gitignore file found"),
+                description: GitIgnorePluginLocalization.string("No .gitignore file found in current project")
+            )
             if let statusMessage {
                 Text(statusMessage)
                     .font(.caption)

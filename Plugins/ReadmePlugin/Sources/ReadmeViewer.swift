@@ -45,11 +45,15 @@ struct ReadmeViewer: View {
 
             HStack(spacing: 12) {
                 if isLoading {
-                    ProgressView()
-                        .controlSize(.small)
+                    AppLoadingOverlay(size: .small)
+                        .frame(width: 28, height: 28)
                 }
 
-                Button(ReadmePluginLocalization.string("Close")) {
+                AppButton(
+                    ReadmePluginLocalization.string("Close"),
+                    style: .secondary,
+                    size: .small
+                ) {
                     dismiss()
                 }
                 .keyboardShortcut(.cancelAction)
@@ -68,27 +72,15 @@ struct ReadmeViewer: View {
     private var contentArea: some View {
         ScrollView {
             if isLoading {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .controlSize(.large)
-                    Text(ReadmePluginLocalization.string("Loading document..."))
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                }
+                AppLoadingOverlay(message: ReadmePluginLocalization.string("Loading document..."), size: .large)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .frame(minHeight: 300)
             } else if hasError || readmeContent.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "doc.text.below.ecg")
-                        .font(.system(size: 48))
-                        .foregroundColor(.secondary)
-                    Text(ReadmePluginLocalization.string("README.md not found"))
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                    Text(ReadmePluginLocalization.string("No README.md file found in the current project"))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                AppEmptyState(
+                    icon: "doc.text.below.ecg",
+                    title: ReadmePluginLocalization.string("README.md not found"),
+                    description: ReadmePluginLocalization.string("No README.md file found in the current project")
+                )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .frame(minHeight: 300)
             } else {

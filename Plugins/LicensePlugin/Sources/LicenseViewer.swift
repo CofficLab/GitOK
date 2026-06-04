@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import SwiftUI
 
 struct LicenseViewer: View {
@@ -67,17 +68,27 @@ struct LicenseViewer: View {
             }
 
             if isSaving {
-                ProgressView()
-                    .controlSize(.small)
+                AppLoadingOverlay(size: .small)
+                    .frame(width: 28, height: 28)
             }
 
-            Button(LicensePluginLocalization.string("Save")) {
+            AppButton(
+                LicensePluginLocalization.string("Save"),
+                systemImage: "square.and.arrow.down",
+                style: .secondary,
+                size: .small,
+                isLoading: isSaving
+            ) {
                 saveLicense()
             }
             .keyboardShortcut("s", modifiers: .command)
             .disabled(isLoading || isSaving)
 
-            Button(LicensePluginLocalization.string("Close")) {
+            AppButton(
+                LicensePluginLocalization.string("Close"),
+                style: .secondary,
+                size: .small
+            ) {
                 dismiss()
             }
             .keyboardShortcut(.cancelAction)
@@ -87,13 +98,7 @@ struct LicenseViewer: View {
     }
 
     private var loadingView: some View {
-        VStack(spacing: 12) {
-            ProgressView()
-                .controlSize(.large)
-            Text(LicensePluginLocalization.string("Loading LICENSE..."))
-                .font(.headline)
-                .foregroundColor(.secondary)
-        }
+        AppLoadingOverlay(message: LicensePluginLocalization.string("Loading LICENSE..."), size: .large)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -136,7 +141,12 @@ struct LicenseViewer: View {
 
                     Spacer()
 
-                    Button(LicensePluginLocalization.string("Apply to Current")) {
+                    AppButton(
+                        LicensePluginLocalization.string("Apply to Current"),
+                        systemImage: "arrow.down.doc",
+                        style: .secondary,
+                        size: .small
+                    ) {
                         content = template.content
                         selectedPane = .current
                         statusMessage = String(format: LicensePluginLocalization.string("Template applied: %@"), template.title)

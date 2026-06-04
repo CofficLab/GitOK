@@ -28,10 +28,13 @@ struct BranchRowView: View {
 
             HStack(spacing: 8) {
                 if !isSelected {
-                    Button(action: onSwitch) {
-                        Image(systemName: "checkmark")
+                    AppIconButton(
+                        systemImage: "checkmark",
+                        tint: DesignTokens.Color.semantic.success
+                    ) {
+                        onSwitch()
                     }
-                    .buttonStyle(.borderless)
+                    .help(BranchPluginLocalization.string("Switch Branch"))
                 } else {
                     Text(BranchPluginLocalization.string("Current"))
                         .font(.caption)
