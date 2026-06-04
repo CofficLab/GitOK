@@ -574,40 +574,60 @@ private extension FileListHostView {
 
     func performRefresh(_ command: FileListRules.ProjectRefreshCommand<Project>) async {
         let expectedCommitHash = selectedCommit.map(commitHash)
+        let projectTransfer = UnsafeTransfer(value: command.project)
+        let loadCommitFilesTransfer = UnsafeTransfer(value: loadCommitFiles)
+        let loadWorktreeFilesTransfer = UnsafeTransfer(value: loadWorktreeFiles)
+        let loadStatusEntriesTransfer = UnsafeTransfer(value: loadStatusEntries)
+        let reason = command.request.reason
 
         do {
-            let worker = Task { @MainActor in
-                eventHandler(.log(.refreshStarted(reason: command.request.reason)))
+            let worker = Task.detached(priority: .userInitiated) {
+                await MainActor.run {
+                    eventHandler(.log(.refreshStarted(reason: reason)))
+                }
                 try Task.checkCancellation()
 
                 let loadedFiles: [FileItem]
                 let statusEntries: [StatusEntry]
                 if let expectedCommitHash {
-                    loadedFiles = try await loadCommitFiles(command.project, expectedCommitHash)
+                    loadedFiles = try await loadCommitFilesTransfer.value(projectTransfer.value, expectedCommitHash)
                     statusEntries = []
                 } else {
-                    loadedFiles = try await loadWorktreeFiles(command.project)
-                    statusEntries = try await loadStatusEntries(command.project)
+                    loadedFiles = try await loadWorktreeFilesTransfer.value(projectTransfer.value)
+                    statusEntries = try await loadStatusEntriesTransfer.value(projectTransfer.value)
                 }
 
                 try Task.checkCancellation()
-                let latestCommitHash = selectedCommit.map(commitHash)
-                let preferredPath = selection.map(filePath) ?? scrollTarget.map(filePath)
+                let latestState = await MainActor.run {
+                    (
+                        commitHash: selectedCommit.map(commitHash),
+                        preferredPath: selection.map(filePath) ?? scrollTarget.map(filePath),
+                        selectedBatchPaths: selectedBatchFilePaths,
+                        filterText: appliedFilterText,
+                        historyMode: isHistoryMode
+                    )
+                }
                 let applicationResult = await refreshApplicationResultInBackground(
                     expectedCommitHash: expectedCommitHash,
-                    currentCommitHash: latestCommitHash,
-                    preferredPath: preferredPath,
+                    currentCommitHash: latestState.commitHash,
+                    preferredPath: latestState.preferredPath,
                     loadedFiles: loadedFiles,
                     statusEntries: statusEntries,
-                    selectedBatchPaths: selectedBatchFilePaths
+                    selectedBatchPaths: latestState.selectedBatchPaths,
+                    filterText: latestState.filterText,
+                    historyMode: latestState.historyMode
                 )
 
                 guard let applicationResult else {
-                    eventHandler(.log(.commitChangedDuringRefresh))
+                    await MainActor.run {
+                        eventHandler(.log(.commitChangedDuringRefresh))
+                    }
                     return
                 }
 
-                applyRefreshApplicationResult(applicationResult)
+                await MainActor.run {
+                    applyRefreshApplicationResult(applicationResult)
+                }
             }
 
             refreshWorkerTask = worker
@@ -628,10 +648,10 @@ private extension FileListHostView {
         preferredPath: String?,
         loadedFiles: [FileItem],
         statusEntries: [StatusEntry],
-        selectedBatchPaths: Set<String>
+        selectedBatchPaths: Set<String>,
+        filterText: String,
+        historyMode: Bool
     ) async -> RefreshApplicationResult? {
-        let filterText = appliedFilterText
-        let historyMode = isHistoryMode
         let loadedFilesTransfer = UnsafeTransfer(value: loadedFiles)
         let statusEntriesTransfer = UnsafeTransfer(value: statusEntries)
         let itemPathTransfer = UnsafeTransfer(value: filePath)
