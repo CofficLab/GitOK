@@ -1,3 +1,5 @@
+import AppKit
+import Foundation
 import GitOKCoreKit
 import GitOKSupportKit
 import SwiftUI
@@ -8,11 +10,11 @@ import SwiftUI
  */
 struct ClassicImage: View {
     @EnvironmentObject var b: BannerProvider
-
+    @State private var loadedImage: Image?
 
     var banner: BannerFile { b.banner }
     var classicData: ClassicBannerData? { banner.classicData }
-    var image: Image { classicData?.getImage(banner.projectURL) ?? Image(ClassicBannerData.defaultImageId) }
+    var image: Image { loadedImage ?? Image(ClassicBannerData.defaultImageId) }
 
     var body: some View {
         ZStack {
@@ -51,6 +53,36 @@ struct ClassicImage: View {
                 image
                     .resizable()
                     .scaledToFit()
+            }
+        }
+        .onAppear(perform: loadImage)
+        .onChange(of: classicData?.imageId) {
+            loadImage()
+        }
+        .onChange(of: banner.projectURL) {
+            loadImage()
+        }
+    }
+
+    private func loadImage() {
+        guard let imageId = classicData?.imageId else {
+            loadedImage = nil
+            return
+        }
+
+        let projectURL = banner.projectURL
+        let cleanPath = imageId.replacingOccurrences(of: "\\/", with: "/")
+        let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
+
+        Task.detached(priority: .userInitiated) {
+            let data = try? Data(contentsOf: imageURL)
+            await MainActor.run {
+                guard classicData?.imageId == imageId, banner.projectURL == projectURL else { return }
+                if let data, let nsImage = NSImage(data: data) {
+                    loadedImage = Image(nsImage: nsImage)
+                } else {
+                    loadedImage = nil
+                }
             }
         }
     }
