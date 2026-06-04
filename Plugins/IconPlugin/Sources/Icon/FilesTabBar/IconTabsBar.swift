@@ -22,7 +22,16 @@ struct IconTabsBar: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(icons) { icon in
-                        Button(action: { selection = icon }) {
+                        AppSelectionTile(
+                            isSelected: isSelected(icon),
+                            cornerRadius: 8,
+                            selectedBackgroundColor: Color.accentColor.opacity(0.15),
+                            selectedBorderColor: Color.accentColor,
+                            selectedBorderWidth: 1,
+                            idleBorderColor: Color.gray.opacity(0.3),
+                            idleBorderWidth: 0.5,
+                            action: { selection = icon }
+                        ) {
                             HStack(spacing: 6) {
                                 Image(systemName: "photo")
                                     .resizable()
@@ -38,14 +47,7 @@ struct IconTabsBar: View {
                             }
                             .padding(.vertical, 6)
                             .padding(.horizontal, 10)
-                            .background(isSelected(icon) ? Color.accentColor.opacity(0.15) : Color.clear)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(isSelected(icon) ? Color.accentColor : Color.gray.opacity(0.3), lineWidth: isSelected(icon) ? 1 : 0.5)
-                            )
-                            .cornerRadius(8)
                         }
-                        .buttonStyle(.plain)
                         .contextMenu {
                             BtnDelIcon(icon: icon)
                         }

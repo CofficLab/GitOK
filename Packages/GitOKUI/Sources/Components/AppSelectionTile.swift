@@ -7,7 +7,11 @@ public struct AppSelectionTile<Content: View>: View {
     let isSelected: Bool
     let cornerRadius: CGFloat
     let selectedScale: CGFloat
+    let selectedBackgroundColor: Color?
     let selectedBorderColor: Color?
+    let selectedBorderWidth: CGFloat
+    let idleBorderColor: Color?
+    let idleBorderWidth: CGFloat
     let action: () -> Void
     let content: Content
 
@@ -17,14 +21,22 @@ public struct AppSelectionTile<Content: View>: View {
         isSelected: Bool = false,
         cornerRadius: CGFloat = 8,
         selectedScale: CGFloat = 1,
+        selectedBackgroundColor: Color? = nil,
         selectedBorderColor: Color? = nil,
+        selectedBorderWidth: CGFloat = 2,
+        idleBorderColor: Color? = nil,
+        idleBorderWidth: CGFloat = 0,
         action: @escaping () -> Void,
         @ViewBuilder content: () -> Content
     ) {
         self.isSelected = isSelected
         self.cornerRadius = cornerRadius
         self.selectedScale = selectedScale
+        self.selectedBackgroundColor = selectedBackgroundColor
         self.selectedBorderColor = selectedBorderColor
+        self.selectedBorderWidth = selectedBorderWidth
+        self.idleBorderColor = idleBorderColor
+        self.idleBorderWidth = idleBorderWidth
         self.action = action
         self.content = content()
     }
@@ -37,10 +49,15 @@ public struct AppSelectionTile<Content: View>: View {
         isSelected ? selectedScale : 1
     }
 
+    var resolvedBorderWidth: CGFloat {
+        isSelected ? selectedBorderWidth : idleBorderWidth
+    }
+
     public var body: some View {
         Button(action: action) {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(tileBackground)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
                 .overlay(selectionBorder)
                 .overlay(hoverBorder)
@@ -59,7 +76,10 @@ public struct AppSelectionTile<Content: View>: View {
     @ViewBuilder private var selectionBorder: some View {
         if isSelected {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(resolvedBorderColor, lineWidth: 2)
+                .stroke(resolvedBorderColor, lineWidth: selectedBorderWidth)
+        } else if let idleBorderColor, idleBorderWidth > 0 {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .stroke(idleBorderColor, lineWidth: idleBorderWidth)
         }
     }
 
@@ -67,6 +87,12 @@ public struct AppSelectionTile<Content: View>: View {
         if isHovered && isSelected == false {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(theme.primary.opacity(0.25), lineWidth: 1)
+        }
+    }
+
+    @ViewBuilder private var tileBackground: some View {
+        if isSelected, let selectedBackgroundColor {
+            selectedBackgroundColor
         }
     }
 }

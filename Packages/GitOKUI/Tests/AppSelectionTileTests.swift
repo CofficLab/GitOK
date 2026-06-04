@@ -22,4 +22,28 @@ struct AppSelectionTileTests {
 
         #expect(tile.resolvedScale == 1)
     }
+
+    @Test
+    @MainActor
+    func borderWidthFollowsSelectionState() {
+        let selected = AppSelectionTile(
+            isSelected: true,
+            selectedBorderWidth: 1,
+            idleBorderWidth: 0.5,
+            action: {}
+        ) {
+            Color.red
+        }
+        let idle = AppSelectionTile(
+            isSelected: false,
+            selectedBorderWidth: 1,
+            idleBorderWidth: 0.5,
+            action: {}
+        ) {
+            Color.red
+        }
+
+        #expect(selected.resolvedBorderWidth == 1)
+        #expect(idle.resolvedBorderWidth == 0.5)
+    }
 }
