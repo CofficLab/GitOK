@@ -102,8 +102,12 @@ struct DiagnosticsSettingView: View {
         action: @escaping () -> Void
     ) -> some View {
         settingsRow(title: title, description: description, icon: icon) {
-            Button(buttonTitle, action: action)
-                .controlSize(.small)
+            AppButton(
+                buttonTitle,
+                style: .secondary,
+                size: .small,
+                action: action
+            )
         }
     }
 

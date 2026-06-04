@@ -482,14 +482,25 @@ private extension BranchManagementView {
             Text(branch.name)
                 .font(.caption)
                 .foregroundColor(.secondary)
-            TextField(BranchPluginLocalization.string("New branch name"), text: $renameBranchName)
-                .textFieldStyle(.roundedBorder)
-            HStack {
+            AppInputField(
+                BranchPluginLocalization.string("New branch name"),
+                text: $renameBranchName
+            )
+            HStack(spacing: 8) {
                 Spacer()
-                Button(BranchPluginLocalization.string("Cancel")) {
+                AppButton(
+                    BranchPluginLocalization.string("Cancel"),
+                    style: .secondary,
+                    size: .small
+                ) {
                     branchToRename = nil
                 }
-                Button(BranchPluginLocalization.string("Rename")) {
+                AppButton(
+                    BranchPluginLocalization.string("Rename"),
+                    systemImage: "pencil",
+                    style: .primary,
+                    size: .small
+                ) {
                     renameBranch(branch)
                     branchToRename = nil
                 }
@@ -512,12 +523,21 @@ private extension BranchManagementView {
                     Text(branchName).tag(branchName)
                 }
             }
-            HStack {
+            HStack(spacing: 8) {
                 Spacer()
-                Button(BranchPluginLocalization.string("Cancel")) {
+                AppButton(
+                    BranchPluginLocalization.string("Cancel"),
+                    style: .secondary,
+                    size: .small
+                ) {
                     branchToSetUpstream = nil
                 }
-                Button(BranchPluginLocalization.string("Set")) {
+                AppButton(
+                    BranchPluginLocalization.string("Set"),
+                    systemImage: "link",
+                    style: .primary,
+                    size: .small
+                ) {
                     setUpstream(branch, upstreamBranch: selectedUpstreamBranch)
                     branchToSetUpstream = nil
                 }
