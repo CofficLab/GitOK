@@ -151,6 +151,72 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
     }
 }
 
+fileprivate enum FileDetailBackgroundLoader {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+
+    static func diffTextLoadResult<Project, File, SelectedCommit>(
+        file: File?,
+        project: Project?,
+        selectedCommit: SelectedCommit?,
+        isBinary: (File) -> Bool,
+        existingPatch: (File) -> String,
+        selectedCommitHash: (SelectedCommit) -> String,
+        loadCommitDiff: (Project, File, String) async throws -> String,
+        loadWorktreeDiff: (Project, File) async throws -> String
+    ) async -> GitDetailDiffDisplayRules.DiffTextLoadResult {
+        guard let loadedFile = file, let loadedProject = project else {
+            return GitDetailDiffDisplayRules.DiffTextLoadResult(
+                state: GitDetailDiffDisplayRules.DiffTextState(text: "", issueMessage: nil),
+                errorDescription: nil
+            )
+        }
+
+        do {
+            let source = GitDetailDiffDisplayRules.diffSource(
+                isBinary: isBinary(loadedFile),
+                selectedCommit: selectedCommit,
+                existingPatch: existingPatch(loadedFile)
+            )
+
+            switch source {
+            case .noneForBinary:
+                return GitDetailDiffDisplayRules.DiffTextLoadResult(
+                    state: GitDetailDiffDisplayRules.diffTextStateForBinary(),
+                    errorDescription: nil
+                )
+            case .commit:
+                guard let selectedCommit else {
+                    throw GitDetailError.commitNotFound
+                }
+                let text = try await loadCommitDiff(loadedProject, loadedFile, selectedCommitHash(selectedCommit))
+                return GitDetailDiffDisplayRules.DiffTextLoadResult(
+                    state: GitDetailDiffDisplayRules.diffTextStateForLoadedText(text),
+                    errorDescription: nil
+                )
+            case let .existingPatch(patch):
+                return GitDetailDiffDisplayRules.DiffTextLoadResult(
+                    state: GitDetailDiffDisplayRules.diffTextStateForLoadedText(patch),
+                    errorDescription: nil
+                )
+            case .worktree:
+                let text = try await loadWorktreeDiff(loadedProject, loadedFile)
+                return GitDetailDiffDisplayRules.DiffTextLoadResult(
+                    state: GitDetailDiffDisplayRules.diffTextStateForLoadedText(text),
+                    errorDescription: nil
+                )
+            }
+        } catch {
+            let errorDescription = error.localizedDescription
+            return GitDetailDiffDisplayRules.DiffTextLoadResult(
+                state: GitDetailDiffDisplayRules.diffTextStateForFailure(errorDescription: errorDescription),
+                errorDescription: errorDescription
+            )
+        }
+    }
+}
+
 private extension FileDetailHostView {
     enum TextPreviewLoadResult {
         case success(GitDetailDiffDisplayRules.TextPreviewState)
@@ -418,22 +484,38 @@ private extension FileDetailHostView {
         let file = file
         let project = project
         let selectedCommit = selectedCommit
+        let fileTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: file)
+        let projectTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: project)
+        let selectedCommitTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommit)
+        let isBinaryTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: isBinary)
+        let existingPatchTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: existingPatch)
+        let selectedCommitHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommitHash)
+        let loadCommitDiffTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCommitDiff)
+        let loadWorktreeDiffTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadWorktreeDiff)
+        let handleEventTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: handleEvent)
 
-        Task(priority: .userInitiated) { @MainActor in
-            let result = await diffTextLoadResult(
-                file: file,
-                project: project,
-                selectedCommit: selectedCommit
+        Task.detached(priority: .userInitiated) {
+            let result = await FileDetailBackgroundLoader.diffTextLoadResult(
+                file: fileTransfer.value,
+                project: projectTransfer.value,
+                selectedCommit: selectedCommitTransfer.value,
+                isBinary: isBinaryTransfer.value,
+                existingPatch: existingPatchTransfer.value,
+                selectedCommitHash: selectedCommitHashTransfer.value,
+                loadCommitDiff: loadCommitDiffTransfer.value,
+                loadWorktreeDiff: loadWorktreeDiffTransfer.value
             )
 
-            guard generation == diffLoadGeneration else { return }
+            await MainActor.run {
+                guard generation == diffLoadGeneration else { return }
 
-            if let failureDescription = result.errorDescription {
-                handleEvent(.diffFailure(errorDescription: failureDescription))
-                handleEvent(.error(failureDescription))
+                if let failureDescription = result.errorDescription {
+                    handleEventTransfer.value(.diffFailure(errorDescription: failureDescription))
+                    handleEventTransfer.value(.error(failureDescription))
+                }
+
+                applyDiffTextState(result.state)
             }
-
-            applyDiffTextState(result.state)
         }
     }
 }
