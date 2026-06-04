@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 // MARK: - ProjectRow
@@ -8,37 +9,13 @@ struct ProjectRow: View {
     let isSelected: Bool
     let action: () -> Void
 
-    @State private var isHovered = false
-
     var body: some View {
-        Button(action: action) {
+        AppListRow(isSelected: isSelected, action: action) {
             Text(title)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
-                .background(rowBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-                .contentShape(Rectangle()) // 确保整个区域都可点击
         }
-        .buttonStyle(.plain)
         .accessibilityLabel(title)
         .accessibilityHint(isSelected ? "当前项目" : "切换到此项目")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovered = hovering
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var rowBackground: some View {
-        if isSelected {
-            Color.accentColor.opacity(0.2)
-        } else if isHovered {
-            Color.primary.opacity(0.08)
-        } else {
-            Color.clear
-        }
     }
 }

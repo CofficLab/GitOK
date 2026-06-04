@@ -382,15 +382,14 @@ struct AppAppearanceSettingView: View, SuperLog {
     /// 重置设置
     private var resetSection: some View {
         GitOKUI.AppSettingsSection(title: String(localized: "Reset")) {
-            Button(role: .destructive) {
+            AppButton(
+                String(localized: "重置所有外观设置"),
+                systemImage: "arrow.counterclockwise",
+                style: .destructive,
+                size: .small
+            ) {
                 showResetConfirmation = true
-            } label: {
-                HStack {
-                    Image(systemName: "arrow.counterclockwise")
-                    Text("重置所有外观设置")
-                }
             }
-            .buttonStyle(.plain)
         }
     }
 
