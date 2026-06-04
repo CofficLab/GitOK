@@ -226,6 +226,12 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     }
 }
 
+fileprivate enum WorkingStateBackgroundRunner {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 private extension WorkingStateHostView {
     var displayActivityStatus: String? {
         if let activityStatus {
@@ -366,57 +372,75 @@ private extension WorkingStateHostView {
 
     func loadSyncStatus(_ command: CommitRemoteSyncRules.ProjectSyncStatusRequest<Project>) {
         eventHandler(.log(.syncStatusLoad(projectPath: command.request.projectPath)))
-        nonisolated(unsafe) let project = command.project
+        let projectTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: command.project)
+        let loadUnpushedCommitsTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: loadUnpushedCommits)
+        let loadUnpulledCountTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: loadUnpulledCount)
+        let loadRemoteTrackingStatusTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: loadRemoteTrackingStatus)
+        let eventHandlerTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: eventHandler)
+        let updateRemoteTrackingStatusTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: updateRemoteTrackingStatus)
 
-        Task { @MainActor in
-            applySyncStatusRefreshState(CommitRemoteSyncRules.syncStatusRefreshStartState())
+        Task.detached(priority: .userInitiated) {
+            await MainActor.run {
+                applySyncStatusRefreshState(CommitRemoteSyncRules.syncStatusRefreshStartState())
+            }
 
             let unpushedCount: Int
             do {
-                unpushedCount = try await loadUnpushedCommits(project).count
+                unpushedCount = try await loadUnpushedCommitsTransfer.value(projectTransfer.value).count
             } catch {
                 unpushedCount = 0
-                eventHandler(.log(.unpushedCountFailure(error)))
+                await MainActor.run {
+                    eventHandlerTransfer.value(.log(.unpushedCountFailure(error)))
+                }
             }
 
             let unpulledCount: Int
             do {
-                unpulledCount = try await loadUnpulledCount(project)
+                unpulledCount = try await loadUnpulledCountTransfer.value(projectTransfer.value)
             } catch {
                 unpulledCount = 0
-                eventHandler(.log(.unpulledCountFailure(error)))
+                await MainActor.run {
+                    eventHandlerTransfer.value(.log(.unpulledCountFailure(error)))
+                }
             }
 
+            let nextTrackingStatus: GitOKRemoteTrackingStatus
+            let trackingFetchedAt = Date()
             do {
-                let trackingStatus = try await loadRemoteTrackingStatus(project)
-                remoteTrackingStatus = trackingStatus
-                updateRemoteTrackingStatus(trackingStatus, Date())
+                nextTrackingStatus = try await loadRemoteTrackingStatusTransfer.value(projectTransfer.value)
             } catch {
-                remoteTrackingStatus = GitOKRemoteTrackingStatus(
+                nextTrackingStatus = GitOKRemoteTrackingStatus(
                     ahead: unpushedCount,
                     behind: unpulledCount,
                     hasUpstream: unpushedCount > 0 || unpulledCount > 0
                 )
-                updateRemoteTrackingStatus(remoteTrackingStatus, Date())
-                eventHandler(.log(.remoteTrackingFailure(error)))
+                await MainActor.run {
+                    eventHandlerTransfer.value(.log(.remoteTrackingFailure(error)))
+                }
             }
 
             let resultState = CommitRemoteSyncRules.syncStatusResultState(
                 unpushedCount: unpushedCount,
                 unpulledCount: unpulledCount
             )
-            CommitRemoteSyncRules.performSyncStatusResultState(
-                resultState,
-                setUnpushedCount: { self.unpushedCount = $0 },
-                setUnpulledCount: { self.unpulledCount = $0 },
-                applyRefreshState: self.applySyncStatusRefreshState
-            )
-            eventHandler(.log(.syncStatusUpdated(
-                unpushedCount: resultState.unpushedCount,
-                unpulledCount: resultState.unpulledCount
-            )))
+            await MainActor.run {
+                remoteTrackingStatus = nextTrackingStatus
+                updateRemoteTrackingStatusTransfer.value(nextTrackingStatus, trackingFetchedAt)
+                CommitRemoteSyncRules.performSyncStatusResultState(
+                    resultState,
+                    setUnpushedCount: { self.unpushedCount = $0 },
+                    setUnpulledCount: { self.unpulledCount = $0 },
+                    applyRefreshState: self.applySyncStatusRefreshState
+                )
+                eventHandlerTransfer.value(.log(.syncStatusUpdated(
+                    unpushedCount: resultState.unpushedCount,
+                    unpulledCount: resultState.unpulledCount
+                )))
+            }
             try? await Task.sleep(nanoseconds: CommitRemoteSyncRules.statusClearDelayNanoseconds)
-            setStatus(nil)
+            await MainActor.run {
+                setStatus(nil)
+            }
         }
     }
 
