@@ -1,3 +1,4 @@
+import GitOKUI
 import GitOKSupportKit
 import ProjectSupportKit
 import SwiftUI
@@ -20,14 +21,9 @@ struct CoAuthorPicker: View {
             }
 
             // 添加合作者按钮
-            Button {
+            AppIconButton(systemImage: "plus.circle.fill", tint: .secondary, size: .compact) {
                 showAddSheet = true
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(.secondary)
             }
-            .buttonStyle(.borderless)
             .help("添加合作者")
         }
         .sheet(isPresented: $showAddSheet) {
@@ -55,14 +51,9 @@ struct CoAuthorBadge: View {
                 .foregroundColor(.white)
                 .lineLimit(1)
 
-            Button {
+            AppIconButton(systemImage: "xmark", tint: .white, size: .compact) {
                 onRemove()
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 8, weight: .bold))
-                    .foregroundColor(.white)
             }
-            .buttonStyle(.borderless)
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 3)
@@ -114,12 +105,9 @@ struct CoAuthorSheet: View {
 
                 Divider()
 
-                Button {
+                AppButton("添加新的合作者", systemImage: "plus", style: .secondary, size: .small) {
                     showCustomAdd = true
-                } label: {
-                    Label("添加新的合作者", systemImage: "plus")
                 }
-                .buttonStyle(.bordered)
             }
 
             // 自定义添加表单
@@ -129,25 +117,22 @@ struct CoAuthorSheet: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
 
-                    TextField("姓名", text: $name)
-                        .textFieldStyle(.roundedBorder)
+                    AppInputField("姓名", text: $name)
 
-                    TextField("邮箱", text: $email)
-                        .textFieldStyle(.roundedBorder)
+                    AppInputField("邮箱", text: $email)
 
                     HStack(spacing: 12) {
-                        Button("取消") {
+                        AppButton("取消", style: .secondary, size: .small) {
                             showCustomAdd = false
                             name = ""
                             email = ""
                         }
                         .keyboardShortcut(.cancelAction)
 
-                        Button("添加") {
+                        AppButton("添加", systemImage: "plus", style: .primary, size: .small) {
                             addNewCoAuthor()
                         }
                         .keyboardShortcut(.defaultAction)
-                        .buttonStyle(.borderedProminent)
                         .disabled(name.isEmpty || email.isEmpty)
                     }
                 }
@@ -170,13 +155,9 @@ struct CoAuthorSheet: View {
 
                             Spacer()
 
-                            Button {
+                            AppIconButton(systemImage: "minus.circle.fill", tint: .red, size: .compact) {
                                 selectedCoAuthors.removeAll { $0.id == coauthor.id }
-                            } label: {
-                                Image(systemName: "minus.circle.fill")
-                                    .foregroundColor(.red)
                             }
-                            .buttonStyle(.borderless)
                         }
                         .padding(.vertical, 4)
                     }
@@ -185,12 +166,12 @@ struct CoAuthorSheet: View {
 
             // 底部操作按钮
             HStack(spacing: 12) {
-                Button("取消") {
+                AppButton("取消", style: .secondary) {
                     isPresented = false
                 }
                 .keyboardShortcut(.cancelAction)
 
-                Button("确定") {
+                AppButton("确定", systemImage: "checkmark", style: .primary) {
                     // 保存新添加的合作者到常用列表
                     for coauthor in selectedCoAuthors {
                         store.addCoAuthor(coauthor)
@@ -198,7 +179,6 @@ struct CoAuthorSheet: View {
                     isPresented = false
                 }
                 .keyboardShortcut(.defaultAction)
-                .buttonStyle(.borderedProminent)
             }
         }
         .padding(24)

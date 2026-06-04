@@ -46,8 +46,7 @@ struct CurrentUserConfigView: View, SuperLog {
             icon: .iconUser
         ) {
             if isLoading {
-                ProgressView()
-                    .scaleEffect(0.8)
+                AppLoadingOverlay(size: .small)
             }
         }
     }
@@ -59,8 +58,7 @@ struct CurrentUserConfigView: View, SuperLog {
             icon: .iconMail
         ) {
             if isLoading {
-                ProgressView()
-                    .scaleEffect(0.8)
+                AppLoadingOverlay(size: .small)
             }
         }
     }

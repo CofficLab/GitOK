@@ -104,8 +104,7 @@ struct GitUserPresetView: View, SuperLog {
         ) {
             Group {
                 if isApplying && !isSelected {
-                    ProgressView()
-                        .scaleEffect(0.6)
+                    AppLoadingOverlay(size: .small)
                 } else if isSelected {
                     Image(systemName: .iconCheckmark)
                         .foregroundColor(.accentColor)
