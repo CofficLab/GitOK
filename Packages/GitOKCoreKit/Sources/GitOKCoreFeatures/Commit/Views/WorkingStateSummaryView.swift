@@ -109,18 +109,26 @@ public struct WorkingStateSummaryView: View {
     }
 
     private var statusTitle: String {
-        if state.changedFileCount == 0 {
-            CommitLocalization.string("Working Tree Clean")
-        } else {
-            CommitLocalization.string("Changes Pending")
-        }
-    }
-
-    private var statusSubtitle: String {
         if let activityStatus {
             return activityStatus
         }
 
+        if state.changedFileCount == 0 {
+            return CommitLocalization.string("Working Tree Clean")
+        } else {
+            return CommitLocalization.string("Changes Pending")
+        }
+    }
+
+    private var statusSubtitle: String {
+        if activityStatus != nil {
+            return baselineStatusSubtitle
+        }
+
+        return baselineStatusSubtitle
+    }
+
+    private var baselineStatusSubtitle: String {
         if state.changedFileCount > 0 {
             return String.localizedStringWithFormat(
                 CommitLocalization.string("(%lld) Uncommitted"),

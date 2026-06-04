@@ -35,6 +35,7 @@ struct WorkingStateView: View, SuperLog {
             project: vm.project,
             selectedCommit: data.commit,
             isRefreshing: $isRefreshing,
+            externalActivityStatus: data.activityStatus,
             setSelectedCommit: { data.commit = $0 },
             setActivityStatus: { data.activityStatus = $0 },
             updateCleanState: { vm.updateIsClean($0) },

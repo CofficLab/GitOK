@@ -36,6 +36,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     private let project: Project?
     private let selectedCommit: Commit?
     @Binding private var isRefreshing: Bool
+    private let externalActivityStatus: String?
     private let setSelectedCommit: @MainActor (Commit?) -> Void
     private let setActivityStatus: @MainActor (String?) -> Void
     private let updateCleanState: @MainActor (Bool) -> Void
@@ -96,6 +97,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         project: Project?,
         selectedCommit: Commit?,
         isRefreshing: Binding<Bool> = .constant(false),
+        externalActivityStatus: String? = nil,
         setSelectedCommit: @MainActor @escaping (Commit?) -> Void,
         setActivityStatus: @MainActor @escaping (String?) -> Void,
         updateCleanState: @MainActor @escaping (Bool) -> Void,
@@ -133,6 +135,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         self.project = project
         self.selectedCommit = selectedCommit
         _isRefreshing = isRefreshing
+        self.externalActivityStatus = externalActivityStatus
         self.setSelectedCommit = setSelectedCommit
         self.setActivityStatus = setActivityStatus
         self.updateCleanState = updateCleanState
@@ -176,7 +179,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
             isRefreshing: isRefreshing,
             isPulling: isPulling,
             isPushing: isPushing,
-            activityStatus: activityStatus,
+            activityStatus: displayActivityStatus,
             trackingStatus: remoteTrackingStatus,
             isSyncWorking: isSyncLoading || isFetching || isPulling || isPushing,
             conflictState: conflictState,
@@ -224,6 +227,38 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
 }
 
 private extension WorkingStateHostView {
+    var displayActivityStatus: String? {
+        if let activityStatus {
+            return activityStatus
+        }
+
+        if let externalActivityStatus {
+            return externalActivityStatus
+        }
+
+        if isPushing {
+            return CommitRemoteSyncRules.activityStatus(.pushing)
+        }
+
+        if isPulling {
+            return CommitRemoteSyncRules.activityStatus(.pulling)
+        }
+
+        if isFetching {
+            return CommitLocalization.string("Fetching")
+        }
+
+        if isSyncLoading {
+            return CommitRemoteSyncRules.activityStatus(.checkingRemoteStatus)
+        }
+
+        if isRefreshingFileList {
+            return CommitRemoteSyncRules.activityStatus(.refreshingFiles)
+        }
+
+        return nil
+    }
+
     func performRetryAction(_ retryAction: CommitRemoteSyncRules.RetryAction) {
         CommitRemoteSyncRules.performRetryAction(
             retryAction,
