@@ -137,7 +137,7 @@ struct CategoryRow: View {
     let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
+        AppListRow(isSelected: isSelected, action: onTap) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(category.name)
@@ -159,15 +159,6 @@ struct CategoryRow: View {
                         .font(.system(size: 12, weight: .medium))
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                Rectangle()
-                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.primary.opacity(0.01))
-            )
         }
-        .contentShape(Rectangle())
-        .buttonStyle(PlainButtonStyle())
     }
 }
