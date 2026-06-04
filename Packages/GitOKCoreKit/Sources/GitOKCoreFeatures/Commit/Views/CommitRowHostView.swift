@@ -80,6 +80,8 @@ public struct CommitRowHostView<Project, Commit>: View {
     @State private var isDeletingRemoteTag = false
     @State private var isPushingTag = false
     @State private var isHovered = false
+    @State private var loadTagTask: Task<Void, Never>?
+    @State private var initialLoadTask: Task<Void, Never>?
 
     public init(
         project: Project?,
@@ -250,18 +252,19 @@ public struct CommitRowHostView<Project, Commit>: View {
         )
         .onChange(of: appWillBecomeActiveToken) {
             CommitTagRules.performReloadEvent(.appWillBecomeActive) {
-                Task { await loadTag() }
+                scheduleLoadTag()
             }
         }
         .onChange(of: projectDidCommitToken) {
             eventHandler(.log(.commitSuccessReloadTag(hash: commitHash(commit))))
             CommitTagRules.performReloadEvent(.commitSuccess) {
-                Task { await loadTag() }
+                scheduleLoadTag()
             }
         }
         .onChange(of: refsDidChangeToken) {
             onGitRefsChanged()
         }
+        .onDisappear(perform: cancelRowTasks)
     }
 }
 
@@ -591,7 +594,7 @@ private extension CommitRowHostView {
             closeDeleteTagConfirmation: { showDeleteTagConfirmation = false },
             closeDeleteRemoteTagConfirmation: { showDeleteRemoteTagConfirmation = false },
             reloadTag: {
-                Task { await loadTag() }
+                scheduleLoadTag()
             }
         )
     }
@@ -614,6 +617,7 @@ private extension CommitRowHostView {
         nonisolated(unsafe) let project = loadedProject
         let hash = commitHash(commit)
         let tags = (try? await loadTags(project, hash)) ?? []
+        guard Task.isCancelled == false else { return }
         tag = CommitTagRules.visibleTag(from: tags)
     }
 
@@ -638,14 +642,39 @@ private extension CommitRowHostView {
             currentProject: project,
             currentProjectPath: projectPath,
             reloadTag: {
-                Task { await loadTag() }
+                scheduleLoadTag()
             }
         )
     }
 
     func onAppear() {
         CommitRowLoadRules.performAppear {
-            Task { await loadInitialCommitRowState() }
+            scheduleInitialLoad()
         }
+    }
+
+    func scheduleLoadTag() {
+        loadTagTask?.cancel()
+        loadTagTask = Task {
+            await loadTag()
+            guard Task.isCancelled == false else { return }
+            loadTagTask = nil
+        }
+    }
+
+    func scheduleInitialLoad() {
+        initialLoadTask?.cancel()
+        initialLoadTask = Task {
+            await loadInitialCommitRowState()
+            guard Task.isCancelled == false else { return }
+            initialLoadTask = nil
+        }
+    }
+
+    func cancelRowTasks() {
+        loadTagTask?.cancel()
+        loadTagTask = nil
+        initialLoadTask?.cancel()
+        initialLoadTask = nil
     }
 }
