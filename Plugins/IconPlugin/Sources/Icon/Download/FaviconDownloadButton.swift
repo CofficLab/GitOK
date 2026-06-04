@@ -173,9 +173,15 @@ struct FaviconDownloadButton: View {
             return true
         } catch {
             MagicMessageProvider.shared.error("生成ICO文件失败：\(error)")
-            try? FileManager.default.removeItem(at: tempPNGPath)
+            await Self.removeTemporaryPNG(at: tempPNGPath)
             return false
         }
+    }
+
+    nonisolated private static func removeTemporaryPNG(at url: URL) async {
+        await Task.detached(priority: .utility) {
+            try? FileManager.default.removeItem(at: url)
+        }.value
     }
 
     nonisolated private static func writeICO(fromPNGAt tempPNGPath: URL, to saveTo: URL) async throws {
