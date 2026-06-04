@@ -138,46 +138,35 @@ struct GitUserPresetView: View, SuperLog {
             os_log("\(Self.t)Applying config: \(config.name) <\(config.email)>")
         }
 
-        guard let project = vm.project else { return }
+        guard let loadedProject = vm.project else { return }
+        nonisolated(unsafe) let project = loadedProject
+        let configName = config.name
+        let configEmail = config.email
 
         // 如果已经是当前配置，不需要重新应用
-        if currentUserName == config.name && currentUserEmail == config.email {
+        if currentUserName == configName && currentUserEmail == configEmail {
             return
         }
 
         isApplying = true
 
-        Task.detached(priority: .userInitiated) {
-            // 捕获需要的值
-            let configName = config.name
-            let configEmail = config.email
-
+        Task(priority: .userInitiated) { @MainActor in
             do {
-                // 在后台线程执行 Git 操作
-                try project.setUserConfig(
-                    name: configName,
-                    email: configEmail
-                )
+                try await project.setUserConfigAsync(name: configName, email: configEmail)
+                currentUserName = configName
+                currentUserEmail = configEmail
+                isApplying = false
 
-                await MainActor.run {
-                    // 更新 UI 状态
-                    self.currentUserName = configName
-                    self.currentUserEmail = configEmail
-                    self.isApplying = false
-
-                    if Self.verbose {
-                        os_log("\(Self.t)✅ Applied config: \(configName) <\(configEmail)>")
-                    }
-
-                    // 发送通知，让其他视图更新
-                    NotificationCenter.default.post(name: .didUpdateGitUserConfig, object: nil)
+                if Self.verbose {
+                    os_log("\(Self.t)✅ Applied config: \(configName) <\(configEmail)>")
                 }
+
+                // 发送通知，让其他视图更新
+                NotificationCenter.default.post(name: .didUpdateGitUserConfig, object: nil)
             } catch {
-                await MainActor.run {
-                    self.isApplying = false
-                    if Self.verbose {
-                        os_log(.error, "\(Self.t)❌ Failed to apply config: \(error)")
-                    }
+                isApplying = false
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)❌ Failed to apply config: \(error)")
                 }
             }
         }
@@ -205,27 +194,31 @@ struct GitUserPresetView: View, SuperLog {
     }
 
     private func loadCurrentUserInfo() {
-        guard let project = vm.project else { return }
+        guard let loadedProject = vm.project else { return }
+        nonisolated(unsafe) let project = loadedProject
 
-        do {
-            // 使用同步方式获取当前用户信息
-            currentUserName = try project.getUserName()
-            currentUserEmail = try project.getUserEmail()
+        Task(priority: .utility) { @MainActor in
+            do {
+                let loadedName = try await project.getUserNameAsync()
+                let loadedEmail = try await project.getUserEmailAsync()
+                currentUserName = loadedName
+                currentUserEmail = loadedEmail
 
-            if Self.verbose {
-                os_log("\(Self.t)Current user info: \(currentUserName) <\(currentUserEmail)>")
-            }
+                if Self.verbose {
+                    os_log("\(Self.t)Current user info: \(loadedName) <\(loadedEmail)>")
+                }
 
-            // 如果当前用户信息不为空，且不在预设列表中，自动添加
-            if !currentUserName.isEmpty && !currentUserEmail.isEmpty {
-                addCurrentUserToPresetsIfNeeded()
-            }
-        } catch {
-            currentUserName = ""
-            currentUserEmail = ""
+                // 如果当前用户信息不为空，且不在预设列表中，自动添加
+                if !loadedName.isEmpty && !loadedEmail.isEmpty {
+                    addCurrentUserToPresetsIfNeeded()
+                }
+            } catch {
+                currentUserName = ""
+                currentUserEmail = ""
 
-            if Self.verbose {
-                os_log(.error, "\(Self.t)Failed to load user info: \(error)")
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)Failed to load user info: \(error)")
+                }
             }
         }
     }

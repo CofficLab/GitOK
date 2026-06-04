@@ -66,25 +66,30 @@ struct CurrentUserConfigView: View, SuperLog {
     // MARK: - Load Data
 
     private func loadUserInfo() {
+        nonisolated(unsafe) let project = project
         isLoading = true
 
-        do {
-            userName = try project.getUserName()
-            userEmail = try project.getUserEmail()
+        Task(priority: .utility) { @MainActor in
+            do {
+                let loadedName = try await project.getUserNameAsync()
+                let loadedEmail = try await project.getUserEmailAsync()
+                userName = loadedName
+                userEmail = loadedEmail
 
-            if Self.verbose {
-                os_log("\(Self.t)Loaded Git user config - name: \(userName), email: \(userEmail)")
-            }
-        } catch {
-            userName = ""
-            userEmail = ""
+                if Self.verbose {
+                    os_log("\(Self.t)Loaded Git user config - name: \(loadedName), email: \(loadedEmail)")
+                }
+            } catch {
+                userName = ""
+                userEmail = ""
 
-            if Self.verbose {
-                os_log(.error, "\(Self.t)Failed to load Git user config: \(error)")
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)Failed to load Git user config: \(error)")
+                }
             }
+
+            isLoading = false
         }
-
-        isLoading = false
     }
 }
 

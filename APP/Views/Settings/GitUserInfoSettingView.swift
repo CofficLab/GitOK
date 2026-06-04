@@ -182,35 +182,34 @@ struct GitUserInfoSettingView: View, SuperLog {
     // MARK: - Actions
 
     private func saveUserConfig() {
-        guard let project = vm.project else { return }
+        guard let loadedProject = vm.project else { return }
+        nonisolated(unsafe) let project = loadedProject
+        let trimmedName = userName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedEmail = userEmail.trimmingCharacters(in: .whitespacesAndNewlines)
 
         isLoading = true
         errorMessage = nil
 
-        do {
-            try project.setUserConfig(
-                name: userName.trimmingCharacters(in: .whitespacesAndNewlines),
-                email: userEmail.trimmingCharacters(in: .whitespacesAndNewlines)
-            )
+        Task(priority: .userInitiated) { @MainActor in
+            do {
+                try await project.setUserConfigAsync(name: trimmedName, email: trimmedEmail)
+                hasChanges = false
 
-            hasChanges = false
+                if Self.verbose {
+                    os_log("\(Self.t)Saved user config - name: \(trimmedName), email: \(trimmedEmail)")
+                }
 
-            if Self.verbose {
-                os_log("\(Self.t)Saved user config - name: \(userName), email: \(userEmail)")
+                // 保存成功后发送通知
+                NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+            } catch {
+                errorMessage = String.localizedStringWithFormat(NSLocalizedString("Save failed: %@", comment: ""), error.localizedDescription)
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)Failed to save user config: \(error)")
+                }
             }
 
             isLoading = false
-
-            // 保存成功后发送通知
-            NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-        } catch {
-            errorMessage = String.localizedStringWithFormat(NSLocalizedString("Save failed: %@", comment: ""), error.localizedDescription)
-            if Self.verbose {
-                os_log(.error, "\(Self.t)Failed to save user config: \(error)")
-            }
         }
-
-        isLoading = false
     }
 
     private func saveAsPreset() {
@@ -266,27 +265,32 @@ struct GitUserInfoSettingView: View, SuperLog {
     }
 
     private func loadCurrentUserInfo() {
-        guard let project = vm.project else { return }
+        guard let loadedProject = vm.project else { return }
+        nonisolated(unsafe) let project = loadedProject
 
         isLoading = true
         errorMessage = nil
 
-        do {
-            userName = try project.getUserName()
-            userEmail = try project.getUserEmail()
-            hasChanges = false
+        Task(priority: .utility) { @MainActor in
+            do {
+                let loadedName = try await project.getUserNameAsync()
+                let loadedEmail = try await project.getUserEmailAsync()
+                userName = loadedName
+                userEmail = loadedEmail
+                hasChanges = false
 
-            if Self.verbose {
-                os_log("\(Self.t)Loaded user info - name: \(userName), email: \(userEmail)")
+                if Self.verbose {
+                    os_log("\(Self.t)Loaded user info - name: \(loadedName), email: \(loadedEmail)")
+                }
+            } catch {
+                errorMessage = String.localizedStringWithFormat(NSLocalizedString("Unable to load current user info: %@", comment: ""), error.localizedDescription)
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)Failed to load user info: \(error)")
+                }
             }
-        } catch {
-            errorMessage = String.localizedStringWithFormat(NSLocalizedString("Unable to load current user info: %@", comment: ""), error.localizedDescription)
-            if Self.verbose {
-                os_log(.error, "\(Self.t)Failed to load user info: \(error)")
-            }
+
+            isLoading = false
         }
-
-        isLoading = false
     }
 
     private func loadSavedConfigs() {
