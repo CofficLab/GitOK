@@ -14,6 +14,10 @@ public struct GitOKUIThemeContribution: Identifiable {
     public let uiTheme: (any GitOKUITheme)?
     public let attachments: ThemeAttachments
 
+    public var appearanceKind: ThemeAppearanceKind {
+        chromeTheme.appearanceKind
+    }
+
     public init(
         sortKey: ThemeSortKey,
         chromeTheme: any GitOKAppChromeTheme,

@@ -11,6 +11,7 @@ public protocol GitOKAppChromeTheme {
     var description: String { get }
     var iconName: String { get }
     var iconColor: Color { get }
+    var appearanceKind: ThemeAppearanceKind { get }
     var isDarkTheme: Bool { get }
     var followsSystemAppearance: Bool { get }
 
@@ -38,6 +39,13 @@ public protocol GitOKAppChromeTheme {
 // MARK: - Default Implementations
 
 public extension GitOKAppChromeTheme {
+    var appearanceKind: ThemeAppearanceKind {
+        if followsSystemAppearance {
+            return .system
+        }
+        return isDarkTheme ? .dark : .light
+    }
+
     var isDarkTheme: Bool { true }
     var followsSystemAppearance: Bool { false }
 

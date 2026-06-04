@@ -21,6 +21,9 @@ struct AppAppearanceSettingView: View, SuperLog {
     /// 当前主题
     @State private var selectedThemeId: String = ""
 
+    /// 主题外观分类筛选
+    @State private var themeAppearanceFilter: ThemeAppearanceFilter = .all
+
     /// 强调色
     @State private var accentColor: AppAppearanceSettingsStore.AccentColor = .blue
 
@@ -81,10 +84,38 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     private var themeSelectionSection: some View {
         GitOKUI.AppSettingsSection(title: String(localized: "Theme")) {
-            ForEach(themeProvider.themes) { theme in
+            Picker("", selection: $themeAppearanceFilter) {
+                ForEach(ThemeAppearanceFilter.allCases) { filter in
+                    Text(filter.title).tag(filter)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+
+            if filteredThemes.isEmpty {
+                GitOKUI.AppSettingsRow(verticalPadding: 10) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                            .foregroundColor(.secondary)
+                            .frame(width: 28)
+
+                        Text(String(localized: "No themes in this category"))
+                            .font(.system(size: 13))
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+                    }
+                }
+            }
+
+            ForEach(filteredThemes) { theme in
                 themeRow(theme)
             }
         }
+    }
+
+    private var filteredThemes: [GitOKUIThemeContribution] {
+        themeProvider.themes.filter { themeAppearanceFilter.matches($0.appearanceKind) }
     }
 
     private func themeRow(_ theme: GitOKUIThemeContribution) -> some View {
@@ -394,6 +425,41 @@ struct AppAppearanceSettingView: View, SuperLog {
     private func logThemeChange(_ mode: AppAppearanceSettingsStore.ThemeMode) {
         if Self.verbose {
             os_log("\(Self.t)✅ Changed theme mode to: \(mode.displayName)")
+        }
+    }
+}
+
+private enum ThemeAppearanceFilter: String, CaseIterable, Identifiable {
+    case all
+    case dark
+    case light
+    case system
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .all:
+            return String(localized: "All")
+        case .dark:
+            return String(localized: "Black")
+        case .light:
+            return String(localized: "Light")
+        case .system:
+            return String(localized: "System")
+        }
+    }
+
+    func matches(_ kind: ThemeAppearanceKind) -> Bool {
+        switch self {
+        case .all:
+            return true
+        case .dark:
+            return kind == .dark
+        case .light:
+            return kind == .light
+        case .system:
+            return kind == .system
         }
     }
 }

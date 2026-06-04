@@ -72,10 +72,14 @@ final class AppThemeVM: ObservableObject {
         case .dark:
             return .dark
         case .system:
-            if activeChromeTheme.followsSystemAppearance {
+            switch activeChromeTheme.appearanceKind {
+            case .dark:
+                return .dark
+            case .light:
+                return .light
+            case .system:
                 return nil
             }
-            return activeChromeTheme.isDarkTheme ? .dark : .light
         }
     }
 
