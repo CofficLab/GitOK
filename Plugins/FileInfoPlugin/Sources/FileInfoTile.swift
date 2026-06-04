@@ -89,10 +89,12 @@ public struct FileInfoTile: View {
 
     private func openInVSCode() {
         guard let url = targetFileURL else { return }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["open", "-a", "Visual Studio Code", url.path]
-        try? process.run()
+        Task.detached(priority: .utility) {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+            process.arguments = ["open", "-a", "Visual Studio Code", url.path]
+            try? process.run()
+        }
     }
 
     private func copyPath() {
