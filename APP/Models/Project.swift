@@ -152,7 +152,14 @@ extension Project {
     func isNotGit() -> Bool { !isGitRepo }
 
     func isNotGitAsync() async -> Bool {
-        return isGit() == false
+        await isGitAsync() == false
+    }
+
+    func isGitAsync() async -> Bool {
+        let repositoryURL = url
+        return await Task.detached(priority: .utility) {
+            GitRepositoryCLI(repositoryURL: repositoryURL).isGitRepository()
+        }.value
     }
 
     /**
@@ -175,7 +182,7 @@ extension Project {
         在后台检查 Git 仓库状态并更新缓存，避免阻塞主线程
      */
     func updateIsGitRepoCache() async {
-        let result = isGit()
+        let result = await isGitAsync()
         await applyIsGitRepoCache(result)
     }
 

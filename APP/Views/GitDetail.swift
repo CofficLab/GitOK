@@ -18,7 +18,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
             project: vm.project,
             selectedCommit: data.commit,
             isClean: vm.isClean,
-            projectIsGitRepository: { $0.isGit() },
+            projectIsGitRepository: { $0.isGitRepo },
             commitMessage: \.message,
             commitBodyText: \.body,
             commitAuthor: \.author,
