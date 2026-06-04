@@ -152,6 +152,11 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
 }
 
 fileprivate enum FileDetailBackgroundLoader {
+    enum TextPreviewLoadResult {
+        case success(GitDetailDiffDisplayRules.TextPreviewState)
+        case failure(GitDetailDiffDisplayRules.TextPreviewFailureState)
+    }
+
     struct UnsafeTransfer<Value>: @unchecked Sendable {
         let value: Value
     }
@@ -314,21 +319,17 @@ fileprivate enum FileDetailBackgroundLoader {
             )
         }
     }
-}
 
-private extension FileDetailHostView {
-    enum TextPreviewLoadResult {
-        case success(GitDetailDiffDisplayRules.TextPreviewState)
-        case failure(GitDetailDiffDisplayRules.TextPreviewFailureState)
-    }
-
-    func textPreviewLoadResult(
+    static func textPreviewLoadResult<Project, File, SelectedCommit>(
         version: GitDetailDiffDisplayRules.TextVersion,
         path: String,
         project: Project?,
         file: File,
         selectedCommit: SelectedCommit?,
-        missingError: Error
+        missingError: Error,
+        selectedCommitHash: (SelectedCommit) -> String,
+        loadCommitContent: (Project, File, String) async throws -> (before: String?, after: String?),
+        loadWorktreeContent: (Project, File) async throws -> (before: String?, after: String?)
     ) async -> TextPreviewLoadResult {
         guard let loadedProject = project else {
             return .failure(GitDetailDiffDisplayRules.textPreviewFailureState(
@@ -336,8 +337,6 @@ private extension FileDetailHostView {
                 errorDescription: missingError.localizedDescription
             ))
         }
-        nonisolated(unsafe) let project = loadedProject
-        nonisolated(unsafe) let file = file
 
         do {
             let content: String
@@ -346,14 +345,14 @@ private extension FileDetailHostView {
                 commitHash: selectedCommitHash
             ) {
             case let .commit(hash):
-                let contents = try await loadCommitContent(project, file, hash)
+                let contents = try await loadCommitContent(loadedProject, file, hash)
                 content = try GitDetailDiffDisplayRules.textContent(
                     version: version,
                     before: contents.before,
                     after: contents.after
                 )
             case .worktree:
-                let contents = try await loadWorktreeContent(project, file)
+                let contents = try await loadWorktreeContent(loadedProject, file)
                 content = try GitDetailDiffDisplayRules.textContent(
                     version: version,
                     before: contents.before,
@@ -373,7 +372,9 @@ private extension FileDetailHostView {
             ))
         }
     }
+}
 
+private extension FileDetailHostView {
     func refreshImages() {
         imageLoadGeneration += 1
         let generation = imageLoadGeneration
@@ -439,34 +440,48 @@ private extension FileDetailHostView {
         let selectedCommit = selectedCommit
         let path = filePath(file)
         let missingError = missingProjectError()
+        let kindTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: kind)
+        let projectTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: project)
+        let fileTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: file)
+        let selectedCommitTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommit)
+        let missingErrorTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: missingError)
+        let selectedCommitHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommitHash)
+        let loadCommitContentTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCommitContent)
+        let loadWorktreeContentTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadWorktreeContent)
+        let handleEventTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: handleEvent)
 
-        Task(priority: .userInitiated) { @MainActor in
-            let result = await textPreviewLoadResult(
-                version: kind,
+        Task.detached(priority: .userInitiated) {
+            let result = await FileDetailBackgroundLoader.textPreviewLoadResult(
+                version: kindTransfer.value,
                 path: path,
-                project: project,
-                file: file,
-                selectedCommit: selectedCommit,
-                missingError: missingError
+                project: projectTransfer.value,
+                file: fileTransfer.value,
+                selectedCommit: selectedCommitTransfer.value,
+                missingError: missingErrorTransfer.value,
+                selectedCommitHash: selectedCommitHashTransfer.value,
+                loadCommitContent: loadCommitContentTransfer.value,
+                loadWorktreeContent: loadWorktreeContentTransfer.value
             )
 
-            guard generation == textPreviewGeneration else { return }
+            await MainActor.run {
+                guard generation == textPreviewGeneration else { return }
 
-            switch result {
-            case let .success(previewState):
-                GitDetailDiffDisplayRules.performTextPreviewState(
-                    previewState,
-                    setTitle: { textPreviewTitle = $0 },
-                    setContent: { textPreviewContent = $0 },
-                    setPresented: { showTextPreview = $0 }
-                )
-            case let .failure(failureState):
-                handleEvent(.textPreviewFailure(issueMessage: failureState.issueMessage))
-                GitDetailDiffDisplayRules.performTextPreviewFailureState(
-                    failureState,
-                    setIssueMessage: { diffIssueMessage = $0 },
-                    showError: { handleEvent(.error($0)) }
-                )
+                switch result {
+                case let .success(previewState):
+                    GitDetailDiffDisplayRules.performTextPreviewState(
+                        previewState,
+                        setTitle: { textPreviewTitle = $0 },
+                        setContent: { textPreviewContent = $0 },
+                        setPresented: { showTextPreview = $0 }
+                    )
+                case let .failure(failureState):
+                    handleEventTransfer.value(.textPreviewFailure(issueMessage: failureState.issueMessage))
+                    GitDetailDiffDisplayRules.performTextPreviewFailureState(
+                        failureState,
+                        setIssueMessage: { diffIssueMessage = $0 },
+                        showError: { handleEventTransfer.value(.error($0)) }
+                    )
+                }
             }
         }
     }
