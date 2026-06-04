@@ -179,12 +179,22 @@ public struct WorkingStateConflictPanel: View {
             Spacer()
 
             HStack(spacing: 8) {
-                Button(CommitLocalization.string("Abort Merge"), role: .destructive) {
+                AppButton(
+                    CommitLocalization.string("Abort Merge"),
+                    systemImage: "xmark.octagon",
+                    style: .destructive,
+                    size: .small
+                ) {
                     onAbort()
                 }
                 .disabled(isPerformingAction)
 
-                Button(CommitLocalization.string("Continue Merge")) {
+                AppButton(
+                    CommitLocalization.string("Continue Merge"),
+                    systemImage: "checkmark.circle",
+                    style: .primary,
+                    size: .small
+                ) {
                     onContinue()
                 }
                 .disabled(isPerformingAction || state.canContinueMerge == false)
@@ -284,12 +294,13 @@ private struct WorkingStateConflictFileRow: View {
     }
 
     private func iconButton(_ systemImage: String, _ help: String, _ action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .frame(width: 26, height: 26)
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(.secondary)
+        AppIconButton(
+            systemImage: systemImage,
+            tint: .secondary,
+            size: .compact,
+            action: action
+        )
+        .frame(width: 26, height: 26)
         .disabled(isBusy)
         .help(help)
     }
