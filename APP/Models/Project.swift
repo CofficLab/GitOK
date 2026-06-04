@@ -175,60 +175,6 @@ extension Project {
         await applyIsGitRepoCache(result)
     }
 
-    func isClean(verbose: Bool = true) throws -> Bool {
-        guard isGitRepo else {
-            if verbose {
-                os_log(.info, "\(self.t)🔄 Project is not a git repository")
-            }
-
-            return true
-        }
-
-        // 检查是否有未提交的已跟踪文件变更
-        let hasUncommittedChanges = try gitCLI.hasUncommittedChanges(verbose: verbose)
-        if hasUncommittedChanges {
-            if verbose {
-                os_log("\(self.t)🔄 Project has uncommitted changes")
-            }
-            return false
-        }
-
-        // 检查是否有未跟踪的文件
-        let hasUntrackedFiles = try self.hasUntrackedFiles(verbose: verbose)
-        if hasUntrackedFiles {
-            if verbose {
-                os_log(.info, "\(self.t)🔄 Project has untracked files")
-            }
-            return false
-        }
-
-        if verbose {
-            os_log(.info, "\(self.t)🔄 Project is clean")
-        }
-        return true
-    }
-
-    /// 检查是否有未跟踪的文件
-    /// - Parameter verbose: 是否启用详细日志
-    /// - Returns: 如果有未跟踪文件返回 true，否则返回 false
-    private func hasUntrackedFiles(verbose: Bool = false) throws -> Bool {
-        let statusEntries = try gitCLI.lightweightStatusEntries()
-        let hasUntracked = statusEntries.contains { $0.indexStatus == "?" || $0.workTreeStatus == "?" }
-
-        if verbose && hasUntracked {
-            let untrackedCount = statusEntries.filter { $0.indexStatus == "?" || $0.workTreeStatus == "?" }.count
-            os_log(.info, "\(self.t)🔄 Found \(untrackedCount) untracked files")
-        }
-
-        return hasUntracked
-    }
-
-    /// 检查项目是否没有未提交的更改
-    /// - Returns: 如果没有未提交的更改返回 true，否则返回 false
-    /// - Throws: Git 操作相关的错误
-    func hasNoUncommittedChanges() throws -> Bool {
-        return try gitCLI.hasUncommittedChanges(verbose: false) == false
-    }
 }
 
 // MARK: - Branch
@@ -766,34 +712,6 @@ extension Project {
         }
     }
 
-    func fileDiff(_ filePath: String, staged: Bool, ignoreWhitespace: Bool = false) throws -> String {
-        try gitCLI.fileDiff(filePath, staged: staged, ignoreWhitespace: ignoreWhitespace)
-    }
-
-    func applyPatch(_ patch: String, mode: GitPatchApplyMode, filePath: String) throws {
-        do {
-            try gitCLI.applyPatch(patch, mode: mode)
-            postEvent(
-                name: .projectDidAddFiles,
-                operation: mode == .stage ? "stagePatch" : "unstagePatch",
-                additionalInfo: ["filePath": filePath]
-            )
-        } catch {
-            postEvent(
-                name: .projectOperationDidFail,
-                operation: mode == .stage ? "stagePatch" : "unstagePatch",
-                success: false,
-                error: error,
-                additionalInfo: ["filePath": filePath]
-            )
-            throw error
-        }
-    }
-
-    func statusEntries() throws -> [GitStatusEntry] {
-        try gitCLI.statusEntries()
-    }
-
     func lightweightStatusEntries() throws -> [GitStatusEntry] {
         try gitCLI.lightweightStatusEntries()
     }
@@ -803,12 +721,6 @@ extension Project {
         return try await Task.detached(priority: .userInitiated) {
             try GitRepositoryCLI(repositoryURL: repositoryURL).lightweightStatusEntries()
         }.value
-    }
-
-    func hasStagedChanges() throws -> Bool {
-        try lightweightStatusEntries().contains { entry in
-            entry.indexStatus != " " && entry.indexStatus != "?"
-        }
     }
 
     func hasStagedChangesAsync() async throws -> Bool {
@@ -1199,23 +1111,11 @@ extension Project {
 // MARK: - File
 
 extension Project {
-    func fileContent(at: String, file: String) throws -> String {
-        try gitCLI.fileContent(atCommit: at, file: file)
-    }
-
-    func fileContentChange(at commit: String, file: String) throws -> (before: String?, after: String?) {
-        try gitCLI.fileContentChange(atCommit: commit, file: file)
-    }
-
     func fileContentChangeAsync(at commit: String, file: String) async throws -> (before: String?, after: String?) {
         let repositoryURL = url
         return try await Task.detached(priority: .userInitiated) {
             try GitRepositoryCLI(repositoryURL: repositoryURL).fileContentChange(atCommit: commit, file: file)
         }.value
-    }
-
-    func uncommittedFileContentChange(file: String) throws -> (before: String?, after: String?) {
-        try gitCLI.uncommittedFileContentChange(for: file)
     }
 
     func uncommittedFileContentChangeAsync(file: String) async throws -> (before: String?, after: String?) {
@@ -1225,11 +1125,6 @@ extension Project {
         }.value
     }
 
-    /// 获取指定提交中文件的 diff 字符串
-    func fileDiff(at commit: String, file: String, ignoreWhitespace: Bool = false) throws -> String {
-        return try gitCLI.fileDiff(atCommit: commit, for: file)
-    }
-
     func fileDiffAsync(at commit: String, file: String, ignoreWhitespace: Bool = false) async throws -> String {
         let repositoryURL = url
         return try await Task.detached(priority: .userInitiated) {
@@ -1237,21 +1132,11 @@ extension Project {
         }.value
     }
 
-    /// 获取未提交文件的 diff 字符串
-    func uncommittedFileDiff(file: String, ignoreWhitespace: Bool = false) throws -> String {
-        return try gitCLI.uncommittedFileDiff(for: file, ignoreWhitespace: ignoreWhitespace)
-    }
-
     func uncommittedFileDiffAsync(file: String, ignoreWhitespace: Bool = false) async throws -> String {
         let repositoryURL = url
         return try await Task.detached(priority: .userInitiated) {
             try GitRepositoryCLI(repositoryURL: repositoryURL).uncommittedFileDiff(for: file, ignoreWhitespace: ignoreWhitespace)
         }.value
-    }
-
-    /// 获取指定提交中文件的原始二进制数据（支持图片等二进制文件）
-    func fileData(at commit: String, file: String) throws -> Data {
-        try gitCLI.fileData(atCommit: commit, file: file)
     }
 
     func fileDataAsync(at commit: String, file: String) async throws -> Data {
