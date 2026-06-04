@@ -465,22 +465,31 @@ private extension WorkingStateHostView {
 
     func performFetch(_ command: CommitRemoteSyncRules.ProjectSyncStatusRequest<Project>) {
         eventHandler(.log(.fetchStart(projectPath: command.request.projectPath)))
-        nonisolated(unsafe) let project = command.project
+        let projectTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: command.project)
+        let commandTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: command)
+        let fetchTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: fetch)
+        let eventHandlerTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: eventHandler)
 
-        Task { @MainActor in
-            isFetching = true
-            setStatus(CommitLocalization.string("Fetching"))
+        Task.detached(priority: .userInitiated) {
+            await MainActor.run {
+                isFetching = true
+                setStatus(CommitLocalization.string("Fetching"))
+            }
 
             do {
-                try await fetch(project)
-                eventHandler(.log(.fetchSuccess))
-                isFetching = false
-                loadSyncStatus(command)
+                try await fetchTransfer.value(projectTransfer.value)
+                await MainActor.run {
+                    eventHandlerTransfer.value(.log(.fetchSuccess))
+                    isFetching = false
+                    loadSyncStatus(commandTransfer.value)
+                }
             } catch {
-                eventHandler(.log(.fetchFailure(error)))
-                isFetching = false
-                setStatus(nil)
-                eventHandler(.showError(error))
+                await MainActor.run {
+                    eventHandlerTransfer.value(.log(.fetchFailure(error)))
+                    isFetching = false
+                    setStatus(nil)
+                    eventHandlerTransfer.value(.showError(error))
+                }
             }
         }
     }
@@ -514,29 +523,49 @@ private extension WorkingStateHostView {
             eventHandler(.log(.pushStart(projectPath: command.request.projectPath)))
         }
 
-        nonisolated(unsafe) let project = command.project
-        Task { @MainActor in
-            applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationStartState(operation: command.request.operation))
+        let projectTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: command.project)
+        let commandTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: command)
+        let pullTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: pull)
+        let eventHandlerTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: eventHandler)
 
-            switch command.request.operation {
+        Task.detached(priority: .userInitiated) {
+            let command = commandTransfer.value
+            let project = projectTransfer.value
+            let operation = command.request.operation
+            await MainActor.run {
+                applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationStartState(operation: operation))
+            }
+
+            switch operation {
             case .pull:
                 do {
-                    try await pull(project)
-                    eventHandler(.log(.pullSuccess))
-                    applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .pull, succeeded: true))
-                } catch {
-                    eventHandler(.log(.pullFailure(error)))
-                    applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .pull, succeeded: false))
-                    if await refreshConflictState(for: project), conflictState?.isMerging == true {
-                        setStatus(nil)
-                        return
+                    try await pullTransfer.value(project)
+                    await MainActor.run {
+                        eventHandlerTransfer.value(.log(.pullSuccess))
+                        applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .pull, succeeded: true))
                     }
-                    await presentRemoteFailure(error, operation: .pull)
+                } catch {
+                    Task { @MainActor in
+                        await finishPullFailure(error, project: project)
+                    }
                 }
             case .push:
-                await performPushOperation(command)
+                Task { @MainActor in
+                    await performPushOperation(command)
+                }
             }
         }
+    }
+
+    @MainActor
+    func finishPullFailure(_ error: Error, project: Project) async {
+        eventHandler(.log(.pullFailure(error)))
+        applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .pull, succeeded: false))
+        if await refreshConflictState(for: project), conflictState?.isMerging == true {
+            setStatus(nil)
+            return
+        }
+        await presentRemoteFailure(error, operation: .pull)
     }
 
     func performPushOperation(_ command: CommitRemoteSyncRules.ProjectRemoteOperationCommand<Project>) async {
