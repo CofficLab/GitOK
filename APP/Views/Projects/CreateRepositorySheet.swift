@@ -21,6 +21,9 @@ struct CreateRepositorySheet: View, SuperLog {
     @State private var createInitialCommit = true
     @State private var isCreating = false
     @State private var errorMessage: String?
+    @State private var destinationState: CloneRepositoryValidation.DestinationState?
+    @State private var destinationStatePath: String?
+    @State private var isCheckingDestination = false
 
     private var trimmedRepositoryName: String {
         repositoryName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -31,12 +34,6 @@ struct CreateRepositorySheet: View, SuperLog {
         return parentFolder.appendingPathComponent(trimmedRepositoryName, isDirectory: true)
     }
 
-    private var destinationState: CloneRepositoryValidation.DestinationState? {
-        guard let destinationURL else { return nil }
-        let projectExists = data.repoManager.projectRepo.exists(path: destinationURL.path)
-        return CloneRepositoryValidation.destinationState(for: destinationURL, projectExists: projectExists)
-    }
-
     private var validationMessage: String? {
         if let repositoryNameMessage = CloneRepositoryValidation.validateRepositoryName(trimmedRepositoryName) {
             return repositoryNameMessage
@@ -44,6 +41,10 @@ struct CreateRepositorySheet: View, SuperLog {
 
         guard destinationURL != nil else {
             return "目标路径无效"
+        }
+
+        if isCheckingDestination || destinationStatePath != destinationURL?.path {
+            return "正在检查目标路径…"
         }
 
         if let destinationState {
@@ -63,6 +64,15 @@ struct CreateRepositorySheet: View, SuperLog {
         }
         .padding(24)
         .frame(width: 560)
+        .onAppear {
+            refreshDestinationState()
+        }
+        .onChange(of: repositoryName) { _, _ in
+            refreshDestinationState()
+        }
+        .onChange(of: parentFolder) { _, _ in
+            refreshDestinationState()
+        }
     }
 }
 
@@ -203,6 +213,33 @@ private extension CreateRepositorySheet {
 
         if panel.runModal() == .OK, let url = panel.url {
             parentFolder = url
+        }
+    }
+
+    func refreshDestinationState() {
+        guard let destinationURL else {
+            destinationState = nil
+            destinationStatePath = nil
+            isCheckingDestination = false
+            return
+        }
+
+        let destinationPath = destinationURL.path
+        let projectExists = data.repoManager.projectRepo.exists(path: destinationPath)
+        isCheckingDestination = true
+
+        Task.detached(priority: .utility) {
+            let state = CloneRepositoryValidation.destinationState(
+                for: destinationURL,
+                projectExists: projectExists
+            )
+
+            await MainActor.run {
+                guard self.destinationURL?.path == destinationPath else { return }
+                self.destinationState = state
+                self.destinationStatePath = destinationPath
+                self.isCheckingDestination = false
+            }
         }
     }
 

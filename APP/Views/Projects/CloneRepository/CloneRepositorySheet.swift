@@ -36,6 +36,9 @@ struct CloneRepositorySheet: View {
     @State private var githubRepositories: [GitHubCloneRepository] = []
     @State private var isLoadingGitHubRepositories = false
     @State private var githubErrorMessage: String?
+    @State private var destinationState: CloneRepositoryValidation.DestinationState?
+    @State private var destinationStatePath: String?
+    @State private var isCheckingDestination = false
 
     init(
         projectExists: @escaping @MainActor @Sendable (URL) -> Bool,
@@ -75,11 +78,6 @@ struct CloneRepositorySheet: View {
         }
     }
 
-    private var destinationState: CloneRepositoryValidation.DestinationState? {
-        guard let destinationURL else { return nil }
-        return CloneRepositoryValidation.destinationState(for: destinationURL, projectExists: projectExists(destinationURL))
-    }
-
     private var validationMessage: String? {
         if trimmedRemoteURL.isEmpty {
             return GitCloneLocalization.string("Please enter a remote repository URL")
@@ -91,6 +89,10 @@ struct CloneRepositorySheet: View {
 
         guard destinationURL != nil else {
             return GitCloneLocalization.string("Invalid destination path")
+        }
+
+        if isCheckingDestination || destinationStatePath != destinationURL?.path {
+            return GitCloneLocalization.string("Checking destination...")
         }
 
         if let destinationState {
@@ -113,6 +115,15 @@ struct CloneRepositorySheet: View {
         .frame(width: 560)
         .onChange(of: remoteURL) { _, newValue in
             autoFillRepositoryName(from: newValue)
+        }
+        .onChange(of: repositoryName) { _, _ in
+            refreshDestinationState()
+        }
+        .onChange(of: destinationFolder) { _, _ in
+            refreshDestinationState()
+        }
+        .onAppear {
+            refreshDestinationState()
         }
         .sheet(isPresented: $showCredentialSheet) {
             credentialRetrySheet
@@ -446,6 +457,33 @@ extension CloneRepositorySheet {
         if let sanitized = CloneRepositoryValidation.inferredRepositoryName(from: trimmed), sanitized.isEmpty == false {
             isAutoFillingRepositoryName = true
             repositoryName = sanitized
+        }
+    }
+
+    func refreshDestinationState() {
+        guard let destinationURL else {
+            destinationState = nil
+            destinationStatePath = nil
+            isCheckingDestination = false
+            return
+        }
+
+        let destinationPath = destinationURL.path
+        let existsInProjectList = projectExists(destinationURL)
+        isCheckingDestination = true
+
+        Task.detached(priority: .utility) {
+            let state = CloneRepositoryValidation.destinationState(
+                for: destinationURL,
+                projectExists: existsInProjectList
+            )
+
+            await MainActor.run {
+                guard self.destinationURL?.path == destinationPath else { return }
+                self.destinationState = state
+                self.destinationStatePath = destinationPath
+                self.isCheckingDestination = false
+            }
         }
     }
 
