@@ -891,7 +891,10 @@ extension Project {
     /// 获取未推送的提交（本地领先远程的提交）
     /// 使用 Git 运行时原生实现
     func getUnPushedCommits() async throws -> [GitCommit] {
-        return try gitCLI.unpushedCommits()
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).unpushedCommits()
+        }.value
     }
 
     /// 获取未拉取的提交（远程领先本地的提交）
@@ -905,6 +908,13 @@ extension Project {
     /// 获取未拉取的提交数量（远程领先本地的提交数量）
     func getUnPulledCount() throws -> Int {
         return try gitCLI.unpulledCount()
+    }
+
+    func getUnPulledCountAsync() async throws -> Int {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).unpulledCount()
+        }.value
     }
 
     func submit(_ message: String) throws {
@@ -1437,6 +1447,13 @@ extension Project {
         try gitCLI.getCurrentMergeBranchName()
     }
 
+    func getCurrentMergeBranchNameAsync() async throws -> String? {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).getCurrentMergeBranchName()
+        }.value
+    }
+
     /// 获取合并冲突文件列表
     /// - Returns: 冲突文件路径列表
     /// - Throws: Git操作异常
@@ -1474,6 +1491,19 @@ extension Project {
 
     func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion) throws {
         try gitCLI.checkoutMergeFileVersion(path: path, version: version)
+        postEvent(
+            name: .projectGitIndexDidChange,
+            operation: "checkoutMergeFileVersion",
+            additionalInfo: ["filePath": path, "version": version.rawValue]
+        )
+    }
+
+    func checkoutMergeFileVersionAsync(path: String, version: GitMergeFileVersion) async throws {
+        let repositoryURL = url
+
+        try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).checkoutMergeFileVersion(path: path, version: version)
+        }.value
         postEvent(
             name: .projectGitIndexDidChange,
             operation: "checkoutMergeFileVersion",
@@ -1631,14 +1661,67 @@ extension Project {
         }
     }
 
+    func fetchAsync(remote: String = "origin") async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).fetch(remote: remote)
+            }.value
+            postEvent(
+                name: .projectDidFetch,
+                operation: "fetch",
+                additionalInfo: ["remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "fetch",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": remote]
+            )
+            throw error
+        }
+    }
+
     func aheadBehind() throws -> GitAheadBehind {
         try gitCLI.aheadBehind()
+    }
+
+    func aheadBehindAsync() async throws -> GitAheadBehind {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).aheadBehind()
+        }.value
     }
 
     func pull() throws {
         do {
             try gitCLI.pull()
 
+            postEvent(
+                name: .projectDidPull,
+                operation: "pull"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pull",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    func pullAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).pull()
+            }.value
             postEvent(
                 name: .projectDidPull,
                 operation: "pull"

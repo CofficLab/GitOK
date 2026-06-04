@@ -41,24 +41,16 @@ struct WorkingStateView: View, SuperLog {
             updateCleanState: { vm.updateIsClean($0) },
             projectPath: \.path,
             loadChangedFileCount: { project in
-                try await runDetached {
-                    try await project.untrackedFiles().count
-                }
+                try await project.untrackedFiles().count
             },
             loadUnpushedCommits: { project in
-                try await runDetached {
-                    try await project.getUnPushedCommits()
-                }
+                try await project.getUnPushedCommits()
             },
             loadUnpulledCount: { project in
-                try await runOffMain {
-                    try project.getUnPulledCount()
-                }
+                try await project.getUnPulledCountAsync()
             },
             loadRemoteTrackingStatus: { project in
-                let status = try await runOffMain {
-                    try project.aheadBehind()
-                }
+                let status = try await project.aheadBehindAsync()
                 return GitOKRemoteTrackingStatus(
                     ahead: status.ahead,
                     behind: status.behind,
@@ -69,37 +61,25 @@ struct WorkingStateView: View, SuperLog {
                 vm.updateRemoteTracking(status, fetchedAt: fetchedAt)
             },
             fetch: { project in
-                try await runOffMain {
-                    try project.fetch()
-                }
+                try await project.fetchAsync()
             },
             pull: { project in
-                try await runOffMain {
-                    try project.pull()
-                }
+                try await project.pullAsync()
             },
             push: { project in
-                try await runOffMain {
-                    try project.push()
-                }
+                try await project.pushAsync()
             },
             loadConflictState: { project in
                 try await loadConflictState(for: project)
             },
             stageConflictFile: { project, path in
-                try await runOffMain {
-                    try project.addFiles([path])
-                }
+                try await project.addFilesAsync([path])
             },
             useConflictFileVersion: { project, path, version in
-                try await runOffMain {
-                    try project.checkoutMergeFileVersion(path: path, version: version)
-                }
+                try await project.checkoutMergeFileVersionAsync(path: path, version: version)
             },
             continueMerge: { project in
-                let branchName = (try? await runOffMain {
-                    try project.getCurrentMergeBranchName()
-                }) ?? "MERGE_HEAD"
+                let branchName = (try? await project.getCurrentMergeBranchNameAsync()) ?? "MERGE_HEAD"
                 try await project.continueMerge(branchName: branchName)
             },
             abortMerge: { project in
@@ -219,12 +199,8 @@ private extension WorkingStateView {
             return .inactive
         }
 
-        let statusEntries = try await runOffMain {
-            try project.lightweightStatusEntries()
-        }
-        let mergeBranchName = try? await runOffMain {
-            try project.getCurrentMergeBranchName()
-        }
+        let statusEntries = try await project.lightweightStatusEntriesAsync()
+        let mergeBranchName = try? await project.getCurrentMergeBranchNameAsync()
         let flattenedMergeBranchName = mergeBranchName.flatMap { $0 }
 
         return WorkingStateConflictState(
@@ -254,24 +230,6 @@ private extension WorkingStateView {
             return nil
         }
         return fileURL
-    }
-
-    func runOffMain<T>(_ operation: @escaping () throws -> T) async throws -> T {
-        try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async {
-                do {
-                    continuation.resume(returning: try operation())
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
-    func runDetached<T>(_ operation: @escaping () async throws -> T) async throws -> T {
-        try await Task.detached(priority: .userInitiated) {
-            try await operation()
-        }.value
     }
 
     func handleEvent(_ event: WorkingStateHostEvent) {
