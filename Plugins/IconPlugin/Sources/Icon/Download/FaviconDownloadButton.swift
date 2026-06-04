@@ -142,7 +142,7 @@ struct FaviconDownloadButton: View {
         """
 
         do {
-            try htmlCode.write(to: saveTo, atomically: true, encoding: .utf8)
+            try await Self.writeFaviconHTML(htmlCode, to: saveTo)
             MagicMessageProvider.shared.info("生成 HTML 引用代码文件")
         } catch {
             MagicMessageProvider.shared.error("生成 HTML 文件失败：\(error)")
@@ -201,6 +201,12 @@ struct FaviconDownloadButton: View {
             icoData.append(pngData)
 
             try icoData.write(to: saveTo)
+        }.value
+    }
+
+    nonisolated private static func writeFaviconHTML(_ htmlCode: String, to saveTo: URL) async throws {
+        try await Task.detached(priority: .userInitiated) {
+            try htmlCode.write(to: saveTo, atomically: true, encoding: .utf8)
         }.value
     }
 }
