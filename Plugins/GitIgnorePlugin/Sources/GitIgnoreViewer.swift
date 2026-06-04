@@ -93,10 +93,10 @@ struct GitIgnoreViewer: View {
     private var organizerControls: some View {
         HStack(spacing: 8) {
             Menu {
-                Button(GitIgnoreTemplate.xcode.title) {
+                AppContextMenuRow(GitIgnoreTemplate.xcode.title, systemImage: "hammer") {
                     applyTemplate(.xcode)
                 }
-                Button(GitIgnoreTemplate.flutter.title) {
+                AppContextMenuRow(GitIgnoreTemplate.flutter.title, systemImage: "iphone.gen3") {
                     applyTemplate(.flutter)
                 }
             } label: {

@@ -1,4 +1,5 @@
 import GitOKSupportKit
+import GitOKUI
 import OSLog
 import SwiftUI
 
@@ -20,22 +21,16 @@ struct BtnAdd: View, SuperLog {
     /// 按钮视图主体
     var body: some View {
         Menu {
-            Button {
+            AppContextMenuRow("添加现有项目", systemImage: "folder") {
                 open()
-            } label: {
-                Label("添加现有项目", systemImage: "folder")
             }
 
-            Button {
+            AppContextMenuRow("新建仓库", systemImage: "plus.square.on.square") {
                 showCreateRepositorySheet = true
-            } label: {
-                Label("新建仓库", systemImage: "plus.square.on.square")
             }
 
-            Button {
+            AppContextMenuRow(GitCloneLocalization.string("Clone Repository"), systemImage: "square.and.arrow.down") {
                 showCloneRepositorySheet = true
-            } label: {
-                Label(GitCloneLocalization.string("Clone Repository"), systemImage: "square.and.arrow.down")
             }
         } label: {
             Label("添加项目", systemImage: "plus")

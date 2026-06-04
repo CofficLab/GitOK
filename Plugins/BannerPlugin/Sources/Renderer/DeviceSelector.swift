@@ -16,16 +16,11 @@ struct DeviceSelector: View {
             // 设备选择下拉菜单
             Menu {
                 ForEach([MagicDevice.iMac, MagicDevice.MacBook, MagicDevice.iPhoneBig, MagicDevice.iPhoneSmall, MagicDevice.iPad_mini], id: \.self) { device in
-                    Button(action: {
+                    AppContextMenuRow(device.description, systemImage: deviceMenuIcon(for: device)) {
                         b.setSelectedDevice(device)
                         // 切换设备时重置缩放
                         scale = 1.0
                         lastScale = 1.0
-                    }) {
-                        HStack {
-//                            Image(systemName: device.systemImageName)
-                            Text(device.description)
-                        }
                     }
                 }
             } label: {
@@ -50,6 +45,21 @@ struct DeviceSelector: View {
             .padding(.vertical, 4)
             .background(Color(.controlBackgroundColor))
             .cornerRadius(4)
+        }
+    }
+
+    private func deviceMenuIcon(for device: MagicDevice) -> String {
+        switch device {
+        case .iMac:
+            "desktopcomputer"
+        case .MacBook:
+            "laptopcomputer"
+        case .iPhoneBig, .iPhoneSmall:
+            "iphone"
+        case .iPad_mini:
+            "ipad"
+        default:
+            "rectangle"
         }
     }
 }
