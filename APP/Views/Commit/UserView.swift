@@ -25,11 +25,11 @@ struct UserView: View, SuperLog {
             configID: { String(describing: $0.persistentModelID) },
             configName: \.name,
             configEmail: \.email,
-            loadProjectUserName: { try $0.getUserName() },
-            loadProjectUserEmail: { try $0.getUserEmail() },
+            loadProjectUserName: { try await $0.getUserNameAsync() },
+            loadProjectUserEmail: { try await $0.getUserEmailAsync() },
             loadRecentConfigs: { try configRepo.getRecentConfigs(limit: $0) },
             applyProjectConfig: { project, identity in
-                try project.setUserConfig(
+                try await project.setUserConfigAsync(
                     name: identity.name,
                     email: identity.email
                 )

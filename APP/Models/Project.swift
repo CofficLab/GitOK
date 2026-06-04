@@ -801,8 +801,22 @@ extension Project {
         try gitCLI.configValue(key: "user.name")
     }
 
+    func getUserNameAsync() async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .utility) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).configValue(key: "user.name")
+        }.value
+    }
+
     func getUserEmail() throws -> String {
         try gitCLI.configValue(key: "user.email")
+    }
+
+    func getUserEmailAsync() async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .utility) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).configValue(key: "user.email")
+        }.value
     }
 
     /// 设置项目的Git用户信息（仅针对当前项目）
@@ -813,6 +827,30 @@ extension Project {
     func setUserConfig(name userName: String, email userEmail: String) throws {
         do {
             try gitCLI.setUserConfig(name: userName, email: userEmail)
+            postEvent(
+                name: .projectDidUpdateUserInfo,
+                operation: "setUserConfig",
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "setUserConfig",
+                success: false,
+                error: error,
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+            throw error
+        }
+    }
+
+    func setUserConfigAsync(name userName: String, email userEmail: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).setUserConfig(name: userName, email: userEmail)
+            }.value
             postEvent(
                 name: .projectDidUpdateUserInfo,
                 operation: "setUserConfig",

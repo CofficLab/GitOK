@@ -13,8 +13,8 @@ public struct CommitUserConfigHostView<Project, Config, ConfigID, SettingsConten
     private let configID: (Config) -> ConfigID
     private let configName: (Config) -> String
     private let configEmail: (Config) -> String
-    private let loadProjectUserName: (Project) throws -> String?
-    private let loadProjectUserEmail: (Project) throws -> String?
+    private let loadProjectUserName: (Project) async throws -> String?
+    private let loadProjectUserEmail: (Project) async throws -> String?
     private let loadRecentConfigs: (Int) throws -> [Config]
     private let applyProjectConfig: (Project, CommitUserConfigRules.Identity) async throws -> Void
     private let logEvent: (CommitUserConfigHostLogEvent) -> Void
@@ -31,8 +31,8 @@ public struct CommitUserConfigHostView<Project, Config, ConfigID, SettingsConten
         configID: @escaping (Config) -> ConfigID,
         configName: @escaping (Config) -> String,
         configEmail: @escaping (Config) -> String,
-        loadProjectUserName: @escaping (Project) throws -> String?,
-        loadProjectUserEmail: @escaping (Project) throws -> String?,
+        loadProjectUserName: @escaping (Project) async throws -> String?,
+        loadProjectUserEmail: @escaping (Project) async throws -> String?,
         loadRecentConfigs: @escaping (Int) throws -> [Config],
         applyProjectConfig: @escaping (Project, CommitUserConfigRules.Identity) async throws -> Void,
         logEvent: @escaping (CommitUserConfigHostLogEvent) -> Void = { _ in },
@@ -89,26 +89,28 @@ private extension CommitUserConfigHostView {
     }
 
     func loadInitialUserViewState() {
-        CommitUserConfigRules.performInitialUserViewLoad(
-            project: project,
-            limit: recentConfigLimit,
-            loadName: loadProjectUserName,
-            loadEmail: loadProjectUserEmail,
-            applyIdentity: applyIdentity,
-            loadConfigs: loadRecentConfigs,
-            applyConfigs: { savedConfigs = $0 },
-            logConfigSuccess: { logEvent(.configLoadSuccess(count: $0)) },
-            logConfigFailure: { logEvent(.configLoadFailure($0)) }
-        )
+        loadUserInfo()
+        loadSavedConfigs()
     }
 
     func loadUserInfo() {
-        CommitUserConfigRules.performProjectIdentityLoad(
-            project: project,
-            loadName: loadProjectUserName,
-            loadEmail: loadProjectUserEmail,
-            applyIdentity: applyIdentity
-        )
+        guard let loadedProject = project else {
+            applyIdentity(CommitUserConfigRules.identity(name: nil, email: nil))
+            return
+        }
+        nonisolated(unsafe) let project = loadedProject
+
+        Task(priority: .utility) { @MainActor in
+            let identity: CommitUserConfigRules.Identity
+            do {
+                let name = try await loadProjectUserName(project)
+                let email = try await loadProjectUserEmail(project)
+                identity = CommitUserConfigRules.identity(name: name, email: email)
+            } catch {
+                identity = CommitUserConfigRules.identity(name: nil, email: nil)
+            }
+            applyIdentity(identity)
+        }
     }
 
     func applyIdentity(_ identity: CommitUserConfigRules.Identity) {
@@ -144,12 +146,12 @@ private extension CommitUserConfigHostView {
     func applyConfig(_ command: CommitUserConfigRules.ProjectApplyConfigRequest<Project>) {
         // Extract project value before Task to avoid Sendable crossing
         nonisolated(unsafe) let project = command.project
+        let configName = command.request.name
+        let configEmail = command.request.email
+        let shouldApply = command.request.state.shouldApply
 
         Task(priority: .userInitiated) { @MainActor in
-            let configName = command.request.name
-            let configEmail = command.request.email
-
-            guard command.request.state.shouldApply else {
+            guard shouldApply else {
                 return
             }
 
