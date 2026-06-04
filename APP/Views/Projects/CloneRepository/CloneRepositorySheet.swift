@@ -1,6 +1,7 @@
 import AppKit
 import GitCoreKit
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 struct CloneRepositorySheet: View {
@@ -145,19 +146,13 @@ extension CloneRepositorySheet {
             Text(GitCloneLocalization.string("Remote Repository"))
                 .font(.headline)
 
-            TextField(
-                GitCloneLocalization.string("Remote Repository URL"),
-                text: $remoteURL,
-                prompt: Text(verbatim: "https://github.com/owner/repo.git")
-            )
-                .textFieldStyle(.roundedBorder)
+            AppInputField(GitCloneLocalization.string("Remote Repository URL"), text: $remoteURL)
 
             Text(GitCloneLocalization.string("Repository Name"))
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            TextField(GitCloneLocalization.string("Repository Name"), text: $repositoryName)
-                .textFieldStyle(.roundedBorder)
+            AppInputField(GitCloneLocalization.string("Repository Name"), text: $repositoryName)
                 .onChange(of: repositoryName) { oldValue, newValue in
                     defer { isAutoFillingRepositoryName = false }
                     if oldValue != newValue {
@@ -179,30 +174,27 @@ extension CloneRepositorySheet {
         DisclosureGroup {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
-                    TextField(GitCloneLocalization.string("github.com or ghe.example.com"), text: $githubHost)
-                        .textFieldStyle(.roundedBorder)
+                    AppInputField(GitCloneLocalization.string("github.com or ghe.example.com"), text: $githubHost)
 
-                    TextField(GitCloneLocalization.string("Username"), text: $githubUsername)
-                        .textFieldStyle(.roundedBorder)
+                    AppInputField(GitCloneLocalization.string("Username"), text: $githubUsername)
                 }
 
-                SecureField(GitCloneLocalization.string("Personal Access Token"), text: $githubToken)
-                    .textFieldStyle(.roundedBorder)
+                AppInputField(
+                    GitCloneLocalization.string("Personal Access Token"),
+                    text: $githubToken,
+                    fieldType: .secure
+                )
 
                 HStack {
-                    Button {
+                    AppButton(
+                        GitCloneLocalization.string("Connect and List Repositories"),
+                        systemImage: "arrow.triangle.2.circlepath",
+                        style: .secondary,
+                        size: .small,
+                        isLoading: isLoadingGitHubRepositories
+                    ) {
                         loadGitHubRepositories()
-                    } label: {
-                        if isLoadingGitHubRepositories {
-                            ProgressView()
-                                .controlSize(.small)
-                                .frame(minWidth: 110)
-                        } else {
-                            Text(GitCloneLocalization.string("Connect and List Repositories"))
-                                .frame(minWidth: 110)
-                        }
                     }
-                    .buttonStyle(.bordered)
                     .disabled(
                         isLoadingGitHubRepositories ||
                             githubHost.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
@@ -210,19 +202,15 @@ extension CloneRepositorySheet {
                             githubToken.isEmpty
                     )
 
-                    Button(GitCloneLocalization.string("Create Token")) {
+                    AppButton(GitCloneLocalization.string("Create Token"), systemImage: "key", style: .ghost, size: .small) {
                         openGitHubTokenSettings()
                     }
-                    .buttonStyle(.borderless)
 
                     Spacer()
                 }
 
                 if let githubErrorMessage {
-                    Text(githubErrorMessage)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                        .textSelection(.enabled)
+                    AppErrorBanner(message: githubErrorMessage)
                 } else {
                     Text(GitCloneLocalization.string("Token will be saved via the current Git credential helper. Repository list comes from GitHub/GitHub Enterprise API."))
                         .font(.caption)
@@ -230,15 +218,17 @@ extension CloneRepositorySheet {
                 }
 
                 if githubRepositories.isEmpty == false {
-                    TextField(GitCloneLocalization.string("Search Repositories"), text: $githubSearchText)
-                        .textFieldStyle(.roundedBorder)
+                    AppSearchBar(
+                        text: $githubSearchText,
+                        placeholder: GitCloneLocalization.string("Search Repositories")
+                    )
 
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 6) {
                             ForEach(filteredGitHubRepositories) { repository in
-                                Button {
+                                AppListRow(isSelected: remoteURL == repository.cloneURL, action: {
                                     selectGitHubRepository(repository)
-                                } label: {
+                                }) {
                                     HStack(alignment: .top, spacing: 8) {
                                         Image(systemName: repository.isPrivate ? "lock.fill" : "globe")
                                             .foregroundColor(repository.isPrivate ? .orange : .secondary)
@@ -260,17 +250,11 @@ extension CloneRepositorySheet {
 
                                         Spacer()
                                     }
-                                    .padding(.vertical, 4)
-                                    .padding(.horizontal, 6)
-                                    .contentShape(Rectangle())
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                     }
                     .frame(maxHeight: 150)
-                    .background(Color(nsColor: .controlBackgroundColor).opacity(0.45))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
             }
             .padding(.top, 8)
@@ -294,7 +278,7 @@ extension CloneRepositorySheet {
 
                 Spacer()
 
-                Button(GitCloneLocalization.string("Choose Directory")) {
+                AppButton(GitCloneLocalization.string("Choose Directory"), systemImage: "folder", style: .tonal, size: .small) {
                     chooseDestinationFolder()
                 }
             }
@@ -334,31 +318,23 @@ extension CloneRepositorySheet {
 
             if let errorMessage, errorMessage.isEmpty == false {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                        .textSelection(.enabled)
+                    AppErrorBanner(message: errorMessage)
 
                     if credentialHost != nil {
-                        Button(GitCloneLocalization.string("Enter Credentials and Retry")) {
+                        AppButton(GitCloneLocalization.string("Enter Credentials and Retry"), systemImage: "key", style: .secondary, size: .small) {
                             showCredentialSheet = true
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
                     }
 
                     if sshHelpRemoteURL != nil {
-                        Button(GitCloneLocalization.string("View SSH Handling")) {
+                        AppButton(GitCloneLocalization.string("View SSH Handling"), systemImage: "questionmark.circle", style: .secondary, size: .small) {
                             showSSHHelpSheet = true
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
                     }
                 }
             } else if isCloning, let cloneProgressMessage, cloneProgressMessage.isEmpty == false {
                 HStack(spacing: 8) {
-                    ProgressView()
-                        .controlSize(.small)
+                    AppSpinningIcon(size: 12)
                     Text(cloneProgressMessage)
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -384,43 +360,37 @@ extension CloneRepositorySheet {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                TextField(GitCloneLocalization.string("Username"), text: $credentialUsername)
-                    .textFieldStyle(.roundedBorder)
+                AppInputField(GitCloneLocalization.string("Username"), text: $credentialUsername)
                     .disabled(isSavingCredential)
 
-                SecureField(GitCloneLocalization.string("Personal Access Token or Password"), text: $credentialToken)
-                    .textFieldStyle(.roundedBorder)
+                AppInputField(
+                    GitCloneLocalization.string("Personal Access Token or Password"),
+                    text: $credentialToken,
+                    fieldType: .secure
+                )
                     .disabled(isSavingCredential)
 
                 if let credentialErrorMessage {
-                    Text(credentialErrorMessage)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                        .textSelection(.enabled)
+                    AppErrorBanner(message: credentialErrorMessage)
                 }
             }
 
             HStack {
                 Spacer()
 
-                Button(GitCloneLocalization.string("Cancel")) {
+                AppButton(GitCloneLocalization.string("Cancel"), style: .secondary) {
                     showCredentialSheet = false
                 }
                 .disabled(isSavingCredential)
 
-                Button {
+                AppButton(
+                    GitCloneLocalization.string("Save and Retry"),
+                    systemImage: "key.fill",
+                    style: .primary,
+                    isLoading: isSavingCredential
+                ) {
                     saveCredentialAndRetryClone()
-                } label: {
-                    if isSavingCredential {
-                        ProgressView()
-                            .controlSize(.small)
-                            .frame(minWidth: 96)
-                    } else {
-                        Text(GitCloneLocalization.string("Save and Retry"))
-                            .frame(minWidth: 96)
-                    }
                 }
-                .buttonStyle(.borderedProminent)
                 .disabled(
                     isSavingCredential ||
                         credentialUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
@@ -437,25 +407,20 @@ extension CloneRepositorySheet {
         HStack {
             Spacer()
 
-            Button(GitCloneLocalization.string("Cancel")) {
+            AppButton(GitCloneLocalization.string("Cancel"), style: .secondary) {
                 dismiss()
             }
             .keyboardShortcut(.escape)
             .disabled(isCloning)
 
-            Button {
+            AppButton(
+                GitCloneLocalization.string("Clone"),
+                systemImage: "arrow.down.doc",
+                style: .primary,
+                isLoading: isCloning
+            ) {
                 cloneRepository()
-            } label: {
-                if isCloning {
-                    ProgressView()
-                        .controlSize(.small)
-                        .frame(minWidth: 80)
-                } else {
-                    Text(GitCloneLocalization.string("Clone"))
-                        .frame(minWidth: 80)
-                }
             }
-            .buttonStyle(.borderedProminent)
             .disabled(isCloning || validationMessage != nil)
             .keyboardShortcut(.defaultAction)
         }

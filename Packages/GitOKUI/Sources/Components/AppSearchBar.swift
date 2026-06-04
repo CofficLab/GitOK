@@ -4,20 +4,32 @@ public struct AppSearchBar: View {
     @GitOKTheme private var theme
 
     @Binding var text: String
-    let placeholder: LocalizedStringKey
+    let placeholder: Text
     let onSubmit: (() -> Void)?
 
     @FocusState private var isFocused: Bool
 
     public init(text: Binding<String>, placeholder: LocalizedStringKey) {
         self._text = text
-        self.placeholder = placeholder
+        self.placeholder = Text(placeholder)
+        self.onSubmit = nil
+    }
+
+    public init(text: Binding<String>, placeholder: String) {
+        self._text = text
+        self.placeholder = Text(placeholder)
         self.onSubmit = nil
     }
 
     public init(text: Binding<String>, placeholder: LocalizedStringKey, onSubmit: @escaping () -> Void) {
         self._text = text
-        self.placeholder = placeholder
+        self.placeholder = Text(placeholder)
+        self.onSubmit = onSubmit
+    }
+
+    public init(text: Binding<String>, placeholder: String, onSubmit: @escaping () -> Void) {
+        self._text = text
+        self.placeholder = Text(placeholder)
         self.onSubmit = onSubmit
     }
 
@@ -27,7 +39,9 @@ public struct AppSearchBar: View {
                 .font(.system(size: 14))
                 .foregroundColor(theme.textSecondary)
 
-            TextField(placeholder, text: $text)
+            TextField(text: $text) {
+                placeholder
+            }
                 .textFieldStyle(.plain)
                 .font(AppUI.Typography.body)
                 .foregroundColor(theme.textPrimary)

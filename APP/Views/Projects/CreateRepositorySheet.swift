@@ -1,5 +1,6 @@
 import AppKit
 import GitCoreKit
+import GitOKUI
 import MagicAlert
 import GitOKSupportKit
 import SwiftUI
@@ -79,73 +80,80 @@ private extension CreateRepositorySheet {
     }
 
     var repositorySection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("本地仓库")
-                .font(.headline)
+        AppSettingsSection(title: "本地仓库") {
+            AppSettingsRow {
+                VStack(alignment: .leading, spacing: 10) {
+                    AppInputField("仓库名称", text: $repositoryName)
 
-            TextField("仓库名称", text: $repositoryName)
-                .textFieldStyle(.roundedBorder)
+                    HStack {
+                        Text(parentFolder.path)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
 
-            HStack {
-                Text(parentFolder.path)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+                        Spacer()
 
-                Spacer()
+                        AppButton("选择目录", systemImage: "folder", style: .tonal, size: .small) {
+                            chooseParentFolder()
+                        }
+                    }
 
-                Button("选择目录") {
-                    chooseParentFolder()
+                    if let destinationURL {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("最终路径")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(destinationURL.path)
+                                .font(.caption.monospaced())
+                                .foregroundColor(.primary)
+                                .lineLimit(2)
+                                .truncationMode(.middle)
+                        }
+                    }
+
+                    if destinationState == .existingEmptyDirectory {
+                        Text("目标目录已存在但为空，允许直接初始化为 Git 仓库。")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
-            }
-
-            if let destinationURL {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("最终路径")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Text(destinationURL.path)
-                        .font(.caption.monospaced())
-                        .foregroundColor(.primary)
-                        .lineLimit(2)
-                        .truncationMode(.middle)
-                }
-            }
-
-            if destinationState == .existingEmptyDirectory {
-                Text("目标目录已存在但为空，允许直接初始化为 Git 仓库。")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
         }
     }
 
     var templateSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("初始文件")
-                .font(.headline)
+        AppSettingsSection(title: "初始文件") {
+            AppSettingsRow {
+                Toggle("创建 README.md", isOn: $includeReadme)
+            }
 
-            Toggle("创建 README.md", isOn: $includeReadme)
-
-            Picker(".gitignore", selection: $gitignoreTemplate) {
-                ForEach(CreateGitignoreTemplate.allCases) { template in
-                    Text(template.title).tag(template)
+            AppSettingsRow {
+                Picker(".gitignore", selection: $gitignoreTemplate) {
+                    ForEach(CreateGitignoreTemplate.allCases) { template in
+                        Text(template.title).tag(template)
+                    }
                 }
             }
 
-            Picker("LICENSE", selection: $licenseTemplate) {
-                ForEach(CreateLicenseTemplate.allCases) { template in
-                    Text(template.title).tag(template)
+            AppSettingsRow {
+                Picker("LICENSE", selection: $licenseTemplate) {
+                    ForEach(CreateLicenseTemplate.allCases) { template in
+                        Text(template.title).tag(template)
+                    }
                 }
             }
 
-            Toggle("创建初始提交", isOn: $createInitialCommit)
+            AppSettingsRow {
+                Toggle("创建初始提交", isOn: $createInitialCommit)
+            }
 
             if createInitialCommit {
-                Text("初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                AppSettingsRow {
+                    Text("初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
     }
@@ -163,9 +171,7 @@ private extension CreateRepositorySheet {
             }
 
             if let errorMessage, errorMessage.isEmpty == false {
-                Text(errorMessage)
-                    .font(.caption)
-                    .foregroundColor(.red)
+                AppErrorBanner(message: errorMessage)
             }
         }
     }
@@ -174,25 +180,15 @@ private extension CreateRepositorySheet {
         HStack {
             Spacer()
 
-            Button("取消") {
+            AppButton("取消", style: .secondary) {
                 dismiss()
             }
             .keyboardShortcut(.escape)
             .disabled(isCreating)
 
-            Button {
+            AppButton("创建", systemImage: "plus", style: .primary, isLoading: isCreating) {
                 createRepository()
-            } label: {
-                if isCreating {
-                    ProgressView()
-                        .controlSize(.small)
-                        .frame(minWidth: 90)
-                } else {
-                    Text("创建")
-                        .frame(minWidth: 90)
-                }
             }
-            .buttonStyle(.borderedProminent)
             .disabled(isCreating || validationMessage != nil)
             .keyboardShortcut(.defaultAction)
         }

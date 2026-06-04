@@ -6,7 +6,7 @@ public struct AppInputField: View {
         case secure
     }
 
-    let placeholder: LocalizedStringKey
+    let placeholder: Text
     @Binding var text: String
     let fieldType: FieldType
 
@@ -15,7 +15,17 @@ public struct AppInputField: View {
         text: Binding<String>,
         fieldType: FieldType = .plain
     ) {
-        self.placeholder = placeholder
+        self.placeholder = Text(placeholder)
+        self._text = text
+        self.fieldType = fieldType
+    }
+
+    public init(
+        _ placeholder: String,
+        text: Binding<String>,
+        fieldType: FieldType = .plain
+    ) {
+        self.placeholder = Text(placeholder)
         self._text = text
         self.fieldType = fieldType
     }
@@ -24,9 +34,13 @@ public struct AppInputField: View {
         Group {
             switch fieldType {
             case .plain:
-                TextField(placeholder, text: $text)
+                TextField(text: $text) {
+                    placeholder
+                }
             case .secure:
-                SecureField(placeholder, text: $text)
+                SecureField(text: $text) {
+                    placeholder
+                }
             }
         }
         .textFieldStyle(.plain)

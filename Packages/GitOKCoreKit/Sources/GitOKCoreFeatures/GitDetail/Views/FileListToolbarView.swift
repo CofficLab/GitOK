@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public struct FileListToolbarView: View {
@@ -6,8 +7,6 @@ public struct FileListToolbarView: View {
     private let isLoading: Bool
     private let showsDiscardAll: Bool
     private let onDiscardAll: () -> Void
-
-    @State private var discardButtonHovered = false
 
     public init(
         filterText: Binding<String>,
@@ -27,37 +26,22 @@ public struct FileListToolbarView: View {
         VStack(spacing: 6) {
             HStack {
                 if showsDiscardAll {
-                    Button(action: onDiscardAll) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrow.uturn.backward")
-                                .font(.system(size: 12))
-                            Text(GitDetailLocalization.string("Discard All Changes"))
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(discardButtonHovered ? Color.red.opacity(0.15) : Color.clear)
-                        )
-                        .contentShape(Rectangle())
+                    AppButton(
+                        GitDetailLocalization.string("Discard All Changes"),
+                        systemImage: "arrow.uturn.backward",
+                        style: .destructive,
+                        size: .small
+                    ) {
+                        onDiscardAll()
                     }
-                    .buttonStyle(.borderless)
-                    .foregroundColor(discardButtonHovered ? .white : .red)
                     .help(GitDetailLocalization.string("Discard changes of all files"))
-                    .onHover { hovering in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            discardButtonHovered = hovering
-                        }
-                    }
                 }
 
                 Spacer()
 
                 if isLoading {
                     HStack(spacing: 4) {
-                        ProgressView()
-                            .controlSize(.small)
+                        AppSpinningIcon(size: 12)
                         Text(GitDetailLocalization.string("Loading..."))
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -75,32 +59,9 @@ public struct FileListToolbarView: View {
                 }
             }
 
-            HStack(spacing: 6) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-
-                TextField(GitDetailLocalization.string("Filter files"), text: $filterText)
-                    .textFieldStyle(.plain)
-                    .font(.caption)
-
-                if filterText.isEmpty == false {
-                    Button {
-                        filterText = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                    .help(GitDetailLocalization.string("Clear filter"))
-                }
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 5)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color(NSColor.textBackgroundColor).opacity(0.75))
+            AppSearchBar(
+                text: $filterText,
+                placeholder: GitDetailLocalization.string("Filter files")
             )
         }
         .padding(.horizontal, 3)

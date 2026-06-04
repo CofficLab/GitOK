@@ -4,19 +4,31 @@ public struct AppErrorBanner: View {
     @GitOKMotionPreferenceReader private var motionPreference
     @GitOKTheme private var theme
 
-    let message: LocalizedStringKey
-    let retryTitle: LocalizedStringKey?
+    let message: Text
+    let retryTitle: Text?
     let onRetry: (() -> Void)?
 
     public init(message: LocalizedStringKey) {
-        self.message = message
+        self.message = Text(message)
+        self.retryTitle = nil
+        self.onRetry = nil
+    }
+
+    public init(message: String) {
+        self.message = Text(message)
         self.retryTitle = nil
         self.onRetry = nil
     }
 
     public init(message: LocalizedStringKey, retryTitle: LocalizedStringKey, onRetry: @escaping () -> Void) {
-        self.message = message
-        self.retryTitle = retryTitle
+        self.message = Text(message)
+        self.retryTitle = Text(retryTitle)
+        self.onRetry = onRetry
+    }
+
+    public init(message: String, retryTitle: String, onRetry: @escaping () -> Void) {
+        self.message = Text(message)
+        self.retryTitle = Text(retryTitle)
         self.onRetry = onRetry
     }
 
@@ -26,7 +38,7 @@ public struct AppErrorBanner: View {
                 .font(.system(size: 14))
                 .foregroundColor(theme.error)
 
-            Text(message)
+            message
                 .font(AppUI.Typography.caption1)
                 .foregroundColor(theme.error)
                 .lineLimit(nil)
@@ -34,7 +46,7 @@ public struct AppErrorBanner: View {
             Spacer()
 
             if let retryTitle, let onRetry {
-                AppButton(retryTitle, style: .ghost, size: .small, action: onRetry)
+                AppButton(title: retryTitle, style: .ghost, size: .small, action: onRetry)
             }
         }
         .padding(.horizontal, AppUI.Spacing.md)

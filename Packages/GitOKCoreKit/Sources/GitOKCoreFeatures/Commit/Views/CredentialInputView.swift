@@ -1,4 +1,5 @@
 import AppKit
+import GitOKUI
 import SwiftUI
 
 /// Git 凭据输入视图
@@ -49,20 +50,16 @@ public struct CredentialInputView: View {
             }
             .padding(.top, 20)
 
-            // 表单
             VStack(alignment: .leading, spacing: 12) {
-                // GitHub 用户名
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Git 用户名")
                         .font(.headline)
                         .foregroundColor(.primary)
 
-                    TextField("例如: CofficLab", text: $username)
-                        .textFieldStyle(.roundedBorder)
+                    AppInputField("例如: CofficLab", text: $username)
                         .disableAutocorrection(true)
                 }
 
-                // Personal Access Token
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text("Personal Access Token 或密码")
@@ -71,23 +68,12 @@ public struct CredentialInputView: View {
 
                         Spacer()
 
-                        Button {
+                        AppIconButton(systemImage: "questionmark.circle", tint: .blue, size: .regular) {
                             openTokenHelp()
-                        } label: {
-                            Image(systemName: "questionmark.circle")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.blue)
-                                .padding(8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                        .fill(Color.blue.opacity(0.08))
-                                )
                         }
-                        .buttonStyle(.plain)
                     }
 
-                    SecureField("token 或密码", text: $token)
-                        .textFieldStyle(.roundedBorder)
+                    AppInputField("token 或密码", text: $token, fieldType: .secure)
 
                     Text("GitOK 会通过当前 Git credential helper 保存凭据；GitHub/GitLab 等平台通常需要 token。")
                         .font(.caption)
@@ -99,18 +85,15 @@ public struct CredentialInputView: View {
 
             Spacer()
 
-            // 按钮
             HStack(spacing: 12) {
-                Button("取消") {
+                AppButton("取消", style: .secondary) {
                     dismiss()
                 }
-                .buttonStyle(.bordered)
                 .disabled(isSaving)
 
-                Button("保存凭据") {
+                AppButton("保存凭据", systemImage: "key.fill", style: .primary, isLoading: isSaving) {
                     saveCredentials()
                 }
-                .buttonStyle(.borderedProminent)
                 .disabled(username.isEmpty || token.isEmpty || isSaving)
             }
             .padding(.bottom, 20)
