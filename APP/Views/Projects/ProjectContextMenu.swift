@@ -37,12 +37,19 @@ struct ProjectContextMenu: View {
     }
 
     private func revealInFinder() {
-        guard FileManager.default.fileExists(atPath: item.path) else {
-            alert_error("项目已不存在")
-            return
-        }
+        let path = item.path
+        Task {
+            let exists = await Task.detached(priority: .utility) {
+                FileManager.default.fileExists(atPath: path)
+            }.value
 
-        let url = URL(fileURLWithPath: item.path)
-        NSWorkspace.shared.activateFileViewerSelecting([url])
+            guard exists else {
+                alert_error("项目已不存在")
+                return
+            }
+
+            let url = URL(fileURLWithPath: path)
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        }
     }
 }

@@ -249,14 +249,17 @@ public struct FileTile: View {
         targetFileURL?.path ?? file.path
     }
 
-    private var targetFileExists: Bool {
-        guard let url = targetFileURL else { return false }
-        return FileManager.default.fileExists(atPath: url.path)
-    }
-
     private func revealInFinder() {
-        guard let url = targetFileURL, targetFileExists else { return }
-        NSWorkspace.shared.activateFileViewerSelecting([url])
+        guard let url = targetFileURL else { return }
+
+        Task {
+            let exists = await Task.detached(priority: .utility) {
+                FileManager.default.fileExists(atPath: url.path)
+            }.value
+
+            guard exists else { return }
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        }
     }
 
     private func copyFilePath() {
