@@ -6,6 +6,12 @@ import OSLog
 import ProjectRulesKit
 import SwiftUI
 
+private enum RepositorySettingBackgroundRunner {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 /// 仓库设置视图
 struct RepositorySettingView: View, SuperLog {
     /// emoji 标识符
@@ -246,66 +252,82 @@ struct RepositorySettingView: View, SuperLog {
     /// 添加远程仓库
     private func addRemoteRepository(name: String, url: String) {
         guard let loadedProject = vm.project else {
-        errorMessage = String(localized: "Please Select a Project First")
+            errorMessage = String(localized: "Please Select a Project First")
             return
         }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = RepositorySettingBackgroundRunner.UnsafeTransfer(value: loadedProject)
 
         isLoading = true
         errorMessage = nil
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                try await project.addRemoteAsync(name: name, url: url)
+                try await projectTransfer.value.addRemoteAsync(name: name, url: url)
+                let remoteList = try await projectTransfer.value.remoteListAsync()
 
-                if Self.verbose {
-                    os_log("\(Self.t)✅ Added remote: \(name)")
+                Task { @MainActor in
+                    remotes = remoteList
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log("\(Self.t)✅ Added remote: \(name)")
+                    }
                 }
-
-                // 重新加载列表
-                loadData()
             } catch {
-                isLoading = false
-            errorMessage = String.localizedStringWithFormat(String(localized: "Failed to add remote repository: %@"), error.localizedDescription)
+                let message = String.localizedStringWithFormat(
+                    String(localized: "Failed to add remote repository: %@"),
+                    error.localizedDescription
+                )
 
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)❌ Failed to add remote: \(error)")
+                Task { @MainActor in
+                    isLoading = false
+                    errorMessage = message
+
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)❌ Failed to add remote: \(message)")
+                    }
                 }
             }
-
-            isLoading = false
         }
     }
 
     /// 删除远程仓库
     private func deleteRemoteRepository(_ remote: GitRemote) {
         guard let loadedProject = vm.project else { return }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = RepositorySettingBackgroundRunner.UnsafeTransfer(value: loadedProject)
         let remoteName = remote.name
 
         isLoading = true
         errorMessage = nil
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                try await project.removeRemoteAsync(name: remoteName)
+                try await projectTransfer.value.removeRemoteAsync(name: remoteName)
+                let remoteList = try await projectTransfer.value.remoteListAsync()
 
-                if Self.verbose {
-                    os_log("\(Self.t)✅ Removed remote: \(remoteName)")
+                Task { @MainActor in
+                    remotes = remoteList
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log("\(Self.t)✅ Removed remote: \(remoteName)")
+                    }
                 }
-
-                // 重新加载列表
-                loadData()
             } catch {
-                isLoading = false
-            errorMessage = String.localizedStringWithFormat(String(localized: "Failed to remove remote repository: %@"), error.localizedDescription)
+                let message = String.localizedStringWithFormat(
+                    String(localized: "Failed to remove remote repository: %@"),
+                    error.localizedDescription
+                )
 
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)❌ Failed to remove remote: \(error)")
+                Task { @MainActor in
+                    isLoading = false
+                    errorMessage = message
+
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)❌ Failed to remove remote: \(message)")
+                    }
                 }
             }
-
-            isLoading = false
         }
     }
 
@@ -316,26 +338,36 @@ struct RepositorySettingView: View, SuperLog {
             remotes = []
             return
         }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = RepositorySettingBackgroundRunner.UnsafeTransfer(value: loadedProject)
 
         isLoading = true
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                let remoteList = try await project.remoteListAsync()
-                remotes = remoteList
-                isLoading = false
+                let remoteList = try await projectTransfer.value.remoteListAsync()
 
-                if Self.verbose {
-                    os_log("\(Self.t)Loaded \(remoteList.count) remotes")
+                Task { @MainActor in
+                    remotes = remoteList
+                    isLoading = false
+
+                    if Self.verbose {
+                        os_log("\(Self.t)Loaded \(remoteList.count) remotes")
+                    }
                 }
             } catch {
-                remotes = []
-                isLoading = false
-                errorMessage = String.localizedStringWithFormat(String(localized: "Failed to load remote repository: %@"), error.localizedDescription)
+                let message = String.localizedStringWithFormat(
+                    String(localized: "Failed to load remote repository: %@"),
+                    error.localizedDescription
+                )
 
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)❌ Failed to load remotes: \(error)")
+                Task { @MainActor in
+                    remotes = []
+                    isLoading = false
+                    errorMessage = message
+
+                    if Self.verbose {
+                        os_log(.error, "\(Self.t)❌ Failed to load remotes: \(message)")
+                    }
                 }
             }
         }
