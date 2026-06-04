@@ -121,8 +121,7 @@ struct UserInfoConfigView: View, SuperLog {
                         HStack {
                             Text("用户名")
                                 .frame(width: 80, alignment: .leading)
-                            TextField(String(localized: "Enter username"), text: $userName)
-                                .textFieldStyle(.plain)
+                            AppInputField(String(localized: "Enter username"), text: $userName)
                                 .onChange(of: userName) {
                                     hasChanges = true
                                     selectedConfig = nil
@@ -138,8 +137,7 @@ struct UserInfoConfigView: View, SuperLog {
                         HStack {
                             Text("邮箱")
                                 .frame(width: 80, alignment: .leading)
-                            TextField(String(localized: "Enter email"), text: $userEmail)
-                                .textFieldStyle(.plain)
+                            AppInputField(String(localized: "Enter email"), text: $userEmail)
                                 .onChange(of: userEmail) {
                                     hasChanges = true
                                     selectedConfig = nil
@@ -153,16 +151,7 @@ struct UserInfoConfigView: View, SuperLog {
 
                 // 错误消息
                 if let errorMessage = errorMessage {
-                    HStack(spacing: 8) {
-                        Image(systemName: .iconWarning)
-                            .foregroundColor(.red)
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                    .padding()
-                    .background(Color.red.opacity(0.1))
-                    .cornerRadius(8)
+                    AppErrorBanner(message: errorMessage)
                 }
             }
             .padding()

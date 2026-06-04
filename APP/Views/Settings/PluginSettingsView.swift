@@ -65,11 +65,9 @@ struct PluginSettingsView: View, SuperLog {
         .navigationTitle(Text(String(localized: "Plugin Management")))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button(action: {
+                AppButton(String(localized: "Done"), style: .secondary, size: .small) {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }) {
-                    Text(String(localized: "Done"))
                 }
             }
         }
@@ -84,18 +82,11 @@ struct PluginSettingsView: View, SuperLog {
     }
 
     private var emptyView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "puzzlepiece")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-
-            Text(String(localized: "No Configurable Plugins"))
-                .font(.headline)
-
-            Text(String(localized: "No plugins available to manage in settings"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
+        AppEmptyState(
+            icon: "puzzlepiece",
+            title: String(localized: "No Configurable Plugins"),
+            description: String(localized: "No plugins available to manage in settings")
+        )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
     }
@@ -127,33 +118,12 @@ struct PluginToggleRow: View {
     @Binding var isEnabled: Bool
 
     var body: some View {
-        HStack(spacing: 16) {
-            // 图标
-            Image(systemName: plugin.icon)
-                .font(.system(size: 20))
-                .foregroundColor(.blue)
-                .frame(width: 32, height: 32)
-                .background(Color.blue.opacity(0.1))
-                .cornerRadius(8)
-
-            // 信息
-            VStack(alignment: .leading, spacing: 4) {
-                Text(plugin.name)
-                    .font(.body)
-                    .fontWeight(.medium)
-
-                Text(plugin.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            // 开关
-            Toggle("", isOn: $isEnabled)
-                .labelsHidden()
-        }
-        .padding(.vertical, 8)
+        AppToggleRow(
+            title: plugin.name,
+            systemImage: plugin.icon,
+            description: plugin.description,
+            isOn: $isEnabled
+        )
     }
 }
 

@@ -51,16 +51,7 @@ struct RepositorySettingView: View, SuperLog {
 
                 // 错误消息
                 if let errorMessage = errorMessage {
-                    HStack(spacing: 8) {
-                        Image(systemName: .iconWarning)
-                            .foregroundColor(.red)
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                    .padding()
-                    .background(Color.red.opacity(0.1))
-                    .cornerRadius(8)
+                    AppErrorBanner(message: errorMessage)
                 }
             }
             .padding()
@@ -68,11 +59,9 @@ struct RepositorySettingView: View, SuperLog {
         .navigationTitle(Text("仓库设置"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button(action: {
+                AppButton("完成", style: .secondary, size: .small) {
                     // 关闭设置视图（通过通知）
                     NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
-                }) {
-                    Text("完成")
                 }
             }
         }
@@ -176,21 +165,12 @@ struct RepositorySettingView: View, SuperLog {
     /// 空状态提示
     private var emptyRemoteRepositoryState: some View {
         GitOKUI.AppSettingsSection(title: String(localized: "Remote Repository")) {
-            VStack(spacing: 12) {
-                HStack {
-                    Image(systemName: .iconCloud)
-                        .foregroundColor(.secondary)
-                    Text(String(localized: "No Remote Repository Configured"))
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                }
-                .padding()
-
-                Text(String(localized: "Add a remote repository to enable push and pull operations"))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
+            AppEmptyState(
+                icon: .iconCloud,
+                title: String(localized: "No Remote Repository Configured"),
+                description: String(localized: "Add a remote repository to enable push and pull operations")
+            )
+            .frame(minHeight: 160)
         }
     }
 
@@ -212,15 +192,10 @@ struct RepositorySettingView: View, SuperLog {
     /// 没有选中项目
     private var noProjectSelected: some View {
         GitOKUI.AppSettingsSection {
-            VStack(spacing: 12) {
-                Image(systemName: "folder.badge.questionmark")
-                    .font(.system(size: 48))
-                    .foregroundColor(.secondary)
-
-                Text(String(localized: "Please Select a Project First"))
-                    .font(.body)
-                    .foregroundColor(.secondary)
-            }
+            AppEmptyState(
+                icon: "folder.badge.questionmark",
+                title: String(localized: "Please Select a Project First")
+            )
             .frame(maxWidth: .infinity)
             .padding()
         }
@@ -383,23 +358,15 @@ struct AddRemoteRepositorySheet: View {
         NavigationView {
             Form {
                 Section(header: Text("Remote Repository Information")) {
-                    TextField(String(localized: "Name"), text: $remoteName)
-                        .textFieldStyle(.plain)
+                    AppInputField(String(localized: "Name"), text: $remoteName)
 
-                    TextField(String(localized: "URL"), text: $remoteURL)
-                        .textFieldStyle(.plain)
+                    AppInputField(String(localized: "URL"), text: $remoteURL)
                         .disableAutocorrection(true)
                 }
 
                 if let errorMessage = errorMessage {
                     Section {
-                        HStack(spacing: 8) {
-                            Image(systemName: .iconWarning)
-                                .foregroundColor(.red)
-                            Text(errorMessage)
-                                .font(.caption)
-                                .foregroundColor(.red)
-                        }
+                        AppErrorBanner(message: errorMessage)
                     }
                 }
             }
@@ -407,18 +374,14 @@ struct AddRemoteRepositorySheet: View {
             .navigationTitle(Text("Add Remote Repository"))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(action: {
+                    AppButton("Cancel", style: .secondary, size: .small) {
                         dismiss()
-                    }) {
-                        Text("Cancel")
                     }
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(action: {
+                    AppButton("Add", systemImage: "plus", style: .secondary, size: .small, isLoading: isLoading) {
                         addRemote()
-                    }) {
-                        Text("Add")
                     }
                     .disabled(!RemoteRepositoryFormRules.isFormValid(name: remoteName, url: remoteURL) || isLoading)
                 }

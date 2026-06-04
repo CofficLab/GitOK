@@ -60,16 +60,7 @@ struct GitUserInfoSettingView: View, SuperLog {
 
                 // 错误消息
                 if let errorMessage = errorMessage {
-                    HStack(spacing: 8) {
-                        Image(systemName: .iconWarning)
-                            .foregroundColor(.red)
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                    .padding()
-                    .background(Color.red.opacity(0.1))
-                    .cornerRadius(8)
+                    AppErrorBanner(message: errorMessage)
                 }
             }
             .padding()
@@ -77,11 +68,9 @@ struct GitUserInfoSettingView: View, SuperLog {
         .navigationTitle(Text(String(localized: "User Info")))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button(action: {
+                AppButton(String(localized: "Done"), style: .secondary, size: .small) {
                     // 关闭设置视图（通过通知）
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }) {
-                    Text(String(localized: "Done"))
                 }
             }
         }
@@ -108,12 +97,9 @@ struct GitUserInfoSettingView: View, SuperLog {
 
                 Spacer()
 
-                Button(action: { deletePreset(config) }) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.red)
-                        .font(.system(size: 14))
+                AppIconButton(systemImage: "trash", tint: DesignTokens.Color.semantic.error) {
+                    deletePreset(config)
                 }
-                .buttonStyle(.plain)
                 .help(Text(String(localized: "Delete this preset")))
             }
         }
@@ -149,8 +135,7 @@ struct GitUserInfoSettingView: View, SuperLog {
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-            TextField(String(localized: "Enter username"), text: $userName)
-                .textFieldStyle(.roundedBorder)
+            AppInputField(String(localized: "Enter username"), text: $userName)
                 .onChange(of: userName) {
                     hasChanges = true
                 }
@@ -166,8 +151,7 @@ struct GitUserInfoSettingView: View, SuperLog {
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-            TextField(String(localized: "Enter email"), text: $userEmail)
-                .textFieldStyle(.roundedBorder)
+            AppInputField(String(localized: "Enter email"), text: $userEmail)
                 .onChange(of: userEmail) {
                     hasChanges = true
                 }
@@ -177,7 +161,13 @@ struct GitUserInfoSettingView: View, SuperLog {
     }
 
     private var saveButtonsView: some View {
-        Image.add.inButtonWithAction {
+        AppButton(
+            String(localized: "Add New Preset"),
+            systemImage: "plus",
+            style: .secondary,
+            size: .small,
+            isLoading: isLoading
+        ) {
             saveAsPreset()
             // 清空输入框
             userName = ""
@@ -185,8 +175,8 @@ struct GitUserInfoSettingView: View, SuperLog {
             hasChanges = false
         }
         .disabled(isLoading || userName.isEmpty || userEmail.isEmpty)
-        .frame(height: 40)
-        .frame(width: 120)
+        .padding(.horizontal)
+        .padding(.vertical, 10)
     }
 
     // MARK: - Actions
