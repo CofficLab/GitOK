@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import GitOKCoreKit
 import MagicAlert
@@ -15,6 +16,7 @@ struct MinimalImageEditor: View {
 
     @State private var showImagePicker = false
     @State private var selectedDevice: MagicDevice? = nil
+    @State private var previewImage: Image?
 
     var minimalData: MinimalBannerData? { b.banner.minimalData }
 
@@ -24,7 +26,7 @@ struct MinimalImageEditor: View {
                 // 图片预览
                 if let minimalData = b.banner.minimalData, minimalData.imageId != nil {
                     AppSelectionTile(cornerRadius: 8, action: { showImagePicker = true }) {
-                        minimalData.getImage(b.banner.projectURL)
+                        (previewImage ?? Image("Snapshot-1"))
                             .resizable()
                             .scaledToFit()
                             .frame(height: 100)
@@ -91,9 +93,16 @@ struct MinimalImageEditor: View {
         }
         .onAppear {
             loadCurrentValues()
+            loadPreviewImage()
         }
         .onChange(of: minimalData?.selectedDevice) {
             loadCurrentValues()
+        }
+        .onChange(of: minimalData?.imageId) {
+            loadPreviewImage()
+        }
+        .onChange(of: b.banner.projectURL) {
+            loadPreviewImage()
         }
     }
 
@@ -113,16 +122,30 @@ struct MinimalImageEditor: View {
     }
 
     private func changeImage(_ url: URL) {
-        do {
-            try b.updateBanner { banner in
-                var minimalData = banner.minimalData ?? MinimalBannerData()
-                minimalData = try minimalData.changeImage(url, projectURL: banner.projectURL)
-                banner.minimalData = minimalData
+        let projectURL = b.banner.projectURL
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                let imageId = try saveImportedImage(url, projectURL: projectURL)
+                await MainActor.run {
+                    do {
+                        try b.updateBanner { banner in
+                            var minimalData = banner.minimalData ?? MinimalBannerData()
+                            minimalData.imageId = imageId
+                            banner.minimalData = minimalData
+                        }
+                        alert_success("图片更新成功")
+                    } catch {
+                        os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
+                        alert_error("更新图片失败: \(error.localizedDescription)")
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
+                    alert_error("更新图片失败: \(error.localizedDescription)")
+                }
             }
-            alert_success("图片更新成功")
-        } catch {
-            os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
-            alert_error("更新图片失败: \(error.localizedDescription)")
         }
     }
 
@@ -132,5 +155,38 @@ struct MinimalImageEditor: View {
             minimalData.selectedDevice = selectedDevice
             banner.minimalData = minimalData
         }
+    }
+
+    private func loadPreviewImage() {
+        guard let imageId = minimalData?.imageId else {
+            previewImage = nil
+            return
+        }
+
+        let projectURL = b.banner.projectURL
+        let cleanPath = imageId.replacingOccurrences(of: "\\/", with: "/")
+        let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
+
+        Task.detached(priority: .userInitiated) {
+            let data = try? Data(contentsOf: imageURL)
+            await MainActor.run {
+                guard minimalData?.imageId == imageId, b.banner.projectURL == projectURL else { return }
+                if let data, let nsImage = NSImage(data: data) {
+                    previewImage = Image(nsImage: nsImage)
+                } else {
+                    previewImage = nil
+                }
+            }
+        }
+    }
+
+    private nonisolated func saveImportedImage(_ url: URL, projectURL: URL) throws -> String {
+        let ext = url.pathExtension
+        let bannerRootURL = projectURL.appendingPathComponent(BannerRepo.bannerStoragePath)
+        let imagesFolder = bannerRootURL.appendingPathComponent("images")
+        let storeURL = imagesFolder.appendingPathComponent("\(Date.nowCompact).\(ext)")
+        try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
+        try FileManager.default.copyItem(at: url, to: storeURL)
+        return storeURL.relativePath.replacingOccurrences(of: projectURL.path, with: "")
     }
 }

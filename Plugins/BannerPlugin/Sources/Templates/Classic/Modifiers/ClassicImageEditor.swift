@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import GitOKCoreKit
 import MagicAlert
@@ -15,6 +16,7 @@ struct ClassicImageEditor: View {
 
     @State private var showImagePicker = false
     @State private var selectedDevice: MagicDevice? = nil
+    @State private var previewImage: Image?
 
     var classicData: ClassicBannerData? { b.banner.classicData }
 
@@ -24,7 +26,7 @@ struct ClassicImageEditor: View {
                 // 图片预览
                 if let classicData = b.banner.classicData, classicData.imageId != nil {
                     AppSelectionTile(cornerRadius: 8, action: { showImagePicker = true }) {
-                        classicData.getImage(b.banner.projectURL)
+                        (previewImage ?? Image(ClassicBannerData.defaultImageId))
                             .resizable()
                             .scaledToFit()
                             .frame(height: 100)
@@ -91,9 +93,16 @@ struct ClassicImageEditor: View {
         }
         .onAppear {
             loadCurrentValues()
+            loadPreviewImage()
         }
         .onChange(of: classicData?.selectedDevice) {
             loadCurrentValues()
+        }
+        .onChange(of: classicData?.imageId) {
+            loadPreviewImage()
+        }
+        .onChange(of: b.banner.projectURL) {
+            loadPreviewImage()
         }
     }
 
@@ -113,16 +122,30 @@ struct ClassicImageEditor: View {
     }
 
     private func changeImage(_ url: URL) {
-        do {
-            try b.updateBanner { banner in
-                var classicData = banner.classicData ?? ClassicBannerData()
-                classicData = try classicData.changeImage(url, projectURL: banner.projectURL)
-                banner.classicData = classicData
+        let projectURL = b.banner.projectURL
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                let imageId = try saveImportedImage(url, projectURL: projectURL)
+                await MainActor.run {
+                    do {
+                        try b.updateBanner { banner in
+                            var classicData = banner.classicData ?? ClassicBannerData()
+                            classicData.imageId = imageId
+                            banner.classicData = classicData
+                        }
+                        alert_success("图片更新成功")
+                    } catch {
+                        os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
+                        alert_error("更新图片失败: \(error.localizedDescription)")
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
+                    alert_error("更新图片失败: \(error.localizedDescription)")
+                }
             }
-            alert_success("图片更新成功")
-        } catch {
-            os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
-            alert_error("更新图片失败: \(error.localizedDescription)")
         }
     }
 
@@ -132,5 +155,38 @@ struct ClassicImageEditor: View {
             classicData.selectedDevice = selectedDevice
             banner.classicData = classicData
         }
+    }
+
+    private func loadPreviewImage() {
+        guard let imageId = classicData?.imageId else {
+            previewImage = nil
+            return
+        }
+
+        let projectURL = b.banner.projectURL
+        let cleanPath = imageId.replacingOccurrences(of: "\\/", with: "/")
+        let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
+
+        Task.detached(priority: .userInitiated) {
+            let data = try? Data(contentsOf: imageURL)
+            await MainActor.run {
+                guard classicData?.imageId == imageId, b.banner.projectURL == projectURL else { return }
+                if let data, let nsImage = NSImage(data: data) {
+                    previewImage = Image(nsImage: nsImage)
+                } else {
+                    previewImage = nil
+                }
+            }
+        }
+    }
+
+    private nonisolated func saveImportedImage(_ url: URL, projectURL: URL) throws -> String {
+        let ext = url.pathExtension
+        let bannerRootURL = projectURL.appendingPathComponent(BannerRepo.bannerStoragePath)
+        let imagesFolder = bannerRootURL.appendingPathComponent("images")
+        let storeURL = imagesFolder.appendingPathComponent("\(Date.nowCompact).\(ext)")
+        try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
+        try FileManager.default.copyItem(at: url, to: storeURL)
+        return storeURL.relativePath.replacingOccurrences(of: projectURL.path, with: "")
     }
 }
