@@ -26,7 +26,7 @@ public struct BannerDetailLayout: View {
             HSplitView {
                 VStack(spacing: 0) {
                     BannerTabs(projectURL: projectURL)
-                        .background(.gray.opacity(0.1))
+                        .gitOKUISurface(style: .toolbar, cornerRadius: 0)
 
                     Divider()
 

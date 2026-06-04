@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 /**
@@ -34,6 +35,6 @@ struct MinimalBannerExampleView: View {
                 endPoint: .bottomTrailing
             )
         )
-        .cornerRadius(8)
+        .gitOKUIClipRounded(8)
     }
 }
