@@ -69,7 +69,7 @@ struct XcodeDownloadButton: View {
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
 
         do {
-            try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
+            try await IconDownloadFileOperations.createDirectory(folderPath)
         } catch {
             MagicMessageProvider.shared.error(String(localized: "Failed to create legacy format directory: \(error)", bundle: .module))
             return
@@ -93,7 +93,7 @@ struct XcodeDownloadButton: View {
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
 
         do {
-            try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
+            try await IconDownloadFileOperations.createDirectory(folderPath)
         } catch {
             MagicMessageProvider.shared.error(String(localized: "Failed to create modern format directory: \(error)", bundle: .module))
             return

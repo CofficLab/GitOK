@@ -53,7 +53,7 @@ struct FaviconDownloadButton: View {
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
 
         do {
-            try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
+            try await IconDownloadFileOperations.createDirectory(folderPath)
         } catch {
             MagicMessageProvider.shared.error("创建目标目录失败：\(error)")
             return
