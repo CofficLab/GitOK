@@ -628,6 +628,29 @@ extension Project {
         }
     }
 
+    /// 将所有更改的文件添加到 Git 暂存区，避免在主线程执行同步 Git 操作。
+    func addAllAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).addAllFiles()
+            }.value
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addAll"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addAll",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
     /// 将指定文件添加到 Git 暂存区
     /// - Parameter filePaths: 相对于仓库根目录的文件路径
     /// - Throws: Git 操作相关的错误
@@ -715,6 +738,12 @@ extension Project {
             entry.indexStatus != " " && entry.indexStatus != "?"
         }
     }
+
+    func hasStagedChangesAsync() async throws -> Bool {
+        try await lightweightStatusEntriesAsync().contains { entry in
+            entry.indexStatus != " " && entry.indexStatus != "?"
+        }
+    }
 }
 
 // MARK: - User
@@ -796,6 +825,30 @@ extension Project {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         do {
             _ = try gitCLI.createCommit(message: message)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "commit",
+                additionalInfo: ["message": message]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "commit",
+                success: false,
+                error: error,
+                additionalInfo: ["message": message]
+            )
+            throw error
+        }
+    }
+
+    func submitAsync(_ message: String) async throws {
+        let repositoryURL = url
+
+        do {
+            _ = try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).createCommit(message: message)
+            }.value
             postEvent(
                 name: .projectDidCommit,
                 operation: "commit",
@@ -1233,6 +1286,41 @@ extension Project {
 
             try gitCLI.push()
 
+            postEvent(
+                name: .projectDidPush,
+                operation: "push"
+            )
+        } catch {
+            let pushError: Error
+            if let message = GitOperationError.pushNeedsFetchMessage(from: error) {
+                pushError = GitOperationError.pushNeedsFetch(message: message)
+            } else {
+                pushError = error
+            }
+
+            os_log(.default, "❌ Push failed: \(pushError.localizedDescription)")
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "push",
+                success: false,
+                error: pushError
+            )
+            throw pushError
+        }
+    }
+
+    func pushAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            let currentBranch = try await Task.detached(priority: .userInitiated) {
+                let gitCLI = GitRepositoryCLI(repositoryURL: repositoryURL)
+                let currentBranch = try gitCLI.currentBranchName() ?? ""
+                try gitCLI.push()
+                return currentBranch
+            }.value
+
+            os_log(.default, "📍 Current branch: \(currentBranch)")
             postEvent(
                 name: .projectDidPush,
                 operation: "push"

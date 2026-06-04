@@ -33,18 +33,16 @@ struct CommitForm: View, SuperLog {
                 try project.remoteBranches()
             },
             hasStagedChanges: { project in
-                try project.hasStagedChanges()
+                try await project.hasStagedChangesAsync()
             },
             addAllFiles: { project in
-                try project.addAll()
+                try await project.addAllAsync()
             },
             commit: { project, plan in
-                try await MainActor.run {
-                    try project.submit(plan.message)
-                }
+                try await project.submitAsync(plan.message)
             },
             push: { project in
-                try project.push()
+                try await project.pushAsync()
             },
             setActivityStatus: { status in
                 g.activityStatus = status
