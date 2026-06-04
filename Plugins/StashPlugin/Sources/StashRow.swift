@@ -1,5 +1,6 @@
 import GitOKCoreKit
 import GitCoreKit
+import GitOKUI
 import SwiftUI
 
 struct StashRow: View {
@@ -69,7 +70,7 @@ struct StashRow: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .frame(maxHeight: 170)
-                    .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 6))
+                    .gitOKUISurface(style: .subtle, cornerRadius: 6)
                 } label: {
                     Label(StashPluginLocalization.string("Diff Preview"), systemImage: "doc.text.magnifyingglass")
                         .font(.caption)
@@ -78,7 +79,7 @@ struct StashRow: View {
             }
         }
         .padding(10)
-        .background(.quaternary.opacity(0.18), in: RoundedRectangle(cornerRadius: 8))
+        .gitOKUISurface(style: .subtle, cornerRadius: 8)
         .alert(StashPluginLocalization.string("Confirm Delete Stash"), isPresented: $showDropAlert) {
             Button(StashPluginLocalization.string("Cancel"), role: .cancel) {}
             Button(StashPluginLocalization.string("Delete"), role: .destructive) {
