@@ -89,7 +89,13 @@ public class BannerProvider: NSObject, ObservableObject, SuperLog {
         try update(&updatedBanner)
         self.banner = updatedBanner
 
-        try BannerRepo.shared.saveBanner(banner)
+        Task.detached(priority: .utility) {
+            do {
+                try BannerRepo.shared.saveBanner(updatedBanner)
+            } catch {
+                os_log(.error, "\(Self.emoji) 保存 Banner 失败: \(error.localizedDescription)")
+            }
+        }
     }
 
     /**
