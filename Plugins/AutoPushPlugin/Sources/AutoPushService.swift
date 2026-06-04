@@ -88,10 +88,12 @@ public final class AutoPushService: ObservableObject {
 
         isPushing = true
         lastPushStatus = .pushing
+        let repositoryURL = URL(fileURLWithPath: projectPath)
 
         do {
-            let repository = GitRepositoryCLI(repositoryURL: URL(fileURLWithPath: projectPath))
-            let unpushedCommitCount = try repository.unpushedCommitHashes().count
+            let unpushedCommitCount = try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).unpushedCommitHashes().count
+            }.value
 
             if AutoPushDecision.execution(isAlreadyPushing: false, unpushedCommitCount: unpushedCommitCount) == .markIdle {
                 isPushing = false
@@ -99,7 +101,9 @@ public final class AutoPushService: ObservableObject {
                 return
             }
 
-            try repository.push()
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).push()
+            }.value
             AutoPushSettingsStore.shared.updateLastPushedDate(for: projectPath, branchName: branchName)
             isPushing = false
             lastPushStatus = .success

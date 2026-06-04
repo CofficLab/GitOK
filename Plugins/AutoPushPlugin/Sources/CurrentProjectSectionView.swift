@@ -6,6 +6,7 @@ struct CurrentProjectSectionView: View {
     let project: AutoPushProjectSnapshot
     @Binding var isEnabled: Bool
     let onToggle: (Bool) -> Void
+    @State private var hasRemoteBranch = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -27,6 +28,10 @@ struct CurrentProjectSectionView: View {
                     .foregroundColor(.secondary)
                 }
             }
+        }
+        .onAppear(perform: loadRemoteState)
+        .onChange(of: project.projectPath) { _, _ in
+            loadRemoteState()
         }
     }
 
@@ -77,7 +82,14 @@ struct CurrentProjectSectionView: View {
         }
     }
 
-    private var hasRemoteBranch: Bool {
-        ((try? GitRepositoryCLI(repositoryURL: URL(fileURLWithPath: project.projectPath)).remoteNames()) ?? []).isEmpty == false
+    private func loadRemoteState() {
+        let projectPath = project.projectPath
+        Task {
+            let hasRemote = await Task.detached(priority: .utility) {
+                ((try? GitRepositoryCLI(repositoryURL: URL(fileURLWithPath: projectPath)).remoteNames()) ?? []).isEmpty == false
+            }.value
+            guard project.projectPath == projectPath else { return }
+            hasRemoteBranch = hasRemote
+        }
     }
 }
