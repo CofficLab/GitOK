@@ -161,8 +161,10 @@ final class IconAsset: Identifiable, @unchecked Sendable {
             // 异步加载远程图片
             let (data, _) = try await iconURL.httpGetData(cacheMaxAge: 3600)
 
-            // 将数据转换为NSImage，然后转换为SwiftUI Image
-            guard let nsImage = NSImage(data: data) else {
+            // 将图片解码放到后台，避免远程图标预览阻塞主线程。
+            guard let nsImage = await Task.detached(priority: .userInitiated, operation: {
+                NSImage(data: data)
+            }).value else {
                 throw RemoteIconError.decodingError
             }
 
