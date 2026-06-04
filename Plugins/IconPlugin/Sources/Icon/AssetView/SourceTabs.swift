@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 
 /**
  * 仓库来源选择标签页组件
@@ -53,9 +54,9 @@ struct SourceTab: View {
             }
             .frame(height: 40)
             .padding(.horizontal, 16)
-            .background(
-                Rectangle()
-                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
+            .gitOKUISurface(
+                style: .custom(isSelected ? Color.accentColor.opacity(0.1) : Color.clear),
+                cornerRadius: 0
             )
             .contentShape(Rectangle())
             .onTapGesture(perform: onTap)

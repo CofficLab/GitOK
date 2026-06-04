@@ -1,3 +1,4 @@
+import GitOKUI
 import GitOKSupportKit
 import OSLog
 import SwiftUI
@@ -47,8 +48,10 @@ struct TabBtn: View, SuperLog {
     )
     .padding(.horizontal, 8)
     .padding(.vertical, 4)
-    .background(hovered || selected ? Color.gray.opacity(0.4) : .clear)
-    .clipShape(RoundedRectangle(cornerRadius: 0))
+    .gitOKUISurface(
+      style: .custom(hovered || selected ? Color.gray.opacity(0.4) : .clear),
+      cornerRadius: 0
+    )
     .onHover(perform: { hovering in
       withAnimation(.easeInOut) {
         hovered = hovering
