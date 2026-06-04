@@ -53,14 +53,16 @@ struct UnpushedStatusRootView: View {
             return
         }
 
-        Task(priority: .userInitiated) {
+        Task.detached(priority: .userInitiated) {
             do {
-                let hashes = try await Task.detached(priority: .userInitiated) {
-                    try GitRepositoryCLI(repositoryURL: projectURL).unpushedCommitHashes()
-                }.value
-                updateUnpushedCommits(hashes.count, hashes)
+                let hashes = try GitRepositoryCLI(repositoryURL: projectURL).unpushedCommitHashes()
+                await MainActor.run {
+                    updateUnpushedCommits(hashes.count, hashes)
+                }
             } catch {
-                updateUnpushedCommits(0, [])
+                await MainActor.run {
+                    updateUnpushedCommits(0, [])
+                }
             }
         }
     }
@@ -71,17 +73,19 @@ struct UnpushedStatusRootView: View {
             return
         }
 
-        Task(priority: .userInitiated) {
+        Task.detached(priority: .userInitiated) {
             do {
-                let state = try await Task.detached(priority: .userInitiated) {
-                    try GitRepositoryCLI(repositoryURL: projectURL).aheadBehind()
-                }.value
-                updateRemoteTracking(
-                    UnpushedStatusPresentation.remoteTrackingStatus(from: state),
-                    markFetched ? .now : nil
-                )
+                let state = try GitRepositoryCLI(repositoryURL: projectURL).aheadBehind()
+                await MainActor.run {
+                    updateRemoteTracking(
+                        UnpushedStatusPresentation.remoteTrackingStatus(from: state),
+                        markFetched ? .now : nil
+                    )
+                }
             } catch {
-                updateRemoteTracking(.noUpstream, nil)
+                await MainActor.run {
+                    updateRemoteTracking(.noUpstream, nil)
+                }
             }
         }
     }
