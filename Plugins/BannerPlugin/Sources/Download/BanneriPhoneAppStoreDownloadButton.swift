@@ -53,7 +53,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
 
         do {
-            try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
+            try await BannerDownloadFileOperations.createDirectory(folderPath)
         } catch {
             let msg = String.localizedStringWithFormat(
                 BannerPluginLocalization.string("Failed to create target directory: %@"),
