@@ -196,16 +196,19 @@ struct IconGrid: View {
         panel.begin { response in
             guard response == .OK else { return }
             let urls = panel.urls
-            Task { @MainActor in
+            Task.detached(priority: .userInitiated) {
                 var okCount = 0
                 for url in urls {
                     if let data = try? Data(contentsOf: url) {
-                        if iconProvider.addImageToProjectLibrary(data: data, filename: url.lastPathComponent) {
+                        if await IconRepo.shared.addImage(data: data, filename: url.lastPathComponent, to: sid) {
                             okCount += 1
                         }
                     }
                 }
-                print("[IconGrid] addImagesViaPanel done: \(okCount)/\(urls.count)")
+                await MainActor.run {
+                    print("[IconGrid] addImagesViaPanel done: \(okCount)/\(urls.count)")
+                    loadIconAssets()
+                }
             }
         }
     }
@@ -222,14 +225,17 @@ struct IconGrid: View {
         panel.begin { response in
             guard response == .OK else { return }
             let urls = panel.urls
-            Task { @MainActor in
+            Task.detached(priority: .userInitiated) {
                 var okCount = 0
                 for url in urls {
-                    if iconProvider.deleteImageFromProjectLibrary(filename: url.lastPathComponent) {
+                    if await IconRepo.shared.deleteImage(filename: url.lastPathComponent, from: sid) {
                         okCount += 1
                     }
                 }
-                print("[IconGrid] deleteImagesViaPanel done: \(okCount)/\(urls.count)")
+                await MainActor.run {
+                    print("[IconGrid] deleteImagesViaPanel done: \(okCount)/\(urls.count)")
+                    loadIconAssets()
+                }
             }
         }
     }
@@ -263,10 +269,16 @@ struct IconGrid: View {
             return false
         }), let filename = target.fileURL?.lastPathComponent else { return }
 
-        let ok = iconProvider.deleteImageFromProjectLibrary(filename: filename)
-        if ok {
-            // 成功后刷新
-            Task { await MainActor.run { self.loadIconAssets() } }
+        Task.detached(priority: .userInitiated) {
+            let ok = await IconRepo.shared.deleteImage(filename: filename, from: sid)
+            await MainActor.run {
+                if ok {
+                    if iconProvider.selectedIconId == selectedId {
+                        iconProvider.selectedIconId = ""
+                    }
+                    loadIconAssets()
+                }
+            }
         }
     }
 }
