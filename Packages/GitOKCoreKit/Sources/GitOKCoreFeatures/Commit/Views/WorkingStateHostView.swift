@@ -716,20 +716,26 @@ private extension WorkingStateHostView {
         guard let project, isConflictActionRunning == false else { return }
         isConflictActionRunning = true
         activeConflictPath = path
+        let projectTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: project)
+        let actionTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: action)
+        let eventHandlerTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: eventHandler)
 
-        Task { @MainActor in
-            nonisolated(unsafe) let project = project
+        Task.detached(priority: .userInitiated) {
             do {
-                try await action(project)
-                isConflictActionRunning = false
-                activeConflictPath = nil
-                _ = await refreshConflictState(for: project)
-                await loadChangedFileCount()
+                try await actionTransfer.value(projectTransfer.value)
+                Task { @MainActor in
+                    isConflictActionRunning = false
+                    activeConflictPath = nil
+                    _ = await refreshConflictState(for: projectTransfer.value)
+                    await loadChangedFileCount()
+                }
             } catch {
-                isConflictActionRunning = false
-                activeConflictPath = nil
-                eventHandler(.showError(error))
-                _ = await refreshConflictState(for: project)
+                Task { @MainActor in
+                    isConflictActionRunning = false
+                    activeConflictPath = nil
+                    eventHandlerTransfer.value(.showError(error))
+                    _ = await refreshConflictState(for: projectTransfer.value)
+                }
             }
         }
     }
