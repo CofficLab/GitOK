@@ -25,7 +25,7 @@ struct ReleaseNotesSettingView: View {
         .navigationTitle("更新")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                AppButton("完成", style: .secondary, size: .small) {
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }
             }

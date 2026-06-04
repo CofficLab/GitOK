@@ -61,11 +61,9 @@ struct AppAppearanceSettingView: View, SuperLog {
         .navigationTitle(Text("外观"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button(action: {
+                AppButton("完成", style: .secondary, size: .small) {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }) {
-                    Text("完成")
                 }
             }
         }

@@ -119,7 +119,7 @@ struct AboutView: View, SuperLog {
         .navigationTitle(Text("关于"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button(String(localized: "Done")) {
+                AppButton(String(localized: "Done"), style: .secondary, size: .small) {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }
