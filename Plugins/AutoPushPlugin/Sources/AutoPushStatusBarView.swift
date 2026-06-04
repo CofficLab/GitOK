@@ -1,4 +1,5 @@
 import AppKit
+import GitOKUI
 import SwiftUI
 
 /// 状态栏视图：显示操作状态消息
@@ -15,7 +16,7 @@ struct AutoPushStatusBarView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
-            .background(Color(NSColor.controlBackgroundColor))
+            .gitOKUISurface(style: .toolbar, cornerRadius: 0)
             .overlay(separatorLine, alignment: .top)
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }

@@ -1,5 +1,6 @@
 import AppKit
 import GitOKCoreKit
+import GitOKUI
 import SwiftUI
 
 /// 自动推送配置视图的标题栏
@@ -14,7 +15,7 @@ struct AutoPushConfigHeaderView: View {
             headerActions
         }
         .padding()
-        .background(Color(NSColor.controlBackgroundColor))
+        .gitOKUISurface(style: .toolbar, cornerRadius: 0)
         .overlay(separatorLine, alignment: .bottom)
     }
 
