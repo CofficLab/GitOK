@@ -168,59 +168,39 @@ struct FaviconDownloadButton: View {
             return false
         }
 
-        // 将PNG转换为ICO格式
         do {
-            // 读取临时PNG文件
-            guard let pngData = try? Data(contentsOf: tempPNGPath) else {
-                MagicMessageProvider.shared.error("读取临时PNG文件失败")
-                return false
-            }
-
-            // 创建ICO文件头和目录
-            var icoData = Data()
-
-            // ICO文件头 (6字节)
-            // 保留字段 (2字节): 0
-            icoData.append(contentsOf: [0x00, 0x00])
-            // 类型 (2字节): 1表示ICO
-            icoData.append(contentsOf: [0x01, 0x00])
-            // 图像数量 (2字节): 1个图像
-            icoData.append(contentsOf: [0x01, 0x00])
-
-            // ICO目录项 (16字节)
-            // 图像宽度 (1字节): 32
-            icoData.append(0x20)
-            // 图像高度 (1字节): 32
-            icoData.append(0x20)
-            // 颜色数 (1字节): 0表示>=256色
-            icoData.append(0x00)
-            // 保留字段 (1字节): 0
-            icoData.append(0x00)
-            // 颜色平面数 (2字节): 1
-            icoData.append(contentsOf: [0x01, 0x00])
-            // 每像素位数 (2字节): 32
-            icoData.append(contentsOf: [0x20, 0x00])
-            // 图像数据大小 (4字节)
-            let imageSize = pngData.count
-            icoData.append(contentsOf: withUnsafeBytes(of: UInt32(imageSize).littleEndian) { Array($0) })
-            // 图像数据偏移量 (4字节): 22 (文件头6 + 目录项16)
-            icoData.append(contentsOf: withUnsafeBytes(of: UInt32(22).littleEndian) { Array($0) })
-
-            // 添加PNG图像数据
-            icoData.append(pngData)
-
-            // 写入ICO文件
-            try icoData.write(to: saveTo)
-
-            // 删除临时文件
-            try? FileManager.default.removeItem(at: tempPNGPath)
-
+            try await Self.writeICO(fromPNGAt: tempPNGPath, to: saveTo)
             return true
         } catch {
             MagicMessageProvider.shared.error("生成ICO文件失败：\(error)")
-            // 删除临时文件
             try? FileManager.default.removeItem(at: tempPNGPath)
             return false
         }
+    }
+
+    nonisolated private static func writeICO(fromPNGAt tempPNGPath: URL, to saveTo: URL) async throws {
+        try await Task.detached(priority: .userInitiated) {
+            defer {
+                try? FileManager.default.removeItem(at: tempPNGPath)
+            }
+
+            let pngData = try Data(contentsOf: tempPNGPath)
+            var icoData = Data()
+
+            icoData.append(contentsOf: [0x00, 0x00])
+            icoData.append(contentsOf: [0x01, 0x00])
+            icoData.append(contentsOf: [0x01, 0x00])
+            icoData.append(0x20)
+            icoData.append(0x20)
+            icoData.append(0x00)
+            icoData.append(0x00)
+            icoData.append(contentsOf: [0x01, 0x00])
+            icoData.append(contentsOf: [0x20, 0x00])
+            icoData.append(contentsOf: withUnsafeBytes(of: UInt32(pngData.count).littleEndian) { Array($0) })
+            icoData.append(contentsOf: withUnsafeBytes(of: UInt32(22).littleEndian) { Array($0) })
+            icoData.append(pngData)
+
+            try icoData.write(to: saveTo)
+        }.value
     }
 }
