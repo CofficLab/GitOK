@@ -8,8 +8,10 @@ struct ReadmeViewer: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var readmeContent = ""
+    @State private var renderedReadme = AttributedString()
     @State private var isLoading = true
     @State private var hasError = false
+    @State private var loadTask: Task<Void, Never>?
 
     public init(projectURL: URL) {
         self.projectURL = projectURL
@@ -22,6 +24,9 @@ struct ReadmeViewer: View {
         }
         .frame(minWidth: 600, minHeight: 400)
         .onAppear(perform: loadReadme)
+        .onDisappear {
+            loadTask?.cancel()
+        }
     }
 
     private var header: some View {
@@ -94,27 +99,32 @@ struct ReadmeViewer: View {
         }
     }
 
-    private var renderedReadme: AttributedString {
-        (try? AttributedString(markdown: readmeContent)) ?? AttributedString(readmeContent)
-    }
-
     private func loadReadme() {
+        loadTask?.cancel()
         isLoading = true
         hasError = false
 
-        Task {
+        let projectURL = projectURL
+        loadTask = Task.detached(priority: .userInitiated) {
             do {
                 let content = try await ProjectDocumentResolver.readReadmeContentAsync(in: projectURL)
+                let rendered = (try? AttributedString(markdown: content)) ?? AttributedString(content)
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     readmeContent = content
+                    renderedReadme = rendered
                     isLoading = false
                     hasError = false
+                    loadTask = nil
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     readmeContent = ""
+                    renderedReadme = AttributedString()
                     isLoading = false
                     hasError = true
+                    loadTask = nil
                 }
             }
         }
