@@ -60,32 +60,29 @@ private struct TemplateCard: View {
     let onSelect: () -> Void
 
     var body: some View {
-        VStack(spacing: 8) {
-            // 模板示例预览
-            template.createExampleView()
-                .frame(width: 120, height: 80)
-                .clipped()
+        AppSelectionTile(
+            isSelected: isSelected,
+            cornerRadius: 8,
+            selectedScale: 1.02,
+            selectedBackgroundColor: Color.accentColor.opacity(0.1),
+            selectedBorderColor: Color.accentColor,
+            action: onSelect
+        ) {
+            VStack(spacing: 8) {
+                // 模板示例预览
+                template.createExampleView()
+                    .frame(width: 120, height: 80)
+                    .clipped()
 
-            // 模板信息
-            Text(template.name)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.primary)
+                // 模板信息
+                Text(template.name)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+            }
+            .frame(width: 120)
+            .padding(8)
         }
-        .frame(width: 120)
-        .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(isSelected ? Color.accentColor.opacity(0.1) : Color(.controlBackgroundColor))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-        )
-        .onTapGesture {
-            onSelect()
-        }
-        .scaleEffect(isSelected ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: isSelected)
+        .frame(width: 136, height: 126)
     }
 }
