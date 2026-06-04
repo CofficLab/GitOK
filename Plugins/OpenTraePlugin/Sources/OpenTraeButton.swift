@@ -1,4 +1,5 @@
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenTraeButton: View {
@@ -9,9 +10,9 @@ public struct OpenTraeButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             TraeProjectLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.traeApp
                 .resizable()
                 .frame(height: 22)

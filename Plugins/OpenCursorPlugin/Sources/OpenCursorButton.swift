@@ -1,4 +1,5 @@
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenCursorButton: View {
@@ -9,9 +10,9 @@ public struct OpenCursorButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             CursorProjectLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.cursorApp
                 .resizable()
                 .frame(height: 22)

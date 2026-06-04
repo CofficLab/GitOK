@@ -1,4 +1,5 @@
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenKiroButton: View {
@@ -9,9 +10,9 @@ public struct OpenKiroButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             KiroProjectLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.kiroApp
                 .resizable()
                 .frame(height: 22)

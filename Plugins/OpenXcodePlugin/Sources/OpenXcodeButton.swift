@@ -1,4 +1,5 @@
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenXcodeButton: View {
@@ -9,9 +10,9 @@ public struct OpenXcodeButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             XcodeProjectLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.xcodeApp
                 .resizable()
                 .frame(height: 22)

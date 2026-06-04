@@ -1,5 +1,6 @@
 import AppKit
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenTerminalButton: View {
@@ -10,9 +11,9 @@ public struct OpenTerminalButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             TerminalLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.terminalRealApp
                 .resizable()
                 .frame(height: 22)

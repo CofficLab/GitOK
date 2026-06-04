@@ -1,4 +1,5 @@
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenGitHubDesktopButton: View {
@@ -9,9 +10,9 @@ public struct OpenGitHubDesktopButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             GitHubDesktopProjectLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.githubDesktopApp
                 .resizable()
                 .frame(height: 22)

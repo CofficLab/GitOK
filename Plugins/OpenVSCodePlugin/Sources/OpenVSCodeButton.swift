@@ -1,4 +1,5 @@
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenVSCodeButton: View {
@@ -9,9 +10,9 @@ public struct OpenVSCodeButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             VSCodeProjectLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.vscodeApp
                 .resizable()
                 .frame(height: 22)

@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitOKSupportKit"),
+        .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
         .target(
@@ -23,6 +24,7 @@ let package = Package(
             dependencies: [
                 "GitOKCoreKit",
                 .product(name: "GitOKDesignKit", package: "GitOKSupportKit"),
+                "GitOKUI",
             ],
             path: "Sources",
             resources: [

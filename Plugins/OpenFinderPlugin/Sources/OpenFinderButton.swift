@@ -1,5 +1,6 @@
 import AppKit
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenFinderButton: View {
@@ -10,9 +11,9 @@ public struct OpenFinderButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             NSWorkspace.shared.activateFileViewerSelecting([projectURL])
-        } label: {
+        }) {
             Image.finderApp
                 .resizable()
                 .frame(height: 22)

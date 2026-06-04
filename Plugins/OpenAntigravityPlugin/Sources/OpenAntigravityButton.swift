@@ -1,4 +1,5 @@
 import GitOKDesignKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenAntigravityButton: View {
@@ -9,9 +10,9 @@ public struct OpenAntigravityButton: View {
     }
 
     public var body: some View {
-        Button {
+        AppStatusBarTile(action: {
             AntigravityProjectLauncher.open(projectURL)
-        } label: {
+        }) {
             Image.antigravityApp
                 .resizable()
                 .frame(height: 22)

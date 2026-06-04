@@ -1,4 +1,5 @@
 import AppKit
+import GitOKUI
 import SwiftUI
 
 public struct OpenRemoteButton: View {
@@ -14,9 +15,9 @@ public struct OpenRemoteButton: View {
     public var body: some View {
         Group {
             if let webURL {
-                Button {
+                AppStatusBarTile(action: {
                     NSWorkspace.shared.open(webURL)
-                } label: {
+                }) {
                     buttonIcon
                 }
                 .help(OpenRemotePluginLocalization.string("Open in Browser"))
