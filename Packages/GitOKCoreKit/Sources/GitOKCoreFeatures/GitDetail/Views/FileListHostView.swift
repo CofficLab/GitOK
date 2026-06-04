@@ -28,13 +28,13 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     private let statusWorkTreeStatus: (StatusEntry) -> Any
     private let scrollTarget: FileItem?
     private let syncSelection: @MainActor (FileItem?) -> Void
-    private let loadCommitFiles: @MainActor (Project, String) async throws -> [FileItem]
-    private let loadWorktreeFiles: @MainActor (Project) async throws -> [FileItem]
-    private let loadStatusEntries: @MainActor (Project) async throws -> [StatusEntry]
-    private let addFiles: @MainActor (Project, [String]) async throws -> Void
-    private let unstageFiles: @MainActor (Project, [String]) async throws -> Void
-    private let discardFileChanges: @MainActor (Project, String) async throws -> Void
-    private let discardAllChanges: @MainActor (Project) async throws -> Void
+    private let loadCommitFiles: (Project, String) async throws -> [FileItem]
+    private let loadWorktreeFiles: (Project) async throws -> [FileItem]
+    private let loadStatusEntries: (Project) async throws -> [StatusEntry]
+    private let addFiles: (Project, [String]) async throws -> Void
+    private let unstageFiles: (Project, [String]) async throws -> Void
+    private let discardFileChanges: (Project, String) async throws -> Void
+    private let discardAllChanges: (Project) async throws -> Void
     private let mapRefreshError: @MainActor (Error) -> String
     private let eventHandler: @MainActor (FileListHostEvent) -> Void
     private let projectChangeToken: Int
@@ -81,13 +81,13 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
         statusWorkTreeStatus: @escaping (StatusEntry) -> Any,
         scrollTarget: FileItem?,
         syncSelection: @MainActor @escaping (FileItem?) -> Void,
-        loadCommitFiles: @MainActor @escaping (Project, String) async throws -> [FileItem],
-        loadWorktreeFiles: @MainActor @escaping (Project) async throws -> [FileItem],
-        loadStatusEntries: @MainActor @escaping (Project) async throws -> [StatusEntry],
-        addFiles: @MainActor @escaping (Project, [String]) async throws -> Void,
-        unstageFiles: @MainActor @escaping (Project, [String]) async throws -> Void,
-        discardFileChanges: @MainActor @escaping (Project, String) async throws -> Void,
-        discardAllChanges: @MainActor @escaping (Project) async throws -> Void,
+        loadCommitFiles: @escaping (Project, String) async throws -> [FileItem],
+        loadWorktreeFiles: @escaping (Project) async throws -> [FileItem],
+        loadStatusEntries: @escaping (Project) async throws -> [StatusEntry],
+        addFiles: @escaping (Project, [String]) async throws -> Void,
+        unstageFiles: @escaping (Project, [String]) async throws -> Void,
+        discardFileChanges: @escaping (Project, String) async throws -> Void,
+        discardAllChanges: @escaping (Project) async throws -> Void,
         mapRefreshError: @MainActor @escaping (Error) -> String,
         eventHandler: @MainActor @escaping (FileListHostEvent) -> Void = { _ in },
         projectChangeToken: Int = 0,
@@ -433,33 +433,34 @@ private extension FileListHostView {
 
     func performFileOperation(command projectCommand: FileListRules.ProjectFileOperationCommand<Project>) async {
         let command = projectCommand.command
+        nonisolated(unsafe) let project = projectCommand.project
 
         do {
             let successState: FileListRules.OperationSuccessState?
             switch command.kind {
             case .stage:
                 guard command.request.canPerform else { return }
-                try await addFiles(projectCommand.project, command.request.paths)
+                try await addFiles(project, command.request.paths)
                 successState = command.request.paths.count == 1 && command.request.primaryPath != nil
                     ? FileListRules.stageFileSuccessState(path: command.request.primaryPath ?? "")
                     : FileListRules.stageSelectedFilesSuccessState(paths: command.request.paths)
             case .unstage:
                 guard command.request.canPerform else { return }
-                try await unstageFiles(projectCommand.project, command.request.paths)
+                try await unstageFiles(project, command.request.paths)
                 successState = command.request.paths.count == 1 && command.request.primaryPath != nil
                     ? FileListRules.unstageFileSuccessState(path: command.request.primaryPath ?? "")
                     : FileListRules.unstageSelectedFilesSuccessState(paths: command.request.paths)
             case .discardFile:
                 guard let path = command.request.primaryPath else { return }
-                try await discardFileChanges(projectCommand.project, path)
+                try await discardFileChanges(project, path)
                 successState = FileListRules.discardFileChangesSuccessState(path: path)
             case .discardAll:
-                try await discardAllChanges(projectCommand.project)
+                try await discardAllChanges(project)
                 successState = FileListRules.discardAllChangesSuccessState()
             case .discardSelected:
                 guard command.request.canPerform else { return }
                 for path in command.request.paths {
-                    try await discardFileChanges(projectCommand.project, path)
+                    try await discardFileChanges(project, path)
                 }
                 successState = FileListRules.discardSelectedChangesSuccessState(paths: command.request.paths)
             }

@@ -36,17 +36,17 @@ public struct CommitRowHostView<Project, Commit>: View {
     private let commitParentHashes: (Commit) -> [String]
     private let commitTagCount: (Commit) -> Int
     private let projectPath: (Project) -> String
-    private let pushProject: @MainActor (Project) async throws -> Void
-    private let undoCommit: @MainActor (Project, Commit) async throws -> Void
-    private let revertCommit: @MainActor (Project, Commit) async throws -> Void
-    private let resetToCommit: @MainActor (Project, Commit, GitResetMode) async throws -> Void
-    private let squashLastCommits: @MainActor (Project, CommitHistoryActionRules.SquashValidation) async throws -> Void
-    private let loadTags: @MainActor (Project, String) async throws -> [String]
-    private let createLightweightTag: @MainActor (Project, String, String) async throws -> Void
-    private let createAnnotatedTag: @MainActor (Project, String, String, String) async throws -> Void
-    private let deleteLocalTag: @MainActor (Project, String) async throws -> Void
-    private let pushTagOperation: @MainActor (Project, String) async throws -> Void
-    private let deleteRemoteTag: @MainActor (Project, String) async throws -> Void
+    private let pushProject: (Project) async throws -> Void
+    private let undoCommit: (Project, Commit) async throws -> Void
+    private let revertCommit: (Project, Commit) async throws -> Void
+    private let resetToCommit: (Project, Commit, GitResetMode) async throws -> Void
+    private let squashLastCommits: (Project, CommitHistoryActionRules.SquashValidation) async throws -> Void
+    private let loadTags: (Project, String) async throws -> [String]
+    private let createLightweightTag: (Project, String, String) async throws -> Void
+    private let createAnnotatedTag: (Project, String, String, String) async throws -> Void
+    private let deleteLocalTag: (Project, String) async throws -> Void
+    private let pushTagOperation: (Project, String) async throws -> Void
+    private let deleteRemoteTag: (Project, String) async throws -> Void
     private let eventHandler: @MainActor (CommitRowHostEvent) -> Void
     private let appWillBecomeActiveToken: Int
     private let projectDidCommitToken: Int
@@ -100,17 +100,17 @@ public struct CommitRowHostView<Project, Commit>: View {
         commitParentHashes: @escaping (Commit) -> [String],
         commitTagCount: @escaping (Commit) -> Int,
         projectPath: @escaping (Project) -> String,
-        pushProject: @MainActor @escaping (Project) async throws -> Void,
-        undoCommit: @MainActor @escaping (Project, Commit) async throws -> Void,
-        revertCommit: @MainActor @escaping (Project, Commit) async throws -> Void,
-        resetToCommit: @MainActor @escaping (Project, Commit, GitResetMode) async throws -> Void,
-        squashLastCommits: @MainActor @escaping (Project, CommitHistoryActionRules.SquashValidation) async throws -> Void,
-        loadTags: @MainActor @escaping (Project, String) async throws -> [String],
-        createLightweightTag: @MainActor @escaping (Project, String, String) async throws -> Void,
-        createAnnotatedTag: @MainActor @escaping (Project, String, String, String) async throws -> Void,
-        deleteLocalTag: @MainActor @escaping (Project, String) async throws -> Void,
-        pushTagOperation: @MainActor @escaping (Project, String) async throws -> Void,
-        deleteRemoteTag: @MainActor @escaping (Project, String) async throws -> Void,
+        pushProject: @escaping (Project) async throws -> Void,
+        undoCommit: @escaping (Project, Commit) async throws -> Void,
+        revertCommit: @escaping (Project, Commit) async throws -> Void,
+        resetToCommit: @escaping (Project, Commit, GitResetMode) async throws -> Void,
+        squashLastCommits: @escaping (Project, CommitHistoryActionRules.SquashValidation) async throws -> Void,
+        loadTags: @escaping (Project, String) async throws -> [String],
+        createLightweightTag: @escaping (Project, String, String) async throws -> Void,
+        createAnnotatedTag: @escaping (Project, String, String, String) async throws -> Void,
+        deleteLocalTag: @escaping (Project, String) async throws -> Void,
+        pushTagOperation: @escaping (Project, String) async throws -> Void,
+        deleteRemoteTag: @escaping (Project, String) async throws -> Void,
         eventHandler: @MainActor @escaping (CommitRowHostEvent) -> Void = { _ in },
         appWillBecomeActiveToken: Int = 0,
         projectDidCommitToken: Int = 0,
@@ -284,7 +284,8 @@ private extension CommitRowHostView {
     }
 
     func performPush() async throws {
-        let project = try CommitHistoryActionRules.requiredProject(project)
+        let loadedProject = try CommitHistoryActionRules.requiredProject(project)
+        nonisolated(unsafe) let project = loadedProject
         let hash = commitHash(commit)
         eventHandler(.log(.pushStart(hash: hash)))
         try await pushProject(project)
@@ -321,10 +322,11 @@ private extension CommitRowHostView {
     }
 
     func performHistoryCommand(_ command: CommitHistoryActionRules.ProjectHistoryCommand<Commit, GitResetMode>) {
-        guard let project else {
+        guard let loadedProject = project else {
             eventHandler(.showErrorMessage(CommitHistoryActionRules.projectUnavailableMessage()))
             return
         }
+        nonisolated(unsafe) let project = loadedProject
 
         Task { @MainActor in
             await performHistoryCommand(command, project: project)
@@ -333,10 +335,13 @@ private extension CommitRowHostView {
 
     func performHistoryCommand(
         _ command: CommitHistoryActionRules.ProjectHistoryCommand<Commit, GitResetMode>,
-        project: Project
+        project loadedProject: Project
     ) async {
+        nonisolated(unsafe) let project = loadedProject
+
         switch command {
-        case let .undo(commit, hash, parentHashes):
+        case let .undo(loadedCommit, hash, parentHashes):
+            nonisolated(unsafe) let commit = loadedCommit
             let request = CommitHistoryActionRules.undoRequestState(parentHashes: parentHashes)
             if let message = CommitHistoryActionRules.validationFailureMessage(for: request) {
                 eventHandler(.showErrorMessage(message))
@@ -344,27 +349,40 @@ private extension CommitRowHostView {
             }
             applyHistoryCompletionState(CommitHistoryActionRules.startState(for: .undo))
             do {
-                try await undoCommit(project, commit)
+                nonisolated(unsafe) let operationProject = project
+                nonisolated(unsafe) let operationCommit = commit
+                try await undoCommit(operationProject, operationCommit)
                 eventHandler(.log(.undoSuccess(hash: hash)))
                 applyHistoryCompletionState(CommitHistoryActionRules.completionState(for: .undo, succeeded: true))
             } catch {
                 applyHistoryCompletionState(CommitHistoryActionRules.completionState(for: .undo, succeeded: false))
                 eventHandler(.showError(error))
             }
-        case let .revert(commit, hash):
+        case let .revert(loadedCommit, hash):
+            nonisolated(unsafe) let commit = loadedCommit
             await performSimpleHistoryOperation(
                 operation: .revert,
                 hash: hash,
-                perform: { try await revertCommit(project, commit) }
+                perform: {
+                    nonisolated(unsafe) let operationProject = project
+                    nonisolated(unsafe) let operationCommit = commit
+                    try await revertCommit(operationProject, operationCommit)
+                }
             )
-        case let .reset(commit, hash, mode, modeName):
+        case let .reset(loadedCommit, hash, mode, modeName):
+            nonisolated(unsafe) let commit = loadedCommit
             await performSimpleHistoryOperation(
                 operation: .reset,
                 hash: hash,
                 resetMode: modeName,
-                perform: { try await resetToCommit(project, commit, mode) }
+                perform: {
+                    nonisolated(unsafe) let operationProject = project
+                    nonisolated(unsafe) let operationCommit = commit
+                    try await resetToCommit(operationProject, operationCommit, mode)
+                }
             )
-        case let .squash(hash, validation):
+        case let .squash(hash, loadedValidation):
+            let validation = loadedValidation
             if let message = CommitHistoryActionRules.validationFailureMessage(for: validation) {
                 eventHandler(.showErrorMessage(message))
                 return
@@ -373,7 +391,10 @@ private extension CommitRowHostView {
                 operation: .squash,
                 hash: hash,
                 squashCount: validation.count,
-                perform: { try await squashLastCommits(project, validation) }
+                perform: {
+                    nonisolated(unsafe) let operationProject = project
+                    try await squashLastCommits(operationProject, validation)
+                }
             )
         }
     }
@@ -438,10 +459,11 @@ private extension CommitRowHostView {
         tagName: String,
         tagMessage: String = ""
     ) {
-        guard let project else {
+        guard let loadedProject = project else {
             eventHandler(.showErrorMessage(CommitHistoryActionRules.projectUnavailableMessage()))
             return
         }
+        nonisolated(unsafe) let project = loadedProject
 
         let request = CommitTagRules.tagRequest(for: operation, tagName: tagName, tagMessage: tagMessage)
         Task { @MainActor in
@@ -449,7 +471,9 @@ private extension CommitRowHostView {
         }
     }
 
-    func performTagOperation(request: CommitTagRules.TagOperationRequest, project: Project) async {
+    func performTagOperation(request: CommitTagRules.TagOperationRequest, project loadedProject: Project) async {
+        nonisolated(unsafe) let project = loadedProject
+
         if let failureMessage = CommitTagRules.validationFailureMessage(for: request) {
             eventHandler(.showErrorMessage(failureMessage))
             return
@@ -558,11 +582,13 @@ private extension CommitRowHostView {
 
 private extension CommitRowHostView {
     func loadTag() async {
-        guard let project else {
+        guard let loadedProject = project else {
             return
         }
 
-        let tags = (try? await loadTags(project, commitHash(commit))) ?? []
+        nonisolated(unsafe) let project = loadedProject
+        let hash = commitHash(commit)
+        let tags = (try? await loadTags(project, hash)) ?? []
         tag = CommitTagRules.visibleTag(from: tags)
     }
 

@@ -41,19 +41,19 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     private let setActivityStatus: @MainActor (String?) -> Void
     private let updateCleanState: @MainActor (Bool) -> Void
     private let projectPath: @MainActor (Project) -> String
-    private let loadChangedFileCount: @MainActor (Project) async throws -> Int
-    private let loadUnpushedCommits: @MainActor (Project) async throws -> [Commit]
-    private let loadUnpulledCount: @MainActor (Project) async throws -> Int
-    private let loadRemoteTrackingStatus: @MainActor (Project) async throws -> GitOKRemoteTrackingStatus
+    private let loadChangedFileCount: (Project) async throws -> Int
+    private let loadUnpushedCommits: (Project) async throws -> [Commit]
+    private let loadUnpulledCount: (Project) async throws -> Int
+    private let loadRemoteTrackingStatus: (Project) async throws -> GitOKRemoteTrackingStatus
     private let updateRemoteTrackingStatus: @MainActor (GitOKRemoteTrackingStatus?, Date?) -> Void
-    private let fetch: @MainActor (Project) async throws -> Void
-    private let pull: @MainActor (Project) async throws -> Void
-    private let push: @MainActor (Project) async throws -> Void
-    private let loadConflictState: @MainActor (Project) async throws -> WorkingStateConflictState
-    private let stageConflictFile: @MainActor (Project, String) async throws -> Void
-    private let useConflictFileVersion: @MainActor (Project, String, GitMergeFileVersion) async throws -> Void
-    private let continueMerge: @MainActor (Project) async throws -> Void
-    private let abortMerge: @MainActor (Project) async throws -> Void
+    private let fetch: (Project) async throws -> Void
+    private let pull: (Project) async throws -> Void
+    private let push: (Project) async throws -> Void
+    private let loadConflictState: (Project) async throws -> WorkingStateConflictState
+    private let stageConflictFile: (Project, String) async throws -> Void
+    private let useConflictFileVersion: (Project, String, GitMergeFileVersion) async throws -> Void
+    private let continueMerge: (Project) async throws -> Void
+    private let abortMerge: (Project) async throws -> Void
     private let openConflictFile: @MainActor (Project, String) -> Void
     private let revealConflictFile: @MainActor (Project, String) -> Void
     private let pushErrorClassification: @MainActor (Error) -> CommitRemoteSyncRules.PushErrorClassification
@@ -102,19 +102,19 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         setActivityStatus: @MainActor @escaping (String?) -> Void,
         updateCleanState: @MainActor @escaping (Bool) -> Void,
         projectPath: @MainActor @escaping (Project) -> String,
-        loadChangedFileCount: @MainActor @escaping (Project) async throws -> Int,
-        loadUnpushedCommits: @MainActor @escaping (Project) async throws -> [Commit],
-        loadUnpulledCount: @MainActor @escaping (Project) async throws -> Int,
-        loadRemoteTrackingStatus: @MainActor @escaping (Project) async throws -> GitOKRemoteTrackingStatus,
+        loadChangedFileCount: @escaping (Project) async throws -> Int,
+        loadUnpushedCommits: @escaping (Project) async throws -> [Commit],
+        loadUnpulledCount: @escaping (Project) async throws -> Int,
+        loadRemoteTrackingStatus: @escaping (Project) async throws -> GitOKRemoteTrackingStatus,
         updateRemoteTrackingStatus: @MainActor @escaping (GitOKRemoteTrackingStatus?, Date?) -> Void = { _, _ in },
-        fetch: @MainActor @escaping (Project) async throws -> Void,
-        pull: @MainActor @escaping (Project) async throws -> Void,
-        push: @MainActor @escaping (Project) async throws -> Void,
-        loadConflictState: @MainActor @escaping (Project) async throws -> WorkingStateConflictState = { _ in .inactive },
-        stageConflictFile: @MainActor @escaping (Project, String) async throws -> Void = { _, _ in },
-        useConflictFileVersion: @MainActor @escaping (Project, String, GitMergeFileVersion) async throws -> Void = { _, _, _ in },
-        continueMerge: @MainActor @escaping (Project) async throws -> Void = { _ in },
-        abortMerge: @MainActor @escaping (Project) async throws -> Void = { _ in },
+        fetch: @escaping (Project) async throws -> Void,
+        pull: @escaping (Project) async throws -> Void,
+        push: @escaping (Project) async throws -> Void,
+        loadConflictState: @escaping (Project) async throws -> WorkingStateConflictState = { _ in .inactive },
+        stageConflictFile: @escaping (Project, String) async throws -> Void = { _, _ in },
+        useConflictFileVersion: @escaping (Project, String, GitMergeFileVersion) async throws -> Void = { _, _, _ in },
+        continueMerge: @escaping (Project) async throws -> Void = { _ in },
+        abortMerge: @escaping (Project) async throws -> Void = { _ in },
         openConflictFile: @MainActor @escaping (Project, String) -> Void = { _, _ in },
         revealConflictFile: @MainActor @escaping (Project, String) -> Void = { _, _ in },
         pushErrorClassification: @MainActor @escaping (Error) -> CommitRemoteSyncRules.PushErrorClassification,
@@ -330,11 +330,12 @@ private extension WorkingStateHostView {
     }
 
     func loadChangedFileCount() async {
-        guard let project else {
+        guard let loadedProject = project else {
             eventHandler(.log(.missingProject))
             return
         }
 
+        nonisolated(unsafe) let project = loadedProject
         applyChangedFileRefreshState(CommitRemoteSyncRules.changedFileRefreshStartState())
 
         do {
@@ -365,13 +366,14 @@ private extension WorkingStateHostView {
 
     func loadSyncStatus(_ command: CommitRemoteSyncRules.ProjectSyncStatusRequest<Project>) {
         eventHandler(.log(.syncStatusLoad(projectPath: command.request.projectPath)))
+        nonisolated(unsafe) let project = command.project
 
         Task { @MainActor in
             applySyncStatusRefreshState(CommitRemoteSyncRules.syncStatusRefreshStartState())
 
             let unpushedCount: Int
             do {
-                unpushedCount = try await loadUnpushedCommits(command.project).count
+                unpushedCount = try await loadUnpushedCommits(project).count
             } catch {
                 unpushedCount = 0
                 eventHandler(.log(.unpushedCountFailure(error)))
@@ -379,14 +381,14 @@ private extension WorkingStateHostView {
 
             let unpulledCount: Int
             do {
-                unpulledCount = try await loadUnpulledCount(command.project)
+                unpulledCount = try await loadUnpulledCount(project)
             } catch {
                 unpulledCount = 0
                 eventHandler(.log(.unpulledCountFailure(error)))
             }
 
             do {
-                let trackingStatus = try await loadRemoteTrackingStatus(command.project)
+                let trackingStatus = try await loadRemoteTrackingStatus(project)
                 remoteTrackingStatus = trackingStatus
                 updateRemoteTrackingStatus(trackingStatus, Date())
             } catch {
@@ -439,13 +441,14 @@ private extension WorkingStateHostView {
 
     func performFetch(_ command: CommitRemoteSyncRules.ProjectSyncStatusRequest<Project>) {
         eventHandler(.log(.fetchStart(projectPath: command.request.projectPath)))
+        nonisolated(unsafe) let project = command.project
 
         Task { @MainActor in
             isFetching = true
             setStatus(CommitLocalization.string("Fetching"))
 
             do {
-                try await fetch(command.project)
+                try await fetch(project)
                 eventHandler(.log(.fetchSuccess))
                 isFetching = false
                 loadSyncStatus(command)
@@ -487,19 +490,20 @@ private extension WorkingStateHostView {
             eventHandler(.log(.pushStart(projectPath: command.request.projectPath)))
         }
 
+        nonisolated(unsafe) let project = command.project
         Task { @MainActor in
             applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationStartState(operation: command.request.operation))
 
             switch command.request.operation {
             case .pull:
                 do {
-                    try await pull(command.project)
+                    try await pull(project)
                     eventHandler(.log(.pullSuccess))
                     applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .pull, succeeded: true))
                 } catch {
                     eventHandler(.log(.pullFailure(error)))
                     applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .pull, succeeded: false))
-                    if await refreshConflictState(for: command.project), conflictState?.isMerging == true {
+                    if await refreshConflictState(for: project), conflictState?.isMerging == true {
                         setStatus(nil)
                         return
                     }
@@ -512,8 +516,10 @@ private extension WorkingStateHostView {
     }
 
     func performPushOperation(_ command: CommitRemoteSyncRules.ProjectRemoteOperationCommand<Project>) async {
+        nonisolated(unsafe) let project = command.project
+
         do {
-            try await push(command.project)
+            try await push(project)
             eventHandler(.log(.pushSuccess(retryAttempt: nil)))
             applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .push, succeeded: true))
             return
@@ -531,7 +537,7 @@ private extension WorkingStateHostView {
                 try? await Task.sleep(nanoseconds: retryAttempt.delayNanoseconds)
 
                 do {
-                    try await push(command.project)
+                    try await push(project)
                     eventHandler(.log(.pushSuccess(retryAttempt: retryAttempt.attempt)))
                     applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .push, succeeded: true))
                     return
@@ -545,7 +551,7 @@ private extension WorkingStateHostView {
                 }
             }
 
-            if await runNetworkFallback(command.project, command.request.projectPath, setStatus) {
+            if await runNetworkFallback(project, command.request.projectPath, setStatus) {
                 eventHandler(.log(.pushSuccess(retryAttempt: nil)))
                 applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .push, succeeded: true))
                 return
@@ -592,6 +598,8 @@ private extension WorkingStateHostView {
 
     @discardableResult
     func refreshConflictState(for project: Project) async -> Bool {
+        nonisolated(unsafe) let project = project
+
         do {
             let state = try await loadConflictState(project)
             conflictState = state.isMerging ? state : nil
@@ -621,37 +629,42 @@ private extension WorkingStateHostView {
 
     func performStageConflictFile(_ path: String) {
         performConflictAction(path: path) { project in
+            nonisolated(unsafe) let project = project
             try await stageConflictFile(project, path)
         }
     }
 
     func performUseConflictVersion(_ version: GitMergeFileVersion, path: String) {
         performConflictAction(path: path) { project in
+            nonisolated(unsafe) let project = project
             try await useConflictFileVersion(project, path, version)
         }
     }
 
     func performContinueMerge() {
         performConflictAction(path: nil) { project in
+            nonisolated(unsafe) let project = project
             try await continueMerge(project)
         }
     }
 
     func performAbortMerge() {
         performConflictAction(path: nil) { project in
+            nonisolated(unsafe) let project = project
             try await abortMerge(project)
         }
     }
 
     func performConflictAction(
         path: String?,
-        action: @escaping @MainActor (Project) async throws -> Void
+        action: @escaping (Project) async throws -> Void
     ) {
         guard let project, isConflictActionRunning == false else { return }
         isConflictActionRunning = true
         activeConflictPath = path
 
         Task { @MainActor in
+            nonisolated(unsafe) let project = project
             do {
                 try await action(project)
                 isConflictActionRunning = false
