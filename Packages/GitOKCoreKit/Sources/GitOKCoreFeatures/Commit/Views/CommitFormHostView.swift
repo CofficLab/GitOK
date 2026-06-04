@@ -96,6 +96,12 @@ public struct CommitFormHostView<Project, Branch, UserContent: View>: View {
     }
 }
 
+fileprivate enum CommitFormBackgroundLoader {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 private extension CommitFormHostView {
     var commitMessage: String {
         CommitMessageRules.formattedMessage(
@@ -116,41 +122,58 @@ private extension CommitFormHostView {
     }
 
     func performCommitAndPush(_ command: CommitMessageRules.ProjectSubmitRequest<Project>) {
-        // Extract project value before Task to avoid Sendable crossing
-        nonisolated(unsafe) let project = command.project
+        let projectTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: command.project)
+        let hasStagedChangesTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: hasStagedChanges)
+        let addAllFilesTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: addAllFiles)
+        let commitTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: commit)
+        let pushTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: push)
+        let setActivityStatusTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: setActivityStatus)
+        let eventHandlerTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: eventHandler)
+        let message = command.request.message
+        let commitOnly = command.request.commitOnly
 
-        Task(priority: .userInitiated) { @MainActor in
-            var clearsActivityStatusAfterCompletion = true
+        Task.detached(priority: .userInitiated) {
+            var shouldClearActivityStatus = true
 
             do {
                 let executionState = try await CommitMessageRules.submitExecutionState(
-                    message: command.request.message,
-                    hasStagedChanges: hasStagedChanges(project),
-                    commitOnly: command.request.commitOnly
+                    message: message,
+                    commitOnly: commitOnly,
+                    hasStagedChanges: {
+                        try await hasStagedChangesTransfer.value(projectTransfer.value)
+                    }
                 )
 
                 for step in executionState.steps {
-                    setActivityStatus(CommitMessageRules.activityStatus(for: step))
+                    await MainActor.run {
+                        setActivityStatusTransfer.value(CommitMessageRules.activityStatus(for: step))
+                    }
                     switch step {
                     case .addAllFiles:
-                        try await addAllFiles(project)
+                        try await addAllFilesTransfer.value(projectTransfer.value)
                     case .commit:
-                        try await commit(project, executionState.plan)
+                        try await commitTransfer.value(projectTransfer.value, executionState.plan)
                     case .push:
-                        try await push(project)
+                        try await pushTransfer.value(projectTransfer.value)
                     }
                 }
 
-                let successState = CommitMessageRules.submitSuccessState(commitOnly: command.request.commitOnly)
-                clearsActivityStatusAfterCompletion = successState.clearsActivityStatus
-                eventHandler(.showInfoMessage(successState.message))
+                let successState = CommitMessageRules.submitSuccessState(commitOnly: commitOnly)
+                shouldClearActivityStatus = successState.clearsActivityStatus
+                await MainActor.run {
+                    eventHandlerTransfer.value(.showInfoMessage(successState.message))
+                }
             } catch {
-                eventHandler(.submitFailure(error))
-                eventHandler(.showError(error))
+                await MainActor.run {
+                    eventHandlerTransfer.value(.submitFailure(error))
+                    eventHandlerTransfer.value(.showError(error))
+                }
             }
 
-            if clearsActivityStatusAfterCompletion {
-                setActivityStatus(nil)
+            if shouldClearActivityStatus {
+                await MainActor.run {
+                    setActivityStatusTransfer.value(nil)
+                }
             }
         }
     }
@@ -219,41 +242,56 @@ private extension CommitFormHostView {
     }
 
     func loadAutocompleteCandidates() {
-        let namesAndEmails = CommitMessageRules.autocompleteNameEmailPairs(
-            coAuthors: loadCoAuthors()
-        )
+        let loadCoAuthorsTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: loadCoAuthors)
+        let loadLocalBranchesTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: loadLocalBranches)
+        let localBranchNameTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: localBranchName)
+        let loadRemoteBranchesTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: loadRemoteBranches)
         guard let project else {
-            Task(priority: .utility) { @MainActor in
+            Task.detached(priority: .utility) {
+                let namesAndEmails = CommitMessageRules.autocompleteNameEmailPairs(
+                    coAuthors: loadCoAuthorsTransfer.value()
+                )
+                let state = CommitMessageRules.autocompleteInitialState(namesAndEmails: namesAndEmails)
+                await MainActor.run {
+                    CommitMessageRules.performAutocompleteState(
+                        state,
+                        setUserMentions: { userMentions = $0 },
+                        setIssueReferences: { issueReferences = $0 }
+                    )
+                }
+            }
+            return
+        }
+        let projectTransfer = CommitFormBackgroundLoader.UnsafeTransfer(value: project)
+
+        Task.detached(priority: .utility) {
+            let namesAndEmails = CommitMessageRules.autocompleteNameEmailPairs(
+                coAuthors: loadCoAuthorsTransfer.value()
+            )
+            let initialState = CommitMessageRules.autocompleteInitialState(namesAndEmails: namesAndEmails)
+            await MainActor.run {
                 CommitMessageRules.performAutocompleteState(
-                    CommitMessageRules.autocompleteInitialState(namesAndEmails: namesAndEmails),
+                    initialState,
                     setUserMentions: { userMentions = $0 },
                     setIssueReferences: { issueReferences = $0 }
                 )
             }
-            return
-        }
-        nonisolated(unsafe) let _project = project
 
-        Task(priority: .utility) { @MainActor in
-            CommitMessageRules.performAutocompleteState(
-                CommitMessageRules.autocompleteInitialState(namesAndEmails: namesAndEmails),
-                setUserMentions: { userMentions = $0 },
-                setIssueReferences: { issueReferences = $0 }
-            )
-
-            let localBranches = (try? await loadLocalBranches(_project)) ?? []
-            let remoteBranches = (try? await loadRemoteBranches(_project)) ?? []
+            let localBranches = (try? await loadLocalBranchesTransfer.value(projectTransfer.value)) ?? []
+            let remoteBranches = (try? await loadRemoteBranchesTransfer.value(projectTransfer.value)) ?? []
             let state = CommitMessageRules.autocompleteState(
                 namesAndEmails: namesAndEmails,
                 localBranches: localBranches,
-                localBranchName: localBranchName,
+                localBranchName: localBranchNameTransfer.value,
                 remoteBranches: remoteBranches
             )
-            CommitMessageRules.performAutocompleteState(
-                state,
-                setUserMentions: { userMentions = $0 },
-                setIssueReferences: { issueReferences = $0 }
-            )
+            await MainActor.run {
+                CommitMessageRules.performAutocompleteState(
+                    state,
+                    setUserMentions: { userMentions = $0 },
+                    setIssueReferences: { issueReferences = $0 }
+                )
+            }
         }
     }
 }
