@@ -8,6 +8,7 @@ import OSLog
 import SwiftUI
 
 /// 图标提供者，统一管理所有图标插件相关的状态
+@MainActor
 public class IconProvider: NSObject, ObservableObject, SuperLog {
     /// emoji 标识符
     public nonisolated static let emoji = "🍒"
@@ -59,13 +60,20 @@ public class IconProvider: NSObject, ObservableObject, SuperLog {
     /// - Parameter notification: 通知对象
     @objc private func handleIconDidSave(_ notification: Notification) {
         // 只有在图标真正保存时才更新模型，避免参数调整时的频繁更新
-        let iconPath = self.currentData?.path
-        if let iconPath = iconPath {
-            let newModel = try? IconData.fromJSONFile(URL(fileURLWithPath: iconPath))
-            // 只在模型真正发生变化时才更新
-            if let newModel = newModel, newModel.path != self.currentData?.path {
-                self.updateCurrentModel(newModel: newModel)
+        guard let iconPath = self.currentData?.path else { return }
+
+        Task {
+            let newModel = await Task.detached(priority: .utility) {
+                try? IconData.fromJSONFile(URL(fileURLWithPath: iconPath))
+            }.value
+
+            guard self.currentData?.path == iconPath,
+                  let newModel,
+                  newModel != self.currentData else {
+                return
             }
+
+            self.updateCurrentModel(newModel: newModel)
         }
     }
 
