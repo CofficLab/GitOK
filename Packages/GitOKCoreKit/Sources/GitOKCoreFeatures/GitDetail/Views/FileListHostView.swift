@@ -290,6 +290,27 @@ private extension FileListHostView {
         cachedFilteredFiles = FileListRules.items(from: filesByPath, matching: nextPresentationState.visiblePaths)
     }
 
+    func presentationStateInBackground(filterText: String) async -> FileListRules.PresentationState {
+        let allPaths = filePaths
+        let historyMode = isHistoryMode
+        let stagedPaths = stagedFilePaths
+        let unstagedPaths = unstagedFilePaths
+        let untrackedPaths = untrackedFilePaths
+        let selectedBatchPaths = selectedBatchFilePaths
+
+        return await Task.detached(priority: .userInitiated) {
+            FileListRules.presentationState(
+                allPaths: allPaths,
+                filterText: filterText,
+                isHistoryMode: historyMode,
+                stagedPaths: stagedPaths,
+                unstagedPaths: unstagedPaths,
+                untrackedPaths: untrackedPaths,
+                selectedBatchPaths: selectedBatchPaths
+            )
+        }.value
+    }
+
     var discardFileAlertMessage: String {
         FileListRules.discardFileAlertMessage(
             file: fileToDiscard,
@@ -666,8 +687,11 @@ private extension FileListHostView {
         filterTask = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 200_000_000)
             guard Task.isCancelled == false else { return }
+            let nextPresentationState = await presentationStateInBackground(filterText: nextFilterText)
+            guard Task.isCancelled == false else { return }
             appliedFilterText = nextFilterText
-            rebuildPresentationCache()
+            cachedPresentationState = nextPresentationState
+            cachedFilteredFiles = FileListRules.items(from: filesByPath, matching: nextPresentationState.visiblePaths)
         }
     }
 
