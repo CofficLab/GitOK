@@ -53,14 +53,9 @@ public struct RemoteRepositoryView: View {
 
                 Spacer()
 
-                Button {
+                AppIconButton(systemImage: "xmark.circle.fill", tint: .secondary, size: .regular) {
                     dismiss()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.plain)
                 .help(RemoteRepositoryPluginLocalization.string("Close"))
             }
 
