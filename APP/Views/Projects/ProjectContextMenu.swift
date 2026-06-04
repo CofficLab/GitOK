@@ -1,4 +1,5 @@
 import MagicAlert
+import GitOKUI
 import SwiftUI
 
 // MARK: - ProjectContextMenu
@@ -10,27 +11,27 @@ struct ProjectContextMenu: View {
     let deleteAction: (Project) -> Void
 
     var body: some View {
-        Button("置顶") {
+        AppContextMenuRow("置顶", systemImage: "pin") {
             pinAction(item)
         }
 
-        Button("复制项目路径") {
+        AppContextMenuRow("复制项目路径", systemImage: "doc.on.doc") {
             copyProjectPath()
         }
 
         if FileManager.default.fileExists(atPath: item.path) {
-            Button("在Finder中显示") {
+            AppContextMenuRow("在Finder中显示", systemImage: "folder") {
                 let url = URL(fileURLWithPath: item.path)
                 NSWorkspace.shared.activateFileViewerSelecting([url])
             }
         } else {
-            Button("项目已不存在") {}
+            AppContextMenuRow("项目已不存在", systemImage: "exclamationmark.triangle") {}
                 .disabled(true)
         }
 
         Divider()
 
-        Button("删除") {
+        AppContextMenuRow("删除", systemImage: "trash", role: .destructive) {
             deleteAction(item)
         }
     }

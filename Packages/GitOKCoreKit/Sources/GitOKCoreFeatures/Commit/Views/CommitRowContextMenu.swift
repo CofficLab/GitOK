@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public struct CommitRowContextMenu: View {
@@ -58,62 +59,40 @@ public struct CommitRowContextMenu: View {
     }
 
     public var body: some View {
-        Button(action: onCreateTag) {
-            Label(CommitLocalization.string("Create Tag"), systemImage: "tag")
-        }
+        AppContextMenuRow(CommitLocalization.string("Create Tag"), systemImage: "tag", action: onCreateTag)
 
-        Button(action: onCreateAnnotatedTag) {
-            Label(CommitLocalization.string("Create Annotated Tag"), systemImage: "tag.fill")
-        }
+        AppContextMenuRow(CommitLocalization.string("Create Annotated Tag"), systemImage: "tag.fill", action: onCreateAnnotatedTag)
 
         if hasTag {
-            Button(action: onPushTag) {
-                Label(CommitLocalization.string("Push Tag"), systemImage: "arrow.up.circle")
-            }
+            AppContextMenuRow(CommitLocalization.string("Push Tag"), systemImage: "arrow.up.circle", action: onPushTag)
             .disabled(isPushingTag)
 
-            Button(role: .destructive, action: onDeleteRemoteTag) {
-                Label(CommitLocalization.string("Delete Remote Tag"), systemImage: "icloud.slash")
-            }
+            AppContextMenuRow(CommitLocalization.string("Delete Remote Tag"), systemImage: "icloud.slash", role: .destructive, action: onDeleteRemoteTag)
             .disabled(isDeletingRemoteTag)
 
-            Button(role: .destructive, action: onDeleteTag) {
-                Label(CommitLocalization.string("Delete Tag"), systemImage: "tag.slash")
-            }
+            AppContextMenuRow(CommitLocalization.string("Delete Tag"), systemImage: "tag.slash", role: .destructive, action: onDeleteTag)
         }
 
         if canUndo {
-            Button(role: .destructive, action: onUndo) {
-                Label(CommitLocalization.string("Undo Commit"), systemImage: "arrow.uturn.backward")
-            }
+            AppContextMenuRow(CommitLocalization.string("Undo Commit"), systemImage: "arrow.uturn.backward", role: .destructive, action: onUndo)
         }
 
         Divider()
 
-        Button(action: onRevert) {
-            Label(CommitLocalization.string("Revert This Commit"), systemImage: "arrow.counterclockwise")
-        }
+        AppContextMenuRow(CommitLocalization.string("Revert This Commit"), systemImage: "arrow.counterclockwise", action: onRevert)
         .disabled(isRunningHistoryOperation)
 
         if canSquashThroughHead {
-            Button(action: onSquash) {
-                Label(CommitLocalization.string("Squash to Here"), systemImage: "arrow.triangle.merge")
-            }
+            AppContextMenuRow(CommitLocalization.string("Squash to Here"), systemImage: "arrow.triangle.merge", action: onSquash)
             .disabled(isRunningHistoryOperation)
         }
 
         Menu {
-            Button(action: onSoftReset) {
-                Label(CommitLocalization.string("Soft Reset"), systemImage: "text.badge.checkmark")
-            }
+            AppContextMenuRow(CommitLocalization.string("Soft Reset"), systemImage: "text.badge.checkmark", action: onSoftReset)
 
-            Button(action: onMixedReset) {
-                Label(CommitLocalization.string("Mixed Reset"), systemImage: "list.bullet.rectangle")
-            }
+            AppContextMenuRow(CommitLocalization.string("Mixed Reset"), systemImage: "list.bullet.rectangle", action: onMixedReset)
 
-            Button(role: .destructive, action: onHardReset) {
-                Label(CommitLocalization.string("Hard Reset"), systemImage: "trash")
-            }
+            AppContextMenuRow(CommitLocalization.string("Hard Reset"), systemImage: "trash", role: .destructive, action: onHardReset)
         } label: {
             Label(CommitLocalization.string("Reset to Here"), systemImage: "arrow.down.to.line")
         }

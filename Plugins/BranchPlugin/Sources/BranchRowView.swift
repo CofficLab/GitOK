@@ -46,13 +46,13 @@ struct BranchRowView: View {
                 }
 
                 Menu {
-                    Button(BranchPluginLocalization.string("Rename Branch"), action: onRename)
-                    Button(BranchPluginLocalization.string("Set upstream"), action: onSetUpstream)
-                    Button(BranchPluginLocalization.string("Publish Branch"), action: onPublish)
-                    Button(BranchPluginLocalization.string("Unset upstream"), action: onUnsetUpstream)
+                    AppContextMenuRow(BranchPluginLocalization.string("Rename Branch"), systemImage: "pencil", action: onRename)
+                    AppContextMenuRow(BranchPluginLocalization.string("Set upstream"), systemImage: "link", action: onSetUpstream)
+                    AppContextMenuRow(BranchPluginLocalization.string("Publish Branch"), systemImage: "icloud.and.arrow.up", action: onPublish)
+                    AppContextMenuRow(BranchPluginLocalization.string("Unset upstream"), systemImage: "link.badge.minus", action: onUnsetUpstream)
                     if !isSelected {
                         Divider()
-                        Button(BranchPluginLocalization.string("Delete Local Branch"), role: .destructive) {
+                        AppContextMenuRow(BranchPluginLocalization.string("Delete Local Branch"), systemImage: "trash", role: .destructive) {
                             showDeleteAlert = true
                         }
                     }

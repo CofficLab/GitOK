@@ -13,8 +13,22 @@ public struct AppContextMenuRow: View {
         self.action = action
     }
 
+    public init(_ title: String, systemImage: String? = nil, action: @escaping () -> Void) {
+        self.title = LocalizedStringKey(title)
+        self.systemImage = systemImage
+        self.role = nil
+        self.action = action
+    }
+
     public init(_ title: LocalizedStringKey, systemImage: String? = nil, role: ButtonRole, action: @escaping () -> Void) {
         self.title = title
+        self.systemImage = systemImage
+        self.role = role
+        self.action = action
+    }
+
+    public init(_ title: String, systemImage: String? = nil, role: ButtonRole, action: @escaping () -> Void) {
+        self.title = LocalizedStringKey(title)
         self.systemImage = systemImage
         self.role = role
         self.action = action
