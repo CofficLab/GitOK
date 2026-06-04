@@ -6,6 +6,7 @@ public struct WorkingStateSummaryView: View {
     @GitOKMotionPreferenceReader private var motionPreference
 
     private let state: CommitRemoteSyncRules.WorkingStatePresentationState
+    private let activityStatus: String?
     private let trackingStatus: GitOKRemoteTrackingStatus
     private let isSyncWorking: Bool
     private let onFetch: () -> Void
@@ -14,6 +15,7 @@ public struct WorkingStateSummaryView: View {
 
     public init(
         state: CommitRemoteSyncRules.WorkingStatePresentationState,
+        activityStatus: String? = nil,
         trackingStatus: GitOKRemoteTrackingStatus = GitOKRemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false),
         isSyncWorking: Bool = false,
         onFetch: @escaping () -> Void = {},
@@ -21,6 +23,7 @@ public struct WorkingStateSummaryView: View {
         onPush: @escaping () -> Void
     ) {
         self.state = state
+        self.activityStatus = activityStatus
         self.trackingStatus = trackingStatus
         self.isSyncWorking = isSyncWorking
         self.onFetch = onFetch
@@ -35,6 +38,7 @@ public struct WorkingStateSummaryView: View {
         isRefreshing: Bool,
         isPulling: Bool,
         isPushing: Bool,
+        activityStatus: String? = nil,
         trackingStatus: GitOKRemoteTrackingStatus = GitOKRemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false),
         isSyncWorking: Bool = false,
         onFetch: @escaping () -> Void = {},
@@ -49,6 +53,7 @@ public struct WorkingStateSummaryView: View {
             isPulling: isPulling,
             isPushing: isPushing
         )
+        self.activityStatus = activityStatus
         self.trackingStatus = trackingStatus
         self.isSyncWorking = isSyncWorking
         self.onFetch = onFetch
@@ -112,6 +117,10 @@ public struct WorkingStateSummaryView: View {
     }
 
     private var statusSubtitle: String {
+        if let activityStatus {
+            return activityStatus
+        }
+
         if state.changedFileCount > 0 {
             return String.localizedStringWithFormat(
                 CommitLocalization.string("(%lld) Uncommitted"),

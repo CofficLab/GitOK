@@ -8,6 +8,7 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
     private let isRefreshing: Bool
     private let isPulling: Bool
     private let isPushing: Bool
+    private let activityStatus: String?
     private let trackingStatus: GitOKRemoteTrackingStatus
     private let isSyncWorking: Bool
     private let conflictState: WorkingStateConflictState?
@@ -40,6 +41,7 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
         isRefreshing: Bool,
         isPulling: Bool,
         isPushing: Bool,
+        activityStatus: String?,
         trackingStatus: GitOKRemoteTrackingStatus,
         isSyncWorking: Bool,
         conflictState: WorkingStateConflictState?,
@@ -71,6 +73,7 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
         self.isRefreshing = isRefreshing
         self.isPulling = isPulling
         self.isPushing = isPushing
+        self.activityStatus = activityStatus
         self.trackingStatus = trackingStatus
         self.isSyncWorking = isSyncWorking
         self.conflictState = conflictState
@@ -108,6 +111,7 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
                     isPulling: isPulling,
                     isPushing: isPushing
                 ),
+                activityStatus: activityStatus,
                 trackingStatus: trackingStatus,
                 isSyncWorking: isSyncWorking,
                 onFetch: onFetch,

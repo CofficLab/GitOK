@@ -75,6 +75,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     @State private var unpushedCount = 0
     @State private var unpulledCount = 0
     @State private var remoteTrackingStatus = GitOKRemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+    @State private var activityStatus: String?
     @State private var isSyncLoading = false
     @State private var timerCancellable: AnyCancellable?
     @State private var isFetching = false
@@ -175,6 +176,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
             isRefreshing: isRefreshing,
             isPulling: isPulling,
             isPushing: isPushing,
+            activityStatus: activityStatus,
             trackingStatus: remoteTrackingStatus,
             isSyncWorking: isSyncLoading || isFetching || isPulling || isPushing,
             conflictState: conflictState,
@@ -269,7 +271,7 @@ private extension WorkingStateHostView {
     func applyChangedFileRefreshState(_ state: CommitRemoteSyncRules.ChangedFileRefreshState) {
         CommitRemoteSyncRules.performChangedFileRefreshState(
             state,
-            setStatus: setActivityStatus,
+            setStatus: setStatus,
             setRefreshing: { isRefreshingFileList = $0 }
         )
     }
@@ -383,6 +385,7 @@ private extension WorkingStateHostView {
 
     func setStatus(_ text: String?) {
         Task { @MainActor in
+            activityStatus = text
             setActivityStatus(text)
         }
     }
