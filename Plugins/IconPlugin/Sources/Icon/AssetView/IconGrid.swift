@@ -45,10 +45,18 @@ struct IconGrid: View {
                         // 右侧：在分类标题下方放置添加/删除按钮（当来源支持增删时显示）
                         if IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations == true {
                             HStack(spacing: 8) {
-                                Button(IconLocalization.string("add-icon-button")) { addImagesViaPanel() }
-                                    .buttonStyle(.bordered)
-                                Button(IconLocalization.string("delete-icon-button")) { deleteImagesViaPanel() }
-                                    .buttonStyle(.bordered)
+                                AppButton(
+                                    IconLocalization.string("add-icon-button"),
+                                    systemImage: "plus",
+                                    style: .secondary,
+                                    size: .small
+                                ) { addImagesViaPanel() }
+                                AppButton(
+                                    IconLocalization.string("delete-icon-button"),
+                                    systemImage: "trash",
+                                    style: .destructive,
+                                    size: .small
+                                ) { deleteImagesViaPanel() }
                                 Spacer()
                             }
                         }
@@ -71,10 +79,18 @@ struct IconGrid: View {
                                 .foregroundColor(.primary)
                             Spacer()
                             if source.supportsMutations {
-                                Button(IconLocalization.string("add-image-button")) { addImagesViaPanel() }
-                                    .buttonStyle(.bordered)
-                                Button(IconLocalization.string("delete-selected-button")) { deleteSelectedImage() }
-                                    .buttonStyle(.bordered)
+                                AppButton(
+                                    IconLocalization.string("add-image-button"),
+                                    systemImage: "plus",
+                                    style: .secondary,
+                                    size: .small
+                                ) { addImagesViaPanel() }
+                                AppButton(
+                                    IconLocalization.string("delete-selected-button"),
+                                    systemImage: "trash",
+                                    style: .destructive,
+                                    size: .small
+                                ) { deleteSelectedImage() }
                                     .disabled(!canDeleteSelected(in: sid))
                             }
                             Text(IconLocalization.string("icon-count").replacingOccurrences(of: "%lld", with: "\(iconAssets.count)"))
@@ -95,29 +111,14 @@ struct IconGrid: View {
 
                 // 图标网格内容
                 if isLoading {
-                    VStack {
-                        Spacer()
-                        ProgressView(IconLocalization.string("loading-icons"))
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        Spacer()
-                    }
-                } else if iconAssets.isEmpty {
-                    VStack {
-                        Spacer()
-                        VStack(spacing: 12) {
-                            Image(systemName: "photo.on.rectangle.angled")
-                                .font(.system(size: 48))
-                                .foregroundColor(.secondary)
-
-                            let shouldSelectPrompt = (selectedSourceIdentifier == nil)
-                            Text(shouldSelectPrompt ? IconLocalization.string("select-category-prompt") : IconLocalization.string("no-icons-in-source"))
-                                .font(.system(size: 14))
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                        }
+                    AppLoadingOverlay(message: IconLocalization.string("loading-icons"))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        Spacer()
-                    }
+                } else if iconAssets.isEmpty {
+                    let shouldSelectPrompt = selectedSourceIdentifier == nil
+                    AppEmptyState(
+                        icon: "photo.on.rectangle.angled",
+                        title: shouldSelectPrompt ? IconLocalization.string("select-category-prompt") : IconLocalization.string("no-icons-in-source")
+                    )
                 } else {
                     ScrollView {
                         LazyVGrid(columns: gridItems, spacing: 16) {

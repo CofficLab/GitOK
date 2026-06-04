@@ -40,29 +40,25 @@ struct CategoryList: View {
 
             // 分类列表
             if isLoading {
-                VStack {
-                    Spacer()
-                    ProgressView(IconLocalization.string("loading-categories"))
-                        .frame(maxWidth: .infinity)
-                    Spacer()
-                }
+                AppLoadingOverlay(message: IconLocalization.string("loading-categories"))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let error = error {
                 VStack {
                     error.makeView().padding()
-                    Button(IconLocalization.string("open-cache-directory")){
+                    AppButton(
+                        IconLocalization.string("open-cache-directory"),
+                        systemImage: "folder",
+                        style: .secondary,
+                        size: .small
+                    ) {
                         URL.temp.openHttpCacheDirectory()
                     }
                 }
             } else if filteredCategories.isEmpty {
-                VStack {
-                    Spacer()
-                    Text(searchText.isEmpty ? IconLocalization.string("no-categories-available") : IconLocalization.string("no-matching-categories"))
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 12))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 16)
-                    Spacer()
-                }
+                AppEmptyState(
+                    icon: "folder",
+                    title: searchText.isEmpty ? IconLocalization.string("no-categories-available") : IconLocalization.string("no-matching-categories")
+                )
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
@@ -127,28 +123,7 @@ struct SearchBar: View {
     @Binding var text: String
 
     var body: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
-                .font(.system(size: 12))
-
-            TextField(IconLocalization.string("search-categories"), text: $text)
-                .textFieldStyle(PlainTextFieldStyle())
-                .font(.system(size: 12))
-
-            if !text.isEmpty {
-                Button(action: { text = "" }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 12))
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(Color(.textBackgroundColor))
-        .cornerRadius(6)
+        AppSearchBar(text: $text, placeholder: IconLocalization.string("search-categories"))
     }
 }
 

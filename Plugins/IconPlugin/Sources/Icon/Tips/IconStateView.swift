@@ -39,7 +39,7 @@ struct IconStateView: View {
     var body: some View {
         VStack(spacing: 12) {
             if showProgress {
-                ProgressView()
+                AppLoadingOverlay(size: .small)
                     .frame(width: 50, height: 50)
             } else if let icon = icon {
                 Image(systemName: icon)
@@ -59,8 +59,7 @@ struct IconStateView: View {
             }
 
             if showRetryButton, let onRetry = onRetry {
-                Button("重试", action: onRetry)
-                    .buttonStyle(.bordered)
+                AppButton("重试", systemImage: "arrow.clockwise", style: .secondary, size: .small, action: onRetry)
             }
         }
         .frame(width: size, height: size)
