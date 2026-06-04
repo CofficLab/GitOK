@@ -1,5 +1,6 @@
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 
 struct ThemePickerPopover: View {
     let registry: GitOKUIThemeRegistry
@@ -54,9 +55,12 @@ struct ThemePickerPopover: View {
         }) {
             HStack(spacing: 10) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(theme.iconColor.opacity(isSelected ? 0.24 : 0.14))
+                    Color.clear
                         .frame(width: 26, height: 26)
+                        .gitOKUISurface(
+                            style: .custom(theme.iconColor.opacity(isSelected ? 0.24 : 0.14)),
+                            cornerRadius: 5
+                        )
 
                     Image(systemName: theme.iconName)
                         .font(.system(size: 12, weight: .semibold))

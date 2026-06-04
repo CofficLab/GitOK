@@ -22,7 +22,7 @@ struct StashRow: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.blue)
                     .frame(width: 28, height: 28)
-                    .background(.blue.opacity(0.10), in: RoundedRectangle(cornerRadius: 6))
+                    .gitOKUISurface(style: .custom(.blue.opacity(0.10)), cornerRadius: 6)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(StashPresentation.displayMessage(for: stash, fallbackBranchName: fallbackBranchName))
