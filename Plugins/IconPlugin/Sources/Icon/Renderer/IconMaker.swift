@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import GitOKUI
 import UniformTypeIdentifiers
 
 /**
@@ -137,11 +138,7 @@ struct ErrorStateView: View {
             }
         }
         .padding(24)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(.quaternary, lineWidth: 1)
-        )
+        .gitOKUISurface(style: .glass, cornerRadius: 16, borderColor: Color.secondary.opacity(0.35), lineWidth: 1)
     }
 }
 
@@ -186,11 +183,7 @@ struct EmptyStateView: View {
             .padding(.top, 8)
         }
         .padding(24)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(.quaternary, lineWidth: 1)
-        )
+        .gitOKUISurface(style: .glass, cornerRadius: 16, borderColor: Color.secondary.opacity(0.35), lineWidth: 1)
     }
 }
 
