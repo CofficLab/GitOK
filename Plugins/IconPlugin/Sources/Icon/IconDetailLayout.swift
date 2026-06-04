@@ -81,47 +81,50 @@ public struct IconDetailLayout: View {
             }
         }
         .onAppear {
-            checkWelcome()
-            refreshIcons()
-            selection = icons.first
+            refreshIcons(selectFirstWhenNeeded: true)
         }
         .onNotification(.iconDidSave, perform: { _ in
             self.showWelcome = false
             let selectedPath = selection?.path
-            refreshIcons()
-            if let selectedPath = selectedPath {
-                selection = icons.first(where: { $0.path == selectedPath })
-            } else {
-                selection = icons.first
-            }
+            refreshIcons(preferredSelectionPath: selectedPath, selectFirstWhenNeeded: true)
         })
         .onNotification(.iconDidDelete, perform: { _ in
-            checkWelcome()
-            refreshIcons()
+            refreshIcons(selectFirstWhenNeeded: true)
         })
         .onChange(of: projectURL) {
-            checkWelcome()
-            refreshIcons()
+            refreshIcons(selectFirstWhenNeeded: true)
         }
         .onChange(of: selection) { _, newValue in
             i.updateCurrentModel(newModel: newValue)
         }
     }
 
-    private func checkWelcome() {
+    private func refreshIcons(
+        preferredSelectionPath: String? = nil,
+        selectFirstWhenNeeded: Bool = false
+    ) {
         guard let projectURL else {
+            icons = []
+            showWelcome = true
+            selection = nil
             return
         }
 
-        let icons = ProjectIconRepo.getIconData(from: projectURL)
-        self.showWelcome = icons.isEmpty
-    }
+        Task {
+            let loadedIcons = await ProjectIconRepo.getIconDataAsync(from: projectURL)
 
-    private func refreshIcons() {
-        if let projectURL {
-            icons = ProjectIconRepo.getIconData(from: projectURL)
-        } else {
-            icons = []
+            await MainActor.run {
+                guard self.projectURL == projectURL else { return }
+                icons = loadedIcons
+                showWelcome = loadedIcons.isEmpty
+
+                if let preferredSelectionPath,
+                   let preferredSelection = loadedIcons.first(where: { $0.path == preferredSelectionPath }) {
+                    selection = preferredSelection
+                } else if selectFirstWhenNeeded, selection == nil || loadedIcons.contains(selection!) == false {
+                    selection = loadedIcons.first
+                }
+            }
         }
     }
 }

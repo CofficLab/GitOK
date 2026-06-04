@@ -29,11 +29,10 @@ struct IconList: View {
             IconListActions()
         }
         .onChange(of: projectURL) {
-            self.refreshIcons()
+            self.refreshIcons(selectFirstWhenNeeded: true)
         }
         .onAppear {
-            self.refreshIcons()
-            self.selection = icons.first
+            self.refreshIcons(selectFirstWhenNeeded: true)
         }
         .onChange(of: selection) { _, newValue in
             i.updateCurrentModel(newModel: newValue)
@@ -41,34 +40,42 @@ struct IconList: View {
         .onNotification(.iconDidSave, perform: { _ in
             os_log("iconDidSave while current selection is \(self.selection?.title ?? "nil")")
             let selectedPath = selection?.path
-            refreshIcons()
-
-            if self.selection == nil {
-                os_log("iconDidSave: no selection, select the first icon")
-                self.selection = icons.first
-            } else {
-                if let selectedPath = selectedPath {
-                    selection = icons.first(where: { $0.path == selectedPath })
-                }
-            }
+            refreshIcons(preferredSelectionPath: selectedPath, selectFirstWhenNeeded: true)
         })
         .onNotification(.iconDidDelete, perform: { notification in
-            self.refreshIcons()
-
-            if let path = notification.userInfo?["path"] as? String {
-                if path == self.selection?.path {
-                    os_log("iconDidDelete: delete the current selection")
-                    self.selection = nil
-                }
-            }
+            let deletedSelectionPath = notification.userInfo?["path"] as? String
+            self.refreshIcons(
+                preferredSelectionPath: selection?.path,
+                selectFirstWhenNeeded: deletedSelectionPath == self.selection?.path
+            )
         })
     }
 
-    func refreshIcons() {
-        if let projectURL {
-            icons = ProjectIconRepo.getIconData(from: projectURL)
-        } else {
+    func refreshIcons(
+        preferredSelectionPath: String? = nil,
+        selectFirstWhenNeeded: Bool = false
+    ) {
+        guard let projectURL else {
             icons = []
+            selection = nil
+            return
+        }
+
+        Task {
+            let loadedIcons = await ProjectIconRepo.getIconDataAsync(from: projectURL)
+
+            await MainActor.run {
+                guard self.projectURL == projectURL else { return }
+                icons = loadedIcons
+
+                if let preferredSelectionPath,
+                   let preferredSelection = loadedIcons.first(where: { $0.path == preferredSelectionPath }) {
+                    selection = preferredSelection
+                } else if selectFirstWhenNeeded, selection == nil || loadedIcons.contains(selection!) == false {
+                    os_log("refreshIcons: select the first icon")
+                    selection = loadedIcons.first
+                }
+            }
         }
     }
 }

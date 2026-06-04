@@ -45,6 +45,12 @@ class ProjectIconRepo {
         return models.sorted { $0.title < $1.title }
     }
 
+    static func getIconDataAsync(from projectURL: URL) async -> [IconData] {
+        await Task.detached(priority: .userInitiated) {
+            getIconData(from: projectURL)
+        }.value
+    }
+
     /// 尝试加载图标模型
     /// - Parameter fileURL: 图标配置文件URL
     /// - Returns: 图标模型，如果加载失败则返回nil
