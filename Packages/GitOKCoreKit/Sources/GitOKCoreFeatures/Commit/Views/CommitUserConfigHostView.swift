@@ -7,6 +7,12 @@ public enum CommitUserConfigHostLogEvent {
     case applyFailure(Error)
 }
 
+private enum CommitUserConfigBackgroundRunner {
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+}
+
 public struct CommitUserConfigHostView<Project, Config, ConfigID, SettingsContent: View>: View where ConfigID: CustomStringConvertible {
     private let project: Project?
     private let recentConfigLimit: Int
@@ -98,18 +104,23 @@ private extension CommitUserConfigHostView {
             applyIdentity(CommitUserConfigRules.identity(name: nil, email: nil))
             return
         }
-        nonisolated(unsafe) let project = loadedProject
+        let projectTransfer = CommitUserConfigBackgroundRunner.UnsafeTransfer(value: loadedProject)
+        let loadProjectUserNameTransfer = CommitUserConfigBackgroundRunner.UnsafeTransfer(value: loadProjectUserName)
+        let loadProjectUserEmailTransfer = CommitUserConfigBackgroundRunner.UnsafeTransfer(value: loadProjectUserEmail)
 
-        Task(priority: .utility) { @MainActor in
+        Task.detached(priority: .utility) {
             let identity: CommitUserConfigRules.Identity
             do {
-                let name = try await loadProjectUserName(project)
-                let email = try await loadProjectUserEmail(project)
+                let name = try await loadProjectUserNameTransfer.value(projectTransfer.value)
+                let email = try await loadProjectUserEmailTransfer.value(projectTransfer.value)
                 identity = CommitUserConfigRules.identity(name: name, email: email)
             } catch {
                 identity = CommitUserConfigRules.identity(name: nil, email: nil)
             }
-            applyIdentity(identity)
+
+            Task { @MainActor in
+                applyIdentity(identity)
+            }
         }
     }
 
@@ -144,31 +155,37 @@ private extension CommitUserConfigHostView {
     }
 
     func applyConfig(_ command: CommitUserConfigRules.ProjectApplyConfigRequest<Project>) {
-        // Extract project value before Task to avoid Sendable crossing
-        nonisolated(unsafe) let project = command.project
+        let projectTransfer = CommitUserConfigBackgroundRunner.UnsafeTransfer(value: command.project)
+        let applyProjectConfigTransfer = CommitUserConfigBackgroundRunner.UnsafeTransfer(value: applyProjectConfig)
+        let logEventTransfer = CommitUserConfigBackgroundRunner.UnsafeTransfer(value: logEvent)
         let configName = command.request.name
         let configEmail = command.request.email
         let shouldApply = command.request.state.shouldApply
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             guard shouldApply else {
                 return
             }
 
             do {
                 let identity = CommitUserConfigRules.identity(name: configName, email: configEmail)
-                try await applyProjectConfig(project, identity)
-                CommitUserConfigRules.performApplyConfigState(
-                    CommitUserConfigRules.applyConfigSuccessState(name: identity.name, email: identity.email),
-                    setName: { currentUser = $0 },
-                    setEmail: { currentEmail = $0 },
-                    postUpdateNotification: {
-                        CommitUserConfigRules.postDidUpdateGitUserConfigNotification()
-                    }
-                )
-                logEvent(.applySuccess(name: configName, email: configEmail))
+                try await applyProjectConfigTransfer.value(projectTransfer.value, identity)
+
+                Task { @MainActor in
+                    CommitUserConfigRules.performApplyConfigState(
+                        CommitUserConfigRules.applyConfigSuccessState(name: identity.name, email: identity.email),
+                        setName: { currentUser = $0 },
+                        setEmail: { currentEmail = $0 },
+                        postUpdateNotification: {
+                            CommitUserConfigRules.postDidUpdateGitUserConfigNotification()
+                        }
+                    )
+                    logEventTransfer.value(.applySuccess(name: configName, email: configEmail))
+                }
             } catch {
-                logEvent(.applyFailure(error))
+                Task { @MainActor in
+                    logEventTransfer.value(.applyFailure(error))
+                }
             }
         }
     }
