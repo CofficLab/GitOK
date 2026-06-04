@@ -1792,9 +1792,40 @@ extension Project {
         try gitCLI.remoteList()
     }
 
+    func remoteListAsync() async throws -> [GitRemote] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).remoteList()
+        }.value
+    }
+
     func addRemote(name: String, url: String) throws {
         do {
             try gitCLI.addRemote(name: name, url: url)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "addRemote",
+                additionalInfo: ["remote": name, "url": url]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name, "url": url]
+            )
+            throw error
+        }
+    }
+
+    func addRemoteAsync(name: String, url: String) async throws {
+        let repositoryURL = self.url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).addRemote(name: name, url: url)
+            }.value
             postEvent(
                 name: .projectGitRefsDidChange,
                 operation: "addRemote",
@@ -1835,6 +1866,30 @@ extension Project {
     func removeRemote(name: String) throws {
         do {
             try gitCLI.removeRemote(name: name)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "removeRemote",
+                additionalInfo: ["remote": name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "removeRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name]
+            )
+            throw error
+        }
+    }
+
+    func removeRemoteAsync(name: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).removeRemote(name: name)
+            }.value
             postEvent(
                 name: .projectGitRefsDidChange,
                 operation: "removeRemote",

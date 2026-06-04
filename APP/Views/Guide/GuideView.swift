@@ -24,6 +24,8 @@ struct GuideView: View, SuperLog {
     let actionLabel: String?
     let iconColor: Color?
 
+    @State private var remoteInfo: [GitRemote] = []
+
     /// 初始化引导视图
     /// - Parameters:
     ///   - systemImage: SF Symbol 图标名称
@@ -89,7 +91,7 @@ struct GuideView: View, SuperLog {
                             // 仓库信息（本地、远程、分支）
                             RepositoryInfoView(
                                 project: project,
-                                remotes: getRemoteInfo() ?? [],
+                                remotes: remoteInfo,
                                 branch: g.branch
                             )
 
@@ -117,6 +119,14 @@ struct GuideView: View, SuperLog {
             }
         }
         .background(Color(.windowBackgroundColor))
+        .onAppear(perform: loadRemoteInfo)
+        .onChange(of: vm.project?.path) {
+            loadRemoteInfo()
+        }
+        .onProjectGitRefsDidChange { eventInfo in
+            guard eventInfo.project.path == vm.project?.path else { return }
+            loadRemoteInfo()
+        }
     }
 }
 
@@ -142,21 +152,22 @@ extension GuideView {
         NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: path)
     }
 
-    /// 获取远程仓库信息
-    /// - Returns: 远程仓库信息数组，如果获取失败则返回 nil
-    private func getRemoteInfo() -> [GitRemote]? {
-        guard let project = vm.project else {
-            return nil
+    private func loadRemoteInfo() {
+        guard let loadedProject = vm.project else {
+            remoteInfo = []
+            return
         }
+        nonisolated(unsafe) let project = loadedProject
 
-        do {
-            let remotes = try project.remoteList()
-            return remotes.isEmpty ? nil : remotes
-        } catch {
-            if Self.verbose {
-                os_log("\(Self.t)❌ Failed to get remote info: \(error)")
+        Task(priority: .utility) { @MainActor in
+            do {
+                remoteInfo = try await project.remoteListAsync()
+            } catch {
+                remoteInfo = []
+                if Self.verbose {
+                    os_log("\(Self.t)❌ Failed to get remote info: \(error)")
+                }
             }
-            return nil
         }
     }
 }

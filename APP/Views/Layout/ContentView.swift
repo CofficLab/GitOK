@@ -108,15 +108,14 @@ struct ContentView: View, SuperLog {
     }
 
     private func performGitMenuCommand(_ command: GitMenuCommand) {
-        guard let project = vm.project, project.isGitRepo else {
+        guard let loadedProject = vm.project, loadedProject.isGitRepo else {
             alert_error("当前没有可操作的 Git 仓库")
             return
         }
+        nonisolated(unsafe) let project = loadedProject
 
-        Task.detached(priority: .userInitiated) {
-            await MainActor.run {
-                g.activityStatus = statusText(for: command)
-            }
+        Task(priority: .userInitiated) { @MainActor in
+            g.activityStatus = statusText(for: command)
 
             do {
                 switch command {
@@ -130,21 +129,17 @@ struct ContentView: View, SuperLog {
                         operation: "menuRefresh"
                     )
                 case .fetch:
-                    try project.fetch()
+                    try await project.fetchAsync()
                 case .pull:
-                    try project.pull()
+                    try await project.pullAsync()
                 case .push:
-                    try project.push()
+                    try await project.pushAsync()
                 }
 
-                await MainActor.run {
-                    g.activityStatus = nil
-                }
+                g.activityStatus = nil
             } catch {
-                await MainActor.run {
-                    g.activityStatus = nil
-                    alert_error(error)
-                }
+                g.activityStatus = nil
+                alert_error(error)
             }
         }
     }
