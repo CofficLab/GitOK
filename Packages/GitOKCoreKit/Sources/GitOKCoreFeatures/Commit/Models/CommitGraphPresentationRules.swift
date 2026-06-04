@@ -3,7 +3,7 @@ public enum CommitGraphPresentationRules {
     public typealias Node = CommitGraphLayoutRules.Node
     public typealias Row = CommitGraphLayoutRules.Row
 
-    public struct GraphState {
+    public struct GraphState: Sendable {
         public let rowsByCommitID: [String: Row]
         public let laneCount: Int
 

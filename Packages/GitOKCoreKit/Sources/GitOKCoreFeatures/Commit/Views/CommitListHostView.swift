@@ -1,3 +1,4 @@
+import Dispatch
 import SwiftUI
 
 public enum CommitListHostLogEvent {
@@ -6,7 +7,7 @@ public enum CommitListHostLogEvent {
     case duplicateLoadMore
 }
 
-public struct CommitListHostView<Project, Item, UnpushedItem, WorkingStateContent: View, RowContent: View>: View {
+public struct CommitListHostView<Project, Item, UnpushedItem, WorkingStateContent: View, RowContent: View>: View where Item: Sendable, UnpushedItem: Sendable {
     private let project: Project?
     private let projectPath: (Project) -> String
     private let loadItems: (Project, Int, Int) async throws -> [Item]
@@ -120,6 +121,221 @@ public struct CommitListHostView<Project, Item, UnpushedItem, WorkingStateConten
     }
 }
 
+fileprivate enum CommitListBackgroundBuilder {
+    struct AppendApplicationResult<Item: Sendable>: Sendable {
+        let itemsToAppend: [Item]
+        let appendState: CommitListPaginationRules.AppendResultState
+        let graphState: CommitGraphPresentationRules.GraphState?
+    }
+
+    struct RefreshApplicationResult<Item: Sendable>: Sendable {
+        let items: [Item]
+        let resultState: CommitListPaginationRules.RefreshResultState
+        let graphState: CommitGraphPresentationRules.GraphState
+    }
+
+    struct RestoreAppendApplicationResult<Item: Sendable>: Sendable {
+        let itemsToAppend: [Item]
+        let appendState: CommitListPaginationRules.AppendResultState
+        let graphState: CommitGraphPresentationRules.GraphState?
+        let selectedItem: Item?
+        let shouldLoadMore: Bool
+        let remainingAttempts: Int
+    }
+
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+
+    static func runOffMainThread<Result: Sendable>(
+        _ operation: @escaping () -> Result
+    ) async -> Result {
+        let result: Result = await withCheckedContinuation { (continuation: CheckedContinuation<Result, Never>) in
+            let workItem = DispatchWorkItem {
+                continuation.resume(returning: operation())
+            }
+            DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
+        }
+        return result
+    }
+
+    static func makeAppendResult<Item>(
+        existingItems: [Item],
+        loadedItems: [Item],
+        currentPage: Int,
+        id: (Item) -> String,
+        parentIDs: (Item) -> [String]
+    ) -> AppendApplicationResult<Item> where Item: Sendable {
+        let appendState = CommitListPaginationRules.appendResultState(
+            existingItems: existingItems,
+            newItems: loadedItems,
+            currentPage: currentPage,
+            id: id
+        )
+        let uniqueItems = CommitListPaginationRules.uniqueItems(
+            from: loadedItems,
+            keepingIDs: appendState.decision.uniqueNewIDs,
+            id: id
+        )
+        let nextItems = appendState.appendsUniqueCommits ? existingItems + uniqueItems : existingItems
+        let graphState = appendState.rebuildsGraphAfterAppend
+            ? CommitGraphPresentationRules.graphState(from: nextItems, id: id, parentIDs: parentIDs)
+            : nil
+
+        return AppendApplicationResult(
+            itemsToAppend: uniqueItems,
+            appendState: appendState,
+            graphState: graphState
+        )
+    }
+
+    static func makeRefreshResult<Item>(
+        items: [Item],
+        unpushedIDs: [String],
+        id: (Item) -> String,
+        parentIDs: (Item) -> [String]
+    ) -> RefreshApplicationResult<Item> where Item: Sendable {
+        RefreshApplicationResult(
+            items: items,
+            resultState: CommitListPaginationRules.refreshSuccessResultState(unpushedIDs: unpushedIDs),
+            graphState: CommitGraphPresentationRules.graphState(from: items, id: id, parentIDs: parentIDs)
+        )
+    }
+
+    static func makeRestoreAppendResult<Item>(
+        existingItems: [Item],
+        loadedItems: [Item],
+        currentPage: Int,
+        targetID: String,
+        hasMoreItemsForRestore: Bool,
+        remainingAttempts: Int,
+        id: (Item) -> String,
+        parentIDs: (Item) -> [String]
+    ) -> RestoreAppendApplicationResult<Item> where Item: Sendable {
+        let appendState = CommitListPaginationRules.appendResultState(
+            existingItems: existingItems,
+            newItems: loadedItems,
+            currentPage: currentPage,
+            id: id
+        )
+        let uniqueItems = CommitListPaginationRules.uniqueItems(
+            from: loadedItems,
+            keepingIDs: appendState.decision.uniqueNewIDs,
+            id: id
+        )
+        let nextItems = appendState.decision.hasMoreCommits ? existingItems + uniqueItems : existingItems
+        let shouldRebuildGraph = appendState.rebuildsGraphAfterAppend || uniqueItems.isEmpty == false
+        let restoreAction = CommitListPaginationRules.restoreAfterAppendAction(
+            targetID: targetID,
+            newItems: loadedItems,
+            hasMoreCommits: hasMoreItemsForRestore,
+            remainingAttempts: remainingAttempts,
+            id: id
+        )
+
+        let selectedItem: Item?
+        let shouldLoadMore: Bool
+        let nextRemainingAttempts: Int
+        switch restoreAction {
+        case let .select(selectedID):
+            selectedItem = loadedItems.first { id($0) == selectedID }
+            shouldLoadMore = false
+            nextRemainingAttempts = remainingAttempts
+        case let .loadMore(_, remainingAttempts):
+            selectedItem = nil
+            shouldLoadMore = true
+            nextRemainingAttempts = remainingAttempts
+        case .none:
+            selectedItem = nil
+            shouldLoadMore = false
+            nextRemainingAttempts = remainingAttempts
+        }
+
+        return RestoreAppendApplicationResult(
+            itemsToAppend: uniqueItems,
+            appendState: appendState,
+            graphState: shouldRebuildGraph
+                ? CommitGraphPresentationRules.graphState(from: nextItems, id: id, parentIDs: parentIDs)
+                : nil,
+            selectedItem: selectedItem,
+            shouldLoadMore: shouldLoadMore,
+            remainingAttempts: nextRemainingAttempts
+        )
+    }
+
+    static func appendResult<Item>(
+        existingItems: [Item],
+        loadedItems: [Item],
+        currentPage: Int,
+        id: @escaping (Item) -> String,
+        parentIDs: @escaping (Item) -> [String]
+    ) async -> AppendApplicationResult<Item> where Item: Sendable {
+        let existingItemsTransfer = UnsafeTransfer(value: existingItems)
+        let loadedItemsTransfer = UnsafeTransfer(value: loadedItems)
+        let itemIDTransfer = UnsafeTransfer(value: id)
+        let itemParentIDsTransfer = UnsafeTransfer(value: parentIDs)
+
+        return await runOffMainThread {
+            makeAppendResult(
+                existingItems: existingItemsTransfer.value,
+                loadedItems: loadedItemsTransfer.value,
+                currentPage: currentPage,
+                id: itemIDTransfer.value,
+                parentIDs: itemParentIDsTransfer.value
+            )
+        }
+    }
+
+    static func refreshResult<Item>(
+        items: [Item],
+        unpushedIDs: [String],
+        id: @escaping (Item) -> String,
+        parentIDs: @escaping (Item) -> [String]
+    ) async -> RefreshApplicationResult<Item> where Item: Sendable {
+        let itemsTransfer = UnsafeTransfer(value: items)
+        let itemIDTransfer = UnsafeTransfer(value: id)
+        let itemParentIDsTransfer = UnsafeTransfer(value: parentIDs)
+
+        return await runOffMainThread {
+            makeRefreshResult(
+                items: itemsTransfer.value,
+                unpushedIDs: unpushedIDs,
+                id: itemIDTransfer.value,
+                parentIDs: itemParentIDsTransfer.value
+            )
+        }
+    }
+
+    static func restoreAppendResult<Item>(
+        existingItems: [Item],
+        loadedItems: [Item],
+        currentPage: Int,
+        targetID: String,
+        hasMoreItemsForRestore: Bool,
+        remainingAttempts: Int,
+        id: @escaping (Item) -> String,
+        parentIDs: @escaping (Item) -> [String]
+    ) async -> RestoreAppendApplicationResult<Item> where Item: Sendable {
+        let existingItemsTransfer = UnsafeTransfer(value: existingItems)
+        let loadedItemsTransfer = UnsafeTransfer(value: loadedItems)
+        let itemIDTransfer = UnsafeTransfer(value: id)
+        let itemParentIDsTransfer = UnsafeTransfer(value: parentIDs)
+
+        return await runOffMainThread {
+            makeRestoreAppendResult(
+                existingItems: existingItemsTransfer.value,
+                loadedItems: loadedItemsTransfer.value,
+                currentPage: currentPage,
+                targetID: targetID,
+                hasMoreItemsForRestore: hasMoreItemsForRestore,
+                remainingAttempts: remainingAttempts,
+                id: itemIDTransfer.value,
+                parentIDs: itemParentIDsTransfer.value
+            )
+        }
+    }
+}
+
 private extension CommitListHostView {
     func rebuildGraphRows() {
         let graphState = CommitGraphPresentationRules.graphState(
@@ -191,29 +407,17 @@ private extension CommitListHostView {
         let page = currentPage
         let limit = pageSize
         let existingItems = items
-        let existingIDs = Set(existingItems.map(itemID))
 
         Task(priority: .userInitiated) { @MainActor in
             do {
                 let loadedItems = try await loadItemsInBackground(project: project, page: page, limit: limit)
-                let uniqueItems = loadedItems.filter { existingIDs.contains(itemID($0)) == false }
-                let appendState = CommitListPaginationRules.appendResultState(
-                    existingIDs: existingItems.map(itemID),
-                    newIDs: loadedItems.map(itemID),
+                let applicationResult = await appendApplicationResultInBackground(
+                    existingItems: existingItems,
+                    loadedItems: loadedItems,
                     currentPage: page
                 )
 
-                CommitListPaginationRules.performAppendResultState(
-                    appendState,
-                    newItems: uniqueItems,
-                    id: itemID,
-                    appendItems: { items.append(contentsOf: $0) },
-                    rebuildGraph: rebuildGraphRows,
-                    logDuplicateWarning: {
-                        logEvent(.duplicateLoadMore)
-                    },
-                    applyPageState: applyPageState
-                )
+                applyAppendApplicationResult(applicationResult)
             } catch {
                 logEvent(.loadMoreFailure(error))
                 applyPageState(CommitListPaginationRules.PageState(
@@ -256,14 +460,11 @@ private extension CommitListHostView {
                 )
                 let unpushedIDs = try await loadUnpushedItems(request.project).map(unpushedID)
                 try Task.checkCancellation()
-                CommitListPaginationRules.performRefreshSuccessResultState(
-                    CommitListPaginationRules.refreshSuccessResultState(unpushedIDs: unpushedIDs),
+                let applicationResult = await refreshApplicationResultInBackground(
                     items: refreshedItems,
-                    updateUnpushed: updateUnpushed,
-                    setItems: { items = $0 },
-                    rebuildGraph: rebuildGraphRows,
-                    applyPageState: applyPageState
+                    unpushedIDs: unpushedIDs
                 )
+                applyRefreshApplicationResult(applicationResult)
             } catch is CancellationError {
                 return
             } catch {
@@ -321,33 +522,20 @@ private extension CommitListHostView {
         let page = currentPage
         let limit = pageSize
         let existingItems = items
-        let existingIDs = Set(existingItems.map(itemID))
+        let hasMoreItemsForRestore = hasMoreItems
 
         Task(priority: .userInitiated) { @MainActor in
             do {
                 let loadedItems = try await loadItemsInBackground(project: project, page: page, limit: limit)
-                let uniqueItems = loadedItems.filter { existingIDs.contains(itemID($0)) == false }
-                let appendState = CommitListPaginationRules.appendResultState(
-                    existingIDs: existingItems.map(itemID),
-                    newIDs: loadedItems.map(itemID),
-                    currentPage: page
-                )
-                CommitListPaginationRules.performAppendResultForRestore(
-                    appendState,
-                    newItems: uniqueItems,
+                let applicationResult = await restoreAppendApplicationResultInBackground(
+                    existingItems: existingItems,
+                    loadedItems: loadedItems,
+                    currentPage: page,
                     targetID: targetID,
-                    hasMoreCommitsForRestore: hasMoreItems,
-                    remainingAttempts: maxAttempts - 1,
-                    id: itemID,
-                    appendItems: { items.append(contentsOf: $0) },
-                    setCurrentPage: { currentPage = $0 },
-                    rebuildGraph: rebuildGraphRows,
-                    select: setItem,
-                    loadMore: { targetID, remainingAttempts in
-                        loadMoreItemsUntilFound(targetID: targetID, maxAttempts: remainingAttempts)
-                    },
-                    applyPageState: applyPageState
+                    hasMoreItemsForRestore: hasMoreItemsForRestore,
+                    remainingAttempts: maxAttempts - 1
                 )
+                applyRestoreAppendApplicationResult(applicationResult, targetID: targetID)
             } catch {
                 applyPageState(CommitListPaginationRules.PageState(
                     isLoading: false,
@@ -355,6 +543,119 @@ private extension CommitListHostView {
                     hasMoreCommits: hasMoreItems
                 ))
             }
+        }
+    }
+
+    func appendApplicationResultInBackground(
+        existingItems: [Item],
+        loadedItems: [Item],
+        currentPage: Int
+    ) async -> CommitListBackgroundBuilder.AppendApplicationResult<Item> {
+        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
+        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
+        return await CommitListBackgroundBuilder.appendResult(
+            existingItems: existingItems,
+            loadedItems: loadedItems,
+            currentPage: currentPage,
+            id: itemIDTransfer.value,
+            parentIDs: itemParentIDsTransfer.value
+        )
+    }
+
+    func refreshApplicationResultInBackground(
+        items: [Item],
+        unpushedIDs: [String]
+    ) async -> CommitListBackgroundBuilder.RefreshApplicationResult<Item> {
+        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
+        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
+        return await CommitListBackgroundBuilder.refreshResult(
+            items: items,
+            unpushedIDs: unpushedIDs,
+            id: itemIDTransfer.value,
+            parentIDs: itemParentIDsTransfer.value
+        )
+    }
+
+    func restoreAppendApplicationResultInBackground(
+        existingItems: [Item],
+        loadedItems: [Item],
+        currentPage: Int,
+        targetID: String,
+        hasMoreItemsForRestore: Bool,
+        remainingAttempts: Int
+    ) async -> CommitListBackgroundBuilder.RestoreAppendApplicationResult<Item> {
+        let itemIDTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemID)
+        let itemParentIDsTransfer = CommitListBackgroundBuilder.UnsafeTransfer(value: itemParentIDs)
+        return await CommitListBackgroundBuilder.restoreAppendResult(
+            existingItems: existingItems,
+            loadedItems: loadedItems,
+            currentPage: currentPage,
+            targetID: targetID,
+            hasMoreItemsForRestore: hasMoreItemsForRestore,
+            remainingAttempts: remainingAttempts,
+            id: itemIDTransfer.value,
+            parentIDs: itemParentIDsTransfer.value
+        )
+    }
+
+    func applyAppendApplicationResult(_ result: CommitListBackgroundBuilder.AppendApplicationResult<Item>) {
+        if result.appendState.appendsUniqueCommits {
+            items.append(contentsOf: result.itemsToAppend)
+        } else if result.appendState.logsDuplicateWarning {
+            logEvent(.duplicateLoadMore)
+        }
+
+        if let graphState = result.graphState {
+            CommitGraphPresentationRules.performGraphState(
+                graphState,
+                setRowsByCommitID: { graphRowsByItemID = $0 },
+                setLaneCount: { graphLaneCount = $0 }
+            )
+        }
+
+        applyPageState(result.appendState.completionState)
+    }
+
+    func applyRefreshApplicationResult(_ result: CommitListBackgroundBuilder.RefreshApplicationResult<Item>) {
+        CommitListPaginationRules.performRefreshSuccessResultState(
+            result.resultState,
+            items: result.items,
+            updateUnpushed: updateUnpushed,
+            setItems: { items = $0 },
+            rebuildGraph: {
+                CommitGraphPresentationRules.performGraphState(
+                    result.graphState,
+                    setRowsByCommitID: { graphRowsByItemID = $0 },
+                    setLaneCount: { graphLaneCount = $0 }
+                )
+            },
+            applyPageState: applyPageState
+        )
+    }
+
+    func applyRestoreAppendApplicationResult(
+        _ result: CommitListBackgroundBuilder.RestoreAppendApplicationResult<Item>,
+        targetID: String
+    ) {
+        if result.appendState.decision.hasMoreCommits {
+            items.append(contentsOf: result.itemsToAppend)
+            currentPage = result.appendState.decision.nextPage
+
+            if let selectedItem = result.selectedItem {
+                setItem(selectedItem)
+            } else if result.shouldLoadMore {
+                loadMoreItemsUntilFound(targetID: targetID, maxAttempts: result.remainingAttempts)
+            }
+        }
+
+        applyPageState(result.appendState.completionState)
+
+        if let graphState = result.graphState {
+            CommitGraphPresentationRules.performGraphState(
+                graphState,
+                setRowsByCommitID: { graphRowsByItemID = $0 },
+                setLaneCount: { graphLaneCount = $0 }
+            )
         }
     }
 }
