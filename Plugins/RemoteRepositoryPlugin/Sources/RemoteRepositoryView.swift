@@ -4,6 +4,31 @@ import GitOKCoreKit
 import GitOKUI
 import SwiftUI
 
+private enum RemoteRepositoryBackgroundRunner {
+    static func loadRemoteState(projectURL: URL) throws -> (remotes: [GitRemoteSummary], aheadBehind: GitAheadBehind, currentUpstreamRemoteName: String?) {
+        let repository = GitRepositoryCLI(repositoryURL: projectURL)
+        let remotes = try repository.remotes()
+        let aheadBehind = (try? repository.aheadBehind()) ?? .noUpstream
+        let currentUpstreamRemoteName = try? repository.currentUpstreamRemoteName()
+        return (remotes, aheadBehind, currentUpstreamRemoteName)
+    }
+
+    static func runRemoteAction(
+        projectURL: URL,
+        action: @escaping @Sendable (GitRepositoryCLI) throws -> Void
+    ) throws {
+        try action(GitRepositoryCLI(repositoryURL: projectURL))
+    }
+
+    static func addFirstPushMessage(remoteName: String, aheadBehind: GitAheadBehind) -> String {
+        if aheadBehind.hasUpstream {
+            return String(format: RemoteRepositoryPluginLocalization.string("Added remote repository %@. The current branch already has an upstream."), remoteName)
+        }
+
+        return String(format: RemoteRepositoryPluginLocalization.string("Added remote repository %@. The current branch has no upstream yet. For the first push, publish the branch or run git push -u %@ <branch>."), remoteName, remoteName)
+    }
+}
+
 public struct RemoteRepositoryView: View {
     let projectURL: URL
     @Environment(\.dismiss) private var dismiss
@@ -190,62 +215,82 @@ private extension RemoteRepositoryView {
     func loadRemotes() {
         isLoading = true
         errorMessage = nil
+        let projectURL = projectURL
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                let state = try await loadRemoteState()
-                remotes = state.remotes
-                aheadBehind = state.aheadBehind
-                currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                let state = try RemoteRepositoryBackgroundRunner.loadRemoteState(projectURL: projectURL)
+                await MainActor.run {
+                    remotes = state.remotes
+                    aheadBehind = state.aheadBehind
+                    currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                    isLoading = false
+                }
             } catch {
-                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to load remote repositories: %@"), error.localizedDescription)
+                let message = String(format: RemoteRepositoryPluginLocalization.string("Failed to load remote repositories: %@"), error.localizedDescription)
+                await MainActor.run {
+                    errorMessage = message
+                    isLoading = false
+                }
             }
-
-            isLoading = false
         }
     }
 
     func addRemote(name: String, url: String) {
         isLoading = true
         errorMessage = nil
+        let projectURL = projectURL
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                try await runRemoteAction { repository in
+                try RemoteRepositoryBackgroundRunner.runRemoteAction(projectURL: projectURL) { repository in
                     try repository.addRemote(name: name, url: url)
                 }
-                let state = try await loadRemoteState()
-                remotes = state.remotes
-                aheadBehind = state.aheadBehind
-                currentUpstreamRemoteName = state.currentUpstreamRemoteName
-                postRemoteActionMessage = firstPushMessage(for: name)
+                let state = try RemoteRepositoryBackgroundRunner.loadRemoteState(projectURL: projectURL)
+                let actionMessage = RemoteRepositoryBackgroundRunner.addFirstPushMessage(remoteName: name, aheadBehind: state.aheadBehind)
+                await MainActor.run {
+                    remotes = state.remotes
+                    aheadBehind = state.aheadBehind
+                    currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                    postRemoteActionMessage = actionMessage
+                    isLoading = false
+                }
             } catch {
-                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to add remote repository: %@"), error.localizedDescription)
+                let message = String(format: RemoteRepositoryPluginLocalization.string("Failed to add remote repository: %@"), error.localizedDescription)
+                await MainActor.run {
+                    errorMessage = message
+                    isLoading = false
+                }
             }
-
-            isLoading = false
         }
     }
 
     func updateRemote(originalName: String, newName: String, newURL: String) {
         isLoading = true
         errorMessage = nil
+        let projectURL = projectURL
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                try await runRemoteAction { repository in
+                try RemoteRepositoryBackgroundRunner.runRemoteAction(projectURL: projectURL) { repository in
                     try repository.updateRemote(originalName: originalName, newName: newName, newURL: newURL)
                 }
-                let state = try await loadRemoteState()
-                remotes = state.remotes
-                aheadBehind = state.aheadBehind
-                currentUpstreamRemoteName = state.currentUpstreamRemoteName
-                postRemoteActionMessage = String(format: RemoteRepositoryPluginLocalization.string("Updated remote repository %@. If the branch has no upstream yet, publish the branch or do the first push."), newName)
+                let state = try RemoteRepositoryBackgroundRunner.loadRemoteState(projectURL: projectURL)
+                let actionMessage = String(format: RemoteRepositoryPluginLocalization.string("Updated remote repository %@. If the branch has no upstream yet, publish the branch or do the first push."), newName)
+                await MainActor.run {
+                    remotes = state.remotes
+                    aheadBehind = state.aheadBehind
+                    currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                    postRemoteActionMessage = actionMessage
+                    isLoading = false
+                }
             } catch {
-                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to update remote repository: %@"), error.localizedDescription)
+                let message = String(format: RemoteRepositoryPluginLocalization.string("Failed to update remote repository: %@"), error.localizedDescription)
+                await MainActor.run {
+                    errorMessage = message
+                    isLoading = false
+                }
             }
-
-            isLoading = false
         }
     }
 
@@ -255,28 +300,36 @@ private extension RemoteRepositoryView {
         let remoteName = remote.name
         let remoteID = remote.id
         let wasUpstreamRemote = remoteName == currentUpstreamRemoteName
+        let projectURL = projectURL
 
-        Task(priority: .userInitiated) { @MainActor in
+        Task.detached(priority: .userInitiated) {
             do {
-                try await runRemoteAction { repository in
+                try RemoteRepositoryBackgroundRunner.runRemoteAction(projectURL: projectURL) { repository in
                     try repository.removeRemote(name: remoteName)
                 }
-                let state = try await loadRemoteState()
-                remotes = state.remotes
-                aheadBehind = state.aheadBehind
-                currentUpstreamRemoteName = state.currentUpstreamRemoteName
-                postRemoteActionMessage = wasUpstreamRemote
+                let state = try RemoteRepositoryBackgroundRunner.loadRemoteState(projectURL: projectURL)
+                let actionMessage = wasUpstreamRemote
                     ? String(format: RemoteRepositoryPluginLocalization.string("Deleted the current upstream remote %@. Re-set upstream before push/pull."), remoteName)
                     : String(format: RemoteRepositoryPluginLocalization.string("Deleted remote repository %@."), remoteName)
 
-                if selectedRemote?.id == remoteID {
-                    selectedRemote = nil
+                await MainActor.run {
+                    remotes = state.remotes
+                    aheadBehind = state.aheadBehind
+                    currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                    postRemoteActionMessage = actionMessage
+
+                    if selectedRemote?.id == remoteID {
+                        selectedRemote = nil
+                    }
+                    isLoading = false
                 }
             } catch {
-                errorMessage = String(format: RemoteRepositoryPluginLocalization.string("Failed to delete remote repository: %@"), error.localizedDescription)
+                let message = String(format: RemoteRepositoryPluginLocalization.string("Failed to delete remote repository: %@"), error.localizedDescription)
+                await MainActor.run {
+                    errorMessage = message
+                    isLoading = false
+                }
             }
-
-            isLoading = false
         }
     }
 
@@ -317,41 +370,21 @@ private extension RemoteRepositoryView {
     }
 
     func loadRemoteTrackingState() {
-        Task(priority: .userInitiated) { @MainActor in
+        let projectURL = projectURL
+        Task.detached(priority: .userInitiated) {
             do {
-                let state = try await loadRemoteState()
-                aheadBehind = state.aheadBehind
-                currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                let state = try RemoteRepositoryBackgroundRunner.loadRemoteState(projectURL: projectURL)
+                await MainActor.run {
+                    aheadBehind = state.aheadBehind
+                    currentUpstreamRemoteName = state.currentUpstreamRemoteName
+                }
             } catch {
-                aheadBehind = .noUpstream
-                currentUpstreamRemoteName = nil
+                await MainActor.run {
+                    aheadBehind = .noUpstream
+                    currentUpstreamRemoteName = nil
+                }
             }
         }
     }
 
-    func loadRemoteState() async throws -> (remotes: [GitRemoteSummary], aheadBehind: GitAheadBehind, currentUpstreamRemoteName: String?) {
-        let projectURL = projectURL
-        return try await Task.detached(priority: .userInitiated) {
-            let repository = GitRepositoryCLI(repositoryURL: projectURL)
-            let remotes = try repository.remotes()
-            let aheadBehind = (try? repository.aheadBehind()) ?? .noUpstream
-            let currentUpstreamRemoteName = try? repository.currentUpstreamRemoteName()
-            return (remotes, aheadBehind, currentUpstreamRemoteName)
-        }.value
-    }
-
-    func runRemoteAction(_ action: @escaping @Sendable (GitRepositoryCLI) throws -> Void) async throws {
-        let projectURL = projectURL
-        try await Task.detached(priority: .userInitiated) {
-            try action(GitRepositoryCLI(repositoryURL: projectURL))
-        }.value
-    }
-
-    func firstPushMessage(for remoteName: String) -> String {
-        if aheadBehind.hasUpstream {
-            return String(format: RemoteRepositoryPluginLocalization.string("Added remote repository %@. The current branch already has an upstream."), remoteName)
-        }
-
-        return String(format: RemoteRepositoryPluginLocalization.string("Added remote repository %@. The current branch has no upstream yet. For the first push, publish the branch or run git push -u %@ <branch>."), remoteName, remoteName)
-    }
 }
