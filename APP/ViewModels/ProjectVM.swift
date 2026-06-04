@@ -39,6 +39,7 @@ class ProjectVM: ObservableObject, SuperLog {
 
     /// 仓库管理器
     private let repoManager: RepoManager
+    private var projectExistenceGeneration = 0
 
     // MARK: - Initialization
 
@@ -151,10 +152,25 @@ class ProjectVM: ObservableObject, SuperLog {
     // MARK: - Private
 
     private func checkIfProjectExists() {
-        if let newProject = self.project {
-            self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
-        } else {
+        projectExistenceGeneration += 1
+        let generation = projectExistenceGeneration
+
+        guard let newProject = self.project else {
             self.projectExists = false
+            return
+        }
+
+        self.projectExists = true
+        let path = newProject.path
+        Task.detached(priority: .utility) {
+            let exists = FileManager.default.fileExists(atPath: path)
+            await MainActor.run {
+                guard generation == self.projectExistenceGeneration,
+                      self.project?.path == path else {
+                    return
+                }
+                self.projectExists = exists
+            }
         }
     }
 }
