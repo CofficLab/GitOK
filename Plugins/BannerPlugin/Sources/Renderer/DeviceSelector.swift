@@ -1,6 +1,7 @@
 import SwiftUI
 import GitOKCoreKit
 import GitOKSupportKit
+import GitOKUI
 
 /**
  设备选择器组件
@@ -43,8 +44,7 @@ struct DeviceSelector: View {
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(Color(.controlBackgroundColor))
-            .cornerRadius(4)
+            .gitOKUISurface(style: .subtle, cornerRadius: 4)
         }
     }
 

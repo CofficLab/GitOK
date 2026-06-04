@@ -1,5 +1,6 @@
 
 import GitOKCoreKit
+import GitOKUI
 import OSLog
 import SwiftUI
 
@@ -36,7 +37,7 @@ public struct BannerDetailLayout: View {
                     )
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color(.controlBackgroundColor))
+                    .gitOKUISurface(style: .toolbar, cornerRadius: 0)
 
                     Divider()
 
@@ -50,7 +51,7 @@ public struct BannerDetailLayout: View {
                     TemplateSelector()
                         .padding(.horizontal, 4)
                         .padding(.vertical, 8)
-                        .background(Color(.controlBackgroundColor))
+                        .gitOKUISurface(style: .toolbar, cornerRadius: 0)
 
                     // 模板提供的修改器视图
                     b.selectedTemplate.createModifierView()
