@@ -43,7 +43,7 @@ struct VAsyncCommandButton: View {
         
         Task {
             do {
-                let output = try await Shell.runSync("sleep 2 && echo 'Async command completed!'")
+                let output = try await Shell.run("sleep 2 && echo 'Async command completed!'")
                 await MainActor.run {
                     result = output
                     isLoading = false

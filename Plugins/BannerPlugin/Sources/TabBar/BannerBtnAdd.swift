@@ -36,23 +36,30 @@ struct BannerBtnAdd: View, SuperThread {
          - `projectURL`: 所属项目根目录
      */
     private func createBanner(in projectURL: URL) {
-        do {
-            let newBanner = try bannerRepo.createBanner(
-                in: projectURL,
-                title: BannerPluginLocalization.string("New Banner")
-            )
+        let title = BannerPluginLocalization.string("New Banner")
 
-            // 设置为当前选中的Banner
-            b.setBanner(newBanner)
+        Task.detached(priority: .userInitiated) {
+            do {
+                let newBanner = try bannerRepo.createBanner(
+                    in: projectURL,
+                    title: title
+                )
 
-            alert_info(BannerPluginLocalization.string("New Banner file added"))
-        } catch {
-            os_log(.error, "❌ 创建 Banner 失败: \(error.localizedDescription)")
-            let msg = String.localizedStringWithFormat(
-                BannerPluginLocalization.string("Failed to create Banner: %@"),
-                error.localizedDescription
-            )
-            alert_error(msg)
+                await MainActor.run {
+                    // 设置为当前选中的Banner
+                    b.setBanner(newBanner)
+                    alert_info(BannerPluginLocalization.string("New Banner file added"))
+                }
+            } catch {
+                os_log(.error, "❌ 创建 Banner 失败: \(error.localizedDescription)")
+                await MainActor.run {
+                    let msg = String.localizedStringWithFormat(
+                        BannerPluginLocalization.string("Failed to create Banner: %@"),
+                        error.localizedDescription
+                    )
+                    alert_error(msg)
+                }
+            }
         }
     }
 }

@@ -65,22 +65,28 @@ struct BannerTab: View {
          直接调用repo层删除Banner，通知由repo层负责发送
      */
     private func deleteBanner() {
-        do {
-            try bannerRepo.deleteBanner(banner)
+        Task.detached(priority: .userInitiated) {
+            do {
+                try bannerRepo.deleteBanner(banner)
 
-            // 如果删除的是当前选中的Banner，清除选中状态
-            if b.banner.id == banner.id {
-                b.clearBanner()
+                await MainActor.run {
+                    // 如果删除的是当前选中的Banner，清除选中状态
+                    if b.banner.id == banner.id {
+                        b.clearBanner()
+                    }
+
+                    alert_info(BannerPluginLocalization.string("Deleted"))
+                }
+            } catch {
+                os_log(.error, "❌ 删除 Banner 失败: \(error.localizedDescription)")
+                await MainActor.run {
+                    let msg = String.localizedStringWithFormat(
+                        BannerPluginLocalization.string("Failed to delete Banner: %@"),
+                        error.localizedDescription
+                    )
+                    alert_error(msg)
+                }
             }
-
-            alert_info(BannerPluginLocalization.string("Deleted"))
-        } catch {
-            os_log(.error, "❌ 删除 Banner 失败: \(error.localizedDescription)")
-            let msg = String.localizedStringWithFormat(
-                BannerPluginLocalization.string("Failed to delete Banner: %@"),
-                error.localizedDescription
-            )
-            alert_error(msg)
         }
     }
 }
