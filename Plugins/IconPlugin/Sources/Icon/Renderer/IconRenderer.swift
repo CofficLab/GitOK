@@ -40,7 +40,7 @@ class IconRenderer {
             AnyView(baseView.background(Color(.windowBackgroundColor))) :
             AnyView(baseView)
 
-        try view.snapshot(path: savePath, scale: scale)
+        try await view.snapshotAsync(path: savePath, scale: scale)
     }
 }
 

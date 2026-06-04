@@ -52,6 +52,19 @@ public extension View {
     ///     - `> 1.0`: 高分辨率。对于矢量图形（如 SVG），应使用高值（如 4.0 或 8.0）以确保导出图像的清晰度。
     /// - Throws: `SnapshotError` 如果在任何步骤中失败。
     @MainActor func snapshot(path: URL? = nil, title: String? = nil, scale: CGFloat = 0.0) throws {
+        let rendered = try snapshotRenderResult(path: path, title: title, scale: scale)
+
+        try Self.writeSnapshotImage(rendered.image, to: rendered.path)
+    }
+
+    /// 将视图快照保存为 PNG 图像文件，文件写入在后台执行。
+    @MainActor func snapshotAsync(path: URL? = nil, title: String? = nil, scale: CGFloat = 0.0) async throws {
+        let rendered = try snapshotRenderResult(path: path, title: title, scale: scale)
+
+        try await Self.writeSnapshotImageAsync(rendered.image, to: rendered.path)
+    }
+
+    @MainActor private func snapshotRenderResult(path: URL? = nil, title: String? = nil, scale: CGFloat = 0.0) throws -> SnapshotRenderResult {
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             throw SnapshotError.failedToAccessDownloads
         }
@@ -70,16 +83,37 @@ public extension View {
         let defaultPath = downloadsURL.appendingPathComponent(fileName)
         let finalPath = path ?? defaultPath
 
-        guard let destination = CGImageDestinationCreateWithURL(finalPath as CFURL, UTType.png.identifier as CFString, 1, nil) else {
+        return SnapshotRenderResult(image: cgImage, path: finalPath)
+    }
+
+    nonisolated private static func writeSnapshotImage(_ image: CGImage, to path: URL) throws {
+        guard let destination = CGImageDestinationCreateWithURL(path as CFURL, UTType.png.identifier as CFString, 1, nil) else {
             throw SnapshotError.destinationCreateFailed
         }
 
-        CGImageDestinationAddImage(destination, cgImage, nil)
+        CGImageDestinationAddImage(destination, image, nil)
 
         guard CGImageDestinationFinalize(destination) else {
             throw SnapshotError.saveFailed
         }
     }
+
+    nonisolated private static func writeSnapshotImageAsync(_ image: CGImage, to path: URL) async throws {
+        let payload = SnapshotImagePayload(image: image)
+
+        try await Task.detached(priority: .userInitiated) {
+            try writeSnapshotImage(payload.image, to: path)
+        }.value
+    }
+}
+
+private struct SnapshotRenderResult {
+    let image: CGImage
+    let path: URL
+}
+
+private struct SnapshotImagePayload: @unchecked Sendable {
+    let image: CGImage
 }
 
 /// 快照过程中可能发生的错误

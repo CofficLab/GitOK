@@ -86,7 +86,7 @@ struct BannerPNGDownloadButton: View {
             let bannerView = createBannerView(device: device)
 
             do {
-                try bannerView.snapshot(path: filePath)
+                try await bannerView.snapshotAsync(path: filePath)
                 successCount += 1
             } catch {
                 let msg = String.localizedStringWithFormat(
