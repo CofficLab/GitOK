@@ -53,19 +53,19 @@ public struct OpenRemoteButton: View {
 
         loadTask = Task.detached(priority: .utility) {
             let nextURL = await OpenRemoteURLProvider.webURL(for: projectURL)
-            let nextIcon = nextURL.flatMap(Self.browserIcon)
             guard Task.isCancelled == false else { return }
 
             await MainActor.run {
                 webURL = nextURL
-                browserIcon = nextIcon
+                browserIcon = nextURL.flatMap(Self.browserIcon)
                 loadTask = nil
             }
         }
         await loadTask?.value
     }
 
-    nonisolated private static func browserIcon(for webURL: URL) -> NSImage? {
+    @MainActor
+    private static func browserIcon(for webURL: URL) -> NSImage? {
         guard let appURL = NSWorkspace.shared.urlForApplication(toOpen: webURL) else {
             return nil
         }
