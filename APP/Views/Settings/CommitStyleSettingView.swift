@@ -109,10 +109,7 @@ struct CommitStyleSettingView: View, SuperLog {
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color(.controlBackgroundColor))
-                        )
+                        .gitOKUISurface(style: .subtle, cornerRadius: 6)
                 }
             }
         }
