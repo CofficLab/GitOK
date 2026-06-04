@@ -21,8 +21,7 @@ struct ClassicTitleEditor: View {
                     Text("标题")
                         .frame(width: 60, alignment: .leading)
 
-                    TextField("输入标题", text: $titleText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    AppInputField("输入标题", text: $titleText)
                         .onChange(of: titleText) {
                             updateTitle()
                         }

@@ -18,13 +18,12 @@ struct ClassicFeaturesEditor: View {
             VStack(spacing: 12) {
                 // 添加新特性
                 HStack {
-                    TextField("添加新特性", text: $newFeature)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    AppInputField("添加新特性", text: $newFeature)
                         .onSubmit {
                             addFeature()
                         }
 
-                    Button("添加", action: addFeature)
+                    AppButton("添加", systemImage: "plus", style: .secondary, size: .small, action: addFeature)
                         .disabled(newFeature.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
 
@@ -39,14 +38,13 @@ struct ClassicFeaturesEditor: View {
 
                                 Spacer()
 
-                                Button(action: {
+                                AppIconButton(
+                                    systemImage: "xmark.circle.fill",
+                                    tint: .red,
+                                    size: .compact
+                                ) {
                                     removeFeature(at: index)
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(.red)
-                                        .font(.system(size: 16))
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                             .padding(.vertical, 2)
                         }

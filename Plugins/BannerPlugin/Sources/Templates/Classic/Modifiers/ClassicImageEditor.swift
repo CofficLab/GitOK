@@ -52,10 +52,14 @@ struct ClassicImageEditor: View {
                 // 控制选项
                 VStack(spacing: 8) {
                     // 更换图片按钮
-                    Button("更换图片") {
+                    AppButton(
+                        "更换图片",
+                        systemImage: "photo",
+                        style: .secondary,
+                        fillsWidth: true
+                    ) {
                         showImagePicker = true
                     }
-                    .frame(maxWidth: .infinity)
 
                     // 设备选择
                     HStack {

@@ -21,8 +21,7 @@ struct ClassicSubTitleEditor: View {
                     Text("副标题")
                         .frame(width: 60, alignment: .leading)
 
-                    TextField("输入副标题", text: $subTitleText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    AppInputField("输入副标题", text: $subTitleText)
                         .onChange(of: subTitleText) {
                             updateSubTitle()
                         }
