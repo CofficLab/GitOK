@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public struct UnpushedCommitActionsView: View {
@@ -27,23 +28,13 @@ public struct UnpushedCommitActionsView: View {
     public var body: some View {
         HStack(spacing: 4) {
             if canUndo {
-                Button(action: onUndo) {
-                    Image(systemName: "arrow.uturn.backward.circle")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.red)
-                }
-                .buttonStyle(.plain)
+                AppIconButton(systemImage: "arrow.uturn.backward.circle", tint: .red, size: .compact, action: onUndo)
                 .help(CommitLocalization.string("Undo this commit"))
             }
 
-            Button {
+            AppIconButton(systemImage: "arrow.up.circle.fill", tint: .orange, size: .compact) {
                 showPushPopover = true
-            } label: {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.orange)
             }
-            .buttonStyle(.plain)
             .help(CommitLocalization.string("Click to push to remote"))
             .popover(isPresented: $showPushPopover) {
                 PushPopoverContent(

@@ -1,3 +1,4 @@
+import GitOKUI
 import SwiftUI
 
 public struct FileBatchActionBarView: View {
@@ -43,33 +44,62 @@ public struct FileBatchActionBarView: View {
                 .foregroundColor(.secondary)
                 .monospacedDigit()
 
-            Button(GitDetailLocalization.string("Stage"), action: onStage)
+            AppButton(
+                GitDetailLocalization.string("Stage"),
+                systemImage: "plus.rectangle.on.folder",
+                style: .secondary,
+                size: .small,
+                action: onStage
+            )
                 .disabled(canStage == false)
                 .keyboardShortcut("s", modifiers: [.command, .shift])
                 .accessibilityHint(GitDetailLocalization.string("Stage files that can still be staged in the batch selection"))
 
-            Button(GitDetailLocalization.string("Unstage"), action: onUnstage)
+            AppButton(
+                GitDetailLocalization.string("Unstage"),
+                systemImage: "minus.rectangle",
+                style: .secondary,
+                size: .small,
+                action: onUnstage
+            )
                 .disabled(canUnstage == false)
                 .keyboardShortcut("u", modifiers: [.command, .shift])
                 .accessibilityHint(GitDetailLocalization.string("Unstage already staged files in the batch selection"))
 
-            Button(GitDetailLocalization.string("Discard"), role: .destructive, action: onDiscard)
+            AppButton(
+                GitDetailLocalization.string("Discard"),
+                systemImage: "trash",
+                style: .destructive,
+                size: .small,
+                action: onDiscard
+            )
                 .disabled(canDiscard == false)
                 .keyboardShortcut(.delete, modifiers: [.command])
                 .accessibilityHint(GitDetailLocalization.string("Discard changes of files in the batch selection"))
 
             Spacer()
 
-            Button(GitDetailLocalization.string("Select All Current"), action: onSelectAll)
+            AppButton(
+                GitDetailLocalization.string("Select All Current"),
+                systemImage: "checklist",
+                style: .secondary,
+                size: .small,
+                action: onSelectAll
+            )
                 .disabled(canSelectAll == false)
                 .keyboardShortcut("a", modifiers: [.command, .shift])
                 .accessibilityHint(GitDetailLocalization.string("Select all files in the current filter result"))
 
-            Button(GitDetailLocalization.string("Clear Selection"), action: onClearSelection)
+            AppButton(
+                GitDetailLocalization.string("Clear Selection"),
+                systemImage: "xmark.circle",
+                style: .ghost,
+                size: .small,
+                action: onClearSelection
+            )
                 .accessibilityHint(GitDetailLocalization.string("Clear current batch selection"))
         }
         .font(.caption)
-        .buttonStyle(.borderless)
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
         .background(
