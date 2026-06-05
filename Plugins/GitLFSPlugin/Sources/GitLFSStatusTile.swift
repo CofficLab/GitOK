@@ -46,15 +46,12 @@ struct GitLFSStatusTile: View {
 
     @ViewBuilder
     private var content: some View {
-        if isLoading {
-            AppLoadingOverlay(size: .small)
-                .frame(width: 24, height: 20)
-        } else if issueCount > 0 {
+        if isLoading == false, issueCount > 0 {
             Text("LFS \(issueCount)")
                 .font(.footnote.weight(.medium))
                 .foregroundColor(.orange)
                 .monospacedDigit()
-        } else {
+        } else if isLoading == false {
             Text(GitLFSPluginLocalization.string("LFS"))
                 .foregroundColor(.secondary)
         }
