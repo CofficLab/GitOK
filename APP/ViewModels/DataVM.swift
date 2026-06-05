@@ -18,6 +18,8 @@ class DataVM: NSObject, ObservableObject, SuperLog {
     private let verbose = false
     var cancellables = Set<AnyCancellable>()
     let repoManager: RepoManager
+    private var branchRefreshGeneration = 0
+    private var branchRefreshTask: Task<Void, Never>?
 
     // MARK: - Initialization
 
@@ -193,5 +195,36 @@ extension DataVM {
 
         try project.checkout(branch: branch)
         self.branch = branch
+    }
+
+    func refreshCurrentBranch(project: Project?, isGitRepository: Bool, reason: String) {
+        branchRefreshGeneration += 1
+        let generation = branchRefreshGeneration
+        branchRefreshTask?.cancel()
+
+        guard let project, isGitRepository else {
+            branch = nil
+            return
+        }
+
+        let projectPath = project.path
+        let repositoryURL = project.url
+        if verbose {
+            os_log("\(self.t)Refresh current branch begin reason=\(reason) path=\(projectPath)")
+        }
+
+        branchRefreshTask = Task.detached(priority: .utility) {
+            let currentBranch = try? GitRepositoryCLI(repositoryURL: repositoryURL).currentBranchInfo()
+            guard Task.isCancelled == false else { return }
+
+            await MainActor.run {
+                guard generation == self.branchRefreshGeneration else { return }
+                self.branch = currentBranch
+                self.branchRefreshTask = nil
+                if self.verbose {
+                    os_log("\(self.t)Refresh current branch end branch=\(currentBranch?.name ?? "-") path=\(projectPath)")
+                }
+            }
+        }
     }
 }

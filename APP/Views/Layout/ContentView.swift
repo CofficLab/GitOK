@@ -204,6 +204,9 @@ extension ContentView {
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.registeredPluginCount, onPluginsLoaded)
         .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
+        .onReceive(g.$branch) { _ in
+            updateCachedViews()
+        }
         .onReceive(app.$sidebarVisibility) { _ in
             updateCachedViews()
         }
@@ -379,6 +382,7 @@ extension ContentView {
             self.projectActionsVisibility = d
         }
 
+        refreshCurrentBranch(reason: "ContentView.onAppear")
         updateCachedViews()
 
         os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
@@ -386,11 +390,21 @@ extension ContentView {
 
     /// 处理项目变更事件
     func onProjectChange() {
+        refreshCurrentBranch(reason: "ContentView.onProjectChange")
         updateCachedViews()
     }
 
     func onProjectGitRepositoryStateChange() {
+        refreshCurrentBranch(reason: "ContentView.onProjectGitRepositoryStateChange")
         updateCachedViews()
+    }
+
+    func refreshCurrentBranch(reason: String) {
+        g.refreshCurrentBranch(
+            project: vm.project,
+            isGitRepository: vm.currentProjectIsGitRepository,
+            reason: reason
+        )
     }
 
     /// 处理标签页变更事件
