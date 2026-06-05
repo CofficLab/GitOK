@@ -1652,6 +1652,7 @@ public struct GitRepositoryCLI {
         }
 
         if newPaths.isEmpty == false {
+            try removeIndexEntries(newPaths)
             for path in newPaths {
                 try removeWorkingTreeItem(path)
             }
@@ -1868,7 +1869,14 @@ public struct GitRepositoryCLI {
     }
 
     private func isTrackedInHead(_ filePath: String) throws -> Bool {
-        (try? LibGit2.getFileContent(atCommit: "HEAD", file: filePath, at: repositoryURL.path)) != nil
+        let output = try Self.runGit(
+            ["ls-tree", "-r", "--name-only", "HEAD", "--", filePath],
+            in: repositoryURL,
+            defaultErrorMessage: "无法读取 HEAD 文件状态"
+        )
+        return output
+            .split(separator: "\n")
+            .contains { $0 == filePath }
     }
 
     private func removeWorkingTreeItem(_ filePath: String) throws {
@@ -1885,6 +1893,20 @@ public struct GitRepositoryCLI {
 
         guard FileManager.default.fileExists(atPath: targetURL.path) else { return }
         try FileManager.default.removeItem(at: targetURL)
+    }
+
+    private func removeIndexEntries(_ filePaths: [String]) throws {
+        guard filePaths.isEmpty == false else { return }
+
+        let chunkSize = 200
+        for startIndex in stride(from: 0, to: filePaths.count, by: chunkSize) {
+            let endIndex = min(startIndex + chunkSize, filePaths.count)
+            try Self.runGit(
+                ["rm", "--cached", "--ignore-unmatch", "--"] + Array(filePaths[startIndex..<endIndex]),
+                in: repositoryURL,
+                defaultErrorMessage: "无法从暂存区移除新增文件"
+            )
+        }
     }
 
     private func branchCompareCommits(base: String, head: String) throws -> [GitBranchCompareCommit] {

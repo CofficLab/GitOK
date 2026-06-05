@@ -1315,6 +1315,22 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try client.statusEntries(), [])
     }
 
+    func testDiscardAllChangesRemovesAddedThenDeletedIndexEntries() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        try repo.write("new.txt", content: "new\n")
+        try repo.run(["add", "new.txt"])
+        try FileManager.default.removeItem(at: repo.url.appendingPathComponent("new.txt"))
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "new.txt", indexStatus: "A", workTreeStatus: "D")])
+
+        try client.discardAllChanges()
+
+        XCTAssertNil(try repo.read("new.txt"))
+        XCTAssertEqual(try client.statusEntries(), [])
+    }
+
     // MARK: - CLI Git Availability Tests
 
     func testIsGitCLIAvailableReturnsTrue() {
