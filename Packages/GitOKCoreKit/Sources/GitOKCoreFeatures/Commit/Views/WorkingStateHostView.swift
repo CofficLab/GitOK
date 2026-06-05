@@ -42,7 +42,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     private let updateCleanState: @MainActor (Bool) -> Void
     private let projectPath: @MainActor (Project) -> String
     private let loadChangedFileCount: (Project) async throws -> Int
-    private let loadUnpushedCommits: (Project) async throws -> [Commit]
+    private let loadUnpushedCount: (Project) async throws -> Int
     private let loadUnpulledCount: (Project) async throws -> Int
     private let loadRemoteTrackingStatus: (Project) async throws -> GitOKRemoteTrackingStatus
     private let updateRemoteTrackingStatus: @MainActor (GitOKRemoteTrackingStatus?, Date?) -> Void
@@ -107,7 +107,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         updateCleanState: @MainActor @escaping (Bool) -> Void,
         projectPath: @MainActor @escaping (Project) -> String,
         loadChangedFileCount: @escaping (Project) async throws -> Int,
-        loadUnpushedCommits: @escaping (Project) async throws -> [Commit],
+        loadUnpushedCount: @escaping (Project) async throws -> Int,
         loadUnpulledCount: @escaping (Project) async throws -> Int,
         loadRemoteTrackingStatus: @escaping (Project) async throws -> GitOKRemoteTrackingStatus,
         updateRemoteTrackingStatus: @MainActor @escaping (GitOKRemoteTrackingStatus?, Date?) -> Void = { _, _ in },
@@ -145,7 +145,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         self.updateCleanState = updateCleanState
         self.projectPath = projectPath
         self.loadChangedFileCount = loadChangedFileCount
-        self.loadUnpushedCommits = loadUnpushedCommits
+        self.loadUnpushedCount = loadUnpushedCount
         self.loadUnpulledCount = loadUnpulledCount
         self.loadRemoteTrackingStatus = loadRemoteTrackingStatus
         self.updateRemoteTrackingStatus = updateRemoteTrackingStatus
@@ -385,7 +385,7 @@ private extension WorkingStateHostView {
     func loadSyncStatus(_ command: CommitRemoteSyncRules.ProjectSyncStatusRequest<Project>) {
         eventHandler(.log(.syncStatusLoad(projectPath: command.request.projectPath)))
         let projectTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: command.project)
-        let loadUnpushedCommitsTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: loadUnpushedCommits)
+        let loadUnpushedCountTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: loadUnpushedCount)
         let loadUnpulledCountTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: loadUnpulledCount)
         let loadRemoteTrackingStatusTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: loadRemoteTrackingStatus)
         let eventHandlerTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: eventHandler)
@@ -400,7 +400,7 @@ private extension WorkingStateHostView {
 
             let unpushedCount: Int
             do {
-                unpushedCount = try await loadUnpushedCommitsTransfer.value(projectTransfer.value).count
+                unpushedCount = try await loadUnpushedCountTransfer.value(projectTransfer.value)
             } catch {
                 unpushedCount = 0
                 await MainActor.run {

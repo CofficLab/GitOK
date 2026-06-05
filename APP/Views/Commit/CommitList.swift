@@ -26,11 +26,11 @@ struct CommitList: View, SuperLog {
                 try await project.getCommitGraphWithPaginationAsync(page, limit: limit)
             },
             loadUnpushedItems: { project in
-                try await project.getUnPushedCommits()
+                try await project.getUnPushedCommitHashesAsync()
             },
             itemID: \.hash,
             itemParentIDs: \.parentHashes,
-            unpushedID: \.hash,
+            unpushedID: { $0 },
             updateUnpushed: { count, hashes in
                 vm.updateUnpushedCommits(count, hashes: hashes, projectPath: projectPath)
             },

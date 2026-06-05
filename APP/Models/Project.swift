@@ -810,12 +810,17 @@ extension Project {
 // MARK: - Commit
 
 extension Project {
-    /// 获取未推送的提交（本地领先远程的提交）
-    /// 使用 Git 运行时原生实现
-    func getUnPushedCommits() async throws -> [GitCommit] {
+    func getUnPushedCommitHashesAsync() async throws -> [String] {
         let repositoryURL = url
         return try await Task.detached(priority: .userInitiated) {
-            try GitRepositoryCLI(repositoryURL: repositoryURL).unpushedCommits()
+            try GitRepositoryCLI(repositoryURL: repositoryURL).unpushedCommitHashes()
+        }.value
+    }
+
+    func getUnPushedCommitCountAsync() async throws -> Int {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).unpushedCommitCount()
         }.value
     }
 

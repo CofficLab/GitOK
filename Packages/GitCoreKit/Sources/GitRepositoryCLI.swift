@@ -1525,8 +1525,68 @@ public struct GitRepositoryCLI {
         return GitAheadBehind(ahead: state.ahead, behind: state.behind, hasUpstream: state.hasUpstream)
     }
 
+    public func unpushedCommitCount() throws -> Int {
+        try aheadBehind().ahead
+    }
+
     public func unpushedCommitHashes() throws -> [String] {
-        try LibGit2.getUnPushedCommits(at: repositoryURL.path, verbose: false).map(\.hash)
+        let state = try aheadBehind()
+        guard state.ahead > 0 else { return [] }
+
+        let repo = try LibGit2.openRepository(at: repositoryURL.path)
+        defer { git_repository_free(repo) }
+
+        var headOID = git_oid()
+        guard git_reference_name_to_id(&headOID, repo, "HEAD") == 0 else {
+            return []
+        }
+
+        var headRef: OpaquePointer?
+        guard git_reference_lookup(&headRef, repo, "HEAD") == 0, let ref = headRef else {
+            return []
+        }
+        defer { git_reference_free(headRef) }
+
+        var targetRef: OpaquePointer?
+        guard git_reference_resolve(&targetRef, ref) == 0, let branchRef = targetRef else {
+            return []
+        }
+        defer { git_reference_free(targetRef) }
+
+        var upstreamRef: OpaquePointer?
+        guard git_branch_upstream(&upstreamRef, branchRef) == 0, let upstream = upstreamRef else {
+            return []
+        }
+        defer { git_reference_free(upstreamRef) }
+
+        guard let upstreamName = git_reference_shorthand(upstream) else {
+            return []
+        }
+        let remoteTrackingBranchName = "refs/remotes/\(String(cString: upstreamName))"
+
+        var upstreamOID = git_oid()
+        guard git_reference_name_to_id(&upstreamOID, repo, remoteTrackingBranchName) == 0 else {
+            return []
+        }
+
+        var revwalk: OpaquePointer?
+        guard git_revwalk_new(&revwalk, repo) == 0, let walker = revwalk else {
+            throw LibGit2Error.cannotCreateRevwalk
+        }
+        defer { git_revwalk_free(walker) }
+
+        git_revwalk_sorting(walker, GIT_SORT_TOPOLOGICAL.rawValue)
+        git_revwalk_push(walker, &headOID)
+        git_revwalk_hide(walker, &upstreamOID)
+
+        var hashes: [String] = []
+        hashes.reserveCapacity(state.ahead)
+        var oid = git_oid()
+        while git_revwalk_next(&oid, walker) == 0 && hashes.count < state.ahead {
+            hashes.append(LibGit2.oidToString(oid))
+        }
+
+        return hashes
     }
 
     public func addFiles(_ filePaths: [String]) throws {

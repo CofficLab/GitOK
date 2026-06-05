@@ -45,8 +45,8 @@ struct WorkingStateView: View, SuperLog {
             loadChangedFileCount: { project in
                 try await project.untrackedFiles().count
             },
-            loadUnpushedCommits: { project in
-                try await project.getUnPushedCommits()
+            loadUnpushedCount: { project in
+                try await project.getUnPushedCommitCountAsync()
             },
             loadUnpulledCount: { project in
                 try await project.getUnPulledCountAsync()

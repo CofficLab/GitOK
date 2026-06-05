@@ -806,6 +806,8 @@ final class GitRepositoryCLITests: XCTestCase {
         try local.run(["add", "."])
         try local.run(["commit", "-m", "local change"])
         XCTAssertEqual(try client.aheadBehind(), GitAheadBehind(ahead: 1, behind: 0, hasUpstream: true))
+        XCTAssertEqual(try client.unpushedCommitCount(), 1)
+        XCTAssertEqual(try client.unpushedCommitHashes(), [try local.run(["rev-parse", "HEAD"])])
 
         try remote.write("remote.txt", content: "remote\n")
         try remote.run(["add", "."])
@@ -813,6 +815,7 @@ final class GitRepositoryCLITests: XCTestCase {
         try client.fetch()
 
         XCTAssertEqual(try client.aheadBehind(), GitAheadBehind(ahead: 1, behind: 1, hasUpstream: true))
+        XCTAssertEqual(try client.unpushedCommitCount(), 1)
     }
 
     func testMergeConflictLifecycle() throws {
