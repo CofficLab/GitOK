@@ -347,6 +347,8 @@ public struct GitRepositoryCLI {
     /// 系统 git CLI 的缓存路径（首次检测后缓存）
     private nonisolated(unsafe) static var cachedGitPath: String?
     private nonisolated(unsafe) static var hasCheckedGit = false
+    private static let maxGitCommandOutputBytes = 32 * 1024 * 1024
+    private static let maxGitCommandErrorBytes = 1 * 1024 * 1024
 
     public init(repositoryURL: URL) {
         GitRuntime.initialize()
@@ -918,12 +920,22 @@ public struct GitRepositoryCLI {
         throw Self.unsupportedNativeGitOperation("LibGit2Swift 尚未实现 Git LFS 初始化")
     }
 
-    public func lfsLargeFileCandidates(thresholdBytes: Int64 = 50 * 1024 * 1024) throws -> [GitLFSLargeFileCandidate] {
+    public func lfsLargeFileCandidates(
+        thresholdBytes: Int64 = 50 * 1024 * 1024,
+        maxCount: Int = 200
+    ) throws -> [GitLFSLargeFileCandidate] {
         guard thresholdBytes > 0 else {
             throw NSError(
                 domain: "GitOK.GitCommand",
                 code: -1,
                 userInfo: [NSLocalizedDescriptionKey: "大文件阈值必须大于 0"]
+            )
+        }
+        guard maxCount > 0 else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "大文件候选数量必须大于 0"]
             )
         }
 
@@ -943,6 +955,7 @@ public struct GitRepositoryCLI {
         }
 
         var candidates: [GitLFSLargeFileCandidate] = []
+        let pruneThreshold = max(maxCount * 2, 1000)
 
         for case let fileURL as URL in enumerator {
             if fileURL.lastPathComponent == ".git" {
@@ -962,14 +975,26 @@ public struct GitRepositoryCLI {
                     byteSize: byteSize
                 )
             )
+
+            if candidates.count > pruneThreshold {
+                candidates = Self.sortedLFSLargeFileCandidates(candidates, limit: maxCount)
+            }
         }
 
-        return candidates.sorted {
+        return Self.sortedLFSLargeFileCandidates(candidates, limit: maxCount)
+    }
+
+    private static func sortedLFSLargeFileCandidates(
+        _ candidates: [GitLFSLargeFileCandidate],
+        limit: Int
+    ) -> [GitLFSLargeFileCandidate] {
+        let sorted = candidates.sorted {
             if $0.byteSize == $1.byteSize {
                 return $0.path < $1.path
             }
             return $0.byteSize > $1.byteSize
         }
+        return Array(sorted.prefix(limit))
     }
 
     public func lfsAttributeMismatches() throws -> [GitLFSAttributeMismatch] {
@@ -1914,16 +1939,45 @@ public struct GitRepositoryCLI {
         let errorPipe = Pipe()
         process.standardOutput = outputPipe
         process.standardError = errorPipe
+        let outputCollector = ProcessOutputCollector(maxBytes: maxGitCommandOutputBytes)
+        let errorCollector = ProcessOutputCollector(maxBytes: maxGitCommandErrorBytes)
+        outputPipe.fileHandleForReading.readabilityHandler = { handle in
+            outputCollector.append(handle.availableData)
+        }
+        errorPipe.fileHandleForReading.readabilityHandler = { handle in
+            errorCollector.append(handle.availableData)
+        }
+
+        defer {
+            outputPipe.fileHandleForReading.readabilityHandler = nil
+            errorPipe.fileHandleForReading.readabilityHandler = nil
+        }
 
         try process.run()
         process.waitUntilExit()
 
-        let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
-        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+        outputCollector.append(outputPipe.fileHandleForReading.readDataToEndOfFile())
+        errorCollector.append(errorPipe.fileHandleForReading.readDataToEndOfFile())
+
+        let outputData = outputCollector.dataValue
+        let errorData = errorCollector.dataValue
         let errorOutput = String(data: errorData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
 
+        if outputCollector.isTruncated {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -2,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Git command output exceeded \(maxGitCommandOutputBytes / 1024 / 1024) MB: \(arguments.joined(separator: " "))"
+                ]
+            )
+        }
+
         if process.terminationStatus != 0 {
-            let message = errorOutput.isEmpty ? defaultErrorMessage : errorOutput
+            var message = errorOutput.isEmpty ? defaultErrorMessage : errorOutput
+            if errorCollector.isTruncated {
+                message += "\n\nGit command error output was truncated."
+            }
             throw NSError(
                 domain: "GitOK.GitCommand",
                 code: Int(process.terminationStatus),
@@ -1977,8 +2031,11 @@ private final class ProcessOutputCollector: @unchecked Sendable {
     private var data = Data()
     private var pendingText = ""
     private let progress: (@Sendable (String) -> Void)?
+    private let maxBytes: Int?
+    private var truncated = false
 
-    init(progress: (@Sendable (String) -> Void)?) {
+    init(maxBytes: Int? = nil, progress: (@Sendable (String) -> Void)? = nil) {
+        self.maxBytes = maxBytes
         self.progress = progress
     }
 
@@ -1988,6 +2045,18 @@ private final class ProcessOutputCollector: @unchecked Sendable {
         return String(data: data, encoding: .utf8) ?? ""
     }
 
+    var dataValue: Data {
+        lock.lock()
+        defer { lock.unlock() }
+        return data
+    }
+
+    var isTruncated: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return truncated
+    }
+
     func append(_ chunk: Data) {
         guard chunk.isEmpty == false else { return }
 
@@ -1995,7 +2064,21 @@ private final class ProcessOutputCollector: @unchecked Sendable {
         let progressLines: [String]
 
         lock.lock()
-        data.append(chunk)
+        if let maxBytes {
+            let remainingBytes = maxBytes - data.count
+            if remainingBytes > 0 {
+                data.append(chunk.prefix(remainingBytes))
+            }
+            if chunk.count > remainingBytes {
+                truncated = true
+            }
+        } else {
+            data.append(chunk)
+        }
+        guard progress != nil else {
+            lock.unlock()
+            return
+        }
         pendingText += text
 
         let separators = CharacterSet(charactersIn: "\n\r")

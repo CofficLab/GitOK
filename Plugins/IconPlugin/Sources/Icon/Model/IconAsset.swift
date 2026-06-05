@@ -129,8 +129,7 @@ final class IconAsset: Identifiable, @unchecked Sendable {
         }
 
         let nsImage: NSImage? = await Task.detached(priority: .userInitiated) {
-            guard let data = try? Data(contentsOf: fileURL) else { return nil }
-            return NSImage(data: data)
+            IconImageLoadingRules.localImage(at: fileURL)
         }.value
         if let nsImage {
             return Image(nsImage: nsImage)
@@ -163,7 +162,7 @@ final class IconAsset: Identifiable, @unchecked Sendable {
 
             // 将图片解码放到后台，避免远程图标预览阻塞主线程。
             guard let nsImage = await Task.detached(priority: .userInitiated, operation: {
-                NSImage(data: data)
+                IconImageLoadingRules.decodedImage(from: data)
             }).value else {
                 throw RemoteIconError.decodingError
             }

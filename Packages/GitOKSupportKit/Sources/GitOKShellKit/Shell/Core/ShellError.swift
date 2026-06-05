@@ -5,6 +5,7 @@ enum ShellError: Error, LocalizedError {
     case commandFailed(String, String)
     case stringConversionFailed(Data)
     case processStartFailed(String)
+    case outputTooLarge(String, Int)
 
     var errorDescription: String? {
         switch self {
@@ -14,9 +15,10 @@ enum ShellError: Error, LocalizedError {
             return "Failed to convert command output data to UTF-8 string. Data size: \(data.count) bytes"
         case let .processStartFailed(message):
             return "Failed to start process: \(message)"
+        case let .outputTooLarge(command, maxBytes):
+            return "Command output exceeded \(maxBytes / 1024 / 1024) MB. Command: \n\(command)"
         }
     }
 }
 
 // MARK: - Preview
-

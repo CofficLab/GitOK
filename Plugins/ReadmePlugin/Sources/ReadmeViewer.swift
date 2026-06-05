@@ -26,6 +26,10 @@ struct ReadmeViewer: View {
         .onAppear(perform: loadReadme)
         .onDisappear {
             loadTask?.cancel()
+            loadTask = nil
+            readmeContent = ""
+            renderedReadme = AttributedString()
+            isLoading = false
         }
     }
 

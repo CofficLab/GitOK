@@ -28,6 +28,17 @@ final class ProjectDocumentResolverTests: XCTestCase {
         XCTAssertEqual(content, "async\n")
     }
 
+    func testReadReadmeContentRejectsOversizedFile() throws {
+        let repo = try TestWorkspace()
+        let readmeURL = repo.url.appendingPathComponent("README.md")
+        try Data(repeating: 0, count: ProjectDocumentResolver.maxReadmeContentBytes + 1).write(to: readmeURL)
+
+        XCTAssertTrue(ProjectDocumentResolver.hasReadme(in: repo.url))
+        XCTAssertThrowsError(try ProjectDocumentResolver.readReadmeContent(in: repo.url)) { error in
+            XCTAssertEqual((error as NSError).localizedDescription, "README.md file is too large to preview")
+        }
+    }
+
     func testReadGitignoreContentReadsRootFile() throws {
         let repo = try TestWorkspace()
         try repo.write(".gitignore", content: "DerivedData/\n")

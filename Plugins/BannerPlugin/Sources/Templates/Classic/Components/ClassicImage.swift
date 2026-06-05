@@ -15,6 +15,7 @@ private struct DecodedClassicBannerImage: @unchecked Sendable {
 struct ClassicImage: View {
     @EnvironmentObject var b: BannerProvider
     @State private var loadedImage: Image?
+    @State private var loadImageTask: Task<Void, Never>?
 
     var banner: BannerFile { b.banner }
     var classicData: ClassicBannerData? { banner.classicData }
@@ -66,9 +67,15 @@ struct ClassicImage: View {
         .onChange(of: banner.projectURL) {
             loadImage()
         }
+        .onDisappear {
+            loadImageTask?.cancel()
+            loadImageTask = nil
+            loadedImage = nil
+        }
     }
 
     private func loadImage() {
+        loadImageTask?.cancel()
         guard let imageId = classicData?.imageId else {
             loadedImage = nil
             return
@@ -78,10 +85,11 @@ struct ClassicImage: View {
         let cleanPath = imageId.replacingOccurrences(of: "\\/", with: "/")
         let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
 
-        Task.detached(priority: .userInitiated) {
+        loadImageTask = Task.detached(priority: .userInitiated) {
             let decodedImage = DecodedClassicBannerImage(
-                image: (try? Data(contentsOf: imageURL)).flatMap(NSImage.init(data:))
+                image: BannerImageLoadingRules.previewImage(at: imageURL)
             )
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
                 guard classicData?.imageId == imageId, banner.projectURL == projectURL else { return }
                 if let nsImage = decodedImage.image {
@@ -89,6 +97,7 @@ struct ClassicImage: View {
                 } else {
                     loadedImage = nil
                 }
+                loadImageTask = nil
             }
         }
     }

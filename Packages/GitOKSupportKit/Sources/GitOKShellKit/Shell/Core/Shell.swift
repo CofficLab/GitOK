@@ -38,6 +38,8 @@ import SwiftUI
     /// 提供基础的Shell命令执行功能
     public class Shell: SuperLog {
         public static let emoji = "🐚"
+        private static let maxCommandOutputBytes = 16 * 1024 * 1024
+        private static let maxCommandErrorBytes = 1024 * 1024
 
         /// 异步执行Shell命令
         /// - Parameters:
@@ -63,19 +65,33 @@ import SwiftUI
                     process.standardOutput = outputPipe
                     process.standardError = errorPipe
 
+                    let outputCollector = ShellOutputCollector(maxBytes: maxCommandOutputBytes)
+                    let errorCollector = ShellOutputCollector(maxBytes: maxCommandErrorBytes)
+                    outputPipe.fileHandleForReading.readabilityHandler = { handle in
+                        outputCollector.append(handle.availableData)
+                    }
+                    errorPipe.fileHandleForReading.readabilityHandler = { handle in
+                        errorCollector.append(handle.availableData)
+                    }
+
+                    defer {
+                        outputPipe.fileHandleForReading.readabilityHandler = nil
+                        errorPipe.fileHandleForReading.readabilityHandler = nil
+                    }
+
                     do {
                         try process.run()
-
-                        // 使用同步方式读取数据，避免异步handler的竞态条件
-                        let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
-                        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-
-                        // 等待进程完成
                         process.waitUntilExit()
 
+                        outputCollector.append(outputPipe.fileHandleForReading.readDataToEndOfFile())
+                        errorCollector.append(errorPipe.fileHandleForReading.readDataToEndOfFile())
+
                         // 转换数据到字符串
-                        let output = String(data: outputData, encoding: .utf8) ?? ""
-                        let errorOutput = String(data: errorData, encoding: .utf8) ?? ""
+                        let output = String(data: outputCollector.dataValue, encoding: .utf8) ?? ""
+                        var errorOutput = String(data: errorCollector.dataValue, encoding: .utf8) ?? ""
+                        if errorCollector.isTruncated {
+                            errorOutput += "\n\nShell command error output was truncated."
+                        }
 
                         // 合并标准输出和错误输出
                         let combinedOutput = errorOutput.isEmpty ? output : "\(output)\n\(errorOutput)"
@@ -87,6 +103,8 @@ import SwiftUI
                         if process.terminationStatus != 0 {
                             os_log(.error, "\(self.t) ❌ Command failed \n ➡️ Path: \(path ?? "Current Directory") (\(FileManager.default.currentDirectoryPath)) \n ➡️ Command: \(command) \n ➡️ Output: \(combinedOutput) \n ➡️ Exit code: \(process.terminationStatus)")
                             continuation.resume(throwing: ShellError.commandFailed(combinedOutput, command))
+                        } else if outputCollector.isTruncated {
+                            continuation.resume(throwing: ShellError.outputTooLarge(command, maxCommandOutputBytes))
                         } else {
                             let trimmedOutput = output.trimmingCharacters(in: .whitespacesAndNewlines)
                             continuation.resume(returning: trimmedOutput)
@@ -170,7 +188,7 @@ import SwiftUI
             process.standardError = pipe
 
             let outputHandle = pipe.fileHandleForReading
-            var outputData = Data()
+            let outputCollector = ShellOutputCollector(maxBytes: maxCommandOutputBytes + maxCommandErrorBytes)
 
             // 使用信号量来确保数据读取完成
             let semaphore = DispatchSemaphore(value: 0)
@@ -183,7 +201,7 @@ import SwiftUI
                     isReadingComplete = true
                     semaphore.signal()
                 } else {
-                    outputData.append(data)
+                    outputCollector.append(data)
                 }
             }
 
@@ -204,12 +222,16 @@ import SwiftUI
             if result == .timedOut || !isReadingComplete {
                 let remainingData = outputHandle.readDataToEndOfFile()
                 if !remainingData.isEmpty {
-                    outputData.append(remainingData)
+                    outputCollector.append(remainingData)
                 }
             }
 
-            guard let output = String(data: outputData, encoding: .utf8) else {
-                return ("字符串转换失败: 无法将输出数据转换为UTF-8字符串，数据大小: \(outputData.count) 字节", -2)
+            guard var output = String(data: outputCollector.dataValue, encoding: .utf8) else {
+                return ("字符串转换失败: 无法将输出数据转换为UTF-8字符串，数据大小: \(outputCollector.dataValue.count) 字节", -2)
+            }
+
+            if outputCollector.isTruncated {
+                output += "\n\nShell command output was truncated."
             }
 
             if verbose {
@@ -256,7 +278,49 @@ import SwiftUI
         }
     }
 
+    private final class ShellOutputCollector: @unchecked Sendable {
+        private let maxBytes: Int
+        private var data = Data()
+        private let lock = NSLock()
+        private var truncated = false
+
+        init(maxBytes: Int) {
+            self.maxBytes = maxBytes
+        }
+
+        var dataValue: Data {
+            lock.lock()
+            defer { lock.unlock() }
+            return data
+        }
+
+        var isTruncated: Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            return truncated
+        }
+
+        func append(_ chunk: Data) {
+            guard chunk.isEmpty == false else { return }
+
+            lock.lock()
+            defer { lock.unlock() }
+
+            guard data.count < maxBytes else {
+                truncated = true
+                return
+            }
+
+            let remaining = maxBytes - data.count
+            if chunk.count <= remaining {
+                data.append(chunk)
+            } else {
+                data.append(chunk.prefix(remaining))
+                truncated = true
+            }
+        }
+    }
+
 #endif
 
 // MARK: - Preview
-

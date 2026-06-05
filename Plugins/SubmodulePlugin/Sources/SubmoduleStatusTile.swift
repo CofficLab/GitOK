@@ -13,6 +13,10 @@ public struct SubmoduleStatusTile: View {
     @State private var isDiffLoading = false
     @State private var message: String?
     @State private var errorMessage: String?
+    @State private var refreshTask: Task<Void, Never>?
+    @State private var diffTask: Task<Void, Never>?
+    @State private var initializeTask: Task<Void, Never>?
+    @State private var updateTask: Task<Void, Never>?
 
     public init(projectURL: URL) {
         self.projectURL = projectURL
@@ -39,6 +43,7 @@ public struct SubmoduleStatusTile: View {
         .onReceive(NotificationCenter.default.publisher(for: .pluginSubmoduleProjectGitIndexDidChange)) { _ in
             refresh()
         }
+        .onDisappear(perform: onDisappear)
     }
 
     private var issueCount: Int {
@@ -231,36 +236,46 @@ public struct SubmoduleStatusTile: View {
     }
 
     private func refresh() {
+        refreshTask?.cancel()
         isLoading = true
-        Task.detached(priority: .utility) {
+        refreshTask = Task.detached(priority: .utility) {
             do {
                 let nextSubmodules = try GitRepositoryCLI(repositoryURL: projectURL).submodules()
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     submodules = nextSubmodules
                     isLoading = false
                     errorMessage = nil
+                    refreshTask = nil
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     submodules = []
                     isLoading = false
                     errorMessage = nil
+                    refreshTask = nil
                 }
             }
         }
     }
 
     private func initializeSubmodules(paths: [String] = []) {
-        Task.detached(priority: .userInitiated) {
+        initializeTask?.cancel()
+        initializeTask = Task.detached(priority: .userInitiated) {
             do {
                 try GitRepositoryCLI(repositoryURL: projectURL).initializeSubmodules(paths: paths)
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    initializeTask = nil
                     message = paths.isEmpty ? SubmodulePluginLocalization.string("Submodule initialized") : SubmodulePluginLocalization.string("Initialized %@", paths[0])
                     errorMessage = nil
                     refresh()
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    initializeTask = nil
                     errorMessage = error.localizedDescription
                 }
             }
@@ -268,16 +283,21 @@ public struct SubmoduleStatusTile: View {
     }
 
     private func updateSubmodules(paths: [String] = []) {
-        Task.detached(priority: .userInitiated) {
+        updateTask?.cancel()
+        updateTask = Task.detached(priority: .userInitiated) {
             do {
                 try GitRepositoryCLI(repositoryURL: projectURL).updateSubmodules(paths: paths)
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    updateTask = nil
                     message = paths.isEmpty ? SubmodulePluginLocalization.string("Submodules updated") : SubmodulePluginLocalization.string("Updated %@", paths[0])
                     errorMessage = nil
                     refresh()
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    updateTask = nil
                     errorMessage = error.localizedDescription
                 }
             }
@@ -285,24 +305,45 @@ public struct SubmoduleStatusTile: View {
     }
 
     private func loadDiff(for path: String) {
+        diffTask?.cancel()
         diffPath = path
         diffText = nil
         isDiffLoading = true
 
-        Task.detached(priority: .utility) {
+        diffTask = Task.detached(priority: .utility) {
             do {
                 let output = try GitRepositoryCLI(repositoryURL: projectURL).submoduleDiff(path: path)
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     diffText = output
                     isDiffLoading = false
+                    diffTask = nil
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     diffText = error.localizedDescription
                     isDiffLoading = false
+                    diffTask = nil
                 }
             }
         }
+    }
+
+    private func onDisappear() {
+        refreshTask?.cancel()
+        diffTask?.cancel()
+        initializeTask?.cancel()
+        updateTask?.cancel()
+        refreshTask = nil
+        diffTask = nil
+        initializeTask = nil
+        updateTask = nil
+        isLoading = false
+        isDiffLoading = false
+        submodules.removeAll()
+        diffPath = nil
+        diffText = nil
     }
 
     private func statusColor(for status: GitRepositoryCLI.GitSubmodule.Status) -> Color {

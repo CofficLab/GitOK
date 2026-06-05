@@ -36,6 +36,9 @@ public struct AppImagePreviewGrid: View {
                 AppImagePreviewSheet(image: previewingImage)
             }
         }
+        .onDisappear {
+            previewingImage = nil
+        }
     }
 }
 
@@ -44,6 +47,7 @@ private struct AppImagePreviewGridItem: View {
     let preview: (NSImage) -> Void
 
     @State private var image: NSImage?
+    private let maxPreviewImageBytes = 20 * 1024 * 1024
 
     var body: some View {
         Group {
@@ -67,9 +71,17 @@ private struct AppImagePreviewGridItem: View {
             }
         }
         .task(id: data) {
+            guard data.count <= maxPreviewImageBytes else {
+                image = nil
+                return
+            }
+
             image = await Task.detached(priority: .utility) {
                 NSImage(data: data)
             }.value
+        }
+        .onDisappear {
+            image = nil
         }
     }
 }

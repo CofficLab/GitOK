@@ -33,6 +33,8 @@ public struct CommitListHostView<Project, Item, UnpushedItem, WorkingStateConten
     @State private var pageSize = CommitListPaginationRules.defaultPageSize
     @State private var isLoadingMoreScheduled = false
     @State private var currentRefreshTask: Task<Void, Never>?
+    @State private var currentLoadMoreTask: Task<Void, Never>?
+    @State private var currentRestoreLoadMoreTask: Task<Void, Never>?
 
     @AppStorage(CommitListPaginationRules.showCommitGraphStorageKey)
     private var showCommitGraph = false
@@ -115,6 +117,7 @@ public struct CommitListHostView<Project, Item, UnpushedItem, WorkingStateConten
             }
         }
         .onAppear(perform: onAppear)
+        .onDisappear(perform: onDisappear)
         .onChange(of: refreshToken) {
             refresh(refreshReason)
         }
@@ -393,6 +396,32 @@ private extension CommitListHostView {
         )
     }
 
+    func onDisappear() {
+        cancelBackgroundTasks()
+        clearLoadedState()
+    }
+
+    func cancelBackgroundTasks() {
+        currentRefreshTask?.cancel()
+        currentLoadMoreTask?.cancel()
+        currentRestoreLoadMoreTask?.cancel()
+        currentRefreshTask = nil
+        currentLoadMoreTask = nil
+        currentRestoreLoadMoreTask = nil
+    }
+
+    func clearLoadedState() {
+        items.removeAll()
+        graphRowsByItemID.removeAll()
+        graphLaneCount = 1
+        loading = false
+        hasMoreItems = true
+        currentPage = CommitListPaginationRules.initialPage
+        isLoadingMoreScheduled = false
+        updateUnpushed(0, [])
+        setItem(nil)
+    }
+
     func setItem(_ item: Item?) {
         CommitListPaginationRules.performCommitSelection(item, select: selectItem)
     }
@@ -421,8 +450,10 @@ private extension CommitListHostView {
         let limit = pageSize
         let existingItems = items
 
-        Task.detached(priority: .userInitiated) {
+        currentLoadMoreTask?.cancel()
+        currentLoadMoreTask = Task.detached(priority: .userInitiated) {
             do {
+                try Task.checkCancellation()
                 let loadedItems = try await CommitListBackgroundBuilder.loadItems(
                     project: projectTransfer.value,
                     page: page,
@@ -436,12 +467,19 @@ private extension CommitListHostView {
                     id: itemIDTransfer.value,
                     parentIDs: itemParentIDsTransfer.value
                 )
+                try Task.checkCancellation()
 
                 await MainActor.run {
                     applyAppendApplicationResult(applicationResult)
+                    currentLoadMoreTask = nil
+                }
+            } catch is CancellationError {
+                await MainActor.run {
+                    currentLoadMoreTask = nil
                 }
             } catch {
                 await MainActor.run {
+                    currentLoadMoreTask = nil
                     logEvent(.loadMoreFailure(error))
                     applyPageState(CommitListPaginationRules.PageState(
                         isLoading: false,
@@ -472,7 +510,7 @@ private extension CommitListHostView {
 
         CommitListPaginationRules.performRefreshStart(
             cancelPreviousRefreshes: {
-                currentRefreshTask?.cancel()
+                cancelBackgroundTasks()
             },
             applyPageState: applyPageState
         )
@@ -568,8 +606,10 @@ private extension CommitListHostView {
         let existingItems = items
         let hasMoreItemsForRestore = hasMoreItems
 
-        Task.detached(priority: .userInitiated) {
+        currentRestoreLoadMoreTask?.cancel()
+        currentRestoreLoadMoreTask = Task.detached(priority: .userInitiated) {
             do {
+                try Task.checkCancellation()
                 let loadedItems = try await CommitListBackgroundBuilder.loadItems(
                     project: projectTransfer.value,
                     page: page,
@@ -586,11 +626,18 @@ private extension CommitListHostView {
                     id: itemIDTransfer.value,
                     parentIDs: itemParentIDsTransfer.value
                 )
+                try Task.checkCancellation()
                 await MainActor.run {
                     applyRestoreAppendApplicationResult(applicationResult, targetID: targetID)
+                    currentRestoreLoadMoreTask = nil
+                }
+            } catch is CancellationError {
+                await MainActor.run {
+                    currentRestoreLoadMoreTask = nil
                 }
             } catch {
                 await MainActor.run {
+                    currentRestoreLoadMoreTask = nil
                     applyPageState(CommitListPaginationRules.PageState(
                         isLoading: false,
                         currentPage: page,

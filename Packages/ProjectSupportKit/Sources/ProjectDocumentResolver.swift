@@ -3,10 +3,22 @@ import Foundation
 public enum ProjectDocumentResolver {
     public static let readmeCandidates = ["README.md", "readme.md", "Readme.md", "README.MD"]
     public static let licenseCandidates = ["LICENSE", "LICENSE.txt", "License", "license"]
+    public static let maxReadmeContentBytes = 2 * 1024 * 1024
 
     public static func readReadmeContent(in repositoryURL: URL) throws -> String {
         let fileURL = try firstExistingFileURL(in: repositoryURL, candidates: readmeCandidates)
+        try validateFileSize(fileURL, maxBytes: maxReadmeContentBytes, message: "README.md file is too large to preview")
         return try String(contentsOf: fileURL, encoding: .utf8)
+    }
+
+    public static func hasReadme(in repositoryURL: URL) -> Bool {
+        (try? firstExistingFileURL(in: repositoryURL, candidates: readmeCandidates)) != nil
+    }
+
+    public static func hasReadmeAsync(in repositoryURL: URL) async -> Bool {
+        await Task.detached(priority: .utility) {
+            hasReadme(in: repositoryURL)
+        }.value
     }
 
     public static func readReadmeContentAsync(in repositoryURL: URL) async throws -> String {
@@ -40,6 +52,14 @@ public enum ProjectDocumentResolver {
             throw notFoundError(message: "README.md file not found")
         }
         throw notFoundError(message: "LICENSE file not found")
+    }
+
+    private static func validateFileSize(_ fileURL: URL, maxBytes: Int, message: String) throws {
+        let values = try fileURL.resourceValues(forKeys: [.fileSizeKey, .totalFileAllocatedSizeKey])
+        let fileSize = values.fileSize ?? values.totalFileAllocatedSize ?? 0
+        if fileSize > maxBytes {
+            throw notFoundError(message: message)
+        }
     }
 
     private static func notFoundError(message: String) -> NSError {

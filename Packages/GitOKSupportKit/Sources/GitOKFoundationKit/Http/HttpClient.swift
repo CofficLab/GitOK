@@ -331,6 +331,8 @@ public class HttpClient {
 
 // MARK: - 简单文件缓存实现
 private final class FileCacheStore {
+    private static let maxCachedResponseBytes = 32 * 1024 * 1024
+
     private let directory: URL
     private let fm = FileManager.default
     
@@ -362,10 +364,19 @@ private final class FileCacheStore {
             try? fm.removeItem(at: path)
             return nil
         }
+
+        if let fileSize = attrs[.size] as? NSNumber,
+           fileSize.intValue > Self.maxCachedResponseBytes {
+            try? fm.removeItem(at: path)
+            return nil
+        }
+
         return try Data(contentsOf: path)
     }
     
     func write(url: URL, headers: [String:String], data: Data) throws {
+        guard data.count <= Self.maxCachedResponseBytes else { return }
+
         let path = fileURL(url: url, headers: headers)
         try data.write(to: path, options: .atomic)
     }
@@ -388,4 +399,3 @@ private final class FileCacheStore {
         return digest.map { String(format: "%02x", $0) }.joined()
     }
 }
-

@@ -760,6 +760,29 @@ private extension FileListHostView {
         filterTask?.cancel()
         refreshTask?.cancel()
         refreshWorkerTask?.cancel()
+        clearLoadedState()
+    }
+
+    func clearLoadedState() {
+        files.removeAll()
+        filePaths.removeAll()
+        filesByPath.removeAll()
+        selection = nil
+        hoveredFile = nil
+        stagedFilePaths.removeAll()
+        unstagedFilePaths.removeAll()
+        untrackedFilePaths.removeAll()
+        selectedBatchFilePaths.removeAll()
+        cachedPresentationState = FileListRules.presentationState(
+            allPaths: [],
+            filterText: "",
+            isHistoryMode: isHistoryMode,
+            stagedPaths: [],
+            unstagedPaths: [],
+            untrackedPaths: [],
+            selectedBatchPaths: []
+        )
+        cachedFilteredFiles.removeAll()
     }
 
     func onProjectChange() {

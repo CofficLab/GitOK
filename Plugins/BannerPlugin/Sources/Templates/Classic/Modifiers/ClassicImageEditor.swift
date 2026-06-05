@@ -21,6 +21,7 @@ struct ClassicImageEditor: View {
     @State private var showImagePicker = false
     @State private var selectedDevice: MagicDevice? = nil
     @State private var previewImage: Image?
+    @State private var previewImageTask: Task<Void, Never>?
 
     var classicData: ClassicBannerData? { b.banner.classicData }
 
@@ -108,6 +109,11 @@ struct ClassicImageEditor: View {
         .onChange(of: b.banner.projectURL) {
             loadPreviewImage()
         }
+        .onDisappear {
+            previewImageTask?.cancel()
+            previewImageTask = nil
+            previewImage = nil
+        }
     }
 
     private func loadCurrentValues() {
@@ -153,6 +159,7 @@ struct ClassicImageEditor: View {
     }
 
     private func loadPreviewImage() {
+        previewImageTask?.cancel()
         guard let imageId = classicData?.imageId else {
             previewImage = nil
             return
@@ -162,10 +169,11 @@ struct ClassicImageEditor: View {
         let cleanPath = imageId.replacingOccurrences(of: "\\/", with: "/")
         let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
 
-        Task.detached(priority: .userInitiated) {
+        previewImageTask = Task.detached(priority: .userInitiated) {
             let decodedImage = DecodedBannerPreviewImage(
-                image: (try? Data(contentsOf: imageURL)).flatMap(NSImage.init(data:))
+                image: BannerImageLoadingRules.previewImage(at: imageURL)
             )
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
                 guard classicData?.imageId == imageId, b.banner.projectURL == projectURL else { return }
                 if let nsImage = decodedImage.image {
@@ -173,6 +181,7 @@ struct ClassicImageEditor: View {
                 } else {
                     previewImage = nil
                 }
+                previewImageTask = nil
             }
         }
     }

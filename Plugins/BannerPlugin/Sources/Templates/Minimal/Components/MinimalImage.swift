@@ -15,6 +15,7 @@ private struct DecodedMinimalBannerImage: @unchecked Sendable {
 struct MinimalImage: View {
     @EnvironmentObject var b: BannerProvider
     @State private var loadedImage: Image?
+    @State private var loadImageTask: Task<Void, Never>?
 
     var banner: BannerFile { b.banner }
     var minimalData: MinimalBannerData? { banner.minimalData }
@@ -66,6 +67,11 @@ struct MinimalImage: View {
         .onChange(of: banner.projectURL) {
             loadImage()
         }
+        .onDisappear {
+            loadImageTask?.cancel()
+            loadImageTask = nil
+            loadedImage = nil
+        }
     }
 
     private func getCornerRadius() -> CGFloat {
@@ -74,6 +80,7 @@ struct MinimalImage: View {
     }
 
     private func loadImage() {
+        loadImageTask?.cancel()
         guard let imageId = minimalData?.imageId else {
             loadedImage = nil
             return
@@ -82,10 +89,11 @@ struct MinimalImage: View {
         let projectURL = banner.projectURL
         let imageURL = ProjectImage.fromImageId(imageId).getImageURL(projectURL)
 
-        Task.detached(priority: .userInitiated) {
+        loadImageTask = Task.detached(priority: .userInitiated) {
             let decodedImage = DecodedMinimalBannerImage(
-                image: (try? Data(contentsOf: imageURL)).flatMap(NSImage.init(data:))
+                image: BannerImageLoadingRules.previewImage(at: imageURL)
             )
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
                 guard minimalData?.imageId == imageId, banner.projectURL == projectURL else { return }
                 if let nsImage = decodedImage.image {
@@ -93,6 +101,7 @@ struct MinimalImage: View {
                 } else {
                     loadedImage = nil
                 }
+                loadImageTask = nil
             }
         }
     }

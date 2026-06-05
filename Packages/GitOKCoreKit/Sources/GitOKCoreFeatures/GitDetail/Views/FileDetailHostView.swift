@@ -37,6 +37,7 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
 
     @State private var unifiedDiffText = ""
     @State private var diffIssueMessage: String?
+    @State private var imageIssueMessage: String?
     @State private var showTextPreview = false
     @State private var textPreviewTitle = ""
     @State private var textPreviewContent = ""
@@ -47,6 +48,9 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
     @State private var imageLoadGeneration = 0
     @State private var diffLoadGeneration = 0
     @State private var textPreviewGeneration = 0
+    @State private var imageLoadTask: Task<Void, Never>?
+    @State private var diffLoadTask: Task<Void, Never>?
+    @State private var textPreviewTask: Task<Void, Never>?
 
     public init(
         project: Project?,
@@ -111,7 +115,7 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
                     isBinary: isBinary(file),
                     changeType: changeType(file),
                     diffText: unifiedDiffText,
-                    issueMessage: diffIssueMessage,
+                    issueMessage: isImage(file) ? imageIssueMessage ?? diffIssueMessage : diffIssueMessage,
                     beforeImage: beforeImage,
                     afterImage: afterImage,
                     imageDiffMode: $imageDiffMode,
@@ -133,16 +137,22 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
             }
         }
         .onChange(of: fileChangeToken) {
+            clearLoadedContent()
             refreshImages()
             GitDetailDiffDisplayRules.performFileDidChange(performRefreshAction: performDiffRefreshAction)
         }
         .onChange(of: commitChangeToken) {
+            clearLoadedContent()
             refreshImages()
             GitDetailDiffDisplayRules.performCommitDidChange(performRefreshAction: performDiffRefreshAction)
         }
         .onAppear {
             refreshImages()
             GitDetailDiffDisplayRules.performFileDetailAppear(performRefreshAction: performDiffRefreshAction)
+        }
+        .onDisappear {
+            cancelBackgroundLoads()
+            clearLoadedContent()
         }
         .sheet(isPresented: $showTextPreview) {
             TextPreviewSheetView(title: textPreviewTitle, content: textPreviewContent)
@@ -152,6 +162,12 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
 }
 
 fileprivate enum FileDetailBackgroundLoader {
+    struct ImageLoadResult {
+        let before: NSImage?
+        let after: NSImage?
+        let issueMessage: String?
+    }
+
     enum TextPreviewLoadResult {
         case success(GitDetailDiffDisplayRules.TextPreviewState)
         case failure(GitDetailDiffDisplayRules.TextPreviewFailureState)
@@ -233,7 +249,7 @@ fileprivate enum FileDetailBackgroundLoader {
         loadedParentHashes: (LoadedCommit) -> [String],
         loadHeadHash: (Project) async -> String?,
         loadPreviousCommitData: (Project, File, String) async throws -> Data
-    ) async -> (before: NSImage?, after: NSImage?) {
+    ) async -> ImageLoadResult {
         let afterData = await currentImageData(
             project: project,
             file: file,
@@ -242,6 +258,10 @@ fileprivate enum FileDetailBackgroundLoader {
             loadCurrentCommitData: loadCurrentCommitData,
             loadCurrentWorktreeData: loadCurrentWorktreeData
         )
+        if let issueMessage = imageDataIssueMessage(afterData) {
+            return ImageLoadResult(before: nil, after: nil, issueMessage: issueMessage)
+        }
+
         let beforeData = await previousImageData(
             project: project,
             file: file,
@@ -253,11 +273,24 @@ fileprivate enum FileDetailBackgroundLoader {
             loadHeadHash: loadHeadHash,
             loadPreviousCommitData: loadPreviousCommitData
         )
+        if let issueMessage = imageDataIssueMessage(beforeData) {
+            return ImageLoadResult(before: nil, after: nil, issueMessage: issueMessage)
+        }
 
-        return (
-            GitDetailImageFactory.image(from: beforeData),
-            GitDetailImageFactory.image(from: afterData)
+        return ImageLoadResult(
+            before: GitDetailImageFactory.image(from: beforeData),
+            after: GitDetailImageFactory.image(from: afterData),
+            issueMessage: nil
         )
+    }
+
+    static func imageDataIssueMessage(_ data: Data?) -> String? {
+        guard let data,
+              data.count > GitDetailDiffDisplayRules.maxPreviewImageBytes else {
+            return nil
+        }
+
+        return GitDetailDiffDisplayRules.imagePreviewTooLargeMessage(byteCount: data.count)
     }
 
     static func diffTextLoadResult<Project, File, SelectedCommit>(
@@ -375,13 +408,39 @@ fileprivate enum FileDetailBackgroundLoader {
 }
 
 private extension FileDetailHostView {
+    func cancelBackgroundLoads() {
+        imageLoadGeneration += 1
+        diffLoadGeneration += 1
+        textPreviewGeneration += 1
+        imageLoadTask?.cancel()
+        diffLoadTask?.cancel()
+        textPreviewTask?.cancel()
+        imageLoadTask = nil
+        diffLoadTask = nil
+        textPreviewTask = nil
+    }
+
+    func clearLoadedContent() {
+        unifiedDiffText = ""
+        diffIssueMessage = nil
+        imageIssueMessage = nil
+        beforeImage = nil
+        afterImage = nil
+        showTextPreview = false
+        textPreviewTitle = ""
+        textPreviewContent = ""
+    }
+
     func refreshImages() {
         imageLoadGeneration += 1
         let generation = imageLoadGeneration
+        imageLoadTask?.cancel()
+        imageLoadTask = nil
 
         guard let file, isImage(file) else {
             beforeImage = nil
             afterImage = nil
+            imageIssueMessage = nil
             return
         }
 
@@ -399,7 +458,7 @@ private extension FileDetailHostView {
         let loadHeadHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadHeadHash)
         let loadPreviousCommitDataTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadPreviousCommitData)
 
-        Task.detached(priority: .userInitiated) {
+        imageLoadTask = Task.detached(priority: .userInitiated) {
             let images = await FileDetailBackgroundLoader.images(
                 project: projectTransfer.value,
                 file: fileTransfer.value,
@@ -414,10 +473,13 @@ private extension FileDetailHostView {
                 loadPreviousCommitData: loadPreviousCommitDataTransfer.value
             )
 
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
                 guard generation == imageLoadGeneration else { return }
                 beforeImage = images.before
                 afterImage = images.after
+                imageIssueMessage = images.issueMessage
+                imageLoadTask = nil
             }
         }
     }
@@ -435,6 +497,8 @@ private extension FileDetailHostView {
     func presentTextPreview(kind: GitDetailDiffDisplayRules.TextVersion, for file: File) {
         textPreviewGeneration += 1
         let generation = textPreviewGeneration
+        textPreviewTask?.cancel()
+        textPreviewTask = nil
 
         let project = project
         let selectedCommit = selectedCommit
@@ -450,7 +514,7 @@ private extension FileDetailHostView {
         let loadWorktreeContentTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadWorktreeContent)
         let handleEventTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: handleEvent)
 
-        Task.detached(priority: .userInitiated) {
+        textPreviewTask = Task.detached(priority: .userInitiated) {
             let result = await FileDetailBackgroundLoader.textPreviewLoadResult(
                 version: kindTransfer.value,
                 path: path,
@@ -463,6 +527,7 @@ private extension FileDetailHostView {
                 loadWorktreeContent: loadWorktreeContentTransfer.value
             )
 
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
                 guard generation == textPreviewGeneration else { return }
 
@@ -482,6 +547,7 @@ private extension FileDetailHostView {
                         showError: { handleEventTransfer.value(.error($0)) }
                     )
                 }
+                textPreviewTask = nil
             }
         }
     }
@@ -499,6 +565,8 @@ private extension FileDetailHostView {
 
         diffLoadGeneration += 1
         let generation = diffLoadGeneration
+        diffLoadTask?.cancel()
+        diffLoadTask = nil
         let file = file
         let project = project
         let selectedCommit = selectedCommit
@@ -512,7 +580,7 @@ private extension FileDetailHostView {
         let loadWorktreeDiffTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadWorktreeDiff)
         let handleEventTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: handleEvent)
 
-        Task.detached(priority: .userInitiated) {
+        diffLoadTask = Task.detached(priority: .userInitiated) {
             let result = await FileDetailBackgroundLoader.diffTextLoadResult(
                 file: fileTransfer.value,
                 project: projectTransfer.value,
@@ -524,6 +592,7 @@ private extension FileDetailHostView {
                 loadWorktreeDiff: loadWorktreeDiffTransfer.value
             )
 
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
                 guard generation == diffLoadGeneration else { return }
 
@@ -533,6 +602,7 @@ private extension FileDetailHostView {
                 }
 
                 applyDiffTextState(result.state)
+                diffLoadTask = nil
             }
         }
     }

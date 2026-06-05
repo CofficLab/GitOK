@@ -12,8 +12,11 @@ struct GitLFSStatusTile: View {
     @State private var isLoading = false
     @State private var isPresented = false
     @State private var message: GitLFSPluginMessage?
+    @State private var refreshTask: Task<Void, Never>?
+    @State private var initializeTask: Task<Void, Never>?
 
     private let largeFileThresholdBytes: Int64 = 50 * 1024 * 1024
+    private let largeFileCandidateLimit = 200
 
     public init(projectURL: URL) {
         self.projectURL = projectURL
@@ -34,6 +37,7 @@ struct GitLFSStatusTile: View {
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             refresh()
         }
+        .onDisappear(perform: onDisappear)
     }
 
     private var issueCount: Int {
@@ -218,27 +222,35 @@ struct GitLFSStatusTile: View {
     }
 
     private func refresh() {
+        refreshTask?.cancel()
         isLoading = true
 
-        Task.detached(priority: .utility) {
+        refreshTask = Task.detached(priority: .utility) {
             let cli = GitRepositoryCLI(repositoryURL: projectURL)
 
             do {
                 let nextStatus = cli.lfsStatus()
-                let nextLargeFiles = try cli.lfsLargeFileCandidates(thresholdBytes: largeFileThresholdBytes)
+                let nextLargeFiles = try cli.lfsLargeFileCandidates(
+                    thresholdBytes: largeFileThresholdBytes,
+                    maxCount: largeFileCandidateLimit
+                )
                 let nextMismatches = try cli.lfsAttributeMismatches()
 
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     status = nextStatus
                     largeFiles = nextLargeFiles
                     mismatches = nextMismatches
                     isLoading = false
+                    refreshTask = nil
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     largeFiles = []
                     mismatches = []
                     isLoading = false
+                    refreshTask = nil
                     message = GitLFSPluginMessage(text: error.localizedDescription, isError: true)
                 }
             }
@@ -246,10 +258,13 @@ struct GitLFSStatusTile: View {
     }
 
     private func initializeLFS() {
-        Task.detached(priority: .userInitiated) {
+        initializeTask?.cancel()
+        initializeTask = Task.detached(priority: .userInitiated) {
             do {
                 try GitRepositoryCLI(repositoryURL: projectURL).initializeLFS()
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    initializeTask = nil
                     message = GitLFSPluginMessage(
                         text: GitLFSPluginLocalization.string("Git LFS initialized"),
                         isError: false
@@ -257,11 +272,23 @@ struct GitLFSStatusTile: View {
                     refresh()
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    initializeTask = nil
                     message = GitLFSPluginMessage(text: error.localizedDescription, isError: true)
                 }
             }
         }
+    }
+
+    private func onDisappear() {
+        refreshTask?.cancel()
+        initializeTask?.cancel()
+        refreshTask = nil
+        initializeTask = nil
+        isLoading = false
+        largeFiles.removeAll()
+        mismatches.removeAll()
     }
 
     private func mismatchDescription(_ mismatch: GitRepositoryCLI.GitLFSAttributeMismatch) -> String {

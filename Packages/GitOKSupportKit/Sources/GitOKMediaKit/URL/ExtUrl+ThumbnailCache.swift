@@ -30,6 +30,7 @@ public class ThumbnailCache: SuperLog {
     private struct Config {
         static let maxMemoryCount = 100  // 最大内存缓存数量
         static let maxMemorySize = 50 * 1024 * 1024  // 最大内存占用(50MB)
+        static let maxMemoryObjectSize = 10 * 1024 * 1024  // 单张缩略图最大内存缓存成本(10MB)
         static let maxDiskSize = 200 * 1024 * 1024  // 最大磁盘占用(200MB)
         static let cleanupThreshold = 0.8  // 清理阈值(80%)
     }
@@ -136,7 +137,7 @@ public class ThumbnailCache: SuperLog {
         }
         
         if verbose { os_log("\(self.t) 💾 Found in disk cache: \(url.shortPath())") }
-        memoryCache.setObject(image, forKey: memKey as NSString)
+        setMemoryCacheObject(image, forKey: memKey, dataLength: data.count)
         return image
     }
     
@@ -146,13 +147,14 @@ public class ThumbnailCache: SuperLog {
         let memKey = memoryCacheKey(for: url, size: size)
         if verbose { os_log("\(self.t) Saving cache for: \(url.shortPath())") }
         
-        memoryCache.setObject(image, forKey: memKey as NSString)
         let diskURL = diskCacheURL.appendingPathComponent(diskKey)
         
         guard let data = image.cacheData else {
             if verbose { os_log("\(self.t) Failed to get cache data for: \(url.shortPath())") }
             return
         }
+
+        setMemoryCacheObject(image, forKey: memKey, dataLength: data.count)
         
         do {
             try data.write(to: diskURL)
@@ -196,7 +198,21 @@ public class ThumbnailCache: SuperLog {
     public func getCacheDirectory() -> URL {
         return diskCacheURL
     }
+
+    private func setMemoryCacheObject(_ image: Image.PlatformImage, forKey key: String, dataLength: Int) {
+        let cost = memoryCost(for: image, dataLength: dataLength)
+        guard cost <= Config.maxMemoryObjectSize else {
+            if verbose { os_log("\(self.t) Skip memory cache for oversized thumbnail. cost=\(cost)") }
+            return
+        }
+
+        memoryCache.setObject(image, forKey: key as NSString, cost: cost)
+    }
+
+    private func memoryCost(for image: Image.PlatformImage, dataLength: Int) -> Int {
+        let pixelCost = max(1, Int(image.size.width * image.size.height * 4))
+        return max(pixelCost, dataLength)
+    }
 } 
 
 // MARK: - Preview
-

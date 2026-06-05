@@ -89,13 +89,17 @@ public struct FileDetailContentView: View {
     @ViewBuilder
     private var binaryFileView: some View {
         if isImage {
-            ImageDiffContentView(
-                displayMode: presentationState.imageDisplayMode,
-                before: beforeImage,
-                after: afterImage,
-                mode: $imageDiffMode,
-                blendAmount: $imageBlendAmount
-            )
+            if issueMessage?.isEmpty == false && beforeImage == nil && afterImage == nil {
+                emptyDiffView
+            } else {
+                ImageDiffContentView(
+                    displayMode: presentationState.imageDisplayMode,
+                    before: beforeImage,
+                    after: afterImage,
+                    mode: $imageDiffMode,
+                    blendAmount: $imageBlendAmount
+                )
+            }
         } else {
             BinaryFilePlaceholderView()
         }

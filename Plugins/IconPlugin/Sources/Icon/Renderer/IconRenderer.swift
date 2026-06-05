@@ -62,6 +62,7 @@ struct IconRenderView: View {
     // 用于异步加载图片（预览时）
     @State private var loadedImage: Image?
     @State private var isLoading = false
+    @State private var loadImageTask: Task<Void, Never>?
 
     init(iconData: IconData, iconAsset: IconAsset, size: CGFloat, applyBackground: Bool, preloadedImage: Image? = nil) {
         self.iconData = iconData
@@ -144,15 +145,24 @@ struct IconRenderView: View {
                 loadIconImage()
             }
         }
+        .onDisappear {
+            loadImageTask?.cancel()
+            loadImageTask = nil
+            loadedImage = nil
+            isLoading = false
+        }
     }
 
     @MainActor
     private func loadIconImage() {
+        loadImageTask?.cancel()
         isLoading = true
-        Task {
+        loadImageTask = Task {
             let image = await iconAsset.getImage()
+            guard Task.isCancelled == false else { return }
             loadedImage = image
             isLoading = false
+            loadImageTask = nil
         }
     }
 }

@@ -92,6 +92,10 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     @State private var sshHelpRemoteURL: String?
     @State private var sshHelpErrorMessage: String?
     @State private var sshHelpRetryOperation: CommitRemoteSyncRules.RetryOperation?
+    @State private var changedFileCountTask: Task<Void, Never>?
+    @State private var syncStatusTask: Task<Void, Never>?
+    @State private var conflictRefreshTask: Task<Void, Never>?
+    @State private var statusClearTask: Task<Void, Never>?
 
     public init(
         project: Project?,
@@ -358,6 +362,14 @@ private extension WorkingStateHostView {
         }
     }
 
+    func scheduleChangedFileCountRefresh() {
+        changedFileCountTask?.cancel()
+        changedFileCountTask = Task { @MainActor in
+            await loadChangedFileCount()
+            changedFileCountTask = nil
+        }
+    }
+
     func loadSyncStatus() {
         CommitRemoteSyncRules.performRequiredProjectSyncStatusCommand(
             project: project,
@@ -379,10 +391,12 @@ private extension WorkingStateHostView {
         let eventHandlerTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: eventHandler)
         let updateRemoteTrackingStatusTransfer = WorkingStateBackgroundRunner.UnsafeTransfer(value: updateRemoteTrackingStatus)
 
-        Task.detached(priority: .userInitiated) {
+        syncStatusTask?.cancel()
+        syncStatusTask = Task.detached(priority: .userInitiated) {
             await MainActor.run {
                 applySyncStatusRefreshState(CommitRemoteSyncRules.syncStatusRefreshStartState())
             }
+            guard Task.isCancelled == false else { return }
 
             let unpushedCount: Int
             do {
@@ -393,6 +407,7 @@ private extension WorkingStateHostView {
                     eventHandlerTransfer.value(.log(.unpushedCountFailure(error)))
                 }
             }
+            guard Task.isCancelled == false else { return }
 
             let unpulledCount: Int
             do {
@@ -403,6 +418,7 @@ private extension WorkingStateHostView {
                     eventHandlerTransfer.value(.log(.unpulledCountFailure(error)))
                 }
             }
+            guard Task.isCancelled == false else { return }
 
             let nextTrackingStatus: GitOKRemoteTrackingStatus
             let trackingFetchedAt = Date()
@@ -418,12 +434,14 @@ private extension WorkingStateHostView {
                     eventHandlerTransfer.value(.log(.remoteTrackingFailure(error)))
                 }
             }
+            guard Task.isCancelled == false else { return }
 
             let resultState = CommitRemoteSyncRules.syncStatusResultState(
                 unpushedCount: unpushedCount,
                 unpulledCount: unpulledCount
             )
             await MainActor.run {
+                guard Task.isCancelled == false else { return }
                 remoteTrackingStatus = nextTrackingStatus
                 updateRemoteTrackingStatusTransfer.value(nextTrackingStatus, trackingFetchedAt)
                 CommitRemoteSyncRules.performSyncStatusResultState(
@@ -436,10 +454,16 @@ private extension WorkingStateHostView {
                     unpushedCount: resultState.unpushedCount,
                     unpulledCount: resultState.unpulledCount
                 )))
+                syncStatusTask = nil
             }
-            try? await Task.sleep(nanoseconds: CommitRemoteSyncRules.statusClearDelayNanoseconds)
             await MainActor.run {
-                setStatus(nil)
+                statusClearTask?.cancel()
+                statusClearTask = Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: CommitRemoteSyncRules.statusClearDelayNanoseconds)
+                    guard Task.isCancelled == false else { return }
+                    setStatus(nil)
+                    statusClearTask = nil
+                }
             }
         }
     }
@@ -666,8 +690,10 @@ private extension WorkingStateHostView {
 
     func refreshConflictStateForCurrentProject() {
         guard let project else { return }
-        Task { @MainActor in
+        conflictRefreshTask?.cancel()
+        conflictRefreshTask = Task { @MainActor in
             _ = await refreshConflictState(for: project)
+            conflictRefreshTask = nil
         }
     }
 
@@ -727,7 +753,7 @@ private extension WorkingStateHostView {
                     isConflictActionRunning = false
                     activeConflictPath = nil
                     _ = await refreshConflictState(for: projectTransfer.value)
-                    await loadChangedFileCount()
+                    scheduleChangedFileCountRefresh()
                 }
             } catch {
                 Task { @MainActor in
@@ -746,9 +772,7 @@ private extension WorkingStateHostView {
         CommitRemoteSyncRules.performWorkingStateRefreshAction(
             action,
             refreshChangedFiles: {
-                Task {
-                    await self.loadChangedFileCount()
-                }
+                scheduleChangedFileCountRefresh()
             },
             refreshSyncStatus: loadSyncStatus
         )
@@ -764,6 +788,27 @@ private extension WorkingStateHostView {
 
     func onDisappear() {
         CommitRemoteSyncRules.performWorkingStateDisappear(stopTimer: stopRemoteStatusTimer)
+        cancelRefreshTasks()
+        clearTransientState()
+    }
+
+    func cancelRefreshTasks() {
+        changedFileCountTask?.cancel()
+        syncStatusTask?.cancel()
+        conflictRefreshTask?.cancel()
+        statusClearTask?.cancel()
+        changedFileCountTask = nil
+        syncStatusTask = nil
+        conflictRefreshTask = nil
+        statusClearTask = nil
+    }
+
+    func clearTransientState() {
+        isRefreshingFileList = false
+        isSyncLoading = false
+        activityStatus = nil
+        setActivityStatus(nil)
+        conflictState = nil
     }
 
     func startRemoteStatusTimer() {

@@ -184,9 +184,14 @@ public extension URL {
     /// - Parameter length: 要读取的字节数
     /// - Returns: 文件头部字节数组，读取失败时返回 nil
     func readFileHeader(length: Int) -> [UInt8]? {
+        guard length > 0 else { return [] }
+
         do {
-            let fileData = try Data(contentsOf: self, options: .mappedIfSafe)
-            return Array(fileData.prefix(length))
+            let fileHandle = try FileHandle(forReadingFrom: self)
+            defer { fileHandle.closeFile() }
+
+            let headerData = fileHandle.readData(ofLength: length)
+            return Array(headerData)
         } catch {
             print("读取文件头时出错: \(error)")
             return nil
@@ -328,4 +333,3 @@ public extension URL {
 }
 
 /// URL 扩展功能演示视图
-

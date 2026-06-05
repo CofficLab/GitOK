@@ -36,6 +36,10 @@ public final class CoverArtViewModel: ObservableObject {
     /// 错误回调
     public var onError: ((Error) -> Void)?
 
+    private let maxImageDataSize = 10 * 1024 * 1024
+    private var processImageTask: Task<Void, Never>?
+    private var currentProcessingID: UUID?
+
     // MARK: - Initialization
 
     /// 创建封面设置视图模型
@@ -45,6 +49,10 @@ public final class CoverArtViewModel: ObservableObject {
     public init(targetURL: URL, verbose: Bool = false) {
         self.targetURL = targetURL
         self.verbose = verbose
+    }
+
+    deinit {
+        processImageTask?.cancel()
     }
 
     // MARK: - Public Methods
@@ -69,8 +77,12 @@ public final class CoverArtViewModel: ObservableObject {
                 return
             }
 
-            Task {
-                await processSelectedImage(at: selectedURL)
+            processImageTask?.cancel()
+            let processingID = UUID()
+            currentProcessingID = processingID
+            processImageTask = Task { [weak self] in
+                guard let self else { return }
+                await processSelectedImage(at: selectedURL, processingID: processingID)
             }
 
         case let .failure(error):
@@ -85,9 +97,19 @@ public final class CoverArtViewModel: ObservableObject {
 
     /// 处理选中的图片
     /// - Parameter selectedURL: 选中的图片 URL
-    private func processSelectedImage(at selectedURL: URL) async {
+    private func processSelectedImage(at selectedURL: URL, processingID: UUID) async {
+        guard currentProcessingID == processingID, Task.isCancelled == false else { return }
         isProcessing = true
         errorMessage = nil
+
+        defer {
+            if currentProcessingID == processingID {
+                isProcessing = false
+                isImagePickerPresented = false
+                processImageTask = nil
+                currentProcessingID = nil
+            }
+        }
 
         do {
             if verbose {
@@ -109,18 +131,27 @@ public final class CoverArtViewModel: ObservableObject {
                 selectedURL.stopAccessingSecurityScopedResource()
             }
 
-            // 3. 读取图片数据
+            // 3. 先检查文件大小，避免超大图片先被完整读入内存
+            try validateImageFileSize(selectedURL)
+
+            guard Task.isCancelled == false else { return }
+
+            // 4. 读取图片数据
             let imageData = try Data(contentsOf: selectedURL)
 
-            // 4. 验证图片数据
+            guard Task.isCancelled == false else { return }
+
+            // 5. 验证图片数据
             try validateImageData(imageData)
 
-            // 5. 写入封面到媒体文件
+            // 6. 写入封面到媒体文件
             try await targetURL.writeCoverToMediaFile(
                 imageData: imageData,
                 imageType: detectedImageType(for: selectedURL),
                 verbose: verbose
             )
+
+            guard currentProcessingID == processingID, Task.isCancelled == false else { return }
 
             if verbose {
                 os_log("✅ 封面设置成功")
@@ -133,11 +164,18 @@ public final class CoverArtViewModel: ObservableObject {
             if verbose {
                 os_log(.error, "❌ 设置封面失败: \(error.localizedDescription)")
             }
-            handleError(error)
+            if currentProcessingID == processingID {
+                handleError(error)
+            }
         }
+    }
 
-        isProcessing = false
-        isImagePickerPresented = false
+    private func validateImageFileSize(_ url: URL) throws {
+        let values = try? url.resourceValues(forKeys: [.fileSizeKey, .totalFileAllocatedSizeKey])
+        let fileSize = values?.fileSize ?? values?.totalFileAllocatedSize ?? 0
+        if fileSize > maxImageDataSize {
+            throw CoverArtError.fileTooLarge
+        }
     }
 
     /// 验证图片数据
@@ -145,8 +183,7 @@ public final class CoverArtViewModel: ObservableObject {
     /// - Throws: 如果数据无效则抛出错误
     private func validateImageData(_ imageData: Data) throws {
         // 检查数据大小（限制为 10MB）
-        let maxSize: UInt64 = 10 * 1024 * 1024
-        if UInt64(imageData.count) > maxSize {
+        if imageData.count > maxImageDataSize {
             throw CoverArtError.fileTooLarge
         }
 
@@ -203,4 +240,3 @@ public enum CoverArtError: LocalizedError {
 }
 
 // MARK: - Preview
-

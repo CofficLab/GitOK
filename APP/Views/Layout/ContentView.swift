@@ -197,6 +197,7 @@ extension ContentView {
             )
         }
         .onAppear(perform: onAppear)
+        .onDisappear(perform: clearCachedViews)
         .onChange(of: vm.project, onProjectChange)
         .onChange(of: self.tab, onChangeOfTab)
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
@@ -270,17 +271,13 @@ extension ContentView {
     /// 更新缓存的视图
     func updateCachedViews() {
         guard p.hasPlugins else {
-            toolbarLeadingViews = []
-            toolbarTrailingViews = []
-            pluginListViews = []
+            clearCachedViews()
             return
         }
 
         let start = Date()
-        os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
-
         if Self.verbose {
-            os_log("\(self.t)🔄 Updating cached views")
+            os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
         }
 
         let leadingStart = Date()
@@ -304,7 +301,9 @@ extension ContentView {
             onActivityStatusUpdate: repositoryHandlers.onActivityStatusUpdate,
             onInfoMessage: repositoryHandlers.onInfoMessage
         )
-        os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
+        if Self.verbose {
+            os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
+        }
 
         let trailingStart = Date()
         toolbarTrailingViews = p.getEnabledToolbarTrailingViews(
@@ -317,17 +316,26 @@ extension ContentView {
             ),
             isGitRepository: vm.project?.isGitRepo ?? false
         )
-        os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
+        if Self.verbose {
+            os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
+        }
 
         let listStart = Date()
         pluginListViews = p.getEnabledPluginListViews(tab: tab, project: vm.project)
-        os_log("\(self.t)✅ UpdateCachedViews list count=\(pluginListViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(listStart)))s")
+        if Self.verbose {
+            os_log("\(self.t)✅ UpdateCachedViews list count=\(pluginListViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(listStart)))s")
+        }
 
         if Self.verbose {
             os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
+            os_log("\(self.t)✅ UpdateCachedViews end elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
         }
+    }
 
-        os_log("\(self.t)✅ UpdateCachedViews end elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+    func clearCachedViews() {
+        toolbarLeadingViews.removeAll()
+        toolbarTrailingViews.removeAll()
+        pluginListViews.removeAll()
     }
 
     /// 视图出现时的事件处理
@@ -398,17 +406,23 @@ extension ContentView {
     }
 
     func onPluginsLoaded() {
-        if p.hasPlugins {
-            if Self.verbose {
-                os_log("\(self.t)🔌 Plugins loaded, updating cached views")
-            }
-            selectResolvedTab(preferred: defaultTab, reason: "pluginsLoaded")
-            updateCachedViews()
+        guard p.hasPlugins else {
+            clearCachedViews()
+            return
         }
+
+        if Self.verbose {
+            os_log("\(self.t)🔌 Plugins loaded, updating cached views")
+        }
+        selectResolvedTab(preferred: defaultTab, reason: "pluginsLoaded")
+        updateCachedViews()
     }
 
     func onPluginProviderChange() {
-        guard p.hasPlugins else { return }
+        guard p.hasPlugins else {
+            clearCachedViews()
+            return
+        }
         if Self.verbose {
             os_log("\(self.t)🔔 PluginProvider changed, updating cached views")
         }

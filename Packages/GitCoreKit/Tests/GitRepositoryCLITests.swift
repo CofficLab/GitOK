@@ -60,6 +60,32 @@ final class GitRepositoryCLITests: XCTestCase {
         }
     }
 
+    func testLFSLargeFileCandidatesLimitsResultsBySize() throws {
+        let repo = try TestGitRepository()
+        try repo.writeData("assets/medium.bin", data: Data(repeating: 1, count: 24))
+        try repo.writeData("assets/large.bin", data: Data(repeating: 2, count: 48))
+        try repo.writeData("assets/small.bin", data: Data(repeating: 3, count: 16))
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsLargeFileCandidates(thresholdBytes: 8, maxCount: 2),
+            [
+                GitRepositoryCLI.GitLFSLargeFileCandidate(path: "assets/large.bin", byteSize: 48),
+                GitRepositoryCLI.GitLFSLargeFileCandidate(path: "assets/medium.bin", byteSize: 24),
+            ]
+        )
+    }
+
+    func testLFSLargeFileCandidatesRejectsInvalidMaxCount() throws {
+        let repo = try TestGitRepository()
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.lfsLargeFileCandidates(thresholdBytes: 1, maxCount: 0)) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("大文件候选数量必须大于 0"))
+        }
+    }
+
     func testLFSAttributeMismatchesFindsPointerWithoutAttribute() throws {
         let repo = try TestGitRepository()
         try repo.write("asset.bin", content: lfsPointer())

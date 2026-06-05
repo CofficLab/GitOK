@@ -15,6 +15,7 @@ struct IconGrid: View {
     @State private var iconAssets: [IconAsset] = []
     @State private var isLoading: Bool = false
     @State private var loadTask: Task<Void, Never>?
+    @State private var imageMutationTask: Task<Void, Never>?
 
     let selectedCategory: IconCategory?
     let selectedSourceIdentifier: String?
@@ -150,6 +151,11 @@ struct IconGrid: View {
         }
         .onDisappear {
             loadTask?.cancel()
+            imageMutationTask?.cancel()
+            loadTask = nil
+            imageMutationTask = nil
+            iconAssets.removeAll()
+            isLoading = false
         }
     }
 
@@ -207,17 +213,24 @@ struct IconGrid: View {
         panel.begin { response in
             guard response == .OK else { return }
             let urls = panel.urls
-            Task.detached(priority: .userInitiated) {
+            imageMutationTask?.cancel()
+            imageMutationTask = Task.detached(priority: .userInitiated) {
                 var okCount = 0
                 for url in urls {
-                    if let data = try? Data(contentsOf: url) {
-                        if await IconRepo.shared.addImage(data: data, filename: url.lastPathComponent, to: sid) {
-                            okCount += 1
-                        }
+                    guard Task.isCancelled == false else { return }
+                    guard IconImageLoadingRules.canLoadImageData(at: url),
+                          let data = try? Data(contentsOf: url) else {
+                        continue
+                    }
+
+                    if await IconRepo.shared.addImage(data: data, filename: url.lastPathComponent, to: sid) {
+                        okCount += 1
                     }
                 }
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     print("[IconGrid] addImagesViaPanel done: \(okCount)/\(urls.count)")
+                    imageMutationTask = nil
                     loadIconAssets()
                 }
             }
@@ -236,15 +249,19 @@ struct IconGrid: View {
         panel.begin { response in
             guard response == .OK else { return }
             let urls = panel.urls
-            Task.detached(priority: .userInitiated) {
+            imageMutationTask?.cancel()
+            imageMutationTask = Task.detached(priority: .userInitiated) {
                 var okCount = 0
                 for url in urls {
+                    guard Task.isCancelled == false else { return }
                     if await IconRepo.shared.deleteImage(filename: url.lastPathComponent, from: sid) {
                         okCount += 1
                     }
                 }
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     print("[IconGrid] deleteImagesViaPanel done: \(okCount)/\(urls.count)")
+                    imageMutationTask = nil
                     loadIconAssets()
                 }
             }
@@ -280,9 +297,12 @@ struct IconGrid: View {
             return false
         }), let filename = target.fileURL?.lastPathComponent else { return }
 
-        Task.detached(priority: .userInitiated) {
+        imageMutationTask?.cancel()
+        imageMutationTask = Task.detached(priority: .userInitiated) {
             let ok = await IconRepo.shared.deleteImage(filename: filename, from: sid)
+            guard Task.isCancelled == false else { return }
             await MainActor.run {
+                imageMutationTask = nil
                 if ok {
                     if iconProvider.selectedIconId == selectedId {
                         iconProvider.selectedIconId = ""

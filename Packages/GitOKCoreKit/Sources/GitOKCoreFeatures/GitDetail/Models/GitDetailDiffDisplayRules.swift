@@ -198,6 +198,7 @@ public enum GitDetailDiffDisplayRules {
     }
 
     public static let maxRenderableDiffCharacters = 500_000
+    public static let maxPreviewImageBytes = 20 * 1024 * 1024
     public static let defaultImageBlendAmount = 0.5
     public static let defaultFileIcon = "doc.text"
     public static let manualRefreshReason = "Manual Refresh"
@@ -309,6 +310,12 @@ public enum GitDetailDiffDisplayRules {
 
     public static func diffTextStateForFailure(errorDescription: String) -> DiffTextState {
         DiffTextState(text: "", issueMessage: errorDescription)
+    }
+
+    public static func imagePreviewTooLargeMessage(byteCount: Int, maxBytes: Int = maxPreviewImageBytes) -> String {
+        let sizeMB = max(1, Int(ceil(Double(byteCount) / 1024.0 / 1024.0)))
+        let maxMB = max(1, maxBytes / 1024 / 1024)
+        return GitDetailLocalization.string("Image preview skipped because the file is \(sizeMB) MB, exceeding the \(maxMB) MB preview limit.")
     }
 
     public static func diffTextLoadResult(
