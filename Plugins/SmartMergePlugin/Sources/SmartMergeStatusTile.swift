@@ -140,7 +140,6 @@ public struct SmartMergeForm: View {
                         detail: operationTitle
                     )
                 }
-                try repository.checkoutBranch(named: targetBranch.name)
 
                 await MainActor.run {
                     BlockingOperationCenter.shared.update(
@@ -149,7 +148,11 @@ public struct SmartMergeForm: View {
                         detail: SmartMergePluginLocalization.string("GitOK is updating the repository. Other actions are temporarily blocked.")
                     )
                 }
-                try repository.merge(branchName: sourceBranch.name, verbose: false)
+                try await GitOperationHelperClient.shared.mergeBranches(
+                    repositoryURL: projectURL,
+                    sourceBranch: sourceBranch.name,
+                    targetBranch: targetBranch.name
+                )
 
                 await MainActor.run {
                     BlockingOperationCenter.shared.update(
