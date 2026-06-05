@@ -2390,13 +2390,13 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKPluginRegistry;
 		};
-		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKSupportKit;
-		};
 		F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/ProjectSupportKit;
+		};
+		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/GitOKSupportKit;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -2437,15 +2437,15 @@
 			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
 			productName = GitOKCoreFeatures;
 		};
-		F5E6143E2F33311F00F79149 /* GitOKSupportKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */;
-			productName = GitOKSupportKit;
-		};
 		F5ABCD022FCE000100000001 /* ProjectSupportKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */;
 			productName = ProjectSupportKit;
+		};
+		F5E6143E2F33311F00F79149 /* GitOKSupportKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */;
+			productName = GitOKSupportKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
