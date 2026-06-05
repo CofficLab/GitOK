@@ -895,18 +895,31 @@ public enum FileListRules {
         untrackedCount: Int
     ) -> String {
         if untrackedCount > 0 {
-            return GitDetailLocalization.string("Are you sure you want to discard changes for \(selectedCount) files? \(untrackedCount) untracked files will be deleted. This action cannot be undone.")
+            return GitDetailLocalization.format(
+                "Are you sure you want to discard changes for %lld files? %lld untracked files will be deleted. This action cannot be undone.",
+                selectedCount,
+                untrackedCount
+            )
         }
 
-        return GitDetailLocalization.string("Are you sure you want to discard changes for \(selectedCount) files? This action cannot be undone.")
+        return GitDetailLocalization.format(
+            "Are you sure you want to discard changes for %lld files? This action cannot be undone.",
+            selectedCount
+        )
     }
 
     public static func discardFileAlertMessage(path: String, isUntracked: Bool) -> String {
         if isUntracked {
-            return GitDetailLocalization.string("Are you sure you want to discard changes for \(path)? This untracked file will be deleted. This action cannot be undone.")
+            return GitDetailLocalization.format(
+                "Are you sure you want to discard changes for %@? This untracked file will be deleted. This action cannot be undone.",
+                path
+            )
         }
 
-        return GitDetailLocalization.string("Are you sure you want to discard changes for \(path)? This action cannot be undone.")
+        return GitDetailLocalization.format(
+            "Are you sure you want to discard changes for %@? This action cannot be undone.",
+            path
+        )
     }
 
     public static func discardFileAlertMessage(path: String, untrackedPaths: Set<String>) -> String {
@@ -939,17 +952,20 @@ public enum FileListRules {
     ) -> String {
         var details: [String] = []
         if stagedCount > 0 {
-            details.append(GitDetailLocalization.string("\(stagedCount) staged files"))
+            details.append(GitDetailLocalization.format("%lld staged files", stagedCount))
         }
         if unstagedCount > 0 {
-            details.append(GitDetailLocalization.string("\(unstagedCount) unstaged files"))
+            details.append(GitDetailLocalization.format("%lld unstaged files", unstagedCount))
         }
         if untrackedCount > 0 {
-            details.append(GitDetailLocalization.string("\(untrackedCount) untracked files will be deleted"))
+            details.append(GitDetailLocalization.format("%lld untracked files will be deleted", untrackedCount))
         }
 
-        let summary = details.isEmpty ? GitDetailLocalization.string("\(totalFileCount) files") : details.joined(separator: ", ")
-        return GitDetailLocalization.string("Are you sure you want to discard all changes? This will affect \(summary). This action cannot be undone.")
+        let summary = details.isEmpty ? GitDetailLocalization.format("%lld files", totalFileCount) : details.joined(separator: ", ")
+        return GitDetailLocalization.format(
+            "Are you sure you want to discard all changes? This will affect %@. This action cannot be undone.",
+            summary
+        )
     }
 
     public static func discardAllAlertText() -> DiscardAlertText {
@@ -1093,7 +1109,7 @@ public enum FileListRules {
     }
 
     public static func discardedFileChangesMessage(path: String) -> String {
-        GitDetailLocalization.string("Discarded file changes: \(path)")
+        GitDetailLocalization.format("Discarded file changes: %@", path)
     }
 
     public static func discardedAllChangesMessage() -> String {
@@ -1101,7 +1117,7 @@ public enum FileListRules {
     }
 
     public static func discardedSelectedChangesMessage(count: Int) -> String {
-        GitDetailLocalization.string("Discarded changes for \(count) files")
+        GitDetailLocalization.format("Discarded changes for %lld files", count)
     }
 
     public static func stageFileSuccessState(path: String) -> OperationSuccessState {
