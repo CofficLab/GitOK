@@ -198,6 +198,7 @@ public enum GitDetailDiffDisplayRules {
     }
 
     public static let maxRenderableDiffCharacters = 500_000
+    public static let maxRenderableDiffFiles = 200
     public static let maxPreviewImageBytes = 20 * 1024 * 1024
     public static let defaultImageBlendAmount = 0.5
     public static let defaultFileIcon = "doc.text"
@@ -210,12 +211,34 @@ public enum GitDetailDiffDisplayRules {
         characterCount > maxRenderableCharacters
     }
 
+    public static func diffFileCount(in diffText: String, stopAfter: Int? = nil) -> Int {
+        var count = 0
+        diffText.enumerateLines { line, stop in
+            if line.hasPrefix("diff --git ") || line.hasPrefix("diff --cc ") || line.hasPrefix("diff --combined ") {
+                count += 1
+                if let stopAfter, count > stopAfter {
+                    stop = true
+                }
+            }
+        }
+        return count
+    }
+
+    public static func shouldSkipDiffRendering(
+        diffText: String,
+        maxRenderableCharacters: Int = maxRenderableDiffCharacters,
+        maxRenderableFiles: Int = maxRenderableDiffFiles
+    ) -> Bool {
+        shouldSkipDiffRendering(characterCount: diffText.count, maxRenderableCharacters: maxRenderableCharacters)
+            || diffFileCount(in: diffText, stopAfter: maxRenderableFiles) > maxRenderableFiles
+    }
+
     public static func diffContentMode(diffText: String) -> DiffContentMode {
         if diffText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .empty
         }
 
-        if shouldSkipDiffRendering(characterCount: diffText.count) {
+        if shouldSkipDiffRendering(diffText: diffText) {
             return .large
         }
 

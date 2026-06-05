@@ -861,7 +861,11 @@ public struct GitRepositoryCLI {
     }
 
     public func uncommittedFileDiff(for filePath: String, ignoreWhitespace: Bool = false) throws -> String {
-        try LibGit2.getFileDiff(for: filePath, at: repositoryURL.path, staged: false, ignoreWhitespace: ignoreWhitespace)
+        let stagedDiff = try fileDiff(filePath, staged: true, ignoreWhitespace: ignoreWhitespace)
+        let unstagedDiff = try fileDiff(filePath, staged: false, ignoreWhitespace: ignoreWhitespace)
+        return [stagedDiff, unstagedDiff]
+            .filter { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false }
+            .joined(separator: "\n")
     }
 
     public func fileData(atCommit commitHash: String, file filePath: String) throws -> Data {

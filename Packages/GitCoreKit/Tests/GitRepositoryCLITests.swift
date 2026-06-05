@@ -1176,6 +1176,30 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try client.fileDiff("notes.txt", staged: true), "")
     }
 
+    func testUncommittedFileDiffIncludesStagedAndUnstagedDiffsForOneFile() throws {
+        let repo = try TestGitRepository()
+        let base = (1...24).map { "line \($0)" }.joined(separator: "\n") + "\n"
+        try repo.write("notes.txt", content: base)
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        let modified = (1...24).map { line -> String in
+            if line == 2 { return "line two" }
+            if line == 22 { return "line twenty two" }
+            return "line \(line)"
+        }.joined(separator: "\n") + "\n"
+        try repo.write("notes.txt", content: modified)
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        let firstHunkPatch = try XCTUnwrap(firstHunkPatch(from: client.fileDiff("notes.txt", staged: false)))
+        try client.applyPatch(firstHunkPatch, mode: .stage)
+
+        let diff = try client.uncommittedFileDiff(for: "notes.txt")
+        XCTAssertTrue(diff.contains("line two"))
+        XCTAssertTrue(diff.contains("line twenty two"))
+        XCTAssertFalse(diff.contains("README.md"))
+    }
+
     func testRevertCommitCreatesInverseCommit() throws {
         let repo = try TestGitRepository()
         try repo.write("README.md", content: "base\n")

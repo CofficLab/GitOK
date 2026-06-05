@@ -35,4 +35,38 @@ struct GitDetailDiffDisplayRulesTests {
 
         #expect(source == .unavailable)
     }
+
+    @Test("single file diff remains renderable")
+    func singleFileDiffRemainsRenderable() {
+        let diff = """
+        diff --git a/README.md b/README.md
+        index 1111111..2222222 100644
+        --- a/README.md
+        +++ b/README.md
+        @@ -1 +1 @@
+        -old
+        +new
+        """
+
+        #expect(GitDetailDiffDisplayRules.diffFileCount(in: diff) == 1)
+        #expect(GitDetailDiffDisplayRules.diffContentMode(diffText: diff) == .render)
+    }
+
+    @Test("multi-file diff skips rendering before view count explodes")
+    func multiFileDiffSkipsRenderingBeforeViewCountExplodes() {
+        let diff = (0...GitDetailDiffDisplayRules.maxRenderableDiffFiles).map { index in
+            """
+            diff --git a/File\(index).swift b/File\(index).swift
+            index 1111111..2222222 100644
+            --- a/File\(index).swift
+            +++ b/File\(index).swift
+            @@ -1 +1 @@
+            -old
+            +new
+            """
+        }.joined(separator: "\n")
+
+        #expect(GitDetailDiffDisplayRules.diffFileCount(in: diff) == GitDetailDiffDisplayRules.maxRenderableDiffFiles + 1)
+        #expect(GitDetailDiffDisplayRules.diffContentMode(diffText: diff) == .large)
+    }
 }
