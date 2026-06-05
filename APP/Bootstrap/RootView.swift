@@ -34,6 +34,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 当前项目状态
     @ObservedObject var projectVM: ProjectVM
 
+    /// 全局阻塞操作状态
+    @ObservedObject private var blockingOperationCenter = BlockingOperationCenter.shared
+
     /// 拖拽覆盖层是否可见
     @State private var isDropTargeted = false
 
@@ -122,6 +125,12 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                 )
                 .transition(.opacity)
             }
+
+            if let blockingOperation = blockingOperationCenter.state {
+                blockingOperationOverlay(blockingOperation)
+                    .transition(.opacity)
+                    .zIndex(10)
+            }
         }
         .tint(themeProvider.accentColor)
         .preferredColorScheme(themeProvider.preferredColorScheme)
@@ -152,6 +161,43 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         content
             .withMagicToast()
             .navigationTitle("")
+    }
+
+    private func blockingOperationOverlay(_ state: BlockingOperationCenter.State) -> some View {
+        ZStack {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .overlay(Color.black.opacity(0.18))
+                .ignoresSafeArea()
+
+            AppCard(style: .elevated, cornerRadius: 8, padding: EdgeInsets(top: 22, leading: 24, bottom: 22, trailing: 24)) {
+                VStack(spacing: 14) {
+                    ProgressView()
+                        .controlSize(.large)
+
+                    VStack(spacing: 6) {
+                        Text(state.title)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        Text(state.message)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+
+                        if let detail = state.detail {
+                            Text(detail)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                }
+                .frame(width: 340)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {}
     }
 
     private var pluginRootContext: GitOKPluginContext {

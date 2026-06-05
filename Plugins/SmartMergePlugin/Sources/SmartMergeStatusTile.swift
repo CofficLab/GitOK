@@ -1,4 +1,3 @@
-import AppKit
 import GitCoreKit
 import GitOKCoreKit
 import GitOKUI
@@ -35,6 +34,8 @@ public struct SmartMergeForm: View {
     @State private var sourceBranch: GitBranchSummary?
     @State private var targetBranch: GitBranchSummary?
     @State private var isWorking = false
+    @State private var statusMessage: String?
+    @State private var errorMessage: String?
 
     public init(projectURL: URL) {
         self.projectURL = projectURL
@@ -47,6 +48,7 @@ public struct SmartMergeForm: View {
                     Text(branch.name).tag(branch as GitBranchSummary?)
                 }
             }
+            .disabled(isWorking)
 
             Text(SmartMergePluginLocalization.string("to"))
                 .font(.caption)
@@ -58,6 +60,7 @@ public struct SmartMergeForm: View {
                     Text(branch.name).tag(branch as GitBranchSummary?)
                 }
             }
+            .disabled(isWorking)
 
             AppButton(
                 SmartMergePluginLocalization.string("Merge"),
@@ -69,6 +72,20 @@ public struct SmartMergeForm: View {
                 merge()
             }
             .disabled(sourceBranch == nil || targetBranch == nil || sourceBranch == targetBranch || isWorking)
+
+            if let statusMessage {
+                Label(statusMessage, systemImage: "checkmark.circle")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+
+            if let errorMessage {
+                Label(errorMessage, systemImage: "exclamationmark.triangle")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .lineLimit(3)
+            }
         }
         .onAppear(perform: loadBranches)
     }
@@ -87,7 +104,11 @@ public struct SmartMergeForm: View {
                 }
             } catch {
                 await MainActor.run {
-                    showError(error, title: SmartMergePluginLocalization.string("Failed to load branches"))
+                    errorMessage = String(
+                        format: "%@: %@",
+                        SmartMergePluginLocalization.string("Failed to load branches"),
+                        error.localizedDescription
+                    )
                 }
             }
         }
@@ -96,47 +117,80 @@ public struct SmartMergeForm: View {
     private func merge() {
         guard let sourceBranch, let targetBranch else { return }
         isWorking = true
+        statusMessage = nil
+        errorMessage = nil
+        let operationTitle = String(
+            format: SmartMergePluginLocalization.string("Merging %@ into %@"),
+            sourceBranch.name,
+            targetBranch.name
+        )
+        let operationID = BlockingOperationCenter.shared.begin(
+            title: SmartMergePluginLocalization.string("Merging branches"),
+            message: operationTitle,
+            detail: SmartMergePluginLocalization.string("Large branch merges may take a while. Please keep GitOK open.")
+        )
 
         Task.detached {
+            let repository = GitRepositoryCLI(repositoryURL: projectURL)
             do {
-                try GitRepositoryCLI(repositoryURL: projectURL).mergeBranches(
-                    fromBranch: sourceBranch.name,
-                    toBranch: targetBranch.name
-                )
                 await MainActor.run {
+                    BlockingOperationCenter.shared.update(
+                        id: operationID,
+                        message: String(format: SmartMergePluginLocalization.string("Switching to %@"), targetBranch.name),
+                        detail: operationTitle
+                    )
+                }
+                try repository.checkoutBranch(named: targetBranch.name)
+
+                await MainActor.run {
+                    BlockingOperationCenter.shared.update(
+                        id: operationID,
+                        message: String(format: SmartMergePluginLocalization.string("Merging %@"), sourceBranch.name),
+                        detail: SmartMergePluginLocalization.string("GitOK is updating the repository. Other actions are temporarily blocked.")
+                    )
+                }
+                try repository.merge(branchName: sourceBranch.name, verbose: false)
+
+                await MainActor.run {
+                    BlockingOperationCenter.shared.update(
+                        id: operationID,
+                        message: SmartMergePluginLocalization.string("Checking merge result"),
+                        detail: SmartMergePluginLocalization.string("Refreshing repository state after merge.")
+                    )
+                }
+                let conflictCount = (try? repository.getMergeConflictFiles().count) ?? 0
+
+                await MainActor.run {
+                    BlockingOperationCenter.shared.end(id: operationID)
                     isWorking = false
-                    showInfo(
-                        String(
+                    if conflictCount > 0 {
+                        errorMessage = String(
+                            format: SmartMergePluginLocalization.string("Merge paused with %d conflict files"),
+                            conflictCount
+                        )
+                    } else {
+                        statusMessage = String(
                             format: SmartMergePluginLocalization.string("Merged %@ into %@"),
                             sourceBranch.name,
                             targetBranch.name
                         )
-                    )
+                    }
                 }
             } catch {
+                let conflictCount = (try? repository.getMergeConflictFiles().count) ?? 0
                 await MainActor.run {
+                    BlockingOperationCenter.shared.end(id: operationID)
                     isWorking = false
-                    showError(error, title: SmartMergePluginLocalization.string("Merge failed"))
+                    if conflictCount > 0 {
+                        errorMessage = String(
+                            format: SmartMergePluginLocalization.string("Merge paused with %d conflict files"),
+                            conflictCount
+                        )
+                    } else {
+                        errorMessage = error.localizedDescription
+                    }
                 }
             }
         }
-    }
-
-    @MainActor
-    private func showInfo(_ message: String) {
-        let alert = NSAlert()
-        alert.messageText = SmartMergePluginLocalization.string("Merge complete")
-        alert.informativeText = message
-        alert.alertStyle = .informational
-        alert.runModal()
-    }
-
-    @MainActor
-    private func showError(_ error: Error, title: String) {
-        let alert = NSAlert()
-        alert.messageText = title
-        alert.informativeText = error.localizedDescription
-        alert.alertStyle = .warning
-        alert.runModal()
     }
 }
