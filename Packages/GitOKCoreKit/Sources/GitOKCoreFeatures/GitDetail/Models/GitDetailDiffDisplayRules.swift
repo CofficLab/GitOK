@@ -754,16 +754,15 @@ public enum GitDetailDiffDisplayRules {
 
     public static func previousFileContentSource(
         currentSource: FileContentSource,
-        commits: [(hash: String, parentHashes: [String])],
+        selectedCommitParentHashes: [String],
         headHash: String?
     ) -> PreviousFileContentSource {
         switch currentSource {
-        case let .commit(hash):
-            return previousFileContentSource(
-                selectedCommitHash: hash,
-                commits: commits,
-                headHash: nil
-            )
+        case .commit:
+            guard let parentHash = selectedCommitParentHashes.first else {
+                return .unavailable
+            }
+            return .commit(hash: parentHash)
         case .worktree:
             return previousFileContentSource(
                 selectedCommitHash: nil,

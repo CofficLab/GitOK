@@ -25,6 +25,7 @@ struct FileDetail: View, SuperLog {
             changeType: \.changeType,
             existingPatch: \.diff,
             selectedCommitHash: \.hash,
+            selectedCommitParentHashes: \.parentHashes,
             loadCurrentCommitData: { project, file, hash in
                 try await project.fileDataAsync(at: hash, file: file.file)
             },
@@ -38,11 +39,6 @@ struct FileDetail: View, SuperLog {
                     )
                 }.value
             },
-            loadCommits: { project in
-                await project.getCommitsAsync("Load previous image")
-            },
-            loadedCommitHash: \.hash,
-            loadedParentHashes: \.parentHashes,
             loadHeadHash: { project in
                 await project.headCommitHashAsync()
             },

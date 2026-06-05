@@ -100,20 +100,6 @@ final class Project: SuperLog {
         )
     }
 
-    func getCommitsAsync(_ reason: String) async -> [GitCommit] {
-        let repositoryURL = url
-        do {
-            return try await Task.detached(priority: .userInitiated) {
-                try GitRepositoryCLI(repositoryURL: repositoryURL).commitList()
-            }.value
-        } catch let error {
-            os_log(.error, "\(self.t)GetCommits has error")
-            os_log(.error, "\(error)")
-
-            return []
-        }
-    }
-
     func isExist() -> Bool {
         return FileManager.default.fileExists(atPath: self.path)
     }

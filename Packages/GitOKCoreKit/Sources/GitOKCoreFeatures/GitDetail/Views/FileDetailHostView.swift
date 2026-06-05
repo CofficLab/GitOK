@@ -8,7 +8,7 @@ public enum FileDetailHostEvent {
     case diffFailure(errorDescription: String)
 }
 
-public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: View {
+public struct FileDetailHostView<Project, File, SelectedCommit>: View {
     private let project: Project?
     private let file: File?
     private let selectedCommit: SelectedCommit?
@@ -18,11 +18,9 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
     private let changeType: (File) -> String
     private let existingPatch: (File) -> String
     private let selectedCommitHash: (SelectedCommit) -> String
+    private let selectedCommitParentHashes: (SelectedCommit) -> [String]
     private let loadCurrentCommitData: (Project, File, String) async throws -> Data
     private let loadCurrentWorktreeData: (Project, File) async throws -> Data
-    private let loadCommits: (Project) async throws -> [LoadedCommit]
-    private let loadedCommitHash: (LoadedCommit) -> String
-    private let loadedParentHashes: (LoadedCommit) -> [String]
     private let loadHeadHash: (Project) async -> String?
     private let loadPreviousCommitData: (Project, File, String) async throws -> Data
     private let loadCommitContent: (Project, File, String) async throws -> (before: String?, after: String?)
@@ -62,11 +60,9 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
         changeType: @escaping (File) -> String,
         existingPatch: @escaping (File) -> String,
         selectedCommitHash: @escaping (SelectedCommit) -> String,
+        selectedCommitParentHashes: @escaping (SelectedCommit) -> [String],
         loadCurrentCommitData: @escaping (Project, File, String) async throws -> Data,
         loadCurrentWorktreeData: @escaping (Project, File) async throws -> Data,
-        loadCommits: @escaping (Project) async throws -> [LoadedCommit],
-        loadedCommitHash: @escaping (LoadedCommit) -> String,
-        loadedParentHashes: @escaping (LoadedCommit) -> [String],
         loadHeadHash: @escaping (Project) async -> String?,
         loadPreviousCommitData: @escaping (Project, File, String) async throws -> Data,
         loadCommitContent: @escaping (Project, File, String) async throws -> (before: String?, after: String?),
@@ -88,11 +84,9 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: V
         self.changeType = changeType
         self.existingPatch = existingPatch
         self.selectedCommitHash = selectedCommitHash
+        self.selectedCommitParentHashes = selectedCommitParentHashes
         self.loadCurrentCommitData = loadCurrentCommitData
         self.loadCurrentWorktreeData = loadCurrentWorktreeData
-        self.loadCommits = loadCommits
-        self.loadedCommitHash = loadedCommitHash
-        self.loadedParentHashes = loadedParentHashes
         self.loadHeadHash = loadHeadHash
         self.loadPreviousCommitData = loadPreviousCommitData
         self.loadCommitContent = loadCommitContent
@@ -202,31 +196,23 @@ fileprivate enum FileDetailBackgroundLoader {
         }
     }
 
-    static func previousImageData<Project, File, SelectedCommit, LoadedCommit>(
+    static func previousImageData<Project, File, SelectedCommit>(
         project: Project?,
         file: File,
         selectedCommit: SelectedCommit?,
         selectedCommitHash: (SelectedCommit) -> String,
-        loadCommits: (Project) async throws -> [LoadedCommit],
-        loadedCommitHash: (LoadedCommit) -> String,
-        loadedParentHashes: (LoadedCommit) -> [String],
+        selectedCommitParentHashes: (SelectedCommit) -> [String],
         loadHeadHash: (Project) async -> String?,
         loadPreviousCommitData: (Project, File, String) async throws -> Data
     ) async -> Data? {
         guard let loadedProject = project else { return nil }
 
-        let commits = (try? await loadCommits(loadedProject)) ?? []
-        let summaries = GitDetailDiffDisplayRules.commitSummaries(
-            from: commits,
-            commitHash: loadedCommitHash,
-            parentHashes: loadedParentHashes
-        )
         let source = GitDetailDiffDisplayRules.previousFileContentSource(
             currentSource: GitDetailDiffDisplayRules.fileContentSource(
                 selectedCommit: selectedCommit,
                 commitHash: selectedCommitHash
             ),
-            commits: summaries,
+            selectedCommitParentHashes: selectedCommit.map(selectedCommitParentHashes) ?? [],
             headHash: await loadHeadHash(loadedProject)
         )
 
@@ -237,16 +223,14 @@ fileprivate enum FileDetailBackgroundLoader {
         return try? await loadPreviousCommitData(loadedProject, file, hash)
     }
 
-    static func images<Project, File, SelectedCommit, LoadedCommit>(
+    static func images<Project, File, SelectedCommit>(
         project: Project?,
         file: File,
         selectedCommit: SelectedCommit?,
         selectedCommitHash: (SelectedCommit) -> String,
+        selectedCommitParentHashes: (SelectedCommit) -> [String],
         loadCurrentCommitData: (Project, File, String) async throws -> Data,
         loadCurrentWorktreeData: (Project, File) async throws -> Data,
-        loadCommits: (Project) async throws -> [LoadedCommit],
-        loadedCommitHash: (LoadedCommit) -> String,
-        loadedParentHashes: (LoadedCommit) -> [String],
         loadHeadHash: (Project) async -> String?,
         loadPreviousCommitData: (Project, File, String) async throws -> Data
     ) async -> ImageLoadResult {
@@ -267,9 +251,7 @@ fileprivate enum FileDetailBackgroundLoader {
             file: file,
             selectedCommit: selectedCommit,
             selectedCommitHash: selectedCommitHash,
-            loadCommits: loadCommits,
-            loadedCommitHash: loadedCommitHash,
-            loadedParentHashes: loadedParentHashes,
+            selectedCommitParentHashes: selectedCommitParentHashes,
             loadHeadHash: loadHeadHash,
             loadPreviousCommitData: loadPreviousCommitData
         )
@@ -450,11 +432,9 @@ private extension FileDetailHostView {
         let fileTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: file)
         let selectedCommitTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommit)
         let selectedCommitHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommitHash)
+        let selectedCommitParentHashesTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: selectedCommitParentHashes)
         let loadCurrentCommitDataTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCurrentCommitData)
         let loadCurrentWorktreeDataTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCurrentWorktreeData)
-        let loadCommitsTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadCommits)
-        let loadedCommitHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadedCommitHash)
-        let loadedParentHashesTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadedParentHashes)
         let loadHeadHashTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadHeadHash)
         let loadPreviousCommitDataTransfer = FileDetailBackgroundLoader.UnsafeTransfer(value: loadPreviousCommitData)
 
@@ -464,11 +444,9 @@ private extension FileDetailHostView {
                 file: fileTransfer.value,
                 selectedCommit: selectedCommitTransfer.value,
                 selectedCommitHash: selectedCommitHashTransfer.value,
+                selectedCommitParentHashes: selectedCommitParentHashesTransfer.value,
                 loadCurrentCommitData: loadCurrentCommitDataTransfer.value,
                 loadCurrentWorktreeData: loadCurrentWorktreeDataTransfer.value,
-                loadCommits: loadCommitsTransfer.value,
-                loadedCommitHash: loadedCommitHashTransfer.value,
-                loadedParentHashes: loadedParentHashesTransfer.value,
                 loadHeadHash: loadHeadHashTransfer.value,
                 loadPreviousCommitData: loadPreviousCommitDataTransfer.value
             )
