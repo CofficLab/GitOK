@@ -31,6 +31,7 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     private let loadCommitFiles: (Project, String) async throws -> [FileItem]
     private let loadWorktreeFiles: (Project) async throws -> [FileItem]
     private let loadStatusEntries: (Project) async throws -> [StatusEntry]
+    private let makeWorktreeFilesFromStatusEntries: (([StatusEntry]) -> [FileItem])?
     private let addFiles: (Project, [String]) async throws -> Void
     private let unstageFiles: (Project, [String]) async throws -> Void
     private let discardFileChanges: (Project, String) async throws -> Void
@@ -49,6 +50,7 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     @State private var files: [FileItem] = []
     @State private var filePaths: [String] = []
     @State private var filesByPath: [String: FileItem] = [:]
+    @State private var fileListChangeToken = 0
     @State private var isLoading = true
     @State private var selection: FileItem?
     @State private var hoveredFile: FileItem?
@@ -94,6 +96,7 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
         loadCommitFiles: @escaping (Project, String) async throws -> [FileItem],
         loadWorktreeFiles: @escaping (Project) async throws -> [FileItem],
         loadStatusEntries: @escaping (Project) async throws -> [StatusEntry],
+        makeWorktreeFilesFromStatusEntries: (([StatusEntry]) -> [FileItem])? = nil,
         addFiles: @escaping (Project, [String]) async throws -> Void,
         unstageFiles: @escaping (Project, [String]) async throws -> Void,
         discardFileChanges: @escaping (Project, String) async throws -> Void,
@@ -124,6 +127,7 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
         self.loadCommitFiles = loadCommitFiles
         self.loadWorktreeFiles = loadWorktreeFiles
         self.loadStatusEntries = loadStatusEntries
+        self.makeWorktreeFilesFromStatusEntries = makeWorktreeFilesFromStatusEntries
         self.addFiles = addFiles
         self.unstageFiles = unstageFiles
         self.discardFileChanges = discardFileChanges
@@ -187,7 +191,7 @@ private extension FileListHostView {
 
         return FileListContentView(
             selection: $selection,
-            files: files,
+            fileListChangeToken: fileListChangeToken,
             sections: presentationState.sections,
             presentationState: presentationState,
             scrollTarget: scrollTarget,
@@ -588,6 +592,7 @@ private extension FileListHostView {
         let loadCommitFilesTransfer = UnsafeTransfer(value: loadCommitFiles)
         let loadWorktreeFilesTransfer = UnsafeTransfer(value: loadWorktreeFiles)
         let loadStatusEntriesTransfer = UnsafeTransfer(value: loadStatusEntries)
+        let makeWorktreeFilesFromStatusEntriesTransfer = UnsafeTransfer(value: makeWorktreeFilesFromStatusEntries)
         let reason = command.request.reason
 
         do {
@@ -603,8 +608,12 @@ private extension FileListHostView {
                     loadedFiles = try await loadCommitFilesTransfer.value(projectTransfer.value, expectedCommitHash)
                     statusEntries = []
                 } else {
-                    loadedFiles = try await loadWorktreeFilesTransfer.value(projectTransfer.value)
                     statusEntries = try await loadStatusEntriesTransfer.value(projectTransfer.value)
+                    if let makeWorktreeFiles = makeWorktreeFilesFromStatusEntriesTransfer.value {
+                        loadedFiles = makeWorktreeFiles(statusEntries)
+                    } else {
+                        loadedFiles = try await loadWorktreeFilesTransfer.value(projectTransfer.value)
+                    }
                 }
 
                 try Task.checkCancellation()
@@ -721,6 +730,7 @@ private extension FileListHostView {
 
     func applyRefreshApplicationResult(_ result: RefreshApplicationResult) {
         files = result.items
+        fileListChangeToken += 1
         filePaths = result.filePaths
         filesByPath = result.filesByPath
         stagedFilePaths = result.refreshState.stagedPaths
@@ -765,6 +775,7 @@ private extension FileListHostView {
 
     func clearLoadedState() {
         files.removeAll()
+        fileListChangeToken += 1
         filePaths.removeAll()
         filesByPath.removeAll()
         selection = nil

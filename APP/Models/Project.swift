@@ -1166,15 +1166,18 @@ extension Project {
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
-        try await lightweightStatusEntriesAsync()
-            .map { entry in
-                GitDiffFile(
-                    id: entry.path,
-                    file: entry.path,
-                    changeType: Self.displayChangeType(for: entry),
-                    diff: ""
-                )
-            }
+        Self.diffFiles(from: try await lightweightStatusEntriesAsync())
+    }
+
+    static func diffFiles(from statusEntries: [GitStatusEntry]) -> [GitDiffFile] {
+        statusEntries.map { entry in
+            GitDiffFile(
+                id: entry.path,
+                file: entry.path,
+                changeType: Self.displayChangeType(for: entry),
+                diff: ""
+            )
+        }
     }
 
     private static func displayChangeType(for entry: GitStatusEntry) -> String {

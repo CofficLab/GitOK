@@ -3,7 +3,7 @@ import SwiftUI
 public struct FileListContentView<FileItem: Hashable, RowContent: View>: View {
     @Binding private var selection: FileItem?
 
-    private let files: [FileItem]
+    private let fileListChangeToken: Int
     private let sections: [FileListRules.FileSection]
     private let presentationState: FileListRules.PresentationState
     private let scrollTarget: FileItem?
@@ -17,7 +17,7 @@ public struct FileListContentView<FileItem: Hashable, RowContent: View>: View {
 
     public init(
         selection: Binding<FileItem?>,
-        files: [FileItem],
+        fileListChangeToken: Int,
         sections: [FileListRules.FileSection],
         presentationState: FileListRules.PresentationState,
         scrollTarget: FileItem?,
@@ -30,7 +30,7 @@ public struct FileListContentView<FileItem: Hashable, RowContent: View>: View {
         onClearSelection: @escaping () -> Void
     ) {
         _selection = selection
-        self.files = files
+        self.fileListChangeToken = fileListChangeToken
         self.sections = sections
         self.presentationState = presentationState
         self.scrollTarget = scrollTarget
@@ -61,7 +61,7 @@ public struct FileListContentView<FileItem: Hashable, RowContent: View>: View {
                         }
                     }
                     .listStyle(.plain)
-                    .onChange(of: files) {
+                    .onChange(of: fileListChangeToken) {
                         guard let scrollTarget else {
                             return
                         }

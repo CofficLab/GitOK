@@ -44,6 +44,9 @@ struct FileList: View, SuperLog {
             loadStatusEntries: { project in
                 try await project.lightweightStatusEntriesAsync()
             },
+            makeWorktreeFilesFromStatusEntries: { entries in
+                Project.diffFiles(from: entries)
+            },
             addFiles: { project, paths in
                 try await project.addFilesAsync(paths)
             },
