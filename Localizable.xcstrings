@@ -46,6 +46,7 @@
       }
     },
     "/path/to/company-ca.pem" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -186,6 +187,7 @@
       }
     },
     "Add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -203,28 +205,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "加入"
-          }
-        }
-      }
-    },
-    "All" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全部"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全部"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全部"
           }
         }
       }
@@ -313,6 +293,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "加入遠端倉庫"
+          }
+        }
+      }
+    },
+    "All" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部"
           }
         }
       }
@@ -1494,6 +1496,7 @@
       }
     },
     "HTTP proxy" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1516,6 +1519,7 @@
       }
     },
     "http://127.0.0.1:7890" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1538,6 +1542,7 @@
       }
     },
     "HTTPS proxy" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1913,28 +1918,6 @@
         }
       }
     },
-    "No themes in this category" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此分类没有主题"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此分类没有主题"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此分類沒有主題"
-          }
-        }
-      }
-    },
     "No Remote Repository Configured" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1953,6 +1936,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "尚未設定遠端倉庫"
+          }
+        }
+      }
+    },
+    "No themes in this category" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此分类没有主题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此分类没有主题"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此分類沒有主題"
           }
         }
       }
@@ -2815,7 +2820,6 @@
       }
     },
     "System" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3330,6 +3334,7 @@
       }
     },
     "保存" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3642,6 +3647,7 @@
       }
     },
     "删除" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3686,6 +3692,7 @@
       }
     },
     "取消" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3730,6 +3737,7 @@
       }
     },
     "启用 Git SSL 证书验证" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3752,6 +3760,7 @@
       }
     },
     "在Finder中显示" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3797,6 +3806,7 @@
       }
     },
     "复制项目路径" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3841,6 +3851,7 @@
       }
     },
     "姓名" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3863,6 +3874,7 @@
       }
     },
     "完成" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4195,6 +4207,7 @@
       }
     },
     "打开钥匙串访问" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4217,6 +4230,7 @@
       }
     },
     "推送" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4462,6 +4476,7 @@
       }
     },
     "检查更新" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4484,6 +4499,7 @@
       }
     },
     "正在检查更新..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4506,6 +4522,7 @@
       }
     },
     "正在读取 Git 网络配置…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4528,6 +4545,7 @@
       }
     },
     "添加" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4623,6 +4641,7 @@
       }
     },
     "添加新的合作者" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4645,6 +4664,7 @@
       }
     },
     "添加现有项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4711,6 +4731,7 @@
       }
     },
     "清除" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4800,6 +4821,7 @@
       }
     },
     "确定" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4866,6 +4888,7 @@
       }
     },
     "置顶" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4976,6 +4999,7 @@
       }
     },
     "选择" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5221,6 +5245,7 @@
       }
     },
     "项目已不存在" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
