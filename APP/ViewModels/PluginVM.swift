@@ -101,13 +101,17 @@ class PluginVM: ObservableObject {
     ///   - project: 当前选中的项目
     /// - Returns: 插件及其对应的列表视图数组
     @MainActor
-    func getEnabledPluginListViews(tab: String, project: Project?) -> [GitOKPluginViewContribution] {
+    func getEnabledPluginListViews(
+        tab: String,
+        project: Project?,
+        isGitRepository: Bool = false
+    ) -> [GitOKPluginViewContribution] {
         guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             projectURL: project?.url,
             projectPath: project.map { $0.url.path },
             projectTitle: project?.title,
-            isGitRepository: project?.isGitRepo ?? false
+            isGitRepository: isGitRepository
         )
         return runtime.enabledListViews(tab: tab, projectURL: project?.url, context: context)
     }

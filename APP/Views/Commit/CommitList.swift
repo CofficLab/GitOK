@@ -17,6 +17,8 @@ struct CommitList: View, SuperLog {
     private let commitRepo = GitCommitRepo.shared
 
     var body: some View {
+        let projectPath = vm.project?.path
+
         CommitListHostView(
             project: vm.project,
             projectPath: \.path,
@@ -30,7 +32,7 @@ struct CommitList: View, SuperLog {
             itemParentIDs: \.parentHashes,
             unpushedID: \.hash,
             updateUnpushed: { count, hashes in
-                vm.updateUnpushedCommits(count, hashes: hashes)
+                vm.updateUnpushedCommits(count, hashes: hashes, projectPath: projectPath)
             },
             selectItem: { commit in
                 data.setCommit(commit)

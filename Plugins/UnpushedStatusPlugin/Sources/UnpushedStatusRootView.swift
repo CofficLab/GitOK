@@ -8,11 +8,24 @@ struct UnpushedStatusRootView: View {
     let updateUnpushedCommits: GitOKUnpushedCommitsUpdateHandler
     let updateRemoteTracking: GitOKRemoteTrackingUpdateHandler
 
+    @State private var unpushedTask: Task<Void, Never>?
+    @State private var aheadBehindTask: Task<Void, Never>?
+
     var body: some View {
         content
             .onAppear {
                 refreshUnpushedCount()
                 refreshAheadBehind()
+            }
+            .onChange(of: projectURL) {
+                refreshUnpushedCount()
+                refreshAheadBehind()
+            }
+            .onDisappear {
+                unpushedTask?.cancel()
+                aheadBehindTask?.cancel()
+                unpushedTask = nil
+                aheadBehindTask = nil
             }
             .onReceive(NotificationCenter.default.publisher(for: .pluginUnpushedStatusAppDidBecomeActive)) { _ in
                 refreshUnpushedCount()
@@ -48,19 +61,25 @@ struct UnpushedStatusRootView: View {
     }
 
     private func refreshUnpushedCount() {
+        unpushedTask?.cancel()
+
         guard let projectURL else {
             updateUnpushedCommits(0, [])
             return
         }
 
-        Task.detached(priority: .userInitiated) {
+        unpushedTask = Task.detached(priority: .userInitiated) {
             do {
                 let hashes = try GitRepositoryCLI(repositoryURL: projectURL).unpushedCommitHashes()
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    unpushedTask = nil
                     updateUnpushedCommits(hashes.count, hashes)
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    unpushedTask = nil
                     updateUnpushedCommits(0, [])
                 }
             }
@@ -68,22 +87,28 @@ struct UnpushedStatusRootView: View {
     }
 
     private func refreshAheadBehind(markFetched: Bool = false) {
+        aheadBehindTask?.cancel()
+
         guard let projectURL else {
             updateRemoteTracking(nil, nil)
             return
         }
 
-        Task.detached(priority: .userInitiated) {
+        aheadBehindTask = Task.detached(priority: .userInitiated) {
             do {
                 let state = try GitRepositoryCLI(repositoryURL: projectURL).aheadBehind()
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    aheadBehindTask = nil
                     updateRemoteTracking(
                         UnpushedStatusPresentation.remoteTrackingStatus(from: state),
                         markFetched ? .now : nil
                     )
                 }
             } catch {
+                guard Task.isCancelled == false else { return }
                 await MainActor.run {
+                    aheadBehindTask = nil
                     updateRemoteTracking(.noUpstream, nil)
                 }
             }

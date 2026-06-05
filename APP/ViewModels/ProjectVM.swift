@@ -22,6 +22,15 @@ class ProjectVM: ObservableObject, SuperLog {
     /// 当前项目路径是否存在
     @Published private(set) var projectExists = true
 
+    /// 当前项目是否已经确认是 Git 仓库。
+    @Published private(set) var currentProjectIsGitRepository = false
+
+    /// 当前项目 Git 仓库状态是否仍在后台检测中。
+    @Published private(set) var isCheckingCurrentProjectGitRepository = false
+
+    /// Git 仓库状态变化令牌，用于驱动依赖内部 State 的视图重算。
+    @Published private(set) var projectGitRepositoryStateToken = 0
+
     /// 未推送提交数量
     @Published private(set) var unpushedCommitsCount: Int = 0
 
@@ -40,6 +49,8 @@ class ProjectVM: ObservableObject, SuperLog {
     /// 仓库管理器
     private let repoManager: RepoManager
     private var projectExistenceGeneration = 0
+    private var gitRepositoryGeneration = 0
+    private var gitRepositoryCheckTask: Task<Void, Never>?
 
     // MARK: - Initialization
 
@@ -54,13 +65,7 @@ class ProjectVM: ObservableObject, SuperLog {
         self.checkIfProjectExists()
         os_log("\(Self.t)✅ Startup step: project exists=\(self.projectExists) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(existsStart)))s")
 
-        if let project = project {
-            os_log("\(Self.t)🚀 Startup schedule: Project.isGit path=\(project.path)")
-            Task {
-                await project.updateIsGitRepoCache()
-                objectWillChange.send()
-            }
-        }
+        refreshCurrentProjectGitRepositoryState(reason: "init")
 
         os_log("\(Self.t)✅ Startup end: ProjectVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
@@ -81,18 +86,56 @@ class ProjectVM: ObservableObject, SuperLog {
 
         self.project = p
         self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
+        resetProjectDerivedState()
         self.checkIfProjectExists()
-
-        if let project = p {
-            let gitStart = Date()
-            Task {
-                await project.updateIsGitRepoCache()
-                objectWillChange.send()
-                os_log("\(self.t)✅ SetProject Project.isGit updated=\(project.isGitRepo) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
-            }
-        }
+        refreshCurrentProjectGitRepositoryState(reason: reason)
 
         os_log("\(self.t)✅ SetProject end reason=\(reason) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+    }
+
+    /// 重新检测当前项目是否是 Git 仓库，并防止旧项目的异步结果回写到新项目。
+    func refreshCurrentProjectGitRepositoryState(reason: String) {
+        gitRepositoryGeneration += 1
+        let generation = gitRepositoryGeneration
+        gitRepositoryCheckTask?.cancel()
+
+        guard let project else {
+            currentProjectIsGitRepository = false
+            isCheckingCurrentProjectGitRepository = false
+            projectGitRepositoryStateToken += 1
+            return
+        }
+
+        let path = project.path
+        let repositoryURL = project.url
+        let cachedValue = project.isGitRepo
+
+        currentProjectIsGitRepository = cachedValue
+        isCheckingCurrentProjectGitRepository = true
+        projectGitRepositoryStateToken += 1
+
+        let gitStart = Date()
+        os_log("\(self.t)🚀 Git repository check scheduled reason=\(reason) path=\(path)")
+
+        gitRepositoryCheckTask = Task.detached(priority: .utility) {
+            let isGitRepository = GitRepositoryCLI(repositoryURL: repositoryURL).isGitRepository()
+
+            guard Task.isCancelled == false else { return }
+            await MainActor.run {
+                guard generation == self.gitRepositoryGeneration,
+                      self.project?.path == path,
+                      let currentProject = self.project else {
+                    return
+                }
+
+                currentProject.updateIsGitRepoCacheSync(isGitRepository)
+                self.currentProjectIsGitRepository = isGitRepository
+                self.isCheckingCurrentProjectGitRepository = false
+                self.projectGitRepositoryStateToken += 1
+                self.gitRepositoryCheckTask = nil
+                os_log("\(self.t)✅ Git repository check finished isGit=\(isGitRepository) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s path=\(path)")
+            }
+        }
     }
 
     /// 设置当前选中的文件
@@ -106,7 +149,10 @@ class ProjectVM: ObservableObject, SuperLog {
     /// - Parameters:
     ///   - count: 未推送提交数量
     ///   - hashes: 未推送提交的哈希数组
-    func updateUnpushedCommits(_ count: Int, hashes: [String]) {
+    func updateUnpushedCommits(_ count: Int, hashes: [String], projectPath: String? = nil) {
+        if let projectPath, project?.path != projectPath {
+            return
+        }
         self.unpushedCommitsCount = count
         self.unpushedCommitHashes = Set(hashes)
     }
@@ -120,11 +166,18 @@ class ProjectVM: ObservableObject, SuperLog {
 
     /// 更新项目的 clean 状态
     /// - Parameter isClean: 项目是否 clean
-    func updateIsClean(_ isClean: Bool) {
+    func updateIsClean(_ isClean: Bool, projectPath: String? = nil) {
+        if let projectPath, project?.path != projectPath {
+            return
+        }
         self.isClean = isClean
     }
 
-    func updateRemoteTracking(_ status: GitOKRemoteTrackingStatus?, fetchedAt: Date?) {
+    func updateRemoteTracking(_ status: GitOKRemoteTrackingStatus?, fetchedAt: Date?, projectPath: String? = nil) {
+        if let projectPath, project?.path != projectPath {
+            return
+        }
+
         if let status {
             self.aheadCount = status.ahead
             self.behindCount = status.behind
@@ -147,6 +200,13 @@ class ProjectVM: ObservableObject, SuperLog {
         self.behindCount = 0
         self.hasUpstream = false
         self.lastFetchedAt = nil
+    }
+
+    private func resetProjectDerivedState() {
+        isClean = true
+        unpushedCommitsCount = 0
+        unpushedCommitHashes = []
+        resetRemoteTrackingState()
     }
 
     // MARK: - Private

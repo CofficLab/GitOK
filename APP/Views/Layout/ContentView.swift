@@ -108,7 +108,7 @@ struct ContentView: View, SuperLog {
     }
 
     private func performGitMenuCommand(_ command: GitMenuCommand) {
-        guard let loadedProject = vm.project, loadedProject.isGitRepo else {
+        guard let loadedProject = vm.project, vm.currentProjectIsGitRepository else {
             alert_error("当前没有可操作的 Git 仓库")
             return
         }
@@ -199,6 +199,7 @@ extension ContentView {
         .onAppear(perform: onAppear)
         .onDisappear(perform: clearCachedViews)
         .onChange(of: vm.project, onProjectChange)
+        .onChange(of: vm.projectGitRepositoryStateToken, onProjectGitRepositoryStateChange)
         .onChange(of: self.tab, onChangeOfTab)
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.registeredPluginCount, onPluginsLoaded)
@@ -285,7 +286,7 @@ extension ContentView {
         toolbarLeadingViews = p.getEnabledToolbarLeadingViews(
             projectURL: vm.project?.url,
             branchName: g.branch?.name,
-            isGitRepository: vm.project?.isGitRepo ?? false,
+            isGitRepository: vm.currentProjectIsGitRepository,
             projects: g.projects.map {
                 GitOKProjectSummary(url: $0.url, title: $0.title, path: $0.path)
             },
@@ -314,14 +315,18 @@ extension ContentView {
                 behind: vm.behindCount,
                 hasUpstream: vm.hasUpstream
             ),
-            isGitRepository: vm.project?.isGitRepo ?? false
+            isGitRepository: vm.currentProjectIsGitRepository
         )
         if Self.verbose {
             os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
         }
 
         let listStart = Date()
-        pluginListViews = p.getEnabledPluginListViews(tab: tab, project: vm.project)
+        pluginListViews = p.getEnabledPluginListViews(
+            tab: tab,
+            project: vm.project,
+            isGitRepository: vm.currentProjectIsGitRepository
+        )
         if Self.verbose {
             os_log("\(self.t)✅ UpdateCachedViews list count=\(pluginListViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(listStart)))s")
         }
@@ -381,6 +386,10 @@ extension ContentView {
 
     /// 处理项目变更事件
     func onProjectChange() {
+        updateCachedViews()
+    }
+
+    func onProjectGitRepositoryStateChange() {
         updateCachedViews()
     }
 

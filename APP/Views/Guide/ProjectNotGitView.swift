@@ -61,17 +61,7 @@ extension ProjectNotGitView {
                         os_log("\(Self.t)✅ Git repository initialized successfully")
                     }
 
-                    // 更新项目的 Git 状态缓存并刷新界面
-                    Task {
-                        await project.updateIsGitRepoCache()
-
-                        // 重新设置项目以触发 ContentView 的 updateCachedViews
-                        await MainActor.run {
-                            if let currentProject = vm.project {
-                                vm.setProject(currentProject, reason: "Git initialized")
-                            }
-                        }
-                    }
+                    vm.refreshCurrentProjectGitRepositoryState(reason: "Git initialized")
                 }
             } catch let error {
                 await MainActor.run {

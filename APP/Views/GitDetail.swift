@@ -18,7 +18,9 @@ struct GitDetail: View, SuperEvent, SuperLog {
             project: vm.project,
             selectedCommit: data.commit,
             isClean: vm.isClean,
-            projectIsGitRepository: { $0.isGitRepo },
+            projectIsGitRepository: { _ in
+                vm.currentProjectIsGitRepository || vm.isCheckingCurrentProjectGitRepository
+            },
             commitMessage: \.message,
             commitBodyText: \.body,
             commitAuthor: \.author,
@@ -52,6 +54,9 @@ struct GitDetail: View, SuperEvent, SuperLog {
             }
         )
         .onChange(of: vm.project) {
+            projectChangeToken += 1
+        }
+        .onChange(of: vm.projectGitRepositoryStateToken) {
             projectChangeToken += 1
         }
         .onApplicationWillBecomeActive {

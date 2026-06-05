@@ -32,7 +32,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     var git: DataVM
 
     /// 当前项目状态
-    var projectVM: ProjectVM
+    @ObservedObject var projectVM: ProjectVM
 
     /// 拖拽覆盖层是否可见
     @State private var isDropTargeted = false
@@ -155,19 +155,21 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     }
 
     private var pluginRootContext: GitOKPluginContext {
-        GitOKPluginContext(
+        let cleanStatusProjectPath = projectVM.project?.path
+
+        return GitOKPluginContext(
             projectURL: projectVM.project?.url,
             onCleanStatusUpdate: { isClean in
-                projectVM.updateIsClean(isClean)
+                projectVM.updateIsClean(isClean, projectPath: cleanStatusProjectPath)
             },
             onGitDirectoryChange: { change in
                 postGitDirectoryChange(change)
             },
             onUnpushedCommitsUpdate: { count, hashes in
-                projectVM.updateUnpushedCommits(count, hashes: hashes)
+                projectVM.updateUnpushedCommits(count, hashes: hashes, projectPath: cleanStatusProjectPath)
             },
             onRemoteTrackingUpdate: { status, fetchedAt in
-                projectVM.updateRemoteTracking(status, fetchedAt: fetchedAt)
+                projectVM.updateRemoteTracking(status, fetchedAt: fetchedAt, projectPath: cleanStatusProjectPath)
             }
         )
     }

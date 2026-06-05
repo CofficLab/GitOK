@@ -31,6 +31,8 @@ struct WorkingStateView: View, SuperLog {
     }
 
     var body: some View {
+        let cleanStateProjectPath = vm.project?.path
+
         WorkingStateHostView(
             project: vm.project,
             selectedCommit: data.commit,
@@ -38,7 +40,7 @@ struct WorkingStateView: View, SuperLog {
             externalActivityStatus: data.activityStatus,
             setSelectedCommit: { data.commit = $0 },
             setActivityStatus: { data.activityStatus = $0 },
-            updateCleanState: { vm.updateIsClean($0) },
+            updateCleanState: { vm.updateIsClean($0, projectPath: cleanStateProjectPath) },
             projectPath: \.path,
             loadChangedFileCount: { project in
                 try await project.untrackedFiles().count
@@ -58,7 +60,7 @@ struct WorkingStateView: View, SuperLog {
                 )
             },
             updateRemoteTrackingStatus: { status, fetchedAt in
-                vm.updateRemoteTracking(status, fetchedAt: fetchedAt)
+                vm.updateRemoteTracking(status, fetchedAt: fetchedAt, projectPath: cleanStateProjectPath)
             },
             fetch: { project in
                 try await project.fetchAsync()

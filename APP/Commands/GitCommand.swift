@@ -9,7 +9,7 @@ struct GitCommand: Commands, SuperLog {
     @FocusedObject private var projectVM: ProjectVM?
 
     private var hasGitProject: Bool {
-        projectVM?.project?.isGitRepo == true
+        projectVM?.currentProjectIsGitRepository == true
     }
 
     private var canPush: Bool {
