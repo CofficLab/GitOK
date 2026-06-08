@@ -697,6 +697,62 @@
         }
       }
     },
+    "Showing first %lld conflict files": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first %lld conflict files"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅显示前 %lld 个冲突文件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅顯示前 %lld 個衝突檔案"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅顯示前 %lld 個衝突檔案"
+          }
+        }
+      }
+    },
+    "%lld more conflict files are hidden to keep GitOK responsive": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld more conflict files are hidden to keep GitOK responsive"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还有 %lld 个冲突文件已隐藏，以保持 GitOK 流畅"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還有 %lld 個衝突檔案已隱藏，以保持 GitOK 流暢"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還有 %lld 個衝突檔案已隱藏，以保持 GitOK 流暢"
+          }
+        }
+      }
+    },
     "Continue Merge": {
       "extractionState": "stale",
       "localizations": {

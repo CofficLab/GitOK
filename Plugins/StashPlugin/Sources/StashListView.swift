@@ -12,7 +12,7 @@ private enum StashListBackgroundRunner {
     }
 
     static func hasStatusChanges(projectURL: URL) throws -> Bool {
-        try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty == false
+        try GitRepositoryCLI(repositoryURL: projectURL).lightweightStatusEntries().isEmpty == false
     }
 
     static func runStashAction(

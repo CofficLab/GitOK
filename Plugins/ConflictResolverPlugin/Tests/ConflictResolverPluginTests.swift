@@ -1,5 +1,6 @@
 @testable import ConflictResolverPlugin
 import Foundation
+import GitCoreKit
 import GitOKCoreKit
 import Testing
 

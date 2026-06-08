@@ -71,6 +71,8 @@ public struct WorkingStateConflictState: Equatable, Sendable {
 }
 
 public enum WorkingStateConflictRules {
+    public static let defaultVisibleFileLimit = 80
+
     public static func mergeFiles(
         unresolvedPaths: Set<String>,
         statusEntries: [GitStatusEntry]
@@ -90,6 +92,20 @@ public enum WorkingStateConflictRules {
 
             return GitMergeFile(path: path, state: .staged)
         }
+    }
+
+    public static func visibleFiles(
+        from files: [GitMergeFile],
+        limit: Int = defaultVisibleFileLimit
+    ) -> ArraySlice<GitMergeFile> {
+        files.prefix(max(0, limit))
+    }
+
+    public static func hiddenFileCount(
+        totalCount: Int,
+        limit: Int = defaultVisibleFileLimit
+    ) -> Int {
+        max(0, totalCount - max(0, limit))
     }
 }
 
@@ -136,7 +152,7 @@ public struct WorkingStateConflictPanel: View {
             header
 
             VStack(spacing: 8) {
-                ForEach(state.files) { file in
+                ForEach(visibleFiles) { file in
                     WorkingStateConflictFileRow(
                         file: file,
                         isBusy: isPerformingAction && activePath == file.path,
@@ -147,6 +163,10 @@ public struct WorkingStateConflictPanel: View {
                         onUseTheirs: { onUseTheirs(file.path) }
                     )
                 }
+
+                if hiddenConflictFileCount > 0 {
+                    hiddenConflictSummary
+                }
             }
         }
         .padding(14)
@@ -156,8 +176,45 @@ public struct WorkingStateConflictPanel: View {
                 .fill(Color(.separatorColor))
                 .frame(height: 1)
         }
-        .animation(panelAnimation, value: state)
+        .animation(panelAnimation, value: state.files.count)
         .animation(panelAnimation, value: isPerformingAction)
+    }
+
+    private var visibleFiles: ArraySlice<GitMergeFile> {
+        WorkingStateConflictRules.visibleFiles(from: state.files)
+    }
+
+    private var hiddenConflictFileCount: Int {
+        WorkingStateConflictRules.hiddenFileCount(totalCount: state.files.count)
+    }
+
+    private var hiddenConflictSummary: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "ellipsis.circle")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .frame(width: 24, height: 24)
+                .background(Color.secondary.opacity(0.10), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(String.localizedStringWithFormat(
+                    CommitLocalization.string("Showing first %lld conflict files"),
+                    WorkingStateConflictRules.defaultVisibleFileLimit
+                ))
+                .font(.system(size: 12, weight: .semibold))
+
+                Text(String.localizedStringWithFormat(
+                    CommitLocalization.string("%lld more conflict files are hidden to keep GitOK responsive"),
+                    hiddenConflictFileCount
+                ))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+            }
+
+            Spacer(minLength: 8)
+        }
+        .padding(.vertical, 4)
     }
 
     private var header: some View {

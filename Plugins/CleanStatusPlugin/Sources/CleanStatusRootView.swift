@@ -65,7 +65,7 @@ struct CleanStatusRootView: View {
 
         checkTask = Task.detached(priority: .userInitiated) {
             do {
-                let isClean = try GitRepositoryCLI(repositoryURL: projectURL).statusEntries().isEmpty
+                let isClean = try GitRepositoryCLI(repositoryURL: projectURL).lightweightStatusEntries().isEmpty
                 guard Task.isCancelled == false else { return }
                 await MainActor.run {
                     guard lastProjectURL == projectURL else { return }

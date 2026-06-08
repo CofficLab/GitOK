@@ -476,7 +476,7 @@ private extension ConflictResolverList {
                 }
 
                 let unresolvedPaths = Set(try repository.getMergeConflictFiles())
-                let statusEntries = try repository.statusEntries()
+                let statusEntries = try repository.lightweightStatusEntries()
                 let mergeBranch = try repository.getCurrentMergeBranchName() ?? "unknown"
                 let files = ConflictResolverStateBuilder.mergeFiles(
                     unresolvedPaths: unresolvedPaths,
