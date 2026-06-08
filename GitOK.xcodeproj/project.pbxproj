@@ -765,6 +765,7 @@
 		0B332F062BDA02BC00DFA5BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 			0B559D792F1A5D41005C6809 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 			0B55A0222F1B0F38005C6809 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
+			F60000162DF2000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 			F60000032DF2000000000001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 			F60000052DF2000000000001 /* GitOperationService.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.xpc-service; includeInIndex = 0; path = GitOperationService.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 			0BDA033E2F1373C500A4283A /* Demo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Demo.xcodeproj; sourceTree = "<group>"; };
@@ -915,6 +916,7 @@
 			F60000022DF2000000000001 /* GitOperationService */ = {
 				isa = PBXGroup;
 				children = (
+					F60000162DF2000000000001 /* Info.plist */,
 					F60000032DF2000000000001 /* main.swift */,
 				);
 				path = GitOperationService;
@@ -2433,8 +2435,8 @@
 					DEAD_CODE_STRIPPING = YES;
 					DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 					ENABLE_HARDENED_RUNTIME = YES;
-					GENERATE_INFOPLIST_FILE = YES;
-					INFOPLIST_KEY_CFBundleDisplayName = GitOperationService;
+					GENERATE_INFOPLIST_FILE = NO;
+					INFOPLIST_FILE = GitOperationService/Info.plist;
 					MACOSX_DEPLOYMENT_TARGET = 14.0;
 					PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK.GitOperationService;
 					PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2454,8 +2456,8 @@
 					DEAD_CODE_STRIPPING = YES;
 					DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 					ENABLE_HARDENED_RUNTIME = YES;
-					GENERATE_INFOPLIST_FILE = YES;
-					INFOPLIST_KEY_CFBundleDisplayName = GitOperationService;
+					GENERATE_INFOPLIST_FILE = NO;
+					INFOPLIST_FILE = GitOperationService/Info.plist;
 					MACOSX_DEPLOYMENT_TARGET = 14.0;
 					PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK.GitOperationService;
 					PRODUCT_NAME = "$(TARGET_NAME)";
