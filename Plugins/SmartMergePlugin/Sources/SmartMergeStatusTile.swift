@@ -148,6 +148,13 @@ public struct SmartMergeForm: View {
                         detail: SmartMergePluginLocalization.string("GitOK is updating the repository. Other actions are temporarily blocked.")
                     )
                 }
+                let longMergeStatusUpdates = Self.beginLongMergeStatusUpdates(
+                    operationID: operationID,
+                    sourceBranchName: sourceBranch.name,
+                    targetBranchName: targetBranch.name
+                )
+                defer { longMergeStatusUpdates.cancel() }
+
                 try await GitOperationHelperClient.shared.mergeBranches(
                     repositoryURL: projectURL,
                     sourceBranch: sourceBranch.name,
@@ -192,6 +199,44 @@ public struct SmartMergeForm: View {
                     } else {
                         errorMessage = error.localizedDescription
                     }
+                }
+            }
+        }
+    }
+
+    nonisolated private static func beginLongMergeStatusUpdates(
+        operationID: UUID,
+        sourceBranchName: String,
+        targetBranchName: String
+    ) -> Task<Void, Never> {
+        Task {
+            let updates: [(UInt64, String, String)] = [
+                (
+                    8_000_000_000,
+                    String(format: SmartMergePluginLocalization.string("Still merging %@ into %@"), sourceBranchName, targetBranchName),
+                    SmartMergePluginLocalization.string("The helper is still working on this merge. Large conflict sets can take several minutes.")
+                ),
+                (
+                    17_000_000_000,
+                    SmartMergePluginLocalization.string("Still working through a large merge"),
+                    SmartMergePluginLocalization.string("GitOK is waiting for the helper process to finish. The app is blocked to protect the repository.")
+                ),
+                (
+                    35_000_000_000,
+                    SmartMergePluginLocalization.string("Large merge still in progress"),
+                    SmartMergePluginLocalization.string("This can happen when thousands of files changed or conflicts need to be prepared. Please wait.")
+                ),
+            ]
+
+            for (delay, message, detail) in updates {
+                do {
+                    try await Task.sleep(nanoseconds: delay)
+                } catch {
+                    return
+                }
+                guard Task.isCancelled == false else { return }
+                await MainActor.run {
+                    BlockingOperationCenter.shared.update(id: operationID, message: message, detail: detail)
                 }
             }
         }

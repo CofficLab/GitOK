@@ -455,6 +455,174 @@
         }
       }
     },
+    "Still merging %@ into %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Still merging %@ into %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍在将 %@ 合并到 %@"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍在將 %@ 合併到 %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍在将 %@ 合并到 %@"
+          }
+        }
+      }
+    },
+    "The helper is still working on this merge. Large conflict sets can take several minutes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The helper is still working on this merge. Large conflict sets can take several minutes."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "辅助进程仍在执行合并。大量冲突文件可能需要几分钟。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "輔助程序仍在執行合併。大量衝突文件可能需要幾分鐘。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "辅助进程仍在执行合并。大量冲突文件可能需要几分钟。"
+          }
+        }
+      }
+    },
+    "Still working through a large merge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Still working through a large merge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍在处理大型合并"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍在處理大型合併"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍在处理大型合并"
+          }
+        }
+      }
+    },
+    "GitOK is waiting for the helper process to finish. The app is blocked to protect the repository.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK is waiting for the helper process to finish. The app is blocked to protect the repository."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 正在等待辅助进程完成。为保护仓库，App 操作会暂时阻止。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 正在等待輔助程序完成。為保護倉庫，App 操作會暫時阻止。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 正在等待辅助进程完成。为保护仓库，App 操作会暂时阻止。"
+          }
+        }
+      }
+    },
+    "Large merge still in progress": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large merge still in progress"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大型合并仍在进行"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大型合併仍在進行"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大型合并仍在进行"
+          }
+        }
+      }
+    },
+    "This can happen when thousands of files changed or conflicts need to be prepared. Please wait.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This can happen when thousands of files changed or conflicts need to be prepared. Please wait."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当数千个文件发生变化或需要准备冲突信息时，这种情况是正常的，请继续等待。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當數千個文件發生變化或需要準備衝突資訊時，這種情況是正常的，請繼續等待。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当数千个文件发生变化或需要准备冲突信息时，这种情况是正常的，请继续等待。"
+          }
+        }
+      }
+    },
     "SmartMerge": {
       "extractionState": "stale",
       "localizations": {
