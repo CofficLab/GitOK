@@ -8,6 +8,7 @@ public struct BranchPickerView: View {
     @State private var selection: GitBranchSummary?
     @State private var isRefreshing = false
     @State private var errorMessage: String?
+    @State private var refreshGeneration = 0
 
     nonisolated public init(context: BranchPluginContext) {
         self.context = context
@@ -15,7 +16,10 @@ public struct BranchPickerView: View {
 
     public var body: some View {
         Picker(BranchPluginLocalization.string("Branch"), selection: $selection) {
-            if branches.isEmpty {
+            if branches.isEmpty, isRefreshing {
+                Text(BranchPluginLocalization.string("Loading Branch"))
+                    .tag(nil as GitBranchSummary?)
+            } else if branches.isEmpty {
                 Text(BranchPluginLocalization.string("No Branch"))
                     .tag(nil as GitBranchSummary?)
             } else {
@@ -29,6 +33,7 @@ public struct BranchPickerView: View {
         .onAppear(perform: refreshBranches)
         .onChange(of: context.projectURL) { _, _ in refreshBranches() }
         .onChange(of: context.branchName) { _, _ in refreshBranches() }
+        .onChange(of: context.isGitRepository) { _, _ in refreshBranches() }
         .onChange(of: selection) { _, branch in
             guard let branch, branch.name != context.branchName else { return }
             checkout(branch)
@@ -37,9 +42,13 @@ public struct BranchPickerView: View {
     }
 
     private func refreshBranches() {
+        refreshGeneration += 1
+        let generation = refreshGeneration
+
         guard let projectURL = context.projectURL, context.isGitRepository else {
             branches = []
             selection = nil
+            isRefreshing = false
             return
         }
 
@@ -51,6 +60,7 @@ public struct BranchPickerView: View {
                 let repository = GitRepositoryCLI(repositoryURL: projectURL)
                 let loadedBranches = try repository.branches()
                 await MainActor.run {
+                    guard generation == refreshGeneration else { return }
                     branches = loadedBranches
                     selection = loadedBranches.first(where: \.isCurrent)
                         ?? loadedBranches.first(where: { $0.name == currentBranchName })
@@ -59,6 +69,7 @@ public struct BranchPickerView: View {
                 }
             } catch {
                 await MainActor.run {
+                    guard generation == refreshGeneration else { return }
                     branches = []
                     selection = nil
                     errorMessage = error.localizedDescription
