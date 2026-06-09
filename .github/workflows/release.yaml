@@ -117,18 +117,21 @@ jobs:
           ls -alh updates
       - name: generate appcast (production only)
         if: env.IS_PRERELEASE == 'false'
-        continue-on-error: true
         run: |
           pwd
+          # 只用 arm64 DMG 生成 appcast，避免 Sparkle "Duplicate updates" 错误
+          mkdir -p appcast_input
+          cp ./updates/*arm64*.dmg appcast_input/
+          ls -alh appcast_input
           xcodebuild -resolvePackageDependencies
           cd $(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/ | head -n 1)
           cd SourcePackages/artifacts/sparkle/Sparkle/bin
-          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | ./generate_appcast --ed-key-file - ${{ github.workspace }}/updates
+          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | ./generate_appcast --ed-key-file - ${{ github.workspace }}/appcast_input
       - name: make appcast.xml (production only)
         if: env.IS_PRERELEASE == 'false'
         run: |
           pwd
-          cd updates
+          cd appcast_input
           dmg_file=$(ls *.dmg 2>/dev/null | head -n 1)
           echo $dmg_file
           u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file" 
