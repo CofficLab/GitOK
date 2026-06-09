@@ -4,6 +4,14 @@ import SwiftUI
 
 /// IDE / 应用外壳主题协议（工作区、侧栏、全局背景等）。
 /// 插件主题实现此协议；组件库语义色见 ``GitOKUITheme``。
+///
+/// ## 明暗模式支持
+/// 主题可以通过 `appearanceKind` 属性指定其明暗模式行为：
+/// - `.dark`: 仅支持暗色模式
+/// - `.light`: 仅支持亮色模式
+/// - `.system`: 自动适配系统明暗模式
+///
+/// 对于支持 `.system` 的主题，需使用 `Color.adaptive(light:dark:)` 为不同模式提供不同的颜色值。
 public protocol GitOKAppChromeTheme {
     var identifier: String { get }
     var displayName: String { get }
@@ -12,8 +20,6 @@ public protocol GitOKAppChromeTheme {
     var iconName: String { get }
     var iconColor: Color { get }
     var appearanceKind: ThemeAppearanceKind { get }
-    var isDarkTheme: Bool { get }
-    var followsSystemAppearance: Bool { get }
 
     func resolvedEditorThemeId(defaultEditorThemeId: String, colorScheme: ColorScheme) -> String
 
@@ -39,15 +45,7 @@ public protocol GitOKAppChromeTheme {
 // MARK: - Default Implementations
 
 public extension GitOKAppChromeTheme {
-    var appearanceKind: ThemeAppearanceKind {
-        if followsSystemAppearance {
-            return .system
-        }
-        return isDarkTheme ? .dark : .light
-    }
-
-    var isDarkTheme: Bool { true }
-    var followsSystemAppearance: Bool { false }
+    var appearanceKind: ThemeAppearanceKind { .dark }
 
     func resolvedEditorThemeId(defaultEditorThemeId: String, colorScheme: ColorScheme) -> String {
         defaultEditorThemeId
@@ -66,19 +64,19 @@ public extension GitOKAppChromeTheme {
     }
 
     func sidebarSelectionTextColor() -> Color {
-        isDarkTheme ? Color.white : Color.white
+        Color.white
     }
 
     func workspaceTextColor() -> Color {
-        isDarkTheme ? Color.white : Color(hex: "1C1C1E")
+        Color.adaptive(light: "1C1C1E", dark: "FFFFFF")
     }
 
     func workspaceSecondaryTextColor() -> Color {
-        isDarkTheme ? Color.white.opacity(0.6) : Color(hex: "6B6B7B")
+        Color.adaptive(light: "6B6B7B", dark: "EBEBF5")
     }
 
     func workspaceTertiaryTextColor() -> Color {
-        isDarkTheme ? Color.white.opacity(0.4) : Color(hex: "98989E")
+        Color.adaptive(light: "98989E", dark: "98989E")
     }
 
     func backgroundGradient() -> LinearGradient {

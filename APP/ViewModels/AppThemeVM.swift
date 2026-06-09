@@ -176,7 +176,7 @@ struct GitOKDefaultChromeTheme: GitOKAppChromeTheme {
     let description = "Balanced GitOK default theme"
     let iconName = "app.badge"
     let iconColor = Color.adaptive(light: "2563EB", dark: "60A5FA")
-    let followsSystemAppearance = true
+    let appearanceKind: ThemeAppearanceKind = .system
 
     func accentColors() -> (primary: Color, secondary: Color, tertiary: Color) {
         (

@@ -8,8 +8,7 @@ struct GitOKTheme: GitOKAppChromeTheme {
     let description: String
     let iconName: String
     let iconColor: Color
-    let isDarkTheme: Bool
-    let followsSystemAppearance: Bool
+    let appearanceKind: ThemeAppearanceKind
     let deep: Color
     let medium: Color
     let light: Color
@@ -30,9 +29,9 @@ struct GitOKTheme: GitOKAppChromeTheme {
 
     func glowColors() -> (subtle: Color, medium: Color, intense: Color) {
         (
-            subtle: primary.opacity(isDarkTheme ? 0.12 : 0.08),
-            medium: secondary.opacity(isDarkTheme ? 0.16 : 0.10),
-            intense: tertiary.opacity(isDarkTheme ? 0.18 : 0.12)
+            subtle: primary.opacity(0.12),
+            medium: secondary.opacity(0.16),
+            intense: tertiary.opacity(0.18)
         )
     }
 
@@ -45,11 +44,11 @@ struct GitOKTheme: GitOKAppChromeTheme {
     }
 
     func sidebarSelectionColor() -> Color {
-        primary.opacity(isDarkTheme ? 0.24 : 0.14)
+        primary.opacity(0.24)
     }
 
     func sidebarSelectionTextColor() -> Color {
-        isDarkTheme ? .white : Color(hex: "111827")
+        Color.adaptive(light: "1F2937", dark: "FFFFFF")
     }
 
     func workspaceTextColor() -> Color {
@@ -71,22 +70,22 @@ struct GitOKTheme: GitOKAppChromeTheme {
 
                 VStack(spacing: 0) {
                     Rectangle()
-                        .fill(primary.opacity(isDarkTheme ? 0.10 : 0.05))
+                        .fill(primary.opacity(0.10))
                         .frame(height: 1)
                     Spacer()
                     Rectangle()
-                        .fill(secondary.opacity(isDarkTheme ? 0.08 : 0.04))
+                        .fill(secondary.opacity(0.08))
                         .frame(height: 1)
                 }
                 .padding(.horizontal, 24)
 
                 HStack(spacing: 0) {
                     Rectangle()
-                        .fill(primary.opacity(isDarkTheme ? 0.08 : 0.04))
+                        .fill(primary.opacity(0.08))
                         .frame(width: 1)
                     Spacer()
                     Rectangle()
-                        .fill(tertiary.opacity(isDarkTheme ? 0.06 : 0.035))
+                        .fill(tertiary.opacity(0.06))
                         .frame(width: 1)
                 }
                 .padding(.vertical, 20)
@@ -100,19 +99,18 @@ extension GitOKTheme {
         identifier: "repository",
         displayName: "默认",
         compactName: "默认",
-        description: "Default GitOK dark theme with crisp blue, green, and violet accents",
+        description: "Default GitOK theme with crisp blue, green, and violet accents",
         iconName: "folder.badge.gearshape",
         iconColor: Color.adaptive(light: "2563EB", dark: "58A6FF"),
-        isDarkTheme: true,
-        followsSystemAppearance: false,
-        deep: Color(hex: "0D1117"),
-        medium: Color(hex: "161B22"),
-        light: Color(hex: "21262D"),
-        primary: Color(hex: "58A6FF"),
-        secondary: Color(hex: "3FB950"),
-        tertiary: Color(hex: "BC8CFF"),
-        text: Color(hex: "F0F6FC"),
-        secondaryText: Color(hex: "C9D1D9"),
-        tertiaryText: Color(hex: "8B949E")
+        appearanceKind: .system,
+        deep: Color.adaptive(light: "F3F4F6", dark: "0D1117"),
+        medium: Color.adaptive(light: "FFFFFF", dark: "161B22"),
+        light: Color.adaptive(light: "E5E7EB", dark: "21262D"),
+        primary: Color.adaptive(light: "2563EB", dark: "58A6FF"),
+        secondary: Color.adaptive(light: "059669", dark: "3FB950"),
+        tertiary: Color.adaptive(light: "7C3AED", dark: "BC8CFF"),
+        text: Color.adaptive(light: "1F2937", dark: "F0F6FC"),
+        secondaryText: Color.adaptive(light: "6B7280", dark: "C9D1D9"),
+        tertiaryText: Color.adaptive(light: "9CA3AF", dark: "8B949E")
     )
 }

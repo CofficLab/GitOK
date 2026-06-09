@@ -8,8 +8,7 @@ struct RiverTheme: GitOKAppChromeTheme {
     let description: String
     let iconName: String
     let iconColor: Color
-    let isDarkTheme: Bool
-    let followsSystemAppearance: Bool
+    let appearanceKind: ThemeAppearanceKind
     let deep: Color
     let medium: Color
     let light: Color
@@ -30,9 +29,9 @@ struct RiverTheme: GitOKAppChromeTheme {
 
     func glowColors() -> (subtle: Color, medium: Color, intense: Color) {
         (
-            subtle: primary.opacity(isDarkTheme ? 0.12 : 0.08),
-            medium: secondary.opacity(isDarkTheme ? 0.16 : 0.10),
-            intense: tertiary.opacity(isDarkTheme ? 0.18 : 0.12)
+            subtle: primary.opacity(0.12),
+            medium: secondary.opacity(0.16),
+            intense: tertiary.opacity(0.18)
         )
     }
 
@@ -45,11 +44,11 @@ struct RiverTheme: GitOKAppChromeTheme {
     }
 
     func sidebarSelectionColor() -> Color {
-        primary.opacity(isDarkTheme ? 0.24 : 0.14)
+        primary.opacity(0.24)
     }
 
     func sidebarSelectionTextColor() -> Color {
-        isDarkTheme ? .white : Color(hex: "111827")
+        .white
     }
 
     func workspaceTextColor() -> Color {
@@ -71,22 +70,22 @@ struct RiverTheme: GitOKAppChromeTheme {
 
                 VStack(spacing: 0) {
                     Rectangle()
-                        .fill(primary.opacity(isDarkTheme ? 0.10 : 0.05))
+                        .fill(primary.opacity(0.10))
                         .frame(height: 1)
                     Spacer()
                     Rectangle()
-                        .fill(secondary.opacity(isDarkTheme ? 0.08 : 0.04))
+                        .fill(secondary.opacity(0.08))
                         .frame(height: 1)
                 }
                 .padding(.horizontal, 24)
 
                 HStack(spacing: 0) {
                     Rectangle()
-                        .fill(primary.opacity(isDarkTheme ? 0.08 : 0.04))
+                        .fill(primary.opacity(0.08))
                         .frame(width: 1)
                     Spacer()
                     Rectangle()
-                        .fill(tertiary.opacity(isDarkTheme ? 0.06 : 0.035))
+                        .fill(tertiary.opacity(0.06))
                         .frame(width: 1)
                 }
                 .padding(.vertical, 20)
@@ -103,8 +102,7 @@ extension RiverTheme {
         description: "Flowing dark teal theme with blue and fresh green accents",
         iconName: "arrow.triangle.branch",
         iconColor: Color(hex: "2DD4BF"),
-        isDarkTheme: true,
-        followsSystemAppearance: false,
+        appearanceKind: .dark,
         deep: Color(hex: "061414"),
         medium: Color(hex: "0B1F1D"),
         light: Color(hex: "14302D"),
