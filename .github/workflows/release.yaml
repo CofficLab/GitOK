@@ -149,29 +149,29 @@ jobs:
       - name: Upload DMG to Cloudflare R2
         if: success()
         env:
-          WEBHOOK_SECRET: ${{ secrets.LUMI_WEBHOOK_SECRET }}
+          WEBHOOK_SECRET: ${{ secrets.COFFIC_APP_UPLOAD_KEY }}
           API_URL: https://data.kuaiyizhi.cn
         run: |
           set -euo pipefail
-          
+
           DMG_FILE=$(ls ./updates/*.dmg 2>/dev/null | head -n 1)
           if [ -z "$DMG_FILE" ]; then
             echo "⚠️  No DMG file found to upload"
             exit 0
           fi
-          
+
           DMG_FILENAME=$(basename "$DMG_FILE")
           R2_KEY="gitok/${DMG_FILENAME}"
-          
+
           echo "📤 Uploading DMG to R2: $R2_KEY"
-          
+
           RESPONSE=$(curl -s -X POST "${API_URL}/lumi/upload" \
             -H "X-Webhook-Secret: ${WEBHOOK_SECRET}" \
             -F "file=@${DMG_FILE}" \
             -F "key=${R2_KEY}")
-          
+
           echo "Response: $RESPONSE"
-          
+
           if echo "$RESPONSE" | grep -q '"success":true'; then
             R2_DMG_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
             echo "✅ DMG uploaded: $R2_DMG_URL"
