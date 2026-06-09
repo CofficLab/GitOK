@@ -1,5 +1,20 @@
 # TODO
 
+## P0：插件系统 Context 重构
+
+### 已完成
+
+- [x] Phase 1：BranchPlugin、CleanStatus 从 SwiftUI Environment 迁移到 PluginContext
+- [x] Phase 2：toolbar 视图方法（`addToolBarLeadingView`、`addToolBarTrailingView`）注入 `GitOKPluginContext` 参数
+- [x] Phase 2：statusBar 视图方法（`addStatusBarLeadingView`、`addStatusBarCenterView`、`addStatusBarTrailingView`）注入 `GitOKPluginContext` 参数
+- [x] 扩充 `GitOKPluginContext`：添加 `remoteTrackingStatus`、`projects`、`selectedProjectURL`、`isSidebarVisible`、操作回调等属性
+- [x] 更新 `SuperPlugin` 协议、`GitOKPlugin` 协议、`PluginAdapter` 和 13 个插件的 toolbar 方法签名
+- [x] 更新架构文档（`architecture.md`、`quickstart.md`、`system.md`）
+- [x] `addListView` / `addDetailView` 注入 `GitOKPluginContext`（协议、适配器、PluginVM）
+- [x] 清理 PluginVM 中所有视图方法的冗余 `.environment()` 注入
+- [x] 标记 17 个 EnvironmentKey 及 EnvironmentValues 扩展为 `@available(*, deprecated)`
+- [x] 消除全部 13 处 `@Environment(\.gitOKProjectURL)`（StashPlugin 2 + BannerPlugin 3 + IconPlugin 4 + 其他 4）→ 全插件包归零 ✅
+
 ## P0：核心 Git 工作流
 
 - [ ] OAuth/device-flow 登录、账号多配置、组织分页和头像/权限缓存

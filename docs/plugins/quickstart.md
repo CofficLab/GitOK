@@ -15,7 +15,7 @@ Plugins/
 ## 步骤 2：实现插件协议
 
 ```swift
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 
@@ -61,7 +61,7 @@ extension MyFeaturePlugin {
 
 ```swift
 extension MyFeaturePlugin {
-    func addToolBarTrailingView() -> AnyView? {
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(
             Button(action: {
                 print("按钮被点击")
@@ -127,7 +127,7 @@ extension MyFeaturePlugin {
 ## 完整示例代码
 
 ```swift
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 
@@ -171,7 +171,7 @@ extension MyFeaturePlugin {
 // MARK: - 视图提供
 
 extension MyFeaturePlugin {
-    func addToolBarTrailingView() -> AnyView? {
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(
             Button(action: {
                 showAlert()

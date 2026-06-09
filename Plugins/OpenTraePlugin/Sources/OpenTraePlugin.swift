@@ -1,0 +1,33 @@
+import Foundation
+import GitOKCoreKit
+import SwiftUI
+
+public struct OpenTraePlugin: GitOKPlugin {
+    public static let shared = OpenTraePlugin()
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "OpenTrae",
+        displayName: OpenTraePluginLocalization.string("Open Trae"),
+        description: OpenTraePluginLocalization.string("Open the current project folder in Trae."),
+        iconName: "brain",
+        order: 8404,
+        policy: .optIn,
+        tableName: OpenTraePluginLocalization.table
+    )
+
+    private init() {}
+
+    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(OpenTraeButton(projectURL: projectURL))
+    }
+}
+
+public enum OpenTraePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
+    }
+}

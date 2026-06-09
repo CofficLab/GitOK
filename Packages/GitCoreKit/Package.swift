@@ -3,8 +3,9 @@ import PackageDescription
 
 let package = Package(
     name: "GitCoreKit",
+    defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(
@@ -20,11 +21,14 @@ let package = Package(
             name: "GitCoreKit",
             dependencies: [
                 .product(name: "LibGit2Swift", package: "LibGit2Swift"),
-            ]
+            ],
+            path: "Sources",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitCoreKitTests",
-            dependencies: ["GitCoreKit"]
+            dependencies: ["GitCoreKit"],
+            path: "Tests"
         ),
     ]
 )

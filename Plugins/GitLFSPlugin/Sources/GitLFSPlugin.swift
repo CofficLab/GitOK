@@ -1,0 +1,34 @@
+import Foundation
+import GitOKCoreKit
+import SwiftUI
+
+public struct GitLFSPlugin: GitOKPlugin {
+    public static let shared = GitLFSPlugin()
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "GitLFSPlugin",
+        displayName: GitLFSPluginLocalization.string("Git LFS"),
+        description: GitLFSPluginLocalization.string("Git LFS status and large file recommendations"),
+        iconName: "externaldrive.badge.timemachine",
+        order: 9999,
+        policy: .optIn,
+        tableName: GitLFSPluginLocalization.table
+    )
+
+    private init() {}
+
+    @MainActor
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(GitLFSStatusTile(projectURL: projectURL))
+    }
+}
+
+public enum GitLFSPluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
+    }
+}

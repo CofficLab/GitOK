@@ -1,0 +1,41 @@
+import Foundation
+import GitOKCoreKit
+import SwiftUI
+
+public struct ConflictResolverPlugin: GitOKPlugin {
+    public static let shared = ConflictResolverPlugin()
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "ConflictResolverPlugin",
+        displayName: ConflictResolverPluginLocalization.string("ConflictResolver"),
+        description: ConflictResolverPluginLocalization.string("Git 冲突解决"),
+        iconName: "exclamationmark.triangle",
+        policy: .optIn,
+        tableName: ConflictResolverPluginLocalization.table
+    )
+
+    private init() {}
+
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(ConflictStatusTile(projectURL: projectURL, isGitRepository: context.isGitRepository))
+    }
+
+    @MainActor
+    public func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
+        AnyView(ConflictResolverRootView(
+            content: content,
+            projectURL: context.projectURL,
+            isGitRepository: context.isGitRepository
+        ))
+    }
+}
+
+public enum ConflictResolverPluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
+    }
+}

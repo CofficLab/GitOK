@@ -3,8 +3,9 @@ import PackageDescription
 
 let package = Package(
     name: "BannerCoreKit",
+    defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(
@@ -14,11 +15,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "BannerCoreKit"
+            name: "BannerCoreKit",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "BannerCoreKitTests",
-            dependencies: ["BannerCoreKit"]
+            dependencies: ["BannerCoreKit"],
+            path: "Tests"
         ),
     ]
 )

@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "GitOKUI",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14)
     ],
@@ -15,12 +16,13 @@ let package = Package(
     targets: [
         .target(
             name: "GitOKUI",
-            path: "Sources/GitOKUI"
+            path: "Sources",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitOKUITests",
             dependencies: ["GitOKUI"],
-            path: "Tests/GitOKUITests"
+            path: "Tests"
         )
     ]
 )

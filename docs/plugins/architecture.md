@@ -94,11 +94,11 @@
 │  ├─────────────────────────────────────────────────────┤    │
 │  │  addListView(tab, project) -> AnyView?              │    │
 │  │  addDetailView() -> AnyView?                         │    │
-│  │  addToolBarLeadingView() -> AnyView?                 │    │
-│  │  addToolBarTrailingView() -> AnyView?                │    │
-│  │  addStatusBarLeadingView() -> AnyView?               │    │
-│  │  addStatusBarCenterView() -> AnyView?                │    │
-│  │  addStatusBarTrailingView() -> AnyView?              │    │
+│  │  addToolBarLeadingView(context:) -> AnyView?         │    │
+│  │  addToolBarTrailingView(context:) -> AnyView?        │    │
+│  │  addStatusBarLeadingView(context:) -> AnyView?       │    │
+│  │  addStatusBarCenterView(context:) -> AnyView?        │    │
+│  │  addStatusBarTrailingView(context:) -> AnyView?      │    │
 │  └─────────────────────────────────────────────────────┘    │
 └──────────────────────────────────────────────────────────────┘
                               │
@@ -110,7 +110,7 @@
 │  ┌─────────────────────────────────────────────────────┐    │
 │  │  GitPlugin (order: 0, isTab: true)                  │    │
 │  │  ├─ addDetailView() → GitDetail                     │    │
-│  │  └─ addStatusBarLeadingView() → BranchStatus        │    │
+│  │  └─ addStatusBarLeadingView(context:) → BranchStatus│    │
 │  └─────────────────────────────────────────────────────┘    │
 │                                                              │
 │  ┌─────────────────────────────────────────────────────┐    │
@@ -120,12 +120,12 @@
 │                                                              │
 │  ┌─────────────────────────────────────────────────────┐    │
 │  │  BranchPlugin (order: 22)                            │    │
-│  │  └─ addToolBarTrailingView() → BranchPicker         │    │
+│  │  └─ addToolBarTrailingView(context:) → BranchPicker  │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                                                              │
 │  ┌─────────────────────────────────────────────────────┐    │
 │  │  ProjectPickerPlugin (order: 24)                     │    │
-│  │  └─ addToolBarLeadingView() → ProjectPicker         │    │
+│  │  └─ addToolBarLeadingView(context:) → ProjectPicker  │    │
 │  └─────────────────────────────────────────────────────┘    │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -138,6 +138,7 @@
 │  ┌──────────────────┐  ┌──────────────┐  ┌─────────────────┐ │
 │  │  addToolBar      │  │    Tabs      │  │  addToolBar     │ │
 │  │  LeadingView     │  │    (isTab)   │  │  TrailingView   │ │
+│  │  (context:)      │  │              │  │  (context:)     │ │
 │  │                  │  │              │  │                 │ │
 │  │  [ProjectPicker] │  │  [Git|Files] │  │  [BranchPicker] │ │
 │  └──────────────────┘  └──────────────┘  └─────────────────┘ │
@@ -147,8 +148,9 @@
         ▼                          ▼                   ▼
 ┌────────────────────────────────────────────────────────────────┐
 │  ProjectPickerPlugin          GitPlugin               BranchPlugin│
-│  .addToolBarLeadingView()    (isTab: true)          .addToolBar  │
-│                              .addDetailView()       TrailingView()│
+│  .addToolBarLeadingView      (isTab: true)          .addToolBar  │
+│  (context:)                  .addDetailView()       TrailingView │
+│                                                     (context:)   │
 └────────────────────────────────────────────────────────────────┘
 
 ┌────────────────────────────────────────────────────────────────┐
@@ -175,7 +177,7 @@
 │  ┌──────────────────┐  ┌──────────────┐  ┌─────────────────┐ │
 │  │  addStatusBar    │  │  addStatus   │  │  addStatusBar   │ │
 │  │  LeadingView     │  │  BarCenter   │  │  TrailingView   │ │
-│  │                  │  │  View        │  │                 │ │
+│  │  (context:)      │  │  View        │  │  (context:)     │ │
 │  │  [Branch info]   │  │  [Files: 3]  │  │  [Sync status]  │ │
 │  └──────────────────┘  └──────────────┘  └─────────────────┘ │
 └────────────────────────────────────────────────────────────────┘

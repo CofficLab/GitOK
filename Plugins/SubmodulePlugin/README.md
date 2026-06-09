@@ -1,0 +1,33 @@
+# SubmodulePlugin
+
+Manages Git submodules with status monitoring and update operations.
+
+## Overview
+
+This plugin registers with ID `SubmodulePlugin` and provides functionality through the GitOK plugin system.
+
+## Architecture
+
+```
+SubmodulePlugin/
+├── Package.swift
+├── Sources/SubmodulePlugin/
+│   ├── SubmodulePlugin.swift
+│   ├── SubmoduleEvents.swift
+│   ├── SubmodulePresentation.swift
+│   ├── SubmoduleStatusTile.swift
+│   └── Localizable.xcstrings
+└── Tests/
+```
+
+## Dependencies
+
+- `GitCoreKit`
+- `GitOKCoreKit`
+
+## Configuration
+
+| Property           | Value   |
+|-------------------|---------|
+| `allowUserToggle`  | `false` |
+| `defaultEnabled`   | `true` |

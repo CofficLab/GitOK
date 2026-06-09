@@ -1,3 +1,0 @@
-import BannerCoreKit
-
-typealias BannerTemplateDataStore = BannerCoreKit.BannerTemplateDataStore

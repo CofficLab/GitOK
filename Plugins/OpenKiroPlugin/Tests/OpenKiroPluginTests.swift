@@ -1,0 +1,41 @@
+import XCTest
+import GitOKCoreKit
+@testable import OpenKiroPlugin
+
+final class OpenKiroPluginTests: XCTestCase {
+    func testPluginMetadataIsStable() {
+        let metadata = OpenKiroPlugin.metadata
+
+        XCTAssertEqual(metadata.id, "OpenKiro")
+        XCTAssertEqual(metadata.iconName, "water.waves")
+        XCTAssertEqual(metadata.order, 8405)
+        XCTAssertEqual(metadata.tableName, "Localizable")
+        XCTAssertFalse(metadata.displayName.isEmpty)
+        XCTAssertFalse(metadata.description.isEmpty)
+    }
+
+    func testLocalizationCatalogIsPackaged() {
+        XCTAssertNotNil(OpenKiroPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
+        XCTAssertFalse(OpenKiroPluginLocalization.string("Open Kiro").isEmpty)
+        XCTAssertFalse(OpenKiroPluginLocalization.string("Open in Kiro").isEmpty)
+    }
+
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenKiroPlugin.shared.toolBarTrailingView(context: context)
+
+        if KiroProjectLauncher.isInstalled {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
+    }
+
+    func testLauncherConfigurationIsStable() {
+        let configuration = KiroProjectLauncher.configuration
+
+        XCTAssertEqual(configuration.bundleIdentifier, "dev.kiro.desktop")
+        XCTAssertTrue(configuration.fallbackApplicationPaths.contains("/Applications/Kiro.app"))
+    }
+}
