@@ -1,3 +1,5 @@
+import Foundation
+
 public enum BranchPluginLocalization {
     public static let table = "Localizable"
     public static let bundle = Bundle.module

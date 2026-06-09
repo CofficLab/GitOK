@@ -1,6 +1,5 @@
-/// BranchPlugin 内部使用的上下文，由 GitOKPluginContext 转换而来。
-///
-/// 所有子视图通过此结构体获取内核数据，不再依赖 SwiftUI Environment。
+import Foundation
+
 public struct BranchPluginContext: Sendable {
     public let projectURL: URL?
     public let branchName: String?
