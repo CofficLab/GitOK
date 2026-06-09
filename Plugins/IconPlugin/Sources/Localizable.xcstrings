@@ -21,6 +21,12 @@
             "state": "translated",
             "value": "添加图标…"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Icon…"
+          }
         }
       }
     },
@@ -44,6 +50,12 @@
             "state": "translated",
             "value": "添加图片"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Image"
+          }
         }
       }
     },
@@ -66,6 +78,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "调整颜色和样式"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjust colors and styles"
           }
         }
       }
@@ -118,6 +136,12 @@
             "state": "translated",
             "value": "删除图标…"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Icon…"
+          }
         }
       }
     },
@@ -140,6 +164,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "删除所选"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Selected"
           }
         }
       }
@@ -192,6 +222,12 @@
             "state": "translated",
             "value": "草稿"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draft"
+          }
         }
       }
     },
@@ -215,6 +251,12 @@
             "state": "translated",
             "value": "编辑"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
         }
       }
     },
@@ -237,6 +279,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "导出"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export"
           }
         }
       }
@@ -289,6 +337,12 @@
             "state": "translated",
             "value": "%lld 个图标"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Icons"
+          }
         }
       }
     },
@@ -311,6 +365,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "未找到图标：%@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon not found: %@"
           }
         }
       }
@@ -335,6 +395,12 @@
             "state": "translated",
             "value": "图标制作工坊"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon Workshop"
+          }
         }
       }
     },
@@ -357,6 +423,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "加载图标失败：%@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed to load icon: %@"
           }
         }
       }
@@ -381,6 +453,12 @@
             "state": "translated",
             "value": "加载分类中..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading categories…"
+          }
         }
       }
     },
@@ -403,6 +481,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "加载失败"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading failed"
           }
         }
       }
@@ -427,6 +511,12 @@
             "state": "translated",
             "value": "加载图标中..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading icons…"
+          }
         }
       }
     },
@@ -449,6 +539,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "多种格式下载"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download in multiple formats"
           }
         }
       }
@@ -557,6 +653,12 @@
             "state": "translated",
             "value": "没有可用的分类"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No categories available"
+          }
         }
       }
     },
@@ -579,6 +681,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "该来源下没有可用的图标"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No icons available in this source"
           }
         }
       }
@@ -603,6 +711,12 @@
             "state": "translated",
             "value": "没有找到匹配的分类"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching categories found"
+          }
         }
       }
     },
@@ -625,6 +739,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "打开缓存目录"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Cache Directory"
           }
         }
       }
@@ -650,6 +770,12 @@
             "state": "translated",
             "value": "图标详情视图"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon detail view"
+          }
         }
       }
     },
@@ -670,6 +796,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon Detail"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Icon Detail"
@@ -697,6 +829,12 @@
             "state": "translated",
             "value": "重试"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
+          }
         }
       }
     },
@@ -719,6 +857,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "保存制作进度"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save work progress"
           }
         }
       }
@@ -743,6 +887,12 @@
             "state": "translated",
             "value": "搜索分类..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search categories…"
+          }
         }
       }
     },
@@ -766,6 +916,12 @@
             "state": "translated",
             "value": "请选择一个分类"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a category"
+          }
         }
       }
     },
@@ -788,6 +944,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择一个图标开始制作，或创建新的设计"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select an icon to start crafting, or create a new design"
           }
         }
       }
