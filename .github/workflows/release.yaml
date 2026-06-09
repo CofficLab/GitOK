@@ -74,35 +74,40 @@ jobs:
           echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
           echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
           echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
-      - name: Build App
+      - name: Build App (arm64)
         run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64 --clean=false -v
+      - name: Build App (x86_64)
+        run: servon xcode build --scheme ${{ env.SCHEME }} --arch x86_64 --clean=false -v
       - name: Codesign App
         run: |
           servon xcode codesign --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
-            --identity ${{ steps.signing.outputs.signing_identity }} 
-
-          # servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
-          #   --identity ${{ steps.signing.outputs.signing_identity }}
+            --identity ${{ steps.signing.outputs.signing_identity }}
+          servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
+            --identity ${{ steps.signing.outputs.signing_identity }}
       - name: Create DMG
         run: |
           servon xcode package --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app
-          # servon xcode package --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app
+          servon xcode package --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app
       - name: Notary
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 2 -type f -name "*.dmg" | head -n 1)
-          xcrun notarytool submit "$file" \
-            --key ${{ steps.signing.outputs.api_key_path }} \
-            --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
-            --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
-            --wait \
-            --timeout 10m
-          stapler staple "$file"
+          for file in $(find . -maxdepth 2 -type f -name "*.dmg"); do
+            echo "🔐 Notarizing $file"
+            xcrun notarytool submit "$file" \
+              --key ${{ steps.signing.outputs.api_key_path }} \
+              --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
+              --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
+              --wait \
+              --timeout 10m
+            stapler staple "$file"
+          done
       - name: 公证结果
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 2 -type f -name "*.dmg" | head -n 1)
-          stapler validate "$file"
+          for file in $(find . -maxdepth 2 -type f -name "*.dmg"); do
+            echo "✅ Validating $file"
+            stapler validate "$file"
+          done
       - name: Check
         run: |
           ls -alh
@@ -154,31 +159,32 @@ jobs:
         run: |
           set -euo pipefail
 
-          DMG_FILE=$(ls ./updates/*.dmg 2>/dev/null | head -n 1)
-          if [ -z "$DMG_FILE" ]; then
-            echo "⚠️  No DMG file found to upload"
-            exit 0
-          fi
+          for DMG_FILE in ./updates/*.dmg; do
+            if [ ! -f "$DMG_FILE" ]; then
+              echo "⚠️  No DMG file found to upload"
+              continue
+            fi
 
-          DMG_FILENAME=$(basename "$DMG_FILE")
-          R2_KEY="gitok/${DMG_FILENAME}"
+            DMG_FILENAME=$(basename "$DMG_FILE")
+            R2_KEY="gitok/${DMG_FILENAME}"
 
-          echo "📤 Uploading DMG to R2: $R2_KEY"
+            echo "📤 Uploading DMG to R2: $R2_KEY"
 
-          RESPONSE=$(curl -s -X POST "${API_URL}/lumi/upload" \
-            -H "X-Webhook-Secret: ${WEBHOOK_SECRET}" \
-            -F "file=@${DMG_FILE}" \
-            -F "key=${R2_KEY}")
+            RESPONSE=$(curl -s -X POST "${API_URL}/lumi/upload" \
+              -H "X-Webhook-Secret: ${WEBHOOK_SECRET}" \
+              -F "file=@${DMG_FILE}" \
+              -F "key=${R2_KEY}")
 
-          echo "Response: $RESPONSE"
+            echo "Response: $RESPONSE"
 
-          if echo "$RESPONSE" | grep -q '"success":true'; then
-            R2_DMG_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
-            echo "✅ DMG uploaded: $R2_DMG_URL"
-          else
-            echo "❌ Failed to upload DMG to R2"
-            exit 1
-          fi
+            if echo "$RESPONSE" | grep -q '"success":true'; then
+              R2_DMG_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
+              echo "✅ DMG uploaded: $R2_DMG_URL"
+            else
+              echo "❌ Failed to upload DMG to R2"
+              exit 1
+            fi
+          done
 
       - name: 推送到仓库 (pro)
         if: env.IS_PRERELEASE == 'false'
