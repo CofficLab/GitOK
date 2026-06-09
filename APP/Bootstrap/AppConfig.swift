@@ -58,7 +58,9 @@ extension AppConfig {
     static func getContainer() -> ModelContainer {
         let start = Date()
         let url = AppConfig.getDBFolderURL().appendingPathComponent(dbFileName)
-        os_log("\(Self.t)🚀 Startup begin: ModelContainer url=\(url.path)")
+        if Self.verbose {
+            os_log("\(Self.t)🚀 Startup begin: ModelContainer url=\(url.path)")
+        }
 
         let schema = Schema([
             Project.self,
@@ -73,7 +75,9 @@ extension AppConfig {
 
         do {
             let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
-            os_log("\(Self.t)✅ Startup end: ModelContainer elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            if Self.verbose {
+                os_log("\(Self.t)✅ Startup end: ModelContainer elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            }
             return container
         } catch {
             os_log(.error, "\(Self.t)❌ ModelContainer failed: \(error.localizedDescription)")

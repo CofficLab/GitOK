@@ -20,16 +20,24 @@ struct GitOKApp: App, SuperLog {
 
     init() {
         let start = Date()
-        os_log("\(Self.t)🚀 Startup begin: GitOKApp.init")
+        if Self.verbose {
+            os_log("\(Self.t)🚀 Startup begin: GitOKApp.init")
+        }
 
         // 初始化 libgit2
         GitRuntime.initialize()
 
-        os_log("\(Self.t)✅ Startup end: GitOKApp.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup end: GitOKApp.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        }
     }
 
     var body: some Scene {
-        let _ = os_log("\(Self.t)🚀 Startup phase: GitOKApp.body")
+        let _ = {
+            if Self.verbose {
+                os_log("\(Self.t)🚀 Startup phase: GitOKApp.body")
+            }
+        }()
 
         WindowGroup {
             ContentLayout()

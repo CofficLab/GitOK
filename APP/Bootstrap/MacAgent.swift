@@ -29,7 +29,9 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        os_log("\(self.t)🚀 Startup phase: applicationDidFinishLaunching")
+        if Self.verbose {
+            os_log("\(self.t)🚀 Startup phase: applicationDidFinishLaunching")
+        }
 
         Task { @MainActor in
             DiagnosticsStore.shared.markLaunchStarted()
@@ -41,7 +43,9 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        os_log("\(self.t)🛑 applicationWillTerminate")
+        if Self.verbose {
+            os_log("\(self.t)🛑 applicationWillTerminate")
+        }
 
         Task { @MainActor in
             DiagnosticsStore.shared.markCleanExit()

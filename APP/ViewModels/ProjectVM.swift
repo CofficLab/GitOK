@@ -56,18 +56,24 @@ class ProjectVM: ObservableObject, SuperLog {
 
     init(project: Project?, repoManager: RepoManager) {
         let start = Date()
-        os_log("\(Self.t)🚀 Startup begin: ProjectVM.init project=\(project?.path ?? "nil")")
+        if Self.verbose {
+            os_log("\(Self.t)🚀 Startup begin: ProjectVM.init project=\(project?.path ?? "nil")")
+        }
 
         self.repoManager = repoManager
         self.project = project
 
         let existsStart = Date()
         self.checkIfProjectExists()
-        os_log("\(Self.t)✅ Startup step: project exists=\(self.projectExists) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(existsStart)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup step: project exists=\(self.projectExists) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(existsStart)))s")
+        }
 
         refreshCurrentProjectGitRepositoryState(reason: "init")
 
-        os_log("\(Self.t)✅ Startup end: ProjectVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup end: ProjectVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        }
     }
 
     // MARK: - Project Management
@@ -78,9 +84,8 @@ class ProjectVM: ObservableObject, SuperLog {
     ///   - reason: 设置原因
     func setProject(_ p: Project?, reason: String) {
         let start = Date()
-        os_log("\(self.t)🎯 SetProject begin reason=\(reason) path=\(p?.path ?? "nil")")
-
         if Self.verbose {
+            os_log("\(self.t)🎯 SetProject begin reason=\(reason) path=\(p?.path ?? "nil")")
             os_log("\(self.t)Set Project(\(reason)) \n ➡️ \(p?.path ?? "")")
         }
 
@@ -90,7 +95,9 @@ class ProjectVM: ObservableObject, SuperLog {
         self.checkIfProjectExists()
         refreshCurrentProjectGitRepositoryState(reason: reason)
 
-        os_log("\(self.t)✅ SetProject end reason=\(reason) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        if Self.verbose {
+            os_log("\(self.t)✅ SetProject end reason=\(reason) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        }
     }
 
     /// 重新检测当前项目是否是 Git 仓库，并防止旧项目的异步结果回写到新项目。
@@ -115,7 +122,9 @@ class ProjectVM: ObservableObject, SuperLog {
         projectGitRepositoryStateToken += 1
 
         let gitStart = Date()
-        os_log("\(self.t)🚀 Git repository check scheduled reason=\(reason) path=\(path)")
+        if Self.verbose {
+            os_log("\(self.t)🚀 Git repository check scheduled reason=\(reason) path=\(path)")
+        }
 
         gitRepositoryCheckTask = Task.detached(priority: .utility) {
             let isGitRepository = GitRepositoryCLI(repositoryURL: repositoryURL).isGitRepository()
@@ -133,7 +142,9 @@ class ProjectVM: ObservableObject, SuperLog {
                 self.isCheckingCurrentProjectGitRepository = false
                 self.projectGitRepositoryStateToken += 1
                 self.gitRepositoryCheckTask = nil
-                os_log("\(self.t)✅ Git repository check finished isGit=\(isGitRepository) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s path=\(path)")
+                if Self.verbose {
+                    os_log("\(self.t)✅ Git repository check finished isGit=\(isGitRepository) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s path=\(path)")
+                }
             }
         }
     }
