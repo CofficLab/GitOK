@@ -9,7 +9,7 @@ import SwiftUI
 @MainActor
 class ProjectVM: ObservableObject, SuperLog {
     nonisolated static let emoji = "🎯"
-    private let verbose = false
+    nonisolated static let verbose = false
 
     // MARK: - Properties
 
@@ -80,7 +80,7 @@ class ProjectVM: ObservableObject, SuperLog {
         let start = Date()
         os_log("\(self.t)🎯 SetProject begin reason=\(reason) path=\(p?.path ?? "nil")")
 
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Set Project(\(reason)) \n ➡️ \(p?.path ?? "")")
         }
 

@@ -11,8 +11,8 @@ struct FileDetail: View, SuperLog {
     @State private var fileChangeToken = 0
     @State private var commitChangeToken = 0
 
-    static let emoji = "🌍"
-    private var verbose = false
+    nonisolated static let emoji = "🌍"
+    nonisolated static let verbose = false
 
     var body: some View {
         FileDetailHostView(
@@ -84,7 +84,7 @@ private extension FileDetail {
                 alert_error($0)
             }
         case let .update(reason):
-            if verbose {
+            if Self.verbose {
                 os_log("\(self.t)\(GitDetailDiffDisplayRules.updateDiffViewLogMessage(reason: reason))")
             }
         case let .textPreviewFailure(issueMessage):

@@ -15,7 +15,7 @@ class DataVM: NSObject, ObservableObject, SuperLog {
     @Published var activityStatus: String? = nil
 
     nonisolated static let emoji = "🏠"
-    private let verbose = false
+    nonisolated static let verbose = false
     var cancellables = Set<AnyCancellable>()
     let repoManager: RepoManager
     private var branchRefreshGeneration = 0
@@ -43,7 +43,9 @@ extension DataVM {
     func moveProjects(from source: IndexSet, to destination: Int, using repo: any ProjectRepoProtocol) {
         let itemsToMove = source.map { self.projects[$0] }
 
-        os_log("Moving items: \(itemsToMove.map { $0.title }) from \(source) to \(destination)")
+        if Self.verbose {
+            os_log("Moving items: \(itemsToMove.map { $0.title }) from \(source) to \(destination)")
+        }
 
         do {
             var tempProjects = projects
@@ -66,10 +68,12 @@ extension DataVM {
 
             self.projects = tempProjects
 
-            os_log("Successfully moved items and updated projects array.")
+            if Self.verbose {
+                os_log("Successfully moved items and updated projects array.")
+            }
 
         } catch {
-            os_log("Failed to move items: \(error.localizedDescription)")
+            os_log(.error, "Failed to move items: \(error.localizedDescription)")
         }
     }
 
@@ -80,7 +84,9 @@ extension DataVM {
     func refreshProjects(using repo: any ProjectRepoProtocol) {
         do {
             self.projects = try repo.findAll(sortedBy: .ascending)
-            os_log("Projects refreshed successfully, count: \(self.projects.count)")
+            if Self.verbose {
+                os_log("Projects refreshed successfully, count: \(self.projects.count)")
+            }
         } catch {
             os_log(.error, "Failed to refresh projects: \(error.localizedDescription)")
         }
@@ -96,7 +102,9 @@ extension DataVM {
     func addProject(url: URL, using repo: any ProjectRepoProtocol) -> Project? {
         do {
             if let existingProject = try repo.findByPath(url.path) {
-                os_log("Project already exists, moving to first: \(url.path)")
+                if Self.verbose {
+                    os_log("Project already exists, moving to first: \(url.path)")
+                }
 
                 if let index = self.projects.firstIndex(where: { $0.id == existingProject.id }) {
                     self.projects.remove(at: index)
@@ -109,13 +117,17 @@ extension DataVM {
 
                 self.projects.insert(existingProject, at: 0)
 
-                os_log("Existing project moved to first: \(url.path)")
+                if Self.verbose {
+                    os_log("Existing project moved to first: \(url.path)")
+                }
                 return existingProject
             }
 
             let newProject = try repo.create(url: url)
             self.projects.insert(newProject, at: 0)
-            os_log("New project added: \(url.path)")
+            if Self.verbose {
+                os_log("New project added: \(url.path)")
+            }
             return newProject
         } catch {
             os_log(.error, "Failed to add project: \(error.localizedDescription)")
@@ -138,7 +150,9 @@ extension DataVM {
                 self.projects.remove(at: index)
             }
 
-            os_log("Project deleted successfully: \(path)")
+            if Self.verbose {
+                os_log("Project deleted successfully: \(path)")
+            }
 
         } catch {
             os_log(.error, "Failed to delete project: \(error.localizedDescription)")
@@ -175,7 +189,7 @@ extension DataVM {
      */
     func setBranch(_ branch: GitBranch?, project: Project?) throws {
         assert(Thread.isMainThread, "setBranch(_:) 必须在主线程调用，否则会导致线程安全问题！")
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Set Branch to \(branch?.name ?? "-")")
         }
 
@@ -209,7 +223,7 @@ extension DataVM {
 
         let projectPath = project.path
         let repositoryURL = project.url
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Refresh current branch begin reason=\(reason) path=\(projectPath)")
         }
 
@@ -221,7 +235,7 @@ extension DataVM {
                 guard generation == self.branchRefreshGeneration else { return }
                 self.branch = currentBranch
                 self.branchRefreshTask = nil
-                if self.verbose {
+                if Self.verbose {
                     os_log("\(self.t)Refresh current branch end branch=\(currentBranch?.name ?? "-") path=\(projectPath)")
                 }
             }

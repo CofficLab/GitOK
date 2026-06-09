@@ -8,8 +8,8 @@ import OSLog
 
 class RepoManager: ObservableObject, SuperLog {
     static let emoji = "🏗️"
+    nonisolated static let verbose = false
     private let modelContext: ModelContext
-    private let verbose = false
     
     // Repository实例
     lazy var projectRepo: any ProjectRepoProtocol = {
@@ -26,7 +26,7 @@ class RepoManager: ObservableObject, SuperLog {
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        if verbose {
+        if Self.verbose {
             os_log("\(Self.onInit)")
         }
     }
@@ -34,12 +34,16 @@ class RepoManager: ObservableObject, SuperLog {
     // 便利方法
     func saveContext() throws {
         try modelContext.save()
-        os_log("\(self.t)Context saved")
+        if Self.verbose {
+            os_log("\(self.t)Context saved")
+        }
     }
     
     func rollback() {
         modelContext.rollback()
-        os_log("\(self.t)Context rolled back")
+        if Self.verbose {
+            os_log("\(self.t)Context rolled back")
+        }
     }
 }
 

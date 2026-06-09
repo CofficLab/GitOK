@@ -9,6 +9,7 @@ import OSLog
 /// RootView 通过 `onOpenProject` 回调接收并处理。
 final class OpenProjectHandler: SuperLog {
     nonisolated static let emoji = "📂"
+    nonisolated static let verbose = false
     static let shared = OpenProjectHandler()
 
     /// 处理打开项目的回调
@@ -19,7 +20,9 @@ final class OpenProjectHandler: SuperLog {
     /// 请求打开指定路径的项目
     /// - Parameter path: 项目路径
     func requestOpen(path: String) {
-        os_log("\(Self.t)📋 Request open project: \(path)")
+        if Self.verbose {
+            os_log("\(Self.t)📋 Request open project: \(path)")
+        }
         onOpenProject?(path)
     }
 }
