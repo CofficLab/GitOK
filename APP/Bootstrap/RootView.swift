@@ -45,19 +45,27 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
 
     init(@ViewBuilder content: () -> Content) {
         let start = Date()
-        os_log("\(Self.t)🚀 Startup begin: RootView.init")
+        if Self.verbose {
+            os_log("\(Self.t)🚀 Startup begin: RootView.init")
+        }
 
         let contentStart = Date()
         self.content = content()
-        os_log("\(Self.t)✅ Startup step: RootView content built elapsed=\(String(format: "%.3f", Date().timeIntervalSince(contentStart)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup step: RootView content built elapsed=\(String(format: "%.3f", Date().timeIntervalSince(contentStart)))s")
+        }
 
         let containerStart = Date()
         let c = AppConfig.getContainer()
-        os_log("\(Self.t)✅ Startup step: RootView container ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(containerStart)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup step: RootView container ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(containerStart)))s")
+        }
 
         let repoStart = Date()
         self.repoManager = RepoManager(modelContext: ModelContext(c))
-        os_log("\(Self.t)✅ Startup step: RepoManager ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(repoStart)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup step: RepoManager ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(repoStart)))s")
+        }
 
         // 初始化提供者
         let providersStart = Date()
@@ -66,19 +74,27 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             GeneratedPluginRegistry.registerDefaultAdapters(adapterFactory: adapterFactory, register)
         }
         self.themeProvider = AppThemeVM(pluginProvider: self.pluginProvider)
-        os_log("\(Self.t)✅ Startup step: providers ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(providersStart)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup step: providers ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(providersStart)))s")
+        }
 
         // 初始化数据提供者
         var initialProject: Project?
         do {
             let projectsStart = Date()
-            os_log("\(Self.t)🚀 Startup begin: load projects")
+            if Self.verbose {
+                os_log("\(Self.t)🚀 Startup begin: load projects")
+            }
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
-            os_log("\(Self.t)✅ Startup end: load projects count=\(projects.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(projectsStart)))s")
+            if Self.verbose {
+                os_log("\(Self.t)✅ Startup end: load projects count=\(projects.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(projectsStart)))s")
+            }
 
             let dataStart = Date()
             self.git = DataVM(projects: projects, repoManager: self.repoManager)
-            os_log("\(Self.t)✅ Startup step: DataVM ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(dataStart)))s")
+            if Self.verbose {
+                os_log("\(Self.t)✅ Startup step: DataVM ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(dataStart)))s")
+            }
 
             // 恢复上次选中的项目
             let restoreStart = Date()
@@ -88,18 +104,24 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                 initialProject = firstProject
                 self.repoManager.stateRepo.setProjectPath(firstProject.path)
             }
-            os_log("\(Self.t)✅ Startup step: restore project savedPath=\(savedPath) selected=\(initialProject?.path ?? "nil") elapsed=\(String(format: "%.3f", Date().timeIntervalSince(restoreStart)))s")
+            if Self.verbose {
+                os_log("\(Self.t)✅ Startup step: restore project savedPath=\(savedPath) selected=\(initialProject?.path ?? "nil") elapsed=\(String(format: "%.3f", Date().timeIntervalSince(restoreStart)))s")
+            }
 
             let projectVMStart = Date()
             self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
-            os_log("\(Self.t)✅ Startup step: ProjectVM ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(projectVMStart)))s")
+            if Self.verbose {
+                os_log("\(Self.t)✅ Startup step: ProjectVM ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(projectVMStart)))s")
+            }
         } catch let e {
             os_log(.error, "\(Self.t) Failed to load projects: \(e.localizedDescription)")
             self.git = DataVM(projects: [], repoManager: self.repoManager)
             self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         }
 
-        os_log("\(Self.t)✅ Startup end: RootView.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        if Self.verbose {
+            os_log("\(Self.t)✅ Startup end: RootView.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        }
     }
 
     var body: some View {
@@ -280,7 +302,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     private func openExistingOrNewProject(path: String) {
         // 在已有项目中查找
         if let existingProject = git.projects.first(where: { $0.path == path }) {
-            os_log("\(Self.t)📂 Selecting existing project: \(path)")
+            if Self.verbose {
+                os_log("\(Self.t)📂 Selecting existing project: \(path)")
+            }
             withAnimation {
                 // 如果项目已在列表中，将其移到第一位并选中
                 if let index = git.projects.firstIndex(where: { $0.id == existingProject.id }) {
@@ -290,7 +314,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                 projectVM.setProject(existingProject, reason: "OpenProject")
             }
         } else {
-            os_log("\(Self.t)📂 Adding new project: \(path)")
+            if Self.verbose {
+                os_log("\(Self.t)📂 Adding new project: \(path)")
+            }
             // 添加新项目并选中
             let url = URL(fileURLWithPath: path, isDirectory: true)
             withAnimation {

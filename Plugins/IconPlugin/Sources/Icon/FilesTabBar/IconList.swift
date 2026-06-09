@@ -38,7 +38,9 @@ struct IconList: View {
             i.updateCurrentModel(newModel: newValue)
         }
         .onNotification(.iconDidSave, perform: { _ in
+            #if DEBUG
             os_log("iconDidSave while current selection is \(self.selection?.title ?? "nil")")
+            #endif
             let selectedPath = selection?.path
             refreshIcons(preferredSelectionPath: selectedPath, selectFirstWhenNeeded: true)
         })
@@ -72,7 +74,9 @@ struct IconList: View {
                    let preferredSelection = loadedIcons.first(where: { $0.path == preferredSelectionPath }) {
                     selection = preferredSelection
                 } else if selectFirstWhenNeeded, selection == nil || loadedIcons.contains(selection!) == false {
+                    #if DEBUG
                     os_log("refreshIcons: select the first icon")
+                    #endif
                     selection = loadedIcons.first
                 }
             }

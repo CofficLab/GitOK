@@ -349,7 +349,9 @@ extension ContentView {
     /// 视图出现时的事件处理
     func onAppear() {
         let start = Date()
-        os_log("\(self.t)🚀 ContentView.onAppear begin")
+        if Self.verbose {
+            os_log("\(self.t)🚀 ContentView.onAppear begin")
+        }
 
         if let d = defaultColumnVisibility {
             self.columnVisibility = d
@@ -385,7 +387,9 @@ extension ContentView {
         refreshCurrentBranch(reason: "ContentView.onAppear")
         updateCachedViews()
 
-        os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        if Self.verbose {
+            os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+        }
     }
 
     /// 处理项目变更事件

@@ -32,7 +32,9 @@ class ProjectImage: SuperLog {
     }
 
     static func saveImageAsync(_ url: URL, projectURL: URL) async throws -> String {
+        #if DEBUG
         os_log("SaveImage to project -> \(projectURL.relativeString)")
+        #endif
 
         return try await Task.detached(priority: .userInitiated) {
             let ext = url.pathExtension
@@ -40,8 +42,10 @@ class ProjectImage: SuperLog {
             let imagesFolder = projectURL.appendingPathComponent(Self.dir)
             let storeURL = imagesFolder.appendingPathComponent(fileName)
 
+            #if DEBUG
             os_log("  ➡️ \(url.relativeString)")
             os_log("  ➡️ \(storeURL.relativeString)")
+            #endif
 
             do {
                 // 确保images目录存在

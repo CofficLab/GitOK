@@ -290,7 +290,7 @@ public class HttpClient {
             let str = String(data: data, encoding: .utf8)
             os_log(.error, "\(str!)")
         } else {
-            os_log("返回内容为空")
+            os_log(.error, "返回内容为空")
         }
     }
 

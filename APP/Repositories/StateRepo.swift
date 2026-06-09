@@ -27,8 +27,7 @@ protocol StateRepoProtocol {
 
 class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     static let emoji = "📱"
-
-    private let verbose: Bool = false
+    nonisolated static let verbose = false
 
     // MARK: - App State Properties
 
@@ -53,7 +52,7 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     // MARK: - 初始化
 
     init() {
-        if verbose {
+        if Self.verbose {
             os_log("\(Self.onInit)")
         }
     }
@@ -67,7 +66,7 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     func setProjectPath(_ path: String) {
         self.projectPath = path
 
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Project path set to \(path)")
         }
     }
@@ -78,7 +77,9 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
      */
     func setCurrentTaskUUID(_ id: String) {
         self.currentTaskUUID = id
-        os_log("\(self.t)Current task UUID set to \(id)")
+        if Self.verbose {
+            os_log("\(self.t)Current task UUID set to \(id)")
+        }
     }
 
     /**
@@ -87,7 +88,9 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
      */
     func setCurrentTab(_ tab: String) {
         self.currentTab = tab
-        os_log("\(self.t)Current tab set to \(tab)")
+        if Self.verbose {
+            os_log("\(self.t)Current tab set to \(tab)")
+        }
     }
 
     /**
@@ -96,14 +99,14 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
      */
     func setSidebarVisibility(_ visible: Bool) {
         self.sidebarVisibility = visible
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Sidebar visibility set to \(visible)")
         }
     }
 
     func setGlobalCommitStyle(_ style: CommitStyle) {
         self.globalCommitStyle = style
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Global commit style set to \(style.label)")
         }
     }
@@ -118,7 +121,7 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
 
     func setShowCommitGraph(_ show: Bool) {
         self.showCommitGraph = show
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Show commit graph set to \(show)")
         }
     }

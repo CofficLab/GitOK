@@ -8,8 +8,7 @@ struct GlacierTheme: GitOKAppChromeTheme {
     let description: String
     let iconName: String
     let iconColor: Color
-    let isDarkTheme: Bool
-    let followsSystemAppearance: Bool
+    let appearanceKind: ThemeAppearanceKind
     let deep: Color
     let medium: Color
     let light: Color
@@ -24,15 +23,15 @@ struct GlacierTheme: GitOKAppChromeTheme {
     func atmosphereColors() -> (deep: Color, medium: Color, light: Color) { (deep, medium, light) }
     func glowColors() -> (subtle: Color, medium: Color, intense: Color) {
         (
-            subtle: primary.opacity(isDarkTheme ? 0.12 : 0.08),
-            medium: secondary.opacity(isDarkTheme ? 0.16 : 0.10),
-            intense: tertiary.opacity(isDarkTheme ? 0.18 : 0.12)
+            subtle: primary.opacity(0.12),
+            medium: secondary.opacity(0.16),
+            intense: tertiary.opacity(0.18)
         )
     }
     func workspaceBackgroundColor() -> Color { medium }
     func sidebarBackgroundColor() -> Color { deep }
-    func sidebarSelectionColor() -> Color { primary.opacity(isDarkTheme ? 0.24 : 0.14) }
-    func sidebarSelectionTextColor() -> Color { isDarkTheme ? .white : Color(hex: "111827") }
+    func sidebarSelectionColor() -> Color { primary.opacity(0.24) }
+    func sidebarSelectionTextColor() -> Color { .white }
     func workspaceTextColor() -> Color { text }
     func workspaceSecondaryTextColor() -> Color { secondaryText }
     func workspaceTertiaryTextColor() -> Color { tertiaryText }
@@ -41,15 +40,15 @@ struct GlacierTheme: GitOKAppChromeTheme {
             ZStack {
                 backgroundGradient()
                 VStack(spacing: 0) {
-                    Rectangle().fill(primary.opacity(isDarkTheme ? 0.10 : 0.05)).frame(height: 1)
+                    Rectangle().fill(primary.opacity(0.10)).frame(height: 1)
                     Spacer()
-                    Rectangle().fill(secondary.opacity(isDarkTheme ? 0.08 : 0.04)).frame(height: 1)
+                    Rectangle().fill(secondary.opacity(0.08)).frame(height: 1)
                 }
                 .padding(.horizontal, 24)
                 HStack(spacing: 0) {
-                    Rectangle().fill(primary.opacity(isDarkTheme ? 0.08 : 0.04)).frame(width: 1)
+                    Rectangle().fill(primary.opacity(0.08)).frame(width: 1)
                     Spacer()
-                    Rectangle().fill(tertiary.opacity(isDarkTheme ? 0.06 : 0.035)).frame(width: 1)
+                    Rectangle().fill(tertiary.opacity(0.06)).frame(width: 1)
                 }
                 .padding(.vertical, 20)
             }
@@ -65,8 +64,7 @@ extension GlacierTheme {
         description: "Clean light theme with icy cyan, teal, and violet accents",
         iconName: "externaldrive",
         iconColor: Color(hex: "06B6D4"),
-        isDarkTheme: false,
-        followsSystemAppearance: false,
+        appearanceKind: .light,
         deep: Color(hex: "EEF8FA"),
         medium: Color(hex: "FAFEFF"),
         light: Color(hex: "D7EDF2"),

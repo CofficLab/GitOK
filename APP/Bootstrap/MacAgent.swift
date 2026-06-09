@@ -15,53 +15,50 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    /// 日志标签
-    var label: String { "🍎 MacAgent::" }
-
     /// 待打开的项目路径（通过 Dock 拖拽、open 命令、URL Scheme 触发）
     /// 使用 @Published + Combine 让 RootView 可以立即响应
     @Published var pendingOpenPath: String? = nil
-
-    private let mainThreadWatchdogLock = NSLock()
-    private var mainThreadWatchdogTask: Task<Void, Never>?
-    private var lastMainThreadBeat = Date()
 
     func application(
         _ application: NSApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        os_log("\(self.label)已注册远程通知")
+        if Self.verbose {
+            os_log("\(Self.t)已注册远程通知")
+        }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        os_log("\(self.label)🚀 Startup phase: applicationDidFinishLaunching")
-        startMainThreadWatchdog()
+        if Self.verbose {
+            os_log("\(self.t)🚀 Startup phase: applicationDidFinishLaunching")
+        }
 
         Task { @MainActor in
             DiagnosticsStore.shared.markLaunchStarted()
         }
 
         if Self.verbose {
-            os_log("\(self.label)Finish Lanunching")
+            os_log("\(self.t)Finish Lanunching")
         }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        os_log("\(self.label)🛑 applicationWillTerminate")
-        mainThreadWatchdogTask?.cancel()
+        if Self.verbose {
+            os_log("\(self.t)🛑 applicationWillTerminate")
+        }
 
         Task { @MainActor in
             DiagnosticsStore.shared.markCleanExit()
         }
 
         if Self.verbose {
-            os_log("\(self.label)Will Terminate")
+            os_log("\(self.t)Will Terminate")
         }
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {
         if Self.verbose {
-            os_log("\(self.label)Did Become Active")
+            os_log("\(self.t)Did Become Active")
         }
 
         DispatchQueue.main.async {
@@ -71,7 +68,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         if Self.verbose {
-            os_log("\(self.label)Will Finish Launching")
+            os_log("\(self.t)Will Finish Launching")
         }
 
         // 不再使用 NSAppleEventManager 拦截 kAEOpenDocuments。
@@ -87,7 +84,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
     func applicationWillBecomeActive(_ notification: Notification) {
         if Self.verbose {
-            os_log("\(self.label)Will Become Active")
+            os_log("\(self.t)Will Become Active")
         }
 
         DispatchQueue.main.async {
@@ -104,7 +101,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         didReceiveRemoteNotification userInfo: [String: Any]
     ) {
         if Self.verbose {
-            os_log("\(self.label)收到远程通知\n\(userInfo)")
+            os_log("\(self.t)收到远程通知\n\(userInfo)")
         }
     }
 
@@ -116,11 +113,15 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
             if url.isFileURL {
-                os_log("\(self.label)📂 Open file URL: \(url.path)")
+                if Self.verbose {
+                    os_log("\(self.t)📂 Open file URL: \(url.path)")
+                }
                 let resolvedPath = OpenProjectPathResolver.resolveGitRoot(from: url.path)
                 setOpenPath(resolvedPath)
             } else {
-                os_log("\(self.label)🔗 Open URL: \(url.absoluteString)")
+                if Self.verbose {
+                    os_log("\(self.t)🔗 Open URL: \(url.absoluteString)")
+                }
                 handleURL(url)
             }
         }
@@ -130,7 +131,9 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// 处理通过 `open -a GitOK /path/to/repo` 或拖拽文件夹到 Dock 图标触发的打开事件
     /// 这是 macOS 的另一种文件打开方式，通常用于 Finder 拖拽或命令行 open 命令
     func application(_ application: NSApplication, openFile filename: String) -> Bool {
-        os_log("\(self.label)📂 Open file: \(filename)")
+        if Self.verbose {
+            os_log("\(self.t)📂 Open file: \(filename)")
+        }
 
         let path = OpenProjectPathResolver.resolveGitRoot(from: filename)
         setOpenPath(path)
@@ -178,7 +181,9 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// 设置待打开的项目路径（在主线程）
     private func setOpenPath(_ path: String) {
         let normalized = OpenProjectPathResolver.normalizePath(path)
-        os_log("\(self.label)📁 Set open path: \(normalized)")
+        if Self.verbose {
+            os_log("\(self.t)📁 Set open path: \(normalized)")
+        }
         DispatchQueue.main.async { [weak self] in
             self?.pendingOpenPath = normalized
         }
@@ -194,41 +199,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-    private func startMainThreadWatchdog() {
-        guard mainThreadWatchdogTask == nil else { return }
-
-        markMainThreadBeat()
-        os_log("\(self.label)🫀 Main thread watchdog started")
-
-        mainThreadWatchdogTask = Task.detached(priority: .background) { [weak self] in
-            while !Task.isCancelled {
-                DispatchQueue.main.async {
-                    self?.markMainThreadBeat()
-                }
-
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
-
-                guard let self else { return }
-                let elapsed = self.secondsSinceLastMainThreadBeat()
-                if elapsed > 4 {
-                    os_log(.error, "\(self.label)⏱️ Main thread unresponsive elapsed=\(String(format: "%.1f", elapsed))s")
-                }
-            }
-        }
-    }
-
-    private func markMainThreadBeat() {
-        mainThreadWatchdogLock.lock()
-        lastMainThreadBeat = Date()
-        mainThreadWatchdogLock.unlock()
-    }
-
-    private func secondsSinceLastMainThreadBeat() -> TimeInterval {
-        mainThreadWatchdogLock.lock()
-        let elapsed = Date().timeIntervalSince(lastMainThreadBeat)
-        mainThreadWatchdogLock.unlock()
-        return elapsed
-    }
 }
 
 #Preview("App - Small Screen") {

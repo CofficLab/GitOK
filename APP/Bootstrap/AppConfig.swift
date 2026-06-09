@@ -1,10 +1,11 @@
 import Foundation
 import OSLog
 import SwiftData
+import GitOKFoundationKit
 
 /// 应用配置枚举
 /// 提供应用的基本配置信息和数据库设置
-enum AppConfig {
+enum AppConfig: SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "⚙️"
 
@@ -57,7 +58,9 @@ extension AppConfig {
     static func getContainer() -> ModelContainer {
         let start = Date()
         let url = AppConfig.getDBFolderURL().appendingPathComponent(dbFileName)
-        os_log("\(Self.emoji) AppConfig::🚀 Startup begin: ModelContainer url=\(url.path)")
+        if Self.verbose {
+            os_log("\(Self.t)🚀 Startup begin: ModelContainer url=\(url.path)")
+        }
 
         let schema = Schema([
             Project.self,
@@ -72,10 +75,12 @@ extension AppConfig {
 
         do {
             let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
-            os_log("\(Self.emoji) AppConfig::✅ Startup end: ModelContainer elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            if Self.verbose {
+                os_log("\(Self.t)✅ Startup end: ModelContainer elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            }
             return container
         } catch {
-            os_log(.error, "\(Self.emoji) AppConfig::❌ ModelContainer failed: \(error.localizedDescription)")
+            os_log(.error, "\(Self.t)❌ ModelContainer failed: \(error.localizedDescription)")
             fatalError("Could not create ModelContainer: \(error)")
         }
     }

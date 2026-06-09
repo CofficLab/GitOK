@@ -1,6 +1,5 @@
 import GitOKUI
 import GitOKSupportKit
-import OSLog
 import SwiftUI
 
 /// 标签页按钮视图
@@ -31,7 +30,6 @@ struct TabBtn: View, SuperLog {
 
   /// 点击回调
   var onTap: () -> Void = {
-    os_log("Tab button tapped")
   }
 
   /// 视图主体
