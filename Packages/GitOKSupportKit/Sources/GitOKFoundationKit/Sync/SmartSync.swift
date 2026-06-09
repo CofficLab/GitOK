@@ -53,8 +53,6 @@ public final actor SmartSync: SuperThread, SuperLog {
 
 extension SmartSync: CKSyncEngineDelegate {
     public func handleEvent(_ event: CKSyncEngine.Event, syncEngine: CKSyncEngine) async {
-        let verbose = true
-
         switch event {
         case let .stateUpdate(event):
             do {
@@ -109,7 +107,7 @@ extension SmartSync: CKSyncEngineDelegate {
             break
 
         @unknown default:
-            if verbose {
+            if self.verbose {
                 os_log("\(self.t)Received unknown event: \(event)")
             }
         }
@@ -197,8 +195,6 @@ extension SmartSync: CKSyncEngineDelegate {
     }
 
     func reset() {
-        let verbose = true
-
         if verbose {
             os_log("\(self.t)Reset SyncEngine")
             os_log("  ➡️ PendingRecordZoneChanges(\(self.engine.state.pendingRecordZoneChanges.count))")
@@ -215,8 +211,6 @@ extension SmartSync: CKSyncEngineDelegate {
     }
 
     public func deleteZone(zone: CKRecordZone) async throws {
-        let verbose = true
-
         if verbose {
             os_log("\(self.t)🗑️ Delete Zone -> \(zone.zoneID.zoneName)")
             os_log("  ➡️ PendingRecordZoneChanges(\(self.engine.state.pendingRecordZoneChanges.count))")
@@ -473,8 +467,6 @@ extension SmartSync {
     // MARK: Fetched Database Changes
 
     func handleFetchedDatabaseChanges(_ event: CKSyncEngine.Event.FetchedDatabaseChanges) {
-        let verbose = true
-
         for deletion in event.deletions {
             os_log(.error, "Received deletion for zone: \(deletion.zoneID.zoneName)")
         }
