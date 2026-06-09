@@ -115,34 +115,35 @@ jobs:
           cp ./temp/*.dmg updates/
           echo "the updates is in ${{ github.workspace }}/updates"
           ls -alh updates
-      - name: generate appcast (production only)
+      - name: generate appcasts (production only)
         if: env.IS_PRERELEASE == 'false'
         run: |
-          pwd
-          # 只用 arm64 DMG 生成 appcast，避免 Sparkle "Duplicate updates" 错误
-          mkdir -p appcast_input
-          cp ./updates/*arm64*.dmg appcast_input/
-          ls -alh appcast_input
           xcodebuild -resolvePackageDependencies
-          cd $(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/ | head -n 1)
-          cd SourcePackages/artifacts/sparkle/Sparkle/bin
-          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | ./generate_appcast --ed-key-file - ${{ github.workspace }}/appcast_input
-      - name: make appcast.xml (production only)
-        if: env.IS_PRERELEASE == 'false'
-        run: |
-          pwd
-          cd appcast_input
-          dmg_file=$(ls *.dmg 2>/dev/null | head -n 1)
-          echo $dmg_file
-          u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file" 
-          echo $u
-          sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
-          if ! grep -q "sparkle:releaseNotesLink" appcast.xml; then
-            sed -i '' '/<sparkle:minimumSystemVersion>/a\
+          SPARKLE_BIN="$(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/SourcePackages/artifacts/sparkle/Sparkle/bin | head -n 1)"
+
+          for arch in arm64 x86_64; do
+            input_dir="appcast_input_${arch}"
+            mkdir -p "$input_dir"
+            cp ./updates/*${arch}*.dmg "$input_dir/"
+            ls -alh "$input_dir"
+
+            echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" --ed-key-file - "${{ github.workspace }}/${input_dir}"
+
+            cd "$input_dir"
+            dmg_file=$(ls *.dmg | head -n 1)
+            u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
+            sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
+            if ! grep -q "sparkle:releaseNotesLink" appcast.xml; then
+              sed -i '' '/<sparkle:minimumSystemVersion>/a\
             <sparkle:releaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:releaseNotesLink>
             ' appcast.xml
-          fi
-          mv appcast.xml ../appcast.xml
+            fi
+            mv appcast.xml "../appcast-${arch}.xml"
+            cd ..
+          done
+
+          # 兼容旧版本客户端（仍读取 appcast.xml）
+          cp appcast-arm64.xml appcast.xml
       - name: 发布 Release
         uses: softprops/action-gh-release@v1
         with:
@@ -151,6 +152,8 @@ jobs:
           files: |
             ./updates/*.dmg
             ./appcast.xml
+            ./appcast-arm64.xml
+            ./appcast-x86_64.xml
       # =================================================================================================
       # 上传 DMG 到 Cloudflare R2
       # =================================================================================================
@@ -193,6 +196,9 @@ jobs:
         if: env.IS_PRERELEASE == 'false'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "👷 CI: update appcast.yml"
+          commit_message: "👷 CI: update appcasts"
           commit_user_name: GitHub Action
-          file_pattern: "appcast.xml"
+          file_pattern: |
+            appcast.xml
+            appcast-arm64.xml
+            appcast-x86_64.xml

@@ -7,7 +7,7 @@
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast-arm64.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>VRFIJExvMCeneBRzxR6mu2zPN9ggOUr0LNlcKYOb27o=</string>
 	<key>CFBundleDocumentTypes</key>
