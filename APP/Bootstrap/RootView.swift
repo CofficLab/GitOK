@@ -280,7 +280,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     private func openExistingOrNewProject(path: String) {
         // 在已有项目中查找
         if let existingProject = git.projects.first(where: { $0.path == path }) {
-            os_log("\(Self.t)📂 Selecting existing project: \(path)")
+            if Self.verbose {
+                os_log("\(Self.t)📂 Selecting existing project: \(path)")
+            }
             withAnimation {
                 // 如果项目已在列表中，将其移到第一位并选中
                 if let index = git.projects.firstIndex(where: { $0.id == existingProject.id }) {
@@ -290,7 +292,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                 projectVM.setProject(existingProject, reason: "OpenProject")
             }
         } else {
-            os_log("\(Self.t)📂 Adding new project: \(path)")
+            if Self.verbose {
+                os_log("\(Self.t)📂 Adding new project: \(path)")
+            }
             // 添加新项目并选中
             let url = URL(fileURLWithPath: path, isDirectory: true)
             withAnimation {
