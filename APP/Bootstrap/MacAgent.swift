@@ -22,10 +22,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// 使用 @Published + Combine 让 RootView 可以立即响应
     @Published var pendingOpenPath: String? = nil
 
-    private let mainThreadWatchdogLock = NSLock()
-    private var mainThreadWatchdogTask: Task<Void, Never>?
-    private var lastMainThreadBeat = Date()
-
     func application(
         _ application: NSApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -35,7 +31,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         os_log("\(self.label)🚀 Startup phase: applicationDidFinishLaunching")
-        startMainThreadWatchdog()
 
         Task { @MainActor in
             DiagnosticsStore.shared.markLaunchStarted()
@@ -48,7 +43,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
     func applicationWillTerminate(_ notification: Notification) {
         os_log("\(self.label)🛑 applicationWillTerminate")
-        mainThreadWatchdogTask?.cancel()
 
         Task { @MainActor in
             DiagnosticsStore.shared.markCleanExit()
@@ -194,41 +188,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-    private func startMainThreadWatchdog() {
-        guard mainThreadWatchdogTask == nil else { return }
-
-        markMainThreadBeat()
-        os_log("\(self.label)🫀 Main thread watchdog started")
-
-        mainThreadWatchdogTask = Task.detached(priority: .background) { [weak self] in
-            while !Task.isCancelled {
-                DispatchQueue.main.async {
-                    self?.markMainThreadBeat()
-                }
-
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
-
-                guard let self else { return }
-                let elapsed = self.secondsSinceLastMainThreadBeat()
-                if elapsed > 4 {
-                    os_log(.error, "\(self.label)⏱️ Main thread unresponsive elapsed=\(String(format: "%.1f", elapsed))s")
-                }
-            }
-        }
-    }
-
-    private func markMainThreadBeat() {
-        mainThreadWatchdogLock.lock()
-        lastMainThreadBeat = Date()
-        mainThreadWatchdogLock.unlock()
-    }
-
-    private func secondsSinceLastMainThreadBeat() -> TimeInterval {
-        mainThreadWatchdogLock.lock()
-        let elapsed = Date().timeIntervalSince(lastMainThreadBeat)
-        mainThreadWatchdogLock.unlock()
-        return elapsed
-    }
 }
 
 #Preview("App - Small Screen") {
