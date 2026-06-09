@@ -102,7 +102,9 @@ final class WebIconRepo: SuperLog, IconSourceProtocol, @unchecked Sendable {
             throw RemoteIconError.invalidURL
         }
 
+        #if DEBUG
         os_log("\(self.t)fetchCategoriesFromNetwork: \(url.absoluteString) with cacheMaxAge: \(self.httpCacheMaxAge)")
+        #endif
 
         // 使用显式 Header，避免 GET 携带 Content-Type；同时禁用压缩以排除解压问题
         let headers = [
