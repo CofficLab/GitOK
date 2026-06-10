@@ -17,7 +17,7 @@ final class GitOKThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = GitOKThemePlugin.shared.themeContributions()
+        let contributions = GitOKThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "repository")

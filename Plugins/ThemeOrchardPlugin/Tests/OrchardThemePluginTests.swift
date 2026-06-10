@@ -15,7 +15,7 @@ final class OrchardThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = OrchardThemePlugin.shared.themeContributions()
+        let contributions = OrchardThemePlugin.themeContributions(context: GitOKPluginContext())
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "stash")
         XCTAssertEqual(contributions[0].displayName, "Orchard")

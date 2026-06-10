@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct XcodeLightThemePlugin: GitOKPlugin {
+public enum XcodeLightThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeXcodeLightPlugin",
         displayName: XcodeLightThemePluginLocalization.string("Xcode Light Theme"),
@@ -12,12 +12,10 @@ public struct XcodeLightThemePlugin: GitOKPlugin {
         tableName: XcodeLightThemePluginLocalization.table
     )
 
-    public static let shared = XcodeLightThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: XcodeLightTheme.xcodeLight.identifier),

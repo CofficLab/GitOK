@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ActivityStatusPlugin: GitOKPlugin {
-    public static let shared = ActivityStatusPlugin()
+public enum ActivityStatusPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "ActivityStatusPlugin",
@@ -15,11 +14,10 @@ public struct ActivityStatusPlugin: GitOKPlugin {
         tableName: ActivityStatusPluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func statusBarCenterView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(ActivityStatusTile(activityStatus: context.activityStatus))
+    public static func statusBarCenterItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(ActivityStatusTile(activityStatus: context.activityStatus)))]
     }
 }
 

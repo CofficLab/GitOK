@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct DraculaThemePlugin: GitOKPlugin {
+public enum DraculaThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeDraculaPlugin",
         displayName: DraculaThemePluginLocalization.string("Dracula Theme"),
@@ -12,12 +12,10 @@ public struct DraculaThemePlugin: GitOKPlugin {
         tableName: DraculaThemePluginLocalization.table
     )
 
-    public static let shared = DraculaThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: DraculaTheme.dracula.identifier),

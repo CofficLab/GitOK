@@ -16,7 +16,7 @@ final class GraphiteThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = GraphiteThemePlugin.shared.themeContributions()
+        let contributions = GraphiteThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "graphite")

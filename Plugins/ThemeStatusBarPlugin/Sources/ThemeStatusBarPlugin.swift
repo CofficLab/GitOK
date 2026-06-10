@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ThemeStatusBarPlugin: GitOKPlugin {
-    public static let shared = ThemeStatusBarPlugin()
+public enum ThemeStatusBarPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeStatusBarPlugin",
@@ -15,14 +14,19 @@ public struct ThemeStatusBarPlugin: GitOKPlugin {
         tableName: ThemeStatusBarPluginLocalization.table
     )
 
-    private init() {}
-
     @MainActor
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(ThemeStatusBarView(
-            registry: GitOKUIThemeRegistry.shared,
-            selectTheme: context.onThemeSelection
-        ))
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        [
+            GitOKStatusBarItem(
+                id: metadata.id,
+                view: AnyView(
+                    ThemeStatusBarView(
+                        registry: GitOKUIThemeRegistry.shared,
+                        selectTheme: context.onThemeSelection
+                    )
+                )
+            ),
+        ]
     }
 }
 

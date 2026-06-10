@@ -15,7 +15,7 @@ final class HarborThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = HarborThemePlugin.shared.themeContributions()
+        let contributions = HarborThemePlugin.themeContributions(context: GitOKPluginContext())
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "remote")
         XCTAssertEqual(contributions[0].displayName, "Harbor")

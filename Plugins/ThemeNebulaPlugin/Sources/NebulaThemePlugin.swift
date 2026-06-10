@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct NebulaThemePlugin: GitOKPlugin {
+public enum NebulaThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeNebulaPlugin",
         displayName: NebulaThemePluginLocalization.string("Nebula Theme"),
@@ -12,12 +12,10 @@ public struct NebulaThemePlugin: GitOKPlugin {
         tableName: NebulaThemePluginLocalization.table
     )
 
-    public static let shared = NebulaThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [GitOKUIThemeContribution(sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: NebulaTheme.nebula.identifier), chromeTheme: NebulaTheme.nebula, editorThemeId: NebulaTheme.nebula.identifier)]
     }
 }

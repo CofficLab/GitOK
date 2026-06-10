@@ -16,7 +16,7 @@ final class MatrixThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = MatrixThemePlugin.shared.themeContributions()
+        let contributions = MatrixThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "automation")

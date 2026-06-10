@@ -23,7 +23,8 @@ final class OpenTerminalPluginTests: XCTestCase {
     @MainActor
     func testToolbarContributionMatchesApplicationAvailability() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
-        let view = OpenTerminalPlugin.shared.toolBarTrailingView(context: context)
+        let items = OpenTerminalPlugin.toolbarTrailingItems(context: context)
+        let view = items.first?.view
 
         if TerminalLauncher.hasInstalledTerminal {
             XCTAssertNotNil(view)

@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct AuroraThemePlugin: GitOKPlugin {
+public enum AuroraThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeAuroraPlugin",
         displayName: AuroraThemePluginLocalization.string("Aurora Theme"),
@@ -12,12 +12,10 @@ public struct AuroraThemePlugin: GitOKPlugin {
         tableName: AuroraThemePluginLocalization.table
     )
 
-    public static let shared = AuroraThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: AuroraTheme.commitGraph.identifier),

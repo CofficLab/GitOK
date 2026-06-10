@@ -1,13 +1,11 @@
 import Foundation
 import GitOKCoreKit
 
-public struct GlacierThemePlugin: GitOKPlugin {
+public enum GlacierThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(id: "ThemeGlacierPlugin", displayName: GlacierThemePluginLocalization.string("Glacier Theme"), description: GlacierThemePluginLocalization.string("Icy cyan light theme"), iconName: "externaldrive", order: 129, policy: .alwaysOn, tableName: GlacierThemePluginLocalization.table)
-    public static let shared = GlacierThemePlugin()
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [GitOKUIThemeContribution(sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: GlacierTheme.glacier.identifier), chromeTheme: GlacierTheme.glacier, editorThemeId: GlacierTheme.glacier.identifier)]
     }
 }

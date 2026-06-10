@@ -23,7 +23,7 @@ final class OpenRemotePluginTests: XCTestCase {
     @MainActor
     func testToolbarContributionIsAvailable() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"), isGitRepository: true)
-        XCTAssertNotNil(OpenRemotePlugin.shared.toolBarTrailingView(context: context))
+        XCTAssertFalse(OpenRemotePlugin.toolbarTrailingItems(context: context).isEmpty)
     }
 
     func testRemoteURLConversion() {

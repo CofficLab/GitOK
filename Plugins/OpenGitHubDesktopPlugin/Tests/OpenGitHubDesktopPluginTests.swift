@@ -23,7 +23,8 @@ final class OpenGitHubDesktopPluginTests: XCTestCase {
     @MainActor
     func testToolbarContributionMatchesApplicationAvailability() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
-        let view = OpenGitHubDesktopPlugin.shared.toolBarTrailingView(context: context)
+        let items = OpenGitHubDesktopPlugin.toolbarTrailingItems(context: context)
+        let view = items.first?.view
 
         if GitHubDesktopProjectLauncher.isInstalled {
             XCTAssertNotNil(view)

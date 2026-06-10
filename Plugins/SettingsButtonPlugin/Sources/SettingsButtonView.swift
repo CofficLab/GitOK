@@ -3,16 +3,14 @@ import GitOKCoreKit
 import SwiftUI
 
 public struct SettingsButtonView: View {
-    nonisolated public init() {}
+    private let onOpenSettings: () -> Void
+
+    public init(onOpenSettings: @escaping () -> Void = {}) {
+        self.onOpenSettings = onOpenSettings
+    }
 
     public var body: some View {
-        AppStatusBarTile(systemImage: "gearshape", action: {
-            NotificationCenter.default.post(name: .gitOKOpenSettings, object: nil)
-        })
-        .help(SettingsButtonPluginLocalization.string("Open Settings"))
+        AppStatusBarTile(systemImage: "gearshape", action: onOpenSettings)
+            .help(SettingsButtonPluginLocalization.string("Open Settings"))
     }
-}
-
-public extension Notification.Name {
-    static let gitOKOpenSettings = Notification.Name("openSettings")
 }

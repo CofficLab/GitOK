@@ -1,4 +1,5 @@
 import Foundation
+import GitOKCoreKit
 
 public struct BranchPluginContext: Sendable {
     public let projectURL: URL?

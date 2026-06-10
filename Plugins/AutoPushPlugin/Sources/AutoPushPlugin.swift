@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct AutoPushPlugin: GitOKPlugin {
-    public static let shared = AutoPushPlugin()
+public enum AutoPushPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "AutoPushPlugin",
@@ -14,16 +13,21 @@ public struct AutoPushPlugin: GitOKPlugin {
         tableName: AutoPushPluginLocalization.table
     )
 
-    private init() {}
-
     @MainActor
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(AutoPushStatusIcon(
-            projectPath: context.projectPath,
-            projectTitle: context.projectTitle,
-            branchName: context.branchName,
-            isGitRepository: context.isGitRepository
-        ))
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        [
+            GitOKStatusBarItem(
+                id: metadata.id,
+                view: AnyView(
+                    AutoPushStatusIcon(
+                        projectPath: context.projectPath,
+                        projectTitle: context.projectTitle,
+                        branchName: context.branchName,
+                        isGitRepository: context.isGitRepository
+                    )
+                )
+            ),
+        ]
     }
 }
 

@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct StashPlugin: GitOKPlugin {
-    public static let shared = StashPlugin()
+public enum StashPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "StashPlugin",
@@ -14,11 +13,10 @@ public struct StashPlugin: GitOKPlugin {
         tableName: StashPluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(StashStatusTile(projectURL: context.projectURL))
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(StashStatusTile(projectURL: context.projectURL)))]
     }
 }
 

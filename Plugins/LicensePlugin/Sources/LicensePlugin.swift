@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct LicensePlugin: GitOKPlugin {
-    public static let shared = LicensePlugin()
+public enum LicensePlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "LicensePlugin",
@@ -15,12 +14,11 @@ public struct LicensePlugin: GitOKPlugin {
         tableName: LicensePluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(LicenseStatusIcon(projectURL: projectURL))
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(LicenseStatusIcon(projectURL: projectURL)))]
     }
 }
 

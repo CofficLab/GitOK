@@ -15,7 +15,7 @@ final class GlacierThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = GlacierThemePlugin.shared.themeContributions()
+        let contributions = GlacierThemePlugin.themeContributions(context: GitOKPluginContext())
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "large-files")
         XCTAssertEqual(contributions[0].displayName, "Glacier")

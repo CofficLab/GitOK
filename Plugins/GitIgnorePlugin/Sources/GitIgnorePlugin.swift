@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct GitIgnorePlugin: GitOKPlugin {
-    public static let shared = GitIgnorePlugin()
+public enum GitIgnorePlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "GitignorePlugin",
@@ -15,12 +14,11 @@ public struct GitIgnorePlugin: GitOKPlugin {
         tableName: GitIgnorePluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(GitIgnoreStatusIcon(projectURL: projectURL))
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(GitIgnoreStatusIcon(projectURL: projectURL)))]
     }
 }
 

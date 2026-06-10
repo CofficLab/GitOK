@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct CleanStatusPlugin: GitOKPlugin {
-    public static let shared = CleanStatusPlugin()
+public enum CleanStatusPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "CleanStatusPlugin",
@@ -15,11 +14,10 @@ public struct CleanStatusPlugin: GitOKPlugin {
         tableName: CleanStatusPluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
-        AnyView(CleanStatusRootView(
+    public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {
+        return         AnyView(CleanStatusRootView(
             content: content,
             projectURL: context.projectURL,
             updateCleanStatus: context.onCleanStatusUpdate

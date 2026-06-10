@@ -21,6 +21,8 @@ import Foundation
 /// 所有新增属性应提供合理的默认值，以保持向后兼容性。
 @MainActor
 public struct GitOKPluginContext {
+    public let dependencies: GitOKPluginDependencies
+
     // MARK: - 项目信息
 
     /// 当前项目 URL
@@ -100,6 +102,7 @@ public struct GitOKPluginContext {
     public let onRemoteTrackingUpdate: GitOKRemoteTrackingUpdateHandler
 
     public init(
+        dependencies: GitOKPluginDependencies = GitOKPluginDependencies(),
         projectURL: URL? = nil,
         projectPath: String? = nil,
         projectTitle: String? = nil,
@@ -123,6 +126,7 @@ public struct GitOKPluginContext {
         onUnpushedCommitsUpdate: @escaping GitOKUnpushedCommitsUpdateHandler = { _, _ in },
         onRemoteTrackingUpdate: @escaping GitOKRemoteTrackingUpdateHandler = { _, _ in }
     ) {
+        self.dependencies = dependencies
         self.projectURL = projectURL
         self.projectPath = projectPath
         self.projectTitle = projectTitle
@@ -145,5 +149,9 @@ public struct GitOKPluginContext {
         self.onGitDirectoryChange = onGitDirectoryChange
         self.onUnpushedCommitsUpdate = onUnpushedCommitsUpdate
         self.onRemoteTrackingUpdate = onRemoteTrackingUpdate
+    }
+
+    public func resolve<Service>(_ type: Service.Type = Service.self) -> Service? {
+        dependencies.resolve(type)
     }
 }

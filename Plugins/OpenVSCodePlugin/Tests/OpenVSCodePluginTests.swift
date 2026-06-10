@@ -23,7 +23,8 @@ final class OpenVSCodePluginTests: XCTestCase {
     @MainActor
     func testToolbarContributionMatchesApplicationAvailability() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
-        let view = OpenVSCodePlugin.shared.toolBarTrailingView(context: context)
+        let items = OpenVSCodePlugin.toolbarTrailingItems(context: context)
+        let view = items.first?.view
 
         if VSCodeProjectLauncher.isInstalled {
             XCTAssertNotNil(view)

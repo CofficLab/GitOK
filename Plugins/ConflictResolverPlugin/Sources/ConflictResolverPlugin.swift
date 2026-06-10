@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ConflictResolverPlugin: GitOKPlugin {
-    public static let shared = ConflictResolverPlugin()
+public enum ConflictResolverPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "ConflictResolverPlugin",
@@ -14,16 +13,16 @@ public struct ConflictResolverPlugin: GitOKPlugin {
         tableName: ConflictResolverPluginLocalization.table
     )
 
-    private init() {}
 
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(ConflictStatusTile(projectURL: projectURL, isGitRepository: context.isGitRepository))
+    @MainActor
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(ConflictStatusTile(projectURL: projectURL, isGitRepository: context.isGitRepository)))]
     }
 
     @MainActor
-    public func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
-        AnyView(ConflictResolverRootView(
+    public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {
+        return         AnyView(ConflictResolverRootView(
             content: content,
             projectURL: context.projectURL,
             isGitRepository: context.isGitRepository

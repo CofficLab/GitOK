@@ -1,8 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct CommitPlugin: GitOKPlugin {
-    public static let shared = CommitPlugin()
+public enum CommitPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "CommitPlugin",
@@ -13,7 +12,13 @@ public struct CommitPlugin: GitOKPlugin {
         tableName: CommitPluginLocalization.table
     )
 
-    private init() {}
+    @MainActor
+    public static func listPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKListPaneItem] {
+        guard tab == "Git", context.isGitRepository,
+              let view = context.resolve(GitOKAppHostedViewProviding.self)?.commitListView(context: context)
+        else { return [] }
+        return [GitOKListPaneItem(id: metadata.id, view: view)]
+    }
 }
 
 public enum CommitPluginLocalization {

@@ -24,13 +24,13 @@ final class LicensePluginTests: XCTestCase {
     @MainActor
     func testStatusBarContributionIsAvailable() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/test"))
-        XCTAssertNotNil(LicensePlugin.shared.statusBarTrailingView(context: context))
+        XCTAssertFalse(LicensePlugin.statusBarTrailingItems(context: context).isEmpty)
     }
 
     @MainActor
     func testStatusBarContributionReturnsNilWithoutProject() {
         let context = GitOKPluginContext()
-        XCTAssertNil(LicensePlugin.shared.statusBarTrailingView(context: context))
+        XCTAssertTrue(LicensePlugin.statusBarTrailingItems(context: context).isEmpty)
     }
 
     func testLicenseDocumentWritesCanonicalLicenseFile() throws {

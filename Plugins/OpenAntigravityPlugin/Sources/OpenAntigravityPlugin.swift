@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenAntigravityPlugin: GitOKPlugin {
-    public static let shared = OpenAntigravityPlugin()
+public enum OpenAntigravityPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "OpenAntigravity",
@@ -15,11 +14,11 @@ public struct OpenAntigravityPlugin: GitOKPlugin {
         tableName: OpenAntigravityPluginLocalization.table
     )
 
-    private init() {}
 
-    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(OpenAntigravityButton(projectURL: projectURL))
+    @MainActor
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenAntigravityButton(projectURL: projectURL)))]
     }
 }
 

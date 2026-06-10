@@ -20,6 +20,6 @@ struct ProjectPickerPluginTests {
     @MainActor
     @Test("toolbar contribution is available")
     func toolbarContribution() {
-        #expect(ProjectPickerPlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) != nil)
+        #expect(!ProjectPickerPlugin.toolbarLeadingItems(context: GitOKPluginContext()).isEmpty)
     }
 }

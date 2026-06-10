@@ -22,6 +22,6 @@ final class ThemeStatusBarPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(ThemeStatusBarPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
+        XCTAssertFalse(ThemeStatusBarPlugin.statusBarTrailingItems(context: GitOKPluginContext()).isEmpty)
     }
 }

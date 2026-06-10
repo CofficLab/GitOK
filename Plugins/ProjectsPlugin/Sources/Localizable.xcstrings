@@ -1,0 +1,16 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "ProjectsPlugin" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Projects" } }
+      }
+    },
+    "Project sidebar and repository sheets" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Project sidebar and repository sheets" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

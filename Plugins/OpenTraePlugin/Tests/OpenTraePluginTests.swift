@@ -23,7 +23,8 @@ final class OpenTraePluginTests: XCTestCase {
     @MainActor
     func testToolbarContributionMatchesApplicationAvailability() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
-        let view = OpenTraePlugin.shared.toolBarTrailingView(context: context)
+        let items = OpenTraePlugin.toolbarTrailingItems(context: context)
+        let view = items.first?.view
 
         if TraeProjectLauncher.isInstalled {
             XCTAssertNotNil(view)

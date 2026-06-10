@@ -25,7 +25,7 @@ struct ConflictResolverPluginTests {
     func statusBarTrailingView() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"), isGitRepository: true)
 
-        #expect(ConflictResolverPlugin.shared.statusBarTrailingView(context: context) != nil)
+        #expect(!ConflictResolverPlugin.statusBarTrailingItems(context: context).isEmpty)
     }
 
     @MainActor
@@ -34,7 +34,7 @@ struct ConflictResolverPluginTests {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"), isGitRepository: true)
         let root = AnyView(Text("Root"))
 
-        #expect(ConflictResolverPlugin.shared.rootView(root, context: context) != nil)
+        #expect(ConflictResolverPlugin.rootOverlay(context: context, content: root) != nil)
     }
 
     @Test("state builder prioritizes unresolved files")

@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenXcodePlugin: GitOKPlugin {
-    public static let shared = OpenXcodePlugin()
+public enum OpenXcodePlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "OpenXcode",
@@ -15,11 +14,11 @@ public struct OpenXcodePlugin: GitOKPlugin {
         tableName: OpenXcodePluginLocalization.table
     )
 
-    private init() {}
 
-    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(OpenXcodeButton(projectURL: projectURL))
+    @MainActor
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenXcodeButton(projectURL: projectURL)))]
     }
 }
 

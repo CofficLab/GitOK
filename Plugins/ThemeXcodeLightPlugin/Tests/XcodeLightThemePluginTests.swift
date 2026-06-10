@@ -16,7 +16,7 @@ final class XcodeLightThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = XcodeLightThemePlugin.shared.themeContributions()
+        let contributions = XcodeLightThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "xcode-light")

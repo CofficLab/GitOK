@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct GitLFSPlugin: GitOKPlugin {
-    public static let shared = GitLFSPlugin()
+public enum GitLFSPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "GitLFSPlugin",
@@ -15,12 +14,11 @@ public struct GitLFSPlugin: GitOKPlugin {
         tableName: GitLFSPluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(GitLFSStatusTile(projectURL: projectURL))
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(GitLFSStatusTile(projectURL: projectURL)))]
     }
 }
 

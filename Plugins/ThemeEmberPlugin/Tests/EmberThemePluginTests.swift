@@ -16,7 +16,7 @@ final class EmberThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = EmberThemePlugin.shared.themeContributions()
+        let contributions = EmberThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "conflict")

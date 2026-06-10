@@ -16,7 +16,7 @@ final class SpringThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = SpringThemePlugin.shared.themeContributions()
+        let contributions = SpringThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "worktree")

@@ -22,6 +22,6 @@ struct SmartMergePluginTests {
     @Test("plugin contributes status bar trailing view")
     func statusBarTrailingView() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/test"))
-        #expect(SmartMergePlugin.shared.statusBarTrailingView(context: context) != nil)
+        #expect(!SmartMergePlugin.statusBarTrailingItems(context: context).isEmpty)
     }
 }

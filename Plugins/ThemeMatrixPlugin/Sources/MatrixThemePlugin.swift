@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct MatrixThemePlugin: GitOKPlugin {
+public enum MatrixThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeMatrixPlugin",
         displayName: MatrixThemePluginLocalization.string("Matrix Theme"),
@@ -12,12 +12,10 @@ public struct MatrixThemePlugin: GitOKPlugin {
         tableName: MatrixThemePluginLocalization.table
     )
 
-    public static let shared = MatrixThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: MatrixTheme.matrix.identifier),

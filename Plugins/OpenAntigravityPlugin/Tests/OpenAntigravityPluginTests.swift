@@ -23,7 +23,8 @@ final class OpenAntigravityPluginTests: XCTestCase {
     @MainActor
     func testToolbarContributionMatchesApplicationAvailability() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
-        let view = OpenAntigravityPlugin.shared.toolBarTrailingView(context: context)
+        let items = OpenAntigravityPlugin.toolbarTrailingItems(context: context)
+        let view = items.first?.view
 
         if AntigravityProjectLauncher.isInstalled {
             XCTAssertNotNil(view)

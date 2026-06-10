@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct BranchPlugin: GitOKPlugin {
-    public static let shared = BranchPlugin()
+public enum BranchPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "BranchPlugin",
@@ -15,22 +14,20 @@ public struct BranchPlugin: GitOKPlugin {
         tableName: BranchPluginLocalization.table
     )
 
-    private init() {}
-
     @MainActor
-    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        let pluginContext = Self.toolBarContext(from: context)
-        return AnyView(BranchPickerView(context: pluginContext))
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        let pluginContext = toolBarContext(from: context)
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(BranchPickerView(context: pluginContext)))]
     }
 
     @MainActor
-    public func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
+    public static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
         let pluginContext = BranchPluginContext(context)
-        return AnyView(BranchStatusTile(context: pluginContext))
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(BranchStatusTile(context: pluginContext)))]
     }
 
     @MainActor
-    static func toolBarContext(from context: GitOKPluginContext) -> BranchPluginContext {
+    public static func toolBarContext(from context: GitOKPluginContext) -> BranchPluginContext {
         BranchPluginContext(context)
     }
 }

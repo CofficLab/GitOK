@@ -22,6 +22,6 @@ struct RemoteRepositoryPluginTests {
     @Test("plugin contributes status bar trailing view")
     func statusBarTrailingView() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"), isGitRepository: true)
-        #expect(RemoteRepositoryPlugin.shared.statusBarTrailingView(context: context) != nil)
+        #expect(!RemoteRepositoryPlugin.statusBarTrailingItems(context: context).isEmpty)
     }
 }

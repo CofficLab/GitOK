@@ -25,6 +25,6 @@ final class GitLFSPluginTests: XCTestCase {
     func testStatusBarContributionIsAvailable() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"))
 
-        XCTAssertNotNil(GitLFSPlugin.shared.statusBarTrailingView(context: context))
+        XCTAssertFalse(GitLFSPlugin.statusBarTrailingItems(context: context).isEmpty)
     }
 }

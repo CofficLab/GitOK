@@ -1,28 +1,67 @@
 import XCTest
 @testable import GitOKCoreKit
 
-private struct RuntimeTestPlugin: SuperPlugin {
-    let instanceLabel: String
-    let pluginOrder: Int
-    let pluginPolicy: GitOKPluginPolicy
+private enum FirstTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "first",
+        displayName: "first",
+        order: 10,
+        policy: .alwaysOn
+    )
 
-    var pluginDisplayName: String { instanceLabel }
-    var pluginDescription: String { "" }
-    var pluginIconName: String { "puzzlepiece.extension" }
-    var pluginTableName: String { "GitOKCoreKitTests" }
-
-    init(
-        instanceLabel: String,
-        pluginOrder: Int = 9999,
-        pluginPolicy: GitOKPluginPolicy = .alwaysOn
-    ) {
-        self.instanceLabel = instanceLabel
-        self.pluginOrder = pluginOrder
-        self.pluginPolicy = pluginPolicy
+    @MainActor
+    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
+        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
     }
+}
 
-    func addTabItem() -> String? {
-        instanceLabel
+private enum LastTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "last",
+        displayName: "last",
+        order: 20,
+        policy: .alwaysOn
+    )
+
+    @MainActor
+    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
+        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
+    }
+}
+
+private enum AlwaysOnTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(id: "alwaysOn", displayName: "alwaysOn", policy: .alwaysOn)
+
+    @MainActor
+    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
+        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
+    }
+}
+
+private enum OptOutTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(id: "optOut", displayName: "optOut", policy: .optOut)
+
+    @MainActor
+    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
+        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
+    }
+}
+
+private enum OptInTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(id: "optIn", displayName: "optIn", policy: .optIn)
+
+    @MainActor
+    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
+        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
+    }
+}
+
+private enum DisabledTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(id: "disabled", displayName: "disabled", policy: .disabled)
+
+    @MainActor
+    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
+        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
     }
 }
 
@@ -31,8 +70,8 @@ final class GitOKPluginRuntimeTests: XCTestCase {
     func testRegisteredPluginsAreSortedByOrder() {
         let runtime = GitOKPluginRuntime()
 
-        runtime.register(RuntimeTestPlugin(instanceLabel: "last", pluginOrder: 20))
-        runtime.register(RuntimeTestPlugin(instanceLabel: "first", pluginOrder: 10))
+        runtime.register(LastTestPlugin.self)
+        runtime.register(FirstTestPlugin.self)
 
         XCTAssertEqual(runtime.registeredPluginLabels, ["first", "last"])
         XCTAssertEqual(runtime.registeredCount, 2)
@@ -41,10 +80,10 @@ final class GitOKPluginRuntimeTests: XCTestCase {
     func testRuntimeRespectsPluginPolicyDefaults() {
         let runtime = GitOKPluginRuntime()
 
-        runtime.register(RuntimeTestPlugin(instanceLabel: "alwaysOn", pluginPolicy: .alwaysOn))
-        runtime.register(RuntimeTestPlugin(instanceLabel: "optOut", pluginPolicy: .optOut))
-        runtime.register(RuntimeTestPlugin(instanceLabel: "optIn", pluginPolicy: .optIn))
-        runtime.register(RuntimeTestPlugin(instanceLabel: "disabled", pluginPolicy: .disabled))
+        runtime.register(AlwaysOnTestPlugin.self)
+        runtime.register(OptOutTestPlugin.self)
+        runtime.register(OptInTestPlugin.self)
+        runtime.register(DisabledTestPlugin.self)
 
         XCTAssertEqual(runtime.tabNames, ["alwaysOn", "optOut"])
     }
@@ -60,10 +99,10 @@ final class GitOKPluginRuntimeTests: XCTestCase {
 
         let runtime = GitOKPluginRuntime(settingsStore: settingsStore)
 
-        runtime.register(RuntimeTestPlugin(instanceLabel: "alwaysOn", pluginPolicy: .alwaysOn))
-        runtime.register(RuntimeTestPlugin(instanceLabel: "optOut", pluginPolicy: .optOut))
-        runtime.register(RuntimeTestPlugin(instanceLabel: "optIn", pluginPolicy: .optIn))
-        runtime.register(RuntimeTestPlugin(instanceLabel: "disabled", pluginPolicy: .disabled))
+        runtime.register(AlwaysOnTestPlugin.self)
+        runtime.register(OptOutTestPlugin.self)
+        runtime.register(OptInTestPlugin.self)
+        runtime.register(DisabledTestPlugin.self)
 
         XCTAssertEqual(runtime.tabNames, ["alwaysOn", "optIn"])
     }
