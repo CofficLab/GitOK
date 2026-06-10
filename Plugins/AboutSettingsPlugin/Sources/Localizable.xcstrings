@@ -1,93 +1,141 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "Open Settings": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Settings"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "App Info" : {
+
+    },
+    "App Name" : {
+
+    },
+    "Build" : {
+
+    },
+    "Build %@" : {
+
+    },
+    "Bundle ID" : {
+
+    },
+    "Done" : {
+
+    },
+    "Links" : {
+
+    },
+    "Open Settings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开设置"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开设置"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开设置"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
           }
         }
       }
     },
-    "Settings Button": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings Button"
+    "Settings Button" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings Button"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置按钮"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置按钮"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置按钮"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
           }
         }
       }
     },
-    "Show a settings button in the status bar.": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show a settings button in the status bar."
+    "Show a settings button in the status bar." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show a settings button in the status bar."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在状态栏显示设置按钮。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在状态栏显示设置按钮。"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在状态栏显示设置按钮。"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
           }
         }
       }
+    },
+    "Source Code" : {
+
+    },
+    "Version" : {
+
+    },
+    "Version %@" : {
+
+    },
+    "Website" : {
+
+    },
+    "关于" : {
+
+    },
+    "后台自动检查" : {
+
+    },
+    "开启后 Sparkle 会按系统更新周期在后台检查新版本。" : {
+
+    },
+    "更新" : {
+
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

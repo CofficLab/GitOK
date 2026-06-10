@@ -1,93 +1,171 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "Open Settings": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Settings"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "Aa" : {
+
+    },
+    "Accent Color" : {
+
+    },
+    "All" : {
+
+    },
+    "Always use dark appearance" : {
+
+    },
+    "Always use light appearance" : {
+
+    },
+    "Automatically switch with system settings" : {
+
+    },
+    "Balanced layout, suitable for most scenarios" : {
+
+    },
+    "Black" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Font Size" : {
+
+    },
+    "Layout Density" : {
+
+    },
+    "Light" : {
+
+    },
+    "More compact layout, displays more content" : {
+
+    },
+    "More spacious layout, visually comfortable" : {
+
+    },
+    "No themes in this category" : {
+
+    },
+    "Open Settings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开设置"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开设置"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开设置"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
           }
         }
       }
     },
-    "Settings Button": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings Button"
+    "Reset" : {
+
+    },
+    "Reset Appearance Settings" : {
+
+    },
+    "Scale: %lld%%" : {
+
+    },
+    "Settings Button" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings Button"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置按钮"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置按钮"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置按钮"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
           }
         }
       }
     },
-    "Show a settings button in the status bar.": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show a settings button in the status bar."
+    "Show a settings button in the status bar." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show a settings button in the status bar."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在状态栏显示设置按钮。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在状态栏显示设置按钮。"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在状态栏显示设置按钮。"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
           }
         }
       }
+    },
+    "System" : {
+
+    },
+    "Theme" : {
+
+    },
+    "Theme Mode" : {
+
+    },
+    "外观" : {
+
+    },
+    "确定要将所有外观设置重置为默认值吗？" : {
+
+    },
+    "选择应用的主要强调色" : {
+
+    },
+    "重置所有外观设置" : {
+
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
