@@ -150,14 +150,22 @@ jobs:
             )
 
             dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
-            u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
-            # 只更新最新一条（第一个 item）的下载地址
-            sed -i '' '0,/\(enclosure url="\)[^"]*/s//\1'"$u"'/' "$appcast_file"
+            export u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
+            export RELEASE_NOTES_HTML
+            export RELEASE_NOTES_LINK="https://github.com/CofficLab/GitOK/releases/latest"
+
+            # 只更新最新一条（第一个 item）的下载地址（macOS sed 无法用 / 作分隔符处理 URL）
+            perl -i -pe 'if (!$done) { s/(enclosure url=")[^"]*/$1.$ENV{u}/e && ($done=1) }' "$appcast_file"
 
             # 只给最新一条注入 release notes
-            sed -i '' '0,/<sparkle:minimumSystemVersion>/!b;//a\
-            <description><![CDATA['"$RELEASE_NOTES_HTML"']]></description>\
-            <sparkle:fullReleaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:fullReleaseNotesLink>
+            perl -i -0777 -pe '
+              if (!$done++) {
+                my $notes = $ENV{RELEASE_NOTES_HTML} // "";
+                my $link = $ENV{RELEASE_NOTES_LINK} // "";
+                my $insert = qq{\n            <description><![CDATA[$notes]]></description>\n            <sparkle:fullReleaseNotesLink>$link</sparkle:fullReleaseNotesLink>};
+                s/(<sparkle:minimumSystemVersion>[^<]+<\/sparkle:minimumSystemVersion>)/$1$insert/s
+                  unless /<description><!\[CDATA\[/;
+              }
             ' "$appcast_file"
           done
 
