@@ -488,6 +488,19 @@ private extension ConflictResolverList {
                     unresolvedPaths: unresolvedPaths,
                     statusEntries: statusEntries
                 )
+                let resolutionState = ConflictResolutionState(isMerging: true, mergeFiles: files)
+
+                if resolutionState.canContinueMerge && files.isEmpty {
+                    try repository.finalizeMergeIfNeeded()
+                    await MainActor.run {
+                        mergeFiles = []
+                        isMerging = false
+                        mergeBranchName = "unknown"
+                        isLoading = false
+                        onStatusChange?(false, 0)
+                    }
+                    return
+                }
 
                 await MainActor.run {
                     mergeFiles = files

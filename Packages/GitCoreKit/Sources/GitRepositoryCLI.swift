@@ -802,6 +802,7 @@ public struct GitRepositoryCLI {
 
     public func merge(branchName: String, verbose: Bool = false) throws {
         try LibGit2.merge(branchName: branchName, at: repositoryURL.path, verbose: verbose)
+        try finalizeMergeIfNeeded()
     }
 
     public func addAllFiles() throws {
@@ -1117,7 +1118,7 @@ public struct GitRepositoryCLI {
         }
 
         _ = try LibGit2.checkout(branch: target, at: repositoryURL.path, verbose: false)
-        try LibGit2.merge(branchName: source, at: repositoryURL.path, verbose: false)
+        try merge(branchName: source, verbose: false)
     }
 
     public func setUpstream(localBranch: String, upstreamBranch: String) throws {
@@ -1846,6 +1847,17 @@ public struct GitRepositoryCLI {
     public func continueMerge() throws {
         let branchName = (try? getCurrentMergeBranchName()) ?? "MERGE_HEAD"
         try LibGit2.continueMerge(branchName: branchName, at: repositoryURL.path, verbose: false)
+    }
+
+    /// Completes a no-conflict merge when LibGit2 leaves `MERGE_HEAD` behind.
+    public func finalizeMergeIfNeeded() throws {
+        guard try isMerging() else { return }
+        guard try getMergeConflictFiles().isEmpty else { return }
+
+        let hasUnstagedChanges = try lightweightStatusEntries().contains { $0.workTreeStatus != " " }
+        guard hasUnstagedChanges == false else { return }
+
+        try continueMerge()
     }
 
     private func readGitPathFile(_ relativeGitPath: String) throws -> String? {

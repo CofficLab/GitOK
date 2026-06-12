@@ -1741,6 +1741,35 @@
         }
       }
     },
+    "Merge is ready to complete" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge is ready to complete"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合并已就绪，可以完成"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併已就緒，可以完成"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併已就緒，可以完成"
+          }
+        }
+      }
+    },
     "Merge is waiting for resolution" : {
       "extractionState" : "stale",
       "localizations" : {

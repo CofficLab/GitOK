@@ -32,7 +32,14 @@ public struct WorkingStateConflictState: Equatable, Sendable {
     }
 
     public var canContinueMerge: Bool {
-        isMerging && files.isEmpty == false && files.allSatisfy { $0.state == .staged }
+        guard isMerging else { return false }
+        if unresolvedCount > 0 || pendingStageCount > 0 {
+            return false
+        }
+        if files.isEmpty {
+            return true
+        }
+        return files.allSatisfy { $0.state == .staged }
     }
 
     public var statusText: String {
@@ -51,7 +58,9 @@ public struct WorkingStateConflictState: Equatable, Sendable {
         }
 
         if canContinueMerge {
-            return CommitLocalization.string("All conflicts resolved")
+            return files.isEmpty
+                ? CommitLocalization.string("Merge is ready to complete")
+                : CommitLocalization.string("All conflicts resolved")
         }
 
         return CommitLocalization.string("Merge is waiting for resolution")

@@ -212,14 +212,22 @@ private extension WorkingStateView {
         let mergeBranchName = try? await project.getCurrentMergeBranchNameAsync()
         let flattenedMergeBranchName = mergeBranchName.flatMap { $0 }
 
-        return WorkingStateConflictState(
+        let files = WorkingStateConflictRules.mergeFiles(
+            unresolvedPaths: unresolvedPaths,
+            statusEntries: statusEntries
+        )
+        let state = WorkingStateConflictState(
             isMerging: true,
             mergeBranchName: flattenedMergeBranchName,
-            files: WorkingStateConflictRules.mergeFiles(
-                unresolvedPaths: unresolvedPaths,
-                statusEntries: statusEntries
-            )
+            files: files
         )
+
+        if state.canContinueMerge && files.isEmpty {
+            try await project.continueMerge(branchName: flattenedMergeBranchName ?? "MERGE_HEAD")
+            return .inactive
+        }
+
+        return state
     }
 
     func openConflictFile(project: Project, path: String) {
