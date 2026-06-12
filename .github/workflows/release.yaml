@@ -163,8 +163,7 @@ jobs:
                 my $notes = $ENV{RELEASE_NOTES_HTML} // "";
                 my $link = $ENV{RELEASE_NOTES_LINK} // "";
                 my $insert = qq{\n            <description><![CDATA[$notes]]></description>\n            <sparkle:fullReleaseNotesLink>$link</sparkle:fullReleaseNotesLink>};
-                s/(<sparkle:minimumSystemVersion>[^<]+<\/sparkle:minimumSystemVersion>)/$1$insert/s
-                  unless /<description><!\[CDATA\[/;
+                s/(<sparkle:minimumSystemVersion>[^<]+<\/sparkle:minimumSystemVersion>)(?!\s*<description)/$1$insert/s;
               }
             ' "$appcast_file"
           done
