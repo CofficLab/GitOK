@@ -1,8 +1,8 @@
 {
   "sourceLanguage": "en",
+  "version": "1.0",
   "strings": {
     "%d files": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -25,13 +25,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "%d 个文件"
+            "value": "%d 個檔案"
           }
         }
       }
     },
     "Ahead %d": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -54,13 +53,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "领先 %d"
+            "value": "領先 %d"
           }
         }
       }
     },
     "Are you sure you want to delete local branch \"%@\"? Git will prevent deleting unmerged branches.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -71,7 +69,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "确定要删除本地分支“%@”吗？Git 会阻止删除未合并的分支。"
+            "value": "确定要删除本地分支\"%@\"\"吗？Git 会阻止删除未合并的分支。"
           }
         },
         "zh-HK": {
@@ -83,13 +81,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "确定要删除本地分支“%@”吗？Git 会阻止删除未合并的分支。"
+            "value": "確定要刪除本機分支「%@」嗎？Git 會阻止刪除未合併的分支。"
           }
         }
       }
     },
     "Base": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -112,13 +109,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "基准"
+            "value": "基準"
           }
         }
       }
     },
     "Behind %d": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -141,13 +137,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "落后 %d"
+            "value": "落後 %d"
           }
         }
       }
     },
     "Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -176,7 +171,6 @@
       }
     },
     "Branch Compare": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -199,13 +193,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "分支对比"
+            "value": "分支比較"
           }
         }
       }
     },
     "Branch name": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -228,13 +221,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "分支名称"
+            "value": "分支名稱"
           }
         }
       }
     },
     "Cancel": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -263,7 +255,6 @@
       }
     },
     "Cannot delete the current branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -286,13 +277,40 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "不能删除当前分支"
+            "value": "無法刪除目前分支"
+          }
+        }
+      }
+    },
+    "Comparing branches...": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparing branches..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在对比分支..."
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在比較分支..."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在比較分支..."
           }
         }
       }
     },
     "Compare": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -315,13 +333,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "对比"
+            "value": "比較"
           }
         }
       }
     },
     "Confirm Delete Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -344,13 +361,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "确认删除分支"
+            "value": "確認刪除分支"
           }
         }
       }
     },
     "Create PR": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -373,13 +389,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "创建 PR"
+            "value": "建立 PR"
           }
         }
       }
     },
     "Current": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -402,13 +417,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "当前"
+            "value": "目前"
           }
         }
       }
     },
     "Delete": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -431,13 +445,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "删除"
+            "value": "刪除"
           }
         }
       }
     },
     "Delete Local Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -460,13 +473,40 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "删除本地分支"
+            "value": "刪除本機分支"
           }
         }
       }
     },
-    "Git 分支管理": {
-      "extractionState": "stale",
+    "Delete Remote Branch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Remote Branch"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除远程分支"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除遠端分支"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除遠端分支"
+          }
+        }
+      }
+    },
+    "Git Branch Management": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -495,7 +535,6 @@
       }
     },
     "Head": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -518,13 +557,68 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "目标"
+            "value": "目標"
+          }
+        }
+      }
+    },
+    "Loading Branch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading Branch"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载分支"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入分支"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入分支"
+          }
+        }
+      }
+    },
+    "Loading branches...": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading branches..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载分支..."
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在載入分支..."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在載入分支..."
           }
         }
       }
     },
     "Manage Branches": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -553,7 +647,6 @@
       }
     },
     "Merge Head into Base": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -576,13 +669,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "将目标合并到基准"
+            "value": "將目標合併到基準"
           }
         }
       }
     },
     "New Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -605,13 +697,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "新建分支"
+            "value": "新增分支"
           }
         }
       }
     },
     "New branch name": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -634,13 +725,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "新分支名称"
+            "value": "新分支名稱"
           }
         }
       }
     },
     "No Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -663,41 +753,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "无分支"
-          }
-        }
-      }
-    },
-    "Loading Branch": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading Branch"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "加载分支"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "載入分支"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "加载分支"
+            "value": "無分支"
           }
         }
       }
     },
     "No branches yet": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -720,13 +781,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "暂无分支"
+            "value": "暫無分支"
           }
         }
       }
     },
     "Publish Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -749,13 +809,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "发布分支"
+            "value": "發佈分支"
           }
         }
       }
     },
     "Remote Branches": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -778,13 +837,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "远程分支"
+            "value": "遠端分支"
           }
         }
       }
     },
     "Rename": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -807,13 +865,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "重命名"
+            "value": "重新命名"
           }
         }
       }
     },
     "Rename Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -836,13 +893,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "重命名分支"
+            "value": "重新命名分支"
           }
         }
       }
     },
     "Search branches": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -865,13 +921,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "搜索分支"
+            "value": "搜尋分支"
           }
         }
       }
     },
     "Select base/head to view ahead/behind counts, commits, and file changes.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -894,13 +949,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "选择基准和目标以查看领先/落后数量、提交和文件变更。"
+            "value": "選擇基準和目標以查看領先/落後數量、提交和檔案變更。"
           }
         }
       }
     },
     "Set": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -923,13 +977,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "设置"
+            "value": "設定"
           }
         }
       }
     },
     "Set upstream": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -952,13 +1005,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "设置上游"
+            "value": "設定上游"
           }
         }
       }
     },
     "Set Upstream": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -981,13 +1033,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "设置上游"
+            "value": "設定上游"
           }
         }
       }
     },
     "Switch Branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1010,13 +1061,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "切换分支"
+            "value": "切換分支"
           }
         }
       }
     },
     "Unset upstream": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1045,7 +1095,6 @@
       }
     },
     "Upstream branch": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1073,6 +1122,5 @@
         }
       }
     }
-  },
-  "version": "1.0"
+  }
 }

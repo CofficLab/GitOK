@@ -6,6 +6,7 @@ import SwiftUI
 
 public struct BranchManagementView: View {
     let context: BranchPluginContext
+    @Environment(\.branchService) private var service
     @State private var branches: [GitBranchSummary] = []
     @State private var remoteBranches: [String] = []
     @State private var newBranchName = ""
@@ -64,15 +65,11 @@ public struct BranchManagementView: View {
     }
 
     private var filteredBranches: [GitBranchSummary] {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard query.isEmpty == false else { return branches }
-        return branches.filter { $0.name.localizedCaseInsensitiveContains(query) }
+        BranchLogic.filter(branches: branches, query: searchText)
     }
 
     private var filteredRemoteBranches: [String] {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard query.isEmpty == false else { return remoteBranches }
-        return remoteBranches.filter { $0.localizedCaseInsensitiveContains(query) }
+        BranchLogic.filter(remoteBranches: remoteBranches, query: searchText)
     }
 
     private var newBranchSection: some View {
@@ -246,7 +243,11 @@ public struct BranchManagementView: View {
 
     @ViewBuilder
     private func pullRequestButton(compare: GitBranchCompare) -> some View {
-        if let links = pullRequestLinks() {
+        if let links = BranchLogic.pullRequestLinks(
+            remoteURL: pullRequestRemoteURL,
+            baseBranch: compareBaseBranch?.name,
+            headBranch: compareHeadBranch?.name
+        ) {
             AppButton(
                 BranchPluginLocalization.string("Create PR"),
                 systemImage: "arrow.up.right.square",
@@ -260,12 +261,14 @@ public struct BranchManagementView: View {
     }
 }
 
+// MARK: - Actions
+
 private extension BranchManagementView {
     func createBranch() {
         let branchName = newBranchName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard branchName.isEmpty == false else { return }
-        runAction { repository in
-            try repository.createBranch(named: branchName)
+        runAction { service in
+            try service.createBranch(named: branchName)
         } onSuccess: {
             newBranchName = ""
             loadBranches()
@@ -274,8 +277,8 @@ private extension BranchManagementView {
 
     func switchBranch(_ branch: GitBranchSummary) {
         let branchName = branch.name
-        runAction { repository in
-            try repository.checkoutBranch(named: branchName)
+        runAction { service in
+            try service.checkoutBranch(named: branchName)
         } onSuccess: {
             selectedBranch = branch
             loadBranches()
@@ -288,8 +291,8 @@ private extension BranchManagementView {
             return
         }
         let branchName = branch.name
-        runAction { repository in
-            try repository.deleteLocalBranch(named: branchName)
+        runAction { service in
+            try service.deleteLocalBranch(named: branchName)
         } onSuccess: {
             loadBranches()
         }
@@ -304,8 +307,8 @@ private extension BranchManagementView {
         let branchName = branch.name
         let newName = renameBranchName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard newName.isEmpty == false else { return }
-        runAction { repository in
-            try repository.renameBranch(from: branchName, to: newName)
+        runAction { service in
+            try service.renameBranch(from: branchName, to: newName)
         } onSuccess: {
             loadBranches()
         }
@@ -318,8 +321,8 @@ private extension BranchManagementView {
 
     func setUpstream(_ branch: GitBranchSummary, upstreamBranch: String) {
         let branchName = branch.name
-        runAction { repository in
-            try repository.setUpstream(localBranch: branchName, upstreamBranch: upstreamBranch)
+        runAction { service in
+            try service.setUpstream(localBranch: branchName, upstreamBranch: upstreamBranch)
         } onSuccess: {
             loadBranches()
         }
@@ -327,8 +330,8 @@ private extension BranchManagementView {
 
     func unsetUpstream(_ branch: GitBranchSummary) {
         let branchName = branch.name
-        runAction { repository in
-            try repository.unsetUpstream(localBranch: branchName)
+        runAction { service in
+            try service.unsetUpstream(localBranch: branchName)
         } onSuccess: {
             loadBranches()
         }
@@ -336,35 +339,34 @@ private extension BranchManagementView {
 
     func publishBranch(_ branch: GitBranchSummary) {
         let branchName = branch.name
-        runAction { repository in
-            try repository.publishBranch(localBranch: branchName)
+        runAction { service in
+            try service.publishBranch(localBranch: branchName)
         } onSuccess: {
             loadBranches()
         }
     }
 
     func deleteRemoteBranch(_ branchName: String) {
-        let parts = branchName.split(separator: "/", maxSplits: 1).map(String.init)
-        guard parts.count == 2 else { return }
-        let remoteName = parts[0]
-        let remoteBranchName = parts[1]
-        runAction { repository in
-            try repository.deleteRemoteBranch(named: remoteBranchName, remote: remoteName)
+        guard let parsed = BranchLogic.parseRemoteBranch(branchName) else { return }
+        runAction { service in
+            try service.deleteRemoteBranch(named: parsed.branch, remote: parsed.remote)
         } onSuccess: {
             loadBranches()
         }
     }
 
     func loadCompare() {
-        guard let projectURL = context.projectURL, let base = compareBaseBranch, let head = compareHeadBranch, base.id != head.id else { return }
+        guard let service,
+              let base = compareBaseBranch,
+              let head = compareHeadBranch,
+              base.id != head.id else { return }
         let baseBranchName = base.name
         let headBranchName = head.name
         isComparing = true
         compareError = nil
         Task.detached(priority: .userInitiated) {
             do {
-                let repository = GitRepositoryCLI(repositoryURL: projectURL)
-                let compare = try repository.compareBranches(base: baseBranchName, head: headBranchName)
+                let compare = try service.compareBranches(base: baseBranchName, head: headBranchName)
                 await MainActor.run {
                     branchCompare = compare
                     isComparing = false
@@ -383,21 +385,16 @@ private extension BranchManagementView {
         guard let base = compareBaseBranch, let head = compareHeadBranch, base.id != head.id else { return }
         let baseBranchName = base.name
         let headBranchName = head.name
-        runAction { repository in
-            try repository.mergeBranches(fromBranch: headBranchName, toBranch: baseBranchName)
+        runAction { service in
+            try service.mergeBranches(fromBranch: headBranchName, toBranch: baseBranchName)
         } onSuccess: {
             loadBranches()
             loadCompare()
         }
     }
 
-    func pullRequestLinks() -> RemoteRepositoryFormRules.PullRequestWebLinks? {
-        guard let pullRequestRemoteURL, let base = compareBaseBranch, let head = compareHeadBranch else { return nil }
-        return RemoteRepositoryFormRules.pullRequestWebLinks(remoteURL: pullRequestRemoteURL, baseBranch: base.name, headBranch: head.name)
-    }
-
     func loadBranches() {
-        guard let projectURL = context.projectURL else {
+        guard let service else {
             branches = []
             remoteBranches = []
             selectedBranch = nil
@@ -408,18 +405,23 @@ private extension BranchManagementView {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                let repository = GitRepositoryCLI(repositoryURL: projectURL)
-                let loadedBranches = try repository.branches()
-                let loadedRemoteBranches = (try? repository.remoteBranches()) ?? []
-                let remotes = (try? repository.remotes()) ?? []
-                let preferredRemote = remotes.first(where: { $0.name == "origin" }) ?? remotes.first
-                let remoteURL = preferredRemote?.url ?? preferredRemote?.fetchURL ?? preferredRemote?.pushURL
+                let loadedBranches = try service.branches()
+                let loadedRemoteBranches = (try? service.remoteBranches()) ?? []
+                let loadedRemotes = (try? service.remotes()) ?? []
+                let remoteURL = BranchLogic.preferredRemoteURL(from: loadedRemotes)
                 await MainActor.run {
                     branches = loadedBranches
                     remoteBranches = loadedRemoteBranches
                     pullRequestRemoteURL = remoteURL
-                    selectedBranch = loadedBranches.first(where: \.isCurrent)
-                    updateCompareSelection(with: loadedBranches)
+                    selectedBranch = BranchLogic.selectCurrentBranch(in: loadedBranches)
+                    let updated = BranchLogic.updateCompareSelection(
+                        branches: loadedBranches,
+                        currentBranch: selectedBranch,
+                        existingBase: compareBaseBranch,
+                        existingHead: compareHeadBranch
+                    )
+                    compareBaseBranch = updated.base
+                    compareHeadBranch = updated.head
                     isLoading = false
                 }
             } catch {
@@ -435,32 +437,16 @@ private extension BranchManagementView {
         }
     }
 
-    func updateCompareSelection(with branches: [GitBranchSummary]) {
-        guard branches.count >= 2 else {
-            compareBaseBranch = nil
-            compareHeadBranch = nil
-            branchCompare = nil
-            return
-        }
-        if compareBaseBranch == nil || branches.contains(where: { $0.id == compareBaseBranch?.id }) == false {
-            compareBaseBranch = selectedBranch ?? branches.first
-        }
-        if compareHeadBranch == nil || branches.contains(where: { $0.id == compareHeadBranch?.id }) == false || compareHeadBranch?.id == compareBaseBranch?.id {
-            compareHeadBranch = branches.first(where: { $0.id != compareBaseBranch?.id })
-        }
-    }
-
     func runAction(
-        _ action: @escaping @Sendable (GitRepositoryCLI) throws -> Void,
+        _ action: @escaping @Sendable (any BranchService) throws -> Void,
         onSuccess: @escaping @MainActor @Sendable () -> Void
     ) {
-        guard let projectURL = context.projectURL else { return }
+        guard let service else { return }
         isLoading = true
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                let repository = GitRepositoryCLI(repositoryURL: projectURL)
-                try action(repository)
+                try action(service)
                 await MainActor.run {
                     isLoading = false
                     onSuccess()

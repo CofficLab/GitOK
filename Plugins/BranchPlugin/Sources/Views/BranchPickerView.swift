@@ -4,6 +4,7 @@ import SwiftUI
 
 public struct BranchPickerView: View {
     let context: BranchPluginContext
+    @Environment(\.branchService) private var service
     @State private var branches: [GitBranchSummary] = []
     @State private var selection: GitBranchSummary?
     @State private var isRefreshing = false
@@ -45,7 +46,7 @@ public struct BranchPickerView: View {
         refreshGeneration += 1
         let generation = refreshGeneration
 
-        guard let projectURL = context.projectURL, context.isGitRepository else {
+        guard let service, context.projectURL != nil, context.isGitRepository else {
             branches = []
             selection = nil
             isRefreshing = false
@@ -57,13 +58,12 @@ public struct BranchPickerView: View {
         let currentBranchName = context.branchName
         Task.detached(priority: .userInitiated) {
             do {
-                let repository = GitRepositoryCLI(repositoryURL: projectURL)
-                let loadedBranches = try repository.branches()
+                let loadedBranches = try service.branches()
                 await MainActor.run {
                     guard generation == refreshGeneration else { return }
                     branches = loadedBranches
-                    selection = loadedBranches.first(where: \.isCurrent)
-                        ?? loadedBranches.first(where: { $0.name == currentBranchName })
+                    selection = BranchLogic.selectCurrentBranch(in: loadedBranches)
+                        ?? BranchLogic.selectBranch(named: currentBranchName, in: loadedBranches)
                         ?? loadedBranches.first
                     isRefreshing = false
                 }
@@ -80,13 +80,13 @@ public struct BranchPickerView: View {
     }
 
     private func checkout(_ branch: GitBranchSummary) {
-        guard let projectURL = context.projectURL else { return }
+        guard let service else { return }
         let branchName = branch.name
         isRefreshing = true
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitRepositoryCLI(repositoryURL: projectURL).checkoutBranch(named: branchName)
+                try service.checkoutBranch(named: branchName)
                 await MainActor.run {
                     refreshBranches()
                 }
