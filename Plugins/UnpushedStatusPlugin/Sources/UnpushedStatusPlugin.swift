@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct UnpushedStatusPlugin: GitOKPlugin {
-    public static let shared = UnpushedStatusPlugin()
+public enum UnpushedStatusPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "UnpushedStatusPlugin",
@@ -15,11 +14,10 @@ public struct UnpushedStatusPlugin: GitOKPlugin {
         tableName: UnpushedStatusPluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
-        AnyView(UnpushedStatusRootView(
+    public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {
+        return         AnyView(UnpushedStatusRootView(
             content: content,
             projectURL: context.projectURL,
             updateUnpushedCommits: context.onUnpushedCommitsUpdate,

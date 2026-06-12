@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct RemoteRepositoryPlugin: GitOKPlugin {
-    public static let shared = RemoteRepositoryPlugin()
+public enum RemoteRepositoryPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "RemoteRepositoryPlugin",
@@ -14,11 +13,11 @@ public struct RemoteRepositoryPlugin: GitOKPlugin {
         tableName: RemoteRepositoryPluginLocalization.table
     )
 
-    private init() {}
 
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(RemoteRepositoryStatusButton(projectURL: projectURL, isGitRepository: context.isGitRepository))
+    @MainActor
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(RemoteRepositoryStatusButton(projectURL: projectURL, isGitRepository: context.isGitRepository)))]
     }
 }
 

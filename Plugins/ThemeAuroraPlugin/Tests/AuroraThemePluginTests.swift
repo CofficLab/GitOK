@@ -16,7 +16,7 @@ final class AuroraThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = AuroraThemePlugin.shared.themeContributions()
+        let contributions = AuroraThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "commit-graph")

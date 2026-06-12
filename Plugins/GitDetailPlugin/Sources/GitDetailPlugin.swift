@@ -1,8 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct GitDetailPlugin: GitOKPlugin {
-    public static let shared = GitDetailPlugin()
+public enum GitDetailPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "GitDetailPlugin",
@@ -13,7 +12,13 @@ public struct GitDetailPlugin: GitOKPlugin {
         tableName: GitDetailPluginLocalization.table
     )
 
-    private init() {}
+    @MainActor
+    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
+        guard tab == "Git",
+              let view = context.resolve(GitOKAppHostedViewProviding.self)?.gitDetailView(context: context)
+        else { return [] }
+        return [GitOKDetailPaneItem(id: metadata.id, view: view)]
+    }
 }
 
 public enum GitDetailPluginLocalization {

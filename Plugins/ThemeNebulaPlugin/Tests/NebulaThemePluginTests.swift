@@ -15,7 +15,7 @@ final class NebulaThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = NebulaThemePlugin.shared.themeContributions()
+        let contributions = NebulaThemePlugin.themeContributions(context: GitOKPluginContext())
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "pull-request")
         XCTAssertEqual(contributions[0].displayName, "Nebula")

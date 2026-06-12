@@ -1,8 +1,8 @@
 import Foundation
 import GitOKCoreKit
+import SwiftUI
 
-public struct IconPlugin: GitOKPlugin {
-    public static let shared = IconPlugin()
+public enum IconPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "IconPlugin",
@@ -13,5 +13,17 @@ public struct IconPlugin: GitOKPlugin {
         tableName: IconLocalization.table
     )
 
-    private init() {}
+    @MainActor
+    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
+        guard tab == "Icon" else { return [] }
+        return [
+            GitOKDetailPaneItem(
+                id: metadata.id,
+                view: AnyView(
+                    IconDetailLayout(projectURL: context.projectURL)
+                        .environmentObject(IconProvider())
+                )
+            ),
+        ]
+    }
 }

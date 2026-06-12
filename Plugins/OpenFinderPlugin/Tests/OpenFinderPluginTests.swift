@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenFinderPlugin
 
 final class OpenFinderPluginTests: XCTestCase {
@@ -19,7 +20,9 @@ final class OpenFinderPluginTests: XCTestCase {
         XCTAssertFalse(OpenFinderPluginLocalization.string("Open in Finder").isEmpty)
     }
 
+    @MainActor
     func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenFinderPlugin.shared.toolBarTrailingView())
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"))
+        XCTAssertFalse(OpenFinderPlugin.toolbarTrailingItems(context: context).isEmpty)
     }
 }

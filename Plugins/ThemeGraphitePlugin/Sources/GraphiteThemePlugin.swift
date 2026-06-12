@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct GraphiteThemePlugin: GitOKPlugin {
+public enum GraphiteThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeGraphitePlugin",
         displayName: GraphiteThemePluginLocalization.string("Graphite Theme"),
@@ -12,12 +12,10 @@ public struct GraphiteThemePlugin: GitOKPlugin {
         tableName: GraphiteThemePluginLocalization.table
     )
 
-    public static let shared = GraphiteThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: GraphiteTheme.graphite.identifier),

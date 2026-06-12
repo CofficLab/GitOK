@@ -2,8 +2,7 @@ import SwiftUI
 import XCTest
 @testable import GitOKCoreKit
 
-private struct SamplePlugin: GitOKPlugin {
-    static let shared = SamplePlugin()
+private enum SamplePlugin: GitOKPlugin {
     static let metadata = GitOKPluginMetadata(
         id: "Sample",
         displayName: "Sample",
@@ -43,17 +42,13 @@ final class GitOKPluginTests: XCTestCase {
         XCTAssertFalse(GitOKPluginPolicy.disabled.defaultEnabled)
     }
 
-    func testDefaultInstanceLabelUsesMetadataId() {
-        XCTAssertEqual(SamplePlugin.shared.instanceLabel, "Sample")
+    @MainActor
+    func testDefaultStatusBarLeadingItemsIsEmpty() {
+        XCTAssertEqual(SamplePlugin.statusBarLeadingItems(context: GitOKPluginContext()), [])
     }
 
     @MainActor
-    func testDefaultStatusBarLeadingViewIsNil() {
-        XCTAssertNil(SamplePlugin.shared.statusBarLeadingView(context: GitOKPluginContext()))
-    }
-
-    @MainActor
-    func testDefaultStatusBarCenterViewIsNil() {
-        XCTAssertNil(SamplePlugin.shared.statusBarCenterView(context: GitOKPluginContext()))
+    func testDefaultStatusBarCenterItemsIsEmpty() {
+        XCTAssertEqual(SamplePlugin.statusBarCenterItems(context: GitOKPluginContext()), [])
     }
 }

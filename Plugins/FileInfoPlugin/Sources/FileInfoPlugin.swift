@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct FileInfoPlugin: GitOKPlugin {
-    public static let shared = FileInfoPlugin()
+public enum FileInfoPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "SmartFilePlugin",
@@ -14,12 +13,11 @@ public struct FileInfoPlugin: GitOKPlugin {
         tableName: FileInfoPluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
-        guard let selectedFilePath = context.selectedFilePath, !selectedFilePath.isEmpty else { return nil }
-        return AnyView(FileInfoTile(selectedFilePath: selectedFilePath, projectPath: context.projectPath))
+    public static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let selectedFilePath = context.selectedFilePath, !selectedFilePath.isEmpty else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(FileInfoTile(selectedFilePath: selectedFilePath, projectPath: context.projectPath)))]
     }
 }
 

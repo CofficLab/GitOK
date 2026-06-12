@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import IconTabPlugin
 
 final class IconTabPluginTests: XCTestCase {
@@ -20,6 +21,6 @@ final class IconTabPluginTests: XCTestCase {
     }
 
     func testTabContributionIsAvailable() {
-        XCTAssertEqual(IconTabPlugin.shared.tabItem(), IconTabPlugin.metadata.displayName)
+        XCTAssertEqual(IconTabPlugin.tabItems(context: GitOKPluginContext()).map(\.name), [IconTabPlugin.metadata.displayName])
     }
 }

@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct GitWatcherPlugin: GitOKPlugin {
-    public static let shared = GitWatcherPlugin()
+public enum GitWatcherPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "GitWatcherPlugin",
@@ -15,11 +14,10 @@ public struct GitWatcherPlugin: GitOKPlugin {
         tableName: GitWatcherPluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
-        AnyView(GitWatcherRootView(
+    public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {
+        return         AnyView(GitWatcherRootView(
             content: content,
             projectURL: context.projectURL,
             gitDirectoryChangeHandler: context.onGitDirectoryChange

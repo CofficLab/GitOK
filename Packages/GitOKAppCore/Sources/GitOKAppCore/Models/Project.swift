@@ -1,0 +1,2115 @@
+import Foundation
+import GitCoreKit
+import GitOKCoreKit
+import GitOKSupportKit
+import OSLog
+import ProjectRulesKit
+import ProjectSupportKit
+import SwiftData
+
+/// 项目模型类
+/// 表示一个Git项目的核心数据模型，包含项目的基本信息和操作方法
+@Model
+public final class Project: SuperLog {
+    /// 日志标识符
+    public nonisolated static let emoji = "🌳"
+
+    /// 是否启用详细日志输出
+    public nonisolated static let verbose = false
+
+    nonisolated(unsafe) static var null = Project(URL(fileURLWithPath: ""))
+    static let order = [
+        SortDescriptor<Project>(\.order, order: .forward),
+    ]
+    static let orderReverse = [
+        SortDescriptor<Project>(\.order, order: .reverse),
+    ]
+    var timestamp: Date
+    public var url: URL
+    var order: Int16 = 0
+    var commitStyleRawValue: String = CommitStyle.emoji.rawValue
+
+    public var title: String {
+        url.lastPathComponent
+    }
+
+    public var path: String {
+        url.path
+    }
+
+    public var commitStyle: CommitStyle {
+        get { CommitStyle(rawValue: commitStyleRawValue) ?? .emoji }
+        set { commitStyleRawValue = newValue.rawValue }
+    }
+
+    /// 缓存的 Git 仓库检查结果（不被持久化）
+    @Transient private var _isGitRepo: Bool?
+
+    public init(_ url: URL) {
+        self.timestamp = .now
+        self.url = url
+    }
+
+    // MARK: - Event Notification Helper
+
+    /// 发送项目事件通知
+    /// - Parameters:
+    ///   - name: 通知名称
+    ///   - operation: 操作类型
+    ///   - success: 操作是否成功
+    ///   - error: 错误信息（如果有）
+    ///   - additionalInfo: 额外信息
+    public func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
+        let eventInfo = ProjectEventInfo(
+            project: self,
+            operation: operation,
+            success: success,
+            error: error,
+            additionalInfo: additionalInfo
+        )
+
+        // 确保在主线程发送通知，避免线程安全问题
+        if Thread.isMainThread {
+            NotificationCenter.default.post(
+                name: name,
+                object: self,
+                userInfo: ["eventInfo": eventInfo]
+            )
+        } else {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: name,
+                    object: self,
+                    userInfo: ["eventInfo": eventInfo]
+                )
+            }
+        }
+
+        if Self.verbose {
+            os_log("\(self.t)🍋 Event posted: \(operation) - Success: \(success)")
+        }
+    }
+    public func postEvent(_ descriptor: ProjectGitOperationEventDescriptor) {
+        postEvent(
+            name: descriptor.notificationName,
+            operation: descriptor.operation,
+            success: descriptor.success,
+            error: descriptor.error,
+            additionalInfo: descriptor.additionalInfo
+        )
+    }
+
+    public func isExist() -> Bool {
+        return FileManager.default.fileExists(atPath: self.path)
+    }
+}
+
+extension Project: Identifiable {
+    public var id: URL {
+        self.url
+    }
+}
+
+// MARK: - Git
+
+extension Project {
+    public var isGitRepo: Bool {
+        if path.isEmpty { return false }
+        // 返回缓存值，避免重复检查
+        return _isGitRepo ?? false
+    }
+
+    public func isGit() -> Bool {
+        return gitCLI.isGitRepository()
+    }
+
+    public func isNotGit() -> Bool { !isGitRepo }
+
+    public func isNotGitAsync() async -> Bool {
+        await isGitAsync() == false
+    }
+    public func isGitAsync() async -> Bool {
+        let repositoryURL = url
+        return await Task.detached(priority: .utility) {
+            GitRepositoryCLI(repositoryURL: repositoryURL).isGitRepository()
+        }.value
+    }
+
+    /**
+        更新 isGitRepo 缓存（同步）
+
+        直接设置缓存值，用于避免竞态条件
+     */
+    public func updateIsGitRepoCacheSync(_ value: Bool) {
+        self._isGitRepo = value
+    }
+
+    @MainActor
+    private func applyIsGitRepoCache(_ value: Bool) {
+        self._isGitRepo = value
+    }
+
+    /**
+        更新 isGitRepo 缓存（异步）
+
+        在后台检查 Git 仓库状态并更新缓存，避免阻塞主线程
+     */
+    public func updateIsGitRepoCache() async {
+        let result = await isGitAsync()
+        await applyIsGitRepoCache(result)
+    }
+
+}
+
+// MARK: - Branch
+
+extension Project {
+    /// 获取当前分支信息
+    /// - Returns: 当前分支对象，如果获取失败返回 nil
+    /// - Throws: Git 操作相关的错误
+    public func getCurrentBranch() throws -> GitBranch? {
+        try gitCLI.currentBranchInfo()
+    }
+
+    /// 切换到指定分支
+    /// - Parameter branch: 要切换到的分支
+    /// - Throws: Git 操作相关的错误
+    public func checkout(branch: GitBranch) throws {
+        do {
+            try gitCLI.checkout(branch: branch.name)
+            postEvent(
+                name: .projectDidChangeBranch,
+                operation: "checkout",
+                additionalInfo: ["branchName": branch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "checkout",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name]
+            )
+            throw error
+        }
+    }
+    public func getBranches() throws -> [GitBranch] {
+        try gitCLI.branchList()
+    }
+
+    public func getBranchesAsync() async throws -> [GitBranch] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).branchList()
+        }.value
+    }
+
+    /// 创建新分支并切换到该分支
+    /// - Parameter branchName: 分支名称
+    /// - Throws: Git操作异常
+    public func createBranch(_ branchName: String) throws {
+        do {
+            // 使用 Git 运行时创建并切换到新分支
+            try gitCLI.checkoutNewBranch(named: branchName)
+
+            postEvent(
+                name: .projectDidChangeBranch,
+                operation: "createBranch",
+                additionalInfo: ["branchName": branchName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branchName]
+            )
+            throw error
+        }
+    }
+
+    /// 删除本地分支。
+    /// - Parameter branch: 要删除的本地分支。当前分支不能删除，未合并分支由 git 自身阻止。
+    /// - Throws: Git 操作相关的错误
+    public func deleteLocalBranch(_ branch: GitBranch) throws {
+        do {
+            try gitCLI.deleteLocalBranch(named: branch.name)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteLocalBranch",
+                additionalInfo: ["branchName": branch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteLocalBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name]
+            )
+            throw error
+        }
+    }
+
+    /// 重命名本地分支。
+    /// - Parameters:
+    ///   - branch: 要重命名的本地分支
+    ///   - newName: 新分支名称
+    /// - Throws: Git 操作相关的错误
+    public func renameBranch(_ branch: GitBranch, to newName: String) throws {
+        do {
+            try gitCLI.renameBranch(from: branch.name, to: newName)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "renameBranch",
+                additionalInfo: ["oldBranchName": branch.name, "branchName": newName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "renameBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["oldBranchName": branch.name, "branchName": newName]
+            )
+            throw error
+        }
+    }
+
+    public func remoteBranches(remote: String? = nil) throws -> [String] {
+        try gitCLI.remoteBranches(remote: remote)
+    }
+
+    public func remoteBranchesAsync(remote: String? = nil) async throws -> [String] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).remoteBranches(remote: remote)
+        }.value
+    }
+
+    public func setUpstream(localBranch: GitBranch, upstreamBranch: String) throws {
+        do {
+            try gitCLI.setUpstream(localBranch: localBranch.name, upstreamBranch: upstreamBranch)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "setBranchUpstream",
+                additionalInfo: ["branchName": localBranch.name, "upstream": upstreamBranch]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "setBranchUpstream",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": localBranch.name, "upstream": upstreamBranch]
+            )
+            throw error
+        }
+    }
+
+    public func unsetUpstream(localBranch: GitBranch) throws {
+        do {
+            try gitCLI.unsetUpstream(localBranch: localBranch.name)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "unsetBranchUpstream",
+                additionalInfo: ["branchName": localBranch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "unsetBranchUpstream",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": localBranch.name]
+            )
+            throw error
+        }
+    }
+
+    public func deleteRemoteBranch(named branchName: String, remote: String = "origin") throws {
+        do {
+            try gitCLI.deleteRemoteBranch(named: branchName, remote: remote)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteRemoteBranch",
+                additionalInfo: ["branchName": branchName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteRemoteBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branchName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    public func publishBranch(_ branch: GitBranch, remote: String = "origin") throws {
+        do {
+            try gitCLI.publishBranch(localBranch: branch.name, remote: remote)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "publishBranch",
+                additionalInfo: ["branchName": branch.name, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "publishBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    public func compareBranches(base: GitBranch, head: GitBranch) throws -> GitBranchCompare {
+        try gitCLI.compareBranches(base: base.name, head: head.name)
+    }
+
+    public func rebaseStatus() throws -> GitRebaseStatus {
+        try gitCLI.rebaseStatus()
+    }
+
+    public func startRebase(branch: GitBranch, onto upstream: GitBranch) throws {
+        do {
+            try gitCLI.startRebase(branch: branch.name, onto: upstream.name)
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "startRebase",
+                additionalInfo: ["branchName": branch.name, "upstream": upstream.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "startRebase",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name, "upstream": upstream.name]
+            )
+            throw error
+        }
+    }
+
+    public func continueRebase() async throws {
+        do {
+            try gitCLI.continueRebase()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "continueRebase"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "continueRebase",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    public func abortRebase() async throws {
+        do {
+            try gitCLI.abortRebase()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "abortRebase"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "abortRebase",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    public func cherryPickStatus() throws -> GitCherryPickStatus {
+        try gitCLI.cherryPickStatus()
+    }
+
+    public func cherryPick(commits: [String], onto branch: GitBranch? = nil) throws {
+        do {
+            try gitCLI.cherryPick(commits: commits, onto: branch?.name)
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "cherryPick",
+                additionalInfo: ["commitCount": commits.count, "branchName": branch?.name as Any]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "cherryPick",
+                success: false,
+                error: error,
+                additionalInfo: ["commitCount": commits.count, "branchName": branch?.name as Any]
+            )
+            throw error
+        }
+    }
+
+    public func continueCherryPick() async throws {
+        do {
+            try gitCLI.continueCherryPick()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "continueCherryPick"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "continueCherryPick",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    public func abortCherryPick() async throws {
+        do {
+            try gitCLI.abortCherryPick()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "abortCherryPick"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "abortCherryPick",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    /// 合并分支
+    /// - Parameter branchName: 要合并的分支名称
+    /// - Throws: Git操作异常
+    /// 合并分支：将来源分支合并到目标分支
+    /// - Parameters:
+    ///   - fromBranch: 来源分支
+    ///   - toBranch: 目标分支
+    /// - Throws: Git 错误
+    public func mergeBranches(fromBranch: GitBranch, toBranch: GitBranch) throws {
+        do {
+            // 切换到目标分支
+            try gitCLI.checkout(branch: toBranch.name)
+            postEvent(
+                name: .projectDidChangeBranch,
+                operation: "checkout",
+                additionalInfo: ["branchName": toBranch.name, "reason": "merge_setup"]
+            )
+
+            // 执行合并
+            try gitCLI.merge(branchName: fromBranch.name, verbose: false)
+            postEvent(
+                name: .projectDidMerge,
+                operation: "merge",
+                additionalInfo: ["fromBranch": fromBranch.name, "toBranch": toBranch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "merge",
+                success: false,
+                error: error,
+                additionalInfo: ["fromBranch": fromBranch.name, "toBranch": toBranch.name]
+            )
+            throw error
+        }
+    }
+
+    /// 合并分支（兼容旧接口）
+    /// - Parameter branchName: 要合并的分支名称
+    /// - Throws: Git 错误
+    public func merge(branchName: String) throws {
+        do {
+            try gitCLI.merge(branchName: branchName, verbose: false)
+
+            postEvent(
+                name: .projectDidMerge,
+                operation: "merge",
+                additionalInfo: ["branchName": branchName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "merge",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branchName]
+            )
+            throw error
+        }
+    }
+}
+
+// MARK: - Add
+
+extension Project {
+    private var gitCLI: GitRepositoryCLI {
+        GitRepositoryCLI(repositoryURL: url)
+    }
+
+    /// 将所有更改的文件添加到Git暂存区
+    /// - Throws: Git 操作相关的错误
+    public func addAll() throws {
+        do {
+            try gitCLI.addAllFiles()
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addAll"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addAll",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    /// 将所有更改的文件添加到 Git 暂存区，避免在主线程执行同步 Git 操作。
+    public func addAllAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).addAllFiles()
+            }.value
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addAll"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addAll",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    /// 将指定文件添加到 Git 暂存区
+    /// - Parameter filePaths: 相对于仓库根目录的文件路径
+    /// - Throws: Git 操作相关的错误
+    public func addFiles(_ filePaths: [String]) throws {
+        do {
+            try gitCLI.addFiles(filePaths)
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
+            )
+            throw error
+        }
+    }
+
+    public func addFilesAsync(_ filePaths: [String]) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).addFiles(filePaths)
+            }.value
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
+            )
+            throw error
+        }
+    }
+
+    public func unstageFiles(_ filePaths: [String]) throws {
+        do {
+            try gitCLI.unstageFiles(filePaths)
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "unstageFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "unstageFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
+            )
+            throw error
+        }
+    }
+
+    public func unstageFilesAsync(_ filePaths: [String]) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).unstageFiles(filePaths)
+            }.value
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "unstageFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "unstageFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
+            )
+            throw error
+        }
+    }
+    public func lightweightStatusEntries() throws -> [GitStatusEntry] {
+        try gitCLI.lightweightStatusEntries()
+    }
+    public func lightweightStatusEntriesAsync() async throws -> [GitStatusEntry] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).lightweightStatusEntries()
+        }.value
+    }
+    public func hasStagedChangesAsync() async throws -> Bool {
+        try await lightweightStatusEntriesAsync().contains { entry in
+            entry.indexStatus != " " && entry.indexStatus != "?"
+        }
+    }
+}
+
+// MARK: - User
+
+extension Project {
+    public func getUserName() throws -> String {
+        try gitCLI.configValue(key: "user.name")
+    }
+
+    public func getUserNameAsync() async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .utility) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).configValue(key: "user.name")
+        }.value
+    }
+
+    public func getUserEmail() throws -> String {
+        try gitCLI.configValue(key: "user.email")
+    }
+
+    public func getUserEmailAsync() async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .utility) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).configValue(key: "user.email")
+        }.value
+    }
+
+    /// 设置项目的Git用户信息（仅针对当前项目）
+    /// - Parameters:
+    ///   - userName: 用户名
+    ///   - userEmail: 用户邮箱
+    /// - Throws: Git操作异常
+    public func setUserConfig(name userName: String, email userEmail: String) throws {
+        do {
+            try gitCLI.setUserConfig(name: userName, email: userEmail)
+            postEvent(
+                name: .projectDidUpdateUserInfo,
+                operation: "setUserConfig",
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "setUserConfig",
+                success: false,
+                error: error,
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+            throw error
+        }
+    }
+
+    public func setUserConfigAsync(name userName: String, email userEmail: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).setUserConfig(name: userName, email: userEmail)
+            }.value
+            postEvent(
+                name: .projectDidUpdateUserInfo,
+                operation: "setUserConfig",
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "setUserConfig",
+                success: false,
+                error: error,
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+            throw error
+        }
+    }
+
+    /// 获取项目的Git用户配置
+    /// - Returns: 用户配置信息（用户名，邮箱）
+    /// - Throws: Git操作异常
+    public func getUserConfig() throws -> (name: String, email: String) {
+        try gitCLI.userConfig()
+    }
+
+    /// 批量设置用户信息
+    /// - Parameters:
+    ///   - userName: 用户名
+    ///   - userEmail: 用户邮箱
+    /// - Throws: Git操作异常
+    public func setUserInfo(userName: String, userEmail: String) throws {
+        try setUserConfig(name: userName, email: userEmail)
+    }
+}
+
+// MARK: - Commit
+
+extension Project {
+    public func getUnPushedCommitHashesAsync() async throws -> [String] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).unpushedCommitHashes()
+        }.value
+    }
+    public func getUnPushedCommitCountAsync() async throws -> Int {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).unpushedCommitCount()
+        }.value
+    }
+
+    /// 获取未拉取的提交（远程领先本地的提交）
+    /// 注意：当前返回空数组，因为当前 Git 运行时无法直接访问远程提交
+    /// 但可以通过 getUnPulledCount() 获取数量
+    public func getUnPulledCommits() async throws -> [GitCommit] {
+        // 由于当前 Git 运行时无法直接访问远程提交，暂时返回空数组
+        return []
+    }
+
+    /// 获取未拉取的提交数量（远程领先本地的提交数量）
+    public func getUnPulledCount() throws -> Int {
+        return try gitCLI.unpulledCount()
+    }
+
+    public func getUnPulledCountAsync() async throws -> Int {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).unpulledCount()
+        }.value
+    }
+
+    public func submit(_ message: String) throws {
+        assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
+        do {
+            _ = try gitCLI.createCommit(message: message)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "commit",
+                additionalInfo: ["message": message]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "commit",
+                success: false,
+                error: error,
+                additionalInfo: ["message": message]
+            )
+            throw error
+        }
+    }
+
+    public func submitAsync(_ message: String) async throws {
+        let repositoryURL = url
+
+        do {
+            _ = try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).createCommit(message: message)
+            }.value
+            postEvent(
+                name: .projectDidCommit,
+                operation: "commit",
+                additionalInfo: ["message": message]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "commit",
+                success: false,
+                error: error,
+                additionalInfo: ["message": message]
+            )
+            throw error
+        }
+    }
+
+    public func getCommitGraphWithPaginationAsync(_ page: Int, limit: Int) async throws -> [GitCommit] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).commitGraphList(page: page, size: limit)
+        }.value
+    }
+
+    /// 撤销指定的提交（仅限未推送的 HEAD commit）
+    /// 原理：执行 git reset --mixed <parentHash>，将提交的文件变更保留在工作区（未暂存状态）
+    /// - Parameter commit: 要撤销的提交
+    /// - Throws: Git 操作异常
+    public func undoCommit(_ commit: GitCommit) throws {
+        do {
+            if commit.parentHashes.isEmpty {
+                // 初始提交无法通过 reset 撤销，需要特殊处理
+                throw NSError(
+                    domain: "GitOK",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "暂不支持撤销初始提交"]
+                )
+            }
+
+            // 使用 mixed reset：HEAD 回退到 parent，文件变更保留在工作区
+            let parentHash = commit.parentHashes[0]
+            try gitCLI.reset(to: parentHash, mode: "mixed")
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "undoCommit",
+                additionalInfo: ["commitHash": commit.hash, "parentHash": parentHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "undoCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    public func undoCommitAsync(_ commit: GitCommit) async throws {
+        let repositoryURL = url
+
+        do {
+            if commit.parentHashes.isEmpty {
+                throw NSError(
+                    domain: "GitOK",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "暂不支持撤销初始提交"]
+                )
+            }
+
+            let parentHash = commit.parentHashes[0]
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).reset(to: parentHash, mode: "mixed")
+            }.value
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "undoCommit",
+                additionalInfo: ["commitHash": commit.hash, "parentHash": parentHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "undoCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    public func revertCommit(_ commit: GitCommit) throws {
+        do {
+            try gitCLI.revertCommit(commit.hash)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "revertCommit",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "revertCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    public func revertCommitAsync(_ commit: GitCommit) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).revertCommit(commit.hash)
+            }.value
+            postEvent(
+                name: .projectDidCommit,
+                operation: "revertCommit",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "revertCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    public func reset(to commit: GitCommit, mode: GitResetMode) throws {
+        do {
+            try gitCLI.reset(to: commit.hash, mode: mode)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "reset\(mode.rawValue.capitalized)",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "reset\(mode.rawValue.capitalized)",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    public func resetAsync(to commit: GitCommit, mode: GitResetMode) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).reset(to: commit.hash, mode: mode)
+            }.value
+            postEvent(
+                name: .projectDidCommit,
+                operation: "reset\(mode.rawValue.capitalized)",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "reset\(mode.rawValue.capitalized)",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    public func squashLastCommits(count: Int, message: String) throws {
+        do {
+            try gitCLI.squashLastCommits(count: count, message: message)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "squashCommits",
+                additionalInfo: ["commitCount": count]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "squashCommits",
+                success: false,
+                error: error,
+                additionalInfo: ["commitCount": count]
+            )
+            throw error
+        }
+    }
+
+    public func squashLastCommitsAsync(count: Int, message: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).squashLastCommits(count: count, message: message)
+            }.value
+            postEvent(
+                name: .projectDidCommit,
+                operation: "squashCommits",
+                additionalInfo: ["commitCount": count]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "squashCommits",
+                success: false,
+                error: error,
+                additionalInfo: ["commitCount": count]
+            )
+            throw error
+        }
+    }
+}
+
+// MARK: - File
+
+extension Project {
+    public func fileContentChangeAsync(at commit: String, file: String) async throws -> (before: String?, after: String?) {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).fileContentChange(atCommit: commit, file: file)
+        }.value
+    }
+
+    public func uncommittedFileContentChangeAsync(file: String) async throws -> (before: String?, after: String?) {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).uncommittedFileContentChange(for: file)
+        }.value
+    }
+
+    public func fileDiffAsync(at commit: String, file: String, ignoreWhitespace: Bool = false) async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).fileDiff(atCommit: commit, for: file)
+        }.value
+    }
+
+    public func uncommittedFileDiffAsync(file: String, ignoreWhitespace: Bool = false) async throws -> String {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).uncommittedFileDiff(for: file, ignoreWhitespace: ignoreWhitespace)
+        }.value
+    }
+
+    public func fileDataAsync(at commit: String, file: String) async throws -> Data {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).fileData(atCommit: commit, file: file)
+        }.value
+    }
+
+    /// 获取 HEAD 提交的哈希值
+    public func headCommitHashAsync() async -> String? {
+        let repositoryURL = url
+        return try? await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).commitList(page: 0, size: 1).first?.hash
+        }.value
+    }
+
+    /// 获取指定提交中文件的 diff 字符串
+    /// - Parameters:
+    ///   - atCommit: 提交哈希
+    ///   - verbose: 是否启用详细日志输出
+    /// - Returns: 文件列表
+    /// - Throws: Git操作异常
+    public func changedFilesDetail(in atCommit: String, verbose: Bool = false) async throws -> [GitDiffFile] {
+        if verbose {
+            os_log(.info, "\(self.t)🍋 changedFilesDetail(in: \(atCommit))")
+        }
+
+        // 使用 Git 运行时获取指定 commit 修改的文件列表，并按文件路径排序
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL)
+                .commitDiffFiles(atCommit: atCommit)
+                .sorted { $0.file < $1.file }
+        }.value
+    }
+    public func untrackedFiles() async throws -> [GitDiffFile] {
+        Self.diffFiles(from: try await lightweightStatusEntriesAsync())
+    }
+
+    public static func diffFiles(from statusEntries: [GitStatusEntry]) -> [GitDiffFile] {
+        statusEntries.map { entry in
+            GitDiffFile(
+                id: entry.path,
+                file: entry.path,
+                changeType: Self.displayChangeType(for: entry),
+                diff: ""
+            )
+        }
+    }
+
+    private static func displayChangeType(for entry: GitStatusEntry) -> String {
+        if entry.indexStatus == "?" || entry.workTreeStatus == "?" {
+            return "?"
+        }
+
+        if entry.workTreeStatus != " " {
+            return String(entry.workTreeStatus)
+        }
+
+        if entry.indexStatus != " " {
+            return String(entry.indexStatus)
+        }
+
+        return "M"
+    }
+    public func stagedDiffFileList() async throws -> [GitDiffFile] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL)
+                .diffFileList(staged: true)
+                .sorted { $0.file < $1.file }
+        }.value
+    }
+    public func unstagedDiffFileList() async throws -> [GitDiffFile] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL)
+                .diffFileList(staged: false)
+                .sorted { $0.file < $1.file }
+        }.value
+    }
+
+    /// 丢弃文件的更改（恢复到 HEAD 版本）
+    /// - Parameter filePath: 文件路径（相对于仓库根目录）
+    /// - Throws: Git操作异常
+    public func discardFileChanges(_ filePath: String) throws {
+        do {
+            try gitCLI.discardFileChanges(filePath)
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardFileChanges",
+                additionalInfo: ["filePath": filePath]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardFileChanges",
+                success: false,
+                error: error,
+                additionalInfo: ["filePath": filePath]
+            )
+            throw error
+        }
+    }
+
+    public func discardFileChangesAsync(_ filePath: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).discardFileChanges(filePath)
+            }.value
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardFileChanges",
+                additionalInfo: ["filePath": filePath]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardFileChanges",
+                success: false,
+                error: error,
+                additionalInfo: ["filePath": filePath]
+            )
+            throw error
+        }
+    }
+
+    /// 丢弃所有工作区更改
+    /// 将工作区重置为 HEAD 状态，丢弃所有未提交的更改（包括已暂存和未暂存的）
+    /// - Throws: Git 操作异常
+    public func discardAllChanges() throws {
+        do {
+            try gitCLI.discardAllChanges()
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardAllChanges"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardAllChanges",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    public func discardAllChangesAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).discardAllChanges()
+            }.value
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardAllChanges"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardAllChanges",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    /// 保存当前工作区更改到stash
+    /// - Parameter message: stash的描述信息，可选
+    /// - Throws: Git操作异常
+    public func stashSave(message: String? = nil) throws {
+        do {
+            try gitCLI.stashSave(message: message)
+            postEvent(.stashSaveSuccess(message: message))
+        } catch {
+            postEvent(.stashSaveFailure(message: message, error: error))
+            throw error
+        }
+    }
+
+    /// 获取stash列表
+    /// - Returns: stash列表，包含索引、消息、分支、时间和预览信息
+    /// - Throws: Git操作异常
+    public func stashList() throws -> [GitStashEntry] {
+        try gitCLI.stashList()
+    }
+
+    /// 应用指定的stash（保留stash）
+    /// - Parameter index: stash的索引
+    /// - Throws: Git操作异常
+    public func stashApply(index: Int) throws {
+        do {
+            try gitCLI.stashApply(index: index)
+            postEvent(.stashApplySuccess(index: index))
+        } catch {
+            postEvent(.stashApplyFailure(index: index, error: error))
+            throw error
+        }
+    }
+
+    /// 弹出指定的stash（应用并删除stash）
+    /// - Parameter index: stash的索引
+    /// - Throws: Git操作异常
+    public func stashPop(index: Int) throws {
+        do {
+            try gitCLI.stashPop(index: index)
+            postEvent(.stashPopSuccess(index: index))
+        } catch {
+            postEvent(.stashPopFailure(index: index, error: error))
+            throw error
+        }
+    }
+
+    /// 删除指定的stash
+    /// - Parameter index: stash的索引
+    /// - Throws: Git操作异常
+    public func stashDrop(index: Int) throws {
+        do {
+            try gitCLI.stashDrop(index: index)
+            postEvent(.stashDropSuccess(index: index))
+        } catch {
+            postEvent(.stashDropFailure(index: index, error: error))
+            throw error
+        }
+    }
+
+    /// 基于指定 stash 创建分支并恢复改动。
+    /// - Parameters:
+    ///   - name: 新分支名称
+    ///   - index: stash 的索引
+    /// - Throws: Git 操作异常
+    public func stashBranch(name: String, index: Int) throws {
+        try gitCLI.stashBranch(name: name, index: index)
+        postEvent(.stashPopSuccess(index: index))
+    }
+
+    /// 获取当前正在合并的分支名
+    /// - Returns: 当前合并来源分支名，如果无法解析则返回 nil
+    public func getCurrentMergeBranchName() throws -> String? {
+        try gitCLI.getCurrentMergeBranchName()
+    }
+
+    public func getCurrentMergeBranchNameAsync() async throws -> String? {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).getCurrentMergeBranchName()
+        }.value
+    }
+
+    /// 获取合并冲突文件列表
+    /// - Returns: 冲突文件路径列表
+    /// - Throws: Git操作异常
+    public func getMergeConflictFiles() async throws -> [String] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).getMergeConflictFiles()
+        }.value
+    }
+
+    /// 检查是否正在合并状态
+    /// - Returns: 如果正在合并返回true
+    /// - Throws: Git操作异常
+    public func isMerging() async throws -> Bool {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).isMerging()
+        }.value
+    }
+
+    /// 检查是否有合并冲突
+    /// - Returns: 如果有冲突返回true
+    /// - Throws: Git操作异常
+    public func hasMergeConflicts() async throws -> Bool {
+        try await getMergeConflictFiles().isEmpty == false
+    }
+
+    public func mergeFileContent(path: String, version: GitMergeFileVersion) throws -> String {
+        try gitCLI.mergeFileContent(path: path, version: version)
+    }
+
+    public func mergeFileDiff(path: String) throws -> String {
+        try gitCLI.mergeFileDiff(path: path)
+    }
+
+    public func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion) throws {
+        try gitCLI.checkoutMergeFileVersion(path: path, version: version)
+        postEvent(
+            name: .projectGitIndexDidChange,
+            operation: "checkoutMergeFileVersion",
+            additionalInfo: ["filePath": path, "version": version.rawValue]
+        )
+    }
+
+    public func checkoutMergeFileVersionAsync(path: String, version: GitMergeFileVersion) async throws {
+        let repositoryURL = url
+
+        try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).checkoutMergeFileVersion(path: path, version: version)
+        }.value
+        postEvent(
+            name: .projectGitIndexDidChange,
+            operation: "checkoutMergeFileVersion",
+            additionalInfo: ["filePath": path, "version": version.rawValue]
+        )
+    }
+
+    /// 中止合并操作
+    /// - Throws: Git操作异常
+    public func abortMerge() async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).abortMerge()
+            }.value
+            postEvent(.abortMergeSuccess())
+        } catch {
+            postEvent(.abortMergeFailure(error: error))
+            throw error
+        }
+    }
+
+    /// 继续合并操作（解决冲突后）
+    /// - Parameter branchName: 要合并的分支名
+    /// - Throws: Git操作异常
+    public func continueMerge(branchName: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).continueMerge()
+            }.value
+            postEvent(.continueMergeSuccess(branchName: branchName))
+        } catch {
+            postEvent(.continueMergeFailure(branchName: branchName, error: error))
+            throw error
+        }
+    }
+
+    /// 获取项目的README.md文件内容
+    /// - Returns: README.md文件的内容，如果文件不存在则抛出异常
+    /// - Throws: 文件不存在或读取错误
+    public func getReadmeContent() async throws -> String {
+        try ProjectDocumentResolver.readReadmeContent(in: URL(fileURLWithPath: self.path))
+    }
+
+    /// 获取项目根目录的 .gitignore 内容
+    /// - Returns: .gitignore 文件内容，如果不存在则抛出异常
+    public func getGitignoreContent() async throws -> String {
+        try ProjectDocumentResolver.readGitignoreContent(in: URL(fileURLWithPath: self.path))
+    }
+
+    /// 获取 LICENSE 内容（支持多种常见文件名）
+    public func getLicenseContent() async throws -> String {
+        try ProjectDocumentResolver.readLicenseContent(in: URL(fileURLWithPath: self.path))
+    }
+
+    /// 写入/创建 LICENSE 内容，使用 `LICENSE` 文件名
+    public func saveLicenseContent(_ content: String) async throws {
+        let licenseURL = URL(fileURLWithPath: self.path).appendingPathComponent("LICENSE")
+        try content.write(to: licenseURL, atomically: true, encoding: .utf8)
+    }
+}
+
+// MARK: - Remote
+
+extension Project {
+    /// 推送当前分支到远程仓库
+    /// - Throws: Git 操作相关的错误
+    public func push() throws {
+        do {
+            // 获取当前分支信息
+            let currentBranch = try gitCLI.currentBranchName() ?? ""
+            os_log(.default, "📍 Current branch: \(currentBranch)")
+
+            try gitCLI.push()
+
+            postEvent(
+                name: .projectDidPush,
+                operation: "push"
+            )
+        } catch {
+            let pushError: Error
+            if let message = GitOperationError.pushNeedsFetchMessage(from: error) {
+                pushError = GitOperationError.pushNeedsFetch(message: message)
+            } else {
+                pushError = error
+            }
+
+            os_log(.default, "❌ Push failed: \(pushError.localizedDescription)")
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "push",
+                success: false,
+                error: pushError
+            )
+            throw pushError
+        }
+    }
+
+    public func pushAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            let currentBranch = try await Task.detached(priority: .userInitiated) {
+                let gitCLI = GitRepositoryCLI(repositoryURL: repositoryURL)
+                let currentBranch = try gitCLI.currentBranchName() ?? ""
+                try gitCLI.push()
+                return currentBranch
+            }.value
+
+            os_log(.default, "📍 Current branch: \(currentBranch)")
+            postEvent(
+                name: .projectDidPush,
+                operation: "push"
+            )
+        } catch {
+            let pushError: Error
+            if let message = GitOperationError.pushNeedsFetchMessage(from: error) {
+                pushError = GitOperationError.pushNeedsFetch(message: message)
+            } else {
+                pushError = error
+            }
+
+            os_log(.default, "❌ Push failed: \(pushError.localizedDescription)")
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "push",
+                success: false,
+                error: pushError
+            )
+            throw pushError
+        }
+    }
+
+    public func fetch(remote: String = "origin") throws {
+        do {
+            try gitCLI.fetch(remote: remote)
+
+            postEvent(
+                name: .projectDidFetch,
+                operation: "fetch",
+                additionalInfo: ["remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "fetch",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": remote]
+            )
+            throw error
+        }
+    }
+
+    public func fetchAsync(remote: String = "origin") async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).fetch(remote: remote)
+            }.value
+            postEvent(
+                name: .projectDidFetch,
+                operation: "fetch",
+                additionalInfo: ["remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "fetch",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": remote]
+            )
+            throw error
+        }
+    }
+    public func aheadBehind() throws -> GitAheadBehind {
+        try gitCLI.aheadBehind()
+    }
+    public func aheadBehindAsync() async throws -> GitAheadBehind {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).aheadBehind()
+        }.value
+    }
+
+    public func pull() throws {
+        do {
+            try gitCLI.pull()
+
+            postEvent(
+                name: .projectDidPull,
+                operation: "pull"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pull",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    public func pullAsync() async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).pull()
+            }.value
+            postEvent(
+                name: .projectDidPull,
+                operation: "pull"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pull",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    public func runSystemGitPushFallback(
+        setStatus: @escaping (String) async -> Void,
+        onFailure: @escaping (Error) async -> Void
+    ) async -> Bool {
+        await CommitRemoteSyncRules.performSystemGitPushFallback(
+            isGitCLIAvailable: GitRepositoryCLI.isGitCLIAvailable(),
+            setStatus: setStatus,
+            runSystemGit: {
+                try gitCLI.cliPush()
+            },
+            onSystemGitFailure: onFailure
+        )
+    }
+
+    public func sync() throws {
+        do {
+            try self.fetch()
+            let trackingState = try self.aheadBehind()
+
+            if trackingState.hasUpstream,
+               trackingState.ahead > 0,
+               trackingState.behind > 0 {
+                throw GitOperationError.syncNeedsUserDecision(
+                    ahead: trackingState.ahead,
+                    behind: trackingState.behind
+                )
+            }
+
+            if trackingState.hasUpstream, trackingState.behind > 0 {
+                try self.pull()
+            }
+
+            if trackingState.hasUpstream == false || trackingState.ahead > 0 {
+                try self.push()
+            }
+
+            postEvent(
+                name: .projectDidSync,
+                operation: "sync"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "sync",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    public func remoteList() throws -> [GitRemote] {
+        try gitCLI.remoteList()
+    }
+
+    public func remoteListAsync() async throws -> [GitRemote] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).remoteList()
+        }.value
+    }
+
+    public func addRemote(name: String, url: String) throws {
+        do {
+            try gitCLI.addRemote(name: name, url: url)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "addRemote",
+                additionalInfo: ["remote": name, "url": url]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name, "url": url]
+            )
+            throw error
+        }
+    }
+
+    public func addRemoteAsync(name: String, url: String) async throws {
+        let repositoryURL = self.url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).addRemote(name: name, url: url)
+            }.value
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "addRemote",
+                additionalInfo: ["remote": name, "url": url]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name, "url": url]
+            )
+            throw error
+        }
+    }
+
+    public func updateRemote(originalName: String, newName: String, newURL: String) throws {
+        do {
+            try gitCLI.updateRemote(originalName: originalName, newName: newName, newURL: newURL)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "updateRemote",
+                additionalInfo: ["oldRemote": originalName, "remote": newName, "url": newURL]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "updateRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["oldRemote": originalName, "remote": newName, "url": newURL]
+            )
+            throw error
+        }
+    }
+
+    public func removeRemote(name: String) throws {
+        do {
+            try gitCLI.removeRemote(name: name)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "removeRemote",
+                additionalInfo: ["remote": name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "removeRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name]
+            )
+            throw error
+        }
+    }
+
+    public func removeRemoteAsync(name: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).removeRemote(name: name)
+            }.value
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "removeRemote",
+                additionalInfo: ["remote": name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "removeRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name]
+            )
+            throw error
+        }
+    }
+}
+
+// MARK: - Tag
+
+extension Project {
+    public func tags(for commit: String) throws -> [String] {
+        try gitCLI.tags(for: commit)
+    }
+
+    public func getTags(commit: String) throws -> [String] {
+        try tags(for: commit)
+    }
+
+    public func getTagsAsync(commit: String) async throws -> [String] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).tags(for: commit)
+        }.value
+    }
+
+    public func createLightweightTag(named tagName: String, commitHash: String) throws {
+        do {
+            try gitCLI.createLightweightTag(named: tagName, commitHash: commitHash)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createLightweightTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createLightweightTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
+    public func createLightweightTagAsync(named tagName: String, commitHash: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).createLightweightTag(named: tagName, commitHash: commitHash)
+            }.value
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createLightweightTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createLightweightTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
+    public func createAnnotatedTag(named tagName: String, commitHash: String, message: String) throws {
+        do {
+            try gitCLI.createAnnotatedTag(named: tagName, commitHash: commitHash, message: message)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createAnnotatedTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createAnnotatedTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
+    public func createAnnotatedTagAsync(named tagName: String, commitHash: String, message: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL)
+                    .createAnnotatedTag(named: tagName, commitHash: commitHash, message: message)
+            }.value
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createAnnotatedTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createAnnotatedTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
+    public func deleteLocalTag(named tagName: String) throws {
+        do {
+            try gitCLI.deleteLocalTag(named: tagName)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteLocalTag",
+                additionalInfo: ["tagName": tagName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteLocalTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName]
+            )
+            throw error
+        }
+    }
+
+    public func deleteLocalTagAsync(named tagName: String) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).deleteLocalTag(named: tagName)
+            }.value
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteLocalTag",
+                additionalInfo: ["tagName": tagName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteLocalTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName]
+            )
+            throw error
+        }
+    }
+
+    public func pushTag(named tagName: String, remote: String = "origin") throws {
+        do {
+            try gitCLI.pushTag(named: tagName, remote: remote)
+            postEvent(
+                name: .projectDidPush,
+                operation: "pushTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pushTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    public func pushTagAsync(named tagName: String, remote: String = "origin") async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).pushTag(named: tagName, remote: remote)
+            }.value
+            postEvent(
+                name: .projectDidPush,
+                operation: "pushTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pushTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    public func deleteRemoteTag(named tagName: String, remote: String = "origin") throws {
+        do {
+            try gitCLI.deleteRemoteTag(named: tagName, remote: remote)
+            postEvent(
+                name: .projectDidPush,
+                operation: "deleteRemoteTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteRemoteTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    public func deleteRemoteTagAsync(named tagName: String, remote: String = "origin") async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).deleteRemoteTag(named: tagName, remote: remote)
+            }.value
+            postEvent(
+                name: .projectDidPush,
+                operation: "deleteRemoteTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteRemoteTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+}
+
+// MARK: - Git LFS
+
+extension Project {
+    public func lfsStatus() -> GitRepositoryCLI.GitLFSStatus {
+        gitCLI.lfsStatus()
+    }
+
+    public func initializeLFS() throws {
+        try gitCLI.initializeLFS()
+    }
+
+    public func lfsLargeFileCandidates(thresholdBytes: Int64 = 50 * 1024 * 1024) throws -> [GitRepositoryCLI.GitLFSLargeFileCandidate] {
+        try gitCLI.lfsLargeFileCandidates(thresholdBytes: thresholdBytes)
+    }
+
+    public func lfsAttributeMismatches() throws -> [GitRepositoryCLI.GitLFSAttributeMismatch] {
+        try gitCLI.lfsAttributeMismatches()
+    }
+}
+
+// MARK: - Submodule
+
+extension Project {
+    public func submodules() throws -> [GitRepositoryCLI.GitSubmodule] {
+        try gitCLI.submodules()
+    }
+
+    public func initializeSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
+        try gitCLI.initializeSubmodules(paths: paths, recursive: recursive, allowFileProtocol: allowFileProtocol)
+    }
+
+    public func updateSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
+        try gitCLI.updateSubmodules(paths: paths, recursive: recursive, allowFileProtocol: allowFileProtocol)
+    }
+
+    public func submoduleDiff(path: String) throws -> String {
+        try gitCLI.submoduleDiff(path: path)
+    }
+}
+
+// MARK: - Project Events

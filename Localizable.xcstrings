@@ -24,6 +24,7 @@
       }
     },
     ".gitignore" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -69,6 +70,7 @@
       }
     },
     "%@ / %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -143,6 +145,7 @@
       }
     },
     "Aa" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -165,6 +168,7 @@
       }
     },
     "Accent Color" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -210,6 +214,7 @@
       }
     },
     "Add a new remote repository URL" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -232,6 +237,7 @@
       }
     },
     "Add a remote repository to enable push and pull operations" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -254,6 +260,7 @@
       }
     },
     "Add New Preset" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -276,6 +283,7 @@
       }
     },
     "Add Remote Repository" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -298,6 +306,7 @@
       }
     },
     "All" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -320,6 +329,7 @@
       }
     },
     "Always use dark appearance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -342,6 +352,7 @@
       }
     },
     "Always use light appearance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -364,6 +375,7 @@
       }
     },
     "App Info" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -386,6 +398,7 @@
       }
     },
     "App Name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -431,6 +444,7 @@
       }
     },
     "Automatically switch with system settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -453,6 +467,7 @@
       }
     },
     "Balanced layout, suitable for most scenarios" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -475,6 +490,7 @@
       }
     },
     "Black" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -497,6 +513,7 @@
       }
     },
     "Blue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -519,6 +536,7 @@
       }
     },
     "Build" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -563,6 +581,7 @@
       }
     },
     "Bundle ID" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -585,6 +604,7 @@
       }
     },
     "CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -607,6 +627,7 @@
       }
     },
     "Cancel" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -652,6 +673,7 @@
       }
     },
     "Comfortable" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -674,6 +696,7 @@
       }
     },
     "Commit message display style for this project" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -696,6 +719,7 @@
       }
     },
     "Commit 风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -740,6 +764,7 @@
       }
     },
     "Compact" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -785,6 +810,7 @@
       }
     },
     "Current Project" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -807,6 +833,7 @@
       }
     },
     "Current Project Style" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -829,6 +856,7 @@
       }
     },
     "Dark Mode" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -851,6 +879,7 @@
       }
     },
     "Default commit message display style for new projects" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -873,6 +902,7 @@
       }
     },
     "Delete Preset" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -895,6 +925,7 @@
       }
     },
     "Delete this preset" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -985,6 +1016,7 @@
       }
     },
     "Email" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1007,6 +1039,7 @@
       }
     },
     "Emoji 风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1029,6 +1062,7 @@
       }
     },
     "Enter email" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1051,6 +1085,7 @@
       }
     },
     "Enter username" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1073,6 +1108,7 @@
       }
     },
     "Existing Presets" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1095,6 +1131,7 @@
       }
     },
     "Extra Large" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1117,6 +1154,7 @@
       }
     },
     "Failed to add remote repository: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1139,6 +1177,7 @@
       }
     },
     "Failed to delete preset: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1161,6 +1200,7 @@
       }
     },
     "Failed to load remote repository: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1183,6 +1223,7 @@
       }
     },
     "Failed to remove remote repository: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1205,6 +1246,7 @@
       }
     },
     "Failed to save preset: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1249,6 +1291,7 @@
       }
     },
     "Follow System" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1271,6 +1314,7 @@
       }
     },
     "Font Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1406,6 +1450,7 @@
       }
     },
     "Global Default Style" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1428,6 +1473,7 @@
       }
     },
     "Green" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1565,6 +1611,7 @@
       }
     },
     "Indigo" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1587,6 +1634,7 @@
       }
     },
     "Large" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1609,6 +1657,7 @@
       }
     },
     "Layout Density" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1631,6 +1680,7 @@
       }
     },
     "LICENSE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1653,6 +1703,7 @@
       }
     },
     "Light" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1675,6 +1726,7 @@
       }
     },
     "Light Mode" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1697,6 +1749,7 @@
       }
     },
     "Links" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1719,6 +1772,7 @@
       }
     },
     "Local Path" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1741,6 +1795,7 @@
       }
     },
     "Medium" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1809,6 +1864,7 @@
       }
     },
     "More compact layout, displays more content" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1831,6 +1887,7 @@
       }
     },
     "More spacious layout, visually comfortable" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1853,6 +1910,7 @@
       }
     },
     "Name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1896,6 +1954,9 @@
         }
       }
     },
+    "No detail view" : {
+
+    },
     "No plugins available to manage in settings" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1918,7 +1979,11 @@
         }
       }
     },
+    "No projects" : {
+
+    },
     "No Remote Repository Configured" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1940,7 +2005,11 @@
         }
       }
     },
+    "No sidebar" : {
+
+    },
     "No themes in this category" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2160,6 +2229,7 @@
       }
     },
     "Orange" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2182,6 +2252,7 @@
       }
     },
     "Pink" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2204,6 +2275,7 @@
       }
     },
     "Plain Text Lowercase" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2226,6 +2298,7 @@
       }
     },
     "Plain Text Style" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2248,6 +2321,7 @@
       }
     },
     "Please enter a valid Git URL" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2270,6 +2344,7 @@
       }
     },
     "Please Select a Project First" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2314,6 +2389,7 @@
       }
     },
     "Preset Configs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2359,6 +2435,7 @@
       }
     },
     "Project Name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2379,6 +2456,9 @@
           }
         }
       }
+    },
+    "Project not found" : {
+
     },
     "project_not_exist" : {
       "extractionState" : "manual",
@@ -2455,6 +2535,7 @@
       }
     },
     "Purple" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2499,6 +2580,7 @@
       }
     },
     "Red" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2521,6 +2603,7 @@
       }
     },
     "Remote Repository" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2543,6 +2626,7 @@
       }
     },
     "Remote Repository Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2565,6 +2649,7 @@
       }
     },
     "Reset" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2587,6 +2672,7 @@
       }
     },
     "Reset Appearance Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2609,6 +2695,7 @@
       }
     },
     "Save failed: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2631,6 +2718,7 @@
       }
     },
     "Scale: %lld%%" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2676,6 +2764,7 @@
       }
     },
     "select_commit_description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2704,6 +2793,7 @@
       }
     },
     "select_commit_title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2732,6 +2822,7 @@
       }
     },
     "Small" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2754,6 +2845,7 @@
       }
     },
     "Source Code" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2776,6 +2868,7 @@
       }
     },
     "Spacious" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2798,6 +2891,7 @@
       }
     },
     "Style Examples" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2820,6 +2914,7 @@
       }
     },
     "System" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2911,6 +3006,7 @@
       }
     },
     "Theme" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2933,6 +3029,7 @@
       }
     },
     "Theme Mode" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3001,6 +3098,7 @@
       }
     },
     "Unable to load current user info: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3023,6 +3121,7 @@
       }
     },
     "URL" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3091,6 +3190,7 @@
       }
     },
     "User Info" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3113,6 +3213,7 @@
       }
     },
     "Username" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3157,6 +3258,7 @@
       }
     },
     "Version" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3179,6 +3281,7 @@
       }
     },
     "Version %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3201,6 +3304,7 @@
       }
     },
     "Website" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3223,6 +3327,7 @@
       }
     },
     "Yellow" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3268,6 +3373,7 @@
       }
     },
     "仓库设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3312,6 +3418,7 @@
       }
     },
     "会写入 Git 全局配置 `http.proxy` 和 `https.proxy`。如果代理需要认证，可使用 `http://user:password@host:port` 格式。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3403,6 +3510,7 @@
       }
     },
     "关于" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3425,6 +3533,7 @@
       }
     },
     "最终路径" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3447,6 +3556,7 @@
       }
     },
     "准备创建" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3491,6 +3601,7 @@
       }
     },
     "切换到此项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3536,6 +3647,7 @@
       }
     },
     "创建 README.md" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3558,6 +3670,7 @@
       }
     },
     "创建一个新的本地 Git 仓库，并自动导入到项目列表。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3580,6 +3693,7 @@
       }
     },
     "创建初始提交" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3602,6 +3716,7 @@
       }
     },
     "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3715,6 +3830,7 @@
       }
     },
     "后台自动检查" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3829,6 +3945,7 @@
       }
     },
     "外观" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3986,6 +4103,7 @@
       }
     },
     "开启后 Sparkle 会按系统更新周期在后台检查新版本。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4008,6 +4126,7 @@
       }
     },
     "开始使用 GitOK" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4030,6 +4149,7 @@
       }
     },
     "当前会话没有记录到错误。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4074,6 +4194,7 @@
       }
     },
     "当前项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4252,6 +4373,9 @@
         }
       }
     },
+    "插件管理" : {
+
+    },
     "插件管理..." : {
       "localizations" : {
         "zh-Hans" : {
@@ -4297,6 +4421,7 @@
       }
     },
     "新建仓库" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4319,6 +4444,7 @@
       }
     },
     "新建仓库会创建本地 Git 仓库和初始提交。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4341,6 +4467,7 @@
       }
     },
     "暂无项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4363,6 +4490,7 @@
       }
     },
     "更新" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4613,6 +4741,7 @@
       }
     },
     "添加已有仓库，或新建一个本地仓库。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4709,6 +4838,7 @@
       }
     },
     "添加项目会把本地已有 Git 仓库加入列表。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4754,6 +4884,7 @@
       }
     },
     "用户名" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4799,6 +4930,7 @@
       }
     },
     "目标目录已存在但为空，允许直接初始化为 Git 仓库。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4844,6 +4976,7 @@
       }
     },
     "确定要将所有外观设置重置为默认值吗？" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4866,6 +4999,7 @@
       }
     },
     "网络" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4933,6 +5067,7 @@
       }
     },
     "诊断" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4977,6 +5112,7 @@
       }
     },
     "这些设置仅适用于当前项目，不会影响全局Git配置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5022,6 +5158,7 @@
       }
     },
     "选择不同的风格会改变 Commit 消息的显示方式：" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5044,6 +5181,7 @@
       }
     },
     "选择应用的主要强调色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5111,6 +5249,7 @@
       }
     },
     "邮箱" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5178,6 +5317,7 @@
       }
     },
     "配置当前项目的Git用户信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5200,6 +5340,7 @@
       }
     },
     "重置所有外观设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

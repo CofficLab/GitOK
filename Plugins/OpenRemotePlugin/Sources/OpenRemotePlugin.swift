@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenRemotePlugin: GitOKPlugin {
-    public static let shared = OpenRemotePlugin()
+public enum OpenRemotePlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "OpenRemote",
@@ -15,11 +14,11 @@ public struct OpenRemotePlugin: GitOKPlugin {
         tableName: OpenRemotePluginLocalization.table
     )
 
-    private init() {}
 
-    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(OpenRemoteButton(projectURL: projectURL))
+    @MainActor
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenRemoteButton(projectURL: projectURL)))]
     }
 }
 

@@ -27,7 +27,7 @@ final class FileInfoPluginTests: XCTestCase {
             selectedFilePath: "Sources/App/main.swift"
         )
 
-        XCTAssertNotNil(FileInfoPlugin.shared.statusBarLeadingView(context: context))
+        XCTAssertFalse(FileInfoPlugin.statusBarLeadingItems(context: context).isEmpty)
     }
 
     func testPathComponents() {

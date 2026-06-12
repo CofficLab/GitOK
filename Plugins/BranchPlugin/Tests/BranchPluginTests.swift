@@ -22,9 +22,9 @@ struct BranchPluginTests {
     @MainActor
     @Test("plugin contributes toolbar and status bar views")
     func contributesViews() {
-        #expect(BranchPlugin.shared.toolBarTrailingView(context: GitOKPluginContext()) != nil)
-        #expect(BranchPlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) == nil)
-        #expect(BranchPlugin.shared.statusBarLeadingView(context: GitOKPluginContext()) != nil)
+        #expect(!BranchPlugin.toolbarTrailingItems(context: GitOKPluginContext()).isEmpty)
+        #expect(BranchPlugin.toolbarLeadingItems(context: GitOKPluginContext()).isEmpty)
+        #expect(!BranchPlugin.statusBarLeadingItems(context: GitOKPluginContext()).isEmpty)
     }
 
     // MARK: - BranchPluginContext
@@ -112,15 +112,13 @@ struct BranchPluginTests {
     func statusBarLeadingPassesContext() {
         let url = URL(fileURLWithPath: "/tmp/repo")
         let pluginCtx = GitOKPluginContext(projectURL: url, branchName: "develop", isGitRepository: true)
-        let view = BranchPlugin.shared.statusBarLeadingView(context: pluginCtx)
-        #expect(view != nil)
+        #expect(!BranchPlugin.statusBarLeadingItems(context: pluginCtx).isEmpty)
     }
 
     @MainActor
     @Test("statusBarLeadingView with empty context still produces a view")
     func statusBarLeadingEmptyContext() {
-        let view = BranchPlugin.shared.statusBarLeadingView(context: GitOKPluginContext())
-        #expect(view != nil)
+        #expect(!BranchPlugin.statusBarLeadingItems(context: GitOKPluginContext()).isEmpty)
     }
 
     @MainActor

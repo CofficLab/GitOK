@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenKiroPlugin: GitOKPlugin {
-    public static let shared = OpenKiroPlugin()
+public enum OpenKiroPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "OpenKiro",
@@ -15,11 +14,11 @@ public struct OpenKiroPlugin: GitOKPlugin {
         tableName: OpenKiroPluginLocalization.table
     )
 
-    private init() {}
 
-    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(OpenKiroButton(projectURL: projectURL))
+    @MainActor
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenKiroButton(projectURL: projectURL)))]
     }
 }
 

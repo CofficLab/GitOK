@@ -23,7 +23,8 @@ final class OpenCursorPluginTests: XCTestCase {
     @MainActor
     func testToolbarContributionMatchesApplicationAvailability() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
-        let view = OpenCursorPlugin.shared.toolBarTrailingView(context: context)
+        let items = OpenCursorPlugin.toolbarTrailingItems(context: context)
+        let view = items.first?.view
 
         if CursorProjectLauncher.isInstalled {
             XCTAssertNotNil(view)

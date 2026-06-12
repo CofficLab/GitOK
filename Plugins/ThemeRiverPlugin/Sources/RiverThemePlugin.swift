@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct RiverThemePlugin: GitOKPlugin {
+public enum RiverThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeRiverPlugin",
         displayName: RiverThemePluginLocalization.string("River Theme"),
@@ -12,12 +12,10 @@ public struct RiverThemePlugin: GitOKPlugin {
         tableName: RiverThemePluginLocalization.table
     )
 
-    public static let shared = RiverThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: RiverTheme.branchFlow.identifier),

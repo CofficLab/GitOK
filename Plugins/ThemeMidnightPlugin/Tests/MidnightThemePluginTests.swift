@@ -16,7 +16,7 @@ final class MidnightThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = MidnightThemePlugin.shared.themeContributions()
+        let contributions = MidnightThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "terminal")

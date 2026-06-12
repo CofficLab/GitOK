@@ -16,7 +16,7 @@ final class OneDarkThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = OneDarkThemePlugin.shared.themeContributions()
+        let contributions = OneDarkThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "one-dark")

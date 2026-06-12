@@ -15,7 +15,7 @@ final class MountainThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = MountainThemePlugin.shared.themeContributions()
+        let contributions = MountainThemePlugin.themeContributions(context: GitOKPluginContext())
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "archive")
         XCTAssertEqual(contributions[0].displayName, "Mountain")

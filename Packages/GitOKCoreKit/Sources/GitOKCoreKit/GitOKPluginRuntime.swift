@@ -4,89 +4,84 @@ import SwiftUI
 
 @MainActor
 public final class GitOKPluginRuntime {
-    private var plugins: [any SuperPlugin] = []
+    private var pluginTypes: [any GitOKPlugin.Type] = []
     private let settingsStore: PluginSettingsStore
-
-    private var usedLabels: Set<String> = []
 
     public init(settingsStore: PluginSettingsStore = .shared) {
         self.settingsStore = settingsStore
     }
 
     public var registeredCount: Int {
-        plugins.count
+        pluginTypes.count
     }
 
     public var registeredPluginLabels: [String] {
-        plugins.map(\.instanceLabel)
+        pluginTypes.map { $0.metadata.id }
     }
 
     public func clearRegisteredPlugins() {
-        usedLabels.removeAll()
-        plugins.removeAll()
+        pluginTypes.removeAll()
     }
 
-    public func register(_ plugin: any SuperPlugin) {
-        let label = plugin.instanceLabel
-
-        if usedLabels.contains(label) {
-            let pluginType = String(describing: type(of: plugin))
-            assertionFailure("Duplicate plugin label '\(label)' in \(pluginType)")
+    public func register(_ pluginType: any GitOKPlugin.Type) {
+        let label = pluginType.metadata.id
+        guard !pluginTypes.contains(where: { $0.metadata.id == label }) else {
+            assertionFailure("Duplicate plugin id '\(label)'")
             return
         }
-
-        usedLabels.insert(label)
-        plugins.append(plugin)
-        plugins.sort { $0.pluginOrder < $1.pluginOrder }
+        pluginTypes.append(pluginType)
+        pluginTypes.sort { $0.metadata.order < $1.metadata.order }
     }
 
-    private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        let policy = plugin.pluginPolicy
-
+    private func isPluginEnabled(_ pluginType: any GitOKPlugin.Type) -> Bool {
+        let policy = pluginType.policy
         guard policy.shouldRegister else { return false }
         guard policy.allowUserToggle else { return policy.defaultEnabled }
-
         return settingsStore.isPluginEnabled(
-            plugin.instanceLabel,
+            pluginType.metadata.id,
             defaultEnabled: policy.defaultEnabled
         )
     }
 
     public var tabNames: [String] {
-        plugins
+        pluginTypes
             .filter { isPluginEnabled($0) }
-            .compactMap { $0.addTabItem() }
+            .flatMap { $0.tabItems(context: GitOKPluginContext()) }
+            .sorted { $0.order < $1.order }
+            .map(\.name)
     }
 
     public var configurablePlugins: [PluginInfo] {
-        plugins
-            .filter { $0.pluginPolicy.allowUserToggle }
-            .map { plugin in
-                return PluginInfo(
-                    id: plugin.instanceLabel,
-                    name: String(localized: .init(stringLiteral: plugin.pluginDisplayName), bundle: .module),
-                    description: String(localized: .init(stringLiteral: plugin.pluginDescription), bundle: .module),
-                    icon: plugin.pluginIconName,
-                    defaultEnabled: plugin.pluginPolicy.defaultEnabled,
-                    isDeveloperEnabled: { plugin.pluginPolicy.shouldRegister }
+        pluginTypes
+            .filter { $0.policy.allowUserToggle }
+            .map { type in
+                PluginInfo(
+                    id: type.metadata.id,
+                    name: type.metadata.displayName,
+                    description: type.metadata.description,
+                    icon: type.metadata.iconName,
+                    defaultEnabled: type.metadata.defaultEnabled,
+                    isDeveloperEnabled: { type.policy.shouldRegister }
                 )
             }
             .sorted { $0.name < $1.name }
     }
 
     public func enabledToolbarLeadingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
-        plugins.compactMap { plugin in
-            guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addToolBarLeadingView(context: context) else { return nil }
-            return GitOKPluginViewContribution(id: plugin.instanceLabel, view: view)
+        pluginTypes.flatMap { type -> [GitOKPluginViewContribution] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.toolbarLeadingItems(context: context).map {
+                GitOKPluginViewContribution(id: $0.id, view: $0.view)
+            }
         }
     }
 
     public func enabledToolbarTrailingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
-        plugins.compactMap { plugin in
-            guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addToolBarTrailingView(context: context) else { return nil }
-            return GitOKPluginViewContribution(id: plugin.instanceLabel, view: view)
+        pluginTypes.flatMap { type -> [GitOKPluginViewContribution] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.toolbarTrailingItems(context: context).map {
+                GitOKPluginViewContribution(id: $0.id, view: $0.view)
+            }
         }
     }
 
@@ -95,46 +90,49 @@ public final class GitOKPluginRuntime {
         projectURL: URL?,
         context: GitOKPluginContext
     ) -> [GitOKPluginViewContribution] {
-        plugins.compactMap { plugin in
-            guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addListView(tab: tab, projectURL: projectURL, context: context) else { return nil }
-            return GitOKPluginViewContribution(id: plugin.instanceLabel, view: view)
+        pluginTypes.flatMap { type -> [GitOKPluginViewContribution] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.listPaneItems(context: context, tab: tab)
         }
     }
 
     public func enabledDetailView(for tab: String, context: GitOKPluginContext) -> AnyView? {
-        for plugin in plugins {
-            guard isPluginEnabled(plugin) else { continue }
-            if let view = plugin.addDetailView(for: tab, context: context) {
-                return view
+        for type in pluginTypes {
+            guard isPluginEnabled(type) else { continue }
+            for item in type.detailPaneItems(context: context, tab: tab) {
+                return item.view
             }
         }
         return nil
     }
 
     public func enabledStatusBarLeadingViews(context: GitOKPluginContext) -> [AnyView] {
-        plugins
-            .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarLeadingView(context: context) }
+        pluginTypes.flatMap { type -> [AnyView] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.statusBarLeadingItems(context: context).map(\.view)
+        }
     }
 
     public func enabledStatusBarCenterViews(context: GitOKPluginContext) -> [AnyView] {
-        plugins
-            .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarCenterView(context: context) }
+        pluginTypes.flatMap { type -> [AnyView] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.statusBarCenterItems(context: context).map(\.view)
+        }
     }
 
     public func enabledStatusBarTrailingViews(context: GitOKPluginContext) -> [AnyView] {
-        plugins
-            .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarTrailingView(context: context) }
+        pluginTypes.flatMap { type -> [AnyView] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.statusBarTrailingItems(context: context).map(\.view)
+        }
     }
 
     public func themeContributions() -> [GitOKUIThemeContribution] {
-        plugins.flatMap { plugin -> [GitOKUIThemeContribution] in
-            guard isPluginEnabled(plugin) else { return [] }
-            let pluginOrder = plugin.pluginOrder
-            return plugin.addThemeContributions().map { contribution in
+        let context = GitOKPluginContext()
+        return pluginTypes.flatMap { type -> [GitOKUIThemeContribution] in
+            guard isPluginEnabled(type) else { return [] }
+            let pluginOrder = type.metadata.order
+            return type.themeContributions(context: context).map { contribution in
                 GitOKUIThemeContribution(
                     sortKey: ThemeSortKey(pluginOrder: pluginOrder, themeId: contribution.id),
                     chromeTheme: contribution.chromeTheme,
@@ -152,11 +150,45 @@ public final class GitOKPluginRuntime {
     ) -> AnyView {
         var wrapped = AnyView(content())
 
-        for plugin in plugins {
-            guard isPluginEnabled(plugin) else { continue }
-            wrapped = plugin.wrapRoot(wrapped, context: context)
+        for type in pluginTypes {
+            guard isPluginEnabled(type) else { continue }
+            if let overlay = type.rootOverlay(context: context, content: wrapped) {
+                wrapped = overlay
+            }
         }
 
         return wrapped
+    }
+
+    public func enabledSettingsPaneItems(context: GitOKPluginContext) -> [GitOKSettingsPaneItem] {
+        pluginTypes.flatMap { type -> [GitOKSettingsPaneItem] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.settingsPaneItems(context: context)
+        }
+        .sorted { $0.order < $1.order }
+    }
+
+    public func enabledSidebarPaneItems(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+        pluginTypes.flatMap { type -> [GitOKPluginViewContribution] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.sidebarPaneItems(context: context)
+        }
+    }
+
+    public func enabledOnboardingPaneItems(context: GitOKPluginContext) -> [GitOKOnboardingPaneItem] {
+        pluginTypes.flatMap { type -> [GitOKOnboardingPaneItem] in
+            guard isPluginEnabled(type) else { return [] }
+            return type.onboardingPaneItems(context: context)
+        }
+    }
+
+    public func enabledOnboardingView(
+        kind: GitOKOnboardingKind,
+        context: GitOKPluginContext
+    ) -> AnyView? {
+        for item in enabledOnboardingPaneItems(context: context) where item.kind == kind {
+            return item.view
+        }
+        return nil
     }
 }

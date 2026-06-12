@@ -1,8 +1,8 @@
 import Foundation
 import GitOKCoreKit
+import SwiftUI
 
-public struct IconTabPlugin: GitOKPlugin {
-    public static let shared = IconTabPlugin()
+public enum IconTabPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "IconTabPlugin",
@@ -14,10 +14,10 @@ public struct IconTabPlugin: GitOKPlugin {
         tableName: IconTabPluginLocalization.table
     )
 
-    private init() {}
 
-    public func tabItem() -> String? {
-        Self.metadata.displayName
+    @MainActor
+    public static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
+        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
     }
 }
 

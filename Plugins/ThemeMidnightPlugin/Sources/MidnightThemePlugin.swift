@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct MidnightThemePlugin: GitOKPlugin {
+public enum MidnightThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeMidnightPlugin",
         displayName: MidnightThemePluginLocalization.string("Midnight Theme"),
@@ -12,12 +12,10 @@ public struct MidnightThemePlugin: GitOKPlugin {
         tableName: MidnightThemePluginLocalization.table
     )
 
-    public static let shared = MidnightThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: MidnightTheme.terminal.identifier),

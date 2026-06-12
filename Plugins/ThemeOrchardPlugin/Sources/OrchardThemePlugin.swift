@@ -1,13 +1,11 @@
 import Foundation
 import GitOKCoreKit
 
-public struct OrchardThemePlugin: GitOKPlugin {
+public enum OrchardThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(id: "ThemeOrchardPlugin", displayName: OrchardThemePluginLocalization.string("Orchard Theme"), description: OrchardThemePluginLocalization.string("Earthy amber dark theme"), iconName: "tray.full", order: 128, policy: .alwaysOn, tableName: OrchardThemePluginLocalization.table)
-    public static let shared = OrchardThemePlugin()
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [GitOKUIThemeContribution(sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: OrchardTheme.orchard.identifier), chromeTheme: OrchardTheme.orchard, editorThemeId: OrchardTheme.orchard.identifier)]
     }
 }

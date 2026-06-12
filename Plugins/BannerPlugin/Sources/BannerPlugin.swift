@@ -1,8 +1,8 @@
 import Foundation
 import GitOKCoreKit
+import SwiftUI
 
-public struct BannerPlugin: GitOKPlugin {
-    public static let shared = BannerPlugin()
+public enum BannerPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "BannerPlugin",
@@ -13,7 +13,19 @@ public struct BannerPlugin: GitOKPlugin {
         tableName: BannerPluginLocalization.table
     )
 
-    private init() {}
+    @MainActor
+    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
+        guard tab == "Banner" else { return [] }
+        return [
+            GitOKDetailPaneItem(
+                id: metadata.id,
+                view: AnyView(
+                    BannerDetailLayout(projectURL: context.projectURL)
+                        .environmentObject(BannerProvider.shared)
+                )
+            ),
+        ]
+    }
 }
 
 public enum BannerPluginLocalization {

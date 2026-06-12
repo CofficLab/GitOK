@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct SubmodulePlugin: GitOKPlugin {
-    public static let shared = SubmodulePlugin()
+public enum SubmodulePlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "SubmodulePlugin",
@@ -14,12 +13,11 @@ public struct SubmodulePlugin: GitOKPlugin {
         tableName: SubmodulePluginLocalization.table
     )
 
-    private init() {}
 
     @MainActor
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(SubmoduleStatusTile(projectURL: projectURL))
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(SubmoduleStatusTile(projectURL: projectURL)))]
     }
 }
 

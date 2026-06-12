@@ -16,7 +16,7 @@ final class DraculaThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = DraculaThemePlugin.shared.themeContributions()
+        let contributions = DraculaThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "dracula")

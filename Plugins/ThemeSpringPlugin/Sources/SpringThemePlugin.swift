@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct SpringThemePlugin: GitOKPlugin {
+public enum SpringThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeSpringPlugin",
         displayName: SpringThemePluginLocalization.string("Spring Theme"),
@@ -12,12 +12,10 @@ public struct SpringThemePlugin: GitOKPlugin {
         tableName: SpringThemePluginLocalization.table
     )
 
-    public static let shared = SpringThemePlugin()
 
-    private init() {}
 
     @MainActor
-    public func themeContributions() -> [GitOKUIThemeContribution] {
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
         [
             GitOKUIThemeContribution(
                 sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: SpringTheme.worktree.identifier),

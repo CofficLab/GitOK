@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct SettingsButtonPlugin: GitOKPlugin {
-    public static let shared = SettingsButtonPlugin()
+public enum SettingsButtonPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "SettingsButton",
@@ -15,10 +14,15 @@ public struct SettingsButtonPlugin: GitOKPlugin {
         tableName: SettingsButtonPluginLocalization.table
     )
 
-    private init() {}
 
-    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(SettingsButtonView())
+    @MainActor
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        let openSettings: () -> Void = {
+            if let navigation = context.resolve(GitOKNavigationServicing.self) {
+                navigation.openSettings(tab: nil)
+            }
+        }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(SettingsButtonView(onOpenSettings: openSettings)))]
     }
 }
 

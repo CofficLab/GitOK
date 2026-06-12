@@ -1,0 +1,16 @@
+name: Boundaries
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - pre
+
+jobs:
+  plugin-boundaries:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check plugin package boundaries
+        run: bash Scripts/check-plugin-package-boundaries.sh

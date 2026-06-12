@@ -1,0 +1,65 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    ".gitignore" : {
+
+    },
+    "LICENSE" : {
+
+    },
+    "Project sidebar and repository sheets" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project sidebar and repository sheets"
+          }
+        }
+      }
+    },
+    "ProjectsPlugin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projects"
+          }
+        }
+      }
+    },
+    "最终路径" : {
+
+    },
+    "准备创建" : {
+
+    },
+    "切换到此项目" : {
+
+    },
+    "创建 README.md" : {
+
+    },
+    "创建一个新的本地 Git 仓库，并自动导入到项目列表。" : {
+
+    },
+    "创建初始提交" : {
+
+    },
+    "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。" : {
+
+    },
+    "当前项目" : {
+
+    },
+    "新建仓库" : {
+
+    },
+    "暂无项目" : {
+
+    },
+    "目标目录已存在但为空，允许直接初始化为 Git 仓库。" : {
+
+    }
+  },
+  "version" : "1.0"
+}

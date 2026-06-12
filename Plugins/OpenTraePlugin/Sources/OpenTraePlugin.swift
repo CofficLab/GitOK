@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenTraePlugin: GitOKPlugin {
-    public static let shared = OpenTraePlugin()
+public enum OpenTraePlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "OpenTrae",
@@ -15,11 +14,11 @@ public struct OpenTraePlugin: GitOKPlugin {
         tableName: OpenTraePluginLocalization.table
     )
 
-    private init() {}
 
-    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
-        return AnyView(OpenTraeButton(projectURL: projectURL))
+    @MainActor
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenTraeButton(projectURL: projectURL)))]
     }
 }
 

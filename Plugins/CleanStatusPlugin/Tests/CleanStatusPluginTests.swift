@@ -63,7 +63,7 @@ struct CleanStatusPluginTests {
     @Test("rootView returns a non-nil view")
     @MainActor
     func rootViewReturnsView() {
-        let view = CleanStatusPlugin.shared.rootView(AnyView(EmptyView()), context: GitOKPluginContext())
+        let view = CleanStatusPlugin.rootOverlay(context: GitOKPluginContext(), content: AnyView(EmptyView()))
         #expect(view != nil)
     }
 

@@ -1,13 +1,19 @@
 import GitOKCoreKit
+import AboutSettingsPlugin
 import ActivityStatusPlugin
+import AppearanceSettingsPlugin
 import AutoPushPlugin
 import BannerPlugin
 import BannerTabPlugin
 import BranchPlugin
 import CleanStatusPlugin
 import CommitPlugin
+import CommitStyleSettingsPlugin
 import ConflictResolverPlugin
+import DiagnosticsSettingsPlugin
 import FileInfoPlugin
+import GitNetworkSettingsPlugin
+import GitUserSettingsPlugin
 import GitDetailPlugin
 import GitIgnorePlugin
 import GitLFSPlugin
@@ -16,6 +22,7 @@ import GitWatcherPlugin
 import IconPlugin
 import IconTabPlugin
 import LicensePlugin
+import OnboardingPlugin
 import OpenAntigravityPlugin
 import OpenCursorPlugin
 import OpenFinderPlugin
@@ -26,8 +33,10 @@ import OpenTerminalPlugin
 import OpenTraePlugin
 import OpenVSCodePlugin
 import OpenXcodePlugin
+import ProjectsPlugin
 import ProjectPickerPlugin
 import ReadmePlugin
+import RepositorySettingsPlugin
 import RemoteRepositoryPlugin
 import SettingsButtonPlugin
 import SmartMergePlugin
@@ -59,70 +68,77 @@ import UnpushedStatusPlugin
 ///
 /// Add new packaged plugins here explicitly when they should be available to GitOK.
 public enum GeneratedPluginRegistry {
-    public static let hasDefaultAdapters = true
+    public static let plugins: [any GitOKPlugin.Type] = [
+        AboutSettingsPlugin.self,
+        ActivityStatusPlugin.self,
+        AppearanceSettingsPlugin.self,
+        AutoPushPlugin.self,
+        BannerPlugin.self,
+        BannerTabPlugin.self,
+        BranchPlugin.self,
+        CleanStatusPlugin.self,
+        CommitPlugin.self,
+        CommitStyleSettingsPlugin.self,
+        ConflictResolverPlugin.self,
+        DiagnosticsSettingsPlugin.self,
+        FileInfoPlugin.self,
+        GitDetailPlugin.self,
+        GitNetworkSettingsPlugin.self,
+        GitUserSettingsPlugin.self,
+        GitIgnorePlugin.self,
+        GitLFSPlugin.self,
+        GitTabPlugin.self,
+        GitWatcherPlugin.self,
+        IconPlugin.self,
+        IconTabPlugin.self,
+        LicensePlugin.self,
+        OpenAntigravityPlugin.self,
+        OpenCursorPlugin.self,
+        OpenFinderPlugin.self,
+        OpenGitHubDesktopPlugin.self,
+        OpenKiroPlugin.self,
+        OpenRemotePlugin.self,
+        OpenTerminalPlugin.self,
+        OpenTraePlugin.self,
+        OpenVSCodePlugin.self,
+        OpenXcodePlugin.self,
+        OnboardingPlugin.self,
+        ProjectsPlugin.self,
+        ProjectPickerPlugin.self,
+        ReadmePlugin.self,
+        RepositorySettingsPlugin.self,
+        RemoteRepositoryPlugin.self,
+        SettingsButtonPlugin.self,
+        SmartMergePlugin.self,
+        StashPlugin.self,
+        SubmodulePlugin.self,
+        AuroraThemePlugin.self,
+        DraculaThemePlugin.self,
+        EmberThemePlugin.self,
+        GitHubLightThemePlugin.self,
+        GitOKThemePlugin.self,
+        GlacierThemePlugin.self,
+        GraphiteThemePlugin.self,
+        HarborThemePlugin.self,
+        MatrixThemePlugin.self,
+        MidnightThemePlugin.self,
+        MountainThemePlugin.self,
+        NebulaThemePlugin.self,
+        OneDarkThemePlugin.self,
+        OrchardThemePlugin.self,
+        RiverThemePlugin.self,
+        SpringThemePlugin.self,
+        ThemeStatusBarPlugin.self,
+        SummerThemePlugin.self,
+        WinterThemePlugin.self,
+        XcodeLightThemePlugin.self,
+        UnpushedStatusPlugin.self,
+    ]
 
-    /// Register default plugin adapters for all packaged plugins.
-    ///
-    /// Each plugin's own policy still decides whether it is registered at runtime.
     @MainActor
-    public static func registerDefaultAdapters(
-        adapterFactory: any GitOKPluginAdapterFactory,
-        _ register: (any SuperPlugin) -> Void
-    ) {
-        if ActivityStatusPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ActivityStatusPlugin.shared)) }
-        if AutoPushPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: AutoPushPlugin.shared)) }
-        if BannerPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: BannerPlugin.shared)) }
-        if BannerTabPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: BannerTabPlugin.shared)) }
-        if BranchPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: BranchPlugin.shared)) }
-        if CleanStatusPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: CleanStatusPlugin.shared)) }
-        if CommitPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: CommitPlugin.shared)) }
-        if ConflictResolverPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ConflictResolverPlugin.shared)) }
-        if FileInfoPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: FileInfoPlugin.shared)) }
-        if GitDetailPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitDetailPlugin.shared)) }
-        if GitIgnorePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitIgnorePlugin.shared)) }
-        if GitLFSPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitLFSPlugin.shared)) }
-        if GitTabPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitTabPlugin.shared)) }
-        if GitWatcherPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitWatcherPlugin.shared)) }
-        if IconPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: IconPlugin.shared)) }
-        if IconTabPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: IconTabPlugin.shared)) }
-        if LicensePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: LicensePlugin.shared)) }
-        if OpenAntigravityPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenAntigravityPlugin.shared)) }
-        if OpenCursorPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenCursorPlugin.shared)) }
-        if OpenFinderPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenFinderPlugin.shared)) }
-        if OpenGitHubDesktopPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenGitHubDesktopPlugin.shared)) }
-        if OpenKiroPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenKiroPlugin.shared)) }
-        if OpenRemotePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenRemotePlugin.shared)) }
-        if OpenTerminalPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenTerminalPlugin.shared)) }
-        if OpenTraePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenTraePlugin.shared)) }
-        if OpenVSCodePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenVSCodePlugin.shared)) }
-        if OpenXcodePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenXcodePlugin.shared)) }
-        if ProjectPickerPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ProjectPickerPlugin.shared)) }
-        if ReadmePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ReadmePlugin.shared)) }
-        if RemoteRepositoryPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: RemoteRepositoryPlugin.shared)) }
-        if SettingsButtonPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SettingsButtonPlugin.shared)) }
-        if SmartMergePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SmartMergePlugin.shared)) }
-        if StashPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: StashPlugin.shared)) }
-        if SubmodulePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SubmodulePlugin.shared)) }
-        if AuroraThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: AuroraThemePlugin.shared)) }
-        if DraculaThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: DraculaThemePlugin.shared)) }
-        if EmberThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: EmberThemePlugin.shared)) }
-        if GitHubLightThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitHubLightThemePlugin.shared)) }
-        if GitOKThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitOKThemePlugin.shared)) }
-        if GlacierThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GlacierThemePlugin.shared)) }
-        if GraphiteThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GraphiteThemePlugin.shared)) }
-        if HarborThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: HarborThemePlugin.shared)) }
-        if MatrixThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: MatrixThemePlugin.shared)) }
-        if MidnightThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: MidnightThemePlugin.shared)) }
-        if MountainThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: MountainThemePlugin.shared)) }
-        if NebulaThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: NebulaThemePlugin.shared)) }
-        if OneDarkThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OneDarkThemePlugin.shared)) }
-        if OrchardThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OrchardThemePlugin.shared)) }
-        if RiverThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: RiverThemePlugin.shared)) }
-        if SpringThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SpringThemePlugin.shared)) }
-        if ThemeStatusBarPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ThemeStatusBarPlugin.shared)) }
-        if SummerThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SummerThemePlugin.shared)) }
-        if WinterThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: WinterThemePlugin.shared)) }
-        if XcodeLightThemePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: XcodeLightThemePlugin.shared)) }
-        if UnpushedStatusPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: UnpushedStatusPlugin.shared)) }
+    public static func registerAll(into runtime: GitOKPluginRuntime) {
+        for plugin in plugins where plugin.shouldRegister {
+            runtime.register(plugin)
+        }
     }
 }

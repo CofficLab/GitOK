@@ -2,8 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ProjectPickerPlugin: GitOKPlugin {
-    public static let shared = ProjectPickerPlugin()
+public enum ProjectPickerPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "ProjectPickerPlugin",
@@ -14,15 +13,15 @@ public struct ProjectPickerPlugin: GitOKPlugin {
         tableName: ProjectPickerPluginLocalization.table
     )
 
-    private init() {}
 
-    public func toolBarLeadingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(ProjectPickerView(
+    @MainActor
+    public static func toolbarLeadingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(ProjectPickerView(
             projects: context.projects,
             selectedProjectURL: context.selectedProjectURL,
             isSidebarVisible: context.isSidebarVisible,
             selectProject: context.onProjectSelection
-        ))
+        )))]
     }
 }
 

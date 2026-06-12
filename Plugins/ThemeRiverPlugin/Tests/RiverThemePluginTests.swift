@@ -16,7 +16,7 @@ final class RiverThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = RiverThemePlugin.shared.themeContributions()
+        let contributions = RiverThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "branch-flow")

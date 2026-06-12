@@ -16,7 +16,7 @@ final class WinterThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = WinterThemePlugin.shared.themeContributions()
+        let contributions = WinterThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "focus")

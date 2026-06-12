@@ -16,7 +16,7 @@ final class GitHubLightThemePluginTests: XCTestCase {
 
     @MainActor
     func testThemeContributionIsAvailable() {
-        let contributions = GitHubLightThemePlugin.shared.themeContributions()
+        let contributions = GitHubLightThemePlugin.themeContributions(context: GitOKPluginContext())
 
         XCTAssertEqual(contributions.count, 1)
         XCTAssertEqual(contributions[0].id, "github-light")
