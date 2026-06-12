@@ -125,7 +125,7 @@ jobs:
 
           # 获取最新 Release 的 body 并转换为 HTML
           RELEASE_BODY=$(gh api repos/${{ github.repository }}/releases/latest --jq '.body')
-          RELEASE_NOTES_HTML=$(echo "$RELEASE_BODY" | gh api markdown --input -)
+          RELEASE_NOTES_HTML=$(echo "$RELEASE_BODY" | gh api markdown -F text=@- -f mode=gfm)
 
           for arch in arm64 x86_64; do
             input_dir="appcast_input_${arch}"
