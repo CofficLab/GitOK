@@ -117,6 +117,8 @@ jobs:
           ls -alh updates
       - name: generate appcasts (production only)
         if: env.IS_PRERELEASE == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           xcodebuild -resolvePackageDependencies
           SPARKLE_BIN="$(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/SourcePackages/artifacts/sparkle/Sparkle/bin | head -n 1)"
