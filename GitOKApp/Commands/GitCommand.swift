@@ -25,7 +25,7 @@ struct GitCommand: Commands, SuperLog {
     var body: some Commands {
         #if os(macOS)
         CommandMenu("Git") {
-            Button("刷新状态") {
+            Button(String(localized: "Refresh Status")) {
                 RootContainer.shared.gitCoreService.performGitCommand(.refresh)
             }
             .keyboardShortcut("r", modifiers: [.command])
@@ -53,7 +53,7 @@ struct GitCommand: Commands, SuperLog {
 
             Divider()
 
-            Button("仓库设置...") {
+            Button(String(localized: "Repository Settings...")) {
                 RootContainer.shared.navigationService.openRepositorySettings()
             }
             .keyboardShortcut(",", modifiers: [.command, .option])

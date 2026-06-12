@@ -121,7 +121,7 @@ extension ContentView {
 
             if tabPickerVisibility, p.tabNames.isEmpty == false {
                 ToolbarItem(placement: .principal) {
-                    Picker("选择标签", selection: $tab) {
+                    Picker(String(localized: "Select Tab"), selection: $tab) {
                         ForEach(p.tabNames, id: \.self) { tabName in
                             Text(tabName).tag(tabName)
                         }

@@ -71,8 +71,8 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             // 拖拽覆盖层
             if isDropTargeted {
                 DropOverlayCard(
-                    title: "松开即可添加项目",
-                    subtitle: "将文件夹拖到此处，自动切换为当前项目"
+                    title: "Release to Add Project",
+                    subtitle: "Drag a folder here to set it as the current project"
                 )
                 .transition(.opacity)
             }

@@ -11,18 +11,18 @@ struct ConfigCommand: Commands, SuperLog {
 
     var body: some Commands {
         #if os(macOS)
-        CommandMenu("配置") {
-            Button("仓库设置...") {
+        CommandMenu(String(localized: "Configuration")) {
+            Button(String(localized: "Repository Settings...")) {
                 RootContainer.shared.navigationService.openRepositorySettings()
             }
 
-            Button("Commit 风格...") {
+            Button(String(localized: "Commit Style...")) {
                 RootContainer.shared.navigationService.openCommitStyleSettings()
             }
 
             Divider()
 
-            Button("插件管理...") {
+            Button(String(localized: "Plugin Management...")) {
                 RootContainer.shared.navigationService.openPluginSettings()
             }
         }

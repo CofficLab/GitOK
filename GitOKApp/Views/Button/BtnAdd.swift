@@ -23,19 +23,19 @@ struct BtnAdd: View, SuperLog {
     /// 按钮视图主体
     var body: some View {
         Menu {
-            AppContextMenuRow("添加现有项目", systemImage: "folder") {
+            AppContextMenuRow(String(localized: "Add Existing Project"), systemImage: "folder") {
                 open()
             }
 
-            AppContextMenuRow("新建仓库", systemImage: "plus.square.on.square") {
+            AppContextMenuRow(String(localized: "New Repository"), systemImage: "plus.square.on.square") {
                 showCreateRepositorySheet = true
             }
 
-            AppContextMenuRow("克隆仓库", systemImage: "square.and.arrow.down") {
+            AppContextMenuRow(String(localized: "Clone Repository"), systemImage: "square.and.arrow.down") {
                 showCloneRepositorySheet = true
             }
         } label: {
-            Label("添加项目", systemImage: "plus")
+            Label(String(localized: "Add Project"), systemImage: "plus")
         }
         .sheet(isPresented: $showCreateRepositorySheet) {
             CreateRepositorySheet()

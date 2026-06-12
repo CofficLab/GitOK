@@ -36,7 +36,7 @@ final class GitCoreService: GitOKRepositoryServicing, GitOKActivityServicing, Gi
 
     func performGitCommand(_ command: GitOKGitCommand) {
         guard let loadedProject = projectVM.project, projectVM.currentProjectIsGitRepository else {
-            alert_error("当前没有可操作的 Git 仓库")
+            alert_error(String(localized: "No Git repository available to operate on"))
             return
         }
         nonisolated(unsafe) let project = loadedProject
@@ -84,13 +84,13 @@ final class GitCoreService: GitOKRepositoryServicing, GitOKActivityServicing, Gi
     private func statusText(for command: GitOKGitCommand) -> String {
         switch command {
         case .refresh:
-            return "刷新仓库状态中..."
+            return String(localized: "Refreshing repository status...")
         case .fetch:
-            return "获取远程更新中..."
+            return String(localized: "Fetching remote updates...")
         case .pull:
-            return "拉取中..."
+            return String(localized: "Pulling...")
         case .push:
-            return "推送中..."
+            return String(localized: "Pushing...")
         }
     }
 }
