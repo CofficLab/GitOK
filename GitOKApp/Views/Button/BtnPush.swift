@@ -27,7 +27,7 @@ struct BtnPush: View, SuperLog {
 
     /// 按钮视图主体
     var body: some View {
-        AppButton("推送", systemImage: "arrow.up", style: .primary) {
+        AppButton(String(localized: "Push"), systemImage: "arrow.up", style: .primary) {
             guard let project = vm.project else { return }
             isPushing = true
             Task.detached(priority: .userInitiated) {
@@ -35,7 +35,7 @@ struct BtnPush: View, SuperLog {
                     try await project.pushAsync()
                 } catch let error {
                     await MainActor.run {
-                        alert_warning("Push出错", subtitle: error.localizedDescription)
+                        alert_warning(String(localized: "Push Error"), subtitle: error.localizedDescription)
                     }
                 }
                 await MainActor.run {

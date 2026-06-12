@@ -61,7 +61,7 @@ struct TabBtn: View, SuperLog {
       }
     }
     .accessibilityLabel(title)
-    .accessibilityHint(selected ? "当前标签页" : "切换到 \(title) 标签页")
+    .accessibilityHint(selected ? String(localized: "Current Tab") : String(localized: "Switch to Tab", defaultValue: "Switch to \(title) Tab"))
     .accessibilityAddTraits(selected ? .isSelected : [])
   }
 }

@@ -13,7 +13,12 @@ struct AppCommand: Commands, SuperLog {
     var body: some Commands {
         #if os(macOS)
         CommandGroup(after: .appInfo) {
-            Button("设置...") {
+            Button(String(localized: "Release Notes")) {
+                if let url = URL(string: "https://github.com/CofficLab/GitOK/releases/latest") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            Button(String(localized: "Settings...")) {
                 RootContainer.shared.navigationService.openSettings(tab: nil)
             }
             .keyboardShortcut(",", modifiers: .command)

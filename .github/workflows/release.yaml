@@ -121,6 +121,10 @@ jobs:
           xcodebuild -resolvePackageDependencies
           SPARKLE_BIN="$(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/SourcePackages/artifacts/sparkle/Sparkle/bin | head -n 1)"
 
+          # 获取最新 Release 的 body 并转换为 HTML
+          RELEASE_BODY=$(gh api repos/${{ github.repository }}/releases/latest --jq '.body')
+          RELEASE_NOTES_HTML=$(echo "$RELEASE_BODY" | gh api markdown --input -)
+
           for arch in arm64 x86_64; do
             input_dir="appcast_input_${arch}"
             appcast_file="appcast-${arch}.xml"
@@ -136,11 +140,12 @@ jobs:
             dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
             u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
             sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "$appcast_file"
-            if ! grep -q "sparkle:releaseNotesLink" "$appcast_file"; then
-              sed -i '' '/<sparkle:minimumSystemVersion>/a\
-            <sparkle:releaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:releaseNotesLink>
+
+            # 注入内嵌 HTML release notes 和完整日志链接
+            sed -i '' '/<sparkle:minimumSystemVersion>/a\
+            <description><![CDATA['"$RELEASE_NOTES_HTML"']]></description>\
+            <sparkle:fullReleaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:fullReleaseNotesLink>
             ' "$appcast_file"
-            fi
           done
 
           # 兼容旧版本客户端（仍读取 appcast.xml）

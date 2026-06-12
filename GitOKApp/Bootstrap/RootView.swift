@@ -43,6 +43,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 拖拽覆盖层是否可见
     @State private var isDropTargeted = false
 
+    /// 新版本提示弹窗
+    @State private var showNewVersionAlert = false
+
     init(@ViewBuilder content: () -> Content) {
         let container = RootContainer.shared
         self.content = content()
@@ -68,8 +71,8 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             // 拖拽覆盖层
             if isDropTargeted {
                 DropOverlayCard(
-                    title: "松开即可添加项目",
-                    subtitle: "将文件夹拖到此处，自动切换为当前项目"
+                    title: "Release to Add Project",
+                    subtitle: "Drag a folder here to set it as the current project"
                 )
                 .transition(.opacity)
             }
@@ -91,6 +94,14 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             OpenProjectHandler.shared.onOpenProject = { [self] path in
                 self.handleOpenProject(path: path)
             }
+        }
+        .onChange(of: AppVersionChecker.shared.isFirstLaunchOfNewVersion) { _, isFirstLaunch in
+            if isFirstLaunch {
+                showNewVersionAlert = true
+            }
+        }
+        .sheet(isPresented: $showNewVersionAlert) {
+            NewVersionReleaseNotesView()
         }
     }
 

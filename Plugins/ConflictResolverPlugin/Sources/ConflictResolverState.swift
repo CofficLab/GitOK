@@ -23,7 +23,12 @@ public struct ConflictResolutionState: Equatable {
     }
 
     public var canContinueMerge: Bool {
-        isMerging && !mergeFiles.isEmpty && hasStagedResolutions && mergeFiles.allSatisfy { $0.state == .staged }
+        guard isMerging else { return false }
+        guard !hasUnresolvedFiles, !hasPendingUnstagedResolutions else { return false }
+        if mergeFiles.isEmpty {
+            return true
+        }
+        return mergeFiles.allSatisfy { $0.state == .staged }
     }
 
     public var statusSubtitle: String {
@@ -35,6 +40,9 @@ public struct ConflictResolutionState: Equatable {
         }
         if hasPendingUnstagedResolutions {
             return "冲突标记已移除，但还有文件尚未暂存。"
+        }
+        if mergeFiles.isEmpty {
+            return "合并内容已就绪，可以继续完成合并。"
         }
         if canContinueMerge {
             return "所有合并文件都已暂存，可以继续完成合并。"

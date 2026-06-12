@@ -4,6 +4,7 @@ import SwiftUI
 
 public struct BranchStatusTile: View {
     let context: BranchPluginContext
+    @Environment(\.branchService) private var service
     @State private var isPresented = false
     @State private var fallbackBranchName: String?
     @State private var isLoadingBranch = false
@@ -34,10 +35,6 @@ public struct BranchStatusTile: View {
     }
 
     private var displayBranchName: String {
-        if let branchName = context.branchName, branchName.isEmpty == false {
-            return branchName
-        }
-
         if let fallbackBranchName, fallbackBranchName.isEmpty == false {
             return fallbackBranchName
         }
@@ -53,21 +50,21 @@ public struct BranchStatusTile: View {
         refreshGeneration += 1
         let generation = refreshGeneration
 
-        if let branchName = context.branchName, branchName.isEmpty == false {
-            fallbackBranchName = branchName
-            isLoadingBranch = false
-            return
-        }
-
-        guard let projectURL = context.projectURL, context.isGitRepository else {
+        guard context.projectURL != nil, context.isGitRepository else {
             fallbackBranchName = nil
             isLoadingBranch = false
             return
         }
 
+        // Use context.branchName as initial placeholder while async query runs
+        if fallbackBranchName == nil, let branchName = context.branchName, branchName.isEmpty == false {
+            fallbackBranchName = branchName
+        }
+
+        guard let service else { return }
         isLoadingBranch = true
         Task.detached(priority: .utility) {
-            let branchName = try? GitRepositoryCLI(repositoryURL: projectURL).currentBranchName()
+            let branchName = try? service.currentBranchName()
             guard Task.isCancelled == false else { return }
 
             await MainActor.run {

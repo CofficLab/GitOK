@@ -36,6 +36,17 @@ struct WorkingStateConflictRulesTests {
         #expect(state.canContinueMerge)
     }
 
+    @Test("merge can continue when merge state has no pending files")
+    func canContinueWhenMergeHasNoPendingFiles() {
+        let state = WorkingStateConflictState(
+            isMerging: true,
+            files: []
+        )
+
+        #expect(state.canContinueMerge)
+        #expect(state.statusText == CommitLocalization.string("Merge is ready to complete"))
+    }
+
     @Test("large conflict panels limit rendered files")
     func largeConflictPanelsLimitRenderedFiles() {
         let files = (0..<125).map {

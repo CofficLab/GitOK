@@ -79,5 +79,13 @@ struct ConflictResolverPluginTests {
         #expect(fullyStaged.hasPendingUnstagedResolutions == false)
         #expect(fullyStaged.canContinueMerge)
         #expect(fullyStaged.statusSubtitle == "所有合并文件都已暂存，可以继续完成合并。")
+
+        let readyWithoutFiles = ConflictResolutionState(
+            isMerging: true,
+            mergeFiles: []
+        )
+
+        #expect(readyWithoutFiles.canContinueMerge)
+        #expect(readyWithoutFiles.statusSubtitle == "合并内容已就绪，可以继续完成合并。")
     }
 }

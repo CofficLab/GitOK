@@ -13,21 +13,20 @@ struct DebugCommand: Commands, SuperLog {
         SidebarCommands()
 
         #if os(macOS)
-        CommandMenu("调试") {
-            Button("打开App Support目录") {
+        CommandMenu(String(localized: "Debug")) {
+            Button(String(localized: "Open App Support Folder")) {
                 let dir = AppConfig.getCurrentAppSupportDir()
                 
                 NSWorkspace.shared.open(dir)
             }
             
-            Button("打开容器目录") {
+            Button(String(localized: "Open Container Folder")) {
                 guard let dir = AppConfig.localContainer else {
-                    // 显示错误提示
                     let errorAlert = NSAlert()
-                    errorAlert.messageText = "打开容器目录出错"
-                    errorAlert.informativeText = "容器目录不存在"
+                    errorAlert.messageText = String(localized: "Error Opening Container Folder")
+                    errorAlert.informativeText = String(localized: "Container folder does not exist")
                     errorAlert.alertStyle = .critical
-                    errorAlert.addButton(withTitle: "好的")
+                    errorAlert.addButton(withTitle: String(localized: "OK"))
                     errorAlert.runModal()
                     
                     return
@@ -36,14 +35,13 @@ struct DebugCommand: Commands, SuperLog {
                 NSWorkspace.shared.open(dir)
             }
             
-            Button("打开文档目录") {
+            Button(String(localized: "Open Documents Folder")) {
                 guard let dir = AppConfig.localDocumentsDir else {
-                    // 显示错误提示
                     let errorAlert = NSAlert()
-                    errorAlert.messageText = "打开文档目录出错"
-                    errorAlert.informativeText = "文档目录不存在"
+                    errorAlert.messageText = String(localized: "Error Opening Documents Folder")
+                    errorAlert.informativeText = String(localized: "Documents folder does not exist")
                     errorAlert.alertStyle = .critical
-                    errorAlert.addButton(withTitle: "好的")
+                    errorAlert.addButton(withTitle: String(localized: "OK"))
                     errorAlert.runModal()
                     
                     return
@@ -52,7 +50,7 @@ struct DebugCommand: Commands, SuperLog {
                 NSWorkspace.shared.open(dir)
             }
             
-            Button("打开数据库目录") {
+            Button(String(localized: "Open Database Folder")) {
                 let dir = AppConfig.getDBFolderURL()
                 
                 NSWorkspace.shared.open(dir)

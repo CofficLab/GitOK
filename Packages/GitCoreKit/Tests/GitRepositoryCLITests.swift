@@ -1010,6 +1010,35 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertThrowsError(try client.abortMerge())
     }
 
+    func testFinalizeMergeIfNeededIsNoOpOutsideMerge() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.finalizeMergeIfNeeded()
+
+        XCTAssertFalse(try client.isMerging())
+    }
+
+    func testMergeBranchesClearsPendingMergeStateWhenNoConflicts() throws {
+        let repo = try TestGitRepository()
+        try repo.write("feature.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        try repo.run(["checkout", "-b", "feature"])
+        try repo.write("feature.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.mergeBranches(fromBranch: "feature", toBranch: "master")
+
+        XCTAssertFalse(try client.isMerging())
+        XCTAssertEqual(try client.getMergeConflictFiles(), [])
+        XCTAssertEqual(try repo.read("feature.txt"), "feature\n")
+    }
+
     func testInitializeCreatesGitRepository() throws {
         let destinationRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

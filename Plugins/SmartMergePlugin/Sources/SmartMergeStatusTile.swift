@@ -190,6 +190,7 @@ public struct SmartMergeForm: View {
                         detail: SmartMergePluginLocalization.string("Refreshing repository state after merge.")
                     )
                 }
+                try? repository.finalizeMergeIfNeeded()
                 let conflictCount = (try? repository.getMergeConflictFiles().count) ?? 0
 
                 await MainActor.run {

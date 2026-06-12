@@ -24,7 +24,7 @@ struct CoAuthorPicker: View {
             AppIconButton(systemImage: "plus.circle.fill", tint: .secondary, size: .compact) {
                 showAddSheet = true
             }
-            .help("添加合作者")
+            .help(String(localized: "Add Co-Author"))
         }
         .sheet(isPresented: $showAddSheet) {
             CoAuthorSheet(
@@ -76,13 +76,13 @@ struct CoAuthorSheet: View {
     var body: some View {
         VStack(spacing: 16) {
             // 标题
-            Text("添加合作者")
+            Text(String(localized: "Add Co-Author"))
                 .font(.headline)
 
             // 快速选择常用合作者
             if !availableCoAuthors.isEmpty && !showCustomAdd {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("常用合作者")
+                    Text(String(localized: "Frequent Co-Authors"))
                         .font(.subheadline)
                         .fontWeight(.medium)
 
@@ -104,7 +104,7 @@ struct CoAuthorSheet: View {
 
                 Divider()
 
-                AppButton("添加新的合作者", systemImage: "plus", style: .secondary, size: .small) {
+                AppButton(String(localized: "Add New Co-Author"), systemImage: "plus", style: .secondary, size: .small) {
                     showCustomAdd = true
                 }
             }
@@ -112,23 +112,23 @@ struct CoAuthorSheet: View {
             // 自定义添加表单
             if showCustomAdd {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("新合作者信息")
+                    Text(String(localized: "New Co-Author Info"))
                         .font(.subheadline)
                         .fontWeight(.medium)
 
-                    AppInputField("姓名", text: $name)
+                    AppInputField(String(localized: "Name"), text: $name)
 
-                    AppInputField("邮箱", text: $email)
+                    AppInputField(String(localized: "Email"), text: $email)
 
                     HStack(spacing: 12) {
-                        AppButton("取消", style: .secondary, size: .small) {
+                        AppButton(String(localized: "Cancel"), style: .secondary, size: .small) {
                             showCustomAdd = false
                             name = ""
                             email = ""
                         }
                         .keyboardShortcut(.cancelAction)
 
-                        AppButton("添加", systemImage: "plus", style: .primary, size: .small) {
+                        AppButton(String(localized: "Add"), systemImage: "plus", style: .primary, size: .small) {
                             addNewCoAuthor()
                         }
                         .keyboardShortcut(.defaultAction)
@@ -142,7 +142,7 @@ struct CoAuthorSheet: View {
             // 已选择的合作者
             if !selectedCoAuthors.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("已选择 (\(selectedCoAuthors.count))")
+                    Text("Selected (\(selectedCoAuthors.count))")
                         .font(.subheadline)
                         .fontWeight(.medium)
 
@@ -165,12 +165,12 @@ struct CoAuthorSheet: View {
 
             // 底部操作按钮
             HStack(spacing: 12) {
-                AppButton("取消", style: .secondary) {
+                AppButton(String(localized: "Cancel"), style: .secondary) {
                     isPresented = false
                 }
                 .keyboardShortcut(.cancelAction)
 
-                AppButton("确定", systemImage: "checkmark", style: .primary) {
+                AppButton(String(localized: "Confirm"), systemImage: "checkmark", style: .primary) {
                     // 保存新添加的合作者到常用列表
                     for coauthor in selectedCoAuthors {
                         store.addCoAuthor(coauthor)
