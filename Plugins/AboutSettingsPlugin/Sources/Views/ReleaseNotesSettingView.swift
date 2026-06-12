@@ -91,6 +91,13 @@ public struct ReleaseNotesSettingView: View {
 
     private var releaseNotesSection: some View {
         GitOKUI.AppSettingsSection(title: "版本更新说明") {
+            // 内嵌更新说明预览
+            ReleaseNotesPreviewView()
+                .padding(.vertical, 8)
+
+            Divider()
+                .padding(.vertical, 4)
+
             releaseLinkRow(
                 title: "最新版本说明",
                 description: "打开 GitHub 最新 Release",

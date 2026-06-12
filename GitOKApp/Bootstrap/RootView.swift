@@ -43,6 +43,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 拖拽覆盖层是否可见
     @State private var isDropTargeted = false
 
+    /// 新版本提示弹窗
+    @State private var showNewVersionAlert = false
+
     init(@ViewBuilder content: () -> Content) {
         let container = RootContainer.shared
         self.content = content()
@@ -91,6 +94,14 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             OpenProjectHandler.shared.onOpenProject = { [self] path in
                 self.handleOpenProject(path: path)
             }
+        }
+        .onChange(of: AppVersionChecker.shared.isFirstLaunchOfNewVersion) { _, isFirstLaunch in
+            if isFirstLaunch {
+                showNewVersionAlert = true
+            }
+        }
+        .sheet(isPresented: $showNewVersionAlert) {
+            NewVersionReleaseNotesView()
         }
     }
 

@@ -38,6 +38,9 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             DiagnosticsStore.shared.markLaunchStarted()
         }
 
+        // 检查是否为新版本首次启动
+        AppVersionChecker.shared.checkForNewVersion()
+
         if Self.verbose {
             os_log("\(self.t)Finish Lanunching")
         }
