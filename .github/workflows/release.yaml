@@ -123,23 +123,24 @@ jobs:
 
           for arch in arm64 x86_64; do
             input_dir="appcast_input_${arch}"
+            appcast_file="appcast-${arch}.xml"
             mkdir -p "$input_dir"
             cp ./updates/*${arch}*.dmg "$input_dir/"
             ls -alh "$input_dir"
 
-            echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" --ed-key-file - "${{ github.workspace }}/${input_dir}"
+            echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" \
+              --ed-key-file - \
+              -o "${{ github.workspace }}/${appcast_file}" \
+              "${{ github.workspace }}/${input_dir}"
 
-            cd "$input_dir"
-            dmg_file=$(ls *.dmg | head -n 1)
+            dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
             u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
-            sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
-            if ! grep -q "sparkle:releaseNotesLink" appcast.xml; then
+            sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "$appcast_file"
+            if ! grep -q "sparkle:releaseNotesLink" "$appcast_file"; then
               sed -i '' '/<sparkle:minimumSystemVersion>/a\
             <sparkle:releaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:releaseNotesLink>
-            ' appcast.xml
+            ' "$appcast_file"
             fi
-            mv appcast.xml "../appcast-${arch}.xml"
-            cd ..
           done
 
           # 兼容旧版本客户端（仍读取 appcast.xml）
