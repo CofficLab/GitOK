@@ -34,10 +34,6 @@ public struct BranchStatusTile: View {
     }
 
     private var displayBranchName: String {
-        if let branchName = context.branchName, branchName.isEmpty == false {
-            return branchName
-        }
-
         if let fallbackBranchName, fallbackBranchName.isEmpty == false {
             return fallbackBranchName
         }
@@ -53,16 +49,15 @@ public struct BranchStatusTile: View {
         refreshGeneration += 1
         let generation = refreshGeneration
 
-        if let branchName = context.branchName, branchName.isEmpty == false {
-            fallbackBranchName = branchName
-            isLoadingBranch = false
-            return
-        }
-
         guard let projectURL = context.projectURL, context.isGitRepository else {
             fallbackBranchName = nil
             isLoadingBranch = false
             return
+        }
+
+        // Use context.branchName as initial placeholder while async query runs
+        if fallbackBranchName == nil, let branchName = context.branchName, branchName.isEmpty == false {
+            fallbackBranchName = branchName
         }
 
         isLoadingBranch = true
