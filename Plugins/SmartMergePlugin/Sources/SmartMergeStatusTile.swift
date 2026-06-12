@@ -37,8 +37,14 @@ public struct SmartMergeForm: View {
     @State private var statusMessage: String?
     @State private var errorMessage: String?
 
+    @AppStorage private var lastSourceBranchName: String
+    @AppStorage private var lastTargetBranchName: String
+
     public init(projectURL: URL) {
         self.projectURL = projectURL
+        let storageKey = "SmartMergePlugin.lastMerge.\(projectURL.absoluteString)"
+        _lastSourceBranchName = AppStorage(wrappedValue: "", "\(storageKey).source")
+        _lastTargetBranchName = AppStorage(wrappedValue: "", "\(storageKey).target")
     }
 
     public var body: some View {
@@ -99,8 +105,21 @@ public struct SmartMergeForm: View {
 
                 await MainActor.run {
                     branches = loadedBranches
-                    sourceBranch = loadedBranches.first(where: { $0.isCurrent == false }) ?? loadedBranches.first
-                    targetBranch = loadedBranches.first(where: \.isCurrent) ?? loadedBranches.first
+                    // Restore last selected branches if they still exist
+                    let savedSource = lastSourceBranchName
+                    let savedTarget = lastTargetBranchName
+                    if !savedSource.isEmpty,
+                       let restored = loadedBranches.first(where: { $0.name == savedSource }) {
+                        sourceBranch = restored
+                    } else {
+                        sourceBranch = loadedBranches.first(where: { $0.isCurrent == false }) ?? loadedBranches.first
+                    }
+                    if !savedTarget.isEmpty,
+                       let restored = loadedBranches.first(where: { $0.name == savedTarget }) {
+                        targetBranch = restored
+                    } else {
+                        targetBranch = loadedBranches.first(where: \.isCurrent) ?? loadedBranches.first
+                    }
                 }
             } catch {
                 await MainActor.run {
@@ -116,6 +135,9 @@ public struct SmartMergeForm: View {
 
     private func merge() {
         guard let sourceBranch, let targetBranch else { return }
+        // Save the user's branch selection for next time
+        lastSourceBranchName = sourceBranch.name
+        lastTargetBranchName = targetBranch.name
         isWorking = true
         statusMessage = nil
         errorMessage = nil
