@@ -1,0 +1,111 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "Empty-state and onboarding guides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty-state and onboarding guides"
+          }
+        }
+      }
+    },
+    "OnboardingPlugin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onboarding"
+          }
+        }
+      }
+    },
+    "select_commit_description" : {
+
+    },
+    "select_commit_title" : {
+
+    },
+    "开始使用 GitOK" : {
+
+    },
+    "打开插件设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Plugin Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开插件设置"
+          }
+        }
+      }
+    },
+    "新建仓库会创建本地 Git 仓库和初始提交。" : {
+
+    },
+    "暂无可用视图" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No view available"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无可用视图"
+          }
+        }
+      }
+    },
+    "添加已有仓库，或新建一个本地仓库。" : {
+
+    },
+    "添加项目会把本地已有 Git 仓库加入列表。" : {
+
+    },
+    "请在设置中启用相关插件以显示内容" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable related plugins in Settings to show content"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在设置中启用相关插件以显示内容"
+          }
+        }
+      }
+    },
+    "项目不存在" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project not found"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "项目不存在"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

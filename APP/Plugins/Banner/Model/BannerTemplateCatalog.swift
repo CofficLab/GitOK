@@ -1,3 +1,0 @@
-import BannerCoreKit
-
-typealias BannerTemplateCatalog = BannerCoreKit.BannerTemplateCatalog

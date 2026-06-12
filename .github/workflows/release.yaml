@@ -74,35 +74,40 @@ jobs:
           echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
           echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
           echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
-      - name: Build App
+      - name: Build App (arm64)
         run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64 --clean=false -v
+      - name: Build App (x86_64)
+        run: servon xcode build --scheme ${{ env.SCHEME }} --arch x86_64 --clean=false -v
       - name: Codesign App
         run: |
           servon xcode codesign --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
-            --identity ${{ steps.signing.outputs.signing_identity }} 
-
-          # servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
-          #   --identity ${{ steps.signing.outputs.signing_identity }}
+            --identity ${{ steps.signing.outputs.signing_identity }}
+          servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
+            --identity ${{ steps.signing.outputs.signing_identity }}
       - name: Create DMG
         run: |
           servon xcode package --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app
-          # servon xcode package --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app
+          servon xcode package --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app
       - name: Notary
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 2 -type f -name "*.dmg" | head -n 1)
-          xcrun notarytool submit "$file" \
-            --key ${{ steps.signing.outputs.api_key_path }} \
-            --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
-            --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
-            --wait \
-            --timeout 10m
-          stapler staple "$file"
+          for file in $(find . -maxdepth 2 -type f -name "*.dmg"); do
+            echo "🔐 Notarizing $file"
+            xcrun notarytool submit "$file" \
+              --key ${{ steps.signing.outputs.api_key_path }} \
+              --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
+              --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
+              --wait \
+              --timeout 10m
+            stapler staple "$file"
+          done
       - name: 公证结果
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 2 -type f -name "*.dmg" | head -n 1)
-          stapler validate "$file"
+          for file in $(find . -maxdepth 2 -type f -name "*.dmg"); do
+            echo "✅ Validating $file"
+            stapler validate "$file"
+          done
       - name: Check
         run: |
           ls -alh
@@ -110,31 +115,43 @@ jobs:
           cp ./temp/*.dmg updates/
           echo "the updates is in ${{ github.workspace }}/updates"
           ls -alh updates
-      - name: generate appcast (production only)
+      - name: generate appcasts (production only)
         if: env.IS_PRERELEASE == 'false'
-        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pwd
           xcodebuild -resolvePackageDependencies
-          cd $(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/ | head -n 1)
-          cd SourcePackages/artifacts/sparkle/Sparkle/bin
-          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | ./generate_appcast --ed-key-file - ${{ github.workspace }}/updates
-      - name: make appcast.xml (production only)
-        if: env.IS_PRERELEASE == 'false'
-        run: |
-          pwd
-          cd updates
-          dmg_file=$(ls *.dmg 2>/dev/null | head -n 1)
-          echo $dmg_file
-          u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file" 
-          echo $u
-          sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
-          if ! grep -q "sparkle:releaseNotesLink" appcast.xml; then
+          SPARKLE_BIN="$(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/SourcePackages/artifacts/sparkle/Sparkle/bin | head -n 1)"
+
+          # 获取最新 Release 的 body 并转换为 HTML
+          RELEASE_BODY=$(gh api repos/${{ github.repository }}/releases/latest --jq '.body')
+          RELEASE_NOTES_HTML=$(echo "$RELEASE_BODY" | gh api markdown --input -)
+
+          for arch in arm64 x86_64; do
+            input_dir="appcast_input_${arch}"
+            appcast_file="appcast-${arch}.xml"
+            mkdir -p "$input_dir"
+            cp ./updates/*${arch}*.dmg "$input_dir/"
+            ls -alh "$input_dir"
+
+            echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" \
+              --ed-key-file - \
+              -o "${{ github.workspace }}/${appcast_file}" \
+              "${{ github.workspace }}/${input_dir}"
+
+            dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
+            u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
+            sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "$appcast_file"
+
+            # 注入内嵌 HTML release notes 和完整日志链接
             sed -i '' '/<sparkle:minimumSystemVersion>/a\
-            <sparkle:releaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:releaseNotesLink>
-            ' appcast.xml
-          fi
-          mv appcast.xml ../appcast.xml
+            <description><![CDATA['"$RELEASE_NOTES_HTML"']]></description>\
+            <sparkle:fullReleaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:fullReleaseNotesLink>
+            ' "$appcast_file"
+          done
+
+          # 兼容旧版本客户端（仍读取 appcast.xml）
+          cp appcast-arm64.xml appcast.xml
       - name: 发布 Release
         uses: softprops/action-gh-release@v1
         with:
@@ -143,47 +160,53 @@ jobs:
           files: |
             ./updates/*.dmg
             ./appcast.xml
+            ./appcast-arm64.xml
+            ./appcast-x86_64.xml
       # =================================================================================================
       # 上传 DMG 到 Cloudflare R2
       # =================================================================================================
       - name: Upload DMG to Cloudflare R2
         if: success()
         env:
-          WEBHOOK_SECRET: ${{ secrets.LUMI_WEBHOOK_SECRET }}
+          WEBHOOK_SECRET: ${{ secrets.COFFIC_APP_UPLOAD_KEY }}
           API_URL: https://data.kuaiyizhi.cn
         run: |
           set -euo pipefail
-          
-          DMG_FILE=$(ls ./updates/*.dmg 2>/dev/null | head -n 1)
-          if [ -z "$DMG_FILE" ]; then
-            echo "⚠️  No DMG file found to upload"
-            exit 0
-          fi
-          
-          DMG_FILENAME=$(basename "$DMG_FILE")
-          R2_KEY="gitok/${DMG_FILENAME}"
-          
-          echo "📤 Uploading DMG to R2: $R2_KEY"
-          
-          RESPONSE=$(curl -s -X POST "${API_URL}/lumi/upload" \
-            -H "X-Webhook-Secret: ${WEBHOOK_SECRET}" \
-            -F "file=@${DMG_FILE}" \
-            -F "key=${R2_KEY}")
-          
-          echo "Response: $RESPONSE"
-          
-          if echo "$RESPONSE" | grep -q '"success":true'; then
-            R2_DMG_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
-            echo "✅ DMG uploaded: $R2_DMG_URL"
-          else
-            echo "❌ Failed to upload DMG to R2"
-            exit 1
-          fi
+
+          for DMG_FILE in ./updates/*.dmg; do
+            if [ ! -f "$DMG_FILE" ]; then
+              echo "⚠️  No DMG file found to upload"
+              continue
+            fi
+
+            DMG_FILENAME=$(basename "$DMG_FILE")
+            R2_KEY="gitok/${DMG_FILENAME}"
+
+            echo "📤 Uploading DMG to R2: $R2_KEY"
+
+            RESPONSE=$(curl -s -X POST "${API_URL}/lumi/upload" \
+              -H "X-Webhook-Secret: ${WEBHOOK_SECRET}" \
+              -F "file=@${DMG_FILE}" \
+              -F "key=${R2_KEY}")
+
+            echo "Response: $RESPONSE"
+
+            if echo "$RESPONSE" | grep -q '"success":true'; then
+              R2_DMG_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
+              echo "✅ DMG uploaded: $R2_DMG_URL"
+            else
+              echo "❌ Failed to upload DMG to R2"
+              exit 1
+            fi
+          done
 
       - name: 推送到仓库 (pro)
         if: env.IS_PRERELEASE == 'false'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "👷 CI: update appcast.yml"
+          commit_message: "👷 CI: update appcasts"
           commit_user_name: GitHub Action
-          file_pattern: "appcast.xml"
+          file_pattern: |
+            appcast.xml
+            appcast-arm64.xml
+            appcast-x86_64.xml

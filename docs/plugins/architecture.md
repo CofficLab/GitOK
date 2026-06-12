@@ -1,309 +1,78 @@
-# GitOK 插件系统架构图
+# GitOK 插件系统架构
+
+> 状态：SPM 显式注册（`GeneratedPluginRegistry` + `GitOKPluginRuntime`）  
+> App 壳：`GitOKApp/` — 详见 [gitok-app-shell.md](../architecture/gitok-app-shell.md)
 
 ## 系统概览
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
-│                         GitOK Application                            │
-│                                                                      │
-│  ┌──────────────────────────────────────────────────────────────┐   │
-│  │                     ContentView                               │   │
-│  │  ┌────────────────────────────────────────────────────────┐  │   │
-│  │  │                  Toolbar                                │  │   │
-│  │  │  [ProjectPicker] [Git|Files|...] [Branch] [Actions]    │  │   │
-│  │  └────────────────────────────────────────────────────────┘  │   │
-│  │  ┌──────────────┬───────────────────────────────────────────┐  │   │
-│  │  │              │                                           │  │   │
-│  │  │   Sidebar    │            Detail View                    │  │   │
-│  │  │              │                                           │  │   │
-│  │  │ ┌──────────┐ │  ┌─────────────────────────────────────┐ │  │   │
-│  │  │ │CommitList│ │  │                                     │ │  │   │
-│  │  │ │          │ │  │         GitDetail                    │ │  │   │
-│  │  │ │ Commit 1 │ │  │         CommitForm                   │ │  │   │
-│  │  │ │ Commit 2 │ │  │         FileList                     │ │  │   │
-│  │  │ │ Commit 3 │ │  │         FileDetail                   │ │  │   │
-│  │  │ └──────────┘ │  └─────────────────────────────────────┘ │  │   │
-│  │  │              │                                           │  │   │
-│  │  └──────────────┴───────────────────────────────────────────┘  │   │
-│  │  ┌────────────────────────────────────────────────────────┐  │   │
-│  │  │                  StatusBar                              │  │   │
-│  │  │  [Branch: main] [3 files changed] [↑2 ↓1]             │  │   │
-│  │  └────────────────────────────────────────────────────────┘  │   │
-│  └──────────────────────────────────────────────────────────────┘   │
-│                                                                      │
+│                         GitOKApp (thin shell)                        │
+│  RootContainer → PluginService → ContentView (NavigationSplitView)   │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              GitOKPluginRegistry / GeneratedPluginRegistry           │
+│              显式 import 各 Plugins/* SPM 包                          │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  Plugins/*Plugin  →  static GitOKPlugin enum  →  GitOKPluginRuntime   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ## 插件注册流程
 
 ```text
-┌─────────────┐
-│ App Launch  │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────────────────────────────────────────┐
-│              PluginProvider.autoRegisterPlugins()           │
-│                                                              │
-│  通过 Objective-C Runtime 扫描所有类                         │
-│  查找符合 PluginRegistrant 协议的类                          │
-└──────┬──────────────────────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    每个插件的 register()                     │
-└──────┬──────────────────────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────────────────────┐
-│              PluginRegistry.register()                       │
-│                                                              │
-│  存储：FactoryItem {                                         │
-│    id: String                                                │
-│    order: Int                                                │
-│    factory: () -> SuperPlugin                                │
-│  }                                                           │
-└──────┬──────────────────────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────────────────────┐
-│              PluginRegistry.buildAll()                       │
-│                                                              │
-│  1. 按 order 排序                                            │
-│  2. 调用每个 factory()                                       │
-│  3. 返回 [SuperPlugin] 数组                                  │
-└──────┬──────────────────────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────────────────────┐
-│              PluginProvider 存储插件                         │
-│                                                              │
-│  @Published var plugins: [SuperPlugin]                       │
-│  var tabPlugins: [SuperPlugin] { 筛选 isTab == true }       │
-└─────────────────────────────────────────────────────────────┘
+App Launch
+    │
+    ▼
+RootContainer.shared
+    │
+    ├─► GitOKPluginBootstrap.configureRuntimes(projectService:)
+    │
+    ▼
+PluginService.init()
+    │
+    ▼
+GeneratedPluginRegistry.registerAll(into: runtime)
+    │
+    ▼
+GitOKPluginRuntime.register(any GitOKPlugin.Type)
+    │
+    ▼
+ContentView queries PluginService for toolbar / list / detail / statusbar
 ```
 
-## 插件视图贡献
+**注意：** 不再使用 Objective-C Runtime 自动扫描。所有插件必须在 `GeneratedPluginRegistry` 中显式注册。
 
-```text
-┌──────────────────────────────────────────────────────────────┐
-│                     SuperPlugin Protocol                     │
-│                                                              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  视图方法                                            │    │
-│  ├─────────────────────────────────────────────────────┤    │
-│  │  addListView(tab, project) -> AnyView?              │    │
-│  │  addDetailView() -> AnyView?                         │    │
-│  │  addToolBarLeadingView() -> AnyView?                 │    │
-│  │  addToolBarTrailingView() -> AnyView?                │    │
-│  │  addStatusBarLeadingView() -> AnyView?               │    │
-│  │  addStatusBarCenterView() -> AnyView?                │    │
-│  │  addStatusBarTrailingView() -> AnyView?              │    │
-│  └─────────────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              │ 实现
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│                    具体插件实现                               │
-│                                                              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  GitPlugin (order: 0, isTab: true)                  │    │
-│  │  ├─ addDetailView() → GitDetail                     │    │
-│  │  └─ addStatusBarLeadingView() → BranchStatus        │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  CommitPlugin (order: 23)                            │    │
-│  │  └─ addListView() → CommitList (仅 Git tab)         │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  BranchPlugin (order: 22)                            │    │
-│  │  └─ addToolBarTrailingView() → BranchPicker         │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  ProjectPickerPlugin (order: 24)                     │    │
-│  │  └─ addToolBarLeadingView() → ProjectPicker         │    │
-│  └─────────────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────────────┘
-```
+## 插件协议
 
-## UI 区域映射
+- **`GitOKPlugin`** — 静态 enum 协议（`metadata`、`toolbarTrailingItems` 等）
+- **`GitOKPluginContext`** — 向插件视图注入运行时快照、回调与 `resolve()` DI
+- **`GitOKPluginDependencies`** — 注册 `GitOKProjectServicing`、`GitOKNavigationServicing` 等 App 服务
 
-```text
-┌────────────────────────────────────────────────────────────────┐
-│                        Toolbar                                 │
-│  ┌──────────────────┐  ┌──────────────┐  ┌─────────────────┐ │
-│  │  addToolBar      │  │    Tabs      │  │  addToolBar     │ │
-│  │  LeadingView     │  │    (isTab)   │  │  TrailingView   │ │
-│  │                  │  │              │  │                 │ │
-│  │  [ProjectPicker] │  │  [Git|Files] │  │  [BranchPicker] │ │
-│  └──────────────────┘  └──────────────┘  └─────────────────┘ │
-└────────────────────────────────────────────────────────────────┘
-        │                          │                   │
-        │                          │                   │
-        ▼                          ▼                   ▼
-┌────────────────────────────────────────────────────────────────┐
-│  ProjectPickerPlugin          GitPlugin               BranchPlugin│
-│  .addToolBarLeadingView()    (isTab: true)          .addToolBar  │
-│                              .addDetailView()       TrailingView()│
-└────────────────────────────────────────────────────────────────┘
+菜单导航与 Git 命令通过 `GitOKNavigationServicing` / `GitOKGitCommandServicing` 走 App 服务层。
 
-┌────────────────────────────────────────────────────────────────┐
-│                        Content Area                             │
-│  ┌─────────────────┐  ┌──────────────────────────────────────┐ │
-│  │   Sidebar       │  │         Detail View                   │ │
-│  │                 │  │                                      │ │
-│  │  addListView    │  │  addDetailView                       │ │
-│  │                 │  │                                      │ │
-│  │  [CommitList]   │  │  [GitDetail / CommitForm / ...]      │ │
-│  │                 │  │                                      │ │
-│  └─────────────────┘  └──────────────────────────────────────┘ │
-└────────────────────────────────────────────────────────────────┘
-        │                                │
-        ▼                                ▼
-┌──────────────────────┐    ┌──────────────────────────────────────┐
-│  CommitPlugin        │    │  GitPlugin                             │
-│  .addListView()      │    │  .addDetailView()                      │
-│  (仅 Git tab 显示)   │    │                                        │
-└──────────────────────┘    └──────────────────────────────────────┘
+## 贡献点
 
-┌────────────────────────────────────────────────────────────────┐
-│                        StatusBar                                │
-│  ┌──────────────────┐  ┌──────────────┐  ┌─────────────────┐ │
-│  │  addStatusBar    │  │  addStatus   │  │  addStatusBar   │ │
-│  │  LeadingView     │  │  BarCenter   │  │  TrailingView   │ │
-│  │                  │  │  View        │  │                 │ │
-│  │  [Branch info]   │  │  [Files: 3]  │  │  [Sync status]  │ │
-│  └──────────────────┘  └──────────────┘  └─────────────────┘ │
-└────────────────────────────────────────────────────────────────┘
-```
+| 贡献点 | 方法 | 挂载位置 |
+|--------|------|----------|
+| Tab | `tabItems(context:)` | ContentView 标签栏 |
+| List | `listPaneItems(context:tab:)` | NavigationSplitView 左栏 |
+| Detail | `detailPaneItems(context:tab:)` | NavigationSplitView 右栏 |
+| Sidebar | `sidebarPaneItems(context:)` | 侧边栏 |
+| Onboarding | `onboardingPaneItems(context:)` | Detail 空态 |
+| Settings | `settingsPaneItems(context:)` | 设置页 |
+| Toolbar | `toolbarLeadingItems` / `toolbarTrailingItems` | 工具栏 |
+| StatusBar | `statusBar*Items` | 底部状态栏 |
+| Theme | `themeContributions(context:)` | ThemeService |
+| Root | `rootOverlay(context:content:)` | RootView 包裹层 |
 
-## 事件通信系统
+## 依赖规则
 
-```text
-┌──────────────────────────────────────────────────────────────┐
-│                    NotificationCenter                          │
-│                                                              │
-│  ┌────────────────────────────────────────────────────┐     │
-│  │  系统事件                                           │     │
-│  ├────────────────────────────────────────────────────┤     │
-│  │  • appReady                                         │     │
-│  │  • appDidBecomeActive                               │     │
-│  │  • appWillBecomeActive                              │     │
-│  └────────────────────────────────────────────────────┘     │
-│                                                              │
-│  ┌────────────────────────────────────────────────────┐     │
-│  │  项目事件                                           │     │
-│  ├────────────────────────────────────────────────────┤     │
-│  │  • projectDidCommit                                 │     │
-│  │  • projectDidPush                                   │     │
-│  │  • projectDidPull                                   │     │
-│  │  • projectDidChangeBranch                           │     │
-│  │  • projectDidUpdateUserInfo                         │     │
-│  └────────────────────────────────────────────────────┘     │
-└──────────────────────────────────────────────────────────────┘
-                         │
-         ┌───────────────┼───────────────┐
-         │               │               │
-         ▼               ▼               ▼
-┌────────────────┐ ┌────────────┐ ┌──────────────┐
-│   Plugin A     │ │  Plugin B  │ │  Plugin C    │
-│                │ │            │ │              │
-│ .onReceive()   │ │ .onReceive()│ │ .onReceive() │
-└────────────────┘ └────────────┘ └──────────────┘
-```
-
-## 插件加载顺序
-
-```text
-Order: 0    →  GitPlugin          (核心功能)
-Order: 22   →  BranchPlugin       (分支管理)
-Order: 23   →  CommitPlugin       (提交历史)
-Order: 24   →  ProjectPickerPlugin (项目选择)
-Order: 50+  →  其他插件            (扩展功能)
-```
-
-## 条件渲染逻辑
-
-```text
-addListView(tab: String, project: Project?) -> AnyView?
-{
-    if tab != "Git" { return nil }           // 标签页检查
-    if project == nil { return nil }         // 项目存在检查
-    if !project.isGitRepo { return nil }     // Git 仓库检查
-    if !isPluginEnabled() { return nil }     // 插件启用检查
-
-    return AnyView(MyListView())             // 返回视图
-}
-```
-
-## 性能优化
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                     视图缓存机制                             │
-│                                                              │
-│  ContentView 缓存插件视图，避免重复创建                       │
-│                                                              │
-│  @State private var pluginListViews: [(plugin, view)]       │
-│                                                              │
-│  updateCachedViews() {                                       │
-│      pluginListViews = plugins.compactMap { plugin in        │
-│          guard let view = plugin.addListView(...) else       │
-│              return nil                                      │
-│          return (plugin, view)                               │
-│      }                                                       │
-│  }                                                           │
-│                                                              │
-│  触发时机：                                                  │
-│  • 项目切换 (onChange(of: data.project))                    │
-│  • 标签切换 (onChange(of: tab))                             │
-│  • 插件加载 (onChange(of: plugins.count))                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## 类型安全保证
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                   编译时类型检查                             │
-│                                                              │
-│  protocol SuperPlugin {                                      │
-│      static var label: String { get }                       │
-│      func addListView(...) -> AnyView?                      │
-│      ...                                                     │
-│  }                                                           │
-│                                                              │
-│  ✅ 编译器检查：                                             │
-│  • 所有必需属性是否实现                                      │
-│  • 方法签名是否正确                                          │
-│  • 返回类型是否匹配                                          │
-│                                                              │
-│  ❌ 编译错误示例：                                            │
-│  • 缺少 label 属性                                           │
-│  • addListView 返回类型错误                                  │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## 线程安全机制
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                    Actor 并发模型                            │
-│                                                              │
-│  actor PluginRegistry {                                      │
-│      private var factoryItems: [FactoryItem]                │
-│                                                              │
-│      func register(...)    // 自动序列化访问                 │
-│      func buildAll()       // 自动序列化访问                 │
-│  }                                                           │
-│                                                              │
-│  ✅ 线程安全：                                               │
-│  • 多个插件可同时注册                                        │
-│  • Actor 保证串行执行                                        │
-│  • 无需手动加锁                                              │
-└─────────────────────────────────────────────────────────────┘
-```
+- `Plugins/*` **不得** `import GitOKApp`
+- `GitOKCoreKit` **不得** import 任何 Feature Plugin
+- 唯一源码根：`Plugins/<Name>Plugin/`（`Packages/Plugin*` 镜像已废弃）

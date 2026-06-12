@@ -1,3 +1,0 @@
-import ProjectSupportKit
-
-typealias GitCommitSelectionStore = ProjectSupportKit.GitCommitSelectionStore

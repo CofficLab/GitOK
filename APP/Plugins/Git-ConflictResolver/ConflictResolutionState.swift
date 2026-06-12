@@ -1,3 +1,0 @@
-import ProjectSupportKit
-
-typealias ConflictResolutionState = ProjectSupportKit.ConflictResolutionState

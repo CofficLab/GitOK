@@ -207,11 +207,11 @@ protocol SuperPlugin {
     // 视图方法
     func addListView(tab: String, project: Project?) -> AnyView?
     func addDetailView() -> AnyView?
-    func addToolBarLeadingView() -> AnyView?
-    func addToolBarTrailingView() -> AnyView?
-    func addStatusBarLeadingView() -> AnyView?
-    func addStatusBarCenterView() -> AnyView?
-    func addStatusBarTrailingView() -> AnyView?
+    func addToolBarLeadingView(context: GitOKPluginContext) -> AnyView?
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView?
+    func addStatusBarLeadingView(context: GitOKPluginContext) -> AnyView?
+    func addStatusBarCenterView(context: GitOKPluginContext) -> AnyView?
+    func addStatusBarTrailingView(context: GitOKPluginContext) -> AnyView?
 }
 ```
 
@@ -224,11 +224,11 @@ extension SuperPlugin {
 
     func addListView(tab: String, project: Project?) -> AnyView? { nil }
     func addDetailView() -> AnyView? { nil }
-    func addToolBarLeadingView() -> AnyView? { nil }
-    func addToolBarTrailingView() -> AnyView? { nil }
-    func addStatusBarLeadingView() -> AnyView? { nil }
-    func addStatusBarCenterView() -> AnyView? { nil }
-    func addStatusBarTrailingView() -> AnyView? { nil }
+    func addToolBarLeadingView(context: GitOKPluginContext) -> AnyView? { nil }
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? { nil }
+    func addStatusBarLeadingView(context: GitOKPluginContext) -> AnyView? { nil }
+    func addStatusBarCenterView(context: GitOKPluginContext) -> AnyView? { nil }
+    func addStatusBarTrailingView(context: GitOKPluginContext) -> AnyView? { nil }
 }
 ```
 
@@ -318,7 +318,7 @@ func addDetailView() -> AnyView? {
 **前置视图 (Leading)：**
 
 ```swift
-func addToolBarLeadingView() -> AnyView? {
+func addToolBarLeadingView(context: GitOKPluginContext) -> AnyView? {
     AnyView(ProjectPickerView())
 }
 ```
@@ -326,7 +326,7 @@ func addToolBarLeadingView() -> AnyView? {
 **后置视图 (Trailing)：**
 
 ```swift
-func addToolBarTrailingView() -> AnyView? {
+func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
     AnyView(BranchPickerView())
 }
 ```
@@ -334,15 +334,15 @@ func addToolBarTrailingView() -> AnyView? {
 #### 4. 状态栏视图
 
 ```swift
-func addStatusBarLeadingView() -> AnyView? {
+func addStatusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
     // 显示当前分支
 }
 
-func addStatusBarCenterView() -> AnyView? {
+func addStatusBarCenterView(context: GitOKPluginContext) -> AnyView? {
     // 显示文件统计
 }
 
-func addStatusBarTrailingView() -> AnyView? {
+func addStatusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
     // 显示同步状态
 }
 ```
@@ -631,7 +631,7 @@ struct MyPlugin: SuperPlugin, SuperLog {
 
 ```swift
 import Foundation
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 
@@ -663,7 +663,7 @@ class TodoPlugin: SuperPlugin, PluginRegistrant, SuperLog {
         AnyView(TodoListView())
     }
 
-    func addToolBarTrailingView() -> AnyView? {
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(AddTodoButton())
     }
 }

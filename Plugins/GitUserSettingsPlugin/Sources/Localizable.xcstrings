@@ -1,0 +1,150 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Add New Preset" : {
+
+    },
+    "Delete Preset" : {
+
+    },
+    "Delete this preset" : {
+
+    },
+    "Done" : {
+
+    },
+    "Email" : {
+
+    },
+    "Enter email" : {
+
+    },
+    "Enter username" : {
+
+    },
+    "Existing Presets" : {
+
+    },
+    "Failed to delete preset: %@" : {
+
+    },
+    "Failed to save preset: %@" : {
+
+    },
+    "Open Settings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
+        }
+      }
+    },
+    "Preset Configs" : {
+
+    },
+    "Save failed: %@" : {
+
+    },
+    "Settings Button" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings Button"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置按钮"
+          }
+        }
+      }
+    },
+    "Show a settings button in the status bar." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show a settings button in the status bar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在状态栏显示设置按钮。"
+          }
+        }
+      }
+    },
+    "Unable to load current user info: %@" : {
+
+    },
+    "User Info" : {
+
+    },
+    "Username" : {
+
+    },
+    "用户名" : {
+
+    },
+    "这些设置仅适用于当前项目，不会影响全局Git配置" : {
+
+    },
+    "邮箱" : {
+
+    },
+    "配置当前项目的Git用户信息" : {
+
+    }
+  },
+  "version" : "1.0"
+}

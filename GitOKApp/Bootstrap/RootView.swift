@@ -1,0 +1,349 @@
+import GitOKAppCore
+import GitOKUI
+import MagicAlert
+import GitOKSupportKit
+import OSLog
+import GitOKCoreKit
+import ProjectKit
+import SwiftData
+import SwiftUI
+
+/// 根视图容器组件
+/// 为应用提供统一的上下文环境，包括数据提供者和插件提供者
+struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
+    /// 日志标识符
+    static var emoji: String { "🚉" }
+
+    /// 是否启用详细日志输出
+    static var verbose: Bool { false }
+
+    /// 视图内容
+    var content: Content
+
+    private let container = RootContainer.shared
+
+    /// 应用提供者
+    var appProvider: AppVM { container.appVM }
+
+    /// 插件提供者
+    var pluginProvider: PluginService { container.pluginService }
+
+    /// 主题提供者
+    @ObservedObject private var themeProvider: AppThemeVM
+
+    /// Git 数据提供者
+    var git: DataVM { container.dataVM }
+
+    /// 当前项目状态
+    @ObservedObject private var projectVM: ProjectVM
+
+    /// 全局阻塞操作状态
+    @ObservedObject private var blockingOperationCenter = BlockingOperationCenter.shared
+
+    /// 拖拽覆盖层是否可见
+    @State private var isDropTargeted = false
+
+    /// 新版本提示弹窗
+    @State private var showNewVersionAlert = false
+
+    init(@ViewBuilder content: () -> Content) {
+        let container = RootContainer.shared
+        self.content = content()
+        _themeProvider = ObservedObject(wrappedValue: container.themeVM)
+        _projectVM = ObservedObject(wrappedValue: container.projectVM)
+    }
+
+    var body: some View {
+        ZStack {
+            GeometryReader { proxy in
+                themeProvider.activeChromeTheme
+                    .makeGlobalBackground(proxy: proxy)
+                    .ignoresSafeArea()
+            }
+
+            hostedContent
+            .environmentObject(appProvider)
+            .environmentObject(pluginProvider)
+            .environmentObject(themeProvider)
+            .environmentObject(git)
+            .environmentObject(projectVM)
+
+            // 拖拽覆盖层
+            if isDropTargeted {
+                DropOverlayCard(
+                    title: "Release to Add Project",
+                    subtitle: "Drag a folder here to set it as the current project"
+                )
+                .transition(.opacity)
+            }
+
+            if let blockingOperation = blockingOperationCenter.state {
+                blockingOperationOverlay(blockingOperation)
+                    .transition(.opacity)
+                    .zIndex(10)
+            }
+        }
+        .tint(themeProvider.accentColor)
+        .preferredColorScheme(themeProvider.preferredColorScheme)
+        .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
+            handleDrop(providers: providers)
+            return true
+        }
+        .onAppear {
+            // 注册打开项目的回调（单例桥梁模式，确保时序可靠）
+            OpenProjectHandler.shared.onOpenProject = { [self] path in
+                self.handleOpenProject(path: path)
+            }
+        }
+        .onChange(of: AppVersionChecker.shared.isFirstLaunchOfNewVersion) { _, isFirstLaunch in
+            if isFirstLaunch {
+                showNewVersionAlert = true
+            }
+        }
+        .sheet(isPresented: $showNewVersionAlert) {
+            NewVersionReleaseNotesView()
+        }
+    }
+
+    @ViewBuilder
+    private var hostedContent: some View {
+        if container.pluginService.hasPlugins {
+            container.pluginService.rootViewWrapper(context: pluginRootContext) {
+                baseContent
+            }
+        } else {
+            baseContent
+        }
+    }
+
+    private var baseContent: some View {
+        content
+            .withMagicToast()
+            .navigationTitle("")
+    }
+
+    private func blockingOperationOverlay(_ state: BlockingOperationCenter.State) -> some View {
+        ZStack {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .overlay(Color.black.opacity(0.18))
+                .ignoresSafeArea()
+
+            AppCard(style: .elevated, cornerRadius: 8, padding: EdgeInsets(top: 22, leading: 24, bottom: 22, trailing: 24)) {
+                VStack(spacing: 14) {
+                    ProgressView()
+                        .controlSize(.large)
+
+                    VStack(spacing: 6) {
+                        Text(state.title)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        Text(state.message)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+
+                        if let detail = state.detail {
+                            Text(detail)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                }
+                .frame(width: 340)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {}
+    }
+
+    private var pluginRootContext: GitOKPluginContext {
+        let cleanStatusProjectPath = projectVM.project?.path
+        let projectService = container.gitOKProjectService
+
+        return container.pluginService.makeContext(
+            projectURL: projectService.projectURL,
+            projectPath: projectService.projectPath,
+            projectTitle: projectService.projectTitle,
+            branchName: projectService.branchName,
+            isGitRepository: projectService.isGitRepository,
+            selectedFilePath: projectService.selectedFilePath,
+            remoteTrackingStatus: projectService.remoteTrackingStatus,
+            onCleanStatusUpdate: { isClean in
+                projectVM.updateIsClean(isClean, projectPath: cleanStatusProjectPath)
+            },
+            onGitDirectoryChange: { change in
+                postGitDirectoryChange(change)
+            },
+            onUnpushedCommitsUpdate: { count, hashes in
+                projectVM.updateUnpushedCommits(count, hashes: hashes, projectPath: cleanStatusProjectPath)
+            },
+            onRemoteTrackingUpdate: { status, fetchedAt in
+                projectVM.updateRemoteTracking(status, fetchedAt: fetchedAt, projectPath: cleanStatusProjectPath)
+            }
+        )
+    }
+
+    // MARK: - Drop Handler
+
+    /// 处理拖拽释放事件
+    /// - Parameter providers: 拖拽的文件提供者列表
+    private func handleDrop(providers: [NSItemProvider]) {
+        for provider in providers {
+            guard provider.hasItemConformingToTypeIdentifier("public.folder") ||
+                  provider.hasItemConformingToTypeIdentifier("public.directory") ||
+                  provider.hasItemConformingToTypeIdentifier("public.file-url") else {
+                continue
+            }
+
+            provider.loadItem(forTypeIdentifier: "public.file-url", options: nil) { item, _ in
+                guard let data = item as? Data,
+                      let url = URL(dataRepresentation: data, relativeTo: nil) else {
+                    // 尝试作为 URL 对象处理
+                    if let url = item as? URL {
+                        DispatchQueue.main.async {
+                            self.handleOpenProject(path: url.path)
+                        }
+                    }
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    self.handleOpenProject(path: url.path)
+                }
+            }
+
+            // 只处理第一个有效的提供者
+            return
+        }
+    }
+
+    // MARK: - Open Project Handler
+
+    /// 处理打开项目请求
+    /// - 如果项目已存在于列表中，直接选中它
+    /// - 如果项目不存在，添加到列表并选中
+    /// - Parameter path: 项目路径
+    private func handleOpenProject(path: String) {
+        guard !path.isEmpty else { return }
+
+        Task {
+            let exists = await Task.detached(priority: .utility) {
+                FileManager.default.fileExists(atPath: path)
+            }.value
+
+            guard exists else {
+                os_log(.error, "\(Self.t) Open project path does not exist: \(path)")
+                return
+            }
+
+            openExistingOrNewProject(path: path)
+        }
+    }
+
+    private func openExistingOrNewProject(path: String) {
+        // 在已有项目中查找
+        if let existingProject = git.projects.first(where: { $0.path == path }) {
+            if Self.verbose {
+                os_log("\(Self.t)📂 Selecting existing project: \(path)")
+            }
+            withAnimation {
+                // 如果项目已在列表中，将其移到第一位并选中
+                if let index = git.projects.firstIndex(where: { $0.id == existingProject.id }) {
+                    git.projects.remove(at: index)
+                }
+                git.projects.insert(existingProject, at: 0)
+                projectVM.setProject(existingProject, reason: "OpenProject")
+            }
+        } else {
+            if Self.verbose {
+                os_log("\(Self.t)📂 Adding new project: \(path)")
+            }
+            // 添加新项目并选中
+            let url = URL(fileURLWithPath: path, isDirectory: true)
+            withAnimation {
+                if let addedProject = git.addProject(url: url, using: git.repoManager.projectRepo) {
+                    projectVM.setProject(addedProject, reason: "OpenProject")
+                }
+            }
+        }
+
+        // 显示侧边栏以确保项目列表可见
+        appProvider.showSidebar(reason: "OpenProject")
+    }
+
+    private func postGitDirectoryChange(_ change: GitOKGitDirectoryChange) {
+        guard let project = projectVM.project else { return }
+        guard project.url.standardizedFileURL == change.projectURL.standardizedFileURL else { return }
+
+        var additionalInfo: [String: Any] = [
+            "gitPath": change.gitDirectoryPath,
+            "changeKind": change.changeKind,
+            "headChanged": change.headChanged,
+            "indexChanged": change.indexChanged,
+            "stashChanged": change.stashChanged,
+            "refsChanged": change.refsChanged
+        ]
+
+        if let previousHead = change.previousHead {
+            additionalInfo["previousHead"] = previousHead
+        }
+
+        if let head = change.head {
+            additionalInfo["head"] = head
+        }
+
+        project.postEvent(
+            name: .projectGitDirectoryDidChange,
+            operation: "gitDirectoryChanged",
+            additionalInfo: additionalInfo
+        )
+
+        if change.headChanged {
+            project.postEvent(name: .projectGitHeadDidChange, operation: "gitHeadChanged", additionalInfo: additionalInfo)
+        }
+
+        if change.indexChanged {
+            project.postEvent(name: .projectGitIndexDidChange, operation: "gitIndexChanged", additionalInfo: additionalInfo)
+        }
+
+        if change.stashChanged {
+            project.postEvent(name: .projectGitStashDidChange, operation: "gitStashChanged", additionalInfo: additionalInfo)
+        }
+
+        if change.refsChanged {
+            project.postEvent(name: .projectGitRefsDidChange, operation: "gitRefsChanged", additionalInfo: additionalInfo)
+        }
+    }
+}
+
+extension View {
+    /// 将当前视图包裹在RootView中
+    /// - Returns: 被RootView包裹的视图
+    func inRootView() -> some View {
+        RootView {
+            self
+        }
+    }
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
+}

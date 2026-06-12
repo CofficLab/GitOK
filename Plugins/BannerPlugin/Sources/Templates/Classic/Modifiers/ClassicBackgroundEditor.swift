@@ -1,0 +1,84 @@
+import SwiftUI
+import MagicAlert
+import GitOKSupportKit
+import GitOKCoreKit
+import OSLog
+
+/**
+ 经典模板的背景编辑器
+ 专门为经典布局定制的背景设置组件
+ */
+struct ClassicBackgroundEditor: View {
+    @EnvironmentObject var b: BannerProvider
+
+
+    @State private var selectedBackgroundId: String = "1"
+
+    var body: some View {
+        GroupBox("背景设置") {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
+                        let gradient = MagicBackgroundGroup.all[index]
+                        BackgroundPreview(
+                            gradient: gradient,
+                            isSelected: selectedBackgroundId == gradient.rawValue,
+                            onSelect: {
+                                selectBackground(gradient.rawValue)
+                            }
+                        )
+                        .frame(width: 60, height: 40)
+                    }
+                }
+                .padding(8)
+            }
+        }
+        .onAppear {
+            loadCurrentBackground()
+        }
+        .onChange(of: b.banner.id) {
+            loadCurrentBackground()
+        }
+    }
+
+    private func loadCurrentBackground() {
+        if let classicData = b.banner.classicData {
+            selectedBackgroundId = classicData.backgroundId
+        }
+    }
+
+    private func selectBackground(_ backgroundId: String) {
+        selectedBackgroundId = backgroundId
+
+        do {
+            try b.updateBanner { banner in
+                var classicData = banner.classicData ?? ClassicBannerData()
+                classicData.backgroundId = backgroundId
+                banner.classicData = classicData
+            }
+        } catch {
+            os_log(.error, "❌ 更新背景失败: \(error.localizedDescription)")
+            alert_error("更新背景失败: \(error.localizedDescription)")
+        }
+    }
+}
+
+/**
+ 背景预览组件
+ */
+private struct BackgroundPreview: View {
+    let gradient: MagicBackgroundGroup.GradientName
+    let isSelected: Bool
+    let onSelect: () -> Void
+
+    var body: some View {
+        AppSelectionTile(
+            isSelected: isSelected,
+            cornerRadius: 6,
+            selectedScale: 1.1,
+            action: onSelect
+        ) {
+            MagicBackgroundGroup(for: gradient)
+        }
+    }
+}

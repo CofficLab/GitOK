@@ -3,8 +3,9 @@ import PackageDescription
 
 let package = Package(
     name: "GitOKAutomationKit",
+    defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(
@@ -14,11 +15,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GitOKAutomationKit"
+            name: "GitOKAutomationKit",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitOKAutomationKitTests",
-            dependencies: ["GitOKAutomationKit"]
+            dependencies: ["GitOKAutomationKit"],
+            path: "Tests"
         ),
     ]
 )

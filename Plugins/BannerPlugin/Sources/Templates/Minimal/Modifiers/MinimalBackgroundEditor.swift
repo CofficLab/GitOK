@@ -1,0 +1,74 @@
+import SwiftUI
+import GitOKSupportKit
+import GitOKCoreKit
+
+/**
+ 经典模板的背景编辑器
+ 专门为经典布局定制的背景设置组件
+ */
+struct MinimalBackgroundEditor: View {
+    @EnvironmentObject var b: BannerProvider
+
+
+    @State private var selectedBackgroundId: String = "1"
+
+    var body: some View {
+        GroupBox("背景设置") {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
+                        let gradient = MagicBackgroundGroup.all[index]
+                        BackgroundPreview(
+                            gradient: gradient,
+                            isSelected: selectedBackgroundId == gradient.rawValue,
+                            onSelect: {
+                                selectBackground(gradient.rawValue)
+                            }
+                        )
+                        .frame(width: 60, height: 40)
+                    }
+                }
+                .padding(8)
+            }
+        }
+        .onAppear {
+            loadCurrentBackground()
+        }
+    }
+
+    private func loadCurrentBackground() {
+        if let minimalData = b.banner.minimalData {
+            selectedBackgroundId = minimalData.backgroundId
+        }
+    }
+
+    private func selectBackground(_ backgroundId: String) {
+        selectedBackgroundId = backgroundId
+
+        try? b.updateBanner { banner in
+            var minimalData = banner.minimalData ?? MinimalBannerData()
+            minimalData.backgroundId = backgroundId
+            banner.minimalData = minimalData
+        }
+    }
+}
+
+/**
+ 背景预览组件
+ */
+private struct BackgroundPreview: View {
+    let gradient: MagicBackgroundGroup.GradientName
+    let isSelected: Bool
+    let onSelect: () -> Void
+
+    var body: some View {
+        AppSelectionTile(
+            isSelected: isSelected,
+            cornerRadius: 6,
+            selectedScale: 1.1,
+            action: onSelect
+        ) {
+            MagicBackgroundGroup(for: gradient)
+        }
+    }
+}

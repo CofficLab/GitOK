@@ -1,3 +1,0 @@
-import ProjectRulesKit
-
-typealias AvatarIdentityRules = ProjectRulesKit.AvatarIdentityRules

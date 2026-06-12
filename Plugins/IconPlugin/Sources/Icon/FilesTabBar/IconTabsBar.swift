@@ -1,0 +1,70 @@
+import SwiftUI
+import GitOKCoreKit
+import GitOKUI
+
+
+/**
+    图标标签栏视图
+    水平展示所有项目中的图标项，点击切换当前选中图标。
+**/
+struct IconTabsBar: View {
+    /// 图标数据源
+    /// - 用途: 提供需要展示的所有图标
+    /// - 类型: [IconData]
+    let icons: [IconData]
+
+    /// 当前选中的图标
+    /// - 用途: 反映外部当前选中图标并支持切换
+    /// - 类型: Binding<IconData?>
+    @Binding var selection: IconData?
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(icons) { icon in
+                        AppSelectionTile(
+                            isSelected: isSelected(icon),
+                            cornerRadius: 8,
+                            selectedBackgroundColor: Color.accentColor.opacity(0.15),
+                            selectedBorderColor: Color.accentColor,
+                            selectedBorderWidth: 1,
+                            idleBorderColor: Color.gray.opacity(0.3),
+                            idleBorderWidth: 0.5,
+                            action: { selection = icon }
+                        ) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 14, height: 14)
+                                    .padding(4)
+                                    .gitOKUISurface(style: .subtle, cornerRadius: 4)
+
+                                Text(icon.title)
+                                    .font(.callout)
+                                    .lineLimit(1)
+                            }
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 10)
+                        }
+                        .contextMenu {
+                            BtnDelIcon(icon: icon)
+                        }
+                    }
+                }
+                .padding(.horizontal, 8)
+            }
+            .frame(height: 40)
+
+            BtnCreate()
+                .frame(height: 32)
+                .frame(width: 32)
+                .padding(8)
+        }
+    }
+
+    private func isSelected(_ icon: IconData) -> Bool {
+        selection?.path == icon.path
+    }
+}

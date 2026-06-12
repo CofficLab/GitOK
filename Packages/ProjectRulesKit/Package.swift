@@ -3,8 +3,9 @@ import PackageDescription
 
 let package = Package(
     name: "ProjectRulesKit",
+    defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(
@@ -12,13 +13,21 @@ let package = Package(
             targets: ["ProjectRulesKit"]
         ),
     ],
+    dependencies: [
+        .package(path: "../GitCoreKit"),
+    ],
     targets: [
         .target(
-            name: "ProjectRulesKit"
+            name: "ProjectRulesKit",
+            dependencies: [
+                "GitCoreKit",
+            ],
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "ProjectRulesKitTests",
-            dependencies: ["ProjectRulesKit"]
+            dependencies: ["ProjectRulesKit"],
+            path: "Tests"
         ),
     ]
 )

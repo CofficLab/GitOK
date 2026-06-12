@@ -1,0 +1,859 @@
+import SwiftUI
+
+public enum FileListHostLogEvent {
+    case refreshSkipped(reason: String)
+    case refreshStarted(reason: String)
+    case commitChangedDuringRefresh
+    case refreshCancelled(reason: String)
+    case refreshFailure(message: String)
+    case fileOperationFailure(failureLogMessage: String, error: Error)
+}
+
+public enum FileListHostEvent {
+    case showInfoMessage(String)
+    case showError(Error)
+    case log(FileListHostLogEvent)
+}
+
+public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View where FileItem: Hashable & Sendable, StatusEntry: Sendable {
+    private let project: Project?
+    private let selectedCommit: Commit?
+    private let projectURL: (Project) -> URL?
+    private let projectPath: (Project) -> String
+    private let commitHash: (Commit) -> String
+    private let filePath: (FileItem) -> String
+    private let fileChangeType: (FileItem) -> String
+    private let statusPath: (StatusEntry) -> String
+    private let statusIndexStatus: (StatusEntry) -> Any
+    private let statusWorkTreeStatus: (StatusEntry) -> Any
+    private let scrollTarget: FileItem?
+    private let syncSelection: @MainActor (FileItem?) -> Void
+    private let loadCommitFiles: (Project, String) async throws -> [FileItem]
+    private let loadWorktreeFiles: (Project) async throws -> [FileItem]
+    private let loadStatusEntries: (Project) async throws -> [StatusEntry]
+    private let makeWorktreeFilesFromStatusEntries: (([StatusEntry]) -> [FileItem])?
+    private let addFiles: (Project, [String]) async throws -> Void
+    private let unstageFiles: (Project, [String]) async throws -> Void
+    private let discardFileChanges: (Project, String) async throws -> Void
+    private let discardAllChanges: (Project) async throws -> Void
+    private let mapRefreshError: @MainActor (Error) -> String
+    private let eventHandler: @MainActor (FileListHostEvent) -> Void
+    private let projectChangeToken: Int
+    private let commitChangeToken: Int
+    private let projectDidCommitToken: Int
+    private let projectDidAddFilesToken: Int
+    private let projectDidAddFilesPath: String?
+    private let gitDirectoryChangeToken: Int
+    private let gitDirectoryEventProjectPath: String?
+    private let appWillBecomeActiveToken: Int
+
+    @State private var files: [FileItem] = []
+    @State private var filePaths: [String] = []
+    @State private var filesByPath: [String: FileItem] = [:]
+    @State private var fileListChangeToken = 0
+    @State private var isLoading = true
+    @State private var selection: FileItem?
+    @State private var hoveredFile: FileItem?
+    @State private var stagedFilePaths: Set<String> = []
+    @State private var unstagedFilePaths: Set<String> = []
+    @State private var untrackedFilePaths: Set<String> = []
+    @State private var refreshTask: Task<Void, Never>?
+    @State private var refreshWorkerTask: Task<Void, Error>?
+    @State private var showDiscardFileAlert = false
+    @State private var fileToDiscard: FileItem?
+    @State private var showDiscardAllAlert = false
+    @State private var lastRefreshTime: Date = .distantPast
+    @State private var errorMessage: String?
+    @State private var filterText = ""
+    @State private var appliedFilterText = ""
+    @State private var filterTask: Task<Void, Never>?
+    @State private var selectedBatchFilePaths: Set<String> = []
+    @State private var showDiscardSelectedAlert = false
+    @State private var cachedPresentationState = FileListRules.presentationState(
+        allPaths: [],
+        filterText: "",
+        isHistoryMode: false,
+        stagedPaths: [],
+        unstagedPaths: [],
+        untrackedPaths: [],
+        selectedBatchPaths: []
+    )
+    @State private var cachedFilteredFiles: [FileItem] = []
+
+    public init(
+        project: Project?,
+        selectedCommit: Commit?,
+        projectURL: @escaping (Project) -> URL?,
+        projectPath: @escaping (Project) -> String,
+        commitHash: @escaping (Commit) -> String,
+        filePath: @escaping (FileItem) -> String,
+        fileChangeType: @escaping (FileItem) -> String,
+        statusPath: @escaping (StatusEntry) -> String,
+        statusIndexStatus: @escaping (StatusEntry) -> Any,
+        statusWorkTreeStatus: @escaping (StatusEntry) -> Any,
+        scrollTarget: FileItem?,
+        syncSelection: @MainActor @escaping (FileItem?) -> Void,
+        loadCommitFiles: @escaping (Project, String) async throws -> [FileItem],
+        loadWorktreeFiles: @escaping (Project) async throws -> [FileItem],
+        loadStatusEntries: @escaping (Project) async throws -> [StatusEntry],
+        makeWorktreeFilesFromStatusEntries: (([StatusEntry]) -> [FileItem])? = nil,
+        addFiles: @escaping (Project, [String]) async throws -> Void,
+        unstageFiles: @escaping (Project, [String]) async throws -> Void,
+        discardFileChanges: @escaping (Project, String) async throws -> Void,
+        discardAllChanges: @escaping (Project) async throws -> Void,
+        mapRefreshError: @MainActor @escaping (Error) -> String,
+        eventHandler: @MainActor @escaping (FileListHostEvent) -> Void = { _ in },
+        projectChangeToken: Int = 0,
+        commitChangeToken: Int = 0,
+        projectDidCommitToken: Int = 0,
+        projectDidAddFilesToken: Int = 0,
+        projectDidAddFilesPath: String? = nil,
+        gitDirectoryChangeToken: Int = 0,
+        gitDirectoryEventProjectPath: String? = nil,
+        appWillBecomeActiveToken: Int = 0
+    ) {
+        self.project = project
+        self.selectedCommit = selectedCommit
+        self.projectURL = projectURL
+        self.projectPath = projectPath
+        self.commitHash = commitHash
+        self.filePath = filePath
+        self.fileChangeType = fileChangeType
+        self.statusPath = statusPath
+        self.statusIndexStatus = statusIndexStatus
+        self.statusWorkTreeStatus = statusWorkTreeStatus
+        self.scrollTarget = scrollTarget
+        self.syncSelection = syncSelection
+        self.loadCommitFiles = loadCommitFiles
+        self.loadWorktreeFiles = loadWorktreeFiles
+        self.loadStatusEntries = loadStatusEntries
+        self.makeWorktreeFilesFromStatusEntries = makeWorktreeFilesFromStatusEntries
+        self.addFiles = addFiles
+        self.unstageFiles = unstageFiles
+        self.discardFileChanges = discardFileChanges
+        self.discardAllChanges = discardAllChanges
+        self.mapRefreshError = mapRefreshError
+        self.eventHandler = eventHandler
+        self.projectChangeToken = projectChangeToken
+        self.commitChangeToken = commitChangeToken
+        self.projectDidCommitToken = projectDidCommitToken
+        self.projectDidAddFilesToken = projectDidAddFilesToken
+        self.projectDidAddFilesPath = projectDidAddFilesPath
+        self.gitDirectoryChangeToken = gitDirectoryChangeToken
+        self.gitDirectoryEventProjectPath = gitDirectoryEventProjectPath
+        self.appWillBecomeActiveToken = appWillBecomeActiveToken
+    }
+
+    public var body: some View {
+        let presentationState = cachedPresentationState
+
+        FileListRootView(
+            filterText: $filterText,
+            showDiscardFileAlert: $showDiscardFileAlert,
+            showDiscardAllAlert: $showDiscardAllAlert,
+            showDiscardSelectedAlert: $showDiscardSelectedAlert,
+            fileCount: files.count,
+            isLoading: isLoading,
+            presentationState: presentationState,
+            errorMessage: errorMessage,
+            discardFileAlertMessage: discardFileAlertMessage,
+            onRetry: {
+                FileListRules.performRetryAfterError { reason in
+                    Task {
+                        await self.refresh(reason: reason)
+                    }
+                }
+            },
+            onDiscardAllPrompt: promptDiscardAll,
+            onCancelDiscardFile: cancelDiscardFile,
+            onDiscardFile: confirmDiscardFile,
+            onDiscardAll: discardAllChangesAction,
+            onDiscardSelected: discardSelectedChanges
+        ) {
+            fileListView(presentationState: presentationState)
+        }
+        .onAppear(perform: onAppear)
+        .onDisappear(perform: onDisappear)
+        .onChange(of: projectChangeToken) { onProjectChange() }
+        .onChange(of: commitChangeToken) { onCommitChange() }
+        .onChange(of: selection) { onSelectionChange() }
+        .onChange(of: filterText) { onFilterTextChange() }
+        .onChange(of: projectDidCommitToken) { onProjectDidCommit() }
+        .onChange(of: projectDidAddFilesToken) { onProjectDidAddFiles() }
+        .onChange(of: gitDirectoryChangeToken) { onGitDirectoryDidChange() }
+        .onChange(of: appWillBecomeActiveToken) { onAppWillBecomeActive() }
+    }
+}
+
+private extension FileListHostView {
+    func fileListView(presentationState: FileListRules.PresentationState) -> some View {
+        let itemLookup = filesByPath
+
+        return FileListContentView(
+            selection: $selection,
+            fileListChangeToken: fileListChangeToken,
+            sections: presentationState.sections,
+            presentationState: presentationState,
+            scrollTarget: scrollTarget,
+            filesInSection: { section in
+                FileListRules.items(from: itemLookup, matching: section.paths)
+            },
+            rowContent: fileRow,
+            onStageSelected: stageSelectedFiles,
+            onUnstageSelected: unstageSelectedFiles,
+            onDiscardSelected: promptDiscardSelected,
+            onSelectAll: selectFilteredFiles,
+            onClearSelection: clearBatchSelection
+        )
+    }
+
+    func fileRow(_ file: FileItem) -> some View {
+        let path = filePath(file)
+        let rowState = FileListRules.fileRowPresentationState(
+            path: path,
+            selectedCommit: selectedCommit,
+            selectedBatchPaths: selectedBatchFilePaths,
+            project: project,
+            projectURL: projectURL
+        )
+        let actionState = rowState.actionState
+
+        return FileListRowView(
+            file: file,
+            path: path,
+            changeType: fileChangeType(file),
+            projectURL: rowState.projectURL,
+            canEditWorkingTree: actionState.canEditWorkingTree,
+            stageState: stageState(for: file),
+            showsStageBadge: actionState.showsStageBadge,
+            isBatchSelected: actionState.isBatchSelected,
+            hoveredFile: $hoveredFile,
+            isSelected: selection == file,
+            onDiscardChanges: {
+                discardChanges(for: file)
+            },
+            onToggleBatchSelection: {
+                toggleBatchSelection(for: file)
+            },
+            onStage: {
+                stageFile(file)
+            },
+            onUnstage: {
+                unstageFile(file)
+            },
+            onSelect: {
+                selectFile(file)
+            },
+            onMoveCommand: moveSelection,
+            onDeleteCommand: {
+                FileListRules.performDiscardSelectionPrompt(
+                    selection: selection,
+                    isHistoryMode: isHistoryMode
+                ) { file in
+                    promptDiscardFile(file)
+                }
+            }
+        )
+    }
+
+    var filteredFiles: [FileItem] {
+        cachedFilteredFiles
+    }
+
+    var filePresentationState: FileListRules.PresentationState {
+        cachedPresentationState
+    }
+
+    var isHistoryMode: Bool {
+        FileListRules.isHistoryMode(selectedCommit: selectedCommit)
+    }
+
+    var fileSections: [FileListRules.FileSection] {
+        filePresentationState.sections
+    }
+
+    func files(for section: FileListRules.FileSection) -> [FileItem] {
+        FileListRules.items(from: filesByPath, matching: section.paths)
+    }
+
+    var batchActionState: FileListRules.BatchActionState {
+        filePresentationState.batchActionState
+    }
+
+    func rebuildPresentationCache() {
+        let nextPresentationState = FileListRules.presentationState(
+            allPaths: filePaths,
+            filterText: appliedFilterText,
+            isHistoryMode: isHistoryMode,
+            stagedPaths: stagedFilePaths,
+            unstagedPaths: unstagedFilePaths,
+            untrackedPaths: untrackedFilePaths,
+            selectedBatchPaths: selectedBatchFilePaths
+        )
+        cachedPresentationState = nextPresentationState
+        cachedFilteredFiles = FileListRules.items(from: filesByPath, matching: nextPresentationState.visiblePaths)
+    }
+
+    func presentationStateInBackground(filterText: String) async -> FileListRules.PresentationState {
+        let allPaths = filePaths
+        let historyMode = isHistoryMode
+        let stagedPaths = stagedFilePaths
+        let unstagedPaths = unstagedFilePaths
+        let untrackedPaths = untrackedFilePaths
+        let selectedBatchPaths = selectedBatchFilePaths
+
+        return await Task.detached(priority: .userInitiated) {
+            FileListRules.presentationState(
+                allPaths: allPaths,
+                filterText: filterText,
+                isHistoryMode: historyMode,
+                stagedPaths: stagedPaths,
+                unstagedPaths: unstagedPaths,
+                untrackedPaths: untrackedPaths,
+                selectedBatchPaths: selectedBatchPaths
+            )
+        }.value
+    }
+
+    var discardFileAlertMessage: String {
+        FileListRules.discardFileAlertMessage(
+            file: fileToDiscard,
+            path: filePath,
+            untrackedPaths: untrackedFilePaths
+        )
+    }
+
+    func applyRefreshLifecycleState(_ state: FileListRules.RefreshLifecycleState) {
+        FileListRules.performRefreshLifecycleState(
+            state,
+            setLoading: { isLoading = $0 },
+            setErrorMessage: { errorMessage = $0 }
+        )
+    }
+
+    func applyOperationSuccessState(_ state: FileListRules.OperationSuccessState) {
+        FileListRules.performOperationSuccessState(
+            state,
+            selectedBatchPaths: selectedBatchFilePaths,
+            showMessage: { eventHandler(.showInfoMessage($0)) },
+            setSelectedBatchPaths: { selectedBatchFilePaths = $0 }
+        )
+        rebuildPresentationCache()
+    }
+
+    func toggleBatchSelection(for file: FileItem) {
+        FileListRules.performBatchSelectionToggle(
+            currentSelection: selectedBatchFilePaths,
+            path: filePath(file),
+            setSelectedBatchPaths: { selectedBatchFilePaths = $0 }
+        )
+        rebuildPresentationCache()
+    }
+
+    func selectFilteredFiles() {
+        FileListRules.performBatchSelectionSelectAll(
+            currentSelection: selectedBatchFilePaths,
+            presentationState: filePresentationState,
+            setSelectedBatchPaths: { selectedBatchFilePaths = $0 }
+        )
+        rebuildPresentationCache()
+    }
+
+    func clearBatchSelection() {
+        FileListRules.performBatchSelectionClear {
+            selectedBatchFilePaths = $0
+        }
+        rebuildPresentationCache()
+    }
+
+    func selectFile(_ file: FileItem?) {
+        FileListRules.performFileSelection(
+            file,
+            setSelection: { selection = $0 },
+            syncSelection: syncSelection
+        )
+    }
+
+    func promptDiscardFile(_ file: FileItem) {
+        FileListRules.performDiscardFilePrompt(
+            file,
+            setFileToDiscard: { fileToDiscard = $0 },
+            setPresented: { showDiscardFileAlert = $0 }
+        )
+    }
+
+    func cancelDiscardFile() {
+        FileListRules.performDiscardFilePromptCancellation {
+            fileToDiscard = $0
+        }
+    }
+
+    func confirmDiscardFile() {
+        FileListRules.performConfirmedDiscardFile(
+            fileToDiscard,
+            discard: discardChanges(for:),
+            clearFileToDiscard: { fileToDiscard = $0 }
+        )
+    }
+
+    func promptDiscardAll() {
+        FileListRules.performDiscardAllPrompt(
+            presentationState: filePresentationState,
+            setPresented: { showDiscardAllAlert = $0 }
+        )
+    }
+
+    func promptDiscardSelected() {
+        FileListRules.performDiscardSelectedPrompt(
+            presentationState: filePresentationState,
+            setPresented: { showDiscardSelectedAlert = $0 }
+        )
+    }
+
+    func moveSelection(_ direction: MoveCommandDirection) {
+        FileListRules.performMoveSelection(
+            currentPath: selection.map(filePath),
+            presentationState: filePresentationState,
+            isMovingUp: direction == .up,
+            isMovingDown: direction == .down,
+            in: filteredFiles,
+            path: filePath,
+            select: { nextFile in
+                selectFile(nextFile)
+            }
+        )
+    }
+
+    func stageState(for file: FileItem) -> FileStageState {
+        FileListRules.stageState(
+            path: filePath(file),
+            stagedPaths: stagedFilePaths,
+            unstagedPaths: unstagedFilePaths
+        )
+    }
+}
+
+private extension FileListHostView {
+    func stageFile(_ file: FileItem) {
+        performProjectFileOperation(.stageFile(path: filePath(file)))
+    }
+
+    func stageSelectedFiles() {
+        performProjectFileOperation(.stageSelected(batchActionState))
+    }
+
+    func unstageFile(_ file: FileItem) {
+        performProjectFileOperation(.unstageFile(path: filePath(file)))
+    }
+
+    func unstageSelectedFiles() {
+        performProjectFileOperation(.unstageSelected(batchActionState))
+    }
+
+    func discardChanges(for file: FileItem) {
+        performProjectFileOperation(.discardFile(path: filePath(file)))
+    }
+
+    func discardAllChangesAction() {
+        performProjectFileOperation(.discardAll)
+    }
+
+    func discardSelectedChanges() {
+        performProjectFileOperation(.discardSelected(batchActionState))
+    }
+
+    func performProjectFileOperation(_ action: FileListRules.FileOperationAction) {
+        FileListRules.performRequiredProjectFileOperationCommand(
+            project: project,
+            action: action,
+            perform: performFileOperation
+        )
+    }
+
+    func performFileOperation(_ projectCommand: FileListRules.ProjectFileOperationCommand<Project>) {
+        let commandTransfer = UnsafeTransfer(value: projectCommand.command)
+        let projectTransfer = UnsafeTransfer(value: projectCommand.project)
+        let addFilesTransfer = UnsafeTransfer(value: addFiles)
+        let unstageFilesTransfer = UnsafeTransfer(value: unstageFiles)
+        let discardFileChangesTransfer = UnsafeTransfer(value: discardFileChanges)
+        let discardAllChangesTransfer = UnsafeTransfer(value: discardAllChanges)
+        let eventHandlerTransfer = UnsafeTransfer(value: eventHandler)
+
+        Task.detached(priority: .userInitiated) {
+            let command = commandTransfer.value
+            let project = projectTransfer.value
+
+            do {
+                let successState: FileListRules.OperationSuccessState?
+                switch command.kind {
+                case .stage:
+                    guard command.request.canPerform else { return }
+                    try await addFilesTransfer.value(project, command.request.paths)
+                    successState = command.request.paths.count == 1 && command.request.primaryPath != nil
+                        ? FileListRules.stageFileSuccessState(path: command.request.primaryPath ?? "")
+                        : FileListRules.stageSelectedFilesSuccessState(paths: command.request.paths)
+                case .unstage:
+                    guard command.request.canPerform else { return }
+                    try await unstageFilesTransfer.value(project, command.request.paths)
+                    successState = command.request.paths.count == 1 && command.request.primaryPath != nil
+                        ? FileListRules.unstageFileSuccessState(path: command.request.primaryPath ?? "")
+                        : FileListRules.unstageSelectedFilesSuccessState(paths: command.request.paths)
+                case .discardFile:
+                    guard let path = command.request.primaryPath else { return }
+                    try await discardFileChangesTransfer.value(project, path)
+                    successState = FileListRules.discardFileChangesSuccessState(path: path)
+                case .discardAll:
+                    try await discardAllChangesTransfer.value(project)
+                    successState = FileListRules.discardAllChangesSuccessState()
+                case .discardSelected:
+                    guard command.request.canPerform else { return }
+                    for path in command.request.paths {
+                        try await discardFileChangesTransfer.value(project, path)
+                    }
+                    successState = FileListRules.discardSelectedChangesSuccessState(paths: command.request.paths)
+                }
+
+                guard let successState else { return }
+                await MainActor.run {
+                    applyOperationSuccessState(successState)
+                    Task {
+                        await refresh(reason: successState.refreshReason)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    eventHandlerTransfer.value(.log(.fileOperationFailure(
+                        failureLogMessage: command.failureLogMessage,
+                        error: error
+                    )))
+                    eventHandlerTransfer.value(.showError(error))
+                }
+            }
+        }
+    }
+}
+
+private extension FileListHostView {
+    struct RefreshApplicationResult: Sendable {
+        let items: [FileItem]
+        let filePaths: [String]
+        let filesByPath: [String: FileItem]
+        let refreshState: FileListRules.RefreshState
+        let refreshedSelection: FileItem?
+        let presentationState: FileListRules.PresentationState
+        let filteredFiles: [FileItem]
+    }
+
+    struct UnsafeTransfer<Value>: @unchecked Sendable {
+        let value: Value
+    }
+
+    func refresh(reason: String) async {
+        let requestState = FileListRules.refreshRequestState(lastRefreshTime: lastRefreshTime)
+        let didStartRefresh = FileListRules.performRefreshRequestState(
+            requestState,
+            logSkipped: {
+                eventHandler(.log(.refreshSkipped(reason: reason)))
+            },
+            setLastRefreshTime: { lastRefreshTime = $0 },
+            cancelPreviousRefreshes: {
+                refreshTask?.cancel()
+                refreshWorkerTask?.cancel()
+            },
+            startRefresh: {
+                refreshTask = Task {
+                    await performRefresh(reason: reason)
+                }
+            }
+        )
+
+        if didStartRefresh {
+            await refreshTask?.value
+        }
+    }
+
+    func performRefresh(reason: String) async {
+        applyRefreshLifecycleState(FileListRules.refreshStartState())
+
+        guard let project else {
+            applyRefreshLifecycleState(FileListRules.refreshStoppedState())
+            return
+        }
+
+        await performRefresh(FileListRules.ProjectRefreshCommand(
+            request: .init(reason: reason),
+            project: project
+        ))
+    }
+
+    func performRefresh(_ command: FileListRules.ProjectRefreshCommand<Project>) async {
+        let expectedCommitHash = selectedCommit.map(commitHash)
+        let projectTransfer = UnsafeTransfer(value: command.project)
+        let loadCommitFilesTransfer = UnsafeTransfer(value: loadCommitFiles)
+        let loadWorktreeFilesTransfer = UnsafeTransfer(value: loadWorktreeFiles)
+        let loadStatusEntriesTransfer = UnsafeTransfer(value: loadStatusEntries)
+        let makeWorktreeFilesFromStatusEntriesTransfer = UnsafeTransfer(value: makeWorktreeFilesFromStatusEntries)
+        let reason = command.request.reason
+
+        do {
+            let worker = Task.detached(priority: .userInitiated) {
+                await MainActor.run {
+                    eventHandler(.log(.refreshStarted(reason: reason)))
+                }
+                try Task.checkCancellation()
+
+                let loadedFiles: [FileItem]
+                let statusEntries: [StatusEntry]
+                if let expectedCommitHash {
+                    loadedFiles = try await loadCommitFilesTransfer.value(projectTransfer.value, expectedCommitHash)
+                    statusEntries = []
+                } else {
+                    statusEntries = try await loadStatusEntriesTransfer.value(projectTransfer.value)
+                    if let makeWorktreeFiles = makeWorktreeFilesFromStatusEntriesTransfer.value {
+                        loadedFiles = makeWorktreeFiles(statusEntries)
+                    } else {
+                        loadedFiles = try await loadWorktreeFilesTransfer.value(projectTransfer.value)
+                    }
+                }
+
+                try Task.checkCancellation()
+                let latestState = await MainActor.run {
+                    (
+                        commitHash: selectedCommit.map(commitHash),
+                        preferredPath: selection.map(filePath) ?? scrollTarget.map(filePath),
+                        selectedBatchPaths: selectedBatchFilePaths,
+                        filterText: appliedFilterText,
+                        historyMode: isHistoryMode
+                    )
+                }
+                let applicationResult = await refreshApplicationResultInBackground(
+                    expectedCommitHash: expectedCommitHash,
+                    currentCommitHash: latestState.commitHash,
+                    preferredPath: latestState.preferredPath,
+                    loadedFiles: loadedFiles,
+                    statusEntries: statusEntries,
+                    selectedBatchPaths: latestState.selectedBatchPaths,
+                    filterText: latestState.filterText,
+                    historyMode: latestState.historyMode
+                )
+
+                guard let applicationResult else {
+                    await MainActor.run {
+                        eventHandler(.log(.commitChangedDuringRefresh))
+                    }
+                    return
+                }
+
+                await MainActor.run {
+                    applyRefreshApplicationResult(applicationResult)
+                }
+            }
+
+            refreshWorkerTask = worker
+            try await worker.value
+        } catch is CancellationError {
+            applyRefreshLifecycleState(FileListRules.refreshStoppedState())
+            eventHandler(.log(.refreshCancelled(reason: command.request.reason)))
+        } catch {
+            let message = mapRefreshError(error)
+            applyRefreshLifecycleState(FileListRules.refreshFailedState(errorMessage: message))
+            eventHandler(.log(.refreshFailure(message: message)))
+        }
+    }
+
+    func refreshApplicationResultInBackground(
+        expectedCommitHash: String?,
+        currentCommitHash: String?,
+        preferredPath: String?,
+        loadedFiles: [FileItem],
+        statusEntries: [StatusEntry],
+        selectedBatchPaths: Set<String>,
+        filterText: String,
+        historyMode: Bool
+    ) async -> RefreshApplicationResult? {
+        let loadedFilesTransfer = UnsafeTransfer(value: loadedFiles)
+        let statusEntriesTransfer = UnsafeTransfer(value: statusEntries)
+        let itemPathTransfer = UnsafeTransfer(value: filePath)
+        let statusPathTransfer = UnsafeTransfer(value: statusPath)
+        let indexStatusTransfer = UnsafeTransfer(value: statusIndexStatus)
+        let workTreeStatusTransfer = UnsafeTransfer(value: statusWorkTreeStatus)
+
+        return await Task.detached(priority: .userInitiated) {
+            let loadedFiles = loadedFilesTransfer.value
+            let statusEntries = statusEntriesTransfer.value
+            let itemPath = itemPathTransfer.value
+            let statusPath = statusPathTransfer.value
+            let indexStatus = indexStatusTransfer.value
+            let workTreeStatus = workTreeStatusTransfer.value
+
+            let applicationState = FileListRules.refreshResultApplicationState(
+                expectedCommitHash: expectedCommitHash,
+                currentCommitHash: currentCommitHash,
+                preferredPath: preferredPath,
+                newItems: loadedFiles,
+                itemPath: itemPath,
+                statusEntries: statusEntries,
+                statusPath: statusPath,
+                indexStatus: indexStatus,
+                workTreeStatus: workTreeStatus,
+                selectedBatchPaths: selectedBatchPaths
+            )
+
+            guard applicationState.shouldApply,
+                  let refreshState = applicationState.refreshState else {
+                return nil
+            }
+
+            let filePaths = loadedFiles.map(itemPath)
+            let filesByPath = FileListRules.itemLookup(from: loadedFiles, path: itemPath)
+            let presentationState = FileListRules.presentationState(
+                allPaths: filePaths,
+                filterText: filterText,
+                isHistoryMode: historyMode,
+                stagedPaths: refreshState.stagedPaths,
+                unstagedPaths: refreshState.unstagedPaths,
+                untrackedPaths: refreshState.untrackedPaths,
+                selectedBatchPaths: refreshState.selectedBatchPaths
+            )
+
+            return RefreshApplicationResult(
+                items: loadedFiles,
+                filePaths: filePaths,
+                filesByPath: filesByPath,
+                refreshState: refreshState,
+                refreshedSelection: FileListRules.selectedItem(from: refreshState, in: loadedFiles, path: itemPath),
+                presentationState: presentationState,
+                filteredFiles: FileListRules.items(from: filesByPath, matching: presentationState.visiblePaths)
+            )
+        }.value
+    }
+
+    func applyRefreshApplicationResult(_ result: RefreshApplicationResult) {
+        files = result.items
+        fileListChangeToken += 1
+        filePaths = result.filePaths
+        filesByPath = result.filesByPath
+        stagedFilePaths = result.refreshState.stagedPaths
+        unstagedFilePaths = result.refreshState.unstagedPaths
+        untrackedFilePaths = result.refreshState.untrackedPaths
+        selectedBatchFilePaths = result.refreshState.selectedBatchPaths
+        selection = result.refreshedSelection
+        syncSelection(result.refreshedSelection)
+        applyRefreshLifecycleState(FileListRules.refreshStoppedState())
+        cachedPresentationState = result.presentationState
+        cachedFilteredFiles = result.filteredFiles
+    }
+}
+
+private extension FileListHostView {
+    func performRefreshAction(_ action: FileListRules.RefreshEventAction) {
+        FileListRules.performRefreshAction(
+            action,
+            refresh: { reason in
+                Task {
+                    await self.refresh(reason: reason)
+                }
+            },
+            refreshImmediately: { reason in
+                Task {
+                    await self.performRefresh(reason: reason)
+                }
+            }
+        )
+    }
+
+    func onAppear() {
+        FileListRules.performAppear(performRefreshAction: performRefreshAction)
+    }
+
+    func onDisappear() {
+        filterTask?.cancel()
+        refreshTask?.cancel()
+        refreshWorkerTask?.cancel()
+        clearLoadedState()
+    }
+
+    func clearLoadedState() {
+        files.removeAll()
+        fileListChangeToken += 1
+        filePaths.removeAll()
+        filesByPath.removeAll()
+        selection = nil
+        hoveredFile = nil
+        stagedFilePaths.removeAll()
+        unstagedFilePaths.removeAll()
+        untrackedFilePaths.removeAll()
+        selectedBatchFilePaths.removeAll()
+        cachedPresentationState = FileListRules.presentationState(
+            allPaths: [],
+            filterText: "",
+            isHistoryMode: isHistoryMode,
+            stagedPaths: [],
+            unstagedPaths: [],
+            untrackedPaths: [],
+            selectedBatchPaths: []
+        )
+        cachedFilteredFiles.removeAll()
+    }
+
+    func onProjectChange() {
+        FileListRules.performProjectChange(performRefreshAction: performRefreshAction)
+    }
+
+    func onCommitChange() {
+        FileListRules.performCommitChange(performRefreshAction: performRefreshAction)
+    }
+
+    func onSelectionChange() {
+        FileListRules.performSelectionChange(selection, syncSelection: syncSelection)
+    }
+
+    func onFilterTextChange() {
+        filterTask?.cancel()
+        let nextFilterText = filterText
+
+        if nextFilterText.isEmpty {
+            appliedFilterText = ""
+            rebuildPresentationCache()
+            return
+        }
+
+        filterTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 200_000_000)
+            guard Task.isCancelled == false else { return }
+            let nextPresentationState = await presentationStateInBackground(filterText: nextFilterText)
+            guard Task.isCancelled == false else { return }
+            appliedFilterText = nextFilterText
+            cachedPresentationState = nextPresentationState
+            cachedFilteredFiles = FileListRules.items(from: filesByPath, matching: nextPresentationState.visiblePaths)
+        }
+    }
+
+    func onProjectDidCommit() {
+        FileListRules.performProjectDidCommit(performRefreshAction: performRefreshAction)
+    }
+
+    func onProjectDidAddFiles() {
+        guard let projectDidAddFilesPath else { return }
+        FileListRules.performProjectDidAddFiles(
+            eventProjectPath: projectDidAddFilesPath,
+            currentProject: project,
+            currentProjectPath: projectPath,
+            performRefreshAction: performRefreshAction
+        )
+    }
+
+    func onGitDirectoryDidChange() {
+        guard let gitDirectoryEventProjectPath else { return }
+        FileListRules.performGitDirectoryChanged(
+            eventProjectPath: gitDirectoryEventProjectPath,
+            currentProject: project,
+            currentProjectPath: projectPath,
+            performRefreshAction: performRefreshAction
+        )
+    }
+
+    func onAppWillBecomeActive() {
+        FileListRules.performAppWillBecomeActive(performRefreshAction: performRefreshAction)
+    }
+}

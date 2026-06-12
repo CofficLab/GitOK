@@ -1,0 +1,31 @@
+import XCTest
+import GitOKCoreKit
+@testable import ThemeOrchardPlugin
+
+final class OrchardThemePluginTests: XCTestCase {
+    func testPluginMetadataIsStable() {
+        let metadata = OrchardThemePlugin.metadata
+        XCTAssertEqual(metadata.id, "ThemeOrchardPlugin")
+        XCTAssertEqual(metadata.displayName, "Orchard Theme")
+        XCTAssertEqual(metadata.description, "Earthy amber dark theme")
+        XCTAssertEqual(metadata.iconName, "tray.full")
+        XCTAssertEqual(metadata.order, 128)
+        XCTAssertEqual(metadata.tableName, "Localizable")
+    }
+
+    @MainActor
+    func testThemeContributionIsAvailable() {
+        let contributions = OrchardThemePlugin.themeContributions(context: GitOKPluginContext())
+        XCTAssertEqual(contributions.count, 1)
+        XCTAssertEqual(contributions[0].id, "stash")
+        XCTAssertEqual(contributions[0].displayName, "Orchard")
+        XCTAssertEqual(contributions[0].compactName, "Orchard")
+        XCTAssertEqual(contributions[0].iconName, "tray.full")
+        XCTAssertEqual(contributions[0].editorThemeId, "stash")
+        XCTAssertEqual(contributions[0].sortKey.pluginOrder, 128)
+    }
+
+    func testLocalizationCatalogIsPackaged() {
+        XCTAssertNotNil(Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings"))
+    }
+}
