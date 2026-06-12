@@ -2,5 +2,15 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
         <title>GitOK</title>
+        <item>
+            <title>3.0.8</title>
+            <pubDate>Fri, 12 Jun 2026 12:28:07 +0000</pubDate>
+            <sparkle:version>368</sparkle:version>
+            <sparkle:shortVersionString>3.0.8</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[]]></description>
+            <sparkle:fullReleaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:fullReleaseNotesLink>
+            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/GitOK-x86_64-3_0_8.dmg" length="22865213" type="application/octet-stream" sparkle:edSignature="fjkZKey+plCPWFKVLuhqnBpO1MEUrHj7lUVGm12ahkpgGKnv9MbtYc9zFnFnsv60MPXgBWMsaUD92SJxtJLOAg=="/>
+        </item>
     </channel>
 </rss>
