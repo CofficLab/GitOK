@@ -841,7 +841,7 @@ public enum UpdateError: Error, LocalizedError {
 - [x] 实现 UpdateChecker 版本检查服务（支持多 URL fallback）
 - [x] 实现基础 UI（UpdateSettingsView、UpdateNotificationView）
 - [x] 服务端新增 `/gitok/version` API 端点
-- [ ] 单元测试：UpdateChecker、数据模型解析
+- [x] 单元测试：UpdateChecker、数据模型解析
 
 **Phase 2：下载和安装（第 2 周）**
 - [x] 实现 UpdateDownloader 下载服务（支持进度、多 URL fallback）
