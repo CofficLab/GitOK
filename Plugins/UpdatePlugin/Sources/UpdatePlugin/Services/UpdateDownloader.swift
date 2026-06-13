@@ -85,10 +85,18 @@ public class UpdateDownloader: NSObject, ObservableObject {
     private func handleDownloadFinished(tempLocalURL: URL) {
         let version = downloadVersion
         do {
-            // 将临时文件移动到 Downloads 目录，文件名包含版本号以便调试
-            let downloadsDir = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+            // 将临时文件移动到 Caches 目录，符合 macOS 缓存规范
+            // 系统可能在磁盘空间不足时自动清理 Caches，但更新包可随时重新下载
+            let cachesDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            let updateDir = cachesDir.appendingPathComponent("com.cofficlab.gitok.updates", isDirectory: true)
+
+            // 确保缓存目录存在
+            if !FileManager.default.fileExists(atPath: updateDir.path) {
+                try FileManager.default.createDirectory(at: updateDir, withIntermediateDirectories: true)
+            }
+
             let fileName = "GitOK-\(version).dmg"
-            let finalURL = downloadsDir.appendingPathComponent(fileName)
+            let finalURL = updateDir.appendingPathComponent(fileName)
 
             // 如果目标文件已存在，先删除
             if FileManager.default.fileExists(atPath: finalURL.path) {
