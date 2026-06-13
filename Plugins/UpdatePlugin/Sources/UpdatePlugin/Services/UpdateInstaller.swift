@@ -18,25 +18,33 @@ public class UpdateInstaller: ObservableObject {
         installError = nil
         installProgress = ""
 
-        do {
-            // 1. 验证签名
-            installProgress = "验证文件签名..."
-            try await SignatureVerifier.verify(dmgURL)
-            os_log(.info, "[UpdateInstaller] ✓ Signature verified")
+        var mountPath: URL?
 
-            // 2. 挂载 DMG
+        do {
+            // 1. 挂载 DMG
             installProgress = "挂载安装包..."
-            let mountPath = try await DMGMounter.mount(dmgURL)
+            mountPath = try await DMGMounter.mount(dmgURL)
             os_log(.info, "[UpdateInstaller] ✓ DMG mounted")
+
+            let newAppPath = mountPath!.appendingPathComponent("GitOK.app")
+            guard FileManager.default.fileExists(atPath: newAppPath.path) else {
+                throw UpdateError.installationFailed("安装包中未找到 GitOK.app")
+            }
+
+            // 2. 验证 .app 签名（DMG 本身无代码签名）
+            installProgress = "验证文件签名..."
+            try await SignatureVerifier.verify(newAppPath)
+            os_log(.info, "[UpdateInstaller] ✓ Signature verified")
 
             // 3. 替换应用（需要管理员权限）
             installProgress = "安装新版本..."
-            try await replaceAppBundle(mountPath)
+            try await replaceAppBundle(mountPath!)
             os_log(.info, "[UpdateInstaller] ✓ App replaced")
 
             // 4. 清理
             installProgress = "清理临时文件..."
-            try await DMGMounter.unmount(mountPath)
+            try await DMGMounter.unmount(mountPath!)
+            mountPath = nil
             try FileManager.default.removeItem(at: dmgURL)
             os_log(.info, "[UpdateInstaller] ✓ Temp files cleaned")
 
@@ -46,6 +54,9 @@ public class UpdateInstaller: ObservableObject {
 
             isInstalling = false
         } catch {
+            if let mountPath {
+                try? await DMGMounter.unmount(mountPath)
+            }
             installError = error.localizedDescription
             os_log(.error, "[UpdateInstaller] ✗ Installation failed: %{public}s", error.localizedDescription)
             isInstalling = false

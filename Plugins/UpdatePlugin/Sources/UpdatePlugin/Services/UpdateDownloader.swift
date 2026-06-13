@@ -25,7 +25,6 @@ public class UpdateDownloader: NSObject, ObservableObject {
     
     // 用于接收进度回调
     private var continuation: CheckedContinuation<URL, Error>?
-    private var downloadVersion: String = "latest"
 
     override public init() {
         super.init()
@@ -68,53 +67,34 @@ public class UpdateDownloader: NSObject, ObservableObject {
         guard let url = URL(string: urlString) else {
             throw UpdateError.invalidURL
         }
-        
-        downloadVersion = version
 
         return try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation
             
             let task = session.downloadTask(with: url)
+            task.taskDescription = version
             self.downloadTask = task
             task.resume()
         }
     }
     
-    /// 处理下载完成的临时文件
-    @MainActor
-    private func handleDownloadFinished(tempLocalURL: URL) {
-        let version = downloadVersion
-        do {
-            // 将临时文件移动到 Caches 目录，符合 macOS 缓存规范
-            // 系统可能在磁盘空间不足时自动清理 Caches，但更新包可随时重新下载
-            let cachesDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            let updateDir = cachesDir.appendingPathComponent("com.cofficlab.gitok.updates", isDirectory: true)
+    /// 将 URLSession 临时文件移到 Caches（必须在 delegate 回调返回前同步完成）
+    nonisolated private func moveDownloadedFile(from tempURL: URL, version: String) throws -> URL {
+        let cachesDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let updateDir = cachesDir.appendingPathComponent("com.cofficlab.gitok.updates", isDirectory: true)
 
-            // 确保缓存目录存在
-            if !FileManager.default.fileExists(atPath: updateDir.path) {
-                try FileManager.default.createDirectory(at: updateDir, withIntermediateDirectories: true)
-            }
-
-            let fileName = "GitOK-\(version).dmg"
-            let finalURL = updateDir.appendingPathComponent(fileName)
-
-            // 如果目标文件已存在，先删除
-            if FileManager.default.fileExists(atPath: finalURL.path) {
-                try FileManager.default.removeItem(at: finalURL)
-            }
-
-            try FileManager.default.moveItem(at: tempLocalURL, to: finalURL)
-
-            os_log(.info, "[UpdateDownloader] Moved temp file to %{public}s", finalURL.path)
-            
-            downloadProgress = 1.0
-            continuation?.resume(returning: finalURL)
-            continuation = nil
-        } catch {
-            os_log(.error, "[UpdateDownloader] Failed to move file: %{public}s", error.localizedDescription)
-            continuation?.resume(throwing: error)
-            continuation = nil
+        if !FileManager.default.fileExists(atPath: updateDir.path) {
+            try FileManager.default.createDirectory(at: updateDir, withIntermediateDirectories: true)
         }
+
+        let finalURL = updateDir.appendingPathComponent("GitOK-\(version).dmg")
+
+        if FileManager.default.fileExists(atPath: finalURL.path) {
+            try FileManager.default.removeItem(at: finalURL)
+        }
+
+        try FileManager.default.moveItem(at: tempURL, to: finalURL)
+        return finalURL
     }
 
     /// 取消下载
@@ -140,8 +120,22 @@ public class UpdateDownloader: NSObject, ObservableObject {
 
 extension UpdateDownloader: URLSessionDownloadDelegate {
     nonisolated public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        Task { @MainActor in
-            handleDownloadFinished(tempLocalURL: location)
+        // 临时文件仅在 delegate 方法执行期间有效，必须同步移动
+        let version = downloadTask.taskDescription ?? "latest"
+        do {
+            let finalURL = try moveDownloadedFile(from: location, version: version)
+            Task { @MainActor in
+                os_log(.info, "[UpdateDownloader] Moved temp file to %{public}s", finalURL.path)
+                self.downloadProgress = 1.0
+                self.continuation?.resume(returning: finalURL)
+                self.continuation = nil
+            }
+        } catch {
+            Task { @MainActor in
+                os_log(.error, "[UpdateDownloader] Failed to move file: %{public}s", error.localizedDescription)
+                self.continuation?.resume(throwing: error)
+                self.continuation = nil
+            }
         }
     }
     

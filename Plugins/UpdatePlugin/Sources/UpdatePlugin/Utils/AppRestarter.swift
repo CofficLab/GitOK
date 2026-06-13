@@ -12,48 +12,36 @@ public class AppRestarter {
         os_log(.info, "[AppRestarter] Restarting application...")
 
         let appURL = Bundle.main.bundleURL
+        let currentPID = ProcessInfo.processInfo.processIdentifier
         let config = NSWorkspace.OpenConfiguration()
         config.activates = true
         config.addsToRecentItems = true
+        config.createsNewApplicationInstance = true
 
-        // 启动新实例
-        NSWorkspace.shared.openApplication(at: appURL, configuration: config) { app, error in
-            if let error = error {
-                os_log(.error, "[AppRestarter] ✗ Failed to restart: %{public}s", error.localizedDescription)
-            } else {
-                os_log(.info, "[AppRestarter] ✓ Successfully restarted")
+        let newPID: Int32? = await withCheckedContinuation { continuation in
+            NSWorkspace.shared.openApplication(at: appURL, configuration: config) { runningApp, error in
+                if let error = error {
+                    os_log(.error, "[AppRestarter] ✗ Failed to restart: %{public}s", error.localizedDescription)
+                    continuation.resume(returning: nil)
+                } else if let pid = runningApp?.processIdentifier {
+                    os_log(.info, "[AppRestarter] ✓ Launched new instance (PID %d)", pid)
+                    continuation.resume(returning: pid)
+                } else {
+                    os_log(.error, "[AppRestarter] ✗ Launch completed but no running app returned")
+                    continuation.resume(returning: nil)
+                }
             }
         }
 
-        // 等待新实例启动完成，使用轮询检测而非固定延迟
-        // 检查新进程的 PID 是否不同于当前进程
-        let currentPID = ProcessInfo.processInfo.processIdentifier
-        for _ in 0..<20 {  // 最多等待 2 秒
-            try? await Task.sleep(for: .milliseconds(100))
-
-            // 查找所有 GitOK 进程
-            let task = Process()
-            task.executableURL = URL(fileURLWithPath: "/usr/bin/pgrep")
-            task.arguments = ["-f", "GitOK.app"]
-            let pipe = Pipe()
-            task.standardOutput = pipe
-
-            try? task.run()
-            task.waitUntilExit()
-
-            let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-            let pids = output.trimmingCharacters(in: .whitespacesAndNewlines)
-                           .split(separator: "\n")
-                           .compactMap { Int32($0) }
-
-            // 如果存在其他 GitOK 进程，说明新实例已启动
-            if pids.contains(where: { $0 != currentPID }) {
-                os_log(.info, "[AppRestarter] ✓ New instance detected, terminating current")
-                break
-            }
+        guard let newPID, newPID != currentPID else {
+            os_log(.error, "[AppRestarter] ✗ New instance not confirmed, keeping current instance alive")
+            return
         }
 
-        // 退出当前实例
+        // 等待新实例完成初始化
+        try? await Task.sleep(for: .milliseconds(500))
+
+        os_log(.info, "[AppRestarter] Terminating current instance (PID %d)", currentPID)
         NSApplication.shared.terminate(nil)
     }
 }

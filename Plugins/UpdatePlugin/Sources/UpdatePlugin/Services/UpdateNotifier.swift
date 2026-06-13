@@ -74,8 +74,8 @@ public class UpdateNotifier: ObservableObject {
         }
     }
 
-    /// 清除错误消息
-    public func clearError() {
-        errorMessage = nil
+    /// 关闭更新通知弹窗
+    public func dismissNotification() {
+        showUpdateNotification = false
     }
 }

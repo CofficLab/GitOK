@@ -2,10 +2,9 @@ import SwiftUI
 
 /// 更新通知弹窗
 public struct UpdateNotificationView: View {
-    @ObservedObject var notifier = UpdateNotifier.shared
-    @ObservedObject var downloader = UpdateDownloader()
-    @ObservedObject var installer = UpdateInstaller()
-    @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var notifier = UpdateNotifier.shared
+    @ObservedObject private var downloader = UpdateDownloader()
+    @ObservedObject private var installer = UpdateInstaller()
 
     public init() {}
 
@@ -48,9 +47,10 @@ public struct UpdateNotificationView: View {
                 } else {
                     HStack(spacing: 12) {
                         Button("稍后提醒") {
-                            dismiss()
+                            notifier.dismissNotification()
                         }
                         .buttonStyle(.bordered)
+                        .keyboardShortcut(.cancelAction)
 
                         Button("立即更新") {
                             Task {
@@ -64,6 +64,13 @@ public struct UpdateNotificationView: View {
         }
         .frame(width: 400, height: 500)
         .padding()
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("关闭") {
+                    notifier.dismissNotification()
+                }
+            }
+        }
     }
 
     private func downloadAndInstall(updateInfo: UpdateInfo) async {
