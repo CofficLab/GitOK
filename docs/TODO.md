@@ -840,7 +840,7 @@ public enum UpdateError: Error, LocalizedError {
 - [x] 实现基础数据模型（UpdateInfo、UpdateState、UpdateError）
 - [x] 实现 UpdateChecker 版本检查服务（支持多 URL fallback）
 - [x] 实现基础 UI（UpdateSettingsView、UpdateNotificationView）
-- [ ] 服务端新增 `/gitok/version` API 端点
+- [x] 服务端新增 `/gitok/version` API 端点
 - [ ] 单元测试：UpdateChecker、数据模型解析
 
 **Phase 2：下载和安装（第 2 周）**
@@ -854,9 +854,10 @@ public enum UpdateError: Error, LocalizedError {
 - [ ] 测试完整安装流程（从下载到重启）
 
 **Phase 3：优化和监控（第 3 周）**
+- [x] 实现 UpdateNotifier 服务（自动检查、通知弹窗）
 - [ ] 实现 UpdateAnalytics 统计服务（下载成功率、地区分布）
 - [ ] 实现智能路由策略（基于地理位置、成功率）
-- [ ] 实现自动检查策略（启动时检查、定期检查）
+- [x] 实现自动检查策略（启动时检查、定期检查）
 - [ ] 实现错误处理和用户友好的错误提示
 - [ ] 实现取消下载功能
 - [ ] 实现延迟更新功能（用户可选择稍后更新）

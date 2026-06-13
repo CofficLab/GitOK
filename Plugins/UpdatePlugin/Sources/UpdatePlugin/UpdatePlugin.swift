@@ -39,6 +39,20 @@ public enum UpdatePlugin: GitOKPlugin {
             )
         ]
     }
+
+    // 根视图覆盖：更新通知弹窗
+    @MainActor
+    public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {
+        AnyView(
+            content
+                .sheet(isPresented: Binding(
+                    get: { UpdateNotifier.shared.showUpdateNotification },
+                    set: { UpdateNotifier.shared.showUpdateNotification = $0 }
+                )) {
+                    UpdateNotificationView()
+                }
+        )
+    }
 }
 
 public enum UpdatePluginLocalization {
