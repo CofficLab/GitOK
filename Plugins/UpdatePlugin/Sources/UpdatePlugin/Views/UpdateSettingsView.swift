@@ -3,7 +3,7 @@ import OSLog
 
 /// 更新设置视图
 public struct UpdateSettingsView: View {
-    @StateObject private var checker = UpdateChecker()
+    @StateObject private var checker = UpdateChecker.shared
     @StateObject private var downloader = UpdateDownloader()
     @StateObject private var installer = UpdateInstaller()
 

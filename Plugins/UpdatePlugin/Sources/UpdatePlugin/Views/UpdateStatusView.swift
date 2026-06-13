@@ -2,7 +2,7 @@ import SwiftUI
 
 /// 更新状态视图（状态栏指示器）
 public struct UpdateStatusView: View {
-    @StateObject private var checker = UpdateChecker()
+    @StateObject private var checker = UpdateChecker.shared
 
     public init() {}
 
@@ -28,8 +28,12 @@ public struct UpdateStatusView: View {
         }
         .task {
             // 启动时检查更新（延迟3秒）
-            try? await Task.sleep(for: .seconds(3))
-            await checker.checkForUpdates()
+            do {
+                try await Task.sleep(for: .seconds(3))
+                await checker.checkForUpdates()
+            } catch {
+                // 任务被取消（如视图提前消失），静默忽略
+            }
         }
     }
 }

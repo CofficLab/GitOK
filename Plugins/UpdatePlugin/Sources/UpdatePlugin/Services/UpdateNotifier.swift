@@ -13,7 +13,7 @@ public class UpdateNotifier: ObservableObject {
     @Published public var hasUpdate = false
     @Published public var errorMessage: String?
 
-    private let checker = UpdateChecker()
+    private let checker = UpdateChecker.shared
     private var autoCheckTimer: Timer?
 
     private init() {
