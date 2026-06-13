@@ -13,7 +13,6 @@ let package = Package(
         .package(path: "../../Packages/GitOKAppCore"),
         .package(path: "../../Packages/GitOKUI"),
         .package(path: "../../Packages/GitOKSupportKit"),
-        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.0"),
     ],
     targets: [
         .target(
@@ -23,7 +22,6 @@ let package = Package(
                 "GitOKAppCore",
                 "GitOKUI",
                 "GitOKSupportKit",
-                .product(name: "Sparkle", package: "Sparkle"),
             ],
             path: "Sources",
             resources: [.process("Localizable.xcstrings")],

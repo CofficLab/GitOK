@@ -2,7 +2,6 @@ import GitCoreKit
 import GitOKAppCore
 import GitOKSupportKit
 import OSLog
-import Sparkle
 import SwiftData
 import SwiftUI
 
@@ -70,10 +69,6 @@ struct GitOKApp: App, SuperLog {
             ConfigCommand()
             GitCommand()
             AppCommand()
-
-            CommandGroup(after: .appInfo) {
-                UpdaterView(updater: AppUpdateController.shared.updater)
-            }
         })
     }
 }
