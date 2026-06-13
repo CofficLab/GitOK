@@ -9,6 +9,10 @@ public class DMGMounter {
     public static func mount(_ dmgURL: URL) async throws -> URL {
         os_log(.info, "[DMGMounter] Mounting DMG: %{public}s", dmgURL.path)
 
+        // 生成唯一挂载点，避免与已有挂载冲突
+        let mountName = "GitOK-Update-\(UUID().uuidString.prefix(8))"
+        let mountPath = "/Volumes/\(mountName)"
+
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/hdiutil")
         task.arguments = [
@@ -17,7 +21,7 @@ public class DMGMounter {
             "-nobrowse",
             "-readonly",
             "-mountpoint",
-            "/Volumes/GitOK"
+            mountPath
         ]
 
         let pipe = Pipe()
@@ -34,8 +38,8 @@ public class DMGMounter {
             throw UpdateError.dmgMountFailed
         }
 
-        os_log(.info, "[DMGMounter] ✓ Successfully mounted to /Volumes/GitOK")
-        return URL(fileURLWithPath: "/Volumes/GitOK")
+        os_log(.info, "[DMGMounter] ✓ Successfully mounted to %{public}s", mountPath)
+        return URL(fileURLWithPath: mountPath)
     }
 
     /// 卸载 DMG

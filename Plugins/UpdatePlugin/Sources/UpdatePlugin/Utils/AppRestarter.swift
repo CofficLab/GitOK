@@ -25,8 +25,35 @@ public class AppRestarter {
             }
         }
 
-        // 等待短暂延迟后退出当前实例
-        try? await Task.sleep(for: .seconds(1))
+        // 等待新实例启动完成，使用轮询检测而非固定延迟
+        // 检查新进程的 PID 是否不同于当前进程
+        let currentPID = ProcessInfo.processInfo.processIdentifier
+        for _ in 0..<20 {  // 最多等待 2 秒
+            try? await Task.sleep(for: .milliseconds(100))
+
+            // 查找所有 GitOK 进程
+            let task = Process()
+            task.executableURL = URL(fileURLWithPath: "/usr/bin/pgrep")
+            task.arguments = ["-f", "GitOK.app"]
+            let pipe = Pipe()
+            task.standardOutput = pipe
+
+            try? task.run()
+            task.waitUntilExit()
+
+            let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+            let pids = output.trimmingCharacters(in: .whitespacesAndNewlines)
+                           .split(separator: "\n")
+                           .compactMap { Int32($0) }
+
+            // 如果存在其他 GitOK 进程，说明新实例已启动
+            if pids.contains(where: { $0 != currentPID }) {
+                os_log(.info, "[AppRestarter] ✓ New instance detected, terminating current")
+                break
+            }
+        }
+
+        // 退出当前实例
         NSApplication.shared.terminate(nil)
     }
 }

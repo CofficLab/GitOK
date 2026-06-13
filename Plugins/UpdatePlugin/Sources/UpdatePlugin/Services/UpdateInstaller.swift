@@ -64,9 +64,15 @@ public class UpdateInstaller: ObservableObject {
         }
 
         // 使用 AppleScript 请求管理员权限
-        let script = """
-        do shell script "rm -rf '\(currentAppPath.path)' && cp -R '\(newAppPath.path)' '\(currentAppPath.path)'" with administrator privileges
-        """
+        // 1. 清除新应用的 quarantine 属性，避免 Gatekeeper 拦截
+        // 2. 删除旧应用并复制新应用
+        // 3. 清除目标应用的 quarantine 属性
+        // 使用 shell 的 single quote 转义：将路径中的 ' 替换为 '\''
+        let escapedNewPath = newAppPath.path.replacingOccurrences(of: "'", with: "'\\''")
+        let escapedOldPath = currentAppPath.path.replacingOccurrences(of: "'", with: "'\\''")
+
+        let shellScript = "xattr -cr '\(escapedNewPath)' && rm -rf '\(escapedOldPath)' && cp -R '\(escapedNewPath)' '\(escapedOldPath)' && xattr -cr '\(escapedOldPath)'"
+        let script = "do shell script \(shellScript.applescriptQuoted) with administrator privileges"
 
         let appleScript = NSAppleScript(source: script)
         var errorInfo: NSDictionary?
@@ -78,5 +84,15 @@ public class UpdateInstaller: ObservableObject {
             }
             throw UpdateError.installationFailed("AppleScript execution failed")
         }
+    }
+}
+
+// MARK: - String Extension for AppleScript
+private extension String {
+    /// 将字符串转换为 AppleScript 的双引号格式，转义内部双引号和反斜杠
+    var applescriptQuoted: String {
+        let escaped = self.replacingOccurrences(of: "\\", with: "\\\\")
+                       .replacingOccurrences(of: "\"", with: "\\\"")
+        return "\"\(escaped)\""
     }
 }
