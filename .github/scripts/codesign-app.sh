@@ -4,17 +4,16 @@
 # macOS 应用代码签名脚本
 # ====================================
 #
-# 这个脚本用于对 macOS 应用程序进行代码签名，包括 Sparkle 框架的各个组件。
+# 这个脚本用于对 macOS 应用程序进行代码签名。
 # 脚本会显示详细的签名环境信息，帮助开发者了解当前的签名状态，便于调试和问题排查。
 #
 # 功能：
 # 1. 显示系统环境信息（操作系统、架构、主机名等）
 # 2. 显示代码签名环境信息（证书、身份等）
 # 3. 显示应用程序信息（路径、版本等）
-# 4. 对 Sparkle 框架组件进行代码签名
-# 5. 对主应用程序进行代码签名
-# 6. 验证代码签名结果
-# 7. 显示签名结果和状态
+# 4. 对主应用程序进行代码签名
+# 5. 验证代码签名结果
+# 6. 显示签名结果和状态
 #
 # 使用方法：
 # 1. 设置必要的环境变量：
@@ -34,7 +33,6 @@
 # - 需要在 macOS 系统上运行
 # - 确保 SCHEME 和 SIGNING_IDENTITY 环境变量已正确设置
 # - 应用程序必须已经构建完成
-# - 脚本会对 Sparkle 框架的所有组件进行签名
 #
 # 输出：
 # - 详细的环境信息报告
@@ -637,22 +635,6 @@ print_separator
 print_title "🔐 开始代码签名过程"
 print_separator
 echo
-
-# 对 Sparkle 框架组件进行代码签名
-print_title "🔧 签名 Sparkle 框架组件"
-
-# Sparkle XPC Services
-execute_command "codesign -f -s \"$SIGNING_IDENTITY\" -o runtime \"$APP_PATH/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc\"" "签名 Sparkle Installer XPC"
-
-execute_command "codesign -f -s \"$SIGNING_IDENTITY\" -o runtime --preserve-metadata=entitlements \"$APP_PATH/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc\"" "签名 Sparkle Downloader XPC"
-
-# Sparkle 可执行文件
-execute_command "codesign -f -s \"$SIGNING_IDENTITY\" -o runtime \"$APP_PATH/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate\"" "签名 Sparkle Autoupdate"
-
-execute_command "codesign -f -s \"$SIGNING_IDENTITY\" -o runtime \"$APP_PATH/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app\"" "签名 Sparkle Updater App"
-
-# Sparkle 框架
-execute_command "codesign -f -s \"$SIGNING_IDENTITY\" -o runtime \"$APP_PATH/Contents/Frameworks/Sparkle.framework\"" "签名 Sparkle 框架"
 
 # 对主应用程序进行代码签名
 print_title "🎯 签名主应用程序"

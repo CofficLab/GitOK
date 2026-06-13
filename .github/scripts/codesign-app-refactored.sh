@@ -4,7 +4,7 @@
 # macOS 应用代码签名脚本 (重构版)
 # ====================================
 #
-# 这个脚本用于对 macOS 应用程序进行代码签名，包括 Sparkle 框架的各个组件。
+# 这个脚本用于对 macOS 应用程序进行代码签名。
 # 脚本采用结构化的四阶段执行流程，便于维护和调试。
 #
 # 执行流程：
@@ -454,10 +454,7 @@ perform_code_signing() {
     echo "   签名身份: $SIGNING_IDENTITY"
     echo "   详细日志: $VERBOSE"
     echo
-    
-    # 执行 Sparkle 框架签名
-    sign_sparkle_framework "$app_path"
-    
+
     # 执行主应用程序签名
     sign_main_application "$app_path"
     
@@ -466,35 +463,6 @@ perform_code_signing() {
     
     # 显示完成信息
     show_completion_info
-}
-
-# 签名 Sparkle 框架
-sign_sparkle_framework() {
-    local app_path="$1"
-    local sparkle_framework="$app_path/Contents/Frameworks/Sparkle.framework"
-    
-    if [ -d "$sparkle_framework" ]; then
-        printf "${PURPLE}🔧 签名 Sparkle 框架组件...${NC}\n"
-        
-        # Sparkle 框架内的组件
-        local sparkle_components=(
-            "$sparkle_framework/Versions/B/Resources/Autoupdate.app/Contents/MacOS/Autoupdate"
-            "$sparkle_framework/Versions/B/Resources/Autoupdate.app"
-            "$sparkle_framework/Versions/B/Resources/Updater.app/Contents/MacOS/Updater"
-            "$sparkle_framework/Versions/B/Resources/Updater.app"
-            "$sparkle_framework/Versions/B/Sparkle"
-            "$sparkle_framework"
-        )
-        
-        for component in "${sparkle_components[@]}"; do
-            if [ -e "$component" ]; then
-                local component_name=$(basename "$component")
-                execute_command "codesign --force --options runtime --sign '$SIGNING_IDENTITY' '$component'" "签名 $component_name"
-            fi
-        done
-    else
-        print_info "Sparkle 框架" "未找到，跳过"
-    fi
 }
 
 # 签名主应用程序
