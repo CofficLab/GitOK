@@ -21,7 +21,6 @@ let package = Package(
         .package(path: "../ProjectSupportKit"),
         .package(path: "../GitOKUI"),
         .package(path: "../ProjectKit"),
-        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.0"),
     ],
     targets: [
         .target(
@@ -34,7 +33,6 @@ let package = Package(
                 "ProjectRulesKit",
                 "ProjectSupportKit",
                 "ProjectKit",
-                .product(name: "Sparkle", package: "Sparkle"),
             ],
             path: "Sources/GitOKAppCore"
         ),

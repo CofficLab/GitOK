@@ -19,13 +19,6 @@ public enum AboutSettingsPlugin: GitOKPlugin {
     public static func settingsPaneItems(context: GitOKPluginContext) -> [GitOKSettingsPaneItem] {
         [
             GitOKSettingsPaneItem(
-                id: "releaseNotes",
-                title: AboutSettingsPluginLocalization.string("更新"),
-                systemImage: "arrow.triangle.2.circlepath",
-                order: 50,
-                view: AnyView(ReleaseNotesSettingView())
-            ),
-            GitOKSettingsPaneItem(
                 id: "about",
                 title: AboutSettingsPluginLocalization.string("关于"),
                 systemImage: "info.circle",

@@ -63,6 +63,7 @@ import ThemeSummerPlugin
 import ThemeWinterPlugin
 import ThemeXcodeLightPlugin
 import UnpushedStatusPlugin
+import UpdatePlugin
 
 /// Central plugin registry.
 ///
@@ -133,6 +134,7 @@ public enum GeneratedPluginRegistry {
         WinterThemePlugin.self,
         XcodeLightThemePlugin.self,
         UnpushedStatusPlugin.self,
+        UpdatePlugin.self,
     ]
 
     @MainActor

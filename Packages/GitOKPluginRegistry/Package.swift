@@ -80,6 +80,7 @@ let package = Package(
         .package(path: "../../Plugins/ThemeWinterPlugin"),
         .package(path: "../../Plugins/ThemeXcodeLightPlugin"),
         .package(path: "../../Plugins/UnpushedStatusPlugin"),
+        .package(path: "../../Plugins/UpdatePlugin"),
     ],
     targets: [
         .target(
@@ -151,6 +152,7 @@ let package = Package(
                 "ThemeWinterPlugin",
                 "ThemeXcodeLightPlugin",
                 "UnpushedStatusPlugin",
+                "UpdatePlugin",
             ],
             path: "Sources",
             resources: [.process("Localizable.xcstrings")]

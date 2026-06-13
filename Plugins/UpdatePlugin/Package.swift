@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "AboutSettingsPlugin",
+    name: "UpdatePlugin",
     defaultLocalization: "en",
     platforms: [.macOS(.v14)],
     products: [
-        .library(name: "AboutSettingsPlugin", targets: ["AboutSettingsPlugin"]),
+        .library(name: "UpdatePlugin", targets: ["UpdatePlugin"]),
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
@@ -16,23 +16,22 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AboutSettingsPlugin",
+            name: "UpdatePlugin",
             dependencies: [
                 "GitOKCoreKit",
                 "GitOKAppCore",
                 "GitOKUI",
                 "GitOKSupportKit",
             ],
-            path: "Sources",
-            resources: [.process("Localizable.xcstrings")],
+            path: "Sources/UpdatePlugin",
             swiftSettings: [
                 .swiftLanguageMode(.v5),
             ]
         ),
         .testTarget(
-            name: "AboutSettingsPluginTests",
-            dependencies: ["AboutSettingsPlugin"],
-            path: "Tests"
+            name: "UpdatePluginTests",
+            dependencies: ["UpdatePlugin"],
+            path: "Tests/UpdatePluginTests"
         ),
     ]
 )

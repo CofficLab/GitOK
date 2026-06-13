@@ -115,61 +115,6 @@ jobs:
           cp ./temp/*.dmg updates/
           echo "the updates is in ${{ github.workspace }}/updates"
           ls -alh updates
-      - name: generate appcasts (production only)
-        if: env.IS_PRERELEASE == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          xcodebuild -resolvePackageDependencies
-          SPARKLE_BIN="$(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/SourcePackages/artifacts/sparkle/Sparkle/bin | head -n 1)"
-
-          # 获取最新 Release 的 body 并转换为 HTML
-          RELEASE_BODY=$(gh api repos/${{ github.repository }}/releases/latest --jq '.body')
-          RELEASE_NOTES_HTML=$(echo "$RELEASE_BODY" | gh api markdown -F text=@- -f mode=gfm)
-
-          # Sparkle 根据 Info.plist 的 SUFeedURL 命名输出（appcast-arm64.xml），
-          # 忽略 -o；因此在独立目录生成，再按架构重命名。
-          feed_name="appcast-arm64.xml"
-
-          for arch in arm64 x86_64; do
-            input_dir="appcast_input_${arch}"
-            appcast_file="appcast-${arch}.xml"
-            mkdir -p "$input_dir"
-            cp ./updates/*${arch}*.dmg "$input_dir/"
-            if [ -f "$appcast_file" ]; then
-              cp "$appcast_file" "$input_dir/$feed_name"
-            fi
-            ls -alh "$input_dir"
-
-            (
-              cd "$input_dir"
-              echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" \
-                --ed-key-file - \
-                .
-              mv "$feed_name" "../${appcast_file}"
-            )
-
-            dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
-            export u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
-            export RELEASE_NOTES_HTML
-            export RELEASE_NOTES_LINK="https://github.com/CofficLab/GitOK/releases/latest"
-
-            # 只更新最新一条（第一个 item）的下载地址（macOS sed 无法用 / 作分隔符处理 URL）
-            perl -i -pe 'if (!$done) { s/(enclosure url=")[^"]*/$1.$ENV{u}/e && ($done=1) }' "$appcast_file"
-
-            # 只给最新一条注入 release notes
-            perl -i -0777 -pe '
-              if (!$done++) {
-                my $notes = $ENV{RELEASE_NOTES_HTML} // "";
-                my $link = $ENV{RELEASE_NOTES_LINK} // "";
-                my $insert = qq{\n            <description><![CDATA[$notes]]></description>\n            <sparkle:fullReleaseNotesLink>$link</sparkle:fullReleaseNotesLink>};
-                s/(<sparkle:minimumSystemVersion>[^<]+<\/sparkle:minimumSystemVersion>)(?!\s*<description)/$1$insert/s;
-              }
-            ' "$appcast_file"
-          done
-
-          # 兼容旧版本客户端（仍读取 appcast.xml）
-          cp appcast-arm64.xml appcast.xml
       - name: 发布 Release
         uses: softprops/action-gh-release@v1
         with:
@@ -177,9 +122,6 @@ jobs:
           prerelease: ${{ env.IS_PRERELEASE }}
           files: |
             ./updates/*.dmg
-            ./appcast.xml
-            ./appcast-arm64.xml
-            ./appcast-x86_64.xml
       # =================================================================================================
       # 上传 DMG 到 Cloudflare R2
       # =================================================================================================
@@ -217,16 +159,3 @@ jobs:
               exit 1
             fi
           done
-
-      - name: 推送到仓库 (pro)
-        if: env.IS_PRERELEASE == 'false'
-        run: |
-          git add appcast.xml appcast-arm64.xml appcast-x86_64.xml
-          if git diff --staged --quiet; then
-            echo "No appcast changes to commit"
-            exit 0
-          fi
-          git -c user.name="GitHub Action" \
-              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-              commit -m "👷 CI: update appcasts"
-          git push
