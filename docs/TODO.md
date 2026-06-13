@@ -844,13 +844,13 @@ public enum UpdateError: Error, LocalizedError {
 - [ ] 单元测试：UpdateChecker、数据模型解析
 
 **Phase 2：下载和安装（第 2 周）**
-- [ ] 实现 UpdateDownloader 下载服务（支持进度、多 URL fallback）
-- [ ] 实现 URLSessionDownloadDelegate 监听下载进度
-- [ ] 实现 SignatureVerifier 签名验证工具
-- [ ] 实现 DMGMounter DMG 挂载/卸载工具
-- [ ] 实现 UpdateInstaller 安装服务（包括权限请求）
-- [ ] 实现 AppRestarter 应用重启工具
-- [ ] 实现 UpdateProgressView 下载进度视图
+- [x] 实现 UpdateDownloader 下载服务（支持进度、多 URL fallback）
+- [x] 实现 URLSessionDownloadDelegate 监听下载进度
+- [x] 实现 SignatureVerifier 签名验证工具
+- [x] 实现 DMGMounter DMG 挂载/卸载工具
+- [x] 实现 UpdateInstaller 安装服务（包括权限请求）
+- [x] 实现 AppRestarter 应用重启工具
+- [x] 实现 UpdateProgressView 下载进度视图
 - [ ] 测试完整安装流程（从下载到重启）
 
 **Phase 3：优化和监控（第 3 周）**

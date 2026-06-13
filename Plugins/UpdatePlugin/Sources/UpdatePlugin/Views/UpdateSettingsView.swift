@@ -4,6 +4,8 @@ import OSLog
 /// 更新设置视图
 public struct UpdateSettingsView: View {
     @StateObject private var checker = UpdateChecker()
+    @StateObject private var downloader = UpdateDownloader()
+    @StateObject private var installer = UpdateInstaller()
 
     public init() {}
 
@@ -46,7 +48,7 @@ public struct UpdateSettingsView: View {
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(checker.isChecking)
+            .disabled(checker.isChecking || downloader.isDownloading || installer.isInstalling)
 
             // 更新信息（如果有）
             if let updateInfo = checker.latestVersion, updateInfo.isNewerThanCurrent {
@@ -62,10 +64,26 @@ public struct UpdateSettingsView: View {
                         }
                         .frame(maxHeight: 150)
 
-                        Button("下载并安装") {
-                            // TODO: 实现下载和安装逻辑
+                        // 下载进度或安装进度
+                        if downloader.isDownloading {
+                            UpdateProgressView(downloader: downloader)
+                        } else if installer.isInstalling {
+                            VStack(spacing: 8) {
+                                ProgressView()
+                                    .controlSize(.small)
+                                Text(installer.installProgress)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                        } else {
+                            Button("下载并安装") {
+                                Task {
+                                    await downloadAndInstall(updateInfo: updateInfo)
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
                         }
-                        .buttonStyle(.borderedProminent)
                     }
                     .padding()
                 }
@@ -82,10 +100,34 @@ public struct UpdateSettingsView: View {
                 }
             }
 
+            if let installError = installer.installError {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundColor(.red)
+                    Text(installError)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
             Spacer()
         }
         .padding()
         .frame(width: 400, height: 500)
+    }
+
+    private func downloadAndInstall(updateInfo: UpdateInfo) async {
+        do {
+            // 下载 DMG
+            _ = try await downloader.downloadUpdate(updateInfo: updateInfo)
+
+            // 安装更新
+            if let dmgFile = downloader.downloadedFileURL {
+                try await installer.installUpdate(dmgURL: dmgFile)
+            }
+        } catch {
+            os_log(.error, "[UpdateSettingsView] Download or install failed: %{public}s", error.localizedDescription)
+        }
     }
 
     private var currentVersion: String {
