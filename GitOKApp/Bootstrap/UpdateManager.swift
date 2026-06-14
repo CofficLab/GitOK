@@ -2,14 +2,18 @@ import Foundation
 import OSLog
 import Sparkle
 
-/// 更新管理器：基于 Sparkle 实现，支持多 feed URL fallback
+/// 更新管理器：基于 Sparkle 2.x 实现，支持多 feed URL fallback
 ///
-/// 优先使用自有服务器 appcast，如果不可达则 fallback 到 GitHub。
+/// 启动时创建 SPUStandardUpdaterController（启动 Sparkle updater），
+/// 然后检测网络选择 feed URL（自有服务器优先，GitHub fallback）。
 /// Sparkle 负责下载、验证、安装更新（内置特权 Helper，免密码替换）。
 public final class UpdateManager: NSObject {
     nonisolated public static let emoji = "✨"
 
     public static let shared = UpdateManager()
+
+    /// Sparkle 控制器（持有它以保持 updater 运行）
+    public private(set) var updaterController: SPUStandardUpdaterController!
 
     /// 主 feed URL（自有服务器）
     private let primaryFeedURL = URL(string: "https://api.kuaiyizhi.cn/gitok/appcast.xml")!
@@ -18,10 +22,15 @@ public final class UpdateManager: NSObject {
     private let fallbackFeedURL = URL(string: "https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast-arm64.xml")!
 
     /// 缓存网络检测结果，避免每次检查都做网络请求
-    private var detectedFeedURL: URL?
     private var lastDetectionTime: Date?
 
     private override init() {
+        // 创建控制器即启动 Sparkle updater
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
         super.init()
     }
 
@@ -31,22 +40,20 @@ public final class UpdateManager: NSObject {
     public func setupFeedURLIfNeeded() async {
         // 30 分钟内不重复检测
         if let lastDetectionTime,
-           Date().timeIntervalSince(lastDetectionTime) < 1800,
-           detectedFeedURL != nil {
+           Date().timeIntervalSince(lastDetectionTime) < 1800 {
             return
         }
 
         let url = await detectFeedURL()
-        detectedFeedURL = url
         lastDetectionTime = Date()
 
-        SUUpdater.shared()?.feedURL = url
+        updaterController.updater.setFeedURL(url)
         os_log(.info, "[UpdateManager] Feed URL set to: %{public}@", url.absoluteString)
     }
 
-    /// 手动检查更新（用于设置面板中的"检查更新"按钮）
+    /// 手动检查更新
     public func checkForUpdates() {
-        SUUpdater.shared()?.checkForUpdates(nil)
+        updaterController.updater.checkForUpdates()
     }
 
     /// 检测哪个 feed URL 可用
