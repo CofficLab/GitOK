@@ -47,8 +47,11 @@ public final class UpdateManager: NSObject {
         let url = await detectFeedURL()
         lastDetectionTime = Date()
 
-        updaterController.updater.setFeedURL(url)
-        os_log(.info, "[UpdateManager] Feed URL set to: %{public}@", url.absoluteString)
+        // setFeedURL 必须在主线程调用
+        await MainActor.run {
+            updaterController.updater.setFeedURL(url)
+            os_log(.info, "[UpdateManager] Feed URL set to: %{public}@", url.absoluteString)
+        }
     }
 
     /// 手动检查更新
