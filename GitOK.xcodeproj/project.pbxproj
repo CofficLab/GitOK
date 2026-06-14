@@ -13,6 +13,7 @@
 		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
 		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		CC73F007457981A7C3AE5D86 /* GitWorkspaceCore in Frameworks */ = {isa = PBXBuildFile; productRef = CC73F008457981A7C3AE5D86 /* GitWorkspaceCore */; };
+		E51CAF4A54BAA545689D6485 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F6C83393963F8599B29D474A /* Sparkle */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
 		F5ABCD032FCE000100000001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5ABCD022FCE000100000001 /* ProjectSupportKit */; };
 		F5AC00032FCE000100000001 /* GitOKAppCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5AC00022FCE000100000001 /* GitOKAppCore */; };
@@ -890,6 +891,7 @@
 				F5AC00032FCE000100000001 /* GitOKAppCore in Frameworks */,
 				F5AC00062FCE000100000001 /* ProjectsPlugin in Frameworks */,
 				F5AC00092FCE000100000001 /* OnboardingPlugin in Frameworks */,
+				E51CAF4A54BAA545689D6485 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1282,6 +1284,7 @@
 				F5AC00022FCE000100000001 /* GitOKAppCore */,
 				F5AC00052FCE000100000001 /* ProjectsPlugin */,
 				F5AC00082FCE000100000001 /* OnboardingPlugin */,
+				F6C83393963F8599B29D474A /* Sparkle */,
 			);
 			productName = GitOK;
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
@@ -1342,6 +1345,7 @@
 				F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectKit" */,
 				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */,
 				F5B1DB082FCE800F00A9544D /* XCLocalSwiftPackageReference "Plugins/GitWorkspacePlugin" */,
+				48459E53364628BC72FB6C45 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
@@ -2562,6 +2566,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		48459E53364628BC72FB6C45 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		4EC50CECD060E698BF493AED /* GitOKCoreKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2617,6 +2632,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
 			productName = GitCoreKit;
+		};
+		F6C83393963F8599B29D474A /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 48459E53364628BC72FB6C45 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

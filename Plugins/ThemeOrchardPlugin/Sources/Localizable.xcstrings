@@ -1,64 +1,7 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "Earthy amber dark theme": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Earthy amber dark theme"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "泥土琥珀深色主题"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "泥土琥珀深色主题"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "泥土琥珀深色主题"
-          }
-        }
-      }
-    },
-    "Orchard Theme": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orchard Theme"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "果园主题"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "果园主题"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "果园主题"
-          }
-        }
-      }
-    }
+  "sourceLanguage" : "en",
+  "strings" : {
+
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

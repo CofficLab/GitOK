@@ -1,64 +1,7 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "GitHub Light Theme": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GitHub Light Theme"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GitHub 浅色主题"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GitHub 浅色主题"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GitHub 浅色主题"
-          }
-        }
-      }
-    },
-    "GitHub-inspired light theme": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GitHub-inspired light theme"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "受 GitHub 启发的浅色主题"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "受 GitHub 启发的浅色主题"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "受 GitHub 启发的浅色主题"
-          }
-        }
-      }
-    }
+  "sourceLanguage" : "en",
+  "strings" : {
+
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

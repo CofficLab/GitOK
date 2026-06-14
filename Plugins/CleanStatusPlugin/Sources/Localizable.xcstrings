@@ -1,35 +1,7 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "跟踪项目是否 clean（无未提交的更改）": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Track whether project is clean (no uncommitted changes)"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跟踪项目是否 clean（无未提交的更改）"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "追蹤專案是否 clean（無未提交的更改）"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跟踪项目是否 clean（无未提交的更改）"
-          }
-        }
-      }
-    }
+  "sourceLanguage" : "en",
+  "strings" : {
+
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
