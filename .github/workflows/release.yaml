@@ -40,6 +40,10 @@ jobs:
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             --header 'user-agent: GitOK-Release-Workflow' \
             https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Verify Xcode version
         run: |
           echo "Current Xcode version:"
@@ -91,6 +95,8 @@ jobs:
           servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
             --identity ${{ steps.signing.outputs.signing_identity }}
       - name: Create DMG
+        env:
+          DMG_SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
         run: |
           set -euo pipefail
           chmod +x .github/scripts/install-create-dmg.sh
