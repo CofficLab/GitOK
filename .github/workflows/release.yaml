@@ -55,9 +55,15 @@ jobs:
           echo "TAG=$tag" >> $GITHUB_ENV
           if [[ $tag == p* ]]; then
             echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+            previous_tag=$(git tag -l "p[0-9]*" | sort -V | grep -Fxv "$tag" | tail -n 1)
+            if [ -z "$previous_tag" ]; then
+              previous_tag=$(git tag -l "v*" | sort -V | tail -n 1)
+            fi
           else
             echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+            previous_tag=$(git tag -l "v*" | sort -V | grep -Fxv "$tag" | tail -n 1)
           fi
+          echo "PREVIOUS_TAG=$previous_tag" >> $GITHUB_ENV
       - name: Setup macOS signing
         id: signing
         env:
@@ -115,6 +121,27 @@ jobs:
           cp ./temp/*.dmg updates/
           echo "the updates is in ${{ github.workspace }}/updates"
           ls -alh updates
+      - name: Generate Changelog
+        run: |
+          TAG="${{ env.TAG }}"
+          PREVIOUS_TAG="${{ env.PREVIOUS_TAG }}"
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            NOTES="## Release ${TAG}\n\nInitial release"
+          else
+            CHANGES=$(git log ${PREVIOUS_TAG}..HEAD --no-merges --pretty=format:'- %s' \
+              | grep -Ev '^- (ci|chore|build|style|test)(\(|:)' \
+              | grep -Ev '^- 👷 CI:' \
+              | sort -u \
+              | head -20)
+            if [ -z "$CHANGES" ]; then
+              CHANGES="- Maintenance and stability improvements"
+            fi
+            NOTES="## Release ${TAG}\n\n### Changes since ${PREVIOUS_TAG}\n\n${CHANGES}"
+          fi
+
+          echo -e "$NOTES" > changelog.md
+          cat changelog.md >> $GITHUB_STEP_SUMMARY
       - name: generate appcasts (production only)
         if: env.IS_PRERELEASE == 'false'
         env:
@@ -123,9 +150,7 @@ jobs:
           xcodebuild -resolvePackageDependencies
           SPARKLE_BIN="$(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/SourcePackages/artifacts/sparkle/Sparkle/bin | head -n 1)"
 
-          # 获取最新 Release 的 body 并转换为 HTML
-          RELEASE_BODY=$(gh api repos/${{ github.repository }}/releases/latest --jq '.body')
-          RELEASE_NOTES_HTML=$(echo "$RELEASE_BODY" | gh api markdown -F text=@- -f mode=gfm)
+          RELEASE_NOTES_HTML=$(cat changelog.md | gh api markdown -F text=@- -f mode=gfm)
 
           # Sparkle 根据 Info.plist 的 SUFeedURL 命名输出（appcast-arm64.xml），
           # 忽略 -o；因此在独立目录生成，再按架构重命名。
@@ -175,6 +200,7 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           prerelease: ${{ env.IS_PRERELEASE }}
+          body_path: changelog.md
           files: |
             ./updates/*.dmg
             ./appcast.xml
