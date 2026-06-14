@@ -251,16 +251,3 @@ jobs:
               echo "❌ Failed to upload $APPCAST_FILE to R2"
             fi
           done
-
-      - name: 推送 appcast 到仓库
-        if: env.IS_PRERELEASE == 'false'
-        run: |
-          git add appcast.xml appcast-arm64.xml appcast-x86_64.xml
-          if git diff --staged --quiet; then
-            echo "No appcast changes to commit"
-            exit 0
-          fi
-          git -c user.name="GitHub Action" \
-              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-              commit -m "👷 CI: update appcasts"
-          git push

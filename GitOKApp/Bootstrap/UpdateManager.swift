@@ -18,8 +18,8 @@ public final class UpdateManager: NSObject {
     /// 主 feed URL（自有服务器）
     private let primaryFeedURL = URL(string: "https://api.kuaiyizhi.cn/gitok/appcast.xml")!
 
-    /// 备用 feed URL（GitHub）
-    private let fallbackFeedURL = URL(string: "https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast-arm64.xml")!
+    /// 备用 feed URL（GitHub Release）
+    private let fallbackFeedURL = URL(string: "https://github.com/CofficLab/GitOK/releases/latest/download/appcast-arm64.xml")!
 
     /// 缓存网络检测结果，避免每次检查都做网络请求
     private var lastDetectionTime: Date?

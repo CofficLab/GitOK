@@ -213,6 +213,9 @@
         }
       }
     },
+    "Check for Updates..." : {
+
+    },
     "Clone Repository" : {
       "localizations" : {
         "en" : {
