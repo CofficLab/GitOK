@@ -5,19 +5,21 @@ import OSLog
 @MainActor
 public class UpdateChecker: ObservableObject {
     nonisolated public static let emoji = "🔍"
-
+    
+    public static let shared = UpdateChecker()
+    
     @Published public var isChecking = false
     @Published public var latestVersion: UpdateInfo?
     @Published public var hasError = false
     @Published public var errorMessage: String?
-
+    
     private let session = URLSession.shared
-
+    
     // URL fallback 策略：官网 API → GitHub API
     private let primaryURL = "https://api.kuaiyizhi.cn/gitok/version"
     private let fallbackURL = "https://api.github.com/repos/CofficLab/GitOK/releases/latest"
-
-    public init() {}
+    
+    private init() {}
 
     /// 检查更新（支持多 URL fallback）
     public func checkForUpdates() async {
@@ -27,6 +29,7 @@ public class UpdateChecker: ObservableObject {
 
         let urls = [primaryURL, fallbackURL]
 
+        var lastError: Error?
         for url in urls {
             do {
                 let updateInfo = try await fetchUpdateInfo(from: url)
@@ -35,6 +38,7 @@ public class UpdateChecker: ObservableObject {
                 isChecking = false
                 return
             } catch {
+                lastError = error
                 os_log(.error, "[UpdateChecker] ✗ Failed from %{public}s: %{public}s", url, error.localizedDescription)
                 continue
             }
@@ -42,7 +46,13 @@ public class UpdateChecker: ObservableObject {
 
         // 所有 URL 都失败
         hasError = true
-        errorMessage = "无法检查更新，请检查网络连接"
+        if let error = lastError {
+            errorMessage = error.localizedDescription
+            os_log(.error, "[UpdateChecker] All URLs failed: %{public}s", error.localizedDescription)
+        } else {
+            errorMessage = "无法检查更新，请检查网络连接"
+            os_log(.error, "[UpdateChecker] All URLs failed with unknown error")
+        }
         isChecking = false
     }
 
@@ -54,6 +64,9 @@ public class UpdateChecker: ObservableObject {
 
         var request = URLRequest(url: url)
         request.timeoutInterval = 10  // 10秒超时
+
+        // GitHub API 要求所有请求必须包含 User-Agent，否则返回 403
+        request.setValue("GitOK-App/1.0", forHTTPHeaderField: "User-Agent")
 
         // GitHub API 需要设置 Accept header
         if urlString.contains("api.github.com") {

@@ -18,25 +18,33 @@ public class UpdateInstaller: ObservableObject {
         installError = nil
         installProgress = ""
 
-        do {
-            // 1. 验证签名
-            installProgress = "验证文件签名..."
-            try await SignatureVerifier.verify(dmgURL)
-            os_log(.info, "[UpdateInstaller] ✓ Signature verified")
+        var mountPath: URL?
 
-            // 2. 挂载 DMG
+        do {
+            // 1. 挂载 DMG
             installProgress = "挂载安装包..."
-            let mountPath = try await DMGMounter.mount(dmgURL)
+            mountPath = try await DMGMounter.mount(dmgURL)
             os_log(.info, "[UpdateInstaller] ✓ DMG mounted")
+
+            let newAppPath = mountPath!.appendingPathComponent("GitOK.app")
+            guard FileManager.default.fileExists(atPath: newAppPath.path) else {
+                throw UpdateError.installationFailed("安装包中未找到 GitOK.app")
+            }
+
+            // 2. 验证 .app 签名（DMG 本身无代码签名）
+            installProgress = "验证文件签名..."
+            try await SignatureVerifier.verify(newAppPath)
+            os_log(.info, "[UpdateInstaller] ✓ Signature verified")
 
             // 3. 替换应用（需要管理员权限）
             installProgress = "安装新版本..."
-            try await replaceAppBundle(mountPath)
+            try await replaceAppBundle(mountPath!)
             os_log(.info, "[UpdateInstaller] ✓ App replaced")
 
             // 4. 清理
             installProgress = "清理临时文件..."
-            try await DMGMounter.unmount(mountPath)
+            try await DMGMounter.unmount(mountPath!)
+            mountPath = nil
             try FileManager.default.removeItem(at: dmgURL)
             os_log(.info, "[UpdateInstaller] ✓ Temp files cleaned")
 
@@ -46,6 +54,9 @@ public class UpdateInstaller: ObservableObject {
 
             isInstalling = false
         } catch {
+            if let mountPath {
+                try? await DMGMounter.unmount(mountPath)
+            }
             installError = error.localizedDescription
             os_log(.error, "[UpdateInstaller] ✗ Installation failed: %{public}s", error.localizedDescription)
             isInstalling = false
@@ -64,9 +75,15 @@ public class UpdateInstaller: ObservableObject {
         }
 
         // 使用 AppleScript 请求管理员权限
-        let script = """
-        do shell script "rm -rf '\(currentAppPath.path)' && cp -R '\(newAppPath.path)' '\(currentAppPath.path)'" with administrator privileges
-        """
+        // 1. 清除新应用的 quarantine 属性，避免 Gatekeeper 拦截
+        // 2. 删除旧应用并复制新应用
+        // 3. 清除目标应用的 quarantine 属性
+        // 使用 shell 的 single quote 转义：将路径中的 ' 替换为 '\''
+        let escapedNewPath = newAppPath.path.replacingOccurrences(of: "'", with: "'\\''")
+        let escapedOldPath = currentAppPath.path.replacingOccurrences(of: "'", with: "'\\''")
+
+        let shellScript = "xattr -cr '\(escapedNewPath)' && rm -rf '\(escapedOldPath)' && cp -R '\(escapedNewPath)' '\(escapedOldPath)' && xattr -cr '\(escapedOldPath)'"
+        let script = "do shell script \(shellScript.applescriptQuoted) with administrator privileges"
 
         let appleScript = NSAppleScript(source: script)
         var errorInfo: NSDictionary?
@@ -78,5 +95,15 @@ public class UpdateInstaller: ObservableObject {
             }
             throw UpdateError.installationFailed("AppleScript execution failed")
         }
+    }
+}
+
+// MARK: - String Extension for AppleScript
+private extension String {
+    /// 将字符串转换为 AppleScript 的双引号格式，转义内部双引号和反斜杠
+    var applescriptQuoted: String {
+        let escaped = self.replacingOccurrences(of: "\\", with: "\\\\")
+                       .replacingOccurrences(of: "\"", with: "\\\"")
+        return "\"\(escaped)\""
     }
 }

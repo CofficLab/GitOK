@@ -28,6 +28,29 @@ public class DataVM: NSObject, ObservableObject, SuperLog {
         self.repoManager = repoManager
 
         super.init()
+
+        setupNotificationObservers()
+    }
+
+    private func setupNotificationObservers() {
+        // Listen to projectGitHeadDidChange to refresh branch when HEAD changes
+        // (e.g., after merge, checkout, etc.)
+        NotificationCenter.default.publisher(for: .projectGitHeadDidChange)
+            .compactMap { $0.userInfo?["eventInfo"] as? ProjectEventInfo }
+            .sink { [weak self] eventInfo in
+                guard let self else { return }
+                // Check if the notification is for a project in our list
+                guard self.projects.contains(where: {
+                    $0.url.standardizedFileURL == eventInfo.project.url.standardizedFileURL
+                }) else { return }
+
+                self.refreshCurrentBranch(
+                    project: eventInfo.project,
+                    isGitRepository: true,
+                    reason: "projectGitHeadDidChange"
+                )
+            }
+            .store(in: &cancellables)
     }
 }
 

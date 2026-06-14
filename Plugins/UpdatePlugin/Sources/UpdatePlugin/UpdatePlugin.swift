@@ -43,15 +43,20 @@ public enum UpdatePlugin: GitOKPlugin {
     // 根视图覆盖：更新通知弹窗
     @MainActor
     public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {
-        AnyView(
-            content
-                .sheet(isPresented: Binding(
-                    get: { UpdateNotifier.shared.showUpdateNotification },
-                    set: { UpdateNotifier.shared.showUpdateNotification = $0 }
-                )) {
-                    UpdateNotificationView()
-                }
-        )
+        AnyView(UpdateRootOverlay(content: content))
+    }
+}
+
+/// 包裹根视图并展示更新通知 sheet
+private struct UpdateRootOverlay: View {
+    @ObservedObject private var notifier = UpdateNotifier.shared
+    let content: AnyView
+
+    var body: some View {
+        content
+            .sheet(isPresented: $notifier.showUpdateNotification) {
+                UpdateNotificationView()
+            }
     }
 }
 
