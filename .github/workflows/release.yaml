@@ -99,16 +99,38 @@ jobs:
           DMG_SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
         run: |
           set -euo pipefail
-          chmod +x .github/scripts/install-create-dmg.sh
-          chmod +x .github/scripts/create-branded-dmg.sh
-          .github/scripts/create-branded-dmg.sh \
-            ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
-            arm64 \
-            ./temp
-          .github/scripts/create-branded-dmg.sh \
-            ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
-            x86_64 \
-            ./temp
+          for arch in arm64 x86_64; do
+            app="./temp/${arch}/Build/Products/Release/${{ env.SCHEME }}.app"
+            out="./temp/dmg_${arch}"
+            version_dmg=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist" | tr . _)
+            dmg_name="${{ env.SCHEME }}-${arch}-${version_dmg}.dmg"
+
+            rm -rf "$out"
+            mkdir -p "$out"
+
+            create_dmg_args=(--overwrite)
+            if [ -n "${DMG_SIGNING_IDENTITY:-}" ]; then
+              create_dmg_args+=(--identity "$DMG_SIGNING_IDENTITY")
+            fi
+
+            set +e
+            npx create-dmg@8.1.0 "${create_dmg_args[@]}" "$app" "$out"
+            create_dmg_status=$?
+            set -e
+
+            generated_dmg="$(find "$out" -maxdepth 1 -name '*.dmg' -type f | head -n 1)"
+            if [ -z "$generated_dmg" ]; then
+              echo "❌ create-dmg did not produce a DMG for ${arch} (exit ${create_dmg_status})" >&2
+              exit 1
+            fi
+            if [ "$create_dmg_status" -ne 0 ] && [ "$create_dmg_status" -ne 2 ]; then
+              echo "❌ create-dmg failed for ${arch} (exit ${create_dmg_status})" >&2
+              exit "$create_dmg_status"
+            fi
+
+            mv "$generated_dmg" "./temp/${dmg_name}"
+            rm -rf "$out"
+          done
           ls -alh ./temp/*.dmg
       - name: Notary
         continue-on-error: true
@@ -236,9 +258,7 @@ jobs:
             ./appcast.xml
             ./appcast-arm64.xml
             ./appcast-x86_64.xml
-      # =================================================================================================
-      # 上传 DMG 到 Cloudflare R2
-      # =================================================================================================
+
       - name: Upload DMG to R2
         if: success()
         env:
@@ -274,10 +294,7 @@ jobs:
             fi
           done
 
-      # =================================================================================================
-      # 上传 appcast 到 Cloudflare R2（让 api.kuaiyizhi.cn/gitok/appcast.xml 可用）
-      # =================================================================================================
-      - name: Upload appcast to Cloudflare R2
+      - name: Upload appcast to R2
         if: success() && env.IS_PRERELEASE == 'false'
         env:
           WEBHOOK_SECRET: ${{ secrets.COFFIC_APP_UPLOAD_KEY }}

@@ -16,11 +16,6 @@ struct AppCommand: Commands, SuperLog {
             Button(String(localized: "Check for Updates...")) {
                 UpdateManager.shared.checkForUpdates()
             }
-            Button(String(localized: "Release Notes")) {
-                if let url = URL(string: "https://github.com/CofficLab/GitOK/releases/latest") {
-                    NSWorkspace.shared.open(url)
-                }
-            }
             Button(String(localized: "Settings...")) {
                 RootContainer.shared.navigationService.openSettings(tab: nil)
             }
