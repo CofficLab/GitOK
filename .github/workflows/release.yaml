@@ -11,12 +11,10 @@ permissions:
   contents: write
 
 env:
-  TAG: ${{ github.sha }}
   SCHEME: GitOK
-  DESTINATION: "generic/platform=macOS"
-  ArchivePath: "./my-app"
-  BuildPath: "./temp"
-  IS_PRERELEASE: true
+  CREATE_DMG_VERSION: "8.1.0"
+  SPARKLE_VERSION: "2.8.1"
+  R2_API_URL: https://data.coffic.cn
 
 jobs:
   build_with_signing:
@@ -28,46 +26,42 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_branch }}
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: "latest-stable"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: 安装依赖
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -fsSL \
-            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            --header 'user-agent: GitOK-Release-Workflow' \
+            --header "authorization: Bearer ${GITHUB_TOKEN}" \
+            --header "user-agent: GitOK-Release-Workflow" \
             https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - name: Verify Xcode version
-        run: |
-          echo "Current Xcode version:"
-          xcodebuild -version
-          echo "Swift version:"
-          xcrun swift --version
-          echo "Xcode path:"
-          xcode-select -p
+
       - name: 获取最新 tag
-        id: get_tag
         run: |
           tag=$(git describe --tags --abbrev=0)
-          echo "TAG=$tag" >> $GITHUB_ENV
+          echo "TAG=$tag" >> "$GITHUB_ENV"
           if [[ $tag == p* ]]; then
-            echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+            echo "IS_PRERELEASE=true" >> "$GITHUB_ENV"
             previous_tag=$(git tag -l "p[0-9]*" | sort -V | grep -Fxv "$tag" | tail -n 1)
             if [ -z "$previous_tag" ]; then
               previous_tag=$(git tag -l "v*" | sort -V | tail -n 1)
             fi
           else
-            echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+            echo "IS_PRERELEASE=false" >> "$GITHUB_ENV"
             previous_tag=$(git tag -l "v*" | sort -V | grep -Fxv "$tag" | tail -n 1)
           fi
-          echo "PREVIOUS_TAG=$previous_tag" >> $GITHUB_ENV
+          echo "PREVIOUS_TAG=$previous_tag" >> "$GITHUB_ENV"
+
       - name: Setup macOS signing
         id: signing
         env:
@@ -78,22 +72,20 @@ jobs:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
         run: |
-          chmod +x ./.github/scripts/setup-macos-signing.sh
           source ./.github/scripts/setup-macos-signing.sh
-          echo "signing_identity=$SIGNING_IDENTITY" >> $GITHUB_OUTPUT
-          echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
-          echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
-          echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
-      - name: Build App (arm64)
-        run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64 --clean=false -v
-      - name: Build App (x86_64)
-        run: servon xcode build --scheme ${{ env.SCHEME }} --arch x86_64 --clean=false -v
-      - name: Codesign App
+          echo "signing_identity=$SIGNING_IDENTITY" >> "$GITHUB_OUTPUT"
+          echo "api_key_path=$API_KEY_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Build and codesign
         run: |
-          servon xcode codesign --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
-            --identity ${{ steps.signing.outputs.signing_identity }}
-          servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
-            --identity ${{ steps.signing.outputs.signing_identity }}
+          set -euo pipefail
+          for arch in arm64 x86_64; do
+            app="./temp/${arch}/Build/Products/Release/${{ env.SCHEME }}.app"
+            servon xcode build --scheme ${{ env.SCHEME }} --arch "$arch" --clean=false -v
+            servon xcode codesign --path "$app" \
+              --identity "${{ steps.signing.outputs.signing_identity }}"
+          done
+
       - name: Create DMG
         env:
           DMG_SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
@@ -108,13 +100,9 @@ jobs:
             rm -rf "$out"
             mkdir -p "$out"
 
-            create_dmg_args=(--overwrite)
-            if [ -n "${DMG_SIGNING_IDENTITY:-}" ]; then
-              create_dmg_args+=(--identity "$DMG_SIGNING_IDENTITY")
-            fi
-
             set +e
-            npx create-dmg@8.1.0 "${create_dmg_args[@]}" "$app" "$out"
+            npx "create-dmg@${CREATE_DMG_VERSION}" --overwrite \
+              --identity "$DMG_SIGNING_IDENTITY" "$app" "$out"
             create_dmg_status=$?
             set -e
 
@@ -132,10 +120,13 @@ jobs:
             rm -rf "$out"
           done
           ls -alh ./temp/*.dmg
-      - name: Notary
+
+      - name: Notarize DMG
         continue-on-error: true
         run: |
-          for file in $(find . -maxdepth 2 -type f -name "*.dmg"); do
+          set -euo pipefail
+          shopt -s nullglob
+          for file in ./temp/*.dmg; do
             echo "🔐 Notarizing $file"
             xcrun notarytool submit "$file" \
               --key ${{ steps.signing.outputs.api_key_path }} \
@@ -144,30 +135,21 @@ jobs:
               --wait \
               --timeout 10m
             stapler staple "$file"
-          done
-      - name: 公证结果
-        continue-on-error: true
-        run: |
-          for file in $(find . -maxdepth 2 -type f -name "*.dmg"); do
-            echo "✅ Validating $file"
             stapler validate "$file"
           done
-      - name: Check
+
+      - name: Prepare updates
         run: |
-          ls -alh
-          mkdir updates
+          mkdir -p updates
           cp ./temp/*.dmg updates/
-          echo "the updates is in ${{ github.workspace }}/updates"
           ls -alh updates
+
       - name: Generate Changelog
         run: |
-          TAG="${{ env.TAG }}"
-          PREVIOUS_TAG="${{ env.PREVIOUS_TAG }}"
-
-          if [ -z "$PREVIOUS_TAG" ]; then
+          if [ -z "${PREVIOUS_TAG:-}" ]; then
             NOTES="## Release ${TAG}\n\nInitial release"
           else
-            CHANGES=$(git log ${PREVIOUS_TAG}..HEAD --no-merges --pretty=format:'- %s' \
+            CHANGES=$(git log "${PREVIOUS_TAG}"..HEAD --no-merges --pretty=format:'- %s' \
               | grep -Ev '^- (ci|chore|build|style|test)(\(|:)' \
               | grep -Ev '^- 👷 CI:' \
               | sort -u \
@@ -177,37 +159,29 @@ jobs:
             fi
             NOTES="## Release ${TAG}\n\n### Changes since ${PREVIOUS_TAG}\n\n${CHANGES}"
           fi
-
           echo -e "$NOTES" > changelog.md
-          cat changelog.md >> $GITHUB_STEP_SUMMARY
-      - name: generate appcasts (production only)
+          cat changelog.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Generate appcasts
         if: env.IS_PRERELEASE == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SPARKLE_VERSION: "2.8.1"
         run: |
           set -euo pipefail
-
-          chmod +x .github/scripts/install-sparkle-tools.sh
           SPARKLE_BIN="$(SPARKLE_VERSION="${SPARKLE_VERSION}" .github/scripts/install-sparkle-tools.sh)"
-
-          if [ ! -x "$SPARKLE_BIN/generate_appcast" ]; then
-            echo "❌ Sparkle generate_appcast not found at $SPARKLE_BIN"
-            exit 1
-          fi
-
-          RELEASE_NOTES_HTML=$(cat changelog.md | gh api markdown -F text=@- -f mode=gfm)
+          RELEASE_NOTES_HTML=$(gh api markdown -F text=@changelog.md -f mode=gfm)
+          RELEASE_NOTES_LINK="https://github.com/CofficLab/GitOK/releases/latest"
 
           for arch in arm64 x86_64; do
             input_dir="appcast_input_${arch}"
             appcast_file="appcast-${arch}.xml"
             rm -rf "$input_dir"
             mkdir -p "$input_dir"
-            cp ./updates/*${arch}*.dmg "$input_dir/"
-            ls -alh "$input_dir"
+            cp ./updates/*"${arch}"*.dmg "$input_dir/"
 
             echo "🔑 Generating appcast for $arch..."
-            echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" --ed-key-file - "$input_dir"
+            echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | \
+              "${SPARKLE_BIN}/generate_appcast" --ed-key-file - "$input_dir"
 
             if [ ! -f "$input_dir/appcast.xml" ]; then
               echo "❌ generate_appcast did not produce appcast.xml for $arch"
@@ -216,16 +190,12 @@ jobs:
             fi
 
             cp "$input_dir/appcast.xml" "$appcast_file"
-
             dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
             export u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
             export RELEASE_NOTES_HTML
-            export RELEASE_NOTES_LINK="https://github.com/CofficLab/GitOK/releases/latest"
+            export RELEASE_NOTES_LINK
 
-            # 只更新最新一条（第一个 item）的下载地址
             perl -i -pe 'if (!$done) { s/(enclosure url=")[^"]*/$1.$ENV{u}/e && ($done=1) }' "$appcast_file"
-
-            # 只给最新一条注入 release notes
             perl -i -0777 -pe '
               if (!$done++) {
                 my $notes = $ENV{RELEASE_NOTES_HTML} // "";
@@ -236,8 +206,8 @@ jobs:
             ' "$appcast_file"
           done
 
-          # 兼容旧版本客户端（仍读取 appcast.xml）
           cp appcast-arm64.xml appcast.xml
+
       - name: 发布 Release (prerelease)
         if: success() && env.IS_PRERELEASE == 'true'
         uses: softprops/action-gh-release@v1
@@ -246,6 +216,7 @@ jobs:
           prerelease: true
           body_path: changelog.md
           files: ./updates/*.dmg
+
       - name: 发布 Release
         if: success() && env.IS_PRERELEASE == 'false'
         uses: softprops/action-gh-release@v1
@@ -259,68 +230,44 @@ jobs:
             ./appcast-arm64.xml
             ./appcast-x86_64.xml
 
-      - name: Upload DMG to R2
+      - name: Upload to R2
         if: success()
         env:
           WEBHOOK_SECRET: ${{ secrets.COFFIC_APP_UPLOAD_KEY }}
-          API_URL: https://data.coffic.cn
         run: |
           set -euo pipefail
-
-          for DMG_FILE in ./updates/*.dmg; do
-            if [ ! -f "$DMG_FILE" ]; then
-              echo "⚠️  No DMG file found to upload"
-              continue
-            fi
-
-            DMG_FILENAME=$(basename "$DMG_FILE")
-            R2_KEY="gitok/${DMG_FILENAME}"
-
-            echo "📤 Uploading DMG to R2: $R2_KEY"
-
-            RESPONSE=$(curl -s -X POST "${API_URL}/lumi/upload" \
+          upload_file() {
+            local file="$1"
+            local key="$2"
+            local response
+            echo "📤 Uploading to R2: $key"
+            response=$(curl -s -X POST "${R2_API_URL}/lumi/upload" \
               -H "X-Webhook-Secret: ${WEBHOOK_SECRET}" \
-              -F "file=@${DMG_FILE}" \
-              -F "key=${R2_KEY}")
+              -F "file=@${file}" \
+              -F "key=${key}")
+            echo "Response: $response"
+            echo "$response" | grep -q '"success":true'
+          }
 
-            echo "Response: $RESPONSE"
-
-            if echo "$RESPONSE" | grep -q '"success":true'; then
-              R2_DMG_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
-              echo "✅ DMG uploaded: $R2_DMG_URL"
-            else
-              echo "❌ Failed to upload DMG to R2"
+          shopt -s nullglob
+          for dmg in ./updates/*.dmg; do
+            upload_file "$dmg" "gitok/$(basename "$dmg")" || {
+              echo "❌ Failed to upload $(basename "$dmg")"
               exit 1
-            fi
+            }
+            echo "✅ $(basename "$dmg") uploaded"
           done
 
-      - name: Upload appcast to R2
-        if: success() && env.IS_PRERELEASE == 'false'
-        env:
-          WEBHOOK_SECRET: ${{ secrets.COFFIC_APP_UPLOAD_KEY }}
-          API_URL: https://data.coffic.cn
-        run: |
-          set -euo pipefail
-
-          for APPCAST_FILE in appcast.xml appcast-arm64.xml appcast-x86_64.xml; do
-            if [ ! -f "$APPCAST_FILE" ]; then
-              echo "⚠️  $APPCAST_FILE not found, skipping"
-              continue
-            fi
-
-            R2_KEY="gitok/${APPCAST_FILE}"
-            echo "📤 Uploading appcast to R2: $R2_KEY"
-
-            RESPONSE=$(curl -s -X POST "${API_URL}/lumi/upload" \
-              -H "X-Webhook-Secret: ${WEBHOOK_SECRET}" \
-              -F "file=@${APPCAST_FILE}" \
-              -F "key=${R2_KEY}")
-
-            echo "Response: $RESPONSE"
-
-            if echo "$RESPONSE" | grep -q '"success":true'; then
-              echo "✅ $APPCAST_FILE uploaded to R2"
-            else
-              echo "❌ Failed to upload $APPCAST_FILE to R2"
-            fi
-          done
+          if [ "${IS_PRERELEASE}" = "false" ]; then
+            for appcast in appcast.xml appcast-arm64.xml appcast-x86_64.xml; do
+              if [ ! -f "$appcast" ]; then
+                echo "⚠️  $appcast not found, skipping"
+                continue
+              fi
+              if upload_file "$appcast" "gitok/${appcast}"; then
+                echo "✅ $appcast uploaded"
+              else
+                echo "❌ Failed to upload $appcast"
+              fi
+            done
+          fi
