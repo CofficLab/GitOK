@@ -15,11 +15,23 @@ public final class UpdateManager: NSObject {
     /// Sparkle 控制器（持有它以保持 updater 运行）
     public private(set) var updaterController: SPUStandardUpdaterController!
 
-    /// 主 feed URL（自有服务器）
-    private let primaryFeedURL = URL(string: "https://api.kuaiyizhi.cn/gitok/appcast.xml")!
+    /// 主 feed URL（根据架构选择对应的 appcast）
+    private var primaryFeedURL: URL {
+        #if arch(arm64)
+        URL(string: "https://s.kuaiyizhi.cn/gitok/appcast-arm64.xml")!
+        #else
+        URL(string: "https://s.kuaiyizhi.cn/gitok/appcast-x86_64.xml")!
+        #endif
+    }
 
-    /// 备用 feed URL（GitHub Release）
-    private let fallbackFeedURL = URL(string: "https://github.com/CofficLab/GitOK/releases/latest/download/appcast-arm64.xml")!
+    /// 备用 feed URL（GitHub Release，根据架构选择对应的 appcast）
+    private var fallbackFeedURL: URL {
+        #if arch(arm64)
+        URL(string: "https://github.com/CofficLab/GitOK/releases/latest/download/appcast-arm64.xml")!
+        #else
+        URL(string: "https://github.com/CofficLab/GitOK/releases/latest/download/appcast-x86_64.xml")!
+        #endif
+    }
 
     /// 缓存网络检测结果，避免每次检查都做网络请求
     private var lastDetectionTime: Date?

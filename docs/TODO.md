@@ -1,6 +1,6 @@
 # TODO
 
-## P0：自写应用更新机制（UpdatePlugin）
+## P0：自写应用更新机制（UpdatePlugin）- 已删除
 
 ### 背景
 
