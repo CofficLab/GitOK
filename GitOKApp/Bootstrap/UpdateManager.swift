@@ -40,13 +40,13 @@ public final class UpdateManager: NSObject {
         detectedFeedURL = url
         lastDetectionTime = Date()
 
-        SUUpdater.shared().setFeedURL(url)
+        SUUpdater.shared()?.feedURL = url
         os_log(.info, "[UpdateManager] Feed URL set to: %{public}@", url.absoluteString)
     }
 
     /// 手动检查更新（用于设置面板中的"检查更新"按钮）
     public func checkForUpdates() {
-        SUUpdater.shared().checkForUpdates()
+        SUUpdater.shared()?.checkForUpdates(nil)
     }
 
     /// 检测哪个 feed URL 可用
