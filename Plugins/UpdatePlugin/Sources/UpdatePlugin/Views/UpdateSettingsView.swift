@@ -1,14 +1,11 @@
-import SwiftUI
-import OSLog
 import GitOKAppCore
 import GitOKUI
+import OSLog
+import Sparkle
+import SwiftUI
 
-/// 更新设置视图
+/// 更新设置视图（基于 Sparkle 2.x）
 public struct UpdateSettingsView: View {
-    @StateObject private var checker = UpdateChecker.shared
-    @StateObject private var downloader = UpdateDownloader()
-    @StateObject private var installer = UpdateInstaller()
-
     @EnvironmentObject var data: DataVM
 
     public init() {}
@@ -31,89 +28,29 @@ public struct UpdateSettingsView: View {
                         }
 
                         Spacer()
-
-                        if checker.isChecking {
-                            ProgressView()
-                                .controlSize(.small)
-                        }
                     }
                     .padding()
                 }
 
-                // 检查更新按钮
+                // 检查更新按钮（由 Sparkle 处理，会自动弹出更新 UI）
                 Button(action: {
-                    Task {
-                        await checker.checkForUpdates()
-                    }
+                    // SUUpdater.shared() 是 Obj-C 类方法，Sparkle 内部保证全局单例
+                    SUUpdater.shared().checkForUpdates(self)
                 }) {
                     HStack {
                         Image(systemName: "arrow.triangle.2.circlepath")
-                        Text(checker.isChecking ? "正在检查..." : "检查更新")
+                        Text("检查更新")
                     }
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(checker.isChecking || downloader.isDownloading || installer.isInstalling)
 
-                // 更新信息（如果有）
-                if let updateInfo = checker.latestVersion, updateInfo.isNewerThanCurrent {
-                    GroupBox("发现新版本") {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("版本 \(updateInfo.version)")
-                                .font(.headline)
-
-                            ScrollView {
-                                Text(updateInfo.releaseNotes)
-                                    .font(.body)
-                                    .foregroundColor(.secondary)
-                            }
-                            .frame(maxHeight: 150)
-
-                            // 下载进度或安装进度
-                            if downloader.isDownloading {
-                                UpdateProgressView(downloader: downloader)
-                            } else if installer.isInstalling {
-                                VStack(spacing: 8) {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                    Text(installer.installProgress)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                .padding()
-                            } else {
-                                Button("下载并安装") {
-                                    Task {
-                                        await downloadAndInstall(updateInfo: updateInfo)
-                                    }
-                                }
-                                .buttonStyle(.borderedProminent)
-                            }
-                        }
-                        .padding()
-                    }
-                }
-
-                // 错误信息
-                if checker.hasError {
-                    HStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .foregroundColor(.orange)
-                        Text(checker.errorMessage ?? "未知错误")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                if let installError = installer.installError {
-                    HStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .foregroundColor(.red)
-                        Text(installError)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
+                // 自动更新选项
+                Toggle("自动检查更新", isOn: Binding(
+                    get: { SUUpdater.shared().automaticallyChecksForUpdates },
+                    set: { SUUpdater.shared().automaticallyChecksForUpdates = $0 }
+                ))
+                .padding(.horizontal)
 
                 Spacer()
             }
@@ -123,24 +60,9 @@ public struct UpdateSettingsView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 AppButton(String(localized: "Done"), style: .secondary, size: .small) {
-                    // 关闭设置视图（通过通知）
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }
             }
-        }
-    }
-
-    private func downloadAndInstall(updateInfo: UpdateInfo) async {
-        do {
-            // 下载 DMG
-            _ = try await downloader.downloadUpdate(updateInfo: updateInfo)
-
-            // 安装更新
-            if let dmgFile = downloader.downloadedFileURL {
-                try await installer.installUpdate(dmgURL: dmgFile)
-            }
-        } catch {
-            os_log(.error, "[UpdateSettingsView] Download or install failed: %{public}s", error.localizedDescription)
         }
     }
 

@@ -38,6 +38,11 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             DiagnosticsStore.shared.markLaunchStarted()
         }
 
+        // 初始化 Sparkle 更新，检测 feed URL fallback
+        Task {
+            await UpdateManager.shared.setupFeedURLIfNeeded()
+        }
+
         if Self.verbose {
             os_log("\(self.t)Finish Lanunching")
         }
