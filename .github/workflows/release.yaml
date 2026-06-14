@@ -55,9 +55,15 @@ jobs:
           echo "TAG=$tag" >> $GITHUB_ENV
           if [[ $tag == p* ]]; then
             echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+            previous_tag=$(git tag -l "p[0-9]*" | sort -V | grep -Fxv "$tag" | tail -n 1)
+            if [ -z "$previous_tag" ]; then
+              previous_tag=$(git tag -l "v*" | sort -V | tail -n 1)
+            fi
           else
             echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+            previous_tag=$(git tag -l "v*" | sort -V | grep -Fxv "$tag" | tail -n 1)
           fi
+          echo "PREVIOUS_TAG=$previous_tag" >> $GITHUB_ENV
       - name: Setup macOS signing
         id: signing
         env:
@@ -86,8 +92,18 @@ jobs:
             --identity ${{ steps.signing.outputs.signing_identity }}
       - name: Create DMG
         run: |
-          servon xcode package --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app
-          servon xcode package --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app
+          set -euo pipefail
+          chmod +x .github/scripts/install-create-dmg.sh
+          chmod +x .github/scripts/create-branded-dmg.sh
+          .github/scripts/create-branded-dmg.sh \
+            ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
+            arm64 \
+            ./temp
+          .github/scripts/create-branded-dmg.sh \
+            ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
+            x86_64 \
+            ./temp
+          ls -alh ./temp/*.dmg
       - name: Notary
         continue-on-error: true
         run: |
@@ -115,39 +131,63 @@ jobs:
           cp ./temp/*.dmg updates/
           echo "the updates is in ${{ github.workspace }}/updates"
           ls -alh updates
+      - name: Generate Changelog
+        run: |
+          TAG="${{ env.TAG }}"
+          PREVIOUS_TAG="${{ env.PREVIOUS_TAG }}"
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            NOTES="## Release ${TAG}\n\nInitial release"
+          else
+            CHANGES=$(git log ${PREVIOUS_TAG}..HEAD --no-merges --pretty=format:'- %s' \
+              | grep -Ev '^- (ci|chore|build|style|test)(\(|:)' \
+              | grep -Ev '^- 👷 CI:' \
+              | sort -u \
+              | head -20)
+            if [ -z "$CHANGES" ]; then
+              CHANGES="- Maintenance and stability improvements"
+            fi
+            NOTES="## Release ${TAG}\n\n### Changes since ${PREVIOUS_TAG}\n\n${CHANGES}"
+          fi
+
+          echo -e "$NOTES" > changelog.md
+          cat changelog.md >> $GITHUB_STEP_SUMMARY
       - name: generate appcasts (production only)
         if: env.IS_PRERELEASE == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPARKLE_VERSION: "2.8.1"
         run: |
-          xcodebuild -resolvePackageDependencies
-          SPARKLE_BIN="$(ls -d ~/Library/Developer/Xcode/DerivedData/${{ env.SCHEME }}*/SourcePackages/artifacts/sparkle/Sparkle/bin | head -n 1)"
+          set -euo pipefail
 
-          # 获取最新 Release 的 body 并转换为 HTML
-          RELEASE_BODY=$(gh api repos/${{ github.repository }}/releases/latest --jq '.body')
-          RELEASE_NOTES_HTML=$(echo "$RELEASE_BODY" | gh api markdown -F text=@- -f mode=gfm)
+          chmod +x .github/scripts/install-sparkle-tools.sh
+          SPARKLE_BIN="$(SPARKLE_VERSION="${SPARKLE_VERSION}" .github/scripts/install-sparkle-tools.sh)"
 
-          # Sparkle 根据 Info.plist 的 SUFeedURL 命名输出（appcast-arm64.xml），
-          # 忽略 -o；因此在独立目录生成，再按架构重命名。
-          feed_name="appcast-arm64.xml"
+          if [ ! -x "$SPARKLE_BIN/generate_appcast" ]; then
+            echo "❌ Sparkle generate_appcast not found at $SPARKLE_BIN"
+            exit 1
+          fi
+
+          RELEASE_NOTES_HTML=$(cat changelog.md | gh api markdown -F text=@- -f mode=gfm)
 
           for arch in arm64 x86_64; do
             input_dir="appcast_input_${arch}"
             appcast_file="appcast-${arch}.xml"
+            rm -rf "$input_dir"
             mkdir -p "$input_dir"
             cp ./updates/*${arch}*.dmg "$input_dir/"
-            if [ -f "$appcast_file" ]; then
-              cp "$appcast_file" "$input_dir/$feed_name"
-            fi
             ls -alh "$input_dir"
 
-            (
-              cd "$input_dir"
-              echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" \
-                --ed-key-file - \
-                .
-              mv "$feed_name" "../${appcast_file}"
-            )
+            echo "🔑 Generating appcast for $arch..."
+            echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | "${SPARKLE_BIN}/generate_appcast" --ed-key-file - "$input_dir"
+
+            if [ ! -f "$input_dir/appcast.xml" ]; then
+              echo "❌ generate_appcast did not produce appcast.xml for $arch"
+              ls -la "$input_dir"
+              exit 1
+            fi
+
+            cp "$input_dir/appcast.xml" "$appcast_file"
 
             dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
             export u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"
@@ -170,11 +210,21 @@ jobs:
 
           # 兼容旧版本客户端（仍读取 appcast.xml）
           cp appcast-arm64.xml appcast.xml
-      - name: 发布 Release
+      - name: 发布 Release (prerelease)
+        if: success() && env.IS_PRERELEASE == 'true'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}
-          prerelease: ${{ env.IS_PRERELEASE }}
+          prerelease: true
+          body_path: changelog.md
+          files: ./updates/*.dmg
+      - name: 发布 Release
+        if: success() && env.IS_PRERELEASE == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          prerelease: false
+          body_path: changelog.md
           files: |
             ./updates/*.dmg
             ./appcast.xml
