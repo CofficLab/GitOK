@@ -1,65 +1,360 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    ".gitignore" : {
-
-    },
-    "LICENSE" : {
-
-    },
-    "Project sidebar and repository sheets" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Project sidebar and repository sheets"
+  "sourceLanguage": "en",
+  "strings": {
+    ".gitignore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
           }
         }
       }
     },
-    "ProjectsPlugin" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Projects"
+    "LICENSE": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LICENSE"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LICENSE"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LICENSE"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LICENSE"
           }
         }
       }
     },
-    "最终路径" : {
-
+    "Project sidebar and repository sheets": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project sidebar and repository sheets"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目侧栏和仓库表单"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案側邊欄與儲存庫表單"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案側邊欄與儲存庫表單"
+          }
+        }
+      }
     },
-    "准备创建" : {
-
+    "ProjectsPlugin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projects"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ProjectsPlugin"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ProjectsPlugin"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ProjectsPlugin"
+          }
+        }
+      }
     },
-    "切换到此项目" : {
-
+    "最终路径": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最终路径"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最終路徑"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最終路徑"
+          }
+        }
+      }
     },
-    "创建 README.md" : {
-
+    "准备创建": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "准备创建"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "準備建立"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "準備建立"
+          }
+        }
+      }
     },
-    "创建一个新的本地 Git 仓库，并自动导入到项目列表。" : {
-
+    "切换到此项目": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换到此项目"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換到此專案"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換到此專案"
+          }
+        }
+      }
     },
-    "创建初始提交" : {
-
+    "创建 README.md": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建 README.md"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立 README.md"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立 README.md"
+          }
+        }
+      }
     },
-    "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。" : {
-
+    "创建一个新的本地 Git 仓库，并自动导入到项目列表。": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建一个新的本地 Git 仓库，并自动导入到项目列表。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立一個新的本地 Git 儲存庫，並自動匯入到專案列表。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立一個新的本地 Git 儲存庫，並自動匯入到專案列表。"
+          }
+        }
+      }
     },
-    "当前项目" : {
-
+    "创建初始提交": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建初始提交"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立初始提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立初始提交"
+          }
+        }
+      }
     },
-    "新建仓库" : {
-
+    "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "初始提交會使用目前儲存庫或全域 Git 使用者設定；如果未設定 user.name/user.email，Git 會傳回錯誤。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "初始提交會使用目前儲存庫或全域 Git 使用者設定；如果未設定 user.name/user.email，Git 會傳回錯誤。"
+          }
+        }
+      }
     },
-    "暂无项目" : {
-
+    "当前项目": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前项目"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案"
+          }
+        }
+      }
     },
-    "目标目录已存在但为空，允许直接初始化为 Git 仓库。" : {
-
+    "新建仓库": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新建仓库"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新建儲存庫"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新建儲存庫"
+          }
+        }
+      }
+    },
+    "暂无项目": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无项目"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫無專案"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫無專案"
+          }
+        }
+      }
+    },
+    "目标目录已存在但为空，允许直接初始化为 Git 仓库。": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标目录已存在但为空，允许直接初始化为 Git 仓库。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目標目錄已存在但為空，允許直接初始化為 Git 儲存庫。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目標目錄已存在但為空，允許直接初始化為 Git 儲存庫。"
+          }
+        }
+      }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

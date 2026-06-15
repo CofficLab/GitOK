@@ -1,15 +1,72 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。" : {
-
+  "sourceLanguage": "en",
+  "strings": {
+    "CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CA 檔案會寫入 `http.sslCAInfo`。關閉 SSL 驗證只適合臨時排障；企業網路應優先匯入可信 CA 憑證。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CA 檔案會寫入 `http.sslCAInfo`。關閉 SSL 驗證只適合臨時排障；企業網路應優先匯入可信 CA 憑證。"
+          }
+        }
+      }
     },
-    "会写入 Git 全局配置 `http.proxy` 和 `https.proxy`。如果代理需要认证，可使用 `http://user:password@host:port` 格式。" : {
-
+    "会写入 Git 全局配置 `http.proxy` 和 `https.proxy`。如果代理需要认证，可使用 `http://user:password@host:port` 格式。": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "会写入 Git 全局配置 `http.proxy` 和 `https.proxy`。如果代理需要认证，可使用 `http://user:password@host:port` 格式。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "會寫入 Git 全域設定 `http.proxy` 和 `https.proxy`。如果代理需要認證，可使用 `http://user:password@host:port` 格式。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "會寫入 Git 全域設定 `http.proxy` 和 `https.proxy`。如果代理需要認證，可使用 `http://user:password@host:port` 格式。"
+          }
+        }
+      }
     },
-    "网络" : {
-
+    "网络": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "網路"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "網路"
+          }
+        }
+      }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
