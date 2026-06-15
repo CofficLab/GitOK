@@ -16,8 +16,13 @@ public enum BranchPlugin: GitOKPlugin {
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
-        let pluginContext = toolBarContext(from: context)
+        let pluginContext = BranchPluginContext(context)
+        let monitor = BranchMonitor(
+            projectURL: context.projectURL,
+            isGitRepository: context.isGitRepository
+        )
         let picker = BranchPickerView(context: pluginContext)
+            .environment(\.branchMonitor, monitor)
             .injectServiceIfNeeded(projectURL: context.projectURL)
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(picker))]
     }
@@ -25,7 +30,12 @@ public enum BranchPlugin: GitOKPlugin {
     @MainActor
     public static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
         let pluginContext = BranchPluginContext(context)
+        let monitor = BranchMonitor(
+            projectURL: context.projectURL,
+            isGitRepository: context.isGitRepository
+        )
         let tile = BranchStatusTile(context: pluginContext)
+            .environment(\.branchMonitor, monitor)
             .injectServiceIfNeeded(projectURL: context.projectURL)
         return [GitOKStatusBarItem(id: metadata.id, view: AnyView(tile))]
     }

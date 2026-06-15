@@ -1,14 +1,10 @@
-import GitCoreKit
 import GitOKCoreKit
 import SwiftUI
 
 public struct BranchStatusTile: View {
     let context: BranchPluginContext
-    @Environment(\.branchService) private var service
+    @Environment(\.branchMonitor) private var monitor
     @State private var isPresented = false
-    @State private var fallbackBranchName: String?
-    @State private var isLoadingBranch = false
-    @State private var refreshGeneration = 0
 
     public init(context: BranchPluginContext) {
         self.context = context
@@ -27,51 +23,13 @@ public struct BranchStatusTile: View {
                 BranchManagementView(context: context)
                     .frame(width: 560, height: 640)
             }
-            .onAppear(perform: refreshFallbackBranch)
-            .onChange(of: context.projectURL) { _, _ in refreshFallbackBranch() }
-            .onChange(of: context.branchName) { _, _ in refreshFallbackBranch() }
-            .onChange(of: context.isGitRepository) { _, _ in refreshFallbackBranch() }
         }
     }
 
     private var displayBranchName: String {
-        if let fallbackBranchName, fallbackBranchName.isEmpty == false {
-            return fallbackBranchName
+        if let name = monitor?.branchName, !name.isEmpty {
+            return name
         }
-
-        if context.projectURL != nil, context.isGitRepository, isLoadingBranch {
-            return BranchPluginLocalization.string("Loading Branch")
-        }
-
         return BranchPluginLocalization.string("No Branch")
-    }
-
-    private func refreshFallbackBranch() {
-        refreshGeneration += 1
-        let generation = refreshGeneration
-
-        guard context.projectURL != nil, context.isGitRepository else {
-            fallbackBranchName = nil
-            isLoadingBranch = false
-            return
-        }
-
-        // Use context.branchName as initial placeholder while async query runs
-        if fallbackBranchName == nil, let branchName = context.branchName, branchName.isEmpty == false {
-            fallbackBranchName = branchName
-        }
-
-        guard let service else { return }
-        isLoadingBranch = true
-        Task.detached(priority: .utility) {
-            let branchName = try? service.currentBranchName()
-            guard Task.isCancelled == false else { return }
-
-            await MainActor.run {
-                guard generation == refreshGeneration else { return }
-                fallbackBranchName = branchName
-                isLoadingBranch = false
-            }
-        }
     }
 }

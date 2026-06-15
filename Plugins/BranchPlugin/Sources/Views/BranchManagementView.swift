@@ -7,6 +7,7 @@ import SwiftUI
 public struct BranchManagementView: View {
     let context: BranchPluginContext
     @Environment(\.branchService) private var service
+    @Environment(\.branchMonitor) private var monitor
     @State private var branches: [GitBranchSummary] = []
     @State private var remoteBranches: [String] = []
     @State private var newBranchName = ""
@@ -56,6 +57,7 @@ public struct BranchManagementView: View {
             .padding(20)
         }
         .onAppear(perform: loadBranches)
+        .onChange(of: monitor?.branchName) { _, _ in loadBranches() }
         .sheet(item: $branchToRename) { branch in
             renameSheet(branch)
         }
@@ -281,7 +283,7 @@ private extension BranchManagementView {
             try service.checkoutBranch(named: branchName)
         } onSuccess: {
             selectedBranch = branch
-            loadBranches()
+            monitor?.refresh()
         }
     }
 
@@ -403,6 +405,7 @@ private extension BranchManagementView {
         }
         isLoading = true
         errorMessage = nil
+        let currentBranchName = monitor?.branchName
         Task.detached(priority: .userInitiated) {
             do {
                 let loadedBranches = try service.branches()
@@ -414,6 +417,7 @@ private extension BranchManagementView {
                     remoteBranches = loadedRemoteBranches
                     pullRequestRemoteURL = remoteURL
                     selectedBranch = BranchLogic.selectCurrentBranch(in: loadedBranches)
+                        ?? BranchLogic.selectBranch(named: currentBranchName, in: loadedBranches)
                     let updated = BranchLogic.updateCompareSelection(
                         branches: loadedBranches,
                         currentBranch: selectedBranch,
@@ -498,14 +502,14 @@ private extension BranchManagementView {
 
     func upstreamSheet(_ branch: GitBranchSummary) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(BranchPluginLocalization.string("Set Upstream"))
+            Text(BranchPluginLocalization.string("Set Upstream Branch"))
                 .font(.headline)
             Text(branch.name)
                 .font(.caption)
                 .foregroundColor(.secondary)
-            Picker(BranchPluginLocalization.string("Upstream branch"), selection: $selectedUpstreamBranch) {
-                ForEach(remoteBranches, id: \.self) { branchName in
-                    Text(branchName).tag(branchName)
+            Picker(BranchPluginLocalization.string("Upstream"), selection: $selectedUpstreamBranch) {
+                ForEach(remoteBranches, id: \.self) { name in
+                    Text(name).tag(name)
                 }
             }
             HStack(spacing: 8) {
@@ -518,7 +522,7 @@ private extension BranchManagementView {
                     branchToSetUpstream = nil
                 }
                 AppButton(
-                    BranchPluginLocalization.string("Set"),
+                    BranchPluginLocalization.string("Set Upstream"),
                     systemImage: "link",
                     style: .primary,
                     size: .small
@@ -530,6 +534,6 @@ private extension BranchManagementView {
             }
         }
         .padding()
-        .frame(width: 360)
+        .frame(width: 320)
     }
 }

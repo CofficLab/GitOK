@@ -77,6 +77,72 @@ struct BranchPluginTests {
         #expect(ctx.isGitRepository == false)
     }
 
+    // MARK: - BranchMonitor
+
+    @MainActor
+    @Test("BranchMonitor with nil projectURL")
+    func monitorWithNilProjectURL() {
+        let monitor = BranchMonitor(projectURL: nil, isGitRepository: false)
+        #expect(monitor.branchName == nil)
+    }
+
+    @MainActor
+    @Test("BranchMonitor with non-git repository")
+    func monitorWithNonGitRepository() {
+        let url = URL(fileURLWithPath: "/tmp/repo")
+        let monitor = BranchMonitor(projectURL: url, isGitRepository: false)
+        #expect(monitor.branchName == nil)
+    }
+
+    @MainActor
+    @Test("BranchMonitor parseBranchName with normal branch")
+    func parseBranchNameNormalBranch() {
+        let content = "ref: refs/heads/main"
+        let name = BranchMonitor.parseBranchName(from: content)
+        #expect(name == "main")
+    }
+
+    @MainActor
+    @Test("BranchMonitor parseBranchName with feature branch")
+    func parseBranchNameFeatureBranch() {
+        let content = "ref: refs/heads/feature/new-feature"
+        let name = BranchMonitor.parseBranchName(from: content)
+        #expect(name == "feature/new-feature")
+    }
+
+    @MainActor
+    @Test("BranchMonitor parseBranchName with detached HEAD (SHA-1)")
+    func parseBranchNameDetachedHeadSHA1() {
+        let content = "abc1234567890123456789012345678901234567"
+        let name = BranchMonitor.parseBranchName(from: content)
+        #expect(name == "abc1234")
+    }
+
+    @MainActor
+    @Test("BranchMonitor parseBranchName with detached HEAD (SHA-256)")
+    func parseBranchNameDetachedHeadSHA256() {
+        // SHA-256 hash is exactly 64 hex characters
+        let content = "abc1234567890123456789012345678901234567890123456789012345678901"
+        let name = BranchMonitor.parseBranchName(from: content)
+        #expect(name == "abc1234")
+    }
+
+    @MainActor
+    @Test("BranchMonitor parseBranchName with invalid content")
+    func parseBranchNameInvalidContent() {
+        let content = "invalid content"
+        let name = BranchMonitor.parseBranchName(from: content)
+        #expect(name == nil)
+    }
+
+    @MainActor
+    @Test("BranchMonitor parseBranchName with empty content")
+    func parseBranchNameEmptyContent() {
+        let content = ""
+        let name = BranchMonitor.parseBranchName(from: content)
+        #expect(name == nil)
+    }
+
     // MARK: - Views receive context
 
     @MainActor

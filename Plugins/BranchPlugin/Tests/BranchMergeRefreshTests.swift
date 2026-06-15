@@ -29,29 +29,23 @@ struct BranchMergeRefreshBugTests {
         GitBranchSummary(name: name, isRemote: false, isCurrent: isCurrent)
     }
 
-    // MARK: - Core Bug Reproduction
+    // MARK: - Architecture Verification
 
-    @Test("BUG: DataVM does not listen to projectGitHeadDidChange")
-    func dataVMDoesNotListenToHeadChangeNotification() async throws {
-        // This test FAILS because DataVM doesn't subscribe to the notification.
-        //
-        // We verify this by checking if DataVM has the expected behavior:
-        // "DataVM should have a mechanism to respond to projectGitHeadDidChange"
-        //
-        // Currently, it doesn't. So this test documents that gap.
+    @MainActor
+    @Test("BranchMonitor uses file system monitoring instead of notifications")
+    func branchMonitorUsesFileSystemMonitoring() async throws {
+        // With the refactor, BranchPlugin now uses BranchMonitor to watch .git/HEAD directly.
+        // This is more reliable and immediate than relying on NotificationCenter.
+        let branchMonitorSourcePath = "/Users/angel/Code/Coffic/GitOK/Plugins/BranchPlugin/Sources/Services/BranchMonitor.swift"
 
-        // Check DataVM's source code for notification subscription
-        let dataVMSourcePath = "/Users/colorfy/Code/CofficLab/GitOK/Packages/GitOKAppCore/Sources/GitOKAppCore/ViewModels/DataVM.swift"
+        let branchMonitorSource = try? String(contentsOfFile: branchMonitorSourcePath, encoding: .utf8)
 
-        let dataVMSource = try? String(contentsOfFile: dataVMSourcePath, encoding: .utf8)
+        // Verify BranchMonitor uses DispatchSource for file monitoring
+        let usesFileSystemMonitoring = branchMonitorSource?.contains("DispatchSource") ?? false
+        let watchesHEADFile = branchMonitorSource?.contains("HEAD") ?? false
 
-        // The fix should add a subscription to projectGitHeadDidChange
-        let hasNotificationSubscription = dataVMSource?.contains("projectGitHeadDidChange") ?? false
-
-        // THIS ASSERTION WILL FAIL until the fix is implemented!
-        // Error message: DataVM should subscribe to projectGitHeadDidChange notification.
-        // Currently it doesn't, which is the root cause of the bug.
-        #expect(hasNotificationSubscription == true)
+        #expect(usesFileSystemMonitoring == true, "BranchMonitor should use DispatchSource for file monitoring")
+        #expect(watchesHEADFile == true, "BranchMonitor should watch HEAD file")
     }
 
     // MARK: - Branch Logic Tests (these pass - logic is correct)

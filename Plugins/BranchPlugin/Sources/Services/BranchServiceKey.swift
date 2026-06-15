@@ -10,3 +10,14 @@ extension EnvironmentValues {
         set { self[BranchServiceKey.self] = newValue }
     }
 }
+
+struct BranchMonitorKey: EnvironmentKey {
+    static let defaultValue: BranchMonitor? = nil
+}
+
+extension EnvironmentValues {
+    var branchMonitor: BranchMonitor? {
+        get { self[BranchMonitorKey.self] }
+        set { self[BranchMonitorKey.self] = newValue }
+    }
+}
