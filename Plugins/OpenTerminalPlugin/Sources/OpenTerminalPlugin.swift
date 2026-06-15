@@ -20,6 +20,13 @@ public enum OpenTerminalPlugin: GitOKPlugin {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenTerminalButton(projectURL: projectURL)))]
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard(
+            footnote: TerminalLauncher.hasInstalledTerminal ? nil : "No supported terminal app is installed on this Mac."
+        )
+    }
 }
 
 public enum OpenTerminalPluginLocalization {

@@ -118,14 +118,6 @@ public struct AboutView: View, SuperLog {
             }
         }
         .navigationTitle(Text("About"))
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AppButton(String(localized: "Done"), style: .secondary, size: .small) {
-                    // 关闭设置视图
-                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }
-            }
-        }
     }
 
     // MARK: - View Components

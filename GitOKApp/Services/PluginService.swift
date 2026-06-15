@@ -25,6 +25,7 @@ final class PluginService: ObservableObject {
     var registeredPluginCount: Int { runtime.registeredCount }
     var tabNames: [String] { runtime.tabNames }
     var configurablePlugins: [PluginInfo] { runtime.configurablePlugins }
+    var managedPlugins: [PluginInfo] { runtime.managedPlugins }
 
     func makeContext(
         projectURL: URL? = nil,
@@ -247,6 +248,11 @@ final class PluginService: ObservableObject {
     func onboardingView(kind: GitOKOnboardingKind, context: GitOKPluginContext) -> AnyView? {
         guard hasPlugins else { return nil }
         return runtime.enabledOnboardingView(kind: kind, context: context)
+    }
+
+    func pluginIntroductionView(pluginID: String, context: GitOKPluginContext) -> AnyView? {
+        guard hasPlugins else { return nil }
+        return runtime.pluginIntroductionView(pluginID: pluginID, context: context)
     }
 }
 

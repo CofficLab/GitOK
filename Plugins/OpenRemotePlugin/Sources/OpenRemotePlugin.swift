@@ -20,6 +20,11 @@ public enum OpenRemotePlugin: GitOKPlugin {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenRemoteButton(projectURL: projectURL)))]
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard()
+    }
 }
 
 public enum OpenRemotePluginLocalization {

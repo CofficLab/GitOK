@@ -61,6 +61,24 @@ public final class GitOKPluginRuntime {
                     description: type.metadata.description,
                     icon: type.metadata.iconName,
                     defaultEnabled: type.metadata.defaultEnabled,
+                    allowUserToggle: type.policy.allowUserToggle,
+                    isDeveloperEnabled: { type.policy.shouldRegister }
+                )
+            }
+            .sorted { $0.name < $1.name }
+    }
+
+    public var managedPlugins: [PluginInfo] {
+        pluginTypes
+            .filter { $0.policy.shouldRegister }
+            .map { type in
+                PluginInfo(
+                    id: type.metadata.id,
+                    name: type.metadata.displayName,
+                    description: type.metadata.description,
+                    icon: type.metadata.iconName,
+                    defaultEnabled: type.metadata.defaultEnabled,
+                    allowUserToggle: type.policy.allowUserToggle,
                     isDeveloperEnabled: { type.policy.shouldRegister }
                 )
             }
@@ -190,5 +208,13 @@ public final class GitOKPluginRuntime {
             return item.view
         }
         return nil
+    }
+
+    public func pluginIntroductionView(
+        pluginID: String,
+        context: GitOKPluginContext
+    ) -> AnyView? {
+        guard let type = pluginTypes.first(where: { $0.metadata.id == pluginID }) else { return nil }
+        return type.pluginIntroductionView(context: context)
     }
 }

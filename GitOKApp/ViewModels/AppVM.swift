@@ -20,9 +20,6 @@ class AppVM: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     /// 侧边栏是否可见
     @Published var sidebarVisibility: Bool
 
-    /// 是否显示设置
-    @Published var showSettings: Bool = false
-
     /// 默认打开的设置标签（nil 表示使用默认）
     @Published var defaultSettingTab: String? = nil
 
@@ -84,24 +81,24 @@ extension AppVM {
 
     /// 显示设置界面
     func openSettings() {
-        showSettings = true
+        NotificationCenter.default.post(name: .openSettings, object: nil)
     }
 
     /// 打开插件管理设置
     func openPluginSettings() {
         defaultSettingTab = "plugins"
-        showSettings = true
+        NotificationCenter.default.post(name: .openSettings, object: nil)
     }
 
     /// 打开仓库设置
     func openRepositorySettings() {
         defaultSettingTab = "repository"
-        showSettings = true
+        NotificationCenter.default.post(name: .openSettings, object: nil)
     }
 
     /// 打开Commit风格设置
     func openCommitStyleSettings() {
         defaultSettingTab = "commitStyle"
-        showSettings = true
+        NotificationCenter.default.post(name: .openSettings, object: nil)
     }
 }

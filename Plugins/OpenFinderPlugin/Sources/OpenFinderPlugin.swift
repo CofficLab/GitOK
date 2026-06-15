@@ -20,6 +20,11 @@ public enum OpenFinderPlugin: GitOKPlugin {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenFinderButton(projectURL: projectURL)))]
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard()
+    }
 }
 
 public enum OpenFinderPluginLocalization {

@@ -39,9 +39,10 @@ struct GitOKApp: App, SuperLog {
             }
         }()
 
-        WindowGroup {
+        WindowGroup(id: AppBootstrap.mainWindowID) {
             ContentLayout()
                 .inRootView()
+                .settingsWindowOpener(appVM: RootContainer.shared.appVM)
                 .environmentObject(appDelegate)
                 .onReceive(appDelegate.$pendingOpenPath.compactMap { $0 }) { path in
                     // 通过 Combine 直接监听 appDelegate 的 @Published 属性变化
@@ -64,12 +65,22 @@ struct GitOKApp: App, SuperLog {
         .handlesExternalEvents(matching: Set()) // 阻止 WindowGroup 为外部事件创建新窗口
         .windowToolbarStyle(.unified(showsTitle: false))
         .modelContainer(AppConfig.getContainer())
-        .commands(content: {
+        .commands {
             DebugCommand()
             ConfigCommand()
             GitCommand()
             AppCommand()
-        })
+            SettingsCommand()
+        }
+
+        Window(String(localized: "Settings"), id: AppBootstrap.settingsWindowID) {
+            SettingsSceneContent()
+        }
+        .windowToolbarStyle(.unified(showsTitle: false))
+        .defaultSize(
+            width: AppBootstrap.defaultSettingsWindowSize.width,
+            height: AppBootstrap.defaultSettingsWindowSize.height
+        )
     }
 }
 

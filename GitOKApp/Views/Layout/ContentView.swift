@@ -64,19 +64,7 @@ struct ContentView: View, SuperLog {
     var body: some View {
         navigationSplitView()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .sheet(isPresented: $app.showSettings) {
-                SettingView(defaultTabID: app.defaultSettingTab ?? "userInfo")
-                    .onDisappear {
-                        // 重置默认标签
-                        app.defaultSettingTab = nil
-                    }
-            }
             .focusedSceneObject(vm)
-    }
-
-    /// 将字符串转换为设置Tab id（保留供菜单命令使用）
-    private func settingTabFromString(_ tab: String?) -> String {
-        tab ?? "userInfo"
     }
 }
 

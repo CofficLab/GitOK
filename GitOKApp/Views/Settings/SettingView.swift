@@ -15,8 +15,8 @@ struct SettingView: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataVM
+    @EnvironmentObject var app: AppVM
     @EnvironmentObject var pluginProvider: PluginService
-    @Environment(\.dismiss) private var dismiss
 
     /// 默认显示的 Tab id
     var defaultTabID: String = "userInfo"
@@ -74,23 +74,28 @@ struct SettingView: View, SuperLog {
                 PluginSettingsView()
             }
         }
-        .frame(width: 700, height: 800)
+        .frame(minWidth: 720, minHeight: 520)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
-            if settingsPanes.contains(where: { $0.id == defaultTabID }) {
-                selectedTabID = defaultTabID
-            } else if let first = settingsPanes.first {
-                selectedTabID = first.id
-            }
+            applySelectedTab(app.defaultSettingTab ?? defaultTabID)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .didSaveGitUserConfig)) { _ in
-            dismiss()
+        .onChange(of: app.defaultSettingTab) { _, tab in
+            applySelectedTab(tab ?? defaultTabID)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .didUpdateRemoteRepository)) { _ in
-            dismiss()
+        .onDisappear {
+            app.defaultSettingTab = nil
         }
     }
 
     // MARK: - View Components
+
+    private func applySelectedTab(_ tabID: String) {
+        if settingsPanes.contains(where: { $0.id == tabID }) {
+            selectedTabID = tabID
+        } else if let first = settingsPanes.first {
+            selectedTabID = first.id
+        }
+    }
 
     /// 侧边栏头部 - 应用信息
     private var sidebarHeader: some View {

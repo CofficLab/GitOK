@@ -60,14 +60,6 @@ public struct AppAppearanceSettingView: View, SuperLog {
             .padding()
         }
         .navigationTitle(Text("外观"))
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AppButton("完成", style: .secondary, size: .small) {
-                    // 关闭设置视图
-                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }
-            }
-        }
         .onAppear(perform: loadData)
         .alert(String(localized: "Reset Appearance Settings"), isPresented: $showResetConfirmation) {
             Button(String(localized: "Cancel"), role: .cancel) { }
