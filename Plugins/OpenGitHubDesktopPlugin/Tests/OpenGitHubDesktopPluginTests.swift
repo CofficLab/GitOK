@@ -50,7 +50,43 @@ final class GitHubDesktopConfigurationTests: XCTestCase {
 
 // MARK: - Launcher Tests
 
+private final class MockAppLocator: AppLocator, @unchecked Sendable {
+    var bundleURL: URL?
+    var existingPaths = Set<String>()
+
+    func urlForApplication(withBundleIdentifier bundleID: String) -> URL? {
+        bundleURL
+    }
+
+    func fileExists(atPath path: String) -> Bool {
+        existingPaths.contains(path)
+    }
+}
+
+private final class MockGitHubDesktopWorkspace: GitHubDesktopWorkspace, @unchecked Sendable {
+    private(set) var openCallCount = 0
+    private(set) var openedProjectURL: URL?
+    private(set) var openedApplicationURL: URL?
+
+    func openProject(_ projectURL: URL, withApplicationAt appURL: URL) {
+        openCallCount += 1
+        openedProjectURL = projectURL
+        openedApplicationURL = appURL
+    }
+}
+
 final class GitHubDesktopLauncherTests: XCTestCase {
+
+    private let configuration = GitHubDesktopApplicationConfiguration(
+        bundleIdentifier: "com.github.GitHubClient",
+        fallbackApplicationPaths: []
+    )
+
+    override func tearDown() {
+        GitHubDesktopProjectLauncher.locator = SystemAppLocator()
+        GitHubDesktopProjectLauncher.workspace = SystemGitHubDesktopWorkspace()
+        super.tearDown()
+    }
 
     func testLauncherConfigurationIsStable() {
         let configuration = GitHubDesktopProjectLauncher.configuration
@@ -77,58 +113,81 @@ final class GitHubDesktopLauncherTests: XCTestCase {
         XCTAssertNil(url)
     }
 
-    // MARK: localRepositoryURL Tests
-
-    func testLocalRepositoryURLGeneratesCorrectScheme() {
-        let projectURL = URL(fileURLWithPath: "/Users/dev/MyProject")
-        let result = GitHubDesktopProjectLauncher.localRepositoryURL(for: projectURL)
-
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.scheme, "github-desktop")
-        XCTAssertEqual(result?.host, "openLocalRepo")
+    func testIsInstalledMatchesApplicationURLPresence() {
+        XCTAssertEqual(GitHubDesktopProjectLauncher.isInstalled, GitHubDesktopProjectLauncher.applicationURL() != nil)
     }
 
-    func testLocalRepositoryURLContainsPath() {
-        let projectURL = URL(fileURLWithPath: "/Users/dev/MyProject")
-        let result = GitHubDesktopProjectLauncher.localRepositoryURL(for: projectURL)
+    func testApplicationURLReturnsBundleIDURLWhenFound() {
+        let mock = MockAppLocator()
+        let expectedURL = URL(fileURLWithPath: "/Applications/GitHub Desktop.app")
+        mock.bundleURL = expectedURL
 
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result?.absoluteString.contains("path=") ?? false)
+        let url = GitHubDesktopProjectLauncher.applicationURL(
+            configuration: configuration,
+            locator: mock
+        )
+
+        XCTAssertEqual(url, expectedURL)
     }
 
-    func testLocalRepositoryURLEncodesSpaces() {
+    @MainActor
+    func testOpenUsesInstalledApplicationWithProjectFolderURL() {
+        let mockLocator = MockAppLocator()
+        let mockWorkspace = MockGitHubDesktopWorkspace()
+        let appURL = URL(fileURLWithPath: "/Applications/GitHub Desktop.app")
         let projectURL = URL(fileURLWithPath: "/Users/dev/My Project")
-        let result = GitHubDesktopProjectLauncher.localRepositoryURL(for: projectURL)
+        mockLocator.bundleURL = appURL
 
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result?.absoluteString.contains("My%20Project") ?? false)
+        GitHubDesktopProjectLauncher.open(
+            projectURL,
+            configuration: configuration,
+            locator: mockLocator,
+            workspace: mockWorkspace
+        )
+
+        XCTAssertEqual(mockWorkspace.openCallCount, 1)
+        XCTAssertEqual(mockWorkspace.openedProjectURL, projectURL)
+        XCTAssertEqual(mockWorkspace.openedApplicationURL, appURL)
+        XCTAssertEqual(mockWorkspace.openedProjectURL?.scheme, "file")
+        XCTAssertNotEqual(mockWorkspace.openedProjectURL?.scheme, "github-desktop")
     }
 
-    func testLocalRepositoryURLAllowsAtCharacter() {
-        // `@` is in the URLQueryAllowed character set and is not percent-encoded
-        let projectURL = URL(fileURLWithPath: "/Users/dev/@special/project")
-        let result = GitHubDesktopProjectLauncher.localRepositoryURL(for: projectURL)
+    @MainActor
+    func testOpenDoesNothingWhenApplicationIsNotInstalled() {
+        let mockLocator = MockAppLocator()
+        let mockWorkspace = MockGitHubDesktopWorkspace()
+        let projectURL = URL(fileURLWithPath: "/Users/dev/MyProject")
 
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result?.absoluteString.contains("@special") ?? false)
+        GitHubDesktopProjectLauncher.open(
+            projectURL,
+            configuration: configuration,
+            locator: mockLocator,
+            workspace: mockWorkspace
+        )
+
+        XCTAssertEqual(mockWorkspace.openCallCount, 0)
+        XCTAssertNil(mockWorkspace.openedProjectURL)
+        XCTAssertNil(mockWorkspace.openedApplicationURL)
     }
 
-    func testLocalRepositoryURLWithSimplePath() {
-        let projectURL = URL(fileURLWithPath: "/tmp")
-        let result = GitHubDesktopProjectLauncher.localRepositoryURL(for: projectURL)
+    @MainActor
+    func testOpenDoesNotUseGitHubDesktopURLScheme() {
+        let mockLocator = MockAppLocator()
+        let mockWorkspace = MockGitHubDesktopWorkspace()
+        let appURL = URL(fileURLWithPath: "/Applications/GitHub Desktop.app")
+        let projectURL = URL(fileURLWithPath: "/Users/colorfy/Code/CofficLab/GitOK")
+        mockLocator.bundleURL = appURL
 
-        XCTAssertNotNil(result)
-        let expected = "github-desktop://openLocalRepo?path=/tmp"
-        XCTAssertEqual(result?.absoluteString, expected)
-    }
+        GitHubDesktopProjectLauncher.open(
+            projectURL,
+            configuration: configuration,
+            locator: mockLocator,
+            workspace: mockWorkspace
+        )
 
-    func testLocalRepositoryURLWithDeepPath() {
-        let projectURL = URL(fileURLWithPath: "/Users/dev/projects/ios/MyApp")
-        let result = GitHubDesktopProjectLauncher.localRepositoryURL(for: projectURL)
-
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result?.absoluteString.contains("path=") ?? false)
-        XCTAssertTrue(result?.absoluteString.contains("MyApp") ?? false)
+        XCTAssertTrue(mockWorkspace.openedProjectURL?.isFileURL == true)
+        XCTAssertFalse(mockWorkspace.openedProjectURL?.absoluteString.contains("github-desktop://") ?? true)
+        XCTAssertFalse(mockWorkspace.openedProjectURL?.absoluteString.contains("openLocalRepo") ?? true)
     }
 }
 
@@ -208,12 +267,17 @@ final class OpenGitHubDesktopToolbarTests: XCTestCase {
     }
 
     @MainActor
-    func testToolbarReturnsItemWhenProjectURLExists() {
+    func testToolbarRespectsGitHubDesktopInstallationState() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
         let items = OpenGitHubDesktopPlugin.toolbarTrailingItems(context: context)
-        XCTAssertEqual(items.count, 1)
-        XCTAssertEqual(items.first?.id, "OpenGitHubDesktop")
-        XCTAssertNotNil(items.first?.view)
+
+        if GitHubDesktopProjectLauncher.isInstalled {
+            XCTAssertEqual(items.count, 1)
+            XCTAssertEqual(items.first?.id, "OpenGitHubDesktop")
+            XCTAssertNotNil(items.first?.view)
+        } else {
+            XCTAssertTrue(items.isEmpty)
+        }
     }
 
     @MainActor

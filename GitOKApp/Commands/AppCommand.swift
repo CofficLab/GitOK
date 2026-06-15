@@ -1,7 +1,7 @@
-import GitOKAppCore
-import SwiftUI
-import GitOKSupportKit
 import AppKit
+import GitOKAppCore
+import GitOKSupportKit
+import SwiftUI
 
 /// 在应用菜单中添加入口
 struct AppCommand: Commands, SuperLog {
@@ -13,10 +13,8 @@ struct AppCommand: Commands, SuperLog {
     var body: some Commands {
         #if os(macOS)
         CommandGroup(after: .appInfo) {
-            Button(String(localized: "Release Notes")) {
-                if let url = URL(string: "https://github.com/CofficLab/GitOK/releases/latest") {
-                    NSWorkspace.shared.open(url)
-                }
+            Button(String(localized: "Check for Updates...")) {
+                UpdateManager.shared.checkForUpdates()
             }
             Button(String(localized: "Settings...")) {
                 RootContainer.shared.navigationService.openSettings(tab: nil)

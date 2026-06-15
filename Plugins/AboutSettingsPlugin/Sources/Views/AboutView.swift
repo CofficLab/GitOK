@@ -53,7 +53,7 @@ public struct AboutView: View, SuperLog {
                 VStack(spacing: 24) {
                     // 描述
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("关于")
+                        Text(String(localized: "About"))
                             .font(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -106,7 +106,7 @@ public struct AboutView: View, SuperLog {
                         }
 
                         linkRow(
-                            title: "版本更新说明",
+                            title: String(localized: "Release Notes"),
                             url: "https://github.com/CofficLab/GitOK/releases/latest",
                             icon: "doc.text"
                         )
@@ -117,7 +117,7 @@ public struct AboutView: View, SuperLog {
                 Spacer()
             }
         }
-        .navigationTitle(Text("关于"))
+        .navigationTitle(Text("About"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 AppButton(String(localized: "Done"), style: .secondary, size: .small) {

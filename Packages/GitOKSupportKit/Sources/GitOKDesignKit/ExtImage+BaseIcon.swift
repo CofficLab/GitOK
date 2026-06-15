@@ -897,11 +897,6 @@ public extension Image {
         Image(systemName: .iconAppleTerminal)
     }
 
-    /// 终端应用图标 (terminal.fill)
-    static var terminalApp: Image {
-        Image(systemName: .iconTerminalApp)
-    }
-
     // MARK: - U
 
     /// 用户图标 (person.circle)
