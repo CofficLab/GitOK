@@ -7,7 +7,7 @@ public enum SmartMergePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "SmartMergePlugin",
         displayName: SmartMergePluginLocalization.string("SmartMerge"),
-        description: SmartMergePluginLocalization.string("智能合并工具"),
+        description: SmartMergePluginLocalization.string("Smart Merge Tool"),
         iconName: "arrow.merge",
         policy: .optIn,
         tableName: SmartMergePluginLocalization.table
