@@ -59,6 +59,7 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
       defaultStatusBarVisibility: statusBarVisibility,
       defaultTab: initialTab,
       defaultColumnVisibility: columnVisibility,
+      defaultToolbarVisibility: toolbarVisibility,
       defaultProjectActionsVisibility: projectActionsVisibility,
       defaultTabVisibility: tabPickerVisibility
     )
