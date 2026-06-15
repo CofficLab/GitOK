@@ -17,7 +17,8 @@ public enum OpenGitHubDesktopPlugin: GitOKPlugin {
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
-        guard let projectURL = context.projectURL else { return [] }
+        guard let projectURL = context.projectURL,
+              GitHubDesktopProjectLauncher.isInstalled else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenGitHubDesktopButton(projectURL: projectURL)))]
     }
 }
