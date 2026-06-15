@@ -20,6 +20,12 @@
             "state": "translated",
             "value": ""
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ""
+          }
         }
       }
     },
@@ -181,6 +187,34 @@
           "stringUnit": {
             "state": "translated",
             "value": "建置 %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build %@"
+          }
+        }
+      }
+    },
+    "Can Toggle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can Toggle"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可切換"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可切換"
           }
         }
       }
@@ -437,6 +471,50 @@
         }
       }
     },
+    "Default State": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default State"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預設狀態"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預設狀態"
+          }
+        }
+      }
+    },
+    "Disabled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disabled"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已停用"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已停用"
+          }
+        }
+      }
+    },
     "Documents folder does not exist": {
       "localizations": {
         "en": {
@@ -466,6 +544,7 @@
       }
     },
     "Done": {
+      "extractionState": "stale",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -483,6 +562,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "完成"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
           }
         }
       }
@@ -539,6 +624,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "電郵"
+          }
+        }
+      }
+    },
+    "Enabled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enabled"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已啟用"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已啟用"
           }
         }
       }
@@ -617,6 +724,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "擷取"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetch"
           }
         }
       }
@@ -706,6 +819,7 @@
       }
     },
     "GitOK plugins are always enabled": {
+      "extractionState": "stale",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -723,6 +837,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "GitOK 外掛始終啟用"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK plugins are always enabled"
           }
         }
       }
@@ -811,7 +931,30 @@
         }
       }
     },
+    "No": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "否"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "否"
+          }
+        }
+      }
+    },
     "No Configurable Plugins": {
+      "extractionState": "stale",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -829,6 +972,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "沒有可設定的外掛"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Configurable Plugins"
           }
         }
       }
@@ -889,7 +1038,52 @@
         }
       }
     },
+    "No Plugins": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Plugins"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有插件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有插件"
+          }
+        }
+      }
+    },
+    "No plugins available in settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No plugins available in settings"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定中沒有可用的插件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定中沒有可用的插件"
+          }
+        }
+      }
+    },
     "No plugins available to manage in settings": {
+      "extractionState": "stale",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -907,6 +1101,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定中沒有可管理的外掛"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No plugins available to manage in settings"
           }
         }
       }
@@ -1281,6 +1481,50 @@
         }
       }
     },
+    "Plugin ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugin ID"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件 ID"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件 ID"
+          }
+        }
+      }
+    },
+    "Plugin Introduction": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugin Introduction"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件介紹"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件介紹"
+          }
+        }
+      }
+    },
     "Plugin Management": {
       "localizations": {
         "en": {
@@ -1412,6 +1656,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "拉取"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pull"
           }
         }
       }
@@ -1640,6 +1890,28 @@
         }
       }
     },
+    "Search Plugins": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search Plugins"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜尋插件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜尋插件"
+          }
+        }
+      }
+    },
     "Select Tab": {
       "localizations": {
         "en": {
@@ -1692,6 +1964,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "已選取 (%lld)"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定"
           }
         }
       }
@@ -1754,6 +2048,12 @@
     },
     "v%@": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "v%@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1771,11 +2071,27 @@
             "state": "translated",
             "value": "v%@"
           }
-        },
+        }
+      }
+    },
+    "Yes": {
+      "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "v%@"
+            "value": "Yes"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是"
           }
         }
       }

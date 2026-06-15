@@ -73,14 +73,6 @@ public struct GitUserInfoSettingView: View, SuperLog {
             .padding()
         }
         .navigationTitle(Text(String(localized: "User Info")))
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AppButton(String(localized: "Done"), style: .secondary, size: .small) {
-                    // 关闭设置视图（通过通知）
-                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }
-            }
-        }
         .onAppear(perform: loadData)
     }
 

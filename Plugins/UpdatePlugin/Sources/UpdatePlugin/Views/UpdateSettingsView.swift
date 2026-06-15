@@ -56,13 +56,6 @@ public struct UpdateSettingsView: View {
             .padding()
         }
         .navigationTitle(Text("更新"))
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AppButton(String(localized: "Done"), style: .secondary, size: .small) {
-                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }
-            }
-        }
     }
 
     private var currentVersion: String {

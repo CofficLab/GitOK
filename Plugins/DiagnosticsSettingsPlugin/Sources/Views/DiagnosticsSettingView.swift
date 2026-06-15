@@ -15,13 +15,6 @@ public struct DiagnosticsSettingView: View {
             .padding()
         }
         .navigationTitle("诊断")
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AppButton("完成", style: .secondary, size: .small) {
-                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }
-            }
-        }
     }
 
     private var summarySection: some View {

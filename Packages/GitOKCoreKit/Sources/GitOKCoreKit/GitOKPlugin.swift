@@ -110,6 +110,10 @@ public protocol GitOKPlugin {
 
     @MainActor
     static func onboardingPaneItems(context: GitOKPluginContext) -> [GitOKOnboardingPaneItem]
+
+    /// 插件管理页中的介绍视图（可选）。
+    @MainActor
+    static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView?
 }
 
 // MARK: - Callback Typealiases
@@ -227,4 +231,18 @@ public extension GitOKPlugin {
 
     @MainActor
     static func onboardingPaneItems(context: GitOKPluginContext) -> [GitOKOnboardingPaneItem] { [] }
+
+    @MainActor
+    static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? { nil }
+
+    @MainActor
+    static func pluginIntroductionCard(footnote: String? = nil) -> AnyView {
+        AnyView(
+            GitOKPluginIntroductionCard(
+                title: metadata.displayName,
+                description: metadata.description,
+                footnote: footnote
+            )
+        )
+    }
 }

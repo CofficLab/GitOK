@@ -34,6 +34,13 @@ public enum BranchPlugin: GitOKPlugin {
     public static func toolBarContext(from context: GitOKPluginContext) -> BranchPluginContext {
         BranchPluginContext(context)
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard(
+            footnote: "Adds a branch picker in the toolbar and a branch status tile in the status bar."
+        )
+    }
 }
 
 extension View {

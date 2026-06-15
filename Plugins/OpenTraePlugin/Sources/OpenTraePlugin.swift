@@ -21,6 +21,13 @@ public enum OpenTraePlugin: GitOKPlugin {
               TraeProjectLauncher.isInstalled else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenTraeButton(projectURL: projectURL)))]
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard(
+            footnote: TraeProjectLauncher.isInstalled ? nil : "Trae is not installed on this Mac."
+        )
+    }
 }
 
 public enum OpenTraePluginLocalization {

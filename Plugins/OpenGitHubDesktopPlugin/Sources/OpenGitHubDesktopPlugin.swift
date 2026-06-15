@@ -21,6 +21,13 @@ public enum OpenGitHubDesktopPlugin: GitOKPlugin {
               GitHubDesktopProjectLauncher.isInstalled else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenGitHubDesktopButton(projectURL: projectURL)))]
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard(
+            footnote: GitHubDesktopProjectLauncher.isInstalled ? nil : "GitHub Desktop is not installed on this Mac."
+        )
+    }
 }
 
 public enum OpenGitHubDesktopPluginLocalization {

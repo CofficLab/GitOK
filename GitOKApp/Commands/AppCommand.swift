@@ -16,10 +16,6 @@ struct AppCommand: Commands, SuperLog {
             Button(String(localized: "Check for Updates...")) {
                 UpdateManager.shared.checkForUpdates()
             }
-            Button(String(localized: "Settings...")) {
-                RootContainer.shared.navigationService.openSettings(tab: nil)
-            }
-            .keyboardShortcut(",", modifiers: .command)
         }
         #endif
     }

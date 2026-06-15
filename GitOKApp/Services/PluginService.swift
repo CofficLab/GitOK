@@ -248,6 +248,11 @@ final class PluginService: ObservableObject {
         guard hasPlugins else { return nil }
         return runtime.enabledOnboardingView(kind: kind, context: context)
     }
+
+    func pluginIntroductionView(pluginID: String, context: GitOKPluginContext) -> AnyView? {
+        guard hasPlugins else { return nil }
+        return runtime.pluginIntroductionView(pluginID: pluginID, context: context)
+    }
 }
 
 extension PluginService: GitOKThemeContributionsProviding {}

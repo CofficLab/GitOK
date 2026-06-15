@@ -59,6 +59,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             }
 
             hostedContent
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .environmentObject(appProvider)
             .environmentObject(pluginProvider)
             .environmentObject(themeProvider)
@@ -107,6 +108,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
 
     private var baseContent: some View {
         content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .withMagicToast()
             .navigationTitle("")
     }

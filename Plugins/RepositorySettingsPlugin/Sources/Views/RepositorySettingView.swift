@@ -64,14 +64,6 @@ public struct RepositorySettingView: View, SuperLog {
             .padding()
         }
         .navigationTitle(Text("仓库设置"))
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AppButton("完成", style: .secondary, size: .small) {
-                    // 关闭设置视图（通过通知）
-                    NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
-                }
-            }
-        }
         .onAppear(perform: loadData)
         .sheet(isPresented: $showAddRemoteSheet) {
             AddRemoteRepositorySheet { name, url in

@@ -17,76 +17,191 @@ struct PluginSettingsView: View, SuperLog {
 
     /// 插件启用状态
     @State private var pluginStates: [String: Bool] = [:]
+    @State private var selectedPluginID: String?
+    @State private var searchText: String = ""
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                // 标题
-                Text(String(localized: "Plugin Management"))
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .padding(.bottom, 16)
-
-                Text(String(localized: "GitOK plugins are always enabled"))
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.bottom, 24)
-
-                // 插件列表
-                if configurablePlugins.isEmpty {
-                    emptyView
-                } else {
-                    ForEach(configurablePlugins) { plugin in
-                        PluginToggleRow(
-                            plugin: plugin,
-                            isEnabled: Binding(
-                                get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
-                                set: { newValue in
-                                    pluginStates[plugin.id] = newValue
-                                    PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
-
-                                    if Self.verbose {
-                                        os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
-                                    }
-                                }
-                            )
-                        )
-
-                        if plugin.id != configurablePlugins.last?.id {
-                            Divider()
-                                .padding(.leading, 16)
-                        }
-                    }
-                }
-
-                Spacer()
-            }
-            .padding(24)
+        HSplitView {
+            leftPane
+                .frame(minWidth: 260, idealWidth: 280, maxWidth: 320)
+            rightPane
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationTitle(Text(String(localized: "Plugin Management")))
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AppButton(String(localized: "Done"), style: .secondary, size: .small) {
-                    // 关闭设置视图
-                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
-                }
-            }
-        }
         .onAppear {
             loadPluginStates()
+            if selectedPlugin == nil {
+                selectedPluginID = filteredPlugins.first?.id ?? allManagedPlugins.first?.id
+            }
+        }
+        .onChange(of: filteredPlugins.map(\.id)) { _, ids in
+            guard let selectedPluginID else {
+                self.selectedPluginID = ids.first
+                return
+            }
+            if ids.contains(selectedPluginID) == false {
+                self.selectedPluginID = ids.first
+            }
         }
     }
 
-    /// 获取可配置的插件列表
-    private var configurablePlugins: [PluginInfo] {
+    private var leftPane: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            TextField(String(localized: "Search Plugins"), text: $searchText)
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal, 12)
+                .padding(.top, 12)
+                .padding(.bottom, 10)
+
+            Divider()
+
+            if filteredPlugins.isEmpty {
+                emptyView
+            } else {
+                List(filteredPlugins, id: \.id, selection: $selectedPluginID) { plugin in
+                    pluginListRow(plugin)
+                        .tag(plugin.id)
+                }
+                .listStyle(.inset)
+            }
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private var rightPane: some View {
+        Group {
+            if let plugin = selectedPlugin {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        pluginHeader(plugin)
+                        if let introduction = pluginProvider.pluginIntroductionView(
+                            pluginID: plugin.id,
+                            context: pluginProvider.makeContext()
+                        ) {
+                            introduction
+                        } else {
+                            defaultIntroduction(plugin)
+                        }
+                    }
+                    .padding(20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            } else {
+                emptyView
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func pluginListRow(_ plugin: PluginInfo) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Label(plugin.name, systemImage: plugin.icon)
+                    .font(.headline)
+                Spacer()
+                Toggle(
+                    "",
+                    isOn: Binding(
+                        get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
+                        set: { newValue in
+                            pluginStates[plugin.id] = newValue
+                            PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
+                            if Self.verbose {
+                                os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
+                            }
+                        }
+                    )
+                )
+                .toggleStyle(.switch)
+                .labelsHidden()
+            }
+            Text(plugin.description)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+        }
+        .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private func pluginHeader(_ plugin: PluginInfo) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top) {
+                Label(plugin.name, systemImage: plugin.icon)
+                    .font(.title3.weight(.semibold))
+                Spacer()
+                Toggle(
+                    String(localized: "Enabled"),
+                    isOn: Binding(
+                        get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
+                        set: { newValue in
+                            pluginStates[plugin.id] = newValue
+                            PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
+                        }
+                    )
+                )
+                .toggleStyle(.switch)
+                .frame(width: 160)
+            }
+            Text(plugin.description)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Divider()
+        }
+    }
+
+    private func defaultIntroduction(_ plugin: PluginInfo) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(String(localized: "Plugin Introduction"))
+                .font(.headline)
+            Text(plugin.description)
+                .font(.body)
+            VStack(alignment: .leading, spacing: 8) {
+                detailRow(title: String(localized: "Plugin ID"), value: plugin.id)
+                detailRow(title: String(localized: "Default State"), value: plugin.defaultEnabled ? String(localized: "Enabled") : String(localized: "Disabled"))
+                detailRow(title: String(localized: "Can Toggle"), value: plugin.allowUserToggle ? String(localized: "Yes") : String(localized: "No"))
+            }
+        }
+        .padding(16)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func detailRow(title: String, value: String) -> some View {
+        HStack(alignment: .top) {
+            Text(title)
+                .foregroundStyle(.secondary)
+                .frame(width: 110, alignment: .leading)
+            Text(value)
+                .textSelection(.enabled)
+            Spacer(minLength: 0)
+        }
+        .font(.caption)
+    }
+
+    private var allManagedPlugins: [PluginInfo] {
         pluginProvider.configurablePlugins
+    }
+
+    private var filteredPlugins: [PluginInfo] {
+        let keyword = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard keyword.isEmpty == false else { return allManagedPlugins }
+        return allManagedPlugins.filter {
+            $0.name.localizedCaseInsensitiveContains(keyword)
+                || $0.description.localizedCaseInsensitiveContains(keyword)
+                || $0.id.localizedCaseInsensitiveContains(keyword)
+        }
+    }
+
+    private var selectedPlugin: PluginInfo? {
+        guard let selectedPluginID else { return filteredPlugins.first ?? allManagedPlugins.first }
+        return allManagedPlugins.first(where: { $0.id == selectedPluginID })
     }
 
     private var emptyView: some View {
         AppEmptyState(
             icon: "puzzlepiece",
-            title: String(localized: "No Configurable Plugins"),
-            description: String(localized: "No plugins available to manage in settings")
+            title: String(localized: "No Plugins"),
+            description: String(localized: "No plugins available in settings")
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
@@ -94,15 +209,14 @@ struct PluginSettingsView: View, SuperLog {
 
     /// 加载插件状态
     private func loadPluginStates() {
-        guard configurablePlugins.isEmpty == false else {
+        guard allManagedPlugins.isEmpty == false else {
             pluginStates = [:]
             return
         }
 
         let settingsStore = PluginSettingsStore.shared
         var states: [String: Bool] = [:]
-        for plugin in configurablePlugins {
-            // 检查用户配置，如果没有配置则使用插件的默认启用状态
+        for plugin in allManagedPlugins {
             if settingsStore.hasUserConfigured(plugin.id) {
                 states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: plugin.defaultEnabled)
             } else {
@@ -110,21 +224,6 @@ struct PluginSettingsView: View, SuperLog {
             }
         }
         pluginStates = states
-    }
-}
-
-/// 插件开关行视图
-struct PluginToggleRow: View {
-    let plugin: PluginInfo
-    @Binding var isEnabled: Bool
-
-    var body: some View {
-        AppToggleRow(
-            title: plugin.name,
-            systemImage: plugin.icon,
-            description: plugin.description,
-            isOn: $isEnabled
-        )
     }
 }
 

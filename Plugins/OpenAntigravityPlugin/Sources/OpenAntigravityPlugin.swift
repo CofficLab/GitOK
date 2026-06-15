@@ -20,6 +20,13 @@ public enum OpenAntigravityPlugin: GitOKPlugin {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenAntigravityButton(projectURL: projectURL)))]
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard(
+            footnote: AntigravityProjectLauncher.isInstalled ? nil : "Antigravity is not installed on this Mac."
+        )
+    }
 }
 
 public enum OpenAntigravityPluginLocalization {

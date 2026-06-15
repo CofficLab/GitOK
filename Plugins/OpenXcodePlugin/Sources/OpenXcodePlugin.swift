@@ -20,6 +20,13 @@ public enum OpenXcodePlugin: GitOKPlugin {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenXcodeButton(projectURL: projectURL)))]
     }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        Self.pluginIntroductionCard(
+            footnote: XcodeProjectLauncher.isInstalled ? nil : "Xcode is not installed on this Mac."
+        )
+    }
 }
 
 public enum OpenXcodePluginLocalization {

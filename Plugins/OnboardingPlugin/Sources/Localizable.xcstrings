@@ -11,6 +11,24 @@
             "state" : "translated",
             "value" : "Empty-state and onboarding guides"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空状态和引导指南"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空白狀態與引導指南"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空白狀態與引導指南"
+          }
         }
       }
     },
@@ -21,17 +39,104 @@
             "state" : "translated",
             "value" : "Onboarding"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OnboardingPlugin"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OnboardingPlugin"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OnboardingPlugin"
+          }
         }
       }
     },
     "select_commit_description" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_description"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_description"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_description"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_description"
+          }
+        }
+      }
     },
     "select_commit_title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_title"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_title"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_title"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "select_commit_title"
+          }
+        }
+      }
     },
     "开始使用 GitOK" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始使用 GitOK"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始使用 GitOK"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始使用 GitOK"
+          }
+        }
+      }
     },
     "打开插件设置" : {
       "localizations" : {
@@ -46,11 +151,42 @@
             "state" : "translated",
             "value" : "打开插件设置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟外掛程式設定"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟外掛程式設定"
+          }
         }
       }
     },
     "新建仓库会创建本地 Git 仓库和初始提交。" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建仓库会创建本地 Git 仓库和初始提交。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建儲存庫會建立本地 Git 儲存庫和初始提交。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建儲存庫會建立本地 Git 儲存庫和初始提交。"
+          }
+        }
+      }
     },
     "暂无可用视图" : {
       "localizations" : {
@@ -65,14 +201,64 @@
             "state" : "translated",
             "value" : "暂无可用视图"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暫無可用視圖"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暫無可用視圖"
+          }
         }
       }
     },
     "添加已有仓库，或新建一个本地仓库。" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加已有仓库，或新建一个本地仓库。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增已有儲存庫，或新建一個本地儲存庫。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增已有儲存庫，或新建一個本地儲存庫。"
+          }
+        }
+      }
     },
     "添加项目会把本地已有 Git 仓库加入列表。" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加项目会把本地已有 Git 仓库加入列表。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增專案會把本地已有 Git 儲存庫加入列表。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增專案會把本地已有 Git 儲存庫加入列表。"
+          }
+        }
+      }
     },
     "请在设置中启用相关插件以显示内容" : {
       "localizations" : {
@@ -86,6 +272,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请在设置中启用相关插件以显示内容"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請在設定中啟用相關外掛程式以顯示內容"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請在設定中啟用相關外掛程式以顯示內容"
           }
         }
       }
@@ -102,6 +300,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "项目不存在"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "專案不存在"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "專案不存在"
           }
         }
       }

@@ -48,6 +48,7 @@ public struct PluginInfo: Identifiable {
     public let description: String
     public let icon: String
     public let defaultEnabled: Bool
+    public let allowUserToggle: Bool
     public let isDeveloperEnabled: () -> Bool
 
     public init(
@@ -56,6 +57,7 @@ public struct PluginInfo: Identifiable {
         description: String,
         icon: String = "puzzlepiece.extension",
         defaultEnabled: Bool = true,
+        allowUserToggle: Bool = true,
         isDeveloperEnabled: @escaping () -> Bool = { true }
     ) {
         self.id = id
@@ -63,6 +65,7 @@ public struct PluginInfo: Identifiable {
         self.description = description
         self.icon = icon
         self.defaultEnabled = defaultEnabled
+        self.allowUserToggle = allowUserToggle
         self.isDeveloperEnabled = isDeveloperEnabled
     }
 }

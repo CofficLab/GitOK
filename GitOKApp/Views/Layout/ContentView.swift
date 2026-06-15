@@ -63,20 +63,8 @@ struct ContentView: View, SuperLog {
 
     var body: some View {
         navigationSplitView()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .sheet(isPresented: $app.showSettings) {
-            SettingView(defaultTabID: app.defaultSettingTab ?? "userInfo")
-                .onDisappear {
-                    // 重置默认标签
-                    app.defaultSettingTab = nil
-                }
-        }
-        .focusedSceneObject(vm)
-    }
-
-    /// 将字符串转换为设置Tab id（保留供菜单命令使用）
-    private func settingTabFromString(_ tab: String?) -> String {
-        tab ?? "userInfo"
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .focusedSceneObject(vm)
     }
 }
 
@@ -95,22 +83,8 @@ extension ContentView {
                 statusBarVisibility: statusBarVisibility
             )
         }
-        .onAppear(perform: onAppear)
-        .onDisappear(perform: clearCachedViews)
-        .onChange(of: vm.project, onProjectChange)
-        .onChange(of: vm.projectGitRepositoryStateToken, onProjectGitRepositoryStateChange)
-        .onChange(of: self.tab, onChangeOfTab)
-        .onChange(of: self.columnVisibility, onChangeColumnVisibility)
-        .onChange(of: p.registeredPluginCount, onPluginsLoaded)
-        .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
-        .onReceive(g.$branch) { _ in
-            updateCachedViews()
-        }
-        .onReceive(app.$sidebarVisibility) { _ in
-            updateCachedViews()
-        }
         .gitOKToolbarVisibility(toolbarVisibility)
-        .toolbar(content: {
+        .toolbar {
             ToolbarItem(placement: .navigation) {
                 HStack(spacing: 8) {
                     ForEach(toolbarLeadingViews) { item in
@@ -126,20 +100,36 @@ extension ContentView {
                             Text(tabName).tag(tabName)
                         }
                     }
-                    .pickerStyle(SegmentedPickerStyle())
+                    .pickerStyle(.segmented)
                 }
             }
 
             if vm.project != nil, projectActionsVisibility {
-                ToolbarItemGroup(
-                    placement: .cancellationAction,
-                    content: {
-                        ForEach(toolbarTrailingViews) { item in
-                            item.view
-                        }
-                    })
+                ToolbarItemGroup(placement: .cancellationAction) {
+                    ForEach(toolbarTrailingViews) { item in
+                        item.view
+                    }
+                }
             }
-        })
+        }
+        .onAppear(perform: onAppear)
+        .onDisappear(perform: clearCachedViews)
+        .onChange(of: vm.project, onProjectChange)
+        .onChange(of: vm.projectGitRepositoryStateToken, onProjectGitRepositoryStateChange)
+        .onChange(of: self.tab, onChangeOfTab)
+        .onChange(of: self.columnVisibility, onChangeColumnVisibility)
+        .onChange(of: p.registeredPluginCount, onPluginsLoaded)
+        .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
+        .onReceive(g.$branch) { _ in
+            updateCachedViews()
+        }
+        .onReceive(app.$sidebarVisibility) { visible in
+            let target: NavigationSplitViewVisibility = visible ? .all : .detailOnly
+            if columnVisibility != target {
+                columnVisibility = target
+            }
+            updateCachedViews()
+        }
     }
 }
 
