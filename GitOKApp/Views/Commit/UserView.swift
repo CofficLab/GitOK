@@ -1,7 +1,7 @@
 import GitOKAppCore
 import GitOKSupportKit
 import OSLog
-import GitWorkspaceCore
+import GitWorkspacePlugin
 import SwiftUI
 
 /// 用户信息显示视图

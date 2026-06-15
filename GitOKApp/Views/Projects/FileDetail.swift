@@ -2,7 +2,7 @@ import GitOKAppCore
 import MagicAlert
 import GitOKSupportKit
 import OSLog
-import GitWorkspaceCore
+import GitWorkspacePlugin
 import SwiftUI
 
 struct FileDetail: View, SuperLog {

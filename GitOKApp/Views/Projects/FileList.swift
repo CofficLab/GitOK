@@ -1,5 +1,5 @@
 import GitOKAppCore
-import GitWorkspaceCore
+import GitWorkspacePlugin
 import MagicAlert
 import GitOKSupportKit
 import OSLog

@@ -12,10 +12,6 @@ let package = Package(
             name: "GitWorkspacePlugin",
             targets: ["GitWorkspacePlugin"]
         ),
-        .library(
-            name: "GitWorkspaceCore",
-            targets: ["GitWorkspaceCore"]
-        ),
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
@@ -28,7 +24,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GitWorkspaceCore",
+            name: "GitWorkspacePlugin",
             dependencies: [
                 "GitOKCoreKit",
                 "GitOKUI",
@@ -38,21 +34,13 @@ let package = Package(
                 "GitOKSupportKit",
                 "MagicDiffView",
             ],
-            path: "Sources/GitWorkspaceCore"
-        ),
-        .target(
-            name: "GitWorkspacePlugin",
-            dependencies: [
-                "GitWorkspaceCore",
-                "GitOKCoreKit",
-            ],
-            path: "Sources/GitWorkspacePlugin",
+            path: "Sources/GitWorkspace",
             resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitWorkspaceCoreTests",
-            dependencies: ["GitWorkspaceCore"],
-            path: "FeatureTests"
+            dependencies: ["GitWorkspacePlugin"],
+            path: "Tests"
         ),
     ]
 )

@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "%@ (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "%@ %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld %2$@"
+          }
+        }
+      }
+    },
+    "•" : {
+
+    },
+    "+%lld" : {
+
+    },
+    "Commit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        }
+      }
+    },
+    "Git commit management" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git commit management"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 提交管理"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 提交管理"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 提交管理"
+          }
+        }
+      }
+    },
+    "Git 用户名" : {
+
+    },
+    "GitOK 会通过当前 Git credential helper 保存凭据；GitHub/GitLab 等平台通常需要 token。" : {
+
+    },
+    "Hard Reset" : {
+
+    },
+    "Mixed Reset" : {
+
+    },
+    "Personal Access Token 或密码" : {
+
+    },
+    "Revert" : {
+
+    },
+    "Soft Reset" : {
+
+    },
+    "Squash" : {
+
+    },
+    "User info not found" : {
+
+    },
+    "丢弃" : {
+
+    },
+    "为 %@ 添加您的 Git 认证信息" : {
+
+    },
+    "保存失败" : {
+
+    },
+    "保存成功" : {
+
+    },
+    "凭据已安全保存到 macOS Keychain" : {
+
+    },
+    "加载失败" : {
+
+    },
+    "取消" : {
+
+    },
+    "取消选择" : {
+
+    },
+    "取消选择 %@" : {
+
+    },
+    "复制到剪贴板" : {
+
+    },
+    "复制完整 Hash" : {
+
+    },
+    "已复制" : {
+
+    },
+    "按回车或点击查看差异。打开上下文菜单可暂存、取消暂存、复制路径或丢弃更改。" : {
+
+    },
+    "提交 Hash 详情" : {
+
+    },
+    "提交时间详情" : {
+
+    },
+    "插入 %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "插入 %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "显示提交图" : {
+
+    },
+    "未配置用户信息" : {
+
+    },
+    "正在加载" : {
+
+    },
+    "添加 Git 凭据" : {
+
+    },
+    "点击查看完整 Hash 信息" : {
+
+    },
+    "点击查看完整时间信息" : {
+
+    },
+    "用于批量暂存、取消暂存或丢弃" : {
+
+    },
+    "确定" : {
+
+    },
+    "确认丢弃更改" : {
+
+    },
+    "管理预设..." : {
+
+    },
+    "选择 %@" : {
+
+    },
+    "选择文件" : {
+
+    }
+  },
+  "version" : "1.0"
+}

@@ -2,7 +2,7 @@ import GitOKAppCore
 import MagicAlert
 import GitOKSupportKit
 import OSLog
-import GitWorkspaceCore
+import GitWorkspacePlugin
 import SwiftUI
 
 /// 提交表单视图组件
