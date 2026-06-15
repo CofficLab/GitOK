@@ -75,8 +75,8 @@ public extension Image {
         appIcon(for: .finder)
     }
 
-    /// Terminal 真实应用图标（优先使用真实图标）
-    static var terminalRealApp: Image {
+    /// Terminal 应用图标（优先使用真实图标）
+    static var terminalApp: Image {
         appIcon(for: .terminal)
     }
 
