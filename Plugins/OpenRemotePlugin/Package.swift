@@ -12,6 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/GitOKSupportKit"),
         .package(path: "../../Packages/GitOKUI"),
         .package(path: "../../Packages/ProjectRulesKit"),
     ],
@@ -20,6 +21,7 @@ let package = Package(
             name: "OpenRemotePlugin",
             dependencies: [
                 "GitOKCoreKit",
+                .product(name: "GitOKDesignKit", package: "GitOKSupportKit"),
                 "GitOKUI",
                 "ProjectRulesKit",
             ],

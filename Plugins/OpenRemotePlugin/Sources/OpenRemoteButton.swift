@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import GitOKUI
 import SwiftUI
 
@@ -34,8 +35,10 @@ public struct OpenRemoteButton: View {
 
     @ViewBuilder
     private var buttonIcon: some View {
-        Image(systemName: "link")
-            .frame(width: 22, height: 22)
+        Image.defaultBrowserApp
+            .resizable()
+            .frame(height: 22)
+            .frame(width: 22)
     }
 
     @MainActor

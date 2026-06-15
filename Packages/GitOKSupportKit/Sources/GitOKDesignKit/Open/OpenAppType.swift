@@ -156,8 +156,13 @@ public enum OpenAppType: String {
         /// - Parameter useRealIcon: 是否使用真实应用图标，默认为false使用系统图标
         /// - Returns: 图标名称或NSImage
         func realIcon(useRealIcon: Bool = false) -> Any {
-            // 特殊情况：auto 和 browser 没有真实图标
-            if self == .auto || self == .browser {
+            if self == .auto {
+                return icon
+            }
+            if self == .browser {
+                if useRealIcon, let nsImage = DefaultBrowserIcon.nsImage() {
+                    return nsImage
+                }
                 return icon
             }
             // 使用 AppRegistry 的真实图标
@@ -172,6 +177,12 @@ public enum OpenAppType: String {
         func realIcon(for url: URL, useRealIcon: Bool = false) -> Any {
             if self == .auto {
                 return url.isNetworkURL ? String.iconSafari : String.iconShowInFinder
+            }
+            if self == .browser {
+                if useRealIcon, let nsImage = DefaultBrowserIcon.nsImage() {
+                    return nsImage
+                }
+                return icon
             }
             return realIcon(useRealIcon: useRealIcon)
         }

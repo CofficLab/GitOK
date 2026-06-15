@@ -68,6 +68,11 @@ public extension Image {
         appIcon(for: .arc)
     }
 
+    /// 默认浏览器应用图标（优先使用真实图标）
+    static var defaultBrowserApp: Image {
+        appIcon(for: .browser)
+    }
+
     // MARK: - System Apps
 
     /// Finder 应用图标（优先使用真实图标）
