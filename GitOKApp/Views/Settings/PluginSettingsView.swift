@@ -99,23 +99,21 @@ struct PluginSettingsView: View, SuperLog {
                 Label(plugin.name, systemImage: plugin.icon)
                     .font(.headline)
                 Spacer()
-                if plugin.allowUserToggle {
-                    Toggle(
-                        "",
-                        isOn: Binding(
-                            get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
-                            set: { newValue in
-                                pluginStates[plugin.id] = newValue
-                                PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
-                                if Self.verbose {
-                                    os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
-                                }
+                Toggle(
+                    "",
+                    isOn: Binding(
+                        get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
+                        set: { newValue in
+                            pluginStates[plugin.id] = newValue
+                            PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
+                            if Self.verbose {
+                                os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
                             }
-                        )
+                        }
                     )
-                    .toggleStyle(.switch)
-                    .labelsHidden()
-                }
+                )
+                .toggleStyle(.switch)
+                .labelsHidden()
             }
             Text(plugin.description)
                 .font(.caption)
@@ -132,24 +130,18 @@ struct PluginSettingsView: View, SuperLog {
                 Label(plugin.name, systemImage: plugin.icon)
                     .font(.title3.weight(.semibold))
                 Spacer()
-                if plugin.allowUserToggle {
-                    Toggle(
-                        String(localized: "Enabled"),
-                        isOn: Binding(
-                            get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
-                            set: { newValue in
-                                pluginStates[plugin.id] = newValue
-                                PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
-                            }
-                        )
+                Toggle(
+                    String(localized: "Enabled"),
+                    isOn: Binding(
+                        get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
+                        set: { newValue in
+                            pluginStates[plugin.id] = newValue
+                            PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
+                        }
                     )
-                    .toggleStyle(.switch)
-                    .frame(width: 160)
-                } else {
-                    Text(String(localized: "Always Enabled"))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                )
+                .toggleStyle(.switch)
+                .frame(width: 160)
             }
             Text(plugin.description)
                 .font(.subheadline)
@@ -187,7 +179,7 @@ struct PluginSettingsView: View, SuperLog {
     }
 
     private var allManagedPlugins: [PluginInfo] {
-        pluginProvider.managedPlugins
+        pluginProvider.configurablePlugins
     }
 
     private var filteredPlugins: [PluginInfo] {
@@ -225,12 +217,8 @@ struct PluginSettingsView: View, SuperLog {
         let settingsStore = PluginSettingsStore.shared
         var states: [String: Bool] = [:]
         for plugin in allManagedPlugins {
-            if plugin.allowUserToggle {
-                if settingsStore.hasUserConfigured(plugin.id) {
-                    states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: plugin.defaultEnabled)
-                } else {
-                    states[plugin.id] = plugin.defaultEnabled
-                }
+            if settingsStore.hasUserConfigured(plugin.id) {
+                states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: plugin.defaultEnabled)
             } else {
                 states[plugin.id] = plugin.defaultEnabled
             }

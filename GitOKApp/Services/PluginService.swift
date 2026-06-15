@@ -25,7 +25,6 @@ final class PluginService: ObservableObject {
     var registeredPluginCount: Int { runtime.registeredCount }
     var tabNames: [String] { runtime.tabNames }
     var configurablePlugins: [PluginInfo] { runtime.configurablePlugins }
-    var managedPlugins: [PluginInfo] { runtime.managedPlugins }
 
     func makeContext(
         projectURL: URL? = nil,

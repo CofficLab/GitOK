@@ -68,23 +68,6 @@ public final class GitOKPluginRuntime {
             .sorted { $0.name < $1.name }
     }
 
-    public var managedPlugins: [PluginInfo] {
-        pluginTypes
-            .filter { $0.policy.shouldRegister }
-            .map { type in
-                PluginInfo(
-                    id: type.metadata.id,
-                    name: type.metadata.displayName,
-                    description: type.metadata.description,
-                    icon: type.metadata.iconName,
-                    defaultEnabled: type.metadata.defaultEnabled,
-                    allowUserToggle: type.policy.allowUserToggle,
-                    isDeveloperEnabled: { type.policy.shouldRegister }
-                )
-            }
-            .sorted { $0.name < $1.name }
-    }
-
     public func enabledToolbarLeadingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         pluginTypes.flatMap { type -> [GitOKPluginViewContribution] in
             guard isPluginEnabled(type) else { return [] }

@@ -163,9 +163,6 @@
         }
       }
     },
-    "Always Enabled" : {
-
-    },
     "Build %@" : {
       "localizations" : {
         "zh-Hans" : {
