@@ -95,6 +95,10 @@ final class TraeLauncherTests: XCTestCase {
         let url = TraeProjectLauncher.applicationURL(configuration: config)
         XCTAssertNil(url)
     }
+
+    func testIsInstalledMatchesApplicationURLPresence() {
+        XCTAssertEqual(TraeProjectLauncher.isInstalled, TraeProjectLauncher.applicationURL() != nil)
+    }
 }
 
 // MARK: - Plugin Metadata Tests
@@ -183,12 +187,17 @@ final class OpenTraeToolbarTests: XCTestCase {
     }
 
     @MainActor
-    func testToolbarReturnsItemWhenProjectURLExists() {
+    func testToolbarRespectsTraeInstallationState() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
         let items = OpenTraePlugin.toolbarTrailingItems(context: context)
-        XCTAssertEqual(items.count, 1)
-        XCTAssertEqual(items.first?.id, "OpenTrae")
-        XCTAssertNotNil(items.first?.view)
+
+        if TraeProjectLauncher.isInstalled {
+            XCTAssertEqual(items.count, 1)
+            XCTAssertEqual(items.first?.id, "OpenTrae")
+            XCTAssertNotNil(items.first?.view)
+        } else {
+            XCTAssertTrue(items.isEmpty)
+        }
     }
 
     @MainActor
