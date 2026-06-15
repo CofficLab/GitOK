@@ -1,7 +1,7 @@
 import OnboardingPlugin
 import GitOKAppCore
 import GitOKSupportKit
-import GitWorkspaceCore
+import GitWorkspacePlugin
 import SwiftUI
 
 /// Git 详情入口。详情布局和状态逻辑由 CoreKit 的 GitDetailHostView 提供。
