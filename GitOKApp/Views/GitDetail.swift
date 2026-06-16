@@ -1,4 +1,3 @@
-import OnboardingPlugin
 import GitOKAppCore
 import GitOKSupportKit
 import GitWorkspacePlugin
@@ -46,10 +45,10 @@ struct GitDetail: View, SuperEvent, SuperLog {
                 FileDetail()
             },
             emptyContent: {
-                NoLocalChanges()
+                GitDetailNoLocalChangesView()
             },
             notGitContent: {
-                ProjectNotGitView()
+                GitDetailNotRepositoryView()
             },
             commitFormContent: {
                 CommitForm()
