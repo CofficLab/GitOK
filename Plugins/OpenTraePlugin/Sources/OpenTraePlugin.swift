@@ -14,19 +14,22 @@ public enum OpenTraePlugin: GitOKPlugin {
         tableName: OpenTraePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .openIn }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        pluginAboutView(
+            kind: .openIn,
+            footnote: TraeProjectLauncher.isInstalled ? nil : openInUnavailableFootnote()
+        )
+    }
+
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL,
               TraeProjectLauncher.isInstalled else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenTraeButton(projectURL: projectURL)))]
-    }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard(
-            footnote: TraeProjectLauncher.isInstalled ? nil : "Trae is not installed on this Mac."
-        )
     }
 }
 

@@ -42,12 +42,6 @@ public final class DiagnosticsStore: ObservableObject {
         observeFailures()
     }
 
-    deinit {
-        for observer in observers {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
-
     public func markLaunchStarted() {
         let defaults = UserDefaults.standard
         if defaults.object(forKey: cleanExitKey) != nil {
@@ -131,15 +125,17 @@ public final class DiagnosticsStore: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard let eventInfo = notification.userInfo?["eventInfo"] as? ProjectEventInfo else { return }
-            Task { @MainActor in
-                self?.record(
-                    source: "Project",
-                    operation: eventInfo.operation,
-                    message: eventInfo.error?.localizedDescription ?? "Unknown project operation failure",
-                    projectPath: eventInfo.project.path
-                )
-            }
+            guard
+                let self,
+                let eventInfo = notification.userInfo?["eventInfo"] as? ProjectEventInfo
+            else { return }
+
+            self.record(
+                source: "Project",
+                operation: eventInfo.operation,
+                message: eventInfo.error?.localizedDescription ?? "Unknown project operation failure",
+                projectPath: eventInfo.project.path
+            )
         }
 
         let appFailure = NotificationCenter.default.addObserver(
@@ -147,12 +143,13 @@ public final class DiagnosticsStore: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] notification in
+            guard let self else { return }
+
             let message = notification.userInfo?["message"] as? String
                 ?? (notification.object as? Error)?.localizedDescription
                 ?? "Unknown app error"
-            Task { @MainActor in
-                self?.record(source: "App", operation: "error", message: message)
-            }
+
+            self.record(source: "App", operation: "error", message: message)
         }
 
         observers = [projectFailure, appFailure]

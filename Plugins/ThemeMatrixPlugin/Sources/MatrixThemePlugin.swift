@@ -12,6 +12,8 @@ public enum MatrixThemePlugin: GitOKPlugin {
         tableName: MatrixThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

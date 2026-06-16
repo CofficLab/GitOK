@@ -34,7 +34,10 @@ let package = Package(
                 "ProjectSupportKit",
                 "ProjectKit",
             ],
-            path: "Sources/GitOKAppCore"
+            path: "Sources/GitOKAppCore",
+            resources: [
+                .process("Localizable.xcstrings")
+            ]
         ),
     ]
 )

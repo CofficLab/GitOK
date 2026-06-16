@@ -232,17 +232,38 @@ public extension GitOKPlugin {
     @MainActor
     static func onboardingPaneItems(context: GitOKPluginContext) -> [GitOKOnboardingPaneItem] { [] }
 
+    /// Template kind for the default plugin introduction view in settings.
+    static var introductionContentKind: GitOKPluginAboutContentKind { .general }
+
+    /// 插件管理页中的介绍视图。默认使用模板化自我介绍页。
     @MainActor
-    static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? { nil }
+    static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        pluginAboutView(kind: introductionContentKind)
+    }
 
     @MainActor
-    static func pluginIntroductionCard(footnote: String? = nil) -> AnyView {
+    static func pluginAboutView(
+        kind: GitOKPluginAboutContentKind,
+        footnote: String? = nil
+    ) -> AnyView {
         AnyView(
-            GitOKPluginIntroductionCard(
-                title: metadata.displayName,
+            GitOKPluginAboutView(
+                icon: metadata.iconName,
+                displayName: metadata.displayName,
                 description: metadata.description,
+                kind: kind,
                 footnote: footnote
             )
         )
+    }
+
+    @MainActor
+    static func openInUnavailableFootnote() -> String {
+        GitOKPluginAboutLocalization.format("about.openIn.footnote.notInstalled", metadata.displayName)
+    }
+
+    @MainActor
+    static func pluginIntroductionCard(footnote: String? = nil) -> AnyView {
+        pluginAboutView(kind: introductionContentKind, footnote: footnote)
     }
 }

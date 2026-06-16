@@ -80,16 +80,16 @@ public class ProjectVM: ObservableObject, SuperLog {
 
     /// 设置当前项目
     /// - Parameters:
-    ///   - p: 要设置的项目
+    ///   - project: 要设置的项目
     ///   - reason: 设置原因
-    public func setProject(_ p: Project?, reason: String) {
+    public func setProject(_ project: Project?, reason: String) {
         let start = Date()
         if Self.verbose {
-            os_log("\(self.t)🎯 SetProject begin reason=\(reason) path=\(p?.path ?? "nil")")
-            os_log("\(self.t)Set Project(\(reason)) \n ➡️ \(p?.path ?? "")")
+            os_log("\(self.t)🎯 SetProject begin reason=\(reason) path=\(project?.path ?? "nil")")
+            os_log("\(self.t)Set Project(\(reason)) \n ➡️ \(project?.path ?? "")")
         }
 
-        self.project = p
+        self.project = project
         self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
         resetProjectDerivedState()
         self.checkIfProjectExists()
@@ -150,10 +150,10 @@ public class ProjectVM: ObservableObject, SuperLog {
     }
 
     /// 设置当前选中的文件
-    /// - Parameter f: 要设置的文件
-    public func setFile(_ f: GitDiffFile?) {
-        if f == self.file { return }
-        file = f
+    /// - Parameter selectedFile: 要设置的文件
+    public func setFile(_ selectedFile: GitDiffFile?) {
+        if selectedFile == self.file { return }
+        file = selectedFile
     }
 
     /// 更新未推送提交数量和哈希集合

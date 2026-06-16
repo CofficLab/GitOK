@@ -23,13 +23,6 @@ public enum ProjectPickerPlugin: GitOKPlugin {
             selectProject: context.onProjectSelection
         )))]
     }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard(
-            footnote: "Shows the project picker in the toolbar for quick project switching."
-        )
-    }
 }
 
 public enum ProjectPickerPluginLocalization {

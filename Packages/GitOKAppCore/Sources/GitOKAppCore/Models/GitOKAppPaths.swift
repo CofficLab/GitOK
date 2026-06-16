@@ -6,12 +6,12 @@ public enum GitOKAppPaths {
     }
 
     public static func getCurrentAppSupportDir() -> URL {
-        let base = try! FileManager.default.url(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        )
-        return base.appendingPathComponent(getAppName())
+        let fileManager = FileManager.default
+        let baseDirectory =
+            fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? fileManager.homeDirectoryForCurrentUser
+        let appDirectory = baseDirectory.appendingPathComponent(getAppName(), isDirectory: true)
+        try? fileManager.createDirectory(at: appDirectory, withIntermediateDirectories: true)
+        return appDirectory
     }
 }

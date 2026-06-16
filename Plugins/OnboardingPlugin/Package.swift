@@ -9,21 +9,21 @@ let package = Package(
         .library(name: "OnboardingPlugin", targets: ["OnboardingPlugin"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitOKAppCore"),
         .package(path: "../../Packages/GitOKUI"),
         .package(path: "../../Packages/GitOKSupportKit"),
-        .package(path: "../../Plugins/ProjectsPlugin"),
     ],
     targets: [
         .target(
             name: "OnboardingPlugin",
             dependencies: [
+                "GitCoreKit",
                 "GitOKCoreKit",
                 "GitOKAppCore",
                 "GitOKUI",
                 "GitOKSupportKit",
-                "ProjectsPlugin",
             ],
             path: "Sources",
             resources: [.process("Localizable.xcstrings")],

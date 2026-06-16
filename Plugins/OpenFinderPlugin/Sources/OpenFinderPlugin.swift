@@ -14,16 +14,13 @@ public enum OpenFinderPlugin: GitOKPlugin {
         tableName: OpenFinderPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .openIn }
+
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenFinderButton(projectURL: projectURL)))]
-    }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard()
     }
 }
 

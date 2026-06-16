@@ -1,34 +1,90 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    ".gitignore" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ".gitignore"
+  "sourceLanguage": "en",
+  "strings": {
+    ".gitignore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ".gitignore"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ".gitignore"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ".gitignore"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        }
+      }
+    },
+    "Gitignore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        }
+      }
+    },
+    "Provides .gitignore viewer in status bar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provides .gitignore viewer in status bar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏提供 .gitignore 查看器"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列提供 .gitignore 檢視器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列提供 .gitignore 檢視器"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

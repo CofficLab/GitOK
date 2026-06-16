@@ -14,6 +14,8 @@ public enum GitLFSPlugin: GitOKPlugin {
         tableName: GitLFSPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
 
     @MainActor
     public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

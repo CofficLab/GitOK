@@ -1,9 +1,8 @@
-import GitOKAppCore
 import AppKit
 import GitCoreKit
+import GitOKSupportKit
 import GitOKUI
 import MagicAlert
-import GitOKSupportKit
 import SwiftUI
 
 public struct CreateRepositorySheet: View, SuperLog {
@@ -38,20 +37,38 @@ public struct CreateRepositorySheet: View, SuperLog {
     }
 
     private var validationMessage: String? {
-        if let repositoryNameMessage = CloneRepositoryValidation.validateRepositoryName(trimmedRepositoryName) {
-            return repositoryNameMessage
+        if trimmedRepositoryName.isEmpty {
+            return String(localized: "Please enter repository name", bundle: .module)
+        }
+
+        if trimmedRepositoryName == "." || trimmedRepositoryName == ".." {
+            return String(localized: "Repository name cannot be . or ..", bundle: .module)
+        }
+
+        let invalidCharacters = CharacterSet(charactersIn: "/:\\")
+        if trimmedRepositoryName.rangeOfCharacter(from: invalidCharacters) != nil {
+            return String(localized: "Repository name cannot contain /, backslash, or :", bundle: .module)
         }
 
         guard destinationURL != nil else {
-            return "目标路径无效"
+            return String(localized: "Target path is invalid", bundle: .module)
         }
 
         if isCheckingDestination || destinationStatePath != destinationURL?.path {
-            return "正在检查目标路径…"
+            return String(localized: "Checking destination…", bundle: .module)
         }
 
         if let destinationState {
-            return CloneRepositoryValidation.destinationValidationMessage(for: destinationState)
+            switch destinationState {
+            case .available, .existingEmptyDirectory:
+                return nil
+            case .existingProject:
+                return String(localized: "This directory is already in the project list", bundle: .module)
+            case .existingNonEmptyDirectory:
+                return String(localized: "Target directory already exists and is not empty. Please change directory or repository name", bundle: .module)
+            case .existingFile:
+                return String(localized: "Target path already exists as a file", bundle: .module)
+            }
         }
 
         return nil
@@ -82,21 +99,21 @@ public struct CreateRepositorySheet: View, SuperLog {
 private extension CreateRepositorySheet {
     var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("新建仓库")
+            Text("New Repository")
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("创建一个新的本地 Git 仓库，并自动导入到项目列表。")
+            Text("Create a new local Git repository and automatically import it into the project list.")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
     }
 
     var repositorySection: some View {
-        AppSettingsSection(title: "本地仓库") {
+        AppSettingsSection(title: "Local Repository") {
             AppSettingsRow {
                 VStack(alignment: .leading, spacing: 10) {
-                    AppInputField("仓库名称", text: $repositoryName)
+                    AppInputField("Repository name", text: $repositoryName)
 
                     HStack {
                         Text(parentFolder.path)
@@ -107,14 +124,14 @@ private extension CreateRepositorySheet {
 
                         Spacer()
 
-                        AppButton("选择目录", systemImage: "folder", style: .tonal, size: .small) {
+                        AppButton("Choose directory", systemImage: "folder", style: .tonal, size: .small) {
                             chooseParentFolder()
                         }
                     }
 
                     if let destinationURL {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("最终路径")
+                            Text("Final path")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             Text(destinationURL.path)
@@ -126,7 +143,7 @@ private extension CreateRepositorySheet {
                     }
 
                     if destinationState == .existingEmptyDirectory {
-                        Text("目标目录已存在但为空，允许直接初始化为 Git 仓库。")
+                        Text("The target directory already exists but is empty, allowing direct initialization as a Git repository.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -136,9 +153,9 @@ private extension CreateRepositorySheet {
     }
 
     var templateSection: some View {
-        AppSettingsSection(title: "初始文件") {
+        AppSettingsSection(title: "Initial Files") {
             AppSettingsRow {
-                Toggle("创建 README.md", isOn: $includeReadme)
+                Toggle("Create README.md", isOn: $includeReadme)
             }
 
             AppSettingsRow {
@@ -158,12 +175,12 @@ private extension CreateRepositorySheet {
             }
 
             AppSettingsRow {
-                Toggle("创建初始提交", isOn: $createInitialCommit)
+                Toggle("Create initial commit", isOn: $createInitialCommit)
             }
 
             if createInitialCommit {
                 AppSettingsRow {
-                    Text("初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。")
+                    Text("The initial commit uses the current repository or global Git user configuration; if user.name/user.email is not configured, Git will return an error.")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -178,7 +195,7 @@ private extension CreateRepositorySheet {
                     .font(.caption)
                     .foregroundColor(.orange)
             } else {
-                Text("准备创建")
+                Text("Ready to create")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -193,13 +210,13 @@ private extension CreateRepositorySheet {
         HStack {
             Spacer()
 
-            AppButton("取消", style: .secondary) {
+            AppButton("Cancel", style: .secondary) {
                 dismiss()
             }
             .keyboardShortcut(.escape)
             .disabled(isCreating)
 
-            AppButton("创建", systemImage: "plus", style: .primary, isLoading: isCreating) {
+            AppButton("Create", systemImage: "plus", style: .primary, isLoading: isCreating) {
                 createRepository()
             }
             .disabled(isCreating || validationMessage != nil)
@@ -253,7 +270,7 @@ private extension CreateRepositorySheet {
         isCreating = true
 
         Task { @MainActor in
-            data.activityStatus = "创建仓库中…"
+            data.activityStatus = String(localized: "Creating repository…", bundle: .module)
         }
 
         let repositoryName = trimmedRepositoryName
@@ -269,12 +286,12 @@ private extension CreateRepositorySheet {
                         vm.setProject(project, reason: "CreateRepository")
                         data.activityStatus = nil
                         isCreating = false
-                        alert_info("已创建 \(repositoryName)")
+                        alert_info("\(String(localized: "Created", bundle: .module)) \(repositoryName)")
                         dismiss()
                     } else {
                         data.activityStatus = nil
                         isCreating = false
-                        errorMessage = "仓库已创建，但导入项目列表失败：\(destinationURL.path)"
+                        errorMessage = "\(String(localized: "Repository created, but failed to import the project list:", bundle: .module)) \(destinationURL.path)"
                     }
                 }
             } catch {
@@ -310,7 +327,7 @@ private enum CreateGitignoreTemplate: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .none: return "不创建"
+        case .none: return String(localized: "Do not create", bundle: .module)
         case .xcode: return "Xcode"
         case .flutter: return "Flutter"
         }
@@ -359,7 +376,7 @@ private enum CreateLicenseTemplate: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .none: return "不创建"
+        case .none: return String(localized: "Do not create", bundle: .module)
         case .mit: return "MIT"
         }
     }

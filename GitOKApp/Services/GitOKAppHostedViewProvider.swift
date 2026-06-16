@@ -1,4 +1,3 @@
-import BannerPlugin
 import GitOKCoreKit
 import SwiftUI
 

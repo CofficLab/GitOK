@@ -12,6 +12,8 @@ public enum RiverThemePlugin: GitOKPlugin {
         tableName: RiverThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

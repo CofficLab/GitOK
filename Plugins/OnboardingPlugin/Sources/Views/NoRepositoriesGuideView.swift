@@ -1,5 +1,4 @@
 import GitOKAppCore
-import ProjectsPlugin
 import GitOKUI
 import GitOKSupportKit
 import SwiftUI

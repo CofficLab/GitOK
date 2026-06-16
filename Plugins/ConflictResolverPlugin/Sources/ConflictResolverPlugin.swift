@@ -13,6 +13,8 @@ public enum ConflictResolverPlugin: GitOKPlugin {
         tableName: ConflictResolverPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
 
     @MainActor
     public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

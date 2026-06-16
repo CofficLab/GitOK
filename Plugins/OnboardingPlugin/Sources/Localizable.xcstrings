@@ -118,6 +118,12 @@
     },
     "开始使用 GitOK" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get Started with GitOK"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -168,6 +174,12 @@
     },
     "新建仓库会创建本地 Git 仓库和初始提交。" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creating a new repository creates a local Git repository and an initial commit."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -218,6 +230,12 @@
     },
     "添加已有仓库，或新建一个本地仓库。" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add an existing repository, or create a new local one."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -240,6 +258,12 @@
     },
     "添加项目会把本地已有 Git 仓库加入列表。" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adding a project adds an existing local Git repository to the list."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",

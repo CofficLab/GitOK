@@ -14,6 +14,8 @@ public enum GitWatcherPlugin: GitOKPlugin {
         tableName: GitWatcherPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .statusBar }
+
 
     @MainActor
     public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {

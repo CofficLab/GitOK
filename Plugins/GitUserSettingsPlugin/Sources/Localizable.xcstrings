@@ -412,6 +412,12 @@
             "state": "translated",
             "value": "使用者名稱"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username"
+          }
         }
       }
     },
@@ -433,6 +439,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "這些設定僅適用於目前專案，不會影響全域 Git 設定"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These settings apply only to the current project and do not affect global Git configuration"
           }
         }
       }
@@ -456,6 +468,12 @@
             "state": "translated",
             "value": "電子郵件"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
         }
       }
     },
@@ -477,6 +495,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定目前專案的 Git 使用者資訊"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configure Git user information for the current project"
+          }
+        }
+      }
+    },
+    "GitUserSettingsPlugin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User Info"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用户信息"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者資訊"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者資訊"
           }
         }
       }

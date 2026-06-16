@@ -14,6 +14,8 @@ public enum ActivityStatusPlugin: GitOKPlugin {
         tableName: ActivityStatusPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .statusBar }
+
 
     @MainActor
     public static func statusBarCenterItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

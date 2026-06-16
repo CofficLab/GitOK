@@ -1,118 +1,174 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "•" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "•"
+  "sourceLanguage": "en",
+  "strings": {
+    "•": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "•"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "•"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "•"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "•"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "•"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "•"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "•"
           }
         }
       }
     },
-    "Merge paused by conflicts" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merge paused by conflicts"
+    "Merge paused by conflicts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge paused by conflicts"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并已暂停"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并已暂停"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并已暂停"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并已暂停"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併已暫停"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併已暫停"
           }
         }
       }
     },
-    "Resolve %d conflicted files before using the rest of GitOK." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resolve %d conflicted files before using the rest of GitOK."
+    "Resolve %d conflicted files before using the rest of GitOK.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolve %d conflicted files before using the rest of GitOK."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "检测到 %d 个冲突文件。请先解决冲突，完成后再继续使用 GitOK 的其他功能。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到 %d 个冲突文件。请先解决冲突，完成后再继续使用 GitOK 的其他功能。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "检测到 %d 个冲突文件。请先解决冲突，完成后再继续使用 GitOK 的其他功能。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到 %d 个冲突文件。请先解决冲突，完成后再继续使用 GitOK 的其他功能。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "偵測到 %d 個衝突檔案。請先解決衝突，完成後再繼續使用 GitOK 的其他功能。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "偵測到 %d 個衝突檔案。請先解決衝突，完成後再繼續使用 GitOK 的其他功能。"
           }
         }
       }
     },
-    "Resolve the merge state before using the rest of GitOK." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resolve the merge state before using the rest of GitOK."
+    "Resolve the merge state before using the rest of GitOK.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolve the merge state before using the rest of GitOK."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前合并尚未完成。请继续合并或中止合并后再使用 GitOK 的其他功能。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前合并尚未完成。请继续合并或中止合并后再使用 GitOK 的其他功能。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前合并尚未完成。请继续合并或中止合并后再使用 GitOK 的其他功能。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前合并尚未完成。请继续合并或中止合并后再使用 GitOK 的其他功能。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目前合併尚未完成。請繼續合併或中止合併後再使用 GitOK 的其他功能。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前合併尚未完成。請繼續合併或中止合併後再使用 GitOK 的其他功能。"
+          }
+        }
+      }
+    },
+    "ConflictResolver": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conflict Resolver"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冲突解决"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "衝突解決"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "衝突解決"
+          }
+        }
+      }
+    },
+    "Git 冲突解决": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git conflict resolution"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 冲突解决"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 衝突解決"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 衝突解決"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

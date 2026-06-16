@@ -12,6 +12,8 @@ public enum EmberThemePlugin: GitOKPlugin {
         tableName: EmberThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

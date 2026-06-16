@@ -13,6 +13,8 @@ public enum FileInfoPlugin: GitOKPlugin {
         tableName: FileInfoPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .statusBar }
+
 
     @MainActor
     public static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

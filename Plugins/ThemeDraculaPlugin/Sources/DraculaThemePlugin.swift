@@ -12,6 +12,8 @@ public enum DraculaThemePlugin: GitOKPlugin {
         tableName: DraculaThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

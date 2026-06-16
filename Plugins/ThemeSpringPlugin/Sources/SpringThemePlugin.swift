@@ -12,6 +12,8 @@ public enum SpringThemePlugin: GitOKPlugin {
         tableName: SpringThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

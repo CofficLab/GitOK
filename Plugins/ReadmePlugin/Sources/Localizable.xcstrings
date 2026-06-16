@@ -1,34 +1,90 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "README.md" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "README.md"
+  "sourceLanguage": "en",
+  "strings": {
+    "README.md": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "README.md"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "README.md"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "README.md"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
+          }
+        }
+      }
+    },
+    "Readme": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Readme"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自述文件"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自述文件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自述文件"
+          }
+        }
+      }
+    },
+    "Provides README entry point in status bar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provides README entry point in status bar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏提供 README 入口"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列提供 README 入口"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列提供 README 入口"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

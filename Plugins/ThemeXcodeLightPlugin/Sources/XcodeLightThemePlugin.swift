@@ -12,6 +12,8 @@ public enum XcodeLightThemePlugin: GitOKPlugin {
         tableName: XcodeLightThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

@@ -53,7 +53,7 @@ public final class GitOKPluginRuntime {
 
     public var configurablePlugins: [PluginInfo] {
         pluginTypes
-            .filter { $0.policy.allowUserToggle }
+            .filter { $0.policy.shouldRegister }
             .map { type in
                 PluginInfo(
                     id: type.metadata.id,

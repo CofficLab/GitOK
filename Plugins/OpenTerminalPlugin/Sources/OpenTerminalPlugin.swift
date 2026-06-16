@@ -14,18 +14,23 @@ public enum OpenTerminalPlugin: GitOKPlugin {
         tableName: OpenTerminalPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .openIn }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        pluginAboutView(
+            kind: .openIn,
+            footnote: TerminalLauncher.hasInstalledTerminal
+                ? nil
+                : GitOKPluginAboutLocalization.string("about.openIn.footnote.noTerminal")
+        )
+    }
+
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenTerminalButton(projectURL: projectURL)))]
-    }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard(
-            footnote: TerminalLauncher.hasInstalledTerminal ? nil : "No supported terminal app is installed on this Mac."
-        )
     }
 }
 

@@ -197,12 +197,12 @@ extension DataVM {
 extension DataVM {
     /**
      * 设置当前选中的提交
-     * @param c 要设置的提交
+     * @param commitItem 要设置的提交
      */
-    public func setCommit(_ c: GitCommit?) {
+    public func setCommit(_ commitItem: GitCommit?) {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
-        guard commit?.id != c?.id else { return }
-        commit = c
+        guard commit?.id != commitItem?.id else { return }
+        commit = commitItem
     }
 
     /**
