@@ -14,18 +14,21 @@ public enum OpenVSCodePlugin: GitOKPlugin {
         tableName: OpenVSCodePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .openIn }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        pluginAboutView(
+            kind: .openIn,
+            footnote: VSCodeProjectLauncher.isInstalled ? nil : openInUnavailableFootnote()
+        )
+    }
+
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenVSCodeButton(projectURL: projectURL)))]
-    }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard(
-            footnote: VSCodeProjectLauncher.isInstalled ? nil : "VS Code is not installed on this Mac."
-        )
     }
 }
 

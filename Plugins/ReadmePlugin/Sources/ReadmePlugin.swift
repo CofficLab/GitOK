@@ -14,6 +14,8 @@ public enum ReadmePlugin: GitOKPlugin {
         tableName: ReadmePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .statusBar }
+
 
     @MainActor
     public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

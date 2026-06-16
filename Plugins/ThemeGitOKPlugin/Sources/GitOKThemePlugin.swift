@@ -12,6 +12,8 @@ public enum GitOKThemePlugin: GitOKPlugin {
         tableName: GitOKThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

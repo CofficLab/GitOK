@@ -12,6 +12,8 @@ public enum SummerThemePlugin: GitOKPlugin {
         tableName: SummerThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

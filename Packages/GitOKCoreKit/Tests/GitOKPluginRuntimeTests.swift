@@ -106,4 +106,19 @@ final class GitOKPluginRuntimeTests: XCTestCase {
 
         XCTAssertEqual(runtime.tabNames, ["alwaysOn", "optIn"])
     }
+
+    func testConfigurablePluginsListsAllRegisteredPluginsExceptDisabled() {
+        let runtime = GitOKPluginRuntime()
+
+        runtime.register(AlwaysOnTestPlugin.self)
+        runtime.register(OptOutTestPlugin.self)
+        runtime.register(OptInTestPlugin.self)
+        runtime.register(DisabledTestPlugin.self)
+
+        XCTAssertEqual(
+            Set(runtime.configurablePlugins.map(\.id)),
+            Set(["alwaysOn", "optOut", "optIn"])
+        )
+        XCTAssertTrue(runtime.configurablePlugins.first(where: { $0.id == "alwaysOn" })?.allowUserToggle == false)
+    }
 }

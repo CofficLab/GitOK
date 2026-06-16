@@ -14,6 +14,8 @@ public enum UnpushedStatusPlugin: GitOKPlugin {
         tableName: UnpushedStatusPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .statusBar }
+
 
     @MainActor
     public static func rootOverlay(context: GitOKPluginContext, content: AnyView) -> AnyView? {

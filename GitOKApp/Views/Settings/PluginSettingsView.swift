@@ -111,18 +111,27 @@ struct PluginSettingsView: View, SuperLog {
                 Label(plugin.name, systemImage: plugin.icon)
                     .font(.title3.weight(.semibold))
                 Spacer()
-                Toggle(
-                    String(localized: "Enabled"),
-                    isOn: Binding(
-                        get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
-                        set: { newValue in
-                            pluginStates[plugin.id] = newValue
-                            PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
-                        }
+                if plugin.allowUserToggle {
+                    Toggle(
+                        String(localized: "Enabled"),
+                        isOn: Binding(
+                            get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
+                            set: { newValue in
+                                pluginStates[plugin.id] = newValue
+                                PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
+                            }
+                        )
                     )
-                )
-                .toggleStyle(.switch)
-                .frame(width: 160)
+                    .toggleStyle(.switch)
+                    .frame(width: 160)
+                } else {
+                    Text(String(localized: "Always On"))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(.quaternary, in: Capsule())
+                }
             }
             Text(plugin.description)
                 .font(.subheadline)
@@ -132,31 +141,12 @@ struct PluginSettingsView: View, SuperLog {
     }
 
     private func defaultIntroduction(_ plugin: PluginInfo) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(String(localized: "Plugin Introduction"))
-                .font(.headline)
-            Text(plugin.description)
-                .font(.body)
-            VStack(alignment: .leading, spacing: 8) {
-                detailRow(title: String(localized: "Plugin ID"), value: plugin.id)
-                detailRow(title: String(localized: "Default State"), value: plugin.defaultEnabled ? String(localized: "Enabled") : String(localized: "Disabled"))
-                detailRow(title: String(localized: "Can Toggle"), value: plugin.allowUserToggle ? String(localized: "Yes") : String(localized: "No"))
-            }
-        }
-        .padding(16)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
-    }
-
-    private func detailRow(title: String, value: String) -> some View {
-        HStack(alignment: .top) {
-            Text(title)
-                .foregroundStyle(.secondary)
-                .frame(width: 110, alignment: .leading)
-            Text(value)
-                .textSelection(.enabled)
-            Spacer(minLength: 0)
-        }
-        .font(.caption)
+        Text(plugin.description.isEmpty ? String(localized: "No plugin introduction available.") : plugin.description)
+            .font(.body)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
+            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
     }
 
     private var allManagedPlugins: [PluginInfo] {

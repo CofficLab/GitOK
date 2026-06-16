@@ -12,6 +12,8 @@ public enum GitHubLightThemePlugin: GitOKPlugin {
         tableName: GitHubLightThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

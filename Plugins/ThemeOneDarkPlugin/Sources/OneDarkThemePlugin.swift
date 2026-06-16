@@ -12,6 +12,8 @@ public enum OneDarkThemePlugin: GitOKPlugin {
         tableName: OneDarkThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

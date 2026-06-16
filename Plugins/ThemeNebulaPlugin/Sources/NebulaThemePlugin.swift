@@ -12,6 +12,8 @@ public enum NebulaThemePlugin: GitOKPlugin {
         tableName: NebulaThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

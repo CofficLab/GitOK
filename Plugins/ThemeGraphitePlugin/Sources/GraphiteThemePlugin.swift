@@ -12,6 +12,8 @@ public enum GraphiteThemePlugin: GitOKPlugin {
         tableName: GraphiteThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

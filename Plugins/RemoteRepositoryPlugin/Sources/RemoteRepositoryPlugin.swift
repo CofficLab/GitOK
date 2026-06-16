@@ -13,6 +13,8 @@ public enum RemoteRepositoryPlugin: GitOKPlugin {
         tableName: RemoteRepositoryPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
 
     @MainActor
     public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

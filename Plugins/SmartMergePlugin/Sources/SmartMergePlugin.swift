@@ -13,6 +13,8 @@ public enum SmartMergePlugin: GitOKPlugin {
         tableName: Localization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
 
     @MainActor
     public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

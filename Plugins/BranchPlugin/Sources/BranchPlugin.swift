@@ -14,6 +14,8 @@ public enum BranchPlugin: GitOKPlugin {
         tableName: BranchPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         let pluginContext = BranchPluginContext(context)
@@ -43,13 +45,6 @@ public enum BranchPlugin: GitOKPlugin {
     @MainActor
     public static func toolBarContext(from context: GitOKPluginContext) -> BranchPluginContext {
         BranchPluginContext(context)
-    }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard(
-            footnote: "Adds a branch picker in the toolbar and a branch status tile in the status bar."
-        )
     }
 }
 

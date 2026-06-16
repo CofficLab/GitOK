@@ -51,4 +51,9 @@ final class GitOKPluginTests: XCTestCase {
     func testDefaultStatusBarCenterItemsIsEmpty() {
         XCTAssertEqual(SamplePlugin.statusBarCenterItems(context: GitOKPluginContext()), [])
     }
+
+    @MainActor
+    func testDefaultPluginIntroductionViewIsProvided() {
+        XCTAssertNotNil(SamplePlugin.pluginIntroductionView(context: GitOKPluginContext()))
+    }
 }

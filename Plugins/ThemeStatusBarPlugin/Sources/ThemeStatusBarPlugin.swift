@@ -14,6 +14,8 @@ public enum ThemeStatusBarPlugin: GitOKPlugin {
         tableName: ThemeStatusBarPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .statusBar }
+
     @MainActor
     public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
         [

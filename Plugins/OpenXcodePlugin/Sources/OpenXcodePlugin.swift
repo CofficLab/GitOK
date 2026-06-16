@@ -14,18 +14,21 @@ public enum OpenXcodePlugin: GitOKPlugin {
         tableName: OpenXcodePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .openIn }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        pluginAboutView(
+            kind: .openIn,
+            footnote: XcodeProjectLauncher.isInstalled ? nil : openInUnavailableFootnote()
+        )
+    }
+
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenXcodeButton(projectURL: projectURL)))]
-    }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard(
-            footnote: XcodeProjectLauncher.isInstalled ? nil : "Xcode is not installed on this Mac."
-        )
     }
 }
 

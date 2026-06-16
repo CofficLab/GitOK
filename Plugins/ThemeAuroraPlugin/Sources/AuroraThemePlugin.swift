@@ -12,6 +12,8 @@ public enum AuroraThemePlugin: GitOKPlugin {
         tableName: AuroraThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

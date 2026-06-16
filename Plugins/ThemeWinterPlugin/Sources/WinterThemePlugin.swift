@@ -12,6 +12,8 @@ public enum WinterThemePlugin: GitOKPlugin {
         tableName: WinterThemePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
 
 
     @MainActor

@@ -13,6 +13,8 @@ public enum SubmodulePlugin: GitOKPlugin {
         tableName: SubmodulePluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
 
     @MainActor
     public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {

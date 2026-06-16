@@ -14,18 +14,21 @@ public enum OpenKiroPlugin: GitOKPlugin {
         tableName: OpenKiroPluginLocalization.table
     )
 
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .openIn }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        pluginAboutView(
+            kind: .openIn,
+            footnote: KiroProjectLauncher.isInstalled ? nil : openInUnavailableFootnote()
+        )
+    }
+
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenKiroButton(projectURL: projectURL)))]
-    }
-
-    @MainActor
-    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
-        Self.pluginIntroductionCard(
-            footnote: KiroProjectLauncher.isInstalled ? nil : "Kiro is not installed on this Mac."
-        )
     }
 }
 
