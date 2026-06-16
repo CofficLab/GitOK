@@ -1,9 +1,8 @@
-import GitOKAppCore
 import AppKit
 import GitCoreKit
+import GitOKSupportKit
 import GitOKUI
 import MagicAlert
-import GitOKSupportKit
 import SwiftUI
 
 public struct CreateRepositorySheet: View, SuperLog {

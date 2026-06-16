@@ -14,7 +14,6 @@ let package = Package(
         .package(path: "../../Packages/GitOKAppCore"),
         .package(path: "../../Packages/GitOKUI"),
         .package(path: "../../Packages/GitOKSupportKit"),
-        .package(path: "../../Plugins/ProjectsPlugin"),
     ],
     targets: [
         .target(
@@ -25,7 +24,6 @@ let package = Package(
                 "GitOKAppCore",
                 "GitOKUI",
                 "GitOKSupportKit",
-                "ProjectsPlugin",
             ],
             path: "Sources",
             resources: [.process("Localizable.xcstrings")],
