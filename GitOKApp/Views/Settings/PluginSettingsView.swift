@@ -150,7 +150,7 @@ struct PluginSettingsView: View, SuperLog {
     }
 
     private var allManagedPlugins: [PluginInfo] {
-        pluginProvider.configurablePlugins
+        pluginProvider.configurablePlugins.filter(\.allowUserToggle)
     }
 
     private var filteredPlugins: [PluginInfo] {
