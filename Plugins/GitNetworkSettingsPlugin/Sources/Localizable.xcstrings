@@ -20,6 +20,12 @@
             "state": "translated",
             "value": "CA 檔案會寫入 `http.sslCAInfo`。關閉 SSL 驗證只適合臨時排障；企業網路應優先匯入可信 CA 憑證。"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The CA file is written to `http.sslCAInfo`. Disabling SSL verification is only suitable for temporary troubleshooting; enterprise networks should prioritize importing trusted CA certificates."
+          }
         }
       }
     },
@@ -42,6 +48,12 @@
             "state": "translated",
             "value": "會寫入 Git 全域設定 `http.proxy` 和 `https.proxy`。如果代理需要認證，可使用 `http://user:password@host:port` 格式。"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Writes to Git global config `http.proxy` and `https.proxy`. If the proxy requires authentication, use the format `http://user:password@host:port`."
+          }
         }
       }
     },
@@ -63,6 +75,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "網路"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network"
           }
         }
       }

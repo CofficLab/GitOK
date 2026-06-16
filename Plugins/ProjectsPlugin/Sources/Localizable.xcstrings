@@ -132,6 +132,12 @@
             "state": "translated",
             "value": "最終路徑"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final Path"
+          }
         }
       }
     },
@@ -153,6 +159,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "準備建立"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready to Create"
           }
         }
       }
@@ -176,6 +188,12 @@
             "state": "translated",
             "value": "切換到此專案"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to This Project"
+          }
         }
       }
     },
@@ -197,6 +215,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "建立 README.md"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create README.md"
           }
         }
       }
@@ -220,6 +244,12 @@
             "state": "translated",
             "value": "建立一個新的本地 Git 儲存庫，並自動匯入到專案列表。"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a new local Git repository and automatically import it into the project list."
+          }
         }
       }
     },
@@ -241,6 +271,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "建立初始提交"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create Initial Commit"
           }
         }
       }
@@ -264,6 +300,12 @@
             "state": "translated",
             "value": "初始提交會使用目前儲存庫或全域 Git 使用者設定；如果未設定 user.name/user.email，Git 會傳回錯誤。"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The initial commit uses the current repository or global Git user configuration; if user.name/user.email is not configured, Git will return an error."
+          }
         }
       }
     },
@@ -285,6 +327,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "目前專案"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current Project"
           }
         }
       }
@@ -308,6 +356,12 @@
             "state": "translated",
             "value": "新建儲存庫"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Repository"
+          }
         }
       }
     },
@@ -330,6 +384,12 @@
             "state": "translated",
             "value": "暫無專案"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Projects"
+          }
         }
       }
     },
@@ -351,6 +411,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "目標目錄已存在但為空，允許直接初始化為 Git 儲存庫。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The target directory exists but is empty; it can be initialized as a Git repository directly."
           }
         }
       }

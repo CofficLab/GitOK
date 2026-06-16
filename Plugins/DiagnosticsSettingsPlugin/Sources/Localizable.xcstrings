@@ -48,6 +48,12 @@
             "state": "translated",
             "value": "目前工作階段沒有記錄到錯誤。"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No errors were recorded in the current session."
+          }
         }
       }
     },
@@ -69,6 +75,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "診斷"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostics"
           }
         }
       }

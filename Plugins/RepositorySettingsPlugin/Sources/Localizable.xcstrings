@@ -468,6 +468,12 @@
             "state": "translated",
             "value": "儲存庫設定"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository Settings"
+          }
         }
       }
     }

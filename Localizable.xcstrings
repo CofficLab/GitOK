@@ -1,34 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        }
-      }
-    },
     "Add": {
       "localizations": {
         "en": {
@@ -215,6 +187,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "可切換"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可切换"
           }
         }
       }
@@ -490,6 +468,12 @@
             "state": "translated",
             "value": "預設狀態"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认状态"
+          }
         }
       }
     },
@@ -508,6 +492,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已停用"
+          }
+        },
+        "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "已停用"
@@ -646,6 +636,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "已啟用"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已启用"
           }
         }
       }
@@ -950,6 +946,12 @@
             "state": "translated",
             "value": "否"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "否"
+          }
         }
       }
     },
@@ -1057,6 +1059,12 @@
             "state": "translated",
             "value": "沒有插件"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有插件"
+          }
         }
       }
     },
@@ -1078,6 +1086,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定中沒有可用的插件"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置中没有可用的插件"
           }
         }
       }
@@ -1500,6 +1514,12 @@
             "state": "translated",
             "value": "插件 ID"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件 ID"
+          }
         }
       }
     },
@@ -1521,6 +1541,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "插件介紹"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件介绍"
           }
         }
       }
@@ -1909,6 +1935,12 @@
             "state": "translated",
             "value": "搜尋插件"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索插件"
+          }
         }
       }
     },
@@ -1986,6 +2018,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置"
           }
         }
       }
@@ -2089,6 +2127,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是"
+          }
+        },
+        "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "是"
