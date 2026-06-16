@@ -1,7 +1,6 @@
 import GitOKAppCore
 import GitOKCoreKit
 import GitOKSupportKit
-import OSLog
 import SwiftUI
 
 /// 插件设置视图：控制各个插件的启用/禁用状态
@@ -95,26 +94,8 @@ struct PluginSettingsView: View, SuperLog {
     @ViewBuilder
     private func pluginListRow(_ plugin: PluginInfo) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Label(plugin.name, systemImage: plugin.icon)
-                    .font(.headline)
-                Spacer()
-                Toggle(
-                    "",
-                    isOn: Binding(
-                        get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
-                        set: { newValue in
-                            pluginStates[plugin.id] = newValue
-                            PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
-                            if Self.verbose {
-                                os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
-                            }
-                        }
-                    )
-                )
-                .toggleStyle(.switch)
-                .labelsHidden()
-            }
+            Label(plugin.name, systemImage: plugin.icon)
+                .font(.headline)
             Text(plugin.description)
                 .font(.caption)
                 .foregroundStyle(.secondary)
