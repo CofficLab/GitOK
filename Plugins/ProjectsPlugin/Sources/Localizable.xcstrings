@@ -1,426 +1,436 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    ".gitignore": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ".gitignore"
+  "sourceLanguage" : "en",
+  "strings" : {
+    ".gitignore" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ".gitignore"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ".gitignore"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ".gitignore"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore"
           }
         }
       }
     },
-    "LICENSE": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LICENSE"
+    "LICENSE" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LICENSE"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LICENSE"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LICENSE"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LICENSE"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LICENSE"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LICENSE"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LICENSE"
           }
         }
       }
     },
-    "Project sidebar and repository sheets": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Project sidebar and repository sheets"
+    "Project sidebar and repository sheets" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project sidebar and repository sheets"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "项目侧栏和仓库表单"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "项目侧栏和仓库表单"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "專案側邊欄與儲存庫表單"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "專案側邊欄與儲存庫表單"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "專案側邊欄與儲存庫表單"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "專案側邊欄與儲存庫表單"
           }
         }
       }
     },
-    "ProjectsPlugin": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Projects"
+    "ProjectsPlugin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projects"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ProjectsPlugin"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ProjectsPlugin"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ProjectsPlugin"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ProjectsPlugin"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ProjectsPlugin"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ProjectsPlugin"
           }
         }
       }
     },
-    "最终路径": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最终路径"
+    "最终路径" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final Path"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最終路徑"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最终路径"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最終路徑"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最終路徑"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Final Path"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最終路徑"
           }
         }
       }
     },
-    "准备创建": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "准备创建"
+    "准备创建" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready to Create"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "準備建立"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "准备创建"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "準備建立"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "準備建立"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ready to Create"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "準備建立"
           }
         }
       }
     },
-    "切换到此项目": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "切换到此项目"
+    "切换到此项目" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch to This Project"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "切換到此專案"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换到此项目"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "切換到此專案"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換到此專案"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Switch to This Project"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換到此專案"
           }
         }
       }
     },
-    "创建 README.md": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建 README.md"
+    "创建 README.md" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create README.md"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "建立 README.md"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建 README.md"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "建立 README.md"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立 README.md"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create README.md"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立 README.md"
           }
         }
       }
     },
-    "创建一个新的本地 Git 仓库，并自动导入到项目列表。": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建一个新的本地 Git 仓库，并自动导入到项目列表。"
+    "创建一个新的本地 Git 仓库，并自动导入到项目列表。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a new local Git repository and automatically import it into the project list."
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "建立一個新的本地 Git 儲存庫，並自動匯入到專案列表。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建一个新的本地 Git 仓库，并自动导入到项目列表。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "建立一個新的本地 Git 儲存庫，並自動匯入到專案列表。"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立一個新的本地 Git 儲存庫，並自動匯入到專案列表。"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create a new local Git repository and automatically import it into the project list."
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立一個新的本地 Git 儲存庫，並自動匯入到專案列表。"
           }
         }
       }
     },
-    "创建初始提交": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建初始提交"
+    "创建初始提交" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Initial Commit"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "建立初始提交"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建初始提交"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "建立初始提交"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立初始提交"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create Initial Commit"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立初始提交"
           }
         }
       }
     },
-    "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。"
+    "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The initial commit uses the current repository or global Git user configuration; if user.name/user.email is not configured, Git will return an error."
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "初始提交會使用目前儲存庫或全域 Git 使用者設定；如果未設定 user.name/user.email，Git 會傳回錯誤。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "初始提交會使用目前儲存庫或全域 Git 使用者設定；如果未設定 user.name/user.email，Git 會傳回錯誤。"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初始提交會使用目前儲存庫或全域 Git 使用者設定；如果未設定 user.name/user.email，Git 會傳回錯誤。"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The initial commit uses the current repository or global Git user configuration; if user.name/user.email is not configured, Git will return an error."
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初始提交會使用目前儲存庫或全域 Git 使用者設定；如果未設定 user.name/user.email，Git 會傳回錯誤。"
           }
         }
       }
     },
-    "当前项目": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当前项目"
+    "当前项目" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Project"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前專案"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前项目"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前專案"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前專案"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Current Project"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前專案"
           }
         }
       }
     },
-    "新建仓库": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新建仓库"
+    "新建仓库" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Repository"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新建儲存庫"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建仓库"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新建儲存庫"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建儲存庫"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New Repository"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建儲存庫"
           }
         }
       }
     },
-    "暂无项目": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂无项目"
+    "暂无项目" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Projects"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暫無專案"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无项目"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暫無專案"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暫無專案"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Projects"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暫無專案"
           }
         }
       }
     },
-    "目标目录已存在但为空，允许直接初始化为 Git 仓库。": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目标目录已存在但为空，允许直接初始化为 Git 仓库。"
+    "目标目录已存在但为空，允许直接初始化为 Git 仓库。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The target directory exists but is empty; it can be initialized as a Git repository directly."
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目標目錄已存在但為空，允許直接初始化為 Git 儲存庫。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标目录已存在但为空，允许直接初始化为 Git 仓库。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目標目錄已存在但為空，允許直接初始化為 Git 儲存庫。"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標目錄已存在但為空，允許直接初始化為 Git 儲存庫。"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The target directory exists but is empty; it can be initialized as a Git repository directly."
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標目錄已存在但為空，允許直接初始化為 Git 儲存庫。"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
