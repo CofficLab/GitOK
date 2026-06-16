@@ -27,7 +27,8 @@ public enum OpenKiroPlugin: GitOKPlugin {
 
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
-        guard let projectURL = context.projectURL else { return [] }
+        guard let projectURL = context.projectURL,
+              KiroProjectLauncher.isInstalled else { return [] }
         return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenKiroButton(projectURL: projectURL)))]
     }
 }
