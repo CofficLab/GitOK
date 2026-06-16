@@ -41,6 +41,11 @@ public extension Image {
         appIcon(for: .kiro)
     }
 
+    /// Lumi 应用图标（优先使用真实图标）
+    static var lumiApp: Image {
+        appIcon(for: .lumi)
+    }
+
     // MARK: - Browsers
 
     /// Safari 应用图标（优先使用真实图标）

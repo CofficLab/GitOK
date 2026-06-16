@@ -28,6 +28,7 @@ import OpenCursorPlugin
 import OpenFinderPlugin
 import OpenGitHubDesktopPlugin
 import OpenKiroPlugin
+import OpenLumiPlugin
 import OpenRemotePlugin
 import OpenTerminalPlugin
 import OpenTraePlugin
@@ -97,6 +98,7 @@ public enum GeneratedPluginRegistry {
         OpenFinderPlugin.self,
         OpenGitHubDesktopPlugin.self,
         OpenKiroPlugin.self,
+        OpenLumiPlugin.self,
         OpenRemotePlugin.self,
         OpenTerminalPlugin.self,
         OpenTraePlugin.self,

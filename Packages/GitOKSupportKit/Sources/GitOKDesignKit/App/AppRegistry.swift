@@ -19,6 +19,8 @@ public enum AppRegistry: String, CaseIterable {
     case githubDesktop
     /// Kiro
     case kiro
+    /// Lumi
+    case lumi
     /// IntelliJ IDEA
     case intelliJIDEA
     /// WebStorm
@@ -265,6 +267,8 @@ public enum AppRegistry: String, CaseIterable {
             return "com.github.GitHubClient"
         case .kiro:
             return "dev.kiro.desktop"
+        case .lumi:
+            return "com.coffic.lumi"
         case .intelliJIDEA:
             return "com.jetbrains.intellij"
         case .webStorm:
@@ -490,6 +494,8 @@ public enum AppRegistry: String, CaseIterable {
             return .iconXcode
         case .vscode, .cursor, .trae, .antigravity, .intelliJIDEA, .webStorm, .pyCharm, .androidStudio, .visualStudio, .kiro:
             return .iconCode
+        case .lumi:
+            return "sun.max.fill"
         case .githubDesktop:
             return .iconCode
         case .iTerm2:
@@ -649,6 +655,8 @@ public enum AppRegistry: String, CaseIterable {
             return "GitHub Desktop"
         case .kiro:
             return "Kiro"
+        case .lumi:
+            return "Lumi"
         case .intelliJIDEA:
             return "IntelliJ IDEA"
         case .webStorm:

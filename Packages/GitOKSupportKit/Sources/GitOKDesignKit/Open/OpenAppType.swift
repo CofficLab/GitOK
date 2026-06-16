@@ -39,6 +39,8 @@ public enum OpenAppType: String {
     case githubDesktop
     /// 在Kiro中打开
     case kiro
+    /// 在Lumi中打开
+    case lumi
 
     // MARK: - App Registry Mapping
 
@@ -79,6 +81,8 @@ public enum OpenAppType: String {
             return .githubDesktop
         case .kiro:
             return .kiro
+        case .lumi:
+            return .lumi
         }
     }
 
