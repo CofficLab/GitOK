@@ -18,7 +18,7 @@ public struct SmartMergeStatusTile: View {
             AppStatusBarTile(systemImage: "arrow.trianglehead.merge", action: {
                 isPresented.toggle()
             })
-            .help(SmartMergePluginLocalization.string("Merge branches"))
+            .help(Localization.string("Merge branches"))
             .popover(isPresented: $isPresented) {
                 SmartMergeForm(projectURL: projectURL)
                     .padding()
@@ -56,7 +56,7 @@ public struct SmartMergeForm: View {
             }
             .disabled(isWorking)
 
-            Text(SmartMergePluginLocalization.string("to"))
+            Text(Localization.string("to"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity)
@@ -69,7 +69,7 @@ public struct SmartMergeForm: View {
             .disabled(isWorking)
 
             AppButton(
-                SmartMergePluginLocalization.string("Merge"),
+                Localization.string("Merge"),
                 systemImage: "arrow.trianglehead.merge",
                 style: .primary,
                 fillsWidth: true,
@@ -125,7 +125,7 @@ public struct SmartMergeForm: View {
                 await MainActor.run {
                     errorMessage = String(
                         format: "%@: %@",
-                        SmartMergePluginLocalization.string("Failed to load branches"),
+                        Localization.string("Failed to load branches"),
                         error.localizedDescription
                     )
                 }
@@ -142,14 +142,14 @@ public struct SmartMergeForm: View {
         statusMessage = nil
         errorMessage = nil
         let operationTitle = String(
-            format: SmartMergePluginLocalization.string("Merging %@ into %@"),
+            format: Localization.string("Merging %@ into %@"),
             sourceBranch.name,
             targetBranch.name
         )
         let operationID = BlockingOperationCenter.shared.begin(
-            title: SmartMergePluginLocalization.string("Merging branches"),
+            title: Localization.string("Merging branches"),
             message: operationTitle,
-            detail: SmartMergePluginLocalization.string("Large branch merges may take a while. Please keep GitOK open.")
+            detail: Localization.string("Large branch merges may take a while. Please keep GitOK open.")
         )
 
         Task.detached {
@@ -158,7 +158,7 @@ public struct SmartMergeForm: View {
                 await MainActor.run {
                     BlockingOperationCenter.shared.update(
                         id: operationID,
-                        message: String(format: SmartMergePluginLocalization.string("Switching to %@"), targetBranch.name),
+                        message: String(format: Localization.string("Switching to %@"), targetBranch.name),
                         detail: operationTitle
                     )
                 }
@@ -166,8 +166,8 @@ public struct SmartMergeForm: View {
                 await MainActor.run {
                     BlockingOperationCenter.shared.update(
                         id: operationID,
-                        message: String(format: SmartMergePluginLocalization.string("Merging %@"), sourceBranch.name),
-                        detail: SmartMergePluginLocalization.string("GitOK is updating the repository. Other actions are temporarily blocked.")
+                        message: String(format: Localization.string("Merging %@"), sourceBranch.name),
+                        detail: Localization.string("GitOK is updating the repository. Other actions are temporarily blocked.")
                     )
                 }
                 let longMergeStatusUpdates = Self.beginLongMergeStatusUpdates(
@@ -186,8 +186,8 @@ public struct SmartMergeForm: View {
                 await MainActor.run {
                     BlockingOperationCenter.shared.update(
                         id: operationID,
-                        message: SmartMergePluginLocalization.string("Checking merge result"),
-                        detail: SmartMergePluginLocalization.string("Refreshing repository state after merge.")
+                        message: Localization.string("Checking merge result"),
+                        detail: Localization.string("Refreshing repository state after merge.")
                     )
                 }
                 try? repository.finalizeMergeIfNeeded()
@@ -198,12 +198,12 @@ public struct SmartMergeForm: View {
                     isWorking = false
                     if conflictCount > 0 {
                         errorMessage = String(
-                            format: SmartMergePluginLocalization.string("Merge paused with %d conflict files"),
+                            format: Localization.string("Merge paused with %d conflict files"),
                             conflictCount
                         )
                     } else {
                         statusMessage = String(
-                            format: SmartMergePluginLocalization.string("Merged %@ into %@"),
+                            format: Localization.string("Merged %@ into %@"),
                             sourceBranch.name,
                             targetBranch.name
                         )
@@ -216,7 +216,7 @@ public struct SmartMergeForm: View {
                     isWorking = false
                     if conflictCount > 0 {
                         errorMessage = String(
-                            format: SmartMergePluginLocalization.string("Merge paused with %d conflict files"),
+                            format: Localization.string("Merge paused with %d conflict files"),
                             conflictCount
                         )
                     } else {
@@ -236,18 +236,18 @@ public struct SmartMergeForm: View {
             let updates: [(UInt64, String, String)] = [
                 (
                     8_000_000_000,
-                    String(format: SmartMergePluginLocalization.string("Still merging %@ into %@"), sourceBranchName, targetBranchName),
-                    SmartMergePluginLocalization.string("The helper is still working on this merge. Large conflict sets can take several minutes.")
+                    String(format: Localization.string("Still merging %@ into %@"), sourceBranchName, targetBranchName),
+                    Localization.string("The helper is still working on this merge. Large conflict sets can take several minutes.")
                 ),
                 (
                     17_000_000_000,
-                    SmartMergePluginLocalization.string("Still working through a large merge"),
-                    SmartMergePluginLocalization.string("GitOK is waiting for the helper process to finish. The app is blocked to protect the repository.")
+                    Localization.string("Still working through a large merge"),
+                    Localization.string("GitOK is waiting for the helper process to finish. The app is blocked to protect the repository.")
                 ),
                 (
                     35_000_000_000,
-                    SmartMergePluginLocalization.string("Large merge still in progress"),
-                    SmartMergePluginLocalization.string("This can happen when thousands of files changed or conflicts need to be prepared. Please wait.")
+                    Localization.string("Large merge still in progress"),
+                    Localization.string("This can happen when thousands of files changed or conflicts need to be prepared. Please wait.")
                 ),
             ]
 
