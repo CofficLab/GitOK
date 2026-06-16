@@ -1,118 +1,174 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "/" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "/"
+  "sourceLanguage": "en",
+  "strings": {
+    "/": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "/"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "/"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "/"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
           }
         }
       }
     },
-    "%@ %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ %lld"
+    "%@ %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ %lld"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ %lld"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ %lld"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
           }
         }
       }
     },
-    "%lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld"
+    "%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
           }
         }
       }
     },
-    "stash@{%lld}" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "stash@{%lld}"
+    "stash@{%lld}": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stash@{%lld}"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "stash@{%lld}"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stash@{%lld}"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "stash@{%lld}"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stash@{%lld}"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "stash@{%lld}"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stash@{%lld}"
+          }
+        }
+      }
+    },
+    "Stash": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stash"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "储藏"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲藏"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲藏"
+          }
+        }
+      }
+    },
+    "Git stash management": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git stash management"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 储藏管理"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 儲藏管理"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 儲藏管理"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

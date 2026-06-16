@@ -1,7 +1,62 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-
+  "sourceLanguage": "en",
+  "strings": {
+    "License": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "许可证"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "授權條款"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "授權條款"
+          }
+        }
+      }
+    },
+    "LICENSE entry in status bar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LICENSE entry in status bar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏提供 LICENSE 入口"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列提供 LICENSE 入口"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列提供 LICENSE 入口"
+          }
+        }
+      }
+    }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

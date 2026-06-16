@@ -1,6 +1,7 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "": {},
     "Aa": {
       "localizations": {
         "en": {
@@ -591,6 +592,12 @@
     },
     "外观": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -608,17 +615,17 @@
             "state": "translated",
             "value": "外觀"
           }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appearance"
-          }
         }
       }
     },
     "确定要将所有外观设置重置为默认值吗？": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to reset all appearance settings to defaults?"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -636,17 +643,17 @@
             "state": "translated",
             "value": "確定要將所有外觀設定重設為預設值嗎？"
           }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Are you sure you want to reset all appearance settings to defaults?"
-          }
         }
       }
     },
     "选择应用的主要强调色": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the app's primary accent color"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -664,17 +671,17 @@
             "state": "translated",
             "value": "選擇應用的主要強調色"
           }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose the app's primary accent color"
-          }
         }
       }
     },
     "重置所有外观设置": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset All Appearance Settings"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -692,11 +699,33 @@
             "state": "translated",
             "value": "重設所有外觀設定"
           }
-        },
+        }
+      }
+    },
+    "AppearanceSettingsPlugin": {
+      "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reset All Appearance Settings"
+            "value": "Appearance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外观"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外觀"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外觀"
           }
         }
       }

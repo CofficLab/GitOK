@@ -1,6 +1,7 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "": {},
     "Commit message display style for this project": {
       "localizations": {
         "en": {
@@ -31,6 +32,12 @@
     },
     "Commit 风格": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commit Style"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -47,12 +54,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Commit 風格"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Commit Style"
           }
         }
       }
@@ -115,6 +116,12 @@
     },
     "Emoji 风格": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emoji Style"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -131,12 +138,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Emoji 風格"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Emoji Style"
           }
         }
       }
@@ -255,6 +256,12 @@
     },
     "选择不同的风格会改变 Commit 消息的显示方式：": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choosing a different style changes how commit messages are displayed:"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -272,11 +279,33 @@
             "state": "translated",
             "value": "選擇不同的風格會改變 Commit 訊息的顯示方式："
           }
-        },
+        }
+      }
+    },
+    "CommitStyleSettingsPlugin": {
+      "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Choosing a different style changes how commit messages are displayed:"
+            "value": "Commit Style"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交风格"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交風格"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交風格"
           }
         }
       }
