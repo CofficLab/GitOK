@@ -1,15 +1,10 @@
 import GitOKAppCore
 import Foundation
+import GitCoreKit
 import GitOKUI
 import GitOKSupportKit
 import OSLog
 import SwiftUI
-
-private enum CurrentUserConfigBackgroundRunner {
-    struct UnsafeTransfer<Value>: @unchecked Sendable {
-        let value: Value
-    }
-}
 
 /// 显示当前项目 Git 用户配置的视图组件
 public struct CurrentUserConfigView: View, SuperLog {
@@ -73,15 +68,16 @@ public struct CurrentUserConfigView: View, SuperLog {
     // MARK: - Load Data
 
     private func loadUserInfo() {
-        let projectTransfer = CurrentUserConfigBackgroundRunner.UnsafeTransfer(value: project)
+        let repositoryURL = project.url
         isLoading = true
 
         Task.detached(priority: .utility) {
             do {
-                let loadedName = try await projectTransfer.value.getUserNameAsync()
-                let loadedEmail = try await projectTransfer.value.getUserEmailAsync()
+                let cli = GitRepositoryCLI(repositoryURL: repositoryURL)
+                let loadedName = try cli.configValue(key: "user.name")
+                let loadedEmail = try cli.configValue(key: "user.email")
 
-                Task { @MainActor in
+                await MainActor.run {
                     userName = loadedName
                     userEmail = loadedEmail
                     isLoading = false
@@ -93,7 +89,7 @@ public struct CurrentUserConfigView: View, SuperLog {
             } catch {
                 let message = error.localizedDescription
 
-                Task { @MainActor in
+                await MainActor.run {
                     userName = ""
                     userEmail = ""
                     isLoading = false

@@ -6,12 +6,6 @@ import GitOKSupportKit
 import OSLog
 import SwiftUI
 
-private enum GuideBackgroundRunner {
-    struct UnsafeTransfer<Value>: @unchecked Sendable {
-        let value: Value
-    }
-}
-
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面
 public struct GuideView: View, SuperLog {
@@ -164,17 +158,17 @@ public extension GuideView {
             remoteInfo = []
             return
         }
-        let projectTransfer = GuideBackgroundRunner.UnsafeTransfer(value: loadedProject)
+        let repositoryURL = loadedProject.url
 
         Task.detached(priority: .utility) {
             do {
-                let remotes = try await projectTransfer.value.remoteListAsync()
-                Task { @MainActor in
+                let remotes = try GitRepositoryCLI(repositoryURL: repositoryURL).remoteList()
+                await MainActor.run {
                     remoteInfo = remotes
                 }
             } catch {
                 let message = error.localizedDescription
-                Task { @MainActor in
+                await MainActor.run {
                     remoteInfo = []
                     if Self.verbose {
                         os_log("\(Self.t)❌ Failed to get remote info: \(message)")

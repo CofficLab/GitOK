@@ -9,6 +9,7 @@ let package = Package(
         .library(name: "OnboardingPlugin", targets: ["OnboardingPlugin"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitOKAppCore"),
         .package(path: "../../Packages/GitOKUI"),
@@ -19,6 +20,7 @@ let package = Package(
         .target(
             name: "OnboardingPlugin",
             dependencies: [
+                "GitCoreKit",
                 "GitOKCoreKit",
                 "GitOKAppCore",
                 "GitOKUI",
