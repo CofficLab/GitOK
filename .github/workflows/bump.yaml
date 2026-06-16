@@ -48,7 +48,7 @@ jobs:
       - name: 打标签并推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "👷 CI: bump a new version"
+          commit_message: "ci: bump a new version"
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
           push_options: "--tags"

@@ -151,7 +151,7 @@ jobs:
           else
             CHANGES=$(git log "${PREVIOUS_TAG}"..HEAD --no-merges --pretty=format:'- %s' \
               | grep -Ev '^- (ci|chore|build|style|test)(\(|:)' \
-              | grep -Ev '^- 👷 CI:' \
+              | grep -Ev '^- ci:' \
               | sort -u \
               | head -20)
             if [ -z "$CHANGES" ]; then
