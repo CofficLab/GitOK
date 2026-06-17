@@ -13,14 +13,6 @@ public enum GitWorkspacePlugin: GitOKPlugin {
     )
 
     @MainActor
-    public static func listPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKListPaneItem] {
-        guard tab == "Git", context.isGitRepository,
-              let view = context.resolve(GitOKAppHostedViewProviding.self)?.commitListView(context: context)
-        else { return [] }
-        return [GitOKListPaneItem(id: "CommitPlugin", view: view)]
-    }
-
-    @MainActor
     public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
         guard tab == "Git",
               let view = context.resolve(GitOKAppHostedViewProviding.self)?.gitDetailView(context: context)
