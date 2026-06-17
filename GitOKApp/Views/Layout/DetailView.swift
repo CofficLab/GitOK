@@ -11,8 +11,9 @@ struct DetailView: View {
     @EnvironmentObject var themeProvider: AppThemeVM
     @EnvironmentObject var vm: ProjectVM
 
-    let tab: String
-    let pluginListViews: [GitOKPluginViewContribution]
+    let tab: GitOKAppTab
+    let pluginRailViews: [GitOKRailItem]
+    @Binding var selectedRailID: String?
     let statusBarVisibility: Bool
 
     private var pluginContext: GitOKPluginContext {
@@ -58,40 +59,22 @@ struct DetailView: View {
 
     @ViewBuilder
     private var content: some View {
-        if pluginListViews.isEmpty {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            HSplitView {
+                if pluginRailViews.isEmpty == false {
+                    RailView(items: pluginRailViews, selectedID: $selectedRailID)
+                }
                 tabDetailView
-                statusBar
             }
             .frame(maxHeight: .infinity)
-        } else {
-            VStack(spacing: 0) {
-                HSplitView {
-                    pluginList
-                    tabDetailView
-                }.frame(maxHeight: .infinity)
 
-                statusBar
-            }
+            statusBar
         }
-    }
-
-    private var pluginList: some View {
-        VStack(spacing: 0) {
-            ForEach(pluginListViews) { item in
-                item.view
-            }
-        }
-        .frame(idealWidth: 200)
-        .frame(minWidth: 120)
-        .frame(maxWidth: 600)
-        .frame(maxHeight: .infinity)
-        .background(themeProvider.activeChromeTheme.sidebarBackgroundColor().opacity(0.92))
     }
 
     @ViewBuilder
     private var tabDetailView: some View {
-        if p.hasPlugins, let tabDetailView = p.getEnabledTabDetailView(tab: tab, projectURL: vm.project?.url) {
+        if p.hasPlugins, let tabDetailView = p.detailView(tab: tab, context: pluginContext) {
             tabDetailView
         } else if let fallback = p.onboardingView(kind: .missingDetail, context: pluginContext) {
             fallback
@@ -110,8 +93,9 @@ struct DetailView: View {
 
 #Preview("Detail") {
     DetailView(
-        tab: "",
-        pluginListViews: [],
+        tab: .git,
+        pluginRailViews: [],
+        selectedRailID: .constant(nil),
         statusBarVisibility: true
     )
     .inRootView()

@@ -1,23 +1,28 @@
 import Foundation
 import GitOKCoreKit
+import SwiftUI
 
 public enum GitDetailPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "GitDetailPlugin",
-        displayName: GitDetailPluginLocalization.string("GitDetailPlugin"),
-        description: "",
-        order: 0,
+        displayName: GitDetailPluginLocalization.string("Git Detail"),
+        description: GitDetailPluginLocalization.string("Git working tree changes and diff detail"),
+        iconName: "doc.text.magnifyingglass",
+        order: 120,
         policy: .alwaysOn,
         tableName: GitDetailPluginLocalization.table
     )
 
     @MainActor
-    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
-        guard tab == "Git",
-              let view = context.resolve(GitOKAppHostedViewProviding.self)?.gitDetailView(context: context)
-        else { return [] }
-        return [GitOKDetailPaneItem(id: metadata.id, view: view)]
+    public static func detailPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [DetailPane] {
+        guard tab == .git, context.isGitRepository else { return [] }
+        return [
+            DetailPane(
+                id: metadata.id,
+                view: AnyView(GitDetailView())
+            )
+        ]
     }
 }
 

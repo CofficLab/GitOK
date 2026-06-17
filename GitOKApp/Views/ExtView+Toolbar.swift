@@ -12,11 +12,3 @@ struct ToolbarButtonStyle: ViewModifier {
             .roundedFull()
     }
 }
-
-extension View {
-    /// 应用工具栏按钮样式
-    /// - Returns: 应用样式后的视图
-    func toolbarButtonStyle() -> some View {
-        self.modifier(ToolbarButtonStyle())
-    }
-}

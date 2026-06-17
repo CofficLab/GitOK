@@ -33,6 +33,12 @@ public struct AppSearchBar: View {
         self.onSubmit = onSubmit
     }
 
+    public init(text: Binding<String>, placeholder: Text) {
+        self._text = text
+        self.placeholder = placeholder
+        self.onSubmit = nil
+    }
+
     public var body: some View {
         HStack(spacing: AppUI.Spacing.sm) {
             Image(systemName: "magnifyingglass")

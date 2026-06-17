@@ -195,15 +195,14 @@ final class OpenVSCodeToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenVSCodePlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenVSCodePlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenVSCodePlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenVSCodePlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenVSCodePlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenVSCodePlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenVSCodePlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenVSCodePlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenVSCodePlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenVSCodePlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenVSCodePlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenVSCodePlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

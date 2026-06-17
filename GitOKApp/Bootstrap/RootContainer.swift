@@ -29,7 +29,6 @@ final class RootContainer: ObservableObject {
         self.repoManager = RepoManager(modelContext: ModelContext(container))
 
         self.pluginDependencies = GitOKPluginDependencies()
-        pluginDependencies.register(GitOKAppHostedViewProvider(), for: GitOKAppHostedViewProviding.self)
         self.appVM = AppVM(repoManager: repoManager)
         self.pluginService = PluginService(pluginDependencies: pluginDependencies)
         self.themeVM = AppThemeVM(pluginProvider: pluginService)

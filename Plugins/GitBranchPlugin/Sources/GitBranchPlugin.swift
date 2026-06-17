@@ -1,0 +1,61 @@
+import Foundation
+import GitOKCoreKit
+import SwiftUI
+
+public enum GitBranchPlugin: GitOKPlugin {
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "GitBranchPlugin",
+        displayName: GitBranchPluginLocalization.string("Branch"),
+        description: GitBranchPluginLocalization.string("Git Branch Management"),
+        iconName: "arrow.triangle.branch",
+        order: 10000,
+        policy: .alwaysOn,
+        tableName: GitBranchPluginLocalization.table
+    )
+
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
+    @MainActor
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        let pluginContext = GitBranchPluginContext(context)
+        let monitor = BranchMonitor(
+            projectURL: context.projectURL,
+            isGitRepository: context.isGitRepository
+        )
+        let picker = BranchPickerView(context: pluginContext)
+            .environment(\.branchMonitor, monitor)
+            .injectServiceIfNeeded(projectURL: context.projectURL)
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(picker))]
+    }
+
+    @MainActor
+    public static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        let pluginContext = GitBranchPluginContext(context)
+        let monitor = BranchMonitor(
+            projectURL: context.projectURL,
+            isGitRepository: context.isGitRepository
+        )
+        let tile = BranchStatusTile(context: pluginContext)
+            .environment(\.branchMonitor, monitor)
+            .injectServiceIfNeeded(projectURL: context.projectURL)
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(tile))]
+    }
+
+    @MainActor
+    public static func toolBarContext(from context: GitOKPluginContext) -> GitBranchPluginContext {
+        GitBranchPluginContext(context)
+    }
+}
+
+extension View {
+    @MainActor
+    @ViewBuilder
+    func injectServiceIfNeeded(projectURL: URL?) -> some View {
+        if let url = projectURL {
+            self.environment(\.branchService, LiveBranchService(repositoryURL: url))
+        } else {
+            self
+        }
+    }
+}

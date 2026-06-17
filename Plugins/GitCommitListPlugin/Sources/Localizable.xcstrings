@@ -1,0 +1,110 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "+%lld" : {
+
+    },
+    "Commit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        }
+      }
+    },
+    "Git commit management" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git commit management"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 提交管理"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 提交管理"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 提交管理"
+          }
+        }
+      }
+    },
+    "Hard Reset" : {
+
+    },
+    "Mixed Reset" : {
+
+    },
+    "Revert" : {
+
+    },
+    "Soft Reset" : {
+
+    },
+    "Squash" : {
+
+    },
+    "User info not found" : {
+
+    },
+    "复制到剪贴板" : {
+
+    },
+    "复制完整 Hash" : {
+
+    },
+    "已复制" : {
+
+    },
+    "提交 Hash 详情" : {
+
+    },
+    "提交时间详情" : {
+
+    },
+    "显示提交图" : {
+
+    },
+    "正在加载" : {
+
+    },
+    "点击查看完整 Hash 信息" : {
+
+    },
+    "点击查看完整时间信息" : {
+
+    }
+  },
+  "version" : "1.0"
+}

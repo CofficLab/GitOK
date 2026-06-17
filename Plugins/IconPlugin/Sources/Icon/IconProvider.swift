@@ -1,6 +1,6 @@
 import AVKit
-import MagicLog
 import GitOKCoreKit
+import GitOKSupportKit
 import Combine
 import Foundation
 import MediaPlayer

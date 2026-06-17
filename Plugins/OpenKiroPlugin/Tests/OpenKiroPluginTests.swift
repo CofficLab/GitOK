@@ -195,15 +195,14 @@ final class OpenKiroToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenKiroPlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenKiroPlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenKiroPlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenKiroPlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenKiroPlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenKiroPlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenKiroPlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenKiroPlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenKiroPlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenKiroPlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenKiroPlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenKiroPlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

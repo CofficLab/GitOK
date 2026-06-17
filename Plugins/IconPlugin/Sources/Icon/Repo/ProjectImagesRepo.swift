@@ -1,7 +1,7 @@
 import Foundation
 import ProjectRulesKit
-import MagicLog
 import GitOKCoreKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 

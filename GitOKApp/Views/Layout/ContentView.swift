@@ -20,7 +20,7 @@ struct ContentView: View, SuperLog {
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     /// 当前选中的标签页
-    @State private var tab: String = ""
+    @State private var tab: GitOKAppTab = AppTabCatalog.defaultTab
 
     /// 状态栏是否可见
     @State private var statusBarVisibility = true
@@ -38,7 +38,7 @@ struct ContentView: View, SuperLog {
     var defaultStatusBarVisibility: Bool? = nil
 
     /// 默认选中的标签页
-    var defaultTab: String? = nil
+    var defaultTab: GitOKAppTab? = nil
 
     /// 默认列可见性
     var defaultColumnVisibility: NavigationSplitViewVisibility? = nil
@@ -58,8 +58,11 @@ struct ContentView: View, SuperLog {
     /// 缓存工具栏后置视图贡献
     @State private var toolbarTrailingViews: [GitOKPluginViewContribution] = []
 
-    /// 缓存插件列表视图贡献
-    @State private var pluginListViews: [GitOKPluginViewContribution] = []
+    /// 缓存插件 Rail 视图贡献
+    @State private var pluginRailViews: [GitOKRailItem] = []
+
+    /// 当前选中的 Rail 项
+    @State private var selectedRailID: String?
 
     var body: some View {
         navigationSplitView()
@@ -79,7 +82,8 @@ extension ContentView {
         } detail: {
             DetailView(
                 tab: tab,
-                pluginListViews: pluginListViews,
+                pluginRailViews: pluginRailViews,
+                selectedRailID: $selectedRailID,
                 statusBarVisibility: statusBarVisibility
             )
         }
@@ -93,11 +97,11 @@ extension ContentView {
                 }
             }
 
-            if tabPickerVisibility, p.tabNames.isEmpty == false {
+            if tabPickerVisibility, AppTabCatalog.visibleTabs.count > 1 {
                 ToolbarItem(placement: .principal) {
                     Picker(String(localized: "Select Tab"), selection: $tab) {
-                        ForEach(p.tabNames, id: \.self) { tabName in
-                            Text(tabName).tag(tabName)
+                        ForEach(AppTabCatalog.visibleTabs) { workspaceTab in
+                            Text(workspaceTab.displayName).tag(workspaceTab)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -170,7 +174,7 @@ extension ContentView {
 
         let start = Date()
         if Self.verbose {
-            os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
+            os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab.rawValue) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
         }
 
         let leadingStart = Date()
@@ -213,18 +217,24 @@ extension ContentView {
             os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
         }
 
-        let listStart = Date()
-        pluginListViews = p.getEnabledPluginListViews(
+        let railStart = Date()
+        pluginRailViews = p.getEnabledRailViews(
             tab: tab,
             project: vm.project,
             isGitRepository: vm.currentProjectIsGitRepository
         )
+        if let selectedRailID,
+           pluginRailViews.contains(where: { $0.id == selectedRailID }) == false {
+            self.selectedRailID = pluginRailViews.first?.id
+        } else if selectedRailID == nil {
+            self.selectedRailID = pluginRailViews.first?.id
+        }
         if Self.verbose {
-            os_log("\(self.t)✅ UpdateCachedViews list count=\(pluginListViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(listStart)))s")
+            os_log("\(self.t)✅ UpdateCachedViews rail count=\(pluginRailViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(railStart)))s")
         }
 
         if Self.verbose {
-            os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
+            os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginRailViews.count) rail views")
             os_log("\(self.t)✅ UpdateCachedViews end elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
         }
     }
@@ -232,7 +242,8 @@ extension ContentView {
     func clearCachedViews() {
         toolbarLeadingViews.removeAll()
         toolbarTrailingViews.removeAll()
-        pluginListViews.removeAll()
+        pluginRailViews.removeAll()
+        selectedRailID = nil
     }
 
     /// 视图出现时的事件处理
@@ -277,7 +288,7 @@ extension ContentView {
         updateCachedViews()
 
         if Self.verbose {
-            os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab.rawValue) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
         }
     }
 
@@ -345,7 +356,7 @@ extension ContentView {
         updateCachedViews()
     }
 
-    private func selectResolvedTab(preferred: String?, reason: String) {
+    private func selectResolvedTab(preferred: GitOKAppTab?, reason: String) {
         let resolvedTab = resolvedInitialTab(preferred: preferred)
         guard tab != resolvedTab else {
             if app.currentTab != resolvedTab {
@@ -355,33 +366,25 @@ extension ContentView {
         }
 
         if Self.verbose {
-            os_log("\(self.t)Selected tab resolved reason=\(reason) tab=\(resolvedTab)")
+            os_log("\(self.t)Selected tab resolved reason=\(reason) tab=\(resolvedTab.rawValue)")
         }
 
         tab = resolvedTab
         app.setTab(resolvedTab)
     }
 
-    private func resolvedInitialTab(preferred: String?) -> String {
-        let tabNames = p.tabNames
+    private func resolvedInitialTab(preferred: GitOKAppTab?) -> GitOKAppTab {
+        let visibleTabs = AppTabCatalog.visibleTabs
 
-        if tabNames.isEmpty {
-            return preferred ?? ""
+        if let preferred, visibleTabs.contains(preferred) {
+            return preferred
         }
 
-        if let preferred, preferred.isEmpty == false {
-            if tabNames.contains(preferred) {
-                return preferred
-            }
+        if visibleTabs.contains(app.currentTab) {
+            return app.currentTab
         }
 
-        if app.currentTab.isEmpty == false {
-            if tabNames.contains(app.currentTab) {
-                return app.currentTab
-            }
-        }
-
-        return tabNames.first ?? ""
+        return AppTabCatalog.defaultTab
     }
 }
 

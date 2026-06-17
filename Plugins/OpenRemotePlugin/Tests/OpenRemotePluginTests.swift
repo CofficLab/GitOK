@@ -176,15 +176,14 @@ final class OpenRemoteToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenRemotePlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenRemotePlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenRemotePlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenRemotePlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenRemotePlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenRemotePlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenRemotePlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenRemotePlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenRemotePlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenRemotePlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenRemotePlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenRemotePlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

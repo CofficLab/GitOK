@@ -205,15 +205,14 @@ final class OpenTraeToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenTraePlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenTraePlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenTraePlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenTraePlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenTraePlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenTraePlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenTraePlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenTraePlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenTraePlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenTraePlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenTraePlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenTraePlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor
