@@ -1,6 +1,5 @@
 import GitOKAppCore
 import GitOKSupportKit
-import GitUserSettingsPlugin
 import OSLog
 import SwiftUI
 
@@ -33,7 +32,7 @@ struct UserView: View, SuperLog {
             },
             logEvent: logEvent(_:)
         ) {
-            GitUserInfoSettingView()
+            DetailGitUserInfoSettingView()
                 .environmentObject(data)
                 .environmentObject(vm)
         }

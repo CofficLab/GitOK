@@ -17,7 +17,6 @@ let package = Package(
         .package(path: "../../Packages/MagicAlert"),
         .package(path: "../../Packages/ProjectRulesKit"),
         .package(path: "../../Packages/ProjectSupportKit"),
-        .package(path: "../../Plugins/GitUserSettingsPlugin"),
         .package(url: "https://github.com/nookery/MagicDiffView", branch: "main"),
     ],
     targets: [
@@ -32,7 +31,6 @@ let package = Package(
                 "MagicAlert",
                 "ProjectRulesKit",
                 "ProjectSupportKit",
-                "GitUserSettingsPlugin",
                 "MagicDiffView",
             ],
             path: "Sources",

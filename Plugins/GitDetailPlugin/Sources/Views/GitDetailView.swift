@@ -46,10 +46,10 @@ public struct GitDetailView: View, SuperEvent, SuperLog {
                 FileDetailView()
             },
             emptyContent: {
-                GitDetailNoLocalChangesView()
+                DetailNoLocalChangesView()
             },
             notGitContent: {
-                GitDetailNotRepositoryView()
+                DetailNotGitRepositoryView()
             },
             commitFormContent: {
                 CommitFormView()
