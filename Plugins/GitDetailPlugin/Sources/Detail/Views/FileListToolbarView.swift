@@ -62,7 +62,8 @@ public struct FileListToolbarView: View {
 
             AppSearchBar(
                 text: $filterText,
-                placeholder: GitDetailLocalization.string("Filter files")
+                placeholder: Text(GitDetailLocalization.string("Filter files"))
+                    .font(.caption)
             )
         }
         .padding(.horizontal, 3)
