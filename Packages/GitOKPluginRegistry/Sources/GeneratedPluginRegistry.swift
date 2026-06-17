@@ -2,14 +2,14 @@ import GitOKCoreKit
 import AboutSettingsPlugin
 import ActivityStatusPlugin
 import AppearanceSettingsPlugin
-import AutoPushPlugin
+import GitAutoPushPlugin
 import BannerPlugin
 import BannerTabPlugin
-import BranchPlugin
-import CleanStatusPlugin
-import CommitListPlugin
-import CommitStyleSettingsPlugin
-import ConflictResolverPlugin
+import GitBranchPlugin
+import GitCleanStatusPlugin
+import GitCommitListPlugin
+import GitCommitStyleSettingsPlugin
+import GitConflictResolverPlugin
 import DiagnosticsSettingsPlugin
 import FileInfoPlugin
 import GitNetworkSettingsPlugin
@@ -37,12 +37,12 @@ import OpenXcodePlugin
 import ProjectsPlugin
 import ProjectPickerPlugin
 import ReadmePlugin
-import RepositorySettingsPlugin
-import RemoteRepositoryPlugin
+import GitRepositorySettingsPlugin
+import GitRemoteRepositoryPlugin
 import SettingsButtonPlugin
-import SmartMergePlugin
-import StashPlugin
-import SubmodulePlugin
+import GitSmartMergePlugin
+import GitStashPlugin
+import GitSubmodulePlugin
 import ThemeAuroraPlugin
 import ThemeDraculaPlugin
 import ThemeEmberPlugin
@@ -63,8 +63,8 @@ import ThemeStatusBarPlugin
 import ThemeSummerPlugin
 import ThemeWinterPlugin
 import ThemeXcodeLightPlugin
-import UnpushedStatusPlugin
-import WorkingStatePlugin
+import GitUnpushedStatusPlugin
+import GitWorkingStatePlugin
 
 /// Central plugin registry.
 ///
@@ -74,14 +74,14 @@ public enum GeneratedPluginRegistry {
         AboutSettingsPlugin.self,
         ActivityStatusPlugin.self,
         AppearanceSettingsPlugin.self,
-        AutoPushPlugin.self,
+        GitAutoPushPlugin.self,
         BannerPlugin.self,
         BannerTabPlugin.self,
-        BranchPlugin.self,
-        CleanStatusPlugin.self,
-        CommitListPlugin.self,
-        CommitStyleSettingsPlugin.self,
-        ConflictResolverPlugin.self,
+        GitBranchPlugin.self,
+        GitCleanStatusPlugin.self,
+        GitCommitListPlugin.self,
+        GitCommitStyleSettingsPlugin.self,
+        GitConflictResolverPlugin.self,
         DiagnosticsSettingsPlugin.self,
         FileInfoPlugin.self,
         GitDetailPlugin.self,
@@ -109,12 +109,12 @@ public enum GeneratedPluginRegistry {
         ProjectsPlugin.self,
         ProjectPickerPlugin.self,
         ReadmePlugin.self,
-        RepositorySettingsPlugin.self,
-        RemoteRepositoryPlugin.self,
+        GitRepositorySettingsPlugin.self,
+        GitRemoteRepositoryPlugin.self,
         SettingsButtonPlugin.self,
-        SmartMergePlugin.self,
-        StashPlugin.self,
-        SubmodulePlugin.self,
+        GitSmartMergePlugin.self,
+        GitStashPlugin.self,
+        GitSubmodulePlugin.self,
         AuroraThemePlugin.self,
         DraculaThemePlugin.self,
         EmberThemePlugin.self,
@@ -135,8 +135,8 @@ public enum GeneratedPluginRegistry {
         SummerThemePlugin.self,
         WinterThemePlugin.self,
         XcodeLightThemePlugin.self,
-        UnpushedStatusPlugin.self,
-        WorkingStatePlugin.self,
+        GitUnpushedStatusPlugin.self,
+        GitWorkingStatePlugin.self,
     ]
 
     @MainActor

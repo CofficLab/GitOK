@@ -1,4 +1,4 @@
-import AutoPushPlugin
+import GitAutoPushPlugin
 import GitOKCoreKit
 import ProjectKit
 

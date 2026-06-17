@@ -1011,14 +1011,14 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ActivityStatusPlugin,
-				AutoPushPlugin,
 				BannerPlugin,
 				BannerTabPlugin,
-				BranchPlugin,
-				CleanStatusPlugin,
-				CommitListPlugin,
-				ConflictResolverPlugin,
 				FileInfoPlugin,
+				GitAutoPushPlugin,
+				GitBranchPlugin,
+				GitCleanStatusPlugin,
+				GitCommitListPlugin,
+				GitConflictResolverPlugin,
 				GitDetailPlugin,
 				GitIgnorePlugin,
 				GitLFSPlugin,
@@ -1041,11 +1041,11 @@
 				ProjectPickerPlugin,
 				ProjectsPlugin,
 				ReadmePlugin,
-				RemoteRepositoryPlugin,
+				GitRemoteRepositoryPlugin,
 				SettingsButtonPlugin,
-				SmartMergePlugin,
-				StashPlugin,
-				SubmodulePlugin,
+				GitSmartMergePlugin,
+				GitStashPlugin,
+				GitSubmodulePlugin,
 				ThemeAuroraPlugin,
 				ThemeDraculaPlugin,
 				ThemeEmberPlugin,
@@ -1066,8 +1066,8 @@
 				ThemeSummerPlugin,
 				ThemeWinterPlugin,
 				ThemeXcodeLightPlugin,
-				UnpushedStatusPlugin,
-				WorkingStatePlugin,
+				GitUnpushedStatusPlugin,
+				GitWorkingStatePlugin,
 			);
 			target = 0B0E167C2BD89A8F0078942B /* GitOK */;
 		};
@@ -2885,7 +2885,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Plugins/WorkingStatePlugin/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/GitWorkingStatePlugin/.build/arm64-apple-macosx/debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 3.0.11;
@@ -2933,7 +2933,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Plugins/WorkingStatePlugin/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/GitWorkingStatePlugin/.build/arm64-apple-macosx/debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 3.0.11;

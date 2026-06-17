@@ -1,0 +1,37 @@
+import Foundation
+import GitOKCoreKit
+import SwiftUI
+
+public enum GitSubmodulePlugin: GitOKPlugin {
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "GitSubmodulePlugin",
+        displayName: GitSubmodulePluginLocalization.string("Submodule"),
+        description: GitSubmodulePluginLocalization.string("Git submodule status and updates"),
+        iconName: "shippingbox",
+        policy: .optIn,
+        tableName: GitSubmodulePluginLocalization.table
+    )
+
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .gitTool }
+
+
+    @MainActor
+    public static func statusBarTrailingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKStatusBarItem(id: metadata.id, view: AnyView(SubmoduleStatusTile(projectURL: projectURL)))]
+    }
+}
+
+public enum GitSubmodulePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
+    }
+
+    public static func string(_ key: String, _ arguments: CVarArg...) -> String {
+        String(format: string(key), arguments: arguments)
+    }
+}
