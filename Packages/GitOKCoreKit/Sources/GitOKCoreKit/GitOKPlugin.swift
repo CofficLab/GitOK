@@ -88,7 +88,7 @@ public protocol GitOKPlugin {
     static func railPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKRailItem]
 
     @MainActor
-    static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem]
+    static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane]
 
     @MainActor
     static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem]
@@ -212,7 +212,7 @@ public extension GitOKPlugin {
     static func railPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKRailItem] { [] }
 
     @MainActor
-    static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] { [] }
+    static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane] { [] }
 
     @MainActor
     static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] { [] }

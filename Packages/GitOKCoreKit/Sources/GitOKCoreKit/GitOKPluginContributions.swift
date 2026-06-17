@@ -23,7 +23,7 @@ public struct GitOKToolbarItem: Identifiable {
 }
 
 public typealias GitOKListPaneItem = GitOKPluginViewContribution
-public typealias GitOKDetailPaneItem = GitOKPluginViewContribution
+public typealias DetailPane = GitOKPluginViewContribution
 
 public struct GitOKRailItem: Identifiable {
     public let id: String
