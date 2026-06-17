@@ -1112,15 +1112,15 @@
 		0B0E16742BD89A8F0078942B = {
 			isa = PBXGroup;
 			children = (
-				F60000022DF2000000000001 /* GitOperationService */,
-				F5B1DB062FCE800F00A9544C /* Plugins */,
-				F526CF512FADB9FB00EFAB27 /* Packages */,
-				F5AE82732FAB49C900F014F8 /* GitOKApp */,
 				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
 				0B55A0222F1B0F38005C6809 /* GitOK.app */,
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
+				F5AE82732FAB49C900F014F8 /* GitOKApp */,
+				F60000022DF2000000000001 /* GitOperationService */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */,
+				F526CF512FADB9FB00EFAB27 /* Packages */,
+				F5B1DB062FCE800F00A9544C /* Plugins */,
 				F5016B8B2FD8EA3C00E84B36 /* Recovered References */,
 			);
 			sourceTree = "<group>";
