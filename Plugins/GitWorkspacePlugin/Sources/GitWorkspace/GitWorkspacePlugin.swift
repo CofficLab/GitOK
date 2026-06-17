@@ -8,17 +8,9 @@ public enum GitWorkspacePlugin: GitOKPlugin {
         displayName: GitWorkspacePluginLocalization.string("Commit"),
         description: GitWorkspacePluginLocalization.string("Git commit management"),
         iconName: "arrow.up.arrow.down",
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: GitWorkspacePluginLocalization.table
     )
-
-    @MainActor
-    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
-        guard tab == "Git",
-              let view = context.resolve(GitOKAppHostedViewProviding.self)?.gitDetailView(context: context)
-        else { return [] }
-        return [GitOKDetailPaneItem(id: "GitDetailPlugin", view: view)]
-    }
 }
 
 public enum GitWorkspacePluginLocalization {
