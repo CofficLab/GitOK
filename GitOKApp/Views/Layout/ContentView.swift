@@ -93,7 +93,7 @@ extension ContentView {
                 }
             }
 
-            if tabPickerVisibility, p.tabNames.isEmpty == false {
+            if tabPickerVisibility, p.tabNames.count > 1 {
                 ToolbarItem(placement: .principal) {
                     Picker(String(localized: "Select Tab"), selection: $tab) {
                         ForEach(p.tabNames, id: \.self) { tabName in
