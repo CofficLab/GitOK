@@ -97,6 +97,18 @@ public final class GitOKPluginRuntime {
         }
     }
 
+    public func enabledRailViews(
+        tab: String,
+        context: GitOKPluginContext
+    ) -> [GitOKRailItem] {
+        pluginTypes
+            .flatMap { type -> [GitOKRailItem] in
+                guard isPluginEnabled(type) else { return [] }
+                return type.railPaneItems(context: context, tab: tab)
+            }
+            .sorted { $0.order < $1.order }
+    }
+
     public func enabledDetailView(for tab: String, context: GitOKPluginContext) -> AnyView? {
         for type in pluginTypes {
             guard isPluginEnabled(type) else { continue }

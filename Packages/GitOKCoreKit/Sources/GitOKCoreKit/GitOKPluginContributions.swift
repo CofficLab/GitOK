@@ -25,6 +25,28 @@ public struct GitOKToolbarItem: Identifiable {
 public typealias GitOKListPaneItem = GitOKPluginViewContribution
 public typealias GitOKDetailPaneItem = GitOKPluginViewContribution
 
+public struct GitOKRailItem: Identifiable {
+    public let id: String
+    public let iconName: String
+    public let title: String
+    public let order: Int
+    public let view: AnyView
+
+    public init(
+        id: String,
+        iconName: String,
+        title: String,
+        order: Int = 9999,
+        view: AnyView
+    ) {
+        self.id = id
+        self.iconName = iconName
+        self.title = title
+        self.order = order
+        self.view = view
+    }
+}
+
 public struct GitOKStatusBarItem: Identifiable {
     public let id: String
     public let view: AnyView
@@ -88,6 +110,5 @@ public struct GitOKSettingsPaneItem: Identifiable {
 /// App-layer view contributions resolved through plugin context (removed when views move into plugins).
 @MainActor
 public protocol GitOKAppHostedViewProviding: AnyObject {
-    func commitListView(context: GitOKPluginContext) -> AnyView?
     func gitDetailView(context: GitOKPluginContext) -> AnyView?
 }
