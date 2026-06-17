@@ -10,7 +10,7 @@ public enum IconTabPlugin: GitOKPlugin {
         description: IconTabPluginLocalization.string("Icon management"),
         iconName: "photo",
         order: 1,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: IconTabPluginLocalization.table
     )
 
