@@ -74,7 +74,7 @@ struct DetailView: View {
 
     @ViewBuilder
     private var tabDetailView: some View {
-        if p.hasPlugins, let tabDetailView = p.getEnabledTabDetailView(tab: tab, projectURL: vm.project?.url) {
+        if p.hasPlugins, let tabDetailView = p.detailView(tab: tab, context: pluginContext) {
             tabDetailView
         } else if let fallback = p.onboardingView(kind: .missingDetail, context: pluginContext) {
             fallback
