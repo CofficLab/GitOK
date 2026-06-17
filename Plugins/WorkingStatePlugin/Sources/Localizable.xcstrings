@@ -1,0 +1,92 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "•" : {
+
+    },
+    "Git working tree status and sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git working tree status and sync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 工作区状态与同步"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 工作區狀態與同步"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 工作區狀態與同步"
+          }
+        }
+      }
+    },
+    "Git 用户名" : {
+
+    },
+    "GitOK 会通过当前 Git credential helper 保存凭据；GitHub/GitLab 等平台通常需要 token。" : {
+
+    },
+    "Personal Access Token 或密码" : {
+
+    },
+    "Working State" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Working State"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作区状态"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作區狀態"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作區狀態"
+          }
+        }
+      }
+    },
+    "为 %@ 添加您的 Git 认证信息" : {
+
+    },
+    "保存失败" : {
+
+    },
+    "保存成功" : {
+
+    },
+    "凭据已安全保存到 macOS Keychain" : {
+
+    },
+    "添加 Git 凭据" : {
+
+    },
+    "确定" : {
+
+    }
+  },
+  "version" : "1.0"
+}
