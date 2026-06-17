@@ -1,6 +1,6 @@
 import Foundation
-import MagicLog
 import GitOKCoreKit
+import GitOKSupportKit
 import SwiftUI
 
 /**

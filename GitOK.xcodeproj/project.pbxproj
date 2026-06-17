@@ -71,7 +71,6 @@
 				GitUnpushedStatusPlugin,
 				GitWatcherPlugin,
 				GitWorkingStatePlugin,
-				GitWorkspacePlugin,
 				IconPlugin,
 				LicensePlugin,
 				OpenAntigravityPlugin,

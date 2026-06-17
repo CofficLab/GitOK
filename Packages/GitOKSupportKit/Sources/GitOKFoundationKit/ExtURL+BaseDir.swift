@@ -49,7 +49,8 @@ public extension URL {
     /// 应用专属的 Application Support 目录
     static var appSpecificSupport: URL {
         get throws {
-            try applicationSupport.appendingPathComponent(MagicApp.getBundleIdentifier())
+            let bundleId = Bundle.main.bundleIdentifier ?? "GitOK"
+            return try applicationSupport.appendingPathComponent(bundleId)
         }
     }
     
@@ -62,8 +63,7 @@ public extension URL {
     
     /// 应用的 iCloud 容器目录
     static var cloudContainer: URL? {
-        guard MagicApp.isICloudAvailable() else { return nil }
-        return FileManager.default.url(forUbiquityContainerIdentifier: nil)
+        FileManager.default.url(forUbiquityContainerIdentifier: nil)
     }
     
     /// 应用在 iCloud 中的 Documents 目录

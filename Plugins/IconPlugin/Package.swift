@@ -13,7 +13,6 @@ let package = Package(
         .package(path: "../../Packages/MagicAlert"),
         .package(path: "../../Packages/GitOKSupportKit"),
         .package(path: "../../Packages/ProjectRulesKit"),
-        .package(url: "https://github.com/nookery/MagicLog.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -23,7 +22,6 @@ let package = Package(
                 "MagicAlert",
                 "GitOKSupportKit",
                 "ProjectRulesKit",
-                "MagicLog",
             ],
             path: "Sources",
             resources: [
