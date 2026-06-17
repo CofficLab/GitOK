@@ -6,8 +6,8 @@ struct GitDetailPluginTests {
     @Test("metadata matches plugin identity")
     func metadata() {
         #expect(GitDetailPlugin.metadata.id == "GitDetailPlugin")
-        #expect(GitDetailPlugin.metadata.iconName == "puzzlepiece.extension")
-        #expect(GitDetailPlugin.metadata.order == 0)
+        #expect(GitDetailPlugin.metadata.iconName == "doc.text.magnifyingglass")
+        #expect(GitDetailPlugin.metadata.order == 120)
         #expect(GitDetailPlugin.metadata.tableName == "Localizable")
     }
 

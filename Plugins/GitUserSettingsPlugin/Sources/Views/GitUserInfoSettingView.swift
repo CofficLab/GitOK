@@ -19,6 +19,8 @@ public struct GitUserInfoSettingView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
+    public init() {}
+
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 

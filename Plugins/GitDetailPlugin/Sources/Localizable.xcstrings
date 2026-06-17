@@ -1,34 +1,170 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "GitDetailPlugin": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git Detail"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 详情"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 詳情"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 详情"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "%@ (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$@)"
           }
         }
       }
+    },
+    "%@ %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld %2$@"
+          }
+        }
+      }
+    },
+    "Add" : {
+
+    },
+    "Add Co-Author" : {
+
+    },
+    "Add New Co-Author" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Confirm" : {
+
+    },
+    "Email" : {
+
+    },
+    "Frequent Co-Authors" : {
+
+    },
+    "GitDetailPlugin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git Detail"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 详情"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 详情"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 詳情"
+          }
+        }
+      }
+    },
+    "Name" : {
+
+    },
+    "New Co-Author Info" : {
+
+    },
+    "Selected (%lld)" : {
+
+    },
+    "User info not found" : {
+
+    },
+    "丢弃" : {
+
+    },
+    "加载失败" : {
+
+    },
+    "取消" : {
+
+    },
+    "取消选择" : {
+
+    },
+    "取消选择 %@" : {
+
+    },
+    "复制到剪贴板" : {
+
+    },
+    "复制完整 Hash" : {
+
+    },
+    "已复制" : {
+
+    },
+    "按回车或点击查看差异。打开上下文菜单可暂存、取消暂存、复制路径或丢弃更改。" : {
+
+    },
+    "提交 Hash 详情" : {
+
+    },
+    "提交时间详情" : {
+
+    },
+    "插入 %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "插入 %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "未配置用户信息" : {
+
+    },
+    "点击查看完整 Hash 信息" : {
+
+    },
+    "点击查看完整时间信息" : {
+
+    },
+    "用于批量暂存、取消暂存或丢弃" : {
+
+    },
+    "确认丢弃更改" : {
+
+    },
+    "管理预设..." : {
+
+    },
+    "选择 %@" : {
+
+    },
+    "选择文件" : {
+
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
