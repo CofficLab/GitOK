@@ -7,7 +7,7 @@ import BannerPlugin
 import BannerTabPlugin
 import BranchPlugin
 import CleanStatusPlugin
-import CommitPlugin
+import CommitListPlugin
 import CommitStyleSettingsPlugin
 import ConflictResolverPlugin
 import DiagnosticsSettingsPlugin
@@ -64,6 +64,7 @@ import ThemeSummerPlugin
 import ThemeWinterPlugin
 import ThemeXcodeLightPlugin
 import UnpushedStatusPlugin
+import WorkingStatePlugin
 
 /// Central plugin registry.
 ///
@@ -78,7 +79,7 @@ public enum GeneratedPluginRegistry {
         BannerTabPlugin.self,
         BranchPlugin.self,
         CleanStatusPlugin.self,
-        CommitPlugin.self,
+        CommitListPlugin.self,
         CommitStyleSettingsPlugin.self,
         ConflictResolverPlugin.self,
         DiagnosticsSettingsPlugin.self,
@@ -135,6 +136,7 @@ public enum GeneratedPluginRegistry {
         WinterThemePlugin.self,
         XcodeLightThemePlugin.self,
         UnpushedStatusPlugin.self,
+        WorkingStatePlugin.self,
     ]
 
     @MainActor

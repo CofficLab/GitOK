@@ -24,7 +24,7 @@ let package = Package(
         .package(path: "../../Plugins/BannerTabPlugin"),
         .package(path: "../../Plugins/BranchPlugin"),
         .package(path: "../../Plugins/CleanStatusPlugin"),
-        .package(path: "../../Plugins/CommitPlugin"),
+        .package(path: "../../Plugins/CommitListPlugin"),
         .package(path: "../../Plugins/CommitStyleSettingsPlugin"),
         .package(path: "../../Plugins/ConflictResolverPlugin"),
         .package(path: "../../Plugins/DiagnosticsSettingsPlugin"),
@@ -81,6 +81,7 @@ let package = Package(
         .package(path: "../../Plugins/ThemeWinterPlugin"),
         .package(path: "../../Plugins/ThemeXcodeLightPlugin"),
         .package(path: "../../Plugins/UnpushedStatusPlugin"),
+        .package(path: "../../Plugins/WorkingStatePlugin"),
     ],
     targets: [
         .target(
@@ -96,7 +97,7 @@ let package = Package(
                 "BannerTabPlugin",
                 "BranchPlugin",
                 "CleanStatusPlugin",
-                "CommitPlugin",
+                "CommitListPlugin",
                 "CommitStyleSettingsPlugin",
                 "ConflictResolverPlugin",
                 "DiagnosticsSettingsPlugin",
@@ -153,6 +154,7 @@ let package = Package(
                 "ThemeWinterPlugin",
                 "ThemeXcodeLightPlugin",
                 "UnpushedStatusPlugin",
+                "WorkingStatePlugin",
             ],
             path: "Sources",
             resources: [.process("Localizable.xcstrings")]
