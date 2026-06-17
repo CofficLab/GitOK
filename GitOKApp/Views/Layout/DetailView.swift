@@ -12,7 +12,8 @@ struct DetailView: View {
     @EnvironmentObject var vm: ProjectVM
 
     let tab: String
-    let pluginListViews: [GitOKPluginViewContribution]
+    let pluginRailViews: [GitOKRailItem]
+    @Binding var selectedRailID: String?
     let statusBarVisibility: Bool
 
     private var pluginContext: GitOKPluginContext {
@@ -58,35 +59,17 @@ struct DetailView: View {
 
     @ViewBuilder
     private var content: some View {
-        if pluginListViews.isEmpty {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            HSplitView {
+                if pluginRailViews.isEmpty == false {
+                    RailView(items: pluginRailViews, selectedID: $selectedRailID)
+                }
                 tabDetailView
-                statusBar
             }
             .frame(maxHeight: .infinity)
-        } else {
-            VStack(spacing: 0) {
-                HSplitView {
-                    pluginList
-                    tabDetailView
-                }.frame(maxHeight: .infinity)
 
-                statusBar
-            }
+            statusBar
         }
-    }
-
-    private var pluginList: some View {
-        VStack(spacing: 0) {
-            ForEach(pluginListViews) { item in
-                item.view
-            }
-        }
-        .frame(idealWidth: 200)
-        .frame(minWidth: 120)
-        .frame(maxWidth: 600)
-        .frame(maxHeight: .infinity)
-        .background(themeProvider.activeChromeTheme.sidebarBackgroundColor().opacity(0.92))
     }
 
     @ViewBuilder
@@ -111,7 +94,8 @@ struct DetailView: View {
 #Preview("Detail") {
     DetailView(
         tab: "",
-        pluginListViews: [],
+        pluginRailViews: [],
+        selectedRailID: .constant(nil),
         statusBarVisibility: true
     )
     .inRootView()

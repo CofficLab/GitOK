@@ -125,6 +125,21 @@ final class PluginService: ObservableObject {
         return runtime.enabledToolbarTrailingViews(context: context)
     }
 
+    func getEnabledRailViews(
+        tab: String,
+        project: Project?,
+        isGitRepository: Bool = false
+    ) -> [GitOKRailItem] {
+        guard hasPlugins else { return [] }
+        let context = makeContext(
+            projectURL: project?.url,
+            projectPath: project.map { $0.url.path },
+            projectTitle: project?.title,
+            isGitRepository: isGitRepository
+        )
+        return runtime.enabledRailViews(tab: tab, context: context)
+    }
+
     func getEnabledPluginListViews(
         tab: String,
         project: Project?,
@@ -199,6 +214,11 @@ final class PluginService: ObservableObject {
     func toolbarTrailingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         guard hasPlugins else { return [] }
         return runtime.enabledToolbarTrailingViews(context: context)
+    }
+
+    func railViews(tab: String, context: GitOKPluginContext) -> [GitOKRailItem] {
+        guard hasPlugins else { return [] }
+        return runtime.enabledRailViews(tab: tab, context: context)
     }
 
     func listViews(tab: String, context: GitOKPluginContext) -> [GitOKPluginViewContribution] {

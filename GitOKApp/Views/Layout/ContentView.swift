@@ -58,8 +58,11 @@ struct ContentView: View, SuperLog {
     /// 缓存工具栏后置视图贡献
     @State private var toolbarTrailingViews: [GitOKPluginViewContribution] = []
 
-    /// 缓存插件列表视图贡献
-    @State private var pluginListViews: [GitOKPluginViewContribution] = []
+    /// 缓存插件 Rail 视图贡献
+    @State private var pluginRailViews: [GitOKRailItem] = []
+
+    /// 当前选中的 Rail 项
+    @State private var selectedRailID: String?
 
     var body: some View {
         navigationSplitView()
@@ -79,7 +82,8 @@ extension ContentView {
         } detail: {
             DetailView(
                 tab: tab,
-                pluginListViews: pluginListViews,
+                pluginRailViews: pluginRailViews,
+                selectedRailID: $selectedRailID,
                 statusBarVisibility: statusBarVisibility
             )
         }
@@ -213,18 +217,24 @@ extension ContentView {
             os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
         }
 
-        let listStart = Date()
-        pluginListViews = p.getEnabledPluginListViews(
+        let railStart = Date()
+        pluginRailViews = p.getEnabledRailViews(
             tab: tab,
             project: vm.project,
             isGitRepository: vm.currentProjectIsGitRepository
         )
+        if let selectedRailID,
+           pluginRailViews.contains(where: { $0.id == selectedRailID }) == false {
+            self.selectedRailID = pluginRailViews.first?.id
+        } else if selectedRailID == nil {
+            self.selectedRailID = pluginRailViews.first?.id
+        }
         if Self.verbose {
-            os_log("\(self.t)✅ UpdateCachedViews list count=\(pluginListViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(listStart)))s")
+            os_log("\(self.t)✅ UpdateCachedViews rail count=\(pluginRailViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(railStart)))s")
         }
 
         if Self.verbose {
-            os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
+            os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginRailViews.count) rail views")
             os_log("\(self.t)✅ UpdateCachedViews end elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
         }
     }
@@ -232,7 +242,8 @@ extension ContentView {
     func clearCachedViews() {
         toolbarLeadingViews.removeAll()
         toolbarTrailingViews.removeAll()
-        pluginListViews.removeAll()
+        pluginRailViews.removeAll()
+        selectedRailID = nil
     }
 
     /// 视图出现时的事件处理
