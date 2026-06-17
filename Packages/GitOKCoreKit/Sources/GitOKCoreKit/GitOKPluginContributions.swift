@@ -107,8 +107,4 @@ public struct GitOKSettingsPaneItem: Identifiable {
     }
 }
 
-/// App-layer view contributions resolved through plugin context (removed when views move into plugins).
-@MainActor
-public protocol GitOKAppHostedViewProviding: AnyObject {
-    func gitDetailView(context: GitOKPluginContext) -> AnyView?
-}
+/// App-layer services resolved through plugin context.
