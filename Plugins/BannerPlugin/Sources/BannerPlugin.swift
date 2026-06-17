@@ -14,10 +14,10 @@ public enum BannerPlugin: GitOKPlugin {
     )
 
     @MainActor
-    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
+    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane] {
         guard tab == "Banner" else { return [] }
         return [
-            GitOKDetailPaneItem(
+            DetailPane(
                 id: metadata.id,
                 view: AnyView(
                     BannerDetailLayout(projectURL: context.projectURL)

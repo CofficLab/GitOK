@@ -15,10 +15,10 @@ public enum GitDetailPlugin: GitOKPlugin {
     )
 
     @MainActor
-    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
+    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane] {
         guard tab == "Git", context.isGitRepository else { return [] }
         return [
-            GitOKDetailPaneItem(
+            DetailPane(
                 id: metadata.id,
                 view: AnyView(GitDetailView())
             )

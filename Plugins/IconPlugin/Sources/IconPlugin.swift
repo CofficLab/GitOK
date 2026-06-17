@@ -14,10 +14,10 @@ public enum IconPlugin: GitOKPlugin {
     )
 
     @MainActor
-    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKDetailPaneItem] {
+    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane] {
         guard tab == "Icon" else { return [] }
         return [
-            GitOKDetailPaneItem(
+            DetailPane(
                 id: metadata.id,
                 view: AnyView(
                     IconDetailLayout(projectURL: context.projectURL)
