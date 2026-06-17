@@ -174,7 +174,7 @@ extension ContentView {
 
         let start = Date()
         if Self.verbose {
-            os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
+            os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab.rawValue) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
         }
 
         let leadingStart = Date()
@@ -288,7 +288,7 @@ extension ContentView {
         updateCachedViews()
 
         if Self.verbose {
-            os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab.rawValue) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
         }
     }
 

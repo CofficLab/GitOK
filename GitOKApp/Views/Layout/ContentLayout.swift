@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import GitOKSupportKit
 import SwiftUI
 
@@ -27,7 +28,7 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
   private(set) var tabPickerVisibility: Bool?
 
   /// 初始选中的标签页
-  private(set) var initialTab: String?
+  private(set) var initialTab: GitOKAppTab?
 
   /// 初始化内容布局
   /// - Parameters:
