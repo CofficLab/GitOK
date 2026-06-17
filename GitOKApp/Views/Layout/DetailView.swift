@@ -11,7 +11,7 @@ struct DetailView: View {
     @EnvironmentObject var themeProvider: AppThemeVM
     @EnvironmentObject var vm: ProjectVM
 
-    let tab: String
+    let tab: GitOKAppTab
     let pluginRailViews: [GitOKRailItem]
     @Binding var selectedRailID: String?
     let statusBarVisibility: Bool
@@ -93,7 +93,7 @@ struct DetailView: View {
 
 #Preview("Detail") {
     DetailView(
-        tab: "",
+        tab: .git,
         pluginRailViews: [],
         selectedRailID: .constant(nil),
         statusBarVisibility: true

@@ -23,7 +23,6 @@ final class PluginService: ObservableObject {
 
     var hasPlugins: Bool { registeredPluginCount > 0 }
     var registeredPluginCount: Int { runtime.registeredCount }
-    var tabNames: [String] { runtime.tabNames }
     var configurablePlugins: [PluginInfo] { runtime.configurablePlugins }
 
     func makeContext(
@@ -126,7 +125,7 @@ final class PluginService: ObservableObject {
     }
 
     func getEnabledRailViews(
-        tab: String,
+        tab: GitOKAppTab,
         project: Project?,
         isGitRepository: Bool = false
     ) -> [GitOKRailItem] {
@@ -141,7 +140,7 @@ final class PluginService: ObservableObject {
     }
 
     func getEnabledPluginListViews(
-        tab: String,
+        tab: GitOKAppTab,
         project: Project?,
         isGitRepository: Bool = false
     ) -> [GitOKPluginViewContribution] {
@@ -153,12 +152,6 @@ final class PluginService: ObservableObject {
             isGitRepository: isGitRepository
         )
         return runtime.enabledListViews(tab: tab, projectURL: project?.url, context: context)
-    }
-
-    func getEnabledTabDetailView(tab: String, projectURL: URL? = nil) -> AnyView? {
-        guard hasPlugins else { return nil }
-        let context = makeContext(projectURL: projectURL)
-        return runtime.enabledDetailView(for: tab, context: context)
     }
 
     func getEnabledStatusBarLeadingViews(selectedFilePath: String? = nil, projectPath: String? = nil) -> [AnyView] {
@@ -216,17 +209,17 @@ final class PluginService: ObservableObject {
         return runtime.enabledToolbarTrailingViews(context: context)
     }
 
-    func railViews(tab: String, context: GitOKPluginContext) -> [GitOKRailItem] {
+    func railViews(tab: GitOKAppTab, context: GitOKPluginContext) -> [GitOKRailItem] {
         guard hasPlugins else { return [] }
         return runtime.enabledRailViews(tab: tab, context: context)
     }
 
-    func listViews(tab: String, context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+    func listViews(tab: GitOKAppTab, context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         guard hasPlugins else { return [] }
         return runtime.enabledListViews(tab: tab, projectURL: context.projectURL, context: context)
     }
 
-    func detailView(tab: String, context: GitOKPluginContext) -> AnyView? {
+    func detailView(tab: GitOKAppTab, context: GitOKPluginContext) -> AnyView? {
         guard hasPlugins else { return nil }
         return runtime.enabledDetailView(for: tab, context: context)
     }

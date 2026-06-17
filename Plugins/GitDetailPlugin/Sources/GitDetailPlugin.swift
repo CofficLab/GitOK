@@ -15,8 +15,8 @@ public enum GitDetailPlugin: GitOKPlugin {
     )
 
     @MainActor
-    public static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane] {
-        guard tab == "Git", context.isGitRepository else { return [] }
+    public static func detailPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [DetailPane] {
+        guard tab == .git, context.isGitRepository else { return [] }
         return [
             DetailPane(
                 id: metadata.id,

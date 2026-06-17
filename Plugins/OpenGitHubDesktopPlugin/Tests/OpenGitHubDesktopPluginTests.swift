@@ -285,15 +285,14 @@ final class OpenGitHubDesktopToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenGitHubDesktopPlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenGitHubDesktopPlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenGitHubDesktopPlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenGitHubDesktopPlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenGitHubDesktopPlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenGitHubDesktopPlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenGitHubDesktopPlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenGitHubDesktopPlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenGitHubDesktopPlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenGitHubDesktopPlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenGitHubDesktopPlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenGitHubDesktopPlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

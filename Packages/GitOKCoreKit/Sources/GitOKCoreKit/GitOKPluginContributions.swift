@@ -1,17 +1,5 @@
 import SwiftUI
 
-public struct GitOKTabItem: Identifiable, Sendable {
-    public let id: String
-    public let name: String
-    public let order: Int
-
-    public init(id: String, name: String, order: Int) {
-        self.id = id
-        self.name = name
-        self.order = order
-    }
-}
-
 public struct GitOKToolbarItem: Identifiable {
     public let id: String
     public let view: AnyView
@@ -47,13 +35,17 @@ public struct GitOKRailItem: Identifiable {
     }
 }
 
-public struct GitOKStatusBarItem: Identifiable {
+public struct GitOKStatusBarItem: Identifiable, Equatable {
     public let id: String
     public let view: AnyView
 
     public init(id: String, view: AnyView) {
         self.id = id
         self.view = view
+    }
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
     }
 }
 

@@ -9,7 +9,7 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
   /// 是否启用详细日志输出
   nonisolated static let verbose = false
   /// 当前选中的标签页
-  private(set) var tab: String?
+  private(set) var tab: GitOKAppTab?
 
   /// 导航分栏视图的列可见性
   private(set) var columnVisibility: NavigationSplitViewVisibility?
@@ -43,7 +43,7 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
     toolbarVisibility: Bool? = nil,
     projectActionsVisibility: Bool? = nil,
     tabPickerVisibility: Bool? = nil,
-    initialTab: String? = nil
+    initialTab: GitOKAppTab? = nil
   ) {
     self.statusBarVisibility = statusBarVisibility
     self.toolbarVisibility = toolbarVisibility
@@ -202,7 +202,7 @@ extension ContentLayout {
   /// 设置初始标签页
   /// - Parameter tab: 要设置的初始标签页名称
   /// - Returns: 一个新的ContentView实例，初始标签页被设置
-  func setInitialTab(_ tab: String) -> ContentLayout {
+  func setInitialTab(_ tab: GitOKAppTab) -> ContentLayout {
     return ContentLayout(
       statusBarVisibility: self.statusBarVisibility,
       initialColumnVisibility: self.columnVisibility,

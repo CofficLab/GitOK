@@ -195,15 +195,14 @@ final class OpenXcodeToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenXcodePlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenXcodePlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenXcodePlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenXcodePlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenXcodePlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenXcodePlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenXcodePlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenXcodePlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenXcodePlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenXcodePlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenXcodePlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenXcodePlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

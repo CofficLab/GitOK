@@ -195,15 +195,14 @@ final class OpenCursorToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenCursorPlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenCursorPlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenCursorPlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenCursorPlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenCursorPlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenCursorPlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenCursorPlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenCursorPlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenCursorPlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenCursorPlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenCursorPlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenCursorPlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

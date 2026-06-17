@@ -319,15 +319,14 @@ final class OpenAntigravityToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenAntigravityPlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenAntigravityPlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenAntigravityPlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenAntigravityPlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenAntigravityPlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenAntigravityPlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenAntigravityPlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenAntigravityPlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenAntigravityPlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenAntigravityPlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenAntigravityPlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenAntigravityPlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

@@ -15,7 +15,7 @@ class AppVM: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     nonisolated static let verbose = false
 
     /// 当前选中的标签页
-    @Published var currentTab: String = ""
+    @Published var currentTab: GitOKAppTab = .git
 
     /// 侧边栏是否可见
     @Published var sidebarVisibility: Bool
@@ -41,10 +41,10 @@ class AppVM: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
 
 extension AppVM {
     /// 设置当前选中的标签页
-    /// - Parameter t: 标签页名称
-    func setTab(_ t: String) {
+    /// - Parameter t: 标签页
+    func setTab(_ t: GitOKAppTab) {
         if Self.verbose {
-            os_log("\(self.t)Set Tab to \(t)")
+            os_log("\(self.t)Set Tab to \(t.rawValue)")
         }
 
         self.currentTab = t

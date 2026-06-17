@@ -43,14 +43,6 @@ public final class GitOKPluginRuntime {
         )
     }
 
-    public var tabNames: [String] {
-        pluginTypes
-            .filter { isPluginEnabled($0) }
-            .flatMap { $0.tabItems(context: GitOKPluginContext()) }
-            .sorted { $0.order < $1.order }
-            .map(\.name)
-    }
-
     public var configurablePlugins: [PluginInfo] {
         pluginTypes
             .filter { $0.policy.shouldRegister }
@@ -87,7 +79,7 @@ public final class GitOKPluginRuntime {
     }
 
     public func enabledListViews(
-        tab: String,
+        tab: GitOKAppTab,
         projectURL: URL?,
         context: GitOKPluginContext
     ) -> [GitOKPluginViewContribution] {
@@ -98,7 +90,7 @@ public final class GitOKPluginRuntime {
     }
 
     public func enabledRailViews(
-        tab: String,
+        tab: GitOKAppTab,
         context: GitOKPluginContext
     ) -> [GitOKRailItem] {
         pluginTypes
@@ -109,7 +101,7 @@ public final class GitOKPluginRuntime {
             .sorted { $0.order < $1.order }
     }
 
-    public func enabledDetailView(for tab: String, context: GitOKPluginContext) -> AnyView? {
+    public func enabledDetailView(for tab: GitOKAppTab, context: GitOKPluginContext) -> AnyView? {
         for type in pluginTypes {
             guard isPluginEnabled(type) else { continue }
             for item in type.detailPaneItems(context: context, tab: tab) {

@@ -20,7 +20,7 @@ struct ContentView: View, SuperLog {
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     /// 当前选中的标签页
-    @State private var tab: String = ""
+    @State private var tab: GitOKAppTab = AppTabCatalog.defaultTab
 
     /// 状态栏是否可见
     @State private var statusBarVisibility = true
@@ -38,7 +38,7 @@ struct ContentView: View, SuperLog {
     var defaultStatusBarVisibility: Bool? = nil
 
     /// 默认选中的标签页
-    var defaultTab: String? = nil
+    var defaultTab: GitOKAppTab? = nil
 
     /// 默认列可见性
     var defaultColumnVisibility: NavigationSplitViewVisibility? = nil
@@ -97,11 +97,11 @@ extension ContentView {
                 }
             }
 
-            if tabPickerVisibility, p.tabNames.count > 1 {
+            if tabPickerVisibility, AppTabCatalog.visibleTabs.count > 1 {
                 ToolbarItem(placement: .principal) {
                     Picker(String(localized: "Select Tab"), selection: $tab) {
-                        ForEach(p.tabNames, id: \.self) { tabName in
-                            Text(tabName).tag(tabName)
+                        ForEach(AppTabCatalog.visibleTabs) { workspaceTab in
+                            Text(workspaceTab.displayName).tag(workspaceTab)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -356,7 +356,7 @@ extension ContentView {
         updateCachedViews()
     }
 
-    private func selectResolvedTab(preferred: String?, reason: String) {
+    private func selectResolvedTab(preferred: GitOKAppTab?, reason: String) {
         let resolvedTab = resolvedInitialTab(preferred: preferred)
         guard tab != resolvedTab else {
             if app.currentTab != resolvedTab {
@@ -366,33 +366,25 @@ extension ContentView {
         }
 
         if Self.verbose {
-            os_log("\(self.t)Selected tab resolved reason=\(reason) tab=\(resolvedTab)")
+            os_log("\(self.t)Selected tab resolved reason=\(reason) tab=\(resolvedTab.rawValue)")
         }
 
         tab = resolvedTab
         app.setTab(resolvedTab)
     }
 
-    private func resolvedInitialTab(preferred: String?) -> String {
-        let tabNames = p.tabNames
+    private func resolvedInitialTab(preferred: GitOKAppTab?) -> GitOKAppTab {
+        let visibleTabs = AppTabCatalog.visibleTabs
 
-        if tabNames.isEmpty {
-            return preferred ?? ""
+        if let preferred, visibleTabs.contains(preferred) {
+            return preferred
         }
 
-        if let preferred, preferred.isEmpty == false {
-            if tabNames.contains(preferred) {
-                return preferred
-            }
+        if visibleTabs.contains(app.currentTab) {
+            return app.currentTab
         }
 
-        if app.currentTab.isEmpty == false {
-            if tabNames.contains(app.currentTab) {
-                return app.currentTab
-            }
-        }
-
-        return tabNames.first ?? ""
+        return AppTabCatalog.defaultTab
     }
 }
 

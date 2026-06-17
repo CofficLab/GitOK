@@ -1,68 +1,113 @@
+import SwiftUI
 import XCTest
 @testable import GitOKCoreKit
+
+private enum DetailTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "detailTest",
+        displayName: "detailTest",
+        description: "",
+        policy: .alwaysOn,
+        tableName: "Localizable"
+    )
+
+    @MainActor
+    static func detailPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [DetailPane] {
+        guard tab == .git, context.isGitRepository else { return [] }
+        return [DetailPane(id: metadata.id, view: AnyView(Text("git-detail")))]
+    }
+}
+
+private enum AlwaysOnTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "alwaysOn",
+        displayName: "alwaysOn",
+        description: "",
+        policy: .alwaysOn,
+        tableName: "Localizable"
+    )
+}
+
+private enum OptOutDetailPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "optOut",
+        displayName: "optOut",
+        description: "",
+        policy: .optOut,
+        tableName: "Localizable"
+    )
+
+    @MainActor
+    static func detailPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [DetailPane] {
+        [DetailPane(id: metadata.id, view: AnyView(Text("opt-out-detail")))]
+    }
+}
+
+private enum OptInDetailPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "optIn",
+        displayName: "optIn",
+        description: "",
+        policy: .optIn,
+        tableName: "Localizable"
+    )
+
+    @MainActor
+    static func detailPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [DetailPane] {
+        [DetailPane(id: metadata.id, view: AnyView(Text("opt-in-detail")))]
+    }
+}
+
+private enum OptOutTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "optOut",
+        displayName: "optOut",
+        description: "",
+        policy: .optOut,
+        tableName: "Localizable"
+    )
+}
+
+private enum OptInTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "optIn",
+        displayName: "optIn",
+        description: "",
+        policy: .optIn,
+        tableName: "Localizable"
+    )
+}
+
+private enum DisabledTestPlugin: GitOKPlugin {
+    static let metadata = GitOKPluginMetadata(
+        id: "disabled",
+        displayName: "disabled",
+        description: "",
+        policy: .disabled,
+        tableName: "Localizable"
+    )
+}
 
 private enum FirstTestPlugin: GitOKPlugin {
     static let metadata = GitOKPluginMetadata(
         id: "first",
         displayName: "first",
+        description: "",
         order: 10,
-        policy: .alwaysOn
+        policy: .alwaysOn,
+        tableName: "Localizable"
     )
-
-    @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
-        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
-    }
 }
 
 private enum LastTestPlugin: GitOKPlugin {
     static let metadata = GitOKPluginMetadata(
         id: "last",
         displayName: "last",
+        description: "",
         order: 20,
-        policy: .alwaysOn
+        policy: .alwaysOn,
+        tableName: "Localizable"
     )
-
-    @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
-        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
-    }
-}
-
-private enum AlwaysOnTestPlugin: GitOKPlugin {
-    static let metadata = GitOKPluginMetadata(id: "alwaysOn", displayName: "alwaysOn", policy: .alwaysOn)
-
-    @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
-        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
-    }
-}
-
-private enum OptOutTestPlugin: GitOKPlugin {
-    static let metadata = GitOKPluginMetadata(id: "optOut", displayName: "optOut", policy: .optOut)
-
-    @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
-        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
-    }
-}
-
-private enum OptInTestPlugin: GitOKPlugin {
-    static let metadata = GitOKPluginMetadata(id: "optIn", displayName: "optIn", policy: .optIn)
-
-    @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
-        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
-    }
-}
-
-private enum DisabledTestPlugin: GitOKPlugin {
-    static let metadata = GitOKPluginMetadata(id: "disabled", displayName: "disabled", policy: .disabled)
-
-    @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] {
-        [GitOKTabItem(id: metadata.id, name: metadata.displayName, order: metadata.order)]
-    }
 }
 
 @MainActor
@@ -85,7 +130,10 @@ final class GitOKPluginRuntimeTests: XCTestCase {
         runtime.register(OptInTestPlugin.self)
         runtime.register(DisabledTestPlugin.self)
 
-        XCTAssertEqual(runtime.tabNames, ["alwaysOn", "optOut"])
+        XCTAssertEqual(
+            Set(runtime.configurablePlugins.map(\.id)),
+            Set(["alwaysOn", "optOut", "optIn"])
+        )
     }
 
     func testRuntimeRespectsUserPluginSettingsForConfigurablePolicies() {
@@ -98,13 +146,14 @@ final class GitOKPluginRuntimeTests: XCTestCase {
         settingsStore.setPluginEnabled("optIn", enabled: true)
 
         let runtime = GitOKPluginRuntime(settingsStore: settingsStore)
+        let context = GitOKPluginContext(isGitRepository: true)
 
-        runtime.register(AlwaysOnTestPlugin.self)
-        runtime.register(OptOutTestPlugin.self)
-        runtime.register(OptInTestPlugin.self)
-        runtime.register(DisabledTestPlugin.self)
+        runtime.register(OptOutDetailPlugin.self)
+        XCTAssertNil(runtime.enabledDetailView(for: .git, context: context))
 
-        XCTAssertEqual(runtime.tabNames, ["alwaysOn", "optIn"])
+        runtime.clearRegisteredPlugins()
+        runtime.register(OptInDetailPlugin.self)
+        XCTAssertNotNil(runtime.enabledDetailView(for: .git, context: context))
     }
 
     func testConfigurablePluginsListsAllRegisteredPluginsExceptDisabled() {
@@ -119,6 +168,17 @@ final class GitOKPluginRuntimeTests: XCTestCase {
             Set(runtime.configurablePlugins.map(\.id)),
             Set(["alwaysOn", "optOut", "optIn"])
         )
-        XCTAssertTrue(runtime.configurablePlugins.first(where: { $0.id == "alwaysOn" })?.allowUserToggle == false)
+    }
+
+    func testEnabledDetailViewRequiresMatchingTabAndGitRepository() {
+        let runtime = GitOKPluginRuntime()
+        runtime.register(DetailTestPlugin.self)
+
+        let nonGitContext = GitOKPluginContext(isGitRepository: false)
+        XCTAssertNil(runtime.enabledDetailView(for: .git, context: nonGitContext))
+
+        let gitContext = GitOKPluginContext(isGitRepository: true)
+        XCTAssertNotNil(runtime.enabledDetailView(for: .git, context: gitContext))
+        XCTAssertNil(runtime.enabledDetailView(for: .banner, context: gitContext))
     }
 }

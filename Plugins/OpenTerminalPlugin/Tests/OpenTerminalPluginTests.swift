@@ -245,15 +245,14 @@ final class OpenTerminalToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenTerminalPlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenTerminalPlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenTerminalPlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenTerminalPlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenTerminalPlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenTerminalPlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenTerminalPlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenTerminalPlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenTerminalPlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenTerminalPlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenTerminalPlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenTerminalPlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

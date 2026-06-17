@@ -15,8 +15,8 @@ public enum GitCommitListPlugin: GitOKPlugin {
     )
 
     @MainActor
-    public static func railPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKRailItem] {
-        guard tab == "Git", context.isGitRepository else { return [] }
+    public static func railPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [GitOKRailItem] {
+        guard tab == .git, context.isGitRepository else { return [] }
         return [
             GitOKRailItem(
                 id: metadata.id,

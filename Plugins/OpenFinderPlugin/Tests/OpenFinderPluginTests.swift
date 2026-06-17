@@ -105,15 +105,14 @@ final class OpenFinderToolbarTests: XCTestCase {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
 
         XCTAssertTrue(OpenFinderPlugin.toolbarLeadingItems(context: context).isEmpty)
-        XCTAssertTrue(OpenFinderPlugin.tabItems(context: context).isEmpty)
         XCTAssertTrue(OpenFinderPlugin.statusBarLeadingItems(context: context).isEmpty)
         XCTAssertTrue(OpenFinderPlugin.statusBarCenterItems(context: context).isEmpty)
         XCTAssertTrue(OpenFinderPlugin.statusBarTrailingItems(context: context).isEmpty)
         XCTAssertTrue(OpenFinderPlugin.settingsPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenFinderPlugin.sidebarPaneItems(context: context).isEmpty)
         XCTAssertTrue(OpenFinderPlugin.onboardingPaneItems(context: context).isEmpty)
-        XCTAssertTrue(OpenFinderPlugin.listPaneItems(context: context, tab: "any").isEmpty)
-        XCTAssertTrue(OpenFinderPlugin.detailPaneItems(context: context, tab: "any").isEmpty)
+        XCTAssertTrue(OpenFinderPlugin.listPaneItems(context: context, tab: .git).isEmpty)
+        XCTAssertTrue(OpenFinderPlugin.detailPaneItems(context: context, tab: .git).isEmpty)
     }
 
     @MainActor

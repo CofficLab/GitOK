@@ -9,14 +9,14 @@ import OSLog
 public protocol StateRepoProtocol {
     var projectPath: String { get set }
     var currentTaskUUID: String { get set }
-    var currentTab: String { get set }
+    var currentTab: GitOKAppTab { get set }
     var sidebarVisibility: Bool { get set }
     var globalCommitStyle: CommitStyle { get set }
     var showCommitGraph: Bool { get set }
 
     func setProjectPath(_ path: String)
     func setCurrentTaskUUID(_ id: String)
-    func setCurrentTab(_ tab: String)
+    func setCurrentTab(_ tab: GitOKAppTab)
     func setSidebarVisibility(_ visible: Bool)
     func setGlobalCommitStyle(_ style: CommitStyle)
     func getCommitStyle(for project: Project?) -> CommitStyle
@@ -38,7 +38,12 @@ public class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     public var currentTaskUUID: String = ""
 
     @AppStorage("App.CurrentTab")
-    public var currentTab: String = ""
+    private var currentTabRawValue: String = GitOKAppTab.git.rawValue
+
+    public var currentTab: GitOKAppTab {
+        get { GitOKAppTab.migrated(from: currentTabRawValue) ?? .git }
+        set { currentTabRawValue = newValue.rawValue }
+    }
 
     @AppStorage("App.SidebarVisibility")
     public var sidebarVisibility: Bool = true
@@ -86,10 +91,10 @@ public class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
      * 设置当前标签页
      * @param tab 标签页标识
      */
-    public func setCurrentTab(_ tab: String) {
+    public func setCurrentTab(_ tab: GitOKAppTab) {
         self.currentTab = tab
         if Self.verbose {
-            os_log("\(self.t)Current tab set to \(tab)")
+            os_log("\(self.t)Current tab set to \(tab.rawValue)")
         }
     }
 

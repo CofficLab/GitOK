@@ -73,22 +73,19 @@ public protocol GitOKPlugin {
     static var shouldRegister: Bool { get }
 
     @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem]
-
-    @MainActor
     static func toolbarLeadingItems(context: GitOKPluginContext) -> [GitOKToolbarItem]
 
     @MainActor
     static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem]
 
     @MainActor
-    static func listPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKListPaneItem]
+    static func listPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [GitOKListPaneItem]
 
     @MainActor
-    static func railPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKRailItem]
+    static func railPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [GitOKRailItem]
 
     @MainActor
-    static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane]
+    static func detailPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [DetailPane]
 
     @MainActor
     static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem]
@@ -197,22 +194,19 @@ public extension GitOKPlugin {
     static var shouldRegister: Bool { policy.shouldRegister }
 
     @MainActor
-    static func tabItems(context: GitOKPluginContext) -> [GitOKTabItem] { [] }
-
-    @MainActor
     static func toolbarLeadingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] { [] }
 
     @MainActor
     static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] { [] }
 
     @MainActor
-    static func listPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKListPaneItem] { [] }
+    static func listPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [GitOKListPaneItem] { [] }
 
     @MainActor
-    static func railPaneItems(context: GitOKPluginContext, tab: String) -> [GitOKRailItem] { [] }
+    static func railPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [GitOKRailItem] { [] }
 
     @MainActor
-    static func detailPaneItems(context: GitOKPluginContext, tab: String) -> [DetailPane] { [] }
+    static func detailPaneItems(context: GitOKPluginContext, tab: GitOKAppTab) -> [DetailPane] { [] }
 
     @MainActor
     static func statusBarLeadingItems(context: GitOKPluginContext) -> [GitOKStatusBarItem] { [] }
