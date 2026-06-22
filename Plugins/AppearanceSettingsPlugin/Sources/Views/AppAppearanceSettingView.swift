@@ -1,3 +1,4 @@
+import GitOKAppCore
 import Foundation
 import GitOKSupportKit
 import OSLog
