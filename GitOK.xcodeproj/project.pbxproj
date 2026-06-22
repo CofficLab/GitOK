@@ -65,7 +65,7 @@
 				GitIgnorePlugin,
 				GitLFSPlugin,
 				GitRemoteRepositoryPlugin,
-				GitSmartMergePlugin,
+				GitMergePlugin,
 				GitStashPlugin,
 				GitSubmodulePlugin,
 				GitUnpushedStatusPlugin,

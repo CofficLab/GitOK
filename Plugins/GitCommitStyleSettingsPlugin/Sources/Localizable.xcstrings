@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "Choosing a different style changes how commit messages are displayed:" : {
+
+    },
     "Commit message display style for this project" : {
       "localizations" : {
         "en" : {
@@ -28,6 +31,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "目前專案的提交訊息顯示樣式"
+          }
+        }
+      }
+    },
+    "Commit Style" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit Style"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit 风格"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit 風格"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit 風格"
           }
         }
       }
@@ -286,6 +317,7 @@
       }
     },
     "选择不同的风格会改变 Commit 消息的显示方式：" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

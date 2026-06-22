@@ -99,7 +99,7 @@ extension OneDarkTheme {
         identifier: "one-dark",
         displayName: "One Dark",
         compactName: "One",
-        description: "Editor-style dark theme inspired by the One Dark palette",
+        description: OneDarkThemePluginLocalization.string("Classic editor dark theme"),
         iconName: "chevron.left.forwardslash.chevron.right",
         iconColor: Color(hex: "61AFEF"),
         appearanceKind: .dark,

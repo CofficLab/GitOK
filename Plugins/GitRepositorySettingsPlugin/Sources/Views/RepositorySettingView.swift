@@ -63,7 +63,7 @@ public struct RepositorySettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle(Text("仓库设置"))
+        .navigationTitle(Text(String(localized: "Repository Settings")))
         .onAppear(perform: loadData)
         .sheet(isPresented: $showAddRemoteSheet) {
             AddRemoteRepositorySheet { name, url in

@@ -99,7 +99,7 @@ extension RiverTheme {
         identifier: "branch-flow",
         displayName: "River",
         compactName: "River",
-        description: "Flowing dark teal theme with blue and fresh green accents",
+        description: RiverThemePluginLocalization.string("Flowing teal dark theme"),
         iconName: "arrow.triangle.branch",
         iconColor: Color(hex: "2DD4BF"),
         appearanceKind: .dark,

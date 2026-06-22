@@ -3,7 +3,7 @@ import GitOKCoreKit
 import GitOKUI
 import SwiftUI
 
-public struct SmartMergeStatusTile: View {
+public struct MergeStatusTile: View {
     let projectURL: URL
     let isGitRepository: Bool
     @State private var isPresented = false
@@ -20,7 +20,9 @@ public struct SmartMergeStatusTile: View {
             })
             .help(Localization.string("Merge branches"))
             .popover(isPresented: $isPresented) {
-                SmartMergeForm(projectURL: projectURL)
+                MergeForm(projectURL: projectURL, onDismiss: {
+                    isPresented = false
+                })
                     .padding()
                     .frame(width: 240, height: 250)
             }
@@ -28,8 +30,9 @@ public struct SmartMergeStatusTile: View {
     }
 }
 
-public struct SmartMergeForm: View {
+public struct MergeForm: View {
     let projectURL: URL
+    let onDismiss: (() -> Void)?
     @State private var branches: [GitBranchSummary] = []
     @State private var sourceBranch: GitBranchSummary?
     @State private var targetBranch: GitBranchSummary?
@@ -40,9 +43,10 @@ public struct SmartMergeForm: View {
     @AppStorage private var lastSourceBranchName: String
     @AppStorage private var lastTargetBranchName: String
 
-    public init(projectURL: URL) {
+    public init(projectURL: URL, onDismiss: (() -> Void)? = nil) {
         self.projectURL = projectURL
-        let storageKey = "GitSmartMergePlugin.lastMerge.\(projectURL.absoluteString)"
+        self.onDismiss = onDismiss
+        let storageKey = "GitMergePlugin.lastMerge.\(projectURL.absoluteString)"
         _lastSourceBranchName = AppStorage(wrappedValue: "", "\(storageKey).source")
         _lastTargetBranchName = AppStorage(wrappedValue: "", "\(storageKey).target")
     }
@@ -201,6 +205,8 @@ public struct SmartMergeForm: View {
                             format: Localization.string("Merge paused with %d conflict files"),
                             conflictCount
                         )
+                        // Dismiss popover to show conflict resolution overlay
+                        onDismiss?()
                     } else {
                         statusMessage = String(
                             format: Localization.string("Merged %@ into %@"),
@@ -219,6 +225,8 @@ public struct SmartMergeForm: View {
                             format: Localization.string("Merge paused with %d conflict files"),
                             conflictCount
                         )
+                        // Dismiss popover to show conflict resolution overlay
+                        onDismiss?()
                     } else {
                         errorMessage = error.localizedDescription
                     }

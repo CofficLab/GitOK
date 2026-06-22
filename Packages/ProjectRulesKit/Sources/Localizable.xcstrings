@@ -308,6 +308,482 @@
           }
         }
       }
+    },
+    "GitHub authentication note": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub HTTPS typically uses tokens or credential helpers, while SSH uses keys from your local keychain/agent."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub HTTPS 通常使用 token 或 credential helper，SSH 使用本机 keychain/agent 中的密钥。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub HTTPS 通常使用 token 或 credential helper，SSH 使用本機 keychain/agent 中的密鑰。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub HTTPS 通常使用 token 或 credential helper，SSH 使用本機 keychain/agent 中的密鑰。"
+          }
+        }
+      }
+    },
+    "GitLab authentication note": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitLab HTTPS can use personal/project access tokens, while SSH uses configured SSH keys."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitLab HTTPS 可使用 personal/project access token，SSH 使用已配置的 SSH key。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitLab HTTPS 可使用 personal/project access token，SSH 使用已配置的 SSH key。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitLab HTTPS 可使用 personal/project access token，SSH 使用已配置的 SSH key。"
+          }
+        }
+      }
+    },
+    "Bitbucket authentication note": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitbucket HTTPS typically uses app passwords or workspace tokens, while SSH uses configured SSH keys."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitbucket HTTPS 通常使用 app password 或 workspace token，SSH 使用已配置的 SSH key。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitbucket HTTPS 通常使用 app password 或 workspace token，SSH 使用已配置的 SSH key。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitbucket HTTPS 通常使用 app password 或 workspace token，SSH 使用已配置的 SSH key。"
+          }
+        }
+      }
+    },
+    "Azure DevOps authentication note": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Azure DevOps HTTPS commonly uses PAT or enterprise identity login, while SSH URLs are affected by organization policies and key configuration."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Azure DevOps HTTPS 常见为 PAT 或企业身份登录，SSH URL 受组织策略和 key 配置影响。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Azure DevOps HTTPS 常見為 PAT 或企業身份登入，SSH URL 受組織策略和 key 配置影響。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Azure DevOps HTTPS 常見為 PAT 或企業身份登入，SSH URL 受組織策略和 key 配置影響。"
+          }
+        }
+      }
+    },
+    "Unknown platform authentication note": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unrecognized Git hosting platforms are handled as generic Git remotes. Authentication methods depend on server configuration."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未识别的 Git 托管平台会按通用 Git 远程处理，认证方式取决于服务器配置。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未識別的 Git 託管平台會按通用 Git 遠程處理，認證方式取決於服務器配置。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未識別的 Git 託管平台會按通用 Git 遠程處理，認證方式取決於服務器配置。"
+          }
+        }
+      }
+    },
+    "Delete upstream remote warning": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting remote repository \"%@\" will remove the remote tracking relationship for the current branch. Push/Pull status will show no upstream. This action cannot be undone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除远程仓库 \"%@\" 会移除当前分支的远程跟踪关系，Push/Pull 状态会变为无 upstream。此操作不可撤销。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除遠程儲存庫 \"%@\" 會移除當前分支的遠程跟踪關係，Push/Pull 狀態會變為無 upstream。此操作不可撤銷。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除遠程儲存庫 \"%@\" 會移除當前分支的遠程跟踪關係，Push/Pull 狀態會變為無 upstream。此操作不可撤銷。"
+          }
+        }
+      }
+    },
+    "Delete remote warning": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete remote repository \"%@\"? Remote branches, tag pushes, and subsequent Fetch/Pull operations that depend on it will be affected. This action cannot be undone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确定要删除远程仓库 \"%@\" 吗？依赖它的远程分支、标签推送和后续 Fetch/Pull 操作都会受影响。此操作不可撤销。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確定要刪除遠程儲存庫 \"%@\" 嗎？依賴它的遠程分支、標籤推送和後續 Fetch/Pull 操作都會受影響。此操作不可撤銷。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確定要刪除遠程儲存庫 \"%@\" 嗎？依賴它的遠程分支、標籤推送和後續 Fetch/Pull 操作都會受影響。此操作不可撤銷。"
+          }
+        }
+      }
+    },
+    "Emoji sparkles detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New feature"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新功能"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新功能"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新功能"
+          }
+        }
+      }
+    },
+    "Emoji bug detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bug fix"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修复问题"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修復問題"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修復問題"
+          }
+        }
+      }
+    },
+    "Emoji memo detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Documentation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文档"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文檔"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文檔"
+          }
+        }
+      }
+    },
+    "Emoji recycle detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refactoring"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重构"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重構"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重構"
+          }
+        }
+      }
+    },
+    "Emoji zap detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "性能"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "性能"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "性能"
+          }
+        }
+      }
+    },
+    "Emoji check mark detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "测试"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "測試"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "測試"
+          }
+        }
+      }
+    },
+    "Emoji lipstick detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UI styling"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UI 样式"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UI 樣式"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UI 樣式"
+          }
+        }
+      }
+    },
+    "Emoji wrench detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuration"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置"
+          }
+        }
+      }
+    },
+    "Issue reference detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Issue reference"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Issue 引用"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Issue 引用"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Issue 引用"
+          }
+        }
+      }
+    },
+    "User mention detail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User mention"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用户 mention"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用戶 mention"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用戶 mention"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -32,14 +32,14 @@ public enum CommitAutocompleteRules {
     }
 
     private static let defaultEmojiCompletions: [Completion] = [
-        Completion(kind: .emoji, title: ":sparkles:", detail: "新功能", insertion: ":sparkles:"),
-        Completion(kind: .emoji, title: ":bug:", detail: "修复问题", insertion: ":bug:"),
-        Completion(kind: .emoji, title: ":memo:", detail: "文档", insertion: ":memo:"),
-        Completion(kind: .emoji, title: ":recycle:", detail: "重构", insertion: ":recycle:"),
-        Completion(kind: .emoji, title: ":zap:", detail: "性能", insertion: ":zap:"),
-        Completion(kind: .emoji, title: ":white_check_mark:", detail: "测试", insertion: ":white_check_mark:"),
-        Completion(kind: .emoji, title: ":lipstick:", detail: "UI 样式", insertion: ":lipstick:"),
-        Completion(kind: .emoji, title: ":wrench:", detail: "配置", insertion: ":wrench:"),
+        Completion(kind: .emoji, title: ":sparkles:", detail: ProjectRulesLocalization.string("Emoji sparkles detail"), insertion: ":sparkles:"),
+        Completion(kind: .emoji, title: ":bug:", detail: ProjectRulesLocalization.string("Emoji bug detail"), insertion: ":bug:"),
+        Completion(kind: .emoji, title: ":memo:", detail: ProjectRulesLocalization.string("Emoji memo detail"), insertion: ":memo:"),
+        Completion(kind: .emoji, title: ":recycle:", detail: ProjectRulesLocalization.string("Emoji recycle detail"), insertion: ":recycle:"),
+        Completion(kind: .emoji, title: ":zap:", detail: ProjectRulesLocalization.string("Emoji zap detail"), insertion: ":zap:"),
+        Completion(kind: .emoji, title: ":white_check_mark:", detail: ProjectRulesLocalization.string("Emoji check mark detail"), insertion: ":white_check_mark:"),
+        Completion(kind: .emoji, title: ":lipstick:", detail: ProjectRulesLocalization.string("Emoji lipstick detail"), insertion: ":lipstick:"),
+        Completion(kind: .emoji, title: ":wrench:", detail: ProjectRulesLocalization.string("Emoji wrench detail"), insertion: ":wrench:"),
     ]
 
     public static func issueReferences(from branchNames: [String]) -> [String] {
@@ -82,11 +82,11 @@ public enum CommitAutocompleteRules {
         switch token.trigger {
         case "#":
             matches = uniqueSortedReferences(issueReferences).map {
-                Completion(kind: .issue, title: $0, detail: "Issue 引用", insertion: $0)
+                Completion(kind: .issue, title: $0, detail: ProjectRulesLocalization.string("Issue reference detail"), insertion: $0)
             }
         case "@":
             matches = uniqueSorted(userMentions).map {
-                Completion(kind: .user, title: $0, detail: "用户 mention", insertion: $0)
+                Completion(kind: .user, title: $0, detail: ProjectRulesLocalization.string("User mention detail"), insertion: $0)
             }
         case ":":
             matches = defaultEmojiCompletions

@@ -42,7 +42,7 @@ public struct Projects: View, SuperLog {
         VStack(spacing: 0) {
             // 搜索框 - 仅在项目数超过10个时显示
             if data.projects.count > 10 {
-                AppSearchBar(text: $searchText, placeholder: "Search...")
+                AppSearchBar(text: $searchText, placeholder: ProjectsPluginLocalization.string("Search..."))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
             }
@@ -53,7 +53,7 @@ public struct Projects: View, SuperLog {
                     Image(systemName: "folder.badge.plus")
                         .font(.system(size: 28))
                         .foregroundStyle(.secondary)
-                    Text("暂无项目")
+                    Text(ProjectsPluginLocalization.string("No Projects"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

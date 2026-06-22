@@ -16,6 +16,12 @@
             "value": "%1$@（%2$@）"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@（%2$@）"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -33,6 +39,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$lld"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ %2$lld"
@@ -60,6 +72,12 @@
             "value": "%lld"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -77,6 +95,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld %2$@"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld %2$@"
@@ -104,6 +128,12 @@
             "value": "添加"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -121,6 +151,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加合著者"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "添加合著者"
@@ -148,6 +184,12 @@
             "value": "添加新合著者"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加新合著者"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -165,6 +207,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "取消"
@@ -190,6 +238,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "确认"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認"
           }
         },
         "zh-Hant": {
@@ -237,6 +291,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "常用合著者"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "常用合著者"
@@ -292,6 +352,12 @@
             "value": "姓名"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "姓名"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -312,6 +378,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "新合著者信息"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新合著者資訊"
           }
         },
         "zh-Hant": {
@@ -336,6 +408,12 @@
             "value": "已选择（%lld）"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已選擇（%lld）"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -356,6 +434,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "未找到用户信息"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到使用者資訊"
           }
         },
         "zh-Hant": {
@@ -380,6 +464,12 @@
             "value": "丢弃"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "捨棄"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -402,6 +492,12 @@
             "value": "加载失败"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入失敗"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -419,6 +515,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "取消"
@@ -446,6 +548,12 @@
             "value": "取消选择"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消選擇"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -466,6 +574,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "取消选择 %@"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消選擇 %@"
           }
         },
         "zh-Hant": {
@@ -490,6 +604,12 @@
             "value": "复制到剪贴板"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製到剪貼簿"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -510,6 +630,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "复制完整 Hash"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製完整 Hash"
           }
         },
         "zh-Hant": {
@@ -534,6 +660,12 @@
             "value": "已复制"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已複製"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -554,6 +686,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "按回车或点击查看差异。打开上下文菜单可暂存、取消暂存、复制路径或丢弃更改。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按 Enter 或點擊查看差異。打開上下文選單可暫存、取消暫存、複製路徑或捨棄變更。"
           }
         },
         "zh-Hant": {
@@ -578,6 +716,12 @@
             "value": "提交 Hash 详情"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交 Hash 詳情"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -600,6 +744,12 @@
             "value": "提交时间详情"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交時間詳情"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -617,6 +767,12 @@
           }
         },
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插入 %1$@ %2$@"
+          }
+        },
+        "zh-HK": {
           "stringUnit": {
             "state": "translated",
             "value": "插入 %1$@ %2$@"
@@ -644,6 +800,12 @@
             "value": "未配置用户信息"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定使用者資訊"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -664,6 +826,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "点击查看完整 Hash 信息"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊查看完整 Hash 資訊"
           }
         },
         "zh-Hant": {
@@ -688,6 +856,12 @@
             "value": "点击查看完整时间信息"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊查看完整時間資訊"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -708,6 +882,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "用于批量暂存、取消暂存或丢弃"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用於批次暫存、取消暫存或捨棄"
           }
         },
         "zh-Hant": {
@@ -732,6 +912,12 @@
             "value": "确认丢弃更改"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認捨棄變更"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -752,6 +938,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "管理预设..."
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理預設..."
           }
         },
         "zh-Hant": {
@@ -776,6 +968,12 @@
             "value": "选择 %@"
           }
         },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇 %@"
+          }
+        },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
@@ -796,6 +994,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择文件"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇檔案"
           }
         },
         "zh-Hant": {
@@ -1082,6 +1286,286 @@
           "stringUnit": {
             "state": "translated",
             "value": "使用者名稱"
+          }
+        }
+      }
+    },
+    "Full Hash": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full Hash"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整 Hash"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整 Hash"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整 Hash"
+          }
+        }
+      }
+    },
+    "Full Time": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full Time"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整时间"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整時間"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整時間"
+          }
+        }
+      }
+    },
+    "Hash Length": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hash Length"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hash 长度"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hash 長度"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hash 長度"
+          }
+        }
+      }
+    },
+    "ISO Format": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISO Format"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISO 格式"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISO 格式"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISO 格式"
+          }
+        }
+      }
+    },
+    "Prefix Feature": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prefix Feature"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前缀特征"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前綴特徵"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前綴特徵"
+          }
+        }
+      }
+    },
+    "Relative Time": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relative Time"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相对时间"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相對時間"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相對時間"
+          }
+        }
+      }
+    },
+    "Short Hash (8 digits)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short Hash (8 digits)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "短 Hash (8位)"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "短 Hash (8位)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "短 Hash (8位)"
+          }
+        }
+      }
+    },
+    "Starts with 0": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts with 0"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以 0 开头"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以 0 開頭"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以 0 開頭"
+          }
+        }
+      }
+    },
+    "Unix Timestamp": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unix Timestamp"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unix 时间戳"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unix 時間戳"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unix 時間戳"
+          }
+        }
+      }
+    },
+    "characters": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "characters"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字符"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字符"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字符"
           }
         }
       }

@@ -20,7 +20,7 @@ public enum DiagnosticsSettingsPlugin: GitOKPlugin {
         [
             GitOKSettingsPaneItem(
                 id: "diagnostics",
-                title: DiagnosticsSettingsPluginLocalization.string("诊断"),
+                title: DiagnosticsSettingsPluginLocalization.string("Diagnostics"),
                 systemImage: "stethoscope",
                 order: 60,
                 view: AnyView(DiagnosticsSettingView())

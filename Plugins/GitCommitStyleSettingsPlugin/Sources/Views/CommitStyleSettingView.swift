@@ -40,7 +40,7 @@ public struct CommitStyleSettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle(Text("Commit 风格"))
+        .navigationTitle(Text(String(localized: "Commit Style")))
         .onAppear(perform: loadData)
     }
 
@@ -50,7 +50,7 @@ public struct CommitStyleSettingView: View, SuperLog {
     private var styleExamplesSection: some View {
         GitOKUI.AppSettingsSection(title: String(localized: "Style Examples")) {
             VStack(alignment: .leading, spacing: 16) {
-                Text("选择不同的风格会改变 Commit 消息的显示方式：")
+                Text(String(localized: "Choosing a different style changes how commit messages are displayed:"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
 

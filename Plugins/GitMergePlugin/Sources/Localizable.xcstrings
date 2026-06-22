@@ -396,58 +396,58 @@
         }
       }
     },
-    "Smart Merge Tool" : {
+    "Merge Tool" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Smart Merge Tool"
+            "value" : "Merge Tool"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "智能合并工具"
+            "value" : "合并工具"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "智能合併工具"
+            "value" : "合併工具"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "智能合併工具"
+            "value" : "合併工具"
           }
         }
       }
     },
-    "SmartMerge" : {
+    "Merge" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SmartMerge"
+            "value" : "Merge"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "智能合并"
+            "value" : "合并"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "智能合併"
+            "value" : "合併"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "智能合併"
+            "value" : "合併"
           }
         }
       }

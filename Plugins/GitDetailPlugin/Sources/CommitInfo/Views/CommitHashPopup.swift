@@ -19,7 +19,7 @@ public struct CommitHashPopup: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // 标题
-            Text("提交 Hash 详情")
+            Text(String(localized: "提交 Hash 详情"))
                 .font(.headline)
                 .foregroundColor(.primary)
 
@@ -29,7 +29,7 @@ public struct CommitHashPopup: View {
             VStack(spacing: 12) {
                 // 完整 Hash
                 hashInfoRow(
-                    title: "完整 Hash",
+                    title: String(localized: "Full Hash"),
                     value: hash,
                     icon: "number.circle.fill",
                     selectable: true,
@@ -38,7 +38,7 @@ public struct CommitHashPopup: View {
 
                 // 短 Hash (8位)
                 hashInfoRow(
-                    title: "短 Hash (8位)",
+                    title: String(localized: "Short Hash (8 digits)"),
                     value: String(hash.prefix(8)),
                     icon: "number.circle",
                     selectable: true,
@@ -47,8 +47,8 @@ public struct CommitHashPopup: View {
 
                 // Hash 长度
                 hashInfoRow(
-                    title: "Hash 长度",
-                    value: "\(hash.count) 字符",
+                    title: String(localized: "Hash Length"),
+                    value: "\(hash.count) " + String(localized: "characters"),
                     icon: "ruler",
                     selectable: false,
                     showCopyButton: false
@@ -57,8 +57,8 @@ public struct CommitHashPopup: View {
                 // Hash 前缀检查
                 if hash.hasPrefix("0") {
                     hashInfoRow(
-                        title: "前缀特征",
-                        value: "以 0 开头",
+                        title: String(localized: "Prefix Feature"),
+                        value: String(localized: "Starts with 0"),
                         icon: "exclamationmark.triangle",
                         selectable: false,
                         showCopyButton: false
@@ -122,7 +122,7 @@ public struct CommitHashPopup: View {
                         }
                     }
                 }
-                .help(isCopied ? "已复制" : "复制到剪贴板")
+                .help(isCopied ? String(localized: "已复制") : String(localized: "复制到剪贴板"))
             }
         }
         .padding(.vertical, 8)

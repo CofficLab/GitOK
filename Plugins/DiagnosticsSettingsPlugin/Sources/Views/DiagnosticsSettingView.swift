@@ -14,21 +14,21 @@ public struct DiagnosticsSettingView: View {
             }
             .padding()
         }
-        .navigationTitle("诊断")
+        .navigationTitle(DiagnosticsSettingsPluginLocalization.string("Diagnostics"))
     }
 
     private var summarySection: some View {
-        GitOKUI.AppSettingsSection(title: "状态") {
+        GitOKUI.AppSettingsSection(title: DiagnosticsSettingsPluginLocalization.string("Status")) {
             settingsRow(
-                title: "上次退出",
-                description: diagnostics.previousLaunchDidNotExitCleanly ? "上次可能未正常退出" : "正常",
+                title: DiagnosticsSettingsPluginLocalization.string("Last exit"),
+                description: diagnostics.previousLaunchDidNotExitCleanly ? DiagnosticsSettingsPluginLocalization.string("May not have exited cleanly last time") : DiagnosticsSettingsPluginLocalization.string("Normal"),
                 icon: diagnostics.previousLaunchDidNotExitCleanly ? "exclamationmark.triangle" : "checkmark.circle"
             ) {
                 EmptyView()
             }
             settingsRow(
-                title: "最近错误",
-                description: "\(diagnostics.recentEntries.count) 条",
+                title: DiagnosticsSettingsPluginLocalization.string("Recent errors"),
+                description: "\(diagnostics.recentEntries.count) " + DiagnosticsSettingsPluginLocalization.string("Count unit"),
                 icon: "list.bullet.rectangle"
             ) {
                 EmptyView()
@@ -37,36 +37,36 @@ public struct DiagnosticsSettingView: View {
     }
 
     private var actionsSection: some View {
-        GitOKUI.AppSettingsSection(title: "诊断信息") {
+        GitOKUI.AppSettingsSection(title: DiagnosticsSettingsPluginLocalization.string("Diagnostic information")) {
             actionRow(
-                title: "复制诊断信息",
-                description: "包含 App、系统、Git 版本和最近错误",
+                title: DiagnosticsSettingsPluginLocalization.string("Copy diagnostic information"),
+                description: DiagnosticsSettingsPluginLocalization.string("Contains App, system, Git version and recent errors"),
                 icon: "doc.on.doc",
-                buttonTitle: "复制"
+                buttonTitle: DiagnosticsSettingsPluginLocalization.string("Copy")
             ) {
                 diagnostics.copyDiagnosticReport()
             }
             actionRow(
-                title: "复制日志命令",
-                description: "用于在终端导出最近 1 小时 GitOK 日志",
+                title: DiagnosticsSettingsPluginLocalization.string("Copy log command"),
+                description: DiagnosticsSettingsPluginLocalization.string("Used to export recent 1 hour GitOK logs in terminal"),
                 icon: "terminal",
-                buttonTitle: "复制"
+                buttonTitle: DiagnosticsSettingsPluginLocalization.string("Copy")
             ) {
                 diagnostics.copyLogCommand()
             }
             actionRow(
-                title: "打开 Console",
-                description: "查看系统统一日志中的 GitOK 记录",
+                title: DiagnosticsSettingsPluginLocalization.string("Open Console"),
+                description: DiagnosticsSettingsPluginLocalization.string("View GitOK records in system unified logging"),
                 icon: "text.magnifyingglass",
-                buttonTitle: "打开"
+                buttonTitle: DiagnosticsSettingsPluginLocalization.string("Open")
             ) {
                 diagnostics.openConsole()
             }
             actionRow(
-                title: "打开应用支持目录",
+                title: DiagnosticsSettingsPluginLocalization.string("Open application support directory"),
                 description: GitOKAppPaths.getCurrentAppSupportDir().path,
                 icon: "folder",
-                buttonTitle: "打开"
+                buttonTitle: DiagnosticsSettingsPluginLocalization.string("Open")
             ) {
                 diagnostics.openApplicationSupport()
             }
@@ -74,9 +74,9 @@ public struct DiagnosticsSettingView: View {
     }
 
     private var recentFailuresSection: some View {
-        GitOKUI.AppSettingsSection(title: "最近错误") {
+        GitOKUI.AppSettingsSection(title: DiagnosticsSettingsPluginLocalization.string("Recent failures")) {
             if diagnostics.recentEntries.isEmpty {
-                Text("当前会话没有记录到错误。")
+                Text(DiagnosticsSettingsPluginLocalization.string("No errors were recorded in the current session"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding()

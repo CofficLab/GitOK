@@ -16,7 +16,7 @@ struct OpacityControl: View {
     var body: some View {
         GroupBox {
             VStack(spacing: 8) {
-                Text("背景透明度 \(String(format: "%.1f", localOpacity))")
+                Text(String(localized: "背景透明度 \(String(format: "%.1f", localOpacity))"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Slider(value: $localOpacity, in: 0...1)

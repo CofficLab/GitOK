@@ -20,7 +20,7 @@ public enum GitUserSettingsPlugin: GitOKPlugin {
         [
             GitOKSettingsPaneItem(
                 id: "userInfo",
-                title: GitUserSettingsPluginLocalization.string("用户信息"),
+                title: GitUserSettingsPluginLocalization.string("User Information"),
                 systemImage: "person.circle",
                 order: 20,
                 view: AnyView(GitUserInfoSettingView())

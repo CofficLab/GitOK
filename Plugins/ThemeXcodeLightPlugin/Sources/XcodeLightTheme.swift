@@ -99,7 +99,7 @@ extension XcodeLightTheme {
         identifier: "xcode-light",
         displayName: "Xcode Light",
         compactName: "Xcode",
-        description: "Bright macOS-native theme inspired by Xcode Light",
+        description: XcodeLightThemePluginLocalization.string("Xcode-inspired light theme"),
         iconName: "hammer",
         iconColor: Color(hex: "0A84FF"),
         appearanceKind: .light,

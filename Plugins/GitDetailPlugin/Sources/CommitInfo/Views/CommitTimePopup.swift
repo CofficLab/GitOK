@@ -14,7 +14,7 @@ public struct CommitTimePopup: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // 标题
-            Text("提交时间详情")
+            Text(String(localized: "提交时间详情"))
                 .font(.headline)
                 .foregroundColor(.primary)
 
@@ -24,21 +24,21 @@ public struct CommitTimePopup: View {
             VStack(spacing: 12) {
                 // 完整日期时间
                 timeInfoRow(
-                    title: "完整时间",
+                    title: String(localized: "Full Time"),
                     value: fullDateTime,
                     icon: "clock.fill"
                 )
 
                 // 相对时间
                 timeInfoRow(
-                    title: "相对时间",
+                    title: String(localized: "Relative Time"),
                     value: date.formatted(.relative(presentation: .named)),
                     icon: "clock.arrow.circlepath"
                 )
 
                 // ISO 格式
                 timeInfoRow(
-                    title: "ISO 格式",
+                    title: String(localized: "ISO Format"),
                     value: ISO8601DateFormatter().string(from: date),
                     icon: "calendar.badge.clock",
                     selectable: true
@@ -46,7 +46,7 @@ public struct CommitTimePopup: View {
 
                 // Unix 时间戳
                 timeInfoRow(
-                    title: "Unix 时间戳",
+                    title: String(localized: "Unix Timestamp"),
                     value: "\(Int(date.timeIntervalSince1970))",
                     icon: "number.circle",
                     selectable: true
