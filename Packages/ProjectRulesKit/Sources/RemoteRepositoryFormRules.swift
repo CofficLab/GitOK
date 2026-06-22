@@ -11,15 +11,15 @@ public enum RemoteRepositoryFormRules {
         public var authenticationNote: String {
             switch self {
             case .github:
-                return "GitHub HTTPS 通常使用 token 或 credential helper，SSH 使用本机 keychain/agent 中的密钥。"
+                return ProjectRulesLocalization.string("GitHub authentication note")
             case .gitlab:
-                return "GitLab HTTPS 可使用 personal/project access token，SSH 使用已配置的 SSH key。"
+                return ProjectRulesLocalization.string("GitLab authentication note")
             case .bitbucket:
-                return "Bitbucket HTTPS 通常使用 app password 或 workspace token，SSH 使用已配置的 SSH key。"
+                return ProjectRulesLocalization.string("Bitbucket authentication note")
             case .azureDevOps:
-                return "Azure DevOps HTTPS 常见为 PAT 或企业身份登录，SSH URL 受组织策略和 key 配置影响。"
+                return ProjectRulesLocalization.string("Azure DevOps authentication note")
             case .unknown:
-                return "未识别的 Git 托管平台会按通用 Git 远程处理，认证方式取决于服务器配置。"
+                return ProjectRulesLocalization.string("Unknown platform authentication note")
             }
         }
     }
@@ -94,9 +94,9 @@ public enum RemoteRepositoryFormRules {
 
     public static func deleteWarning(remoteName: String, isCurrentUpstreamRemote: Bool) -> String {
         if isCurrentUpstreamRemote {
-            return "删除远程仓库 \"\(remoteName)\" 会移除当前分支的远程跟踪关系，Push/Pull 状态会变为无 upstream。此操作不可撤销。"
+            return String.localizedStringWithFormat(ProjectRulesLocalization.string("Delete upstream remote warning"), remoteName)
         }
-        return "确定要删除远程仓库 \"\(remoteName)\" 吗？依赖它的远程分支、标签推送和后续 Fetch/Pull 操作都会受影响。此操作不可撤销。"
+        return String.localizedStringWithFormat(ProjectRulesLocalization.string("Delete remote warning"), remoteName)
     }
 
     public static func remoteWebLink(for remoteURL: String) -> RemoteWebLink? {
