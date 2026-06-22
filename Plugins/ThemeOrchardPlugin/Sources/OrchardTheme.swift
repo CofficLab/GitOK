@@ -61,7 +61,7 @@ extension OrchardTheme {
         identifier: "stash",
         displayName: "Orchard",
         compactName: "Orchard",
-        description: "Earthy dark theme with amber, blue, and lime accents",
+        description: OrchardThemePluginLocalization.string("Fresh fruit tree theme"),
         iconName: "tray.full",
         iconColor: Color(hex: "FBBF24"),
         appearanceKind: .dark,

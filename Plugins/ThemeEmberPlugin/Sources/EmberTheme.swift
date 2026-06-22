@@ -99,7 +99,7 @@ extension EmberTheme {
         identifier: "conflict",
         displayName: "Ember",
         compactName: "Ember",
-        description: "Warm dark theme with orange, red, and gold contrast",
+        description: EmberThemePluginLocalization.string("Warm orange dark theme"),
         iconName: "exclamationmark.triangle",
         iconColor: Color(hex: "F97316"),
         appearanceKind: .dark,

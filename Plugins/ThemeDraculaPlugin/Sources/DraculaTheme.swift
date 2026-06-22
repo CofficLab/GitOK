@@ -99,7 +99,7 @@ extension DraculaTheme {
         identifier: "dracula",
         displayName: "Dracula",
         compactName: "Dracula",
-        description: "Vivid dark theme inspired by the classic Dracula palette",
+        description: DraculaThemePluginLocalization.string("Classic vivid dark theme"),
         iconName: "moon.stars",
         iconColor: Color(hex: "BD93F9"),
         appearanceKind: .dark,

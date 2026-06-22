@@ -99,7 +99,7 @@ extension MidnightTheme {
         identifier: "terminal",
         displayName: "Midnight",
         compactName: "Midnight",
-        description: "Quiet dark theme with terminal green and cool blue accents",
+        description: MidnightThemePluginLocalization.string("Deep dark blue theme"),
         iconName: "terminal",
         iconColor: Color(hex: "34D399"),
         appearanceKind: .dark,

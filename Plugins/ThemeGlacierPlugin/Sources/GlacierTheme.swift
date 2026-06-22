@@ -61,7 +61,7 @@ extension GlacierTheme {
         identifier: "large-files",
         displayName: "Glacier",
         compactName: "Glacier",
-        description: "Clean light theme with icy cyan, teal, and violet accents",
+        description: GlacierThemePluginLocalization.string("Cool ice blue theme"),
         iconName: "externaldrive",
         iconColor: Color(hex: "06B6D4"),
         appearanceKind: .light,

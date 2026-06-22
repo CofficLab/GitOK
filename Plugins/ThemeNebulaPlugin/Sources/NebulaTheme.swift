@@ -61,7 +61,7 @@ extension NebulaTheme {
         identifier: "pull-request",
         displayName: "Nebula",
         compactName: "Nebula",
-        description: "Violet dark theme with cyan and pink atmospheric accents",
+        description: NebulaThemePluginLocalization.string("Colorful space theme"),
         iconName: "arrow.triangle.pull",
         iconColor: Color(hex: "A78BFA"),
         appearanceKind: .dark,

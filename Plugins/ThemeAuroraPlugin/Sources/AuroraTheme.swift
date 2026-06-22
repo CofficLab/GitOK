@@ -99,7 +99,7 @@ extension AuroraTheme {
         identifier: "commit-graph",
         displayName: "Aurora",
         compactName: "Aurora",
-        description: "Deep cyan night theme with bright green and amber highlights",
+        description: AuroraThemePluginLocalization.string("Deep cyan night theme"),
         iconName: "point.3.connected.trianglepath.dotted",
         iconColor: Color(hex: "22D3EE"),
         appearanceKind: .dark,

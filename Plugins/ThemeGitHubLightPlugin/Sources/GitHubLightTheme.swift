@@ -99,7 +99,7 @@ extension GitHubLightTheme {
         identifier: "github-light",
         displayName: "GitHub Light",
         compactName: "GitHub",
-        description: "Clean light theme inspired by GitHub's default interface",
+        description: GitHubLightThemePluginLocalization.string("GitHub-inspired light theme"),
         iconName: "globe",
         iconColor: Color(hex: "0969DA"),
         appearanceKind: .light,
