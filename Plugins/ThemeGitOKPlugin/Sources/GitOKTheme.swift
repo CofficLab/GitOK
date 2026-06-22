@@ -99,7 +99,7 @@ extension GitOKTheme {
         identifier: "repository",
         displayName: "默认",
         compactName: "默认",
-        description: GitOKThemePluginLocalization.string("Default GitOK theme"),
+        description: GitOKThemePluginLocalization.string("Default GitOK dark theme"),
         iconName: "folder.badge.gearshape",
         iconColor: Color.adaptive(light: "2563EB", dark: "58A6FF"),
         appearanceKind: .system,

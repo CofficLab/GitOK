@@ -61,7 +61,7 @@ extension MountainTheme {
         identifier: "archive",
         displayName: "Mountain",
         compactName: "Mountain",
-        description: MountainThemePluginLocalization.string("Natural earth tone theme"),
+        description: MountainThemePluginLocalization.string("Quiet stone light theme"),
         iconName: "archivebox",
         iconColor: Color(hex: "64748B"),
         appearanceKind: .light,

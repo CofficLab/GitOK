@@ -99,7 +99,7 @@ extension SpringTheme {
         identifier: "worktree",
         displayName: "Spring",
         compactName: "Spring",
-        description: SpringThemePluginLocalization.string("Fresh spring green theme"),
+        description: SpringThemePluginLocalization.string("Fresh green light theme"),
         iconName: "tree",
         iconColor: Color(hex: "047857"),
         appearanceKind: .light,

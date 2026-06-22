@@ -99,7 +99,7 @@ extension GraphiteTheme {
         identifier: "graphite",
         displayName: "Graphite",
         compactName: "Graphite",
-        description: GraphiteThemePluginLocalization.string("Monochrome dark theme"),
+        description: GraphiteThemePluginLocalization.string("Neutral graphite dark theme"),
         iconName: "square.grid.3x3",
         iconColor: Color(hex: "94A3B8"),
         appearanceKind: .dark,

@@ -99,7 +99,7 @@ extension WinterTheme {
         identifier: "focus",
         displayName: "Winter",
         compactName: "Winter",
-        description: WinterThemePluginLocalization.string("Cool winter theme"),
+        description: WinterThemePluginLocalization.string("Cool minimal light theme"),
         iconName: "scope",
         iconColor: Color(hex: "2563EB"),
         appearanceKind: .light,

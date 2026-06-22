@@ -61,7 +61,7 @@ extension HarborTheme {
         identifier: "remote",
         displayName: "Harbor",
         compactName: "Harbor",
-        description: HarborThemePluginLocalization.string("Peaceful ocean theme"),
+        description: HarborThemePluginLocalization.string("Deep blue water theme"),
         iconName: "network",
         iconColor: Color(hex: "38BDF8"),
         appearanceKind: .dark,

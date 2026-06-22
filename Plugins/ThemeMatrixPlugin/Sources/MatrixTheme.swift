@@ -99,7 +99,7 @@ extension MatrixTheme {
         identifier: "automation",
         displayName: "Matrix",
         compactName: "Matrix",
-        description: MatrixThemePluginLocalization.string("Digital green code theme"),
+        description: MatrixThemePluginLocalization.string("Electric green dark theme"),
         iconName: "gearshape.2",
         iconColor: Color(hex: "22C55E"),
         appearanceKind: .dark,

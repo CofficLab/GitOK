@@ -99,7 +99,7 @@ extension SummerTheme {
         identifier: "release",
         displayName: "Summer",
         compactName: "Summer",
-        description: SummerThemePluginLocalization.string("Warm summer theme"),
+        description: SummerThemePluginLocalization.string("Warm golden light theme"),
         iconName: "tag",
         iconColor: Color(hex: "EAB308"),
         appearanceKind: .light,
