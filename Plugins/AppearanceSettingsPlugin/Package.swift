@@ -10,7 +10,6 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(path: "../../Packages/GitOKAppCore"),
         .package(path: "../../Packages/GitOKUI"),
         .package(path: "../../Packages/GitOKSupportKit"),
     ],
@@ -19,7 +18,6 @@ let package = Package(
             name: "AppearanceSettingsPlugin",
             dependencies: [
                 "GitOKCoreKit",
-                "GitOKAppCore",
                 "GitOKUI",
                 "GitOKSupportKit",
             ],
