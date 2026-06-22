@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "GitSmartMergePlugin",
+    name: "GitMergePlugin",
     defaultLocalization: "en",
     platforms: [.macOS(.v14)],
     products: [
-        .library(name: "GitSmartMergePlugin", targets: ["GitSmartMergePlugin"]),
+        .library(name: "GitMergePlugin", targets: ["GitMergePlugin"]),
     ],
     dependencies: [
         .package(path: "../../Packages/GitCoreKit"),
@@ -15,7 +15,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GitSmartMergePlugin",
+            name: "GitMergePlugin",
             dependencies: [
                 "GitCoreKit",
                 "GitOKCoreKit",
@@ -25,8 +25,8 @@ let package = Package(
             resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
-            name: "GitSmartMergePluginTests",
-            dependencies: ["GitSmartMergePlugin"],
+            name: "GitMergePluginTests",
+            dependencies: ["GitMergePlugin"],
             path: "Tests"
         ),
     ]

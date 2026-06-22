@@ -37,7 +37,7 @@ import ReadmePlugin
 import GitRepositorySettingsPlugin
 import GitRemoteRepositoryPlugin
 import SettingsButtonPlugin
-import GitSmartMergePlugin
+import GitMergePlugin
 import GitStashPlugin
 import GitSubmodulePlugin
 import ThemeAuroraPlugin
@@ -106,7 +106,7 @@ public enum GeneratedPluginRegistry {
         GitRepositorySettingsPlugin.self,
         GitRemoteRepositoryPlugin.self,
         SettingsButtonPlugin.self,
-        GitSmartMergePlugin.self,
+        GitMergePlugin.self,
         GitStashPlugin.self,
         GitSubmodulePlugin.self,
         AuroraThemePlugin.self,

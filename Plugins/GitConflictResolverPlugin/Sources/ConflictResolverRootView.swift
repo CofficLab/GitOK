@@ -57,7 +57,7 @@ struct ConflictResolverRootView: View {
 
     private func blockingOverlay(projectURL: URL) -> some View {
         ZStack {
-            Color.black.opacity(0.38)
+            Color.black.opacity(0.12)
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
 
@@ -94,7 +94,7 @@ struct ConflictResolverRootView: View {
             .frame(minWidth: 720, idealWidth: 920, maxWidth: 1040)
             .frame(maxHeight: 760)
             .gitOKUISurface(cornerRadius: DesignTokens.Radius.md)
-            .shadow(color: .black.opacity(0.18), radius: 28, x: 0, y: 18)
+            .shadow(color: .black.opacity(0.35), radius: 48, x: 0, y: 28)
             .padding(DesignTokens.Spacing.xl)
         }
     }
