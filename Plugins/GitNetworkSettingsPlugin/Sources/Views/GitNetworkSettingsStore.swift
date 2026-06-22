@@ -58,7 +58,7 @@ final class GitNetworkSettingsStore: ObservableObject {
 
                 switch result {
                 case .success:
-                    self.message = "Git 网络配置已保存"
+                    self.message = GitNetworkSettingsPluginLocalization.string("Git network configuration saved")
                     self.load()
                 case let .failure(error):
                     self.errorMessage = error.localizedDescription

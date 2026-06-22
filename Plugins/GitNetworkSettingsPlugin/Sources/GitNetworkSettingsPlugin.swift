@@ -20,7 +20,7 @@ public enum GitNetworkSettingsPlugin: GitOKPlugin {
         [
             GitOKSettingsPaneItem(
                 id: "network",
-                title: GitNetworkSettingsPluginLocalization.string("网络"),
+                title: GitNetworkSettingsPluginLocalization.string("Network"),
                 systemImage: "network",
                 order: 40,
                 view: AnyView(GitNetworkSettingView())

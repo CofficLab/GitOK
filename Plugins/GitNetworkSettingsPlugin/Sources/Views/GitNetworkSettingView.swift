@@ -15,11 +15,11 @@ public struct GitNetworkSettingView: View {
             }
             .padding()
         }
-        .navigationTitle("网络")
+        .navigationTitle(GitNetworkSettingsPluginLocalization.string("Network"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 AppButton(
-                    "保存",
+                    GitNetworkSettingsPluginLocalization.string("Save"),
                     systemImage: "square.and.arrow.down",
                     style: .secondary,
                     size: .small,
@@ -36,21 +36,21 @@ public struct GitNetworkSettingView: View {
     }
 
     private var proxySection: some View {
-        GitOKUI.AppSettingsSection(title: "代理") {
+        GitOKUI.AppSettingsSection(title: GitNetworkSettingsPluginLocalization.string("Proxy")) {
             VStack(alignment: .leading, spacing: 14) {
                 labeledInput(
-                    title: "HTTP proxy",
-                    placeholder: "http://127.0.0.1:7890",
+                    title: GitNetworkSettingsPluginLocalization.string("HTTP proxy"),
+                    placeholder: GitNetworkSettingsPluginLocalization.string("HTTP proxy placeholder"),
                     text: $settings.httpProxy
                 )
 
                 labeledInput(
-                    title: "HTTPS proxy",
-                    placeholder: "http://127.0.0.1:7890",
+                    title: GitNetworkSettingsPluginLocalization.string("HTTPS proxy"),
+                    placeholder: GitNetworkSettingsPluginLocalization.string("HTTPS proxy placeholder"),
                     text: $settings.httpsProxy
                 )
 
-                Text("会写入 Git 全局配置 `http.proxy` 和 `https.proxy`。如果代理需要认证，可使用 `http://user:password@host:port` 格式。")
+                Text(GitNetworkSettingsPluginLocalization.string("Proxy configuration description"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -60,36 +60,36 @@ public struct GitNetworkSettingView: View {
     }
 
     private var certificateSection: some View {
-        GitOKUI.AppSettingsSection(title: "证书") {
+        GitOKUI.AppSettingsSection(title: GitNetworkSettingsPluginLocalization.string("Certificate")) {
             VStack(alignment: .leading, spacing: 14) {
                 AppToggleRow(
-                    title: "启用 Git SSL 证书验证",
+                    title: GitNetworkSettingsPluginLocalization.string("Enable Git SSL certificate verification"),
                     systemImage: "lock.shield",
                     isOn: $settings.sslVerify
                 )
                     .disabled(settings.isLoading || settings.isSaving)
 
                 HStack(spacing: 8) {
-                    AppInputField("/path/to/company-ca.pem", text: $settings.sslCAInfo)
+                    AppInputField(GitNetworkSettingsPluginLocalization.string("CA file placeholder"), text: $settings.sslCAInfo)
                         .disabled(settings.isLoading || settings.isSaving)
 
-                    AppButton("选择", systemImage: "folder", style: .secondary, size: .small) {
+                    AppButton(GitNetworkSettingsPluginLocalization.string("Choose"), systemImage: "folder", style: .secondary, size: .small) {
                         chooseCertificateFile()
                     }
                     .disabled(settings.isLoading || settings.isSaving)
 
-                    AppButton("清除", systemImage: "xmark", style: .tonal, size: .small) {
+                    AppButton(GitNetworkSettingsPluginLocalization.string("Clear"), systemImage: "xmark", style: .tonal, size: .small) {
                         settings.sslCAInfo = ""
                     }
                     .disabled(settings.isLoading || settings.isSaving || settings.sslCAInfo.isEmpty)
                 }
 
-                Text("CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。")
+                Text(GitNetworkSettingsPluginLocalization.string("Certificate configuration description"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                AppButton("打开钥匙串访问", systemImage: "key", style: .secondary, size: .small) {
+                AppButton(GitNetworkSettingsPluginLocalization.string("Open Keychain Access"), systemImage: "key", style: .secondary, size: .small) {
                     openKeychainAccess()
                 }
             }
@@ -100,7 +100,7 @@ public struct GitNetworkSettingView: View {
     @ViewBuilder
     private var statusSection: some View {
         if settings.isLoading {
-            AppLoadingOverlay(message: "正在读取 Git 网络配置…", size: .small)
+            AppLoadingOverlay(message: GitNetworkSettingsPluginLocalization.string("Reading Git network config…"), size: .small)
                 .frame(maxWidth: .infinity, minHeight: 48)
         } else if let errorMessage = settings.errorMessage {
             AppErrorBanner(message: errorMessage)
