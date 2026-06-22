@@ -393,6 +393,34 @@
           }
         }
       }
+    },
+    "App Description": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A modern Git client that makes Git operations simple and efficient."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一个现代化的 Git 客户端，让 Git 操作更加简单高效。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一個現代化的 Git 客戶端，讓 Git 操作更加簡單高效。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一個現代化的 Git 客戶端，讓 Git 操作更加簡單高效。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

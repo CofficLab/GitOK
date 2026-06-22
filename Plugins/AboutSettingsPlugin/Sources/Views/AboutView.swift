@@ -39,11 +39,11 @@ public struct AboutView: View, SuperLog {
 
                     // App 版本
                     VStack(spacing: 4) {
-                        Text(String.localizedStringWithFormat(String(localized: "Version %@"), appInfo.version))
+                        Text(String.localizedStringWithFormat(AboutSettingsPluginLocalization.string("Version %@"), appInfo.version))
                             .font(.body)
                             .foregroundColor(.secondary)
 
-                        Text(String.localizedStringWithFormat(NSLocalizedString("Build %@", comment: ""), appInfo.build))
+                        Text(String.localizedStringWithFormat(AboutSettingsPluginLocalization.string("Build %@"), appInfo.build))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -53,11 +53,11 @@ public struct AboutView: View, SuperLog {
                 VStack(spacing: 24) {
                     // 描述
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(String(localized: "About"))
+                        Text(AboutSettingsPluginLocalization.string("About"))
                             .font(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text(String(localized: .init(appInfo.description)))
+                        Text(AboutSettingsPluginLocalization.string("App Description"))
                             .font(.body)
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -66,47 +66,47 @@ public struct AboutView: View, SuperLog {
                     Divider()
 
                     // 基本信息
-                    GitOKUI.AppSettingsSection(title: String(localized: "App Info")) {
+                    GitOKUI.AppSettingsSection(title: AboutSettingsPluginLocalization.string("App Info")) {
                         infoRow(
-                            title: String(localized: "App Name"),
+                            title: AboutSettingsPluginLocalization.string("App Name"),
                             value: appInfo.name,
                             icon: "gearshape"
                         )
                         infoRow(
-                            title: String(localized: "Version"),
+                            title: AboutSettingsPluginLocalization.string("Version"),
                             value: appInfo.version,
                             icon: "speaker.wave.2"
                         )
                         infoRow(
-                            title: String(localized: "Build"),
+                            title: AboutSettingsPluginLocalization.string("Build"),
                             value: appInfo.build,
                             icon: "list.bullet"
                         )
                         infoRow(
-                            title: String(localized: "Bundle ID"),
+                            title: AboutSettingsPluginLocalization.string("Bundle ID"),
                             value: appInfo.bundleIdentifier,
                             icon: "info.circle"
                         )
                     }
 
                     // 链接
-                    GitOKUI.AppSettingsSection(title: String(localized: "Links")) {
+                    GitOKUI.AppSettingsSection(title: AboutSettingsPluginLocalization.string("Links")) {
                         linkRow(
-                            title: String(localized: "Website"),
+                            title: AboutSettingsPluginLocalization.string("Website"),
                             url: appInfo.website,
                             icon: "safari"
                         )
 
                         if !appInfo.repository.isEmpty {
                             linkRow(
-                                title: String(localized: "Source Code"),
+                                title: AboutSettingsPluginLocalization.string("Source Code"),
                                 url: appInfo.repository,
                                 icon: "calendar"
                             )
                         }
 
                         linkRow(
-                            title: String(localized: "Release Notes"),
+                            title: AboutSettingsPluginLocalization.string("Release Notes"),
                             url: "https://github.com/CofficLab/GitOK/releases/latest",
                             icon: "doc.text"
                         )
@@ -117,7 +117,7 @@ public struct AboutView: View, SuperLog {
                 Spacer()
             }
         }
-        .navigationTitle(Text("About"))
+        .navigationTitle(Text(AboutSettingsPluginLocalization.string("About")))
     }
 
     // MARK: - View Components

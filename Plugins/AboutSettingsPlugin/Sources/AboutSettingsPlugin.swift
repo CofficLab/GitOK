@@ -20,7 +20,7 @@ public enum AboutSettingsPlugin: GitOKPlugin {
         [
             GitOKSettingsPaneItem(
                 id: "about",
-                title: AboutSettingsPluginLocalization.string("关于"),
+                title: AboutSettingsPluginLocalization.string("About"),
                 systemImage: "info.circle",
                 order: 90,
                 view: AnyView(AboutView())
