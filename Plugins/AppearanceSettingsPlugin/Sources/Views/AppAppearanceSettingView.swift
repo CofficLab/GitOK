@@ -61,9 +61,9 @@ public struct AppAppearanceSettingView: View, SuperLog {
         }
         .navigationTitle(Text("外观"))
         .onAppear(perform: loadData)
-        .alert(String(localized: "Reset Appearance Settings"), isPresented: $showResetConfirmation) {
-            Button(String(localized: "Cancel"), role: .cancel) { }
-            Button(String(localized: "Reset"), role: .destructive) {
+        .alert(AppearanceSettingsPluginLocalization.string("Reset Appearance Settings"), isPresented: $showResetConfirmation) {
+            Button(AppearanceSettingsPluginLocalization.string("Cancel"), role: .cancel) { }
+            Button(AppearanceSettingsPluginLocalization.string("Reset"), role: .destructive) {
                 resetToDefaults()
             }
         } message: {
@@ -74,7 +74,7 @@ public struct AppAppearanceSettingView: View, SuperLog {
     // MARK: - View Components
 
     private var themeSelectionSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Theme")) {
+        GitOKUI.AppSettingsSection(title: AppearanceSettingsPluginLocalization.string("Theme")) {
             Picker("", selection: $themeAppearanceFilter) {
                 ForEach(ThemeAppearanceFilter.allCases) { filter in
                     Text(filter.title).tag(filter)
@@ -90,7 +90,7 @@ public struct AppAppearanceSettingView: View, SuperLog {
                             .foregroundColor(.secondary)
                             .frame(width: 28)
 
-                        Text(String(localized: "No themes in this category"))
+                        Text(AppearanceSettingsPluginLocalization.string("No themes in this category"))
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
 
@@ -159,7 +159,7 @@ public struct AppAppearanceSettingView: View, SuperLog {
 
     /// 主题模式设置
     private var themeModeSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Theme Mode")) {
+        GitOKUI.AppSettingsSection(title: AppearanceSettingsPluginLocalization.string("Theme Mode")) {
             ForEach(AppAppearanceSettingsStore.ThemeMode.allCases) { mode in
                 themeModeRow(mode)
             }
@@ -202,17 +202,17 @@ public struct AppAppearanceSettingView: View, SuperLog {
     private func modeDescription(_ mode: AppAppearanceSettingsStore.ThemeMode) -> String {
         switch mode {
         case .system:
-            return String(localized: "Automatically switch with system settings")
+            return AppearanceSettingsPluginLocalization.string("Automatically switch with system settings")
         case .light:
-            return String(localized: "Always use light appearance")
+            return AppearanceSettingsPluginLocalization.string("Always use light appearance")
         case .dark:
-            return String(localized: "Always use dark appearance")
+            return AppearanceSettingsPluginLocalization.string("Always use dark appearance")
         }
     }
 
     /// 强调色设置
     private var accentColorSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Accent Color")) {
+        GitOKUI.AppSettingsSection(title: AppearanceSettingsPluginLocalization.string("Accent Color")) {
             VStack(alignment: .leading, spacing: 16) {
                 Text("选择应用的主要强调色")
                     .font(.caption)
@@ -269,7 +269,7 @@ public struct AppAppearanceSettingView: View, SuperLog {
 
     /// 字体大小设置
     private var fontSizeSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Font Size")) {
+        GitOKUI.AppSettingsSection(title: AppearanceSettingsPluginLocalization.string("Font Size")) {
             ForEach(AppAppearanceSettingsStore.FontSize.allCases) { size in
                 fontSizeRow(size)
             }
@@ -318,7 +318,7 @@ public struct AppAppearanceSettingView: View, SuperLog {
 
     /// 布局密度设置
     private var layoutDensitySection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Layout Density")) {
+        GitOKUI.AppSettingsSection(title: AppearanceSettingsPluginLocalization.string("Layout Density")) {
             ForEach(AppAppearanceSettingsStore.LayoutDensity.allCases) { density in
                 layoutDensityRow(density)
             }
@@ -362,11 +362,11 @@ public struct AppAppearanceSettingView: View, SuperLog {
     private func densityDescription(_ density: AppAppearanceSettingsStore.LayoutDensity) -> String {
         switch density {
         case .compact:
-            return String(localized: "More compact layout, displays more content")
+            return AppearanceSettingsPluginLocalization.string("More compact layout, displays more content")
         case .comfortable:
-            return String(localized: "Balanced layout, suitable for most scenarios")
+            return AppearanceSettingsPluginLocalization.string("Balanced layout, suitable for most scenarios")
         case .spacious:
-            return String(localized: "More spacious layout, visually comfortable")
+            return AppearanceSettingsPluginLocalization.string("More spacious layout, visually comfortable")
         }
     }
 
@@ -380,9 +380,9 @@ public struct AppAppearanceSettingView: View, SuperLog {
 
     /// 重置设置
     private var resetSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Reset")) {
+        GitOKUI.AppSettingsSection(title: AppearanceSettingsPluginLocalization.string("Reset")) {
             AppButton(
-                String(localized: "重置所有外观设置"),
+                AppearanceSettingsPluginLocalization.string("重置所有外观设置"),
                 systemImage: "arrow.counterclockwise",
                 style: .destructive,
                 size: .small
@@ -438,13 +438,13 @@ enum ThemeAppearanceFilter: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .all:
-            return String(localized: "All")
+            return AppearanceSettingsPluginLocalization.string("All")
         case .dark:
-            return String(localized: "Black")
+            return AppearanceSettingsPluginLocalization.string("Black")
         case .light:
-            return String(localized: "Light")
+            return AppearanceSettingsPluginLocalization.string("Light")
         case .system:
-            return String(localized: "System")
+            return AppearanceSettingsPluginLocalization.string("System")
         }
     }
 
