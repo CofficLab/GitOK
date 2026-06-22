@@ -17,10 +17,10 @@ struct PaddingControl: View {
         GroupBox {
             VStack(spacing: 8) {
                 VStack(spacing: 2) {
-                    Text("内边距 \(String(format: "%.1f", localPadding))")
+                    Text(String(localized: "内边距 \(String(format: "%.1f", localPadding))"))
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text("Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置")
+                    Text(String(localized: "Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置"))
                         .font(.caption2)
                         .foregroundColor(.secondary.opacity(0.8))
                 }

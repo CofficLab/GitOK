@@ -41,11 +41,11 @@ public struct CredentialInputView: View {
                     .font(.system(size: 40))
                     .foregroundColor(.blue)
 
-                Text("添加 Git 凭据")
+                Text(GitWorkingStatePluginLocalization.string("Add Git Credentials"))
                     .font(.title)
                     .fontWeight(.bold)
 
-                Text("为 \(server) 添加您的 Git 认证信息")
+                Text(String(localized: "Add your Git authentication information for \(server)"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -53,17 +53,17 @@ public struct CredentialInputView: View {
 
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Git 用户名")
+                    Text(GitWorkingStatePluginLocalization.string("Git Username"))
                         .font(.headline)
                         .foregroundColor(.primary)
 
-                    AppInputField("例如: CofficLab", text: $username)
+                    AppInputField(GitWorkingStatePluginLocalization.string("e.g., CofficLab"), text: $username)
                         .disableAutocorrection(true)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text("Personal Access Token 或密码")
+                        Text(GitWorkingStatePluginLocalization.string("Personal Access Token or Password"))
                             .font(.headline)
                             .foregroundColor(.primary)
 
@@ -74,9 +74,9 @@ public struct CredentialInputView: View {
                         }
                     }
 
-                    AppInputField("token 或密码", text: $token, fieldType: .secure)
+                    AppInputField(GitWorkingStatePluginLocalization.string("Token or Password"), text: $token, fieldType: .secure)
 
-                    Text("GitOK 会通过当前 Git credential helper 保存凭据；GitHub/GitLab 等平台通常需要 token。")
+                    Text(GitWorkingStatePluginLocalization.string("GitOK saves credentials through the current Git credential helper; platforms like GitHub/GitLab usually require tokens."))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -87,12 +87,12 @@ public struct CredentialInputView: View {
             Spacer()
 
             HStack(spacing: 12) {
-                AppButton("取消", style: .secondary) {
+                AppButton(GitWorkingStatePluginLocalization.string("Cancel"), style: .secondary) {
                     dismiss()
                 }
                 .disabled(isSaving)
 
-                AppButton("保存凭据", systemImage: "key.fill", style: .primary, isLoading: isSaving) {
+                AppButton(GitWorkingStatePluginLocalization.string("Save Credentials"), systemImage: "key.fill", style: .primary, isLoading: isSaving) {
                     saveCredentials()
                 }
                 .disabled(username.isEmpty || token.isEmpty || isSaving)
@@ -100,16 +100,16 @@ public struct CredentialInputView: View {
             .padding(.bottom, 20)
         }
         .frame(width: 500, height: 400)
-        .alert("保存成功", isPresented: $showSuccessAlert) {
-            Button("确定") {
+        .alert(GitWorkingStatePluginLocalization.string("Save Successful"), isPresented: $showSuccessAlert) {
+            Button(GitWorkingStatePluginLocalization.string("OK")) {
                 dismiss()
                 onSave()
             }
         } message: {
-            Text("凭据已安全保存到 macOS Keychain")
+            Text(GitWorkingStatePluginLocalization.string("Credentials securely saved to macOS Keychain"))
         }
-        .alert("保存失败", isPresented: $showErrorAlert) {
-            Button("确定", role: .cancel) { }
+        .alert(GitWorkingStatePluginLocalization.string("Save Failed"), isPresented: $showErrorAlert) {
+            Button(GitWorkingStatePluginLocalization.string("OK"), role: .cancel) { }
         } message: {
             Text(errorMessage)
         }

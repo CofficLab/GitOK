@@ -9,11 +9,11 @@ struct IconWelcomeView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.accentColor)
 
-            Text("图标工坊")
+            Text(String(localized: "icon-workshop"))
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            Text("在这里，您可以轻松为您的 macOS 和 iOS 应用创建精美的图标。")
+            Text(String(localized: "在这里，您可以轻松为您的 macOS 和 iOS 应用创建精美的图标。"))
                 .font(.title2)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)

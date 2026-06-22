@@ -19,7 +19,7 @@ struct DownloadButtons: View {
             ImageSetDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
 
             if currentIconAsset == nil || iconProvider.currentData == nil {
-                Text("请先选择一个图标")
+                Text(String(localized: "请先选择一个图标"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

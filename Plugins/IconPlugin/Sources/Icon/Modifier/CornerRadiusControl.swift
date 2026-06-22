@@ -16,7 +16,7 @@ struct CornerRadiusControl: View {
     var body: some View {
         GroupBox {
             VStack(spacing: 8) {
-                Text("圆角 \(Int(localCornerRadius))")
+                Text(String(localized: "圆角 %lld").replacingOccurrences(of: "%lld", with: "\(Int(localCornerRadius))"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Slider(value: $localCornerRadius, in: 0...512, step: 1)

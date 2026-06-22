@@ -16,7 +16,7 @@ struct ScaleControl: View {
     var body: some View {
         GroupBox {
             VStack(spacing: 8) {
-                Text("缩放 \(String(format: "%.1f", localScale))")
+                Text(String(localized: "缩放 \(String(format: "%.1f", localScale))"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Slider(value: $localScale, in: 0.2...3.0)

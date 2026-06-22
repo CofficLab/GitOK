@@ -86,11 +86,11 @@ public struct UserInfoConfigView: View, SuperLog {
             VStack(spacing: 20) {
                 // 说明文本
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("配置当前项目的Git用户信息")
+                    Text(String(localized: "配置当前项目的Git用户信息"))
                         .font(.title2)
                         .fontWeight(.medium)
 
-                    Text("这些设置仅适用于当前项目，不会影响全局Git配置")
+                    Text(String(localized: "这些设置仅适用于当前项目，不会影响全局Git配置"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -126,7 +126,7 @@ public struct UserInfoConfigView: View, SuperLog {
                     VStack(spacing: 0) {
                         // 用户名
                         HStack {
-                            Text("用户名")
+                            Text(String(localized: "用户名"))
                                 .frame(width: 80, alignment: .leading)
                             AppInputField(String(localized: "Enter username"), text: $userName)
                                 .onChange(of: userName) {
@@ -142,7 +142,7 @@ public struct UserInfoConfigView: View, SuperLog {
 
                         // 邮箱
                         HStack {
-                            Text("邮箱")
+                            Text(String(localized: "邮箱"))
                                 .frame(width: 80, alignment: .leading)
                             AppInputField(String(localized: "Enter email"), text: $userEmail)
                                 .onChange(of: userEmail) {
