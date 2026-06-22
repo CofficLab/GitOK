@@ -20,7 +20,7 @@ public enum AppearanceSettingsPlugin: GitOKPlugin {
         [
             GitOKSettingsPaneItem(
                 id: "appearance",
-                title: AppearanceSettingsPluginLocalization.string("外观"),
+                title: AppearanceSettingsPluginLocalization.string("Appearance"),
                 systemImage: "paintbrush",
                 order: 70,
                 view: AnyView(AppAppearanceSettingView())

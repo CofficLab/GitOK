@@ -20,7 +20,7 @@ public enum GitCommitStyleSettingsPlugin: GitOKPlugin {
         [
             GitOKSettingsPaneItem(
                 id: "commitStyle",
-                title: GitCommitStyleSettingsPluginLocalization.string("Commit 风格"),
+                title: GitCommitStyleSettingsPluginLocalization.string("Commit Style"),
                 systemImage: "text.alignleft",
                 order: 30,
                 view: AnyView(CommitStyleSettingView())

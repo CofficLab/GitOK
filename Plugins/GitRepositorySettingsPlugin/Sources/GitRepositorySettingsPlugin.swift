@@ -20,7 +20,7 @@ public enum GitRepositorySettingsPlugin: GitOKPlugin {
         [
             GitOKSettingsPaneItem(
                 id: "repository",
-                title: GitRepositorySettingsPluginLocalization.string("仓库设置"),
+                title: GitRepositorySettingsPluginLocalization.string("Repository Settings"),
                 systemImage: "folder.badge.gearshape",
                 order: 10,
                 view: AnyView(RepositorySettingView())
