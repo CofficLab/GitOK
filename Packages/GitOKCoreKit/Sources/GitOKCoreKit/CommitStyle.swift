@@ -3,9 +3,9 @@ import Foundation
 /// Commit 风格选择器枚举
 /// 定义提交消息的不同显示风格
 public enum CommitStyle: String, CaseIterable {
-    case emoji = "Emoji风格"
-    case plain = "纯文本风格"
-    case lowercase = "纯文本小写"
+    case emoji = "Emoji Style"
+    case plain = "Plain Style"
+    case lowercase = "Lowercase Style"
 
     /// 显示标签
     public var label: String {
