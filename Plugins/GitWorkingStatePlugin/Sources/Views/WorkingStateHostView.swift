@@ -50,6 +50,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     private let fetch: (Project) async throws -> Void
     private let pull: (Project) async throws -> Void
     private let push: (Project) async throws -> Void
+    private let stashSave: (Project) async throws -> Void
     private let loadConflictState: (Project) async throws -> WorkingStateConflictState
     private let stageConflictFile: (Project, String) async throws -> Void
     private let useConflictFileVersion: (Project, String, GitMergeFileVersion) async throws -> Void
@@ -93,6 +94,8 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     @State private var sshHelpRemoteURL: String?
     @State private var sshHelpErrorMessage: String?
     @State private var sshHelpRetryOperation: CommitRemoteSyncRules.RetryOperation?
+    @State private var showPullBlockedByLocalChanges = false
+    @State private var pullBlockedMessage = ""
     @State private var changedFileCountTask: Task<Void, Never>?
     @State private var syncStatusTask: Task<Void, Never>?
     @State private var conflictRefreshTask: Task<Void, Never>?
@@ -115,6 +118,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         fetch: @escaping (Project) async throws -> Void,
         pull: @escaping (Project) async throws -> Void,
         push: @escaping (Project) async throws -> Void,
+        stashSave: @escaping (Project) async throws -> Void = { _ in },
         loadConflictState: @escaping (Project) async throws -> WorkingStateConflictState = { _ in .inactive },
         stageConflictFile: @escaping (Project, String) async throws -> Void = { _, _ in },
         useConflictFileVersion: @escaping (Project, String, GitMergeFileVersion) async throws -> Void = { _, _, _ in },
@@ -153,6 +157,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         self.fetch = fetch
         self.pull = pull
         self.push = push
+        self.stashSave = stashSave
         self.loadConflictState = loadConflictState
         self.stageConflictFile = stageConflictFile
         self.useConflictFileVersion = useConflictFileVersion
@@ -192,6 +197,8 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
             activeConflictPath: activeConflictPath,
             showCredentialInput: $showCredentialInput,
             showSSHHelp: $showSSHHelp,
+            showPullBlockedByLocalChanges: $showPullBlockedByLocalChanges,
+            pullBlockedMessage: pullBlockedMessage,
             credentialHost: credentialHost,
             credentialRetryOperation: credentialRetryOperation,
             sshHelpContent: {
@@ -208,6 +215,7 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
             onFetch: performFetch,
             onPull: performPull,
             onPush: performPush,
+            onStashAndPull: performStashAndPull,
             onOpenConflictFile: performOpenConflictFile,
             onRevealConflictFile: performRevealConflictFile,
             onStageConflictFile: performStageConflictFile,
@@ -590,7 +598,33 @@ private extension WorkingStateHostView {
             setStatus(nil)
             return
         }
-        await presentRemoteFailure(error, operation: .pull)
+        switch WorkingStatePullRules.pullFailureDecision(
+            error: error,
+            isMerging: false
+        ) {
+        case .suppressedForMergeConflict:
+            setStatus(nil)
+        case let .offerStashAndPull(message):
+            pullBlockedMessage = message
+            showPullBlockedByLocalChanges = true
+            setStatus(nil)
+        case .presentRemoteFailure:
+            await presentRemoteFailure(error, operation: .pull)
+        }
+    }
+
+    func performStashAndPull() {
+        guard let project else { return }
+        showPullBlockedByLocalChanges = false
+
+        Task {
+            await WorkingStatePullRules.runStashAndPull(
+                stashSave: { try await stashSave(project) },
+                onStashSaved: { scheduleChangedFileCountRefresh() },
+                pull: { performPull() },
+                onFailure: { error in eventHandler(.showError(error)) }
+            )
+        }
     }
 
     func performPushOperation(_ command: CommitRemoteSyncRules.ProjectRemoteOperationCommand<Project>) async {

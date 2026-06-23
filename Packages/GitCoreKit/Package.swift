@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/nookery/LibGit2Swift.git", branch: "main"),
+        .package(url: "https://github.com/nookery/LibGit2Swift.git", revision: "34bf2854d385bab71518bfd527a4dd72f010b21d"),
     ],
     targets: [
         .target(

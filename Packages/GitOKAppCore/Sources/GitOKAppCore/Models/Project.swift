@@ -1311,6 +1311,20 @@ extension Project {
         }
     }
 
+    public func stashSaveAsync(message: String? = nil) async throws {
+        let repositoryURL = url
+
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                try GitRepositoryCLI(repositoryURL: repositoryURL).stashSave(message: message)
+            }.value
+            postEvent(.stashSaveSuccess(message: message))
+        } catch {
+            postEvent(.stashSaveFailure(message: message, error: error))
+            throw error
+        }
+    }
+
     /// 获取stash列表
     /// - Returns: stash列表，包含索引、消息、分支、时间和预览信息
     /// - Throws: Git操作异常
