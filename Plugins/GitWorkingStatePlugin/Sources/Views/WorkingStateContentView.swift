@@ -17,12 +17,15 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
     private let activeConflictPath: String?
     @Binding private var showCredentialInput: Bool
     @Binding private var showSSHHelp: Bool
+    @Binding private var showPullBlockedByLocalChanges: Bool
+    private let pullBlockedMessage: String
     private let credentialHost: String
     private let credentialRetryOperation: CommitRemoteSyncRules.RetryOperation?
     private let sshHelpContent: () -> SSHHelpContent
     private let onFetch: () -> Void
     private let onPull: () -> Void
     private let onPush: () -> Void
+    private let onStashAndPull: () -> Void
     private let onOpenConflictFile: (String) -> Void
     private let onRevealConflictFile: (String) -> Void
     private let onStageConflictFile: (String) -> Void
@@ -50,12 +53,15 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
         activeConflictPath: String? = nil,
         showCredentialInput: Binding<Bool>,
         showSSHHelp: Binding<Bool>,
+        showPullBlockedByLocalChanges: Binding<Bool>,
+        pullBlockedMessage: String = "",
         credentialHost: String,
         credentialRetryOperation: CommitRemoteSyncRules.RetryOperation?,
         @ViewBuilder sshHelpContent: @escaping () -> SSHHelpContent,
         onFetch: @escaping () -> Void,
         onPull: @escaping () -> Void,
         onPush: @escaping () -> Void,
+        onStashAndPull: @escaping () -> Void = {},
         onOpenConflictFile: @escaping (String) -> Void = { _ in },
         onRevealConflictFile: @escaping (String) -> Void = { _ in },
         onStageConflictFile: @escaping (String) -> Void = { _ in },
@@ -82,12 +88,15 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
         self.activeConflictPath = activeConflictPath
         _showCredentialInput = showCredentialInput
         _showSSHHelp = showSSHHelp
+        _showPullBlockedByLocalChanges = showPullBlockedByLocalChanges
+        self.pullBlockedMessage = pullBlockedMessage
         self.credentialHost = credentialHost
         self.credentialRetryOperation = credentialRetryOperation
         self.sshHelpContent = sshHelpContent
         self.onFetch = onFetch
         self.onPull = onPull
         self.onPush = onPush
+        self.onStashAndPull = onStashAndPull
         self.onOpenConflictFile = onOpenConflictFile
         self.onRevealConflictFile = onRevealConflictFile
         self.onStageConflictFile = onStageConflictFile
@@ -150,6 +159,23 @@ public struct WorkingStateContentView<SSHHelpContent: View>: View {
         }
         .sheet(isPresented: $showSSHHelp) {
             sshHelpContent()
+        }
+        .alert(
+            GitWorkingStatePluginLocalization.string("Pull Blocked by Local Changes"),
+            isPresented: $showPullBlockedByLocalChanges
+        ) {
+            Button(GitWorkingStatePluginLocalization.string("Cancel"), role: .cancel) {}
+            Button(GitWorkingStatePluginLocalization.string("Stash and Pull")) {
+                onStashAndPull()
+            }
+        } message: {
+            Text(
+                pullBlockedMessage.isEmpty
+                    ? GitWorkingStatePluginLocalization.string(
+                        "You have uncommitted changes that would be overwritten by pull. Stash them first, then pull again."
+                    )
+                    : pullBlockedMessage
+            )
         }
     }
 }

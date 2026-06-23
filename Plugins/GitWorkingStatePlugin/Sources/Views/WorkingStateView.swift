@@ -72,6 +72,9 @@ public struct WorkingStateView: View, SuperLog {
             push: { project in
                 try await project.pushAsync()
             },
+            stashSave: { project in
+                try await project.stashSaveAsync()
+            },
             loadConflictState: { project in
                 try await loadConflictState(for: project)
             },

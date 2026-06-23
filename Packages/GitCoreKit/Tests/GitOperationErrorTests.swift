@@ -31,4 +31,10 @@ final class GitOperationErrorTests: XCTestCase {
         XCTAssertEqual(GitOperationError.remoteErrorKind(from: LibGit2Error.configNotFound), .known)
         XCTAssertEqual(GitOperationError.remoteErrorKind(from: NSError(domain: "Other", code: 1)), .other)
     }
+
+    func testDetectsLocalChangesWouldBeOverwritten() {
+        let error = LibGit2Error.localChangesWouldBeOverwritten(message: "checkout blocked")
+        XCTAssertTrue(GitOperationError.isLocalChangesWouldBeOverwritten(error))
+        XCTAssertFalse(GitOperationError.isLocalChangesWouldBeOverwritten(LibGit2Error.mergeConflict))
+    }
 }

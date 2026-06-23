@@ -64,4 +64,11 @@ public enum GitOperationError: LocalizedError {
 
         return .other
     }
+
+    public static func isLocalChangesWouldBeOverwritten(_ error: Error) -> Bool {
+        if case LibGit2Error.localChangesWouldBeOverwritten = error {
+            return true
+        }
+        return false
+    }
 }

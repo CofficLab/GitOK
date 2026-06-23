@@ -256,6 +256,34 @@
         }
       }
     },
+    "Pull Blocked by Local Changes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pull Blocked by Local Changes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法 Pull：存在本地改动"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法 Pull：存在本機變更"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法 Pull：存在本機變更"
+          }
+        }
+      }
+    },
     "Save Credentials" : {
       "localizations" : {
         "en" : {
@@ -340,6 +368,34 @@
         }
       }
     },
+    "Stash and Pull" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stash and Pull"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂存并 Pull"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暫存並 Pull"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暫存並 Pull"
+          }
+        }
+      }
+    },
     "Token or Password" : {
       "localizations" : {
         "en" : {
@@ -364,6 +420,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "token 或密碼"
+          }
+        }
+      }
+    },
+    "You have uncommitted changes that would be overwritten by pull. Stash them first, then pull again." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have uncommitted changes that would be overwritten by pull. Stash them first, then pull again."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你有未提交的本地改动，继续 Pull 可能会覆盖它们。请先暂存改动，再重新 Pull。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你有未提交的本機變更，繼續 Pull 可能會覆蓋它們。請先暫存變更，再重新 Pull。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你有未提交的本機變更，繼續 Pull 可能會覆蓋它們。請先暫存變更，再重新 Pull。"
           }
         }
       }
