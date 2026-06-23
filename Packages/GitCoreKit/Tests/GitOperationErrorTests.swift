@@ -37,4 +37,11 @@ final class GitOperationErrorTests: XCTestCase {
         XCTAssertTrue(GitOperationError.isLocalChangesWouldBeOverwritten(error))
         XCTAssertFalse(GitOperationError.isLocalChangesWouldBeOverwritten(LibGit2Error.mergeConflict))
     }
+
+    func testLocalChangesWouldBeOverwrittenIncludesRecoverySuggestion() {
+        let error = LibGit2Error.localChangesWouldBeOverwritten(message: "blocked")
+        let localized = error as LocalizedError
+        XCTAssertEqual(localized.errorDescription, "blocked")
+        XCTAssertEqual(localized.recoverySuggestion, "Commit or stash your changes before continuing")
+    }
 }

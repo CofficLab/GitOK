@@ -598,21 +598,19 @@ private extension WorkingStateHostView {
             setStatus(nil)
             return
         }
-        if GitOperationError.isLocalChangesWouldBeOverwritten(error) {
-            pullBlockedMessage = pullBlockedAlertMessage(for: error)
+        switch WorkingStatePullRules.pullFailureDecision(
+            error: error,
+            isMerging: false
+        ) {
+        case .suppressedForMergeConflict:
+            setStatus(nil)
+        case let .offerStashAndPull(message):
+            pullBlockedMessage = message
             showPullBlockedByLocalChanges = true
             setStatus(nil)
-            return
+        case .presentRemoteFailure:
+            await presentRemoteFailure(error, operation: .pull)
         }
-        await presentRemoteFailure(error, operation: .pull)
-    }
-
-    func pullBlockedAlertMessage(for error: Error) -> String {
-        let localizedError = error as? LocalizedError
-        return [localizedError?.errorDescription, localizedError?.recoverySuggestion]
-            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { $0.isEmpty == false }
-            .joined(separator: "\n\n")
     }
 
     func performStashAndPull() {
@@ -620,13 +618,12 @@ private extension WorkingStateHostView {
         showPullBlockedByLocalChanges = false
 
         Task {
-            do {
-                try await stashSave(project)
-                scheduleChangedFileCountRefresh()
-                performPull()
-            } catch {
-                eventHandler(.showError(error))
-            }
+            await WorkingStatePullRules.runStashAndPull(
+                stashSave: { try await stashSave(project) },
+                onStashSaved: { scheduleChangedFileCountRefresh() },
+                pull: { performPull() },
+                onFailure: { error in eventHandler(.showError(error)) }
+            )
         }
     }
 

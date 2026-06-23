@@ -1,4 +1,5 @@
 import Foundation
+import LibGit2Swift
 import XCTest
 @testable import GitCoreKit
 
@@ -712,6 +713,81 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertThrowsError(try client.deleteLocalTag(named: "  ")) { error in
             XCTAssertTrue((error as NSError).localizedDescription.contains("标签名称不能为空"))
         }
+    }
+
+    func testPullRefusesToOverwriteLocalChanges() throws {
+        let remote = try TestGitRepository()
+        try remote.write("README.md", content: "v1\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "initial"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let localURL = destinationRoot.appendingPathComponent("local", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        try remote.write("README.md", content: "v2\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "update"])
+
+        let localReadmeURL = localURL.appendingPathComponent("README.md")
+        try "local edit\n".write(to: localReadmeURL, atomically: true, encoding: .utf8)
+
+        let local = TestGitRepository(url: localURL)
+        let headBeforePull = try local.run(["rev-parse", "HEAD"])
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+
+        XCTAssertThrowsError(try client.pull()) { error in
+            XCTAssertTrue(GitOperationError.isLocalChangesWouldBeOverwritten(error))
+            guard case LibGit2Error.localChangesWouldBeOverwritten = error else {
+                XCTFail("Expected localChangesWouldBeOverwritten, got \(error)")
+                return
+            }
+        }
+
+        XCTAssertEqual(try String(contentsOf: localReadmeURL, encoding: .utf8), "local edit\n")
+        XCTAssertEqual(try local.run(["rev-parse", "HEAD"]), headBeforePull)
+    }
+
+    func testPullAfterStashSucceedsWhenRemoteHasAdvanced() throws {
+        let remote = try TestGitRepository()
+        try remote.write("README.md", content: "v1\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "initial"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let localURL = destinationRoot.appendingPathComponent("local", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        try remote.write("README.md", content: "v2\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "update"])
+
+        let localReadmeURL = localURL.appendingPathComponent("README.md")
+        try "local edit\n".write(to: localReadmeURL, atomically: true, encoding: .utf8)
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+
+        XCTAssertThrowsError(try client.pull()) { error in
+            XCTAssertTrue(GitOperationError.isLocalChangesWouldBeOverwritten(error))
+        }
+
+        try client.stashSave(message: "GitOK auto-stash before pull")
+        XCTAssertEqual(try String(contentsOf: localReadmeURL, encoding: .utf8), "v1\n")
+
+        try client.pull()
+
+        XCTAssertEqual(try String(contentsOf: localReadmeURL, encoding: .utf8), "v2\n")
+        let stashes = try client.stashList()
+        XCTAssertEqual(stashes.count, 1)
+        XCTAssertTrue(stashes[0].message.contains("GitOK auto-stash before pull"))
     }
 
     func testPushTagPushesTagToOrigin() throws {
