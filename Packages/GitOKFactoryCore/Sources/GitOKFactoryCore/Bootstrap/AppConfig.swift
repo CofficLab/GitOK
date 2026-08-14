@@ -6,16 +6,16 @@ import GitOKFoundationKit
 
 /// 应用配置枚举
 /// 提供应用的基本配置信息和数据库设置
-enum AppConfig: SuperLog {
+public enum AppConfig: SuperLog {
     /// 日志标识符
-    nonisolated static let emoji = "⚙️"
+    public nonisolated static let emoji = "⚙️"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    public nonisolated static let verbose = false
 
     /// 文件管理器实例
     static let fileManager = FileManager.default
-    static func getAppName() -> String {
+    public static func getAppName() -> String {
         if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
             return appName
         } else {
@@ -33,11 +33,11 @@ enum AppConfig: SuperLog {
 
     // MARK: Application Support
 
-    static func getAppSupportDir() -> URL {
+    public static func getAppSupportDir() -> URL {
         try! fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }
 
-    static func getCurrentAppSupportDir() -> URL {
+    public static func getCurrentAppSupportDir() -> URL {
         getAppSupportDir().appendingPathComponent(getAppName())
     }
 
@@ -46,7 +46,7 @@ enum AppConfig: SuperLog {
 
     // MARK: 数据库
 
-    static func getDBFolderURL() -> URL {
+    public static func getDBFolderURL() -> URL {
         return AppConfig.getCurrentAppSupportDir()
     }
 }
@@ -56,7 +56,7 @@ enum AppConfig: SuperLog {
 extension AppConfig {
     static var dbFileName = AppConfig.debug ? "gitok_debug.db" : "gitok.db"
     
-    static func getContainer() -> ModelContainer {
+    public static func getContainer() -> ModelContainer {
         let start = Date()
         let url = AppConfig.getDBFolderURL().appendingPathComponent(dbFileName)
         if Self.verbose {

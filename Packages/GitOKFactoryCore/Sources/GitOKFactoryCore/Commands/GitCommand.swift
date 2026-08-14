@@ -4,9 +4,11 @@ import GitOKCoreKit
 import GitOKSupportKit
 
 /// Git 菜单命令：集中暴露常用仓库操作和快捷键。
-struct GitCommand: Commands, SuperLog {
-    nonisolated static let emoji = "⌘"
-    nonisolated static let verbose = false
+public struct GitCommand: Commands, SuperLog {
+    public nonisolated static let emoji = "⌘"
+    public nonisolated static let verbose = false
+
+    public init() {}
 
     @FocusedObject private var projectVM: ProjectVM?
 
@@ -22,7 +24,7 @@ struct GitCommand: Commands, SuperLog {
         hasGitProject && (projectVM?.behindCount ?? 0) > 0
     }
 
-    var body: some Commands {
+    public var body: some Commands {
         #if os(macOS)
         CommandMenu("Git") {
             Button(String(localized: "Refresh Status")) {

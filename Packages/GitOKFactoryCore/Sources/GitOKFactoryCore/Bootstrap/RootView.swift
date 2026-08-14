@@ -11,12 +11,12 @@ import SwiftUI
 
 /// 根视图容器组件
 /// 为应用提供统一的上下文环境，包括数据提供者和插件提供者
-struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
+public struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 日志标识符
-    static var emoji: String { "🚉" }
+    public static var emoji: String { "🚉" }
 
     /// 是否启用详细日志输出
-    static var verbose: Bool { false }
+    public static var verbose: Bool { false }
 
     /// 视图内容
     var content: Content
@@ -44,14 +44,14 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 拖拽覆盖层是否可见
     @State private var isDropTargeted = false
 
-    init(@ViewBuilder content: () -> Content) {
+    public init(@ViewBuilder content: () -> Content) {
         let container = RootContainer.shared
         self.content = content()
         _themeProvider = ObservedObject(wrappedValue: container.themeVM)
         _projectVM = ObservedObject(wrappedValue: container.projectVM)
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             GeometryReader { proxy in
                 themeProvider.activeChromeTheme
@@ -314,7 +314,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
 extension View {
     /// 将当前视图包裹在RootView中
     /// - Returns: 被RootView包裹的视图
-    func inRootView() -> some View {
+    public func inRootView() -> some View {
         RootView {
             self
         }

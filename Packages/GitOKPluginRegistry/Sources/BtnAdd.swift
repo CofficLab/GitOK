@@ -72,24 +72,3 @@ struct BtnAdd: View, SuperLog {
         }
     }
 }
-
-// MARK: - Preview
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 1200)
-        .frame(height: 1200)
-}

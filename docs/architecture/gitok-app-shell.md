@@ -3,16 +3,20 @@
 GitOK follows the same layered model as Lumi:
 
 ```text
-GitOKApp/          Thin shell: @main, scenes, commands, composition root (RootContainer)
+GitOKApp/          Thin shell (~LumiApp): @main scene declarations, MacAgent,
+                  Sparkle channel-specific commands
 Packages/
-  GitOKFactoryCore/   Host engine (Lumi FactoryCore equivalent): PluginService,
-                      layout views, app services — plugin-agnostic
+  GitOKFactoryCore/   Host engine (Lumi FactoryCore equivalent): RootContainer,
+                      RootView, layout views, app services, settings window,
+                      menu commands — plugin-agnostic
   GitOKCoreKit/       Plugin SDK + kernel (Lumi KernelLumi equivalent)
   GitCoreKit/         Git engine (git CLI wrapper)
   GitOKUI/            Design system (Lumi LumiUI equivalent)
   …                   Domain kits
 Plugins/           Feature SPM packages (one plugin per directory)
-GitOKPluginRegistry/  Compile-time plugin catalog (Lumi FactoryLumi equivalent)
+GitOKPluginRegistry/  Compile-time plugin catalog + GitOKFactory facade
+                      (Lumi FactoryLumi equivalent: makeMainWindow() /
+                      makeCommands() / makeSettingsWindow())
 ```
 
 ## Dependency rules
@@ -21,6 +25,7 @@ GitOKPluginRegistry/  Compile-time plugin catalog (Lumi FactoryLumi equivalent)
 |-------|------------|
 | GitOKApp | GitOKFactoryCore, GitOKPluginRegistry, domain kits |
 | GitOKFactoryCore | GitOKAppCore, GitOKCoreKit, GitOKUI, domain kits — **no plugins** |
+| GitOKPluginRegistry | GitOKFactoryCore + all plugins (composition layer) |
 | Plugins | GitOKCoreKit, domain kits |
 | GitOKCoreKit | Foundation, GitOKUI, GitCoreKit (no Plugins) |
 | Plugins | **Must not** import GitOKApp or GitOKFactoryCore |
@@ -52,17 +57,18 @@ Plugins that receive data through `GitOKPluginContext` (GitWatcher, UnpushedStat
 
 ## App shell responsibilities
 
-- `@main`, Sparkle updates, SwiftData `ModelContainer`
-- `RootContainer` composition root: service wiring, injects
-  `GeneratedPluginRegistry.plugins` into `PluginService`, sets
-  `GitOKFactoryChrome` hooks (e.g. sidebar add-project button), runs the
-  two-phase plugin boot (`startupPlugins()`)
-- macOS menu commands delegating to services (no NotificationCenter for navigation/git menus)
+- `@main` scene declarations calling `GitOKFactory.makeMainWindow()` /
+  `makeCommands()` / `makeSettingsWindow()` (LumiApp → FactoryLumi pattern)
+- Channel-specific pieces only: Sparkle `UpdateManager`, `AppCommand`
+  (check-for-updates menu), `MacAgent`
+- Plugin composition lives in `GitOKPluginRegistry/GitOKFactory`, which
+  injects the plugin catalog, plugin runtime hooks and sidebar chrome into
+  the plugin-agnostic `RootContainer` via `RootContainer.configure(_:)`
 
 Feature UI and business logic belong in Plugins or Packages, not GitOKApp.
-The host engine (layout views, `PluginService`, app services) lives in
-`Packages/GitOKFactoryCore` and stays plugin-agnostic; shell-owned chrome is
-injected through `GitOKFactoryChrome` instead of hard dependencies.
+The host engine (RootContainer/RootView, layout views, `PluginService`, app
+services, commands) lives in `Packages/GitOKFactoryCore`; shell-owned chrome
+is injected through `GitOKFactoryChrome` instead of hard dependencies.
 
 ## Boundary check
 

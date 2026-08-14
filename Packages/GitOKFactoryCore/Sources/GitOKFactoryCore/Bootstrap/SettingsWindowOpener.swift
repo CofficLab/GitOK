@@ -3,11 +3,11 @@ import AppKit
 import GitOKAppCore
 import SwiftUI
 
-struct SettingsWindowOpener: ViewModifier {
+public struct SettingsWindowOpener: ViewModifier {
     @Environment(\.openWindow) private var openWindow
-    @ObservedObject var appVM: AppVM
+    @ObservedObject public var appVM: AppVM
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
                 presentSettingsWindow()
@@ -35,7 +35,7 @@ struct SettingsWindowOpener: ViewModifier {
 }
 
 extension View {
-    func settingsWindowOpener(appVM: AppVM) -> some View {
+    public func settingsWindowOpener(appVM: AppVM) -> some View {
         modifier(SettingsWindowOpener(appVM: appVM))
     }
 }

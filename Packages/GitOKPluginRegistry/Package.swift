@@ -15,6 +15,10 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../GitOKCoreKit"),
+        .package(path: "../GitOKFactoryCore"),
+        .package(path: "../GitOKAppCore"),
+        .package(path: "../GitOKUI"),
+        .package(path: "../GitOKSupportKit"),
         .package(path: "../ProjectKit"),
         .package(path: "../../Plugins/AboutSettingsPlugin"),
         .package(path: "../../Plugins/ActivityStatusPlugin"),
@@ -83,6 +87,10 @@ let package = Package(
             name: "GitOKPluginRegistry",
             dependencies: [
                 "GitOKCoreKit",
+                "GitOKFactoryCore",
+                "GitOKAppCore",
+                "GitOKUI",
+                "GitOKSupportKit",
                 "ProjectKit",
                 "AboutSettingsPlugin",
                 "ActivityStatusPlugin",

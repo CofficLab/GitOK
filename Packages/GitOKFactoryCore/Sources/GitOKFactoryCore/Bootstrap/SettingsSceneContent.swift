@@ -1,9 +1,11 @@
 import SwiftUI
 
-struct SettingsSceneContent: View {
+public struct SettingsSceneContent: View {
+    public init() {}
+
     private let container = RootContainer.shared
 
-    var body: some View {
+    public var body: some View {
         RootView {
             SettingView(defaultTabID: container.appVM.defaultSettingTab ?? "userInfo")
         }

@@ -4,13 +4,15 @@ import CloudKit
 import GitOKSupportKit
 
 /// 调试命令：在应用菜单中添加调试相关的功能入口
-struct DebugCommand: Commands, SuperLog {
+public struct DebugCommand: Commands, SuperLog {
     /// 日志标识符
-    nonisolated static let emoji = "🐛"
+    public nonisolated static let emoji = "🐛"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
-    var body: some Commands {
+    public nonisolated static let verbose = false
+
+    public init() {}
+    public var body: some Commands {
         SidebarCommands()
 
         #if os(macOS)

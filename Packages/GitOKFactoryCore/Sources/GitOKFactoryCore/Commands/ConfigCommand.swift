@@ -2,14 +2,16 @@ import SwiftUI
 import GitOKSupportKit
 
 /// 配置命令：在应用菜单中添加配置相关的功能入口
-struct ConfigCommand: Commands, SuperLog {
+public struct ConfigCommand: Commands, SuperLog {
     /// 日志标识符
-    nonisolated static let emoji = "⚙️"
+    public nonisolated static let emoji = "⚙️"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    public nonisolated static let verbose = false
 
-    var body: some Commands {
+    public init() {}
+
+    public var body: some Commands {
         #if os(macOS)
         CommandMenu(String(localized: "Configuration")) {
             Button(String(localized: "Repository Settings...")) {
