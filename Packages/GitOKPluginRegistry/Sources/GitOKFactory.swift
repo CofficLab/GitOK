@@ -20,10 +20,20 @@ public enum GitOKFactory {
         )
     }
 
+    /// Installs the plugin composition into the host container.
+    ///
+    /// Must run before any window content is evaluated — call it from the
+    /// app entry point's `init()`. SwiftUI evaluates `Window` scene content
+    /// eagerly at `body` time, so installing at `makeMainWindow()` time is
+    /// too late for sibling scenes.
+    @MainActor
+    public static func configure() {
+        RootContainer.configure(makeComposition())
+    }
+
     /// Main window content with the full plugin composition installed.
     @MainActor
     public static func makeMainWindow() -> some View {
-        RootContainer.configure(makeComposition())
         return ContentLayout()
             .inRootView()
             .settingsWindowOpener(appVM: RootContainer.shared.appVM)

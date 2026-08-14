@@ -20,6 +20,10 @@ struct GitOKApp: App {
         // 初始化 libgit2
         GitRuntime.initialize()
 
+        // 在任何窗口内容求值前安装插件组合（SwiftUI 会在 body 求值期
+        // 立即构造各 Scene 的内容，安装必须发生在 App.init）。
+        GitOKFactory.configure()
+
         // 同步初始化 Sparkle updater（确保菜单栏"检查更新"可用），
         // 并异步检测 feed URL fallback。
         GitOKFactoryChrome.launchHooks.append {

@@ -56,6 +56,7 @@ public final class RootContainer: ObservableObject {
     public let themeVM: AppThemeVM
 
     private init(composition: Composition) {
+        os_log(.info, "RootContainer initialized with \(composition.plugins.count, privacy: .public) plugins")
         let container = AppConfig.getContainer()
         self.repoManager = RepoManager(modelContext: ModelContext(container))
 

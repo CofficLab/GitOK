@@ -3,7 +3,7 @@ import SwiftUI
 public struct SettingsSceneContent: View {
     public init() {}
 
-    private let container = RootContainer.shared
+    private var container: RootContainer { RootContainer.shared }
 
     public var body: some View {
         RootView {
