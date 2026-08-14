@@ -9,7 +9,7 @@ public enum OpenRemotePlugin: GitOKPlugin {
         displayName: OpenRemotePluginLocalization.string("Open Remote"),
         description: OpenRemotePluginLocalization.string("Open the current project's remote repository link."),
         iconName: "link",
-        order: 8407,
+        order: 500,
         policy: .optIn,
         tableName: OpenRemotePluginLocalization.table
     )

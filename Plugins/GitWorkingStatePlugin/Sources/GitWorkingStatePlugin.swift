@@ -9,7 +9,7 @@ public enum GitWorkingStatePlugin: GitOKPlugin {
         displayName: GitWorkingStatePluginLocalization.string("Working State"),
         description: GitWorkingStatePluginLocalization.string("Git working tree status and sync"),
         iconName: "tray.2",
-        order: 100,
+        order: 200,
         policy: .alwaysOn,
         tableName: GitWorkingStatePluginLocalization.table
     )

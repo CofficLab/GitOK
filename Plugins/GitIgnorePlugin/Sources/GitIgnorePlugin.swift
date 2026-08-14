@@ -9,7 +9,7 @@ public enum GitIgnorePlugin: GitOKPlugin {
         displayName: GitIgnorePluginLocalization.string("Gitignore"),
         description: GitIgnorePluginLocalization.string("Provides .gitignore viewer in status bar"),
         iconName: "doc.badge.gearshape",
-        order: 9999,
+        order: 290,
         policy: .optIn,
         tableName: GitIgnorePluginLocalization.table
     )

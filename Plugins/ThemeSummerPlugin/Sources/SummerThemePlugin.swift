@@ -7,7 +7,7 @@ public enum SummerThemePlugin: GitOKPlugin {
         displayName: SummerThemePluginLocalization.string("Summer Theme"),
         description: SummerThemePluginLocalization.string("Warm golden light theme"),
         iconName: "tag",
-        order: 130,
+        order: 340,
         policy: .alwaysOn,
         tableName: SummerThemePluginLocalization.table
     )

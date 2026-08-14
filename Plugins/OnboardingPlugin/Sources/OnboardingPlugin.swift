@@ -10,7 +10,7 @@ public enum OnboardingPlugin: GitOKPlugin {
         displayName: OnboardingPluginLocalization.string("OnboardingPlugin"),
         description: OnboardingPluginLocalization.string("Empty-state and onboarding guides"),
         iconName: "questionmark.circle",
-        order: 2,
+        order: 20,
         policy: .alwaysOn,
         tableName: OnboardingPluginLocalization.table
     )

@@ -7,7 +7,7 @@ public enum GitOKThemePlugin: GitOKPlugin {
         displayName: GitOKThemePluginLocalization.string("GitOK Theme"),
         description: GitOKThemePluginLocalization.string("Default GitOK dark theme"),
         iconName: "folder.badge.gearshape",
-        order: 120,
+        order: 330,
         policy: .alwaysOn,
         tableName: GitOKThemePluginLocalization.table
     )

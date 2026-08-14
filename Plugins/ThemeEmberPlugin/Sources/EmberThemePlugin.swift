@@ -7,7 +7,7 @@ public enum EmberThemePlugin: GitOKPlugin {
         displayName: EmberThemePluginLocalization.string("Ember Theme"),
         description: EmberThemePluginLocalization.string("Warm orange dark theme"),
         iconName: "exclamationmark.triangle",
-        order: 124,
+        order: 334,
         policy: .alwaysOn,
         tableName: EmberThemePluginLocalization.table
     )

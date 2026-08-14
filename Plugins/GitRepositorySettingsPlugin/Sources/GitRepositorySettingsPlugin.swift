@@ -10,7 +10,7 @@ public enum GitRepositorySettingsPlugin: GitOKPlugin {
         displayName: GitRepositorySettingsPluginLocalization.string("GitRepositorySettingsPlugin"),
         description: "",
         iconName: "folder.badge.gearshape",
-        order: 10,
+        order: 30,
         policy: .alwaysOn,
         tableName: GitRepositorySettingsPluginLocalization.table
     )

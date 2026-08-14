@@ -7,7 +7,7 @@ public enum GraphiteThemePlugin: GitOKPlugin {
         displayName: GraphiteThemePluginLocalization.string("Graphite Theme"),
         description: GraphiteThemePluginLocalization.string("Neutral graphite dark theme"),
         iconName: "square.grid.3x3",
-        order: 134,
+        order: 344,
         policy: .alwaysOn,
         tableName: GraphiteThemePluginLocalization.table
     )

@@ -9,6 +9,7 @@ public enum GitConflictResolverPlugin: GitOKPlugin {
         displayName: GitConflictResolverPluginLocalization.string("ConflictResolver"),
         description: GitConflictResolverPluginLocalization.string("Git 冲突解决"),
         iconName: "exclamationmark.triangle",
+        order: 260,
         policy: .optIn,
         tableName: GitConflictResolverPluginLocalization.table
     )

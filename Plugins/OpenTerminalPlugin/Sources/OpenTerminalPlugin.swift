@@ -9,7 +9,7 @@ public enum OpenTerminalPlugin: GitOKPlugin {
         displayName: OpenTerminalPluginLocalization.string("Open Terminal"),
         description: OpenTerminalPluginLocalization.string("Open the current project folder in Terminal."),
         iconName: "terminal",
-        order: 8310,
+        order: 410,
         policy: .optIn,
         tableName: OpenTerminalPluginLocalization.table
     )

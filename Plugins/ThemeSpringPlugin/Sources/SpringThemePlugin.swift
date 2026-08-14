@@ -7,7 +7,7 @@ public enum SpringThemePlugin: GitOKPlugin {
         displayName: SpringThemePluginLocalization.string("Spring Theme"),
         description: SpringThemePluginLocalization.string("Fresh green light theme"),
         iconName: "tree",
-        order: 121,
+        order: 331,
         policy: .alwaysOn,
         tableName: SpringThemePluginLocalization.table
     )

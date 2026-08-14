@@ -9,7 +9,7 @@ public enum ActivityStatusPlugin: GitOKPlugin {
         displayName: ActivityStatusPluginLocalization.string("Activity Status"),
         description: ActivityStatusPluginLocalization.string("Displays current long-running activity in the status bar."),
         iconName: "arrow.triangle.2.circlepath",
-        order: 9999,
+        order: 160,
         policy: .alwaysOn,
         tableName: ActivityStatusPluginLocalization.table
     )

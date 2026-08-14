@@ -33,6 +33,30 @@ public final class GitOKPluginRuntime {
         pluginTypes.sort { $0.metadata.order < $1.metadata.order }
     }
 
+    /// Two-phase boot sequence (Lumi kernel style):
+    ///
+    /// 1. `onBoot` on every enabled plugin — synchronous service registration.
+    /// 2. Validate required services; throws ``GitOKCoreKitError/missingRequiredServices(_:)``
+    ///    listing exactly what is missing.
+    /// 3. `onReady` on every enabled plugin — initialization depending on other services.
+    public func startup(dependencies: GitOKPluginDependencies) throws {
+        let enabledPlugins = pluginTypes.filter { isPluginEnabled($0) }
+
+        for plugin in enabledPlugins {
+            plugin.onBoot(dependencies)
+        }
+
+        let missing = GitOKRequiredServices.missing(in: dependencies)
+        guard missing.isEmpty else {
+            throw GitOKCoreKitError.missingRequiredServices(missing)
+        }
+
+        let context = GitOKPluginContext(dependencies: dependencies)
+        for plugin in enabledPlugins {
+            plugin.onReady(context)
+        }
+    }
+
     private func isPluginEnabled(_ pluginType: any GitOKPlugin.Type) -> Bool {
         let policy = pluginType.policy
         guard policy.shouldRegister else { return false }

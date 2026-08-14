@@ -10,7 +10,7 @@ public enum GitNetworkSettingsPlugin: GitOKPlugin {
         displayName: GitNetworkSettingsPluginLocalization.string("GitNetworkSettingsPlugin"),
         description: "",
         iconName: "network",
-        order: 40,
+        order: 110,
         policy: .alwaysOn,
         tableName: GitNetworkSettingsPluginLocalization.table
     )

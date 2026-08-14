@@ -72,5 +72,11 @@ final class RootContainer: ObservableObject {
         }
 
         GitOKPluginBootstrap.configureRuntimes(projectService: gitOKProjectService)
+
+        do {
+            try pluginService.startupPlugins()
+        } catch {
+            os_log(.fault, "Plugin startup failed: \(error.localizedDescription)")
+        }
     }
 }

@@ -21,6 +21,12 @@ final class PluginService: ObservableObject {
             .store(in: &cancellables)
     }
 
+    /// Runs the two-phase boot sequence once the shell finished registering
+    /// its services. Throws when required services are missing.
+    func startupPlugins() throws {
+        try runtime.startup(dependencies: pluginDependencies)
+    }
+
     var hasPlugins: Bool { registeredPluginCount > 0 }
     var registeredPluginCount: Int { runtime.registeredCount }
     var configurablePlugins: [PluginInfo] { runtime.configurablePlugins }

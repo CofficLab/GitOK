@@ -9,7 +9,7 @@ public enum GitCommitListPlugin: GitOKPlugin {
         displayName: GitCommitListPluginLocalization.string("Commit"),
         description: GitCommitListPluginLocalization.string("Git commit management"),
         iconName: "arrow.up.arrow.down",
-        order: 110,
+        order: 210,
         policy: .alwaysOn,
         tableName: GitCommitListPluginLocalization.table
     )

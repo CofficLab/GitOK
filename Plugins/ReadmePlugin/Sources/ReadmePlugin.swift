@@ -9,7 +9,7 @@ public enum ReadmePlugin: GitOKPlugin {
         displayName: ReadmePluginLocalization.string("Readme"),
         description: ReadmePluginLocalization.string("Provides README entry point in status bar"),
         iconName: "book",
-        order: 9999,
+        order: 295,
         policy: .optIn,
         tableName: ReadmePluginLocalization.table
     )

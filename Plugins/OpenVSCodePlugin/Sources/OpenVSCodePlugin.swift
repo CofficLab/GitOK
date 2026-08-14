@@ -9,7 +9,7 @@ public enum OpenVSCodePlugin: GitOKPlugin {
         displayName: OpenVSCodePluginLocalization.string("Open VS Code"),
         description: OpenVSCodePluginLocalization.string("Open the current project folder in VS Code."),
         iconName: "chevron.left.forwardslash.chevron.right",
-        order: 8400,
+        order: 430,
         policy: .optIn,
         tableName: OpenVSCodePluginLocalization.table
     )

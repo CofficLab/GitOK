@@ -7,7 +7,7 @@ public enum GitHubLightThemePlugin: GitOKPlugin {
         displayName: GitHubLightThemePluginLocalization.string("GitHub Light Theme"),
         description: GitHubLightThemePluginLocalization.string("GitHub-inspired light theme"),
         iconName: "globe",
-        order: 138,
+        order: 348,
         policy: .alwaysOn,
         tableName: GitHubLightThemePluginLocalization.table
     )

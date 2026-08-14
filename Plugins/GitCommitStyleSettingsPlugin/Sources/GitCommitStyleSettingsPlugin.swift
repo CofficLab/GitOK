@@ -10,7 +10,7 @@ public enum GitCommitStyleSettingsPlugin: GitOKPlugin {
         displayName: GitCommitStyleSettingsPluginLocalization.string("GitCommitStyleSettingsPlugin"),
         description: "",
         iconName: "text.alignleft",
-        order: 30,
+        order: 100,
         policy: .alwaysOn,
         tableName: GitCommitStyleSettingsPluginLocalization.table
     )

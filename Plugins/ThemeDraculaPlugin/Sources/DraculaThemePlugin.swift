@@ -7,7 +7,7 @@ public enum DraculaThemePlugin: GitOKPlugin {
         displayName: DraculaThemePluginLocalization.string("Dracula Theme"),
         description: DraculaThemePluginLocalization.string("Classic vivid dark theme"),
         iconName: "moon.stars",
-        order: 135,
+        order: 345,
         policy: .alwaysOn,
         tableName: DraculaThemePluginLocalization.table
     )

@@ -9,7 +9,7 @@ public enum GitLFSPlugin: GitOKPlugin {
         displayName: GitLFSPluginLocalization.string("Git LFS"),
         description: GitLFSPluginLocalization.string("Git LFS status and large file recommendations"),
         iconName: "externaldrive.badge.timemachine",
-        order: 9999,
+        order: 285,
         policy: .optIn,
         tableName: GitLFSPluginLocalization.table
     )

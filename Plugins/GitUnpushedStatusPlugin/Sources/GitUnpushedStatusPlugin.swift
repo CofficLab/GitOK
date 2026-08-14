@@ -9,7 +9,7 @@ public enum GitUnpushedStatusPlugin: GitOKPlugin {
         displayName: GitUnpushedStatusPluginLocalization.string("Unpushed Status"),
         description: GitUnpushedStatusPluginLocalization.string("Display unpushed commit count"),
         iconName: "arrow.up.circle",
-        order: 25,
+        order: 70,
         policy: .alwaysOn,
         tableName: GitUnpushedStatusPluginLocalization.table
     )

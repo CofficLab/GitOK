@@ -9,7 +9,7 @@ public enum OpenGitHubDesktopPlugin: GitOKPlugin {
         displayName: OpenGitHubDesktopPluginLocalization.string("Open GitHub Desktop"),
         description: OpenGitHubDesktopPluginLocalization.string("Open the current project folder in GitHub Desktop."),
         iconName: "desktopcomputer",
-        order: 8403,
+        order: 460,
         policy: .optIn,
         tableName: OpenGitHubDesktopPluginLocalization.table
     )

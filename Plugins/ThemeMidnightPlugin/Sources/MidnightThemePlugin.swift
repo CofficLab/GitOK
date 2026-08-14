@@ -7,7 +7,7 @@ public enum MidnightThemePlugin: GitOKPlugin {
         displayName: MidnightThemePluginLocalization.string("Midnight Theme"),
         description: MidnightThemePluginLocalization.string("Quiet terminal-green dark theme"),
         iconName: "terminal",
-        order: 123,
+        order: 333,
         policy: .alwaysOn,
         tableName: MidnightThemePluginLocalization.table
     )

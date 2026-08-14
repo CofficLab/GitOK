@@ -10,7 +10,7 @@ public enum ProjectsPlugin: GitOKPlugin {
         displayName: ProjectsPluginLocalization.string("ProjectsPlugin"),
         description: ProjectsPluginLocalization.string("Project sidebar and repository sheets"),
         iconName: "folder",
-        order: 1,
+        order: 10,
         policy: .alwaysOn,
         tableName: ProjectsPluginLocalization.table
     )

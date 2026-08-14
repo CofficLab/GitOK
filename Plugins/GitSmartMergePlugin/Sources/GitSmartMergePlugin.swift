@@ -9,6 +9,7 @@ public enum GitSmartMergePlugin: GitOKPlugin {
         displayName: Localization.string("SmartMerge"),
         description: Localization.string("Smart Merge Tool"),
         iconName: "arrow.merge",
+        order: 270,
         policy: .optIn,
         tableName: Localization.table
     )

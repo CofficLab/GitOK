@@ -9,7 +9,7 @@ public enum SettingsButtonPlugin: GitOKPlugin {
         displayName: SettingsButtonPluginLocalization.string("Settings Button"),
         description: SettingsButtonPluginLocalization.string("Show a settings button in the status bar."),
         iconName: "gearshape",
-        order: 9000,
+        order: 150,
         policy: .alwaysOn,
         tableName: SettingsButtonPluginLocalization.table
     )

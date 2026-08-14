@@ -9,6 +9,7 @@ public enum GitStashPlugin: GitOKPlugin {
         displayName: GitStashPluginLocalization.string("Stash"),
         description: GitStashPluginLocalization.string("Git stash management"),
         iconName: "archivebox",
+        order: 240,
         policy: .optIn,
         tableName: GitStashPluginLocalization.table
     )

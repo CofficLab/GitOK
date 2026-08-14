@@ -9,7 +9,7 @@ public enum GitCleanStatusPlugin: GitOKPlugin {
         displayName: GitCleanStatusPluginLocalization.string("Clean Status"),
         description: GitCleanStatusPluginLocalization.string("Track whether project is clean (no uncommitted changes)"),
         iconName: "checkmark.circle",
-        order: 24,
+        order: 60,
         policy: .alwaysOn,
         tableName: GitCleanStatusPluginLocalization.table
     )

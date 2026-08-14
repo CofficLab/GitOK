@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 
 public enum GlacierThemePlugin: GitOKPlugin {
-    public static let metadata = GitOKPluginMetadata(id: "ThemeGlacierPlugin", displayName: GlacierThemePluginLocalization.string("Glacier Theme"), description: GlacierThemePluginLocalization.string("Icy cyan light theme"), iconName: "externaldrive", order: 129, policy: .alwaysOn, tableName: GlacierThemePluginLocalization.table)
+    public static let metadata = GitOKPluginMetadata(id: "ThemeGlacierPlugin", displayName: GlacierThemePluginLocalization.string("Glacier Theme"), description: GlacierThemePluginLocalization.string("Icy cyan light theme"), iconName: "externaldrive", order: 339, policy: .alwaysOn, tableName: GlacierThemePluginLocalization.table)
 
     public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
 

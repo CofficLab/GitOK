@@ -7,7 +7,7 @@ public enum XcodeLightThemePlugin: GitOKPlugin {
         displayName: XcodeLightThemePluginLocalization.string("Xcode Light Theme"),
         description: XcodeLightThemePluginLocalization.string("Xcode-inspired light theme"),
         iconName: "hammer",
-        order: 137,
+        order: 347,
         policy: .alwaysOn,
         tableName: XcodeLightThemePluginLocalization.table
     )

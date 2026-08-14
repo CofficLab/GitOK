@@ -10,7 +10,7 @@ public enum AppearanceSettingsPlugin: GitOKPlugin {
         displayName: AppearanceSettingsPluginLocalization.string("AppearanceSettingsPlugin"),
         description: "",
         iconName: "paintbrush",
-        order: 70,
+        order: 130,
         policy: .alwaysOn,
         tableName: AppearanceSettingsPluginLocalization.table
     )

@@ -9,6 +9,7 @@ public enum GitSubmodulePlugin: GitOKPlugin {
         displayName: GitSubmodulePluginLocalization.string("Submodule"),
         description: GitSubmodulePluginLocalization.string("Git submodule status and updates"),
         iconName: "shippingbox",
+        order: 250,
         policy: .optIn,
         tableName: GitSubmodulePluginLocalization.table
     )

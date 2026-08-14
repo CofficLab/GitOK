@@ -9,7 +9,7 @@ public enum OpenXcodePlugin: GitOKPlugin {
         displayName: OpenXcodePluginLocalization.string("Open Xcode"),
         description: OpenXcodePluginLocalization.string("Open the current project folder in Xcode."),
         iconName: "hammer",
-        order: 8402,
+        order: 450,
         policy: .optIn,
         tableName: OpenXcodePluginLocalization.table
     )

@@ -9,6 +9,7 @@ public enum GitRemoteRepositoryPlugin: GitOKPlugin {
         displayName: GitRemoteRepositoryPluginLocalization.string("RemoteRepository"),
         description: GitRemoteRepositoryPluginLocalization.string("远程仓库管理"),
         iconName: "network",
+        order: 280,
         policy: .optIn,
         tableName: GitRemoteRepositoryPluginLocalization.table
     )

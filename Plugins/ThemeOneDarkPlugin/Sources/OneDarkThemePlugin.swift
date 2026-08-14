@@ -7,7 +7,7 @@ public enum OneDarkThemePlugin: GitOKPlugin {
         displayName: OneDarkThemePluginLocalization.string("One Dark Theme"),
         description: OneDarkThemePluginLocalization.string("Classic editor dark theme"),
         iconName: "chevron.left.forwardslash.chevron.right",
-        order: 136,
+        order: 346,
         policy: .alwaysOn,
         tableName: OneDarkThemePluginLocalization.table
     )

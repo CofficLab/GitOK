@@ -9,7 +9,7 @@ public enum GitDetailPlugin: GitOKPlugin {
         displayName: GitDetailPluginLocalization.string("Git Detail"),
         description: GitDetailPluginLocalization.string("Git working tree changes and diff detail"),
         iconName: "doc.text.magnifyingglass",
-        order: 120,
+        order: 220,
         policy: .alwaysOn,
         tableName: GitDetailPluginLocalization.table
     )

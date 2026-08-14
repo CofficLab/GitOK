@@ -7,7 +7,7 @@ public enum AuroraThemePlugin: GitOKPlugin {
         displayName: AuroraThemePluginLocalization.string("Aurora Theme"),
         description: AuroraThemePluginLocalization.string("Deep cyan night theme"),
         iconName: "point.3.connected.trianglepath.dotted",
-        order: 122,
+        order: 332,
         policy: .alwaysOn,
         tableName: AuroraThemePluginLocalization.table
     )

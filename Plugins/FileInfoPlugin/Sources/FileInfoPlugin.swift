@@ -9,6 +9,7 @@ public enum FileInfoPlugin: GitOKPlugin {
         displayName: FileInfoPluginLocalization.string("FileInfo"),
         description: FileInfoPluginLocalization.string("Show selected file information in the status bar."),
         iconName: "doc.text",
+        order: 300,
         policy: .optIn,
         tableName: FileInfoPluginLocalization.table
     )

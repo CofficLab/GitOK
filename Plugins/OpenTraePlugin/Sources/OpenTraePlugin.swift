@@ -9,7 +9,7 @@ public enum OpenTraePlugin: GitOKPlugin {
         displayName: OpenTraePluginLocalization.string("Open Trae"),
         description: OpenTraePluginLocalization.string("Open the current project folder in Trae."),
         iconName: "brain",
-        order: 8404,
+        order: 470,
         policy: .optIn,
         tableName: OpenTraePluginLocalization.table
     )

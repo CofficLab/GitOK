@@ -9,7 +9,7 @@ public enum OpenLumiPlugin: GitOKPlugin {
         displayName: OpenLumiPluginLocalization.string("Open Lumi"),
         description: OpenLumiPluginLocalization.string("Open the current project folder in Lumi."),
         iconName: "sun.max.fill",
-        order: 8399,
+        order: 420,
         policy: .optIn,
         tableName: OpenLumiPluginLocalization.table
     )

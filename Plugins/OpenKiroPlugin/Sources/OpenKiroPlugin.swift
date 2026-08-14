@@ -9,7 +9,7 @@ public enum OpenKiroPlugin: GitOKPlugin {
         displayName: OpenKiroPluginLocalization.string("Open Kiro"),
         description: OpenKiroPluginLocalization.string("Open the current project folder in Kiro."),
         iconName: "water.waves",
-        order: 8405,
+        order: 480,
         policy: .optIn,
         tableName: OpenKiroPluginLocalization.table
     )

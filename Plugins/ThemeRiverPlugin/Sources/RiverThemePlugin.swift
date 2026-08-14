@@ -7,7 +7,7 @@ public enum RiverThemePlugin: GitOKPlugin {
         displayName: RiverThemePluginLocalization.string("River Theme"),
         description: RiverThemePluginLocalization.string("Flowing teal dark theme"),
         iconName: "arrow.triangle.branch",
-        order: 125,
+        order: 335,
         policy: .alwaysOn,
         tableName: RiverThemePluginLocalization.table
     )

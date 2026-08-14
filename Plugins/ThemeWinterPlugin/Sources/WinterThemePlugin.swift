@@ -7,7 +7,7 @@ public enum WinterThemePlugin: GitOKPlugin {
         displayName: WinterThemePluginLocalization.string("Winter Theme"),
         description: WinterThemePluginLocalization.string("Cool minimal light theme"),
         iconName: "scope",
-        order: 133,
+        order: 343,
         policy: .alwaysOn,
         tableName: WinterThemePluginLocalization.table
     )

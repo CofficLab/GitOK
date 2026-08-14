@@ -9,7 +9,7 @@ public enum ThemeStatusBarPlugin: GitOKPlugin {
         displayName: ThemeStatusBarPluginLocalization.string("Theme Status"),
         description: ThemeStatusBarPluginLocalization.string("Switch themes from the status bar"),
         iconName: "paintbrush",
-        order: 119,
+        order: 320,
         policy: .optIn,
         tableName: ThemeStatusBarPluginLocalization.table
     )

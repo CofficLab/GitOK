@@ -9,7 +9,7 @@ public enum OpenCursorPlugin: GitOKPlugin {
         displayName: OpenCursorPluginLocalization.string("Open Cursor"),
         description: OpenCursorPluginLocalization.string("Open the current project folder in Cursor."),
         iconName: "cursor.rays",
-        order: 8401,
+        order: 440,
         policy: .optIn,
         tableName: OpenCursorPluginLocalization.table
     )

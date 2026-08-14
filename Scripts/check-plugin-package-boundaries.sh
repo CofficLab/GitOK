@@ -61,6 +61,27 @@ if [[ -d "$PLUGIN_PACKAGES_DIR" ]]; then
       echo "  plugin imports app target: $file"
       failures=$((failures + 1))
     fi
+    # Contribution IDs must be stable, plugin-prefixed identifiers — no raw
+    # UI copy or throwaway strings. Accepts metadata.id references verbatim.
+    if rg -q 'GitOK(RailItem|ListPaneItem|ToolbarItem|StatusBarItem|SettingsPaneItem|OnboardingPaneItem)\(' "$file" 2>/dev/null; then
+      while IFS= read -r id_line; do
+        id_value="$(printf '%s' "$id_line" | sed -E 's/^[[:space:]]*id:[[:space:]]*//; s/[,[:space:]]*$//')"
+        case "$id_value" in
+          metadata.id|*\.id|"metadata.id + "*)
+            ;;
+          *\ *)
+            echo "  non-constant contribution id in $file: $id_line"
+            failures=$((failures + 1))
+            ;;
+          \"*\")
+            ;;
+          *)
+            echo "  suspicious contribution id in $file: $id_line"
+            failures=$((failures + 1))
+            ;;
+        esac
+      done < <(rg -A2 'GitOK(RailItem|ListPaneItem|ToolbarItem|StatusBarItem|SettingsPaneItem|OnboardingPaneItem)\(' "$file" 2>/dev/null | rg '^\s*[-+]?\s*id:' || true)
+    fi
   done < <(find "$PLUGIN_PACKAGES_DIR" -name '*.swift' -not -path '*/.build/*' 2>/dev/null)
 fi
 

@@ -10,7 +10,7 @@ public enum DiagnosticsSettingsPlugin: GitOKPlugin {
         displayName: DiagnosticsSettingsPluginLocalization.string("DiagnosticsSettingsPlugin"),
         description: "",
         iconName: "stethoscope",
-        order: 60,
+        order: 120,
         policy: .alwaysOn,
         tableName: DiagnosticsSettingsPluginLocalization.table
     )

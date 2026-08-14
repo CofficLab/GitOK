@@ -7,7 +7,7 @@ public enum MatrixThemePlugin: GitOKPlugin {
         displayName: MatrixThemePluginLocalization.string("Matrix Theme"),
         description: MatrixThemePluginLocalization.string("Electric green dark theme"),
         iconName: "gearshape.2",
-        order: 131,
+        order: 341,
         policy: .alwaysOn,
         tableName: MatrixThemePluginLocalization.table
     )

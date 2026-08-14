@@ -10,7 +10,7 @@ public enum GitUserSettingsPlugin: GitOKPlugin {
         displayName: GitUserSettingsPluginLocalization.string("GitUserSettingsPlugin"),
         description: "",
         iconName: "person.circle",
-        order: 20,
+        order: 40,
         policy: .alwaysOn,
         tableName: GitUserSettingsPluginLocalization.table
     )

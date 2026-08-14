@@ -9,7 +9,7 @@ public enum OpenFinderPlugin: GitOKPlugin {
         displayName: OpenFinderPluginLocalization.string("Open Finder"),
         description: OpenFinderPluginLocalization.string("Open the current project folder in Finder."),
         iconName: "folder",
-        order: 8300,
+        order: 400,
         policy: .optIn,
         tableName: OpenFinderPluginLocalization.table
     )

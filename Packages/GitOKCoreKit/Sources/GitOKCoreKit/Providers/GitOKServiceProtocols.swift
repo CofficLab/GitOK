@@ -1,25 +1,8 @@
 import Combine
 import Foundation
+import GitOKUI
 
-/// Dependency bag passed into plugin context (Lumi-style DI).
-@MainActor
-public final class GitOKPluginDependencies {
-    private var services: [ObjectIdentifier: AnyObject] = [:]
-
-    public init() {}
-
-    public func register(_ service: AnyObject, for type: Any.Type) {
-        services[ObjectIdentifier(type)] = service
-    }
-
-    public func register<Service: AnyObject>(_ service: Service, as type: Service.Type = Service.self) {
-        services[ObjectIdentifier(type)] = service
-    }
-
-    public func resolve<Service>(_ type: Service.Type = Service.self) -> Service? {
-        services[ObjectIdentifier(type)] as? Service
-    }
-}
+// MARK: - Core Services
 
 @MainActor
 public protocol GitOKRepositoryServicing: AnyObject {
@@ -53,4 +36,28 @@ public protocol GitOKNavigationServicing: AnyObject {
     func openPluginSettings()
     func openRepositorySettings()
     func openCommitStyleSettings()
+}
+
+// MARK: - Required Services
+
+/// Service types the app shell must register before plugins become ready.
+///
+/// Mirrors the kernel validation contract of a factory host: startup fails
+/// loudly, listing exactly what is missing, instead of failing later with
+/// cryptic `resolve()` nils scattered across plugin views.
+public enum GitOKRequiredServices {
+    public static let all: [Any.Type] = [
+        GitOKRepositoryServicing.self,
+        GitOKActivityServicing.self,
+        GitOKGitCommandServicing.self,
+        GitOKThemeServicing.self,
+        GitOKNavigationServicing.self,
+    ]
+
+    @MainActor
+    public static func missing(in dependencies: GitOKPluginDependencies) -> [String] {
+        all.compactMap { service in
+            dependencies.resolveAny(service) == nil ? String(describing: service) : nil
+        }
+    }
 }

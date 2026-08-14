@@ -7,7 +7,7 @@ public enum NebulaThemePlugin: GitOKPlugin {
         displayName: NebulaThemePluginLocalization.string("Nebula Theme"),
         description: NebulaThemePluginLocalization.string("Violet atmospheric dark theme"),
         iconName: "arrow.triangle.pull",
-        order: 126,
+        order: 336,
         policy: .alwaysOn,
         tableName: NebulaThemePluginLocalization.table
     )

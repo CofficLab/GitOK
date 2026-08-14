@@ -10,7 +10,7 @@ public enum AboutSettingsPlugin: GitOKPlugin {
         displayName: AboutSettingsPluginLocalization.string("AboutSettingsPlugin"),
         description: "",
         iconName: "info.circle",
-        order: 90,
+        order: 140,
         policy: .alwaysOn,
         tableName: AboutSettingsPluginLocalization.table
     )

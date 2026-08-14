@@ -72,6 +72,20 @@ public protocol GitOKPlugin {
     static var policy: GitOKPluginPolicy { get }
     static var shouldRegister: Bool { get }
 
+    /// Phase 1 of the two-phase boot sequence.
+    ///
+    /// Runs before service validation: register plugin-owned services into the
+    /// shared dependency container here. Keep it synchronous and cheap.
+    @MainActor
+    static func onBoot(_ dependencies: GitOKPluginDependencies)
+
+    /// Phase 2 of the two-phase boot sequence.
+    ///
+    /// Runs after all plugins booted and required services were validated:
+    /// perform initialization that depends on other services here.
+    @MainActor
+    static func onReady(_ context: GitOKPluginContext)
+
     @MainActor
     static func toolbarLeadingItems(context: GitOKPluginContext) -> [GitOKToolbarItem]
 
@@ -192,6 +206,12 @@ public struct GitOKRemoteTrackingStatus: Equatable, Sendable {
 public extension GitOKPlugin {
     static var policy: GitOKPluginPolicy { metadata.policy }
     static var shouldRegister: Bool { policy.shouldRegister }
+
+    @MainActor
+    static func onBoot(_ dependencies: GitOKPluginDependencies) {}
+
+    @MainActor
+    static func onReady(_ context: GitOKPluginContext) {}
 
     @MainActor
     static func toolbarLeadingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] { [] }

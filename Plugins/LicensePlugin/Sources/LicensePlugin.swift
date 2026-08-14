@@ -9,7 +9,7 @@ public enum LicensePlugin: GitOKPlugin {
         displayName: LicensePluginLocalization.string("License"),
         description: LicensePluginLocalization.string("LICENSE entry in status bar"),
         iconName: "doc.on.doc",
-        order: 9999,
+        order: 310,
         policy: .optIn,
         tableName: LicensePluginLocalization.table
     )

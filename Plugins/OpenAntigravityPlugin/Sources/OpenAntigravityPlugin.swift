@@ -9,7 +9,7 @@ public enum OpenAntigravityPlugin: GitOKPlugin {
         displayName: OpenAntigravityPluginLocalization.string("Open Antigravity"),
         description: OpenAntigravityPluginLocalization.string("Open the current project folder in Antigravity."),
         iconName: "paperplane",
-        order: 8406,
+        order: 490,
         policy: .optIn,
         tableName: OpenAntigravityPluginLocalization.table
     )

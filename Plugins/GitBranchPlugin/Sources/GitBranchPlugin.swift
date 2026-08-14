@@ -9,7 +9,7 @@ public enum GitBranchPlugin: GitOKPlugin {
         displayName: GitBranchPluginLocalization.string("Branch"),
         description: GitBranchPluginLocalization.string("Git Branch Management"),
         iconName: "arrow.triangle.branch",
-        order: 10000,
+        order: 230,
         policy: .alwaysOn,
         tableName: GitBranchPluginLocalization.table
     )

@@ -9,6 +9,7 @@ public enum ProjectPickerPlugin: GitOKPlugin {
         displayName: ProjectPickerPluginLocalization.string("ProjectPicker"),
         description: ProjectPickerPluginLocalization.string("项目选择器"),
         iconName: "folder",
+        order: 80,
         policy: .alwaysOn,
         tableName: ProjectPickerPluginLocalization.table
     )

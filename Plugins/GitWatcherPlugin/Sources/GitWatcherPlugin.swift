@@ -9,7 +9,7 @@ public enum GitWatcherPlugin: GitOKPlugin {
         displayName: GitWatcherPluginLocalization.string("Git Watcher"),
         description: GitWatcherPluginLocalization.string("Monitor .git directory changes"),
         iconName: "dot.radiowaves.left.and.right",
-        order: 23,
+        order: 50,
         policy: .alwaysOn,
         tableName: GitWatcherPluginLocalization.table
     )
