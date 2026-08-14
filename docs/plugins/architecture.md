@@ -70,7 +70,7 @@ ContentView queries PluginService for toolbar / list / detail / statusbar
 |------|------|------|
 | `0–99` | 核心（应用骨架，alwaysOn） | ProjectsPlugin(10)、OnboardingPlugin(20)、ProjectPickerPlugin(80) |
 | `100–199` | 基础服务（设置、状态） | GitNetworkSettingsPlugin(110)、ActivityStatusPlugin(160) |
-| `200–299` | Git 功能 | GitDetailPlugin(220)、GitBranchPlugin(230)、GitStashPlugin(240) |
+| `200–299` | Git 功能 | GitDetailPlugin(220)、GitBranchPlugin(230)、GitAutoPushPlugin(235)、GitStashPlugin(240) |
 | `300+` | 可选增强（optIn / 主题 / Open-In） | LicensePlugin(310)、Theme*(330+)、Open*(400+) |
 
 新增插件按归属分带取值；同带内保持 10 的步长便于插入。

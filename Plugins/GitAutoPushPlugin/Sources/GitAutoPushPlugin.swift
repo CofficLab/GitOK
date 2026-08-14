@@ -9,6 +9,7 @@ public enum GitAutoPushPlugin: GitOKPlugin {
         displayName: GitAutoPushPluginLocalization.string("Auto Push"),
         description: GitAutoPushPluginLocalization.string("Automatically push the current branch to remote repository."),
         iconName: "arrow.up.circle",
+        order: 235,
         policy: .optIn,
         tableName: GitAutoPushPluginLocalization.table
     )

@@ -149,5 +149,10 @@ let package = Package(
             path: "Sources",
             resources: [.process("Localizable.xcstrings")]
         ),
+        .testTarget(
+            name: "GitOKPluginRegistryTests",
+            dependencies: ["GitOKPluginRegistry"],
+            path: "Tests"
+        ),
     ]
 )
