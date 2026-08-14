@@ -109,9 +109,19 @@ extension ContentView {
             }
 
             if vm.project != nil, projectActionsVisibility {
-                ToolbarItemGroup(placement: .confirmationAction) {
-                    ForEach(toolbarTrailingViews) { item in
-                        item.view
+                if #available(macOS 26.0, *) {
+                    ToolbarSpacer(.flexible)
+
+                    ToolbarItemGroup {
+                        ForEach(toolbarTrailingViews) { item in
+                            item.view
+                        }
+                    }
+                } else {
+                    ToolbarItemGroup(placement: .confirmationAction) {
+                        ForEach(toolbarTrailingViews) { item in
+                            item.view
+                        }
                     }
                 }
             }
