@@ -108,20 +108,16 @@ extension ContentView {
                 }
             }
 
-            if vm.project != nil, projectActionsVisibility {
-                if #available(macOS 26.0, *) {
-                    ToolbarSpacer(.flexible)
+            ToolbarItem {
+                ToolbarFlexibleSpaceAnchor()
+                    .frame(width: 0, height: 0)
+                    .accessibilityHidden(true)
+            }
 
-                    ToolbarItemGroup {
-                        ForEach(toolbarTrailingViews) { item in
-                            item.view
-                        }
-                    }
-                } else {
-                    ToolbarItemGroup(placement: .confirmationAction) {
-                        ForEach(toolbarTrailingViews) { item in
-                            item.view
-                        }
+            if vm.project != nil, projectActionsVisibility {
+                ToolbarItemGroup {
+                    ForEach(toolbarTrailingViews) { item in
+                        item.view
                     }
                 }
             }
@@ -169,6 +165,86 @@ private struct WindowToolbarVisibilityBridge: NSViewRepresentable {
         DispatchQueue.main.async {
             nsView.window?.toolbar?.isVisible = isVisible
         }
+    }
+}
+
+/// SwiftUI's semantic toolbar placements do not provide a positional trailing
+/// placement on macOS. Install AppKit's native flexible-space item immediately
+/// before the plugin action group so those actions stay pinned to the right.
+private struct ToolbarFlexibleSpaceAnchor: NSViewRepresentable {
+    final class Coordinator {
+        weak var installedToolbar: NSToolbar?
+        weak var installedItem: NSToolbarItem?
+        var isInstalling = false
+
+        func install(for anchorView: NSView) {
+            guard !isInstalling, let toolbar = anchorView.window?.toolbar else { return }
+
+            if installedToolbar === toolbar,
+               let installedItem,
+               toolbar.items.contains(where: { $0 === installedItem }) {
+                return
+            }
+
+            guard let anchorIndex = toolbar.items.firstIndex(where: { item in
+                guard let itemView = item.view else { return false }
+                return anchorView === itemView || anchorView.isDescendant(of: itemView)
+            }) else { return }
+
+            isInstalling = true
+            defer { isInstalling = false }
+
+            toolbar.insertItem(withItemIdentifier: .flexibleSpace, at: anchorIndex)
+            installedToolbar = toolbar
+            installedItem = toolbar.items[anchorIndex]
+        }
+
+        func uninstall() {
+            guard let toolbar = installedToolbar,
+                  let installedItem,
+                  let index = toolbar.items.firstIndex(where: { $0 === installedItem }) else {
+                return
+            }
+            toolbar.removeItem(at: index)
+        }
+    }
+
+    final class AnchorView: NSView {
+        var onLayout: ((NSView) -> Void)?
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            onLayout?(self)
+        }
+
+        override func layout() {
+            super.layout()
+            onLayout?(self)
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    func makeNSView(context: Context) -> NSView {
+        let view = AnchorView(frame: .zero)
+        view.onLayout = { [weak coordinator = context.coordinator] anchorView in
+            DispatchQueue.main.async {
+                coordinator?.install(for: anchorView)
+            }
+        }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        DispatchQueue.main.async {
+            context.coordinator.install(for: nsView)
+        }
+    }
+
+    static func dismantleNSView(_ nsView: NSView, coordinator: Coordinator) {
+        coordinator.uninstall()
     }
 }
 
