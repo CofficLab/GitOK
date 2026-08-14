@@ -3,12 +3,14 @@
 GitOK follows the same layered model as Lumi:
 
 ```text
-GitOKApp/          Thin shell (~LumiApp): @main scene declarations, MacAgent,
-                  Sparkle channel-specific commands
+GitOKApp/          Thin shell (= LumiApp, single file): @main scene
+                  declarations + channel-specific wiring
 Packages/
   GitOKFactoryCore/   Host engine (Lumi FactoryCore equivalent): RootContainer,
-                      RootView, layout views, app services, settings window,
-                      menu commands — plugin-agnostic
+                      MacAgent, RootView, layout views, app services, settings
+                      window, menu commands — plugin-agnostic
+  GitOKUpdateKit/     Sparkle auto-update (Lumi AppUpdatePlugin equivalent):
+                      UpdateManager + UpdateCommand, injected at app layer
   GitOKCoreKit/       Plugin SDK + kernel (Lumi KernelLumi equivalent)
   GitCoreKit/         Git engine (git CLI wrapper)
   GitOKUI/            Design system (Lumi LumiUI equivalent)
@@ -57,10 +59,13 @@ Plugins that receive data through `GitOKPluginContext` (GitWatcher, UnpushedStat
 
 ## App shell responsibilities
 
-- `@main` scene declarations calling `GitOKFactory.makeMainWindow()` /
-  `makeCommands()` / `makeSettingsWindow()` (LumiApp → FactoryLumi pattern)
-- Channel-specific pieces only: Sparkle `UpdateManager`, `AppCommand`
-  (check-for-updates menu), `MacAgent`
+- Single-file `GitOKApp.swift` (= LumiApp): `@main` scene declarations
+  calling `GitOKFactory.makeMainWindow()` / `makeCommands()` /
+  `makeSettingsWindow()`, plus channel-specific wiring — the Sparkle launch
+  hook and `UpdateCommand()` from `GitOKUpdateKit` (mirrors Lumi injecting
+  `AppUpdatePlugin` at the `LumiApp` layer; an MAS variant could drop it)
+- `MacAgent` lives in `GitOKFactoryCore/Bootstrap/` (as in Lumi FactoryCore)
+  and runs channel-specific launch work through `GitOKFactoryChrome.launchHooks`
 - Plugin composition lives in `GitOKPluginRegistry/GitOKFactory`, which
   injects the plugin catalog, plugin runtime hooks and sidebar chrome into
   the plugin-agnostic `RootContainer` via `RootContainer.configure(_:)`

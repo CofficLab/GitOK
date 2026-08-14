@@ -1,11 +1,16 @@
 import GitCoreKit
 import GitOKFactoryCore
 import GitOKPluginRegistry
+import GitOKUpdateKit
 import SwiftUI
 
 /// GitOK 应用主入口（Lumi `LumiApp` 等价物）：只负责窗口场景声明与
 /// 渠道专属注入，插件组合与宿主引擎全部下沉到
 /// `GitOKPluginRegistry/GitOKFactory` 与 `GitOKFactoryCore`。
+///
+/// 渠道专属注入（对应 Lumi 在 LumiApp 层注入 AppUpdatePlugin）：
+/// - Sparkle 自动更新（`GitOKUpdateKit`）通过启动钩子接入，
+///   上架 Mac App Store 的变体可不链接它。
 @main
 struct GitOKApp: App {
     /// macOS 应用代理
@@ -14,6 +19,15 @@ struct GitOKApp: App {
     init() {
         // 初始化 libgit2
         GitRuntime.initialize()
+
+        // 同步初始化 Sparkle updater（确保菜单栏"检查更新"可用），
+        // 并异步检测 feed URL fallback。
+        GitOKFactoryChrome.launchHooks.append {
+            _ = UpdateManager.shared
+            Task {
+                await UpdateManager.shared.setupFeedURLIfNeeded()
+            }
+        }
     }
 
     var body: some Scene {
@@ -40,6 +54,7 @@ struct GitOKApp: App {
         .modelContainer(AppConfig.getContainer())
         .commands {
             GitOKFactory.makeCommands()
+            UpdateCommand()
         }
 
         Window(String(localized: "Settings"), id: AppBootstrap.settingsWindowID) {

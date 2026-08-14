@@ -1,4 +1,3 @@
-import GitOKFactoryCore
 import CloudKit
 import GitOKAppCore
 import GitOKSupportKit
@@ -10,18 +9,18 @@ import SwiftUI
 
 /// macOS 应用代理
 /// 负责处理应用生命周期事件和系统通知
-class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
+public class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
     /// 日志标识符
-    nonisolated static let emoji = "🍎"
+    public nonisolated static let emoji = "🍎"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    public nonisolated static let verbose = false
 
     /// 待打开的项目路径（通过 Dock 拖拽、open 命令、URL Scheme 触发）
     /// 使用 @Published + Combine 让 RootView 可以立即响应
-    @Published var pendingOpenPath: String? = nil
+    @Published public var pendingOpenPath: String? = nil
 
-    func application(
+    public func application(
         _ application: NSApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
@@ -30,7 +29,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-    func applicationDidFinishLaunching(_ notification: Notification) {
+    public func applicationDidFinishLaunching(_ notification: Notification) {
         if Self.verbose {
             os_log("\(self.t)🚀 Startup phase: applicationDidFinishLaunching")
         }
@@ -39,12 +38,10 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             DiagnosticsStore.shared.markLaunchStarted()
         }
 
-        // 同步初始化 Sparkle updater（确保菜单栏"检查更新"可用）
-        _ = UpdateManager.shared
-
-        // 异步检测 feed URL fallback
-        Task {
-            await UpdateManager.shared.setupFeedURLIfNeeded()
+        // 运行渠道专属启动钩子（如 Sparkle updater 初始化），
+        // 由应用入口在启动时注册（对应 Lumi 在 LumiApp 层注入 AppUpdatePlugin）。
+        for hook in GitOKFactoryChrome.launchHooks {
+            hook()
         }
 
         if Self.verbose {
@@ -52,7 +49,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-    func applicationWillTerminate(_ notification: Notification) {
+    public func applicationWillTerminate(_ notification: Notification) {
         if Self.verbose {
             os_log("\(self.t)🛑 applicationWillTerminate")
         }
@@ -66,7 +63,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-    func applicationDidBecomeActive(_ notification: Notification) {
+    public func applicationDidBecomeActive(_ notification: Notification) {
         if Self.verbose {
             os_log("\(self.t)Did Become Active")
         }
@@ -76,7 +73,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-    func applicationWillFinishLaunching(_ notification: Notification) {
+    public func applicationWillFinishLaunching(_ notification: Notification) {
         if Self.verbose {
             os_log("\(self.t)Will Finish Launching")
         }
@@ -92,7 +89,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         // WindowGroup 的 .handlesExternalEvents(matching: Set()) 会阻止创建多余窗口。
     }
 
-    func applicationWillBecomeActive(_ notification: Notification) {
+    public func applicationWillBecomeActive(_ notification: Notification) {
         if Self.verbose {
             os_log("\(self.t)Will Become Active")
         }
@@ -106,7 +103,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     // 如果改动由本设备发出：
     //  本设备：不会收到远程通知
     //  其他设备：会收到远程通知
-    func application(
+    public func application(
         _ application: NSApplication,
         didReceiveRemoteNotification userInfo: [String: Any]
     ) {
@@ -120,7 +117,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// 处理通过 `open -a GitOK /path/to/repo`、拖拽文件夹到 Dock 图标、
     /// 以及 NSWorkspace.open([folderURL], withApplicationAt:) 触发的打开事件。
     /// 这是 macOS 冷启动时传递路径的主要方式，且不影响 SwiftUI WindowGroup 的窗口创建。
-    func application(_ application: NSApplication, open urls: [URL]) {
+    public func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
             if url.isFileURL {
                 if Self.verbose {
@@ -140,7 +137,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
     /// 处理通过 `open -a GitOK /path/to/repo` 或拖拽文件夹到 Dock 图标触发的打开事件
     /// 这是 macOS 的另一种文件打开方式，通常用于 Finder 拖拽或命令行 open 命令
-    func application(_ application: NSApplication, openFile filename: String) -> Bool {
+    public func application(_ application: NSApplication, openFile filename: String) -> Bool {
         if Self.verbose {
             os_log("\(self.t)📂 Open file: \(filename)")
         }
@@ -209,24 +206,4 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
 }

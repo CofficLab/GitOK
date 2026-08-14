@@ -10,4 +10,12 @@ import SwiftUI
 public enum GitOKFactoryChrome {
     /// Toolbar item rendered in the sidebar column (e.g. the add-project button).
     public static var sidebarToolbarItem: AnyView?
+
+    /// One-shot launch hooks run from `applicationDidFinishLaunching`.
+    ///
+    /// Channel-specific work that cannot live in the plugin-agnostic host
+    /// (e.g. starting the Sparkle updater) is registered here by the app
+    /// entry point, mirroring how Lumi injects `AppUpdatePlugin` at the
+    /// `LumiApp` layer.
+    public static var launchHooks: [@MainActor () -> Void] = []
 }
