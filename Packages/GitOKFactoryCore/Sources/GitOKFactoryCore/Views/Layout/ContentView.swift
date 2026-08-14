@@ -108,16 +108,16 @@ extension ContentView {
                 }
             }
 
-            ToolbarItem {
-                ToolbarFlexibleSpaceAnchor()
-                    .frame(width: 0, height: 0)
-                    .accessibilityHidden(true)
-            }
-
             if vm.project != nil, projectActionsVisibility {
-                ToolbarItemGroup {
-                    ForEach(toolbarTrailingViews) { item in
-                        item.view
+                ToolbarItem {
+                    HStack(spacing: 0) {
+                        ToolbarFlexibleSpaceAnchor()
+                            .frame(width: 0, height: 0)
+                            .accessibilityHidden(true)
+
+                        ForEach(toolbarTrailingViews) { item in
+                            item.view
+                        }
                     }
                 }
             }
@@ -168,9 +168,9 @@ private struct WindowToolbarVisibilityBridge: NSViewRepresentable {
     }
 }
 
-/// SwiftUI's semantic toolbar placements do not provide a positional trailing
-/// placement on macOS. Install AppKit's native flexible-space item immediately
-/// before the plugin action group so those actions stay pinned to the right.
+/// SwiftUI assigns automatic spacers to the sidebar toolbar section of a
+/// NavigationSplitView. Anchor AppKit's native flexible space to the actual
+/// plugin item so it remains in the detail toolbar section.
 private struct ToolbarFlexibleSpaceAnchor: NSViewRepresentable {
     final class Coordinator {
         weak var installedToolbar: NSToolbar?
@@ -209,36 +209,17 @@ private struct ToolbarFlexibleSpaceAnchor: NSViewRepresentable {
         }
     }
 
-    final class AnchorView: NSView {
-        var onLayout: ((NSView) -> Void)?
-
-        override func viewDidMoveToWindow() {
-            super.viewDidMoveToWindow()
-            onLayout?(self)
-        }
-
-        override func layout() {
-            super.layout()
-            onLayout?(self)
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
+    func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeNSView(context: Context) -> NSView {
-        let view = AnchorView(frame: .zero)
-        view.onLayout = { [weak coordinator = context.coordinator] anchorView in
-            DispatchQueue.main.async {
-                coordinator?.install(for: anchorView)
-            }
-        }
-        return view
+        NSView(frame: .zero)
     }
 
     func updateNSView(_ nsView: NSView, context: Context) {
         DispatchQueue.main.async {
+            context.coordinator.install(for: nsView)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             context.coordinator.install(for: nsView)
         }
     }
