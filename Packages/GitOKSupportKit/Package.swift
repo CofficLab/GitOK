@@ -11,7 +11,6 @@ let package = Package(
     products: [
         .library(name: "GitOKFoundationKit", targets: ["GitOKFoundationKit"]),
         .library(name: "GitOKDesignKit", targets: ["GitOKDesignKit"]),
-        .library(name: "GitOKShellKit", targets: ["GitOKShellKit"]),
         .library(name: "GitOKSupportKit", targets: ["GitOKSupportKit"]),
     ],
     dependencies: [
@@ -31,22 +30,13 @@ let package = Package(
             dependencies: [
                 "GitOKFoundationKit",
             ],
-            path: "Sources/GitOKDesignKit",
-            resources: [.process("Icons.xcassets")]
-        ),
-        .target(
-            name: "GitOKShellKit",
-            dependencies: [
-                "GitOKFoundationKit",
-            ],
-            path: "Sources/GitOKShellKit"
+            path: "Sources/GitOKDesignKit"
         ),
         .target(
             name: "GitOKSupportKit",
             dependencies: [
                 "GitOKFoundationKit",
                 "GitOKDesignKit",
-                "GitOKShellKit",
             ],
             path: "Sources/GitOKSupportKit"
         ),
