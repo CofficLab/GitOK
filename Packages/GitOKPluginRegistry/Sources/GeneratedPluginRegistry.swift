@@ -3,7 +3,6 @@ import AboutSettingsPlugin
 import ActivityStatusPlugin
 import AppearanceSettingsPlugin
 import GitAutoPushPlugin
-import BannerPlugin
 import GitBranchPlugin
 import GitCleanStatusPlugin
 import GitCommitListPlugin
@@ -17,7 +16,6 @@ import GitDetailPlugin
 import GitIgnorePlugin
 import GitLFSPlugin
 import GitWatcherPlugin
-import IconPlugin
 import LicensePlugin
 import OnboardingPlugin
 import OpenAntigravityPlugin
@@ -72,7 +70,6 @@ public enum GeneratedPluginRegistry {
         ActivityStatusPlugin.self,
         AppearanceSettingsPlugin.self,
         GitAutoPushPlugin.self,
-        BannerPlugin.self,
         GitBranchPlugin.self,
         GitCleanStatusPlugin.self,
         GitCommitListPlugin.self,
@@ -86,7 +83,6 @@ public enum GeneratedPluginRegistry {
         GitIgnorePlugin.self,
         GitLFSPlugin.self,
         GitWatcherPlugin.self,
-        IconPlugin.self,
         LicensePlugin.self,
         OpenAntigravityPlugin.self,
         OpenCursorPlugin.self,

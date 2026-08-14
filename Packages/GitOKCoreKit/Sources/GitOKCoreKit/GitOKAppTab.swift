@@ -3,12 +3,13 @@ import Foundation
 /// Main window workspace tab identifiers owned by the app shell.
 public enum GitOKAppTab: String, CaseIterable, Sendable, Codable, Identifiable {
     case git
-    case banner
-    case icon
 
     public var id: String { rawValue }
 
     /// Resolves a persisted tab value from legacy display names or raw values.
+    ///
+    /// Legacy values from removed tabs (`banner`, `icon`) fall back to `nil`,
+    /// letting callers default to the git workspace.
     public static func migrated(from stored: String) -> GitOKAppTab? {
         let trimmed = stored.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isEmpty == false else { return nil }
@@ -20,10 +21,6 @@ public enum GitOKAppTab: String, CaseIterable, Sendable, Codable, Identifiable {
         switch trimmed {
         case "Git":
             return .git
-        case "Banner":
-            return .banner
-        case "Icon":
-            return .icon
         default:
             return nil
         }

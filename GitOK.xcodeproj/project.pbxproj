@@ -54,7 +54,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ActivityStatusPlugin,
-				BannerPlugin,
 				FileInfoPlugin,
 				GitAutoPushPlugin,
 				GitBranchPlugin,
@@ -71,7 +70,6 @@
 				GitUnpushedStatusPlugin,
 				GitWatcherPlugin,
 				GitWorkingStatePlugin,
-				IconPlugin,
 				LicensePlugin,
 				OpenAntigravityPlugin,
 				OpenCursorPlugin,

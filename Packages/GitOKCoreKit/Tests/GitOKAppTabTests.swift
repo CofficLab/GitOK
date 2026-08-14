@@ -4,14 +4,17 @@ import XCTest
 final class GitOKAppTabTests: XCTestCase {
     func testMigratedFromRawValue() {
         XCTAssertEqual(GitOKAppTab.migrated(from: "git"), .git)
-        XCTAssertEqual(GitOKAppTab.migrated(from: "banner"), .banner)
-        XCTAssertEqual(GitOKAppTab.migrated(from: "icon"), .icon)
     }
 
     func testMigratedFromLegacyDisplayNames() {
         XCTAssertEqual(GitOKAppTab.migrated(from: "Git"), .git)
-        XCTAssertEqual(GitOKAppTab.migrated(from: "Banner"), .banner)
-        XCTAssertEqual(GitOKAppTab.migrated(from: "Icon"), .icon)
+    }
+
+    func testMigratedFromRemovedTabsReturnsNil() {
+        XCTAssertNil(GitOKAppTab.migrated(from: "banner"))
+        XCTAssertNil(GitOKAppTab.migrated(from: "icon"))
+        XCTAssertNil(GitOKAppTab.migrated(from: "Banner"))
+        XCTAssertNil(GitOKAppTab.migrated(from: "Icon"))
     }
 
     func testMigratedFromUnknownReturnsNil() {

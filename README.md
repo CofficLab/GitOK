@@ -35,7 +35,6 @@ We need a tool to improve our work efficiency, and we'd like it to have the foll
   - Initializing Git repositories and remote repositories
   - Preparing CI/CD scripts
 - Assisting users in writing well-formatted `commit messages`
-- Quickly generating app icons for multiple platforms
 
 ## Our Other Projects
 

@@ -179,6 +179,5 @@ final class GitOKPluginRuntimeTests: XCTestCase {
 
         let gitContext = GitOKPluginContext(isGitRepository: true)
         XCTAssertNotNil(runtime.enabledDetailView(for: .git, context: gitContext))
-        XCTAssertNil(runtime.enabledDetailView(for: .banner, context: gitContext))
     }
 }
