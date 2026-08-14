@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "Add" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -63,6 +60,7 @@
       }
     },
     "Add Existing Project" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -120,6 +118,7 @@
       }
     },
     "Add Project" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -148,6 +147,7 @@
       }
     },
     "Always On" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -176,6 +176,7 @@
       }
     },
     "Build %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -262,6 +263,7 @@
       }
     },
     "Check for Updates..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -290,6 +292,7 @@
       }
     },
     "Clone Repository" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -318,6 +321,7 @@
       }
     },
     "Commit Style..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -346,6 +350,7 @@
       }
     },
     "Configuration" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -403,6 +408,7 @@
       }
     },
     "Container folder does not exist" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -460,6 +466,7 @@
       }
     },
     "Debug" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -546,6 +553,7 @@
       }
     },
     "Documents folder does not exist" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -603,6 +611,7 @@
       }
     },
     "Drag a folder here to set it as the current project" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -660,6 +669,7 @@
       }
     },
     "Enabled" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -688,6 +698,7 @@
       }
     },
     "Error Opening Container Folder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -716,6 +727,7 @@
       }
     },
     "Error Opening Documents Folder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -744,6 +756,7 @@
       }
     },
     "Fetch" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -830,6 +843,7 @@
       }
     },
     "Git" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -945,6 +959,7 @@
       }
     },
     "New Repository" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1089,6 +1104,7 @@
       }
     },
     "No plugin introduction available." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1117,6 +1133,7 @@
       }
     },
     "No Plugins" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1145,6 +1162,7 @@
       }
     },
     "No plugins available in settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1434,6 +1452,7 @@
       }
     },
     "OK" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1462,6 +1481,7 @@
       }
     },
     "Open App Support Folder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1490,6 +1510,7 @@
       }
     },
     "Open Container Folder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1518,6 +1539,7 @@
       }
     },
     "Open Database Folder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1546,6 +1568,7 @@
       }
     },
     "Open Documents Folder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1632,6 +1655,7 @@
       }
     },
     "Plugin Management" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1660,6 +1684,7 @@
       }
     },
     "Plugin Management..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1746,6 +1771,7 @@
       }
     },
     "Pull" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1803,6 +1829,7 @@
       }
     },
     "Push" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1889,6 +1916,7 @@
       }
     },
     "Refresh Status" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1946,6 +1974,7 @@
       }
     },
     "Release to Add Project" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1974,6 +2003,7 @@
       }
     },
     "Repository Settings..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2002,6 +2032,7 @@
       }
     },
     "Search Plugins" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2116,6 +2147,7 @@
       }
     },
     "Settings..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2173,6 +2205,7 @@
       }
     },
     "v%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2230,6 +2263,7 @@
       }
     },
     "插件管理" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
