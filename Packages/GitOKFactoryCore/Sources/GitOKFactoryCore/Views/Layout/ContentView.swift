@@ -109,7 +109,7 @@ extension ContentView {
             }
 
             if vm.project != nil, projectActionsVisibility {
-                ToolbarItemGroup(placement: .cancellationAction) {
+                ToolbarItemGroup(placement: .primaryAction) {
                     ForEach(toolbarTrailingViews) { item in
                         item.view
                     }
