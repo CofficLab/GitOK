@@ -431,6 +431,7 @@
       }
     },
     "Current Tab" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -771,6 +772,7 @@
       }
     },
     "Fetching remote updates..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1029,6 +1031,7 @@
       }
     },
     "No detail view" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1057,6 +1060,7 @@
       }
     },
     "No Git repository available to operate on" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1198,6 +1202,7 @@
       }
     },
     "No projects" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1226,6 +1231,7 @@
       }
     },
     "No sidebar" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1682,6 +1688,7 @@
       }
     },
     "Project not found" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1767,6 +1774,7 @@
       }
     },
     "Pulling..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1823,6 +1831,7 @@
       }
     },
     "Push Error" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1851,6 +1860,7 @@
       }
     },
     "Pushing..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1907,6 +1917,7 @@
       }
     },
     "Refreshing repository status..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2019,6 +2030,7 @@
       }
     },
     "Select Tab" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2132,6 +2144,7 @@
       }
     },
     "Switch to Tab" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
