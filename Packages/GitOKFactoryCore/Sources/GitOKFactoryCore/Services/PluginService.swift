@@ -1,20 +1,28 @@
 import GitOKAppCore
 import Combine
 import GitOKCoreKit
-import GitOKPluginRegistry
 import GitOKUI
 import SwiftUI
 
+/// Host engine of the factory layer (Lumi FactoryCore equivalent).
+///
+/// Aggregates plugin contributions for the app shell. The concrete plugin
+/// list is injected by the composition root; this type stays plugin-agnostic.
 @MainActor
-final class PluginService: ObservableObject {
+public final class PluginService: ObservableObject {
     private let runtime: GitOKPluginRuntime
     private let pluginDependencies: GitOKPluginDependencies
     private var cancellables = Set<AnyCancellable>()
 
-    init(pluginDependencies: GitOKPluginDependencies) {
+    public init(
+        pluginDependencies: GitOKPluginDependencies,
+        pluginTypes: [any GitOKPlugin.Type]
+    ) {
         self.pluginDependencies = pluginDependencies
         self.runtime = GitOKPluginRuntime()
-        GeneratedPluginRegistry.registerAll(into: runtime)
+        for pluginType in pluginTypes where pluginType.shouldRegister {
+            runtime.register(pluginType)
+        }
 
         PluginSettingsStore.shared.$settings
             .sink { [weak self] _ in self?.objectWillChange.send() }
@@ -23,15 +31,15 @@ final class PluginService: ObservableObject {
 
     /// Runs the two-phase boot sequence once the shell finished registering
     /// its services. Throws when required services are missing.
-    func startupPlugins() throws {
+    public func startupPlugins() throws {
         try runtime.startup(dependencies: pluginDependencies)
     }
 
-    var hasPlugins: Bool { registeredPluginCount > 0 }
-    var registeredPluginCount: Int { runtime.registeredCount }
-    var configurablePlugins: [PluginInfo] { runtime.configurablePlugins }
+    public var hasPlugins: Bool { registeredPluginCount > 0 }
+    public var registeredPluginCount: Int { runtime.registeredCount }
+    public var configurablePlugins: [PluginInfo] { runtime.configurablePlugins }
 
-    func makeContext(
+    public func makeContext(
         projectURL: URL? = nil,
         projectPath: String? = nil,
         projectTitle: String? = nil,
@@ -82,7 +90,7 @@ final class PluginService: ObservableObject {
         )
     }
 
-    func getEnabledToolbarLeadingViews(
+    public func getEnabledToolbarLeadingViews(
         projectURL: URL? = nil,
         branchName: String? = nil,
         isGitRepository: Bool = false,
@@ -114,7 +122,7 @@ final class PluginService: ObservableObject {
         return runtime.enabledToolbarLeadingViews(context: context)
     }
 
-    func getEnabledToolbarTrailingViews(
+    public func getEnabledToolbarTrailingViews(
         projectURL: URL? = nil,
         branchName: String? = nil,
         remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
@@ -130,7 +138,7 @@ final class PluginService: ObservableObject {
         return runtime.enabledToolbarTrailingViews(context: context)
     }
 
-    func getEnabledRailViews(
+    public func getEnabledRailViews(
         tab: GitOKAppTab,
         project: Project?,
         isGitRepository: Bool = false
@@ -145,7 +153,7 @@ final class PluginService: ObservableObject {
         return runtime.enabledRailViews(tab: tab, context: context)
     }
 
-    func getEnabledPluginListViews(
+    public func getEnabledPluginListViews(
         tab: GitOKAppTab,
         project: Project?,
         isGitRepository: Bool = false
@@ -160,19 +168,19 @@ final class PluginService: ObservableObject {
         return runtime.enabledListViews(tab: tab, projectURL: project?.url, context: context)
     }
 
-    func getEnabledStatusBarLeadingViews(selectedFilePath: String? = nil, projectPath: String? = nil) -> [AnyView] {
+    public func getEnabledStatusBarLeadingViews(selectedFilePath: String? = nil, projectPath: String? = nil) -> [AnyView] {
         guard hasPlugins else { return [] }
         let context = makeContext(projectPath: projectPath, selectedFilePath: selectedFilePath)
         return runtime.enabledStatusBarLeadingViews(context: context)
     }
 
-    func getEnabledStatusBarCenterViews(activityStatus: String? = nil) -> [AnyView] {
+    public func getEnabledStatusBarCenterViews(activityStatus: String? = nil) -> [AnyView] {
         guard hasPlugins else { return [] }
         let context = makeContext(activityStatus: activityStatus)
         return runtime.enabledStatusBarCenterViews(context: context)
     }
 
-    func getEnabledStatusBarTrailingViews(
+    public func getEnabledStatusBarTrailingViews(
         projectURL: URL? = nil,
         projectPath: String? = nil,
         projectTitle: String? = nil,
@@ -192,12 +200,12 @@ final class PluginService: ObservableObject {
         return runtime.enabledStatusBarTrailingViews(context: context)
     }
 
-    func getThemeContributions() -> [GitOKUIThemeContribution] {
+    public func getThemeContributions() -> [GitOKUIThemeContribution] {
         guard hasPlugins else { return [] }
         return runtime.themeContributions()
     }
 
-    func getRootViewWrapper<Content: View>(
+    public func getRootViewWrapper<Content: View>(
         context: GitOKPluginContext,
         @ViewBuilder content: () -> Content
     ) -> AnyView {
@@ -205,70 +213,70 @@ final class PluginService: ObservableObject {
         return runtime.rootViewWrapper(context: context, content: content)
     }
 
-    func toolbarLeadingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+    public func toolbarLeadingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         guard hasPlugins else { return [] }
         return runtime.enabledToolbarLeadingViews(context: context)
     }
 
-    func toolbarTrailingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+    public func toolbarTrailingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         guard hasPlugins else { return [] }
         return runtime.enabledToolbarTrailingViews(context: context)
     }
 
-    func railViews(tab: GitOKAppTab, context: GitOKPluginContext) -> [GitOKRailItem] {
+    public func railViews(tab: GitOKAppTab, context: GitOKPluginContext) -> [GitOKRailItem] {
         guard hasPlugins else { return [] }
         return runtime.enabledRailViews(tab: tab, context: context)
     }
 
-    func listViews(tab: GitOKAppTab, context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+    public func listViews(tab: GitOKAppTab, context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         guard hasPlugins else { return [] }
         return runtime.enabledListViews(tab: tab, projectURL: context.projectURL, context: context)
     }
 
-    func detailView(tab: GitOKAppTab, context: GitOKPluginContext) -> AnyView? {
+    public func detailView(tab: GitOKAppTab, context: GitOKPluginContext) -> AnyView? {
         guard hasPlugins else { return nil }
         return runtime.enabledDetailView(for: tab, context: context)
     }
 
-    func statusBarLeadingViews(context: GitOKPluginContext) -> [AnyView] {
+    public func statusBarLeadingViews(context: GitOKPluginContext) -> [AnyView] {
         guard hasPlugins else { return [] }
         return runtime.enabledStatusBarLeadingViews(context: context)
     }
 
-    func statusBarCenterViews(context: GitOKPluginContext) -> [AnyView] {
+    public func statusBarCenterViews(context: GitOKPluginContext) -> [AnyView] {
         guard hasPlugins else { return [] }
         return runtime.enabledStatusBarCenterViews(context: context)
     }
 
-    func statusBarTrailingViews(context: GitOKPluginContext) -> [AnyView] {
+    public func statusBarTrailingViews(context: GitOKPluginContext) -> [AnyView] {
         guard hasPlugins else { return [] }
         return runtime.enabledStatusBarTrailingViews(context: context)
     }
 
-    func themeContributions() -> [GitOKUIThemeContribution] {
+    public func themeContributions() -> [GitOKUIThemeContribution] {
         getThemeContributions()
     }
 
-    func rootViewWrapper(context: GitOKPluginContext, @ViewBuilder content: () -> some View) -> AnyView {
+    public func rootViewWrapper(context: GitOKPluginContext, @ViewBuilder content: () -> some View) -> AnyView {
         getRootViewWrapper(context: context, content: content)
     }
 
-    func settingsPaneItems(context: GitOKPluginContext) -> [GitOKSettingsPaneItem] {
+    public func settingsPaneItems(context: GitOKPluginContext) -> [GitOKSettingsPaneItem] {
         guard hasPlugins else { return [] }
         return runtime.enabledSettingsPaneItems(context: context)
     }
 
-    func sidebarPaneItems(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+    public func sidebarPaneItems(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         guard hasPlugins else { return [] }
         return runtime.enabledSidebarPaneItems(context: context)
     }
 
-    func onboardingView(kind: GitOKOnboardingKind, context: GitOKPluginContext) -> AnyView? {
+    public func onboardingView(kind: GitOKOnboardingKind, context: GitOKPluginContext) -> AnyView? {
         guard hasPlugins else { return nil }
         return runtime.enabledOnboardingView(kind: kind, context: context)
     }
 
-    func pluginIntroductionView(pluginID: String, context: GitOKPluginContext) -> AnyView? {
+    public func pluginIntroductionView(pluginID: String, context: GitOKPluginContext) -> AnyView? {
         guard hasPlugins else { return nil }
         return runtime.pluginIntroductionView(pluginID: pluginID, context: context)
     }

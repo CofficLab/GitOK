@@ -34,19 +34,11 @@ struct SidebarView: View {
         .navigationSplitViewColumnWidth(min: 200, ideal: 200, max: 300)
         .background(themeProvider.activeChromeTheme.sidebarBackgroundColor())
         .toolbar {
-            ToolbarItem {
-                BtnAdd()
+            if let sidebarToolbarItem = GitOKFactoryChrome.sidebarToolbarItem {
+                ToolbarItem {
+                    sidebarToolbarItem
+                }
             }
         }
     }
-}
-
-#Preview("Sidebar") {
-    NavigationSplitView {
-        SidebarView()
-    } detail: {
-        Text("Detail")
-    }
-    .inRootView()
-    .frame(width: 800, height: 600)
 }

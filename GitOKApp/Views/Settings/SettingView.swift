@@ -1,3 +1,4 @@
+import GitOKFactoryCore
 import Foundation
 import GitOKAppCore
 import GitOKCoreKit

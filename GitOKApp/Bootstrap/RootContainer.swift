@@ -1,3 +1,4 @@
+import GitOKFactoryCore
 import GitOKAppCore
 import GitOKCoreKit
 import GitOKPluginRegistry
@@ -30,7 +31,10 @@ final class RootContainer: ObservableObject {
 
         self.pluginDependencies = GitOKPluginDependencies()
         self.appVM = AppVM(repoManager: repoManager)
-        self.pluginService = PluginService(pluginDependencies: pluginDependencies)
+        self.pluginService = PluginService(
+            pluginDependencies: pluginDependencies,
+            pluginTypes: GeneratedPluginRegistry.plugins
+        )
         self.themeVM = AppThemeVM(pluginProvider: pluginService)
         self.themeService = ThemeService(themeVM: themeVM)
         self.navigationService = AppNavigationService(appVM: appVM)
@@ -72,6 +76,8 @@ final class RootContainer: ObservableObject {
         }
 
         GitOKPluginBootstrap.configureRuntimes(projectService: gitOKProjectService)
+
+        GitOKFactoryChrome.sidebarToolbarItem = AnyView(BtnAdd())
 
         do {
             try pluginService.startupPlugins()

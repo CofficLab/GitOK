@@ -5,43 +5,43 @@ import GitOKCoreKit
 import ProjectKit
 
 @MainActor
-final class GitOKProjectService: GitOKProjectServicing {
+public final class GitOKProjectService: GitOKProjectServicing {
     private let dataVM: DataVM
     private let projectVM: ProjectVM
 
-    init(dataVM: DataVM, projectVM: ProjectVM) {
+    public init(dataVM: DataVM, projectVM: ProjectVM) {
         self.dataVM = dataVM
         self.projectVM = projectVM
     }
 
     // MARK: - Snapshot state
 
-    var projectURL: URL? { projectVM.project?.url }
-    var projectPath: String? { projectVM.project?.path }
-    var projectTitle: String? { projectVM.project?.title }
-    var branchName: String? { dataVM.branch?.name }
-    var isGitRepository: Bool { projectVM.currentProjectIsGitRepository }
-    var selectedFilePath: String? { projectVM.file?.file }
-    var remoteTrackingStatus: GitOKRemoteTrackingStatus? {
+    public var projectURL: URL? { projectVM.project?.url }
+    public var projectPath: String? { projectVM.project?.path }
+    public var projectTitle: String? { projectVM.project?.title }
+    public var branchName: String? { dataVM.branch?.name }
+    public var isGitRepository: Bool { projectVM.currentProjectIsGitRepository }
+    public var selectedFilePath: String? { projectVM.file?.file }
+    public var remoteTrackingStatus: GitOKRemoteTrackingStatus? {
         GitOKRemoteTrackingStatus(
             ahead: projectVM.aheadCount,
             behind: projectVM.behindCount,
             hasUpstream: projectVM.hasUpstream
         )
     }
-    var isClean: Bool { projectVM.isClean }
-    var unpushedCommitsCount: Int { projectVM.unpushedCommitsCount }
-    var projectExists: Bool { projectVM.projectExists }
-    var isCheckingGitRepository: Bool { projectVM.isCheckingCurrentProjectGitRepository }
-    var lastFetchedAt: Date? { projectVM.lastFetchedAt }
+    public var isClean: Bool { projectVM.isClean }
+    public var unpushedCommitsCount: Int { projectVM.unpushedCommitsCount }
+    public var projectExists: Bool { projectVM.projectExists }
+    public var isCheckingGitRepository: Bool { projectVM.isCheckingCurrentProjectGitRepository }
+    public var lastFetchedAt: Date? { projectVM.lastFetchedAt }
 
     // MARK: - Batch A read operations
 
-    func refreshGitRepositoryState(reason: String) {
+    public func refreshGitRepositoryState(reason: String) {
         projectVM.refreshCurrentProjectGitRepositoryState(reason: reason)
     }
 
-    func refreshCurrentBranch(reason: String) {
+    public func refreshCurrentBranch(reason: String) {
         dataVM.refreshCurrentBranch(
             project: projectVM.project,
             isGitRepository: projectVM.currentProjectIsGitRepository,
@@ -49,61 +49,61 @@ final class GitOKProjectService: GitOKProjectServicing {
         )
     }
 
-    func getCurrentBranch() throws -> GitBranch? {
+    public func getCurrentBranch() throws -> GitBranch? {
         try requireProject().getCurrentBranch()
     }
 
-    func getBranches() throws -> [GitBranch] {
+    public func getBranches() throws -> [GitBranch] {
         try requireProject().getBranches()
     }
 
-    func lightweightStatusEntries() throws -> [GitStatusEntry] {
+    public func lightweightStatusEntries() throws -> [GitStatusEntry] {
         try requireProject().lightweightStatusEntries()
     }
 
-    func lightweightStatusEntriesAsync() async throws -> [GitStatusEntry] {
+    public func lightweightStatusEntriesAsync() async throws -> [GitStatusEntry] {
         try await requireProject().lightweightStatusEntriesAsync()
     }
 
-    func refreshStatus() async throws -> [GitStatusEntry] {
+    public func refreshStatus() async throws -> [GitStatusEntry] {
         try await lightweightStatusEntriesAsync()
     }
 
-    func hasStagedChangesAsync() async throws -> Bool {
+    public func hasStagedChangesAsync() async throws -> Bool {
         try await requireProject().hasStagedChangesAsync()
     }
 
-    func isGitAsync() async -> Bool {
+    public func isGitAsync() async -> Bool {
         guard let project = projectVM.project else { return false }
         return await project.isGitAsync()
     }
 
-    func headCommitHashAsync() async -> String? {
+    public func headCommitHashAsync() async -> String? {
         guard let project = projectVM.project else { return nil }
         return await project.headCommitHashAsync()
     }
 
-    func untrackedFiles() async throws -> [GitDiffFile] {
+    public func untrackedFiles() async throws -> [GitDiffFile] {
         try await requireProject().untrackedFiles()
     }
 
-    func stagedDiffFileList() async throws -> [GitDiffFile] {
+    public func stagedDiffFileList() async throws -> [GitDiffFile] {
         try await requireProject().stagedDiffFileList()
     }
 
-    func unstagedDiffFileList() async throws -> [GitDiffFile] {
+    public func unstagedDiffFileList() async throws -> [GitDiffFile] {
         try await requireProject().unstagedDiffFileList()
     }
 
-    func getUnPushedCommitCountAsync() async throws -> Int {
+    public func getUnPushedCommitCountAsync() async throws -> Int {
         try await requireProject().getUnPushedCommitCountAsync()
     }
 
-    func aheadBehind() throws -> GitAheadBehind {
+    public func aheadBehind() throws -> GitAheadBehind {
         try requireProject().aheadBehind()
     }
 
-    func aheadBehindAsync() async throws -> GitAheadBehind {
+    public func aheadBehindAsync() async throws -> GitAheadBehind {
         try await requireProject().aheadBehindAsync()
     }
 

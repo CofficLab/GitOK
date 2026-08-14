@@ -1,3 +1,4 @@
+import GitOKFactoryCore
 import CloudKit
 import GitOKAppCore
 import GitOKSupportKit

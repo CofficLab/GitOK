@@ -8,8 +8,8 @@ import SwiftUI
 
 /// 主内容视图，管理应用的整体布局和导航结构
 struct ContentView: View, SuperLog {
-    nonisolated static let emoji = "📱"
-    nonisolated static let verbose = false
+    nonisolated public static let emoji = "📱"
+    nonisolated public static let verbose = false
 
     @EnvironmentObject var app: AppVM
     @EnvironmentObject var g: DataVM
@@ -403,25 +403,4 @@ private extension View {
             self
         }
     }
-}
-
-// MARK: - Preview
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 1200)
-        .frame(height: 1200)
 }

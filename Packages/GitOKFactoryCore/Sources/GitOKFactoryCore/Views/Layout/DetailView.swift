@@ -90,14 +90,3 @@ struct DetailView: View {
         }
     }
 }
-
-#Preview("Detail") {
-    DetailView(
-        tab: .git,
-        pluginRailViews: [],
-        selectedRailID: .constant(nil),
-        statusBarVisibility: true
-    )
-    .inRootView()
-    .frame(width: 800, height: 600)
-}

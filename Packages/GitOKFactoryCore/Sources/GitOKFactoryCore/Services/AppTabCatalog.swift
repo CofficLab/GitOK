@@ -1,7 +1,7 @@
 import GitOKAppCore
 import GitOKCoreKit
 
-enum AppTabCatalog {
+public enum AppTabCatalog {
     static var visibleTabs: [GitOKAppTab] {
         GitOKAppTab.sortedAllCases
     }

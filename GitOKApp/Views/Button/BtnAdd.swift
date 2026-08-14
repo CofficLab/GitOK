@@ -1,3 +1,4 @@
+import GitOKFactoryCore
 import GitOKAppCore
 import GitOKSupportKit
 import GitOKUI

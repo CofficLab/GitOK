@@ -3,20 +3,27 @@
 GitOK follows the same layered model as Lumi:
 
 ```text
-GitOKApp/          Thin shell: scenes, DI, NavigationSplitView chrome
-Packages/          SDK + domain kits (GitOKCoreKit, GitCoreKit, GitOKUI, …)
+GitOKApp/          Thin shell: @main, scenes, commands, composition root (RootContainer)
+Packages/
+  GitOKFactoryCore/   Host engine (Lumi FactoryCore equivalent): PluginService,
+                      layout views, app services — plugin-agnostic
+  GitOKCoreKit/       Plugin SDK + kernel (Lumi KernelLumi equivalent)
+  GitCoreKit/         Git engine (git CLI wrapper)
+  GitOKUI/            Design system (Lumi LumiUI equivalent)
+  …                   Domain kits
 Plugins/           Feature SPM packages (one plugin per directory)
-GitOKPluginRegistry/  Explicit bundled plugin manifest + runtime bootstrap
+GitOKPluginRegistry/  Compile-time plugin catalog (Lumi FactoryLumi equivalent)
 ```
 
 ## Dependency rules
 
 | Layer | May import |
 |-------|------------|
-| GitOKApp | GitOKCoreKit, GitOKPluginRegistry, GitOKUI, domain kits |
+| GitOKApp | GitOKFactoryCore, GitOKPluginRegistry, domain kits |
+| GitOKFactoryCore | GitOKAppCore, GitOKCoreKit, GitOKUI, domain kits — **no plugins** |
 | Plugins | GitOKCoreKit, domain kits |
 | GitOKCoreKit | Foundation, GitOKUI, GitCoreKit (no Plugins) |
-| Plugins | **Must not** import GitOKApp |
+| Plugins | **Must not** import GitOKApp or GitOKFactoryCore |
 
 ## Service layer (replaces menu NotificationCenter)
 
@@ -46,12 +53,16 @@ Plugins that receive data through `GitOKPluginContext` (GitWatcher, UnpushedStat
 ## App shell responsibilities
 
 - `@main`, Sparkle updates, SwiftData `ModelContainer`
-- `RootContainer` service wiring + `GitOKPluginBootstrap`
-- `PluginService` contribution aggregation
-- `ContentView` NavigationSplitView chrome (toolbar, tabs, status bar slots)
+- `RootContainer` composition root: service wiring, injects
+  `GeneratedPluginRegistry.plugins` into `PluginService`, sets
+  `GitOKFactoryChrome` hooks (e.g. sidebar add-project button), runs the
+  two-phase plugin boot (`startupPlugins()`)
 - macOS menu commands delegating to services (no NotificationCenter for navigation/git menus)
 
 Feature UI and business logic belong in Plugins or Packages, not GitOKApp.
+The host engine (layout views, `PluginService`, app services) lives in
+`Packages/GitOKFactoryCore` and stays plugin-agnostic; shell-owned chrome is
+injected through `GitOKFactoryChrome` instead of hard dependencies.
 
 ## Boundary check
 

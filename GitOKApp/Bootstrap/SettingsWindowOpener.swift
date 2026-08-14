@@ -1,3 +1,4 @@
+import GitOKFactoryCore
 import AppKit
 import GitOKAppCore
 import SwiftUI

@@ -4,22 +4,22 @@ import GitOKCoreKit
 import MagicAlert
 
 @MainActor
-final class GitCoreService: GitOKRepositoryServicing, GitOKActivityServicing, GitOKGitCommandServicing {
-    let dataVM: DataVM
-    let projectVM: ProjectVM
+public final class GitCoreService: GitOKRepositoryServicing, GitOKActivityServicing, GitOKGitCommandServicing {
+    public let dataVM: DataVM
+    public let projectVM: ProjectVM
 
-    init(dataVM: DataVM, projectVM: ProjectVM) {
+    public init(dataVM: DataVM, projectVM: ProjectVM) {
         self.dataVM = dataVM
         self.projectVM = projectVM
     }
 
-    var activityStatus: String? { dataVM.activityStatus }
+    public var activityStatus: String? { dataVM.activityStatus }
 
-    func setActivityStatus(_ status: String?) {
+    public func setActivityStatus(_ status: String?) {
         dataVM.activityStatus = status
     }
 
-    func projectExists(at url: URL) -> Bool {
+    public func projectExists(at url: URL) -> Bool {
         GitRepositoryBridgeRules.projectExists(
             url: url,
             path: \.path,
@@ -27,14 +27,14 @@ final class GitCoreService: GitOKRepositoryServicing, GitOKActivityServicing, Gi
         )
     }
 
-    func importRepository(at url: URL) -> Bool {
+    public func importRepository(at url: URL) -> Bool {
         GitRepositoryBridgeRules.performRepositoryImportCompletion(
             addProject: { dataVM.addProject(url: url, using: dataVM.repoManager.projectRepo) },
             selectProject: { project, reason in projectVM.setProject(project, reason: reason) }
         )
     }
 
-    func performGitCommand(_ command: GitOKGitCommand) {
+    public func performGitCommand(_ command: GitOKGitCommand) {
         guard let loadedProject = projectVM.project, projectVM.currentProjectIsGitRepository else {
             alert_error(String(localized: "No Git repository available to operate on"))
             return
