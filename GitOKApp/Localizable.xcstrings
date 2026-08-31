@@ -755,6 +755,18 @@
         }
       }
     },
+    "Failed to assemble main view" : {
+
+    },
+    "Failed to assemble main view: %@" : {
+
+    },
+    "Failed to assemble settings view" : {
+
+    },
+    "Failed to assemble settings view: %@" : {
+
+    },
     "Fetch" : {
       "extractionState" : "stale",
       "localizations" : {
