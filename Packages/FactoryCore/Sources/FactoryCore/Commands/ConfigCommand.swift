@@ -1,4 +1,5 @@
 import SwiftUI
+import KitGitOKCore
 import KitGitOKSupport
 import KernelCore
 
@@ -20,17 +21,17 @@ public struct ConfigCommand: Commands, SuperLog {
         #if os(macOS)
         CommandMenu(String(localized: "Configuration")) {
             Button(String(localized: "Repository Settings...")) {
-                kernel.resolveProvider(AppNavigationService.self)?.openRepositorySettings()
+                kernel.resolveProvider((any GitOKNavigationServicing).self)?.openRepositorySettings()
             }
 
             Button(String(localized: "Commit Style...")) {
-                kernel.resolveProvider(AppNavigationService.self)?.openCommitStyleSettings()
+                kernel.resolveProvider((any GitOKNavigationServicing).self)?.openCommitStyleSettings()
             }
 
             Divider()
 
             Button(String(localized: "Plugin Management...")) {
-                kernel.resolveProvider(AppNavigationService.self)?.openPluginSettings()
+                kernel.resolveProvider((any GitOKNavigationServicing).self)?.openPluginSettings()
             }
         }
         #endif

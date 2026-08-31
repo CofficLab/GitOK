@@ -1,5 +1,6 @@
 import Foundation
 import GitOKUI
+import KernelCore
 import SwiftUI
 
 @MainActor
@@ -52,6 +53,33 @@ public final class GitOKPluginRuntime {
         }
 
         let context = GitOKPluginContext(dependencies: dependencies)
+        for plugin in enabledPlugins {
+            plugin.onReady(context)
+        }
+    }
+
+    /// Starts GitOK plugins against the host's Lumi-compatible kernel.
+    ///
+    /// The legacy dependency registry remains available only as an adapter
+    /// for older plugins. New plugin lifecycle code receives the same kernel
+    /// that the host uses for its Providers and views.
+    public func startup(
+        kernel: KernelCoreContainer,
+        dependencies legacyDependencies: GitOKPluginDependencies? = nil
+    ) throws {
+        let enabledPlugins = pluginTypes.filter { isPluginEnabled($0) }
+        let dependencies = legacyDependencies ?? GitOKPluginDependencies(kernel: kernel)
+
+        for plugin in enabledPlugins {
+            plugin.onBoot(kernel: kernel, dependencies: dependencies)
+        }
+
+        let missing = GitOKRequiredServices.missing(in: kernel)
+        guard missing.isEmpty else {
+            throw KitGitOKCoreError.missingRequiredServices(missing)
+        }
+
+        let context = GitOKPluginContext(kernel: kernel, dependencies: dependencies)
         for plugin in enabledPlugins {
             plugin.onReady(context)
         }

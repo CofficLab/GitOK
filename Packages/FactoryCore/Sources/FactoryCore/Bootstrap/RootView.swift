@@ -62,7 +62,7 @@ public struct RootView<Content>: View, SuperEvent, SuperLog where Content: View 
     /// Compatibility initializer for package-local previews and legacy views.
     @available(*, deprecated, message: "Pass a shared KernelCoreContainer explicitly")
     public init(@ViewBuilder content: () -> Content) {
-        self.init(kernel: RootContainer.shared.kernel, content: content)
+        self.init(kernel: RootContainer(composition: .init()).kernel, content: content)
     }
 
     public var body: some View {
@@ -167,7 +167,7 @@ public struct RootView<Content>: View, SuperEvent, SuperLog where Content: View 
 
     private var pluginRootContext: GitOKPluginContext {
         let cleanStatusProjectPath = projectVM.project?.path
-        let projectService = kernel.resolveProvider(GitOKProjectService.self)!
+        let projectService = kernel.resolveProvider((any GitOKProjectServicing).self)!
 
         return pluginProvider.makeContext(
             projectURL: projectService.projectURL,
@@ -338,7 +338,7 @@ extension View {
     /// `inRootView(kernel:)` so the shared Kernel is explicit.
     @available(*, deprecated, message: "Pass a shared KernelCoreContainer explicitly")
     public func inRootView() -> some View {
-        RootView(kernel: RootContainer.shared.kernel) {
+        RootView(kernel: RootContainer(composition: .init()).kernel) {
             self
         }
     }

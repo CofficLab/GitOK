@@ -37,7 +37,7 @@ final class GeneratedPluginRegistryTests: XCTestCase {
             "GitStashPlugin",
             "GitSubmodulePlugin",
             "GitConflictResolverPlugin",
-            "GitSmartMergePlugin",
+            "GitMergePlugin",
             "GitRemoteRepositoryPlugin",
             "GitLFSPlugin",
             "GitignorePlugin",

@@ -22,6 +22,12 @@ packages:
     path: Packages/KitProjectSupport
   ProviderProject:
     path: Packages/ProviderProject
+  ProviderGit:
+    path: Packages/ProviderGit
+  ProviderTheme:
+    path: Packages/ProviderTheme
+  ProviderNavigation:
+    path: Packages/ProviderNavigation
   KitGitOKCore:
     path: Packages/KitGitOKCore
   FactoryGitOK:
@@ -60,6 +66,9 @@ targets:
       - package: KitGitOKSupport
       - package: KitProjectSupport
       - package: ProviderProject
+      - package: ProviderGit
+      - package: ProviderTheme
+      - package: ProviderNavigation
       - package: KitGitOKCore
       - package: FactoryGitOK
       - package: GitOKAppCore

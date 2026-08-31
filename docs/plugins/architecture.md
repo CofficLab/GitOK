@@ -32,7 +32,8 @@ App Launch
 GitOKApp.init
     │
     ├─► KernelFactory.makeKernel()
-    ├─► ProviderFactory 注册 App 服务到 Kernel（Project/Activity/GitCommand/Theme/Navigation）
+    ├─► ProviderFactory 按能力装配 ProviderGit/Project/Theme/Navigation
+    │   并注册 typed contracts 到 Kernel
     ├─► 兼容桥同步注册 GitOKPluginDependencies
     │
     ├─► GitOKPluginBootstrap.configureRuntimes(projectService:)
@@ -44,9 +45,9 @@ PluginService.init()
 GeneratedPluginRegistry.registerAll(into: runtime)
     │
     ▼
-PluginService.startupPlugins() → GitOKPluginRuntime.startup(dependencies:)
+PluginService.startupPlugins() → GitOKPluginRuntime.startup(kernel:)
     │
-    ├─► ① onBoot(dependencies:)   — 全部启用插件同步注册自有服务
+    ├─► ① onBoot(kernel:dependencies:) — 全部启用插件注册自有 Provider
     ├─► ② 校验 GitOKRequiredServices — 缺失则抛 missingRequiredServices 并列出清单
     └─► ③ onReady(context:)       — 依赖其他服务的插件初始化
     │
@@ -63,7 +64,8 @@ ContentView queries PluginService for toolbar / list / detail / statusbar
 
 - **`GitOKPlugin`** — 静态 enum 协议（`metadata`、`onBoot`、`onReady`、`toolbarTrailingItems` 等）
 - **`GitOKPluginContext`** — 向插件视图注入运行时快照、回调与 `resolve()` DI
-- **`GitOKPluginDependencies`** — 类型键控服务注册表，注册 `GitOKProjectServicing`、`GitOKNavigationServicing` 等 App 服务
+- **`GitOKPluginDependencies`** — 旧版类型键控注册表；新注册会转发到同一个 Kernel
+- **Provider contracts** — `ProviderProject`、`ProviderGit`、`ProviderTheme`、`ProviderNavigation`，插件只依赖能力协议，不依赖 `FactoryCore` 默认实现
 
 菜单导航与 Git 命令通过 `GitOKNavigationServicing` / `GitOKGitCommandServicing` 走 App 服务层。
 

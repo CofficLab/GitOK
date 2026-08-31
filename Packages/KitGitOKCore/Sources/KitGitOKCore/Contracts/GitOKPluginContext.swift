@@ -1,4 +1,5 @@
 import Foundation
+import KernelCore
 
 /// 插件视图构建上下文
 ///
@@ -21,6 +22,11 @@ import Foundation
 /// 所有新增属性应提供合理的默认值，以保持向后兼容性。
 @MainActor
 public struct GitOKPluginContext {
+    /// The host kernel is the primary dependency-resolution boundary.
+    public let kernel: KernelCoreContainer
+
+    /// Compatibility bridge for plugins that still register services through
+    /// the pre-Kernel dependency container.
     public let dependencies: GitOKPluginDependencies
 
     // MARK: - 项目信息
@@ -102,6 +108,7 @@ public struct GitOKPluginContext {
     public let onRemoteTrackingUpdate: GitOKRemoteTrackingUpdateHandler
 
     public init(
+        kernel: KernelCoreContainer = KernelCoreContainer(),
         dependencies: GitOKPluginDependencies = GitOKPluginDependencies(),
         projectURL: URL? = nil,
         projectPath: String? = nil,
@@ -126,6 +133,7 @@ public struct GitOKPluginContext {
         onUnpushedCommitsUpdate: @escaping GitOKUnpushedCommitsUpdateHandler = { _, _ in },
         onRemoteTrackingUpdate: @escaping GitOKRemoteTrackingUpdateHandler = { _, _ in }
     ) {
+        self.kernel = kernel
         self.dependencies = dependencies
         self.projectURL = projectURL
         self.projectPath = projectPath
@@ -152,6 +160,6 @@ public struct GitOKPluginContext {
     }
 
     public func resolve<Service>(_ type: Service.Type = Service.self) -> Service? {
-        dependencies.resolve(type)
+        kernel.resolveProvider(type) ?? dependencies.resolve(type)
     }
 }

@@ -7,6 +7,12 @@ LEGACY_APP_DIR="$ROOT_DIR/APP"
 PLUGIN_PACKAGES_DIR="$ROOT_DIR/Plugins"
 COREKIT_DIR="$ROOT_DIR/Packages/KitGitOKCore"
 KERNEL_DIR="$ROOT_DIR/Packages/KernelCore"
+PROVIDER_DIRS=(
+  "$ROOT_DIR/Packages/ProviderProject"
+  "$ROOT_DIR/Packages/ProviderGit"
+  "$ROOT_DIR/Packages/ProviderTheme"
+  "$ROOT_DIR/Packages/ProviderNavigation"
+)
 
 mode="${1:-strict}"
 if [[ "$mode" != "strict" && "$mode" != "--allow-legacy" ]]; then
@@ -32,6 +38,13 @@ if [[ ! -f "$KERNEL_DIR/Package.swift" ]]; then
   echo "  kernel package missing: Packages/KernelCore/Package.swift"
   failures=$((failures + 1))
 fi
+
+for provider_dir in "${PROVIDER_DIRS[@]}"; do
+  if [[ ! -f "$provider_dir/Package.swift" ]]; then
+    echo "  provider package missing: ${provider_dir#"$ROOT_DIR"/}"
+    failures=$((failures + 1))
+  fi
+done
 
 if [[ -d "$KERNEL_DIR/Sources" ]] && rg -q '^import (GitOK|.*Plugin)' "$KERNEL_DIR/Sources" 2>/dev/null; then
   echo "  KernelCore must remain independent of GitOK and feature plugins"
@@ -75,6 +88,19 @@ if [[ -d "$COREKIT_DIR/Sources" ]]; then
     echo "  KitGitOKCore must not import feature plugin modules"
     failures=$((failures + 1))
   fi
+fi
+
+# The application owns one explicit Kernel. Production UI and commands must
+# not silently create or retrieve the legacy global RootContainer instance.
+if rg -n 'RootContainer\.shared' \
+  "$APP_DIR" \
+  "$ROOT_DIR/Packages/FactoryCore/Sources/FactoryCore/Commands" \
+  "$ROOT_DIR/Packages/FactoryCore/Sources/FactoryCore/Views" \
+  "$ROOT_DIR/Packages/FactoryCore/Sources/FactoryCore/Bootstrap" \
+  --glob '*.swift' \
+  --glob '!RootContainer.swift' 2>/dev/null; then
+  echo "  production app/view/command code must receive an explicit Kernel"
+  failures=$((failures + 1))
 fi
 
 if [[ -d "$PLUGIN_PACKAGES_DIR" ]]; then

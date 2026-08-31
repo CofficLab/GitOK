@@ -36,10 +36,22 @@ FactoryGitOK/  Compile-time plugin catalog + GitOKFactory facade
 
 ## Provider layer (Lumi-compatible)
 
-`KernelCoreContainer` is the single runtime composition object. `RootContainer`
-constructs the existing GitOK service graph, then registers concrete services
-and typed GitOK protocols into Kernel. New code resolves providers from Kernel;
-the old `GitOKPluginDependencies` resolver remains as a migration bridge.
+`KernelCoreContainer` is the single runtime composition object. Provider
+contracts are split by capability instead of being concentrated in the host:
+
+| Provider package | Contract | Default implementation | Consumers |
+|------------------|----------|------------------------|-----------|
+| `ProviderProject` | `GitOKProjectServicing` | `GitOKProjectService` | project-aware plugins, RootView |
+| `ProviderGit` | repository/activity/command services | `GitCoreService` | Git commands and Git plugins |
+| `ProviderTheme` | theme selection/contribution services | `ThemeService` + `PluginService` | theme UI and theme plugins |
+| `ProviderNavigation` | `GitOKNavigationServicing` | `AppNavigationService` | commands and settings plugins |
+
+`FactoryCore.ProviderFactory` owns the construction hooks for these providers;
+`DefaultProviderFactory` supplies the app defaults. `RootContainer` is now a
+compatibility holder that invokes those hooks and registers the typed contracts
+in Kernel. New code resolves providers from Kernel; the old
+`GitOKPluginDependencies` resolver remains a migration bridge and mirrors
+legacy registrations into the same Kernel.
 
 ## Service layer (replaces menu NotificationCenter)
 
@@ -62,10 +74,11 @@ Runtime uses SPM explicit registration (not Objective-C runtime scanning).
 
 ## Runtime bootstrap
 
-`GitOKFactory.makeKernel()` delegates to `KernelFactory`, which asks the
-registry's `PluginFactory` for the compile-time composition and the host's
-`ProviderFactory` for the service graph. The resulting Kernel is shared by the
-main window, settings window and commands.
+`GitOKFactory.makeKernel()` delegates to `KernelFactory`, which creates the
+Kernel first, asks the registry's `PluginFactory` for the compile-time
+composition, and asks the host's `ProviderFactory` to assemble the service
+graph into that exact Kernel. The resulting Kernel is shared by the main
+window, settings window and commands.
 
 `GitOKPluginBootstrap.configureRuntimes(projectService:)` remains a compatibility
 hook called after services are wired. It registers plugin singleton callbacks

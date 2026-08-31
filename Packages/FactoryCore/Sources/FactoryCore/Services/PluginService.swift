@@ -2,6 +2,7 @@ import GitOKAppCore
 import Combine
 import KitGitOKCore
 import GitOKUI
+import KernelCore
 import SwiftUI
 
 /// Host engine of the factory layer (Lumi FactoryCore equivalent).
@@ -10,14 +11,17 @@ import SwiftUI
 /// list is injected by the composition root; this type stays plugin-agnostic.
 @MainActor
 public final class PluginService: ObservableObject {
+    private let kernel: KernelCoreContainer
     private let runtime: GitOKPluginRuntime
     private let pluginDependencies: GitOKPluginDependencies
     private var cancellables = Set<AnyCancellable>()
 
     public init(
+        kernel: KernelCoreContainer,
         pluginDependencies: GitOKPluginDependencies,
         pluginTypes: [any GitOKPlugin.Type]
     ) {
+        self.kernel = kernel
         self.pluginDependencies = pluginDependencies
         self.runtime = GitOKPluginRuntime()
         for pluginType in pluginTypes where pluginType.shouldRegister {
@@ -32,7 +36,7 @@ public final class PluginService: ObservableObject {
     /// Runs the two-phase boot sequence once the shell finished registering
     /// its services. Throws when required services are missing.
     public func startupPlugins() throws {
-        try runtime.startup(dependencies: pluginDependencies)
+        try runtime.startup(kernel: kernel, dependencies: pluginDependencies)
     }
 
     public var hasPlugins: Bool { registeredPluginCount > 0 }
@@ -64,6 +68,7 @@ public final class PluginService: ObservableObject {
         onRemoteTrackingUpdate: @escaping GitOKRemoteTrackingUpdateHandler = { _, _ in }
     ) -> GitOKPluginContext {
         GitOKPluginContext(
+            kernel: kernel,
             dependencies: pluginDependencies,
             projectURL: projectURL,
             projectPath: projectPath,

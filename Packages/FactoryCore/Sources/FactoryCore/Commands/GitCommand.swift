@@ -33,7 +33,7 @@ public struct GitCommand: Commands, SuperLog {
         #if os(macOS)
         CommandMenu("Git") {
             Button(String(localized: "Refresh Status")) {
-                kernel.resolveProvider(GitCoreService.self)?.performGitCommand(.refresh)
+                kernel.resolveProvider((any GitOKGitCommandServicing).self)?.performGitCommand(.refresh)
             }
             .keyboardShortcut("r", modifiers: [.command])
             .disabled(!hasGitProject)
@@ -41,19 +41,19 @@ public struct GitCommand: Commands, SuperLog {
             Divider()
 
             Button("Fetch") {
-                kernel.resolveProvider(GitCoreService.self)?.performGitCommand(.fetch)
+                kernel.resolveProvider((any GitOKGitCommandServicing).self)?.performGitCommand(.fetch)
             }
             .keyboardShortcut("f", modifiers: [.command, .shift])
             .disabled(!hasGitProject)
 
             Button("Pull") {
-                kernel.resolveProvider(GitCoreService.self)?.performGitCommand(.pull)
+                kernel.resolveProvider((any GitOKGitCommandServicing).self)?.performGitCommand(.pull)
             }
             .keyboardShortcut("p", modifiers: [.command, .shift])
             .disabled(!canPull)
 
             Button("Push") {
-                kernel.resolveProvider(GitCoreService.self)?.performGitCommand(.push)
+                kernel.resolveProvider((any GitOKGitCommandServicing).self)?.performGitCommand(.push)
             }
             .keyboardShortcut("p", modifiers: [.command])
             .disabled(!canPush)
@@ -61,7 +61,7 @@ public struct GitCommand: Commands, SuperLog {
             Divider()
 
             Button(String(localized: "Repository Settings...")) {
-                kernel.resolveProvider(AppNavigationService.self)?.openRepositorySettings()
+                kernel.resolveProvider((any GitOKNavigationServicing).self)?.openRepositorySettings()
             }
             .keyboardShortcut(",", modifiers: [.command, .option])
             .disabled(!hasGitProject)

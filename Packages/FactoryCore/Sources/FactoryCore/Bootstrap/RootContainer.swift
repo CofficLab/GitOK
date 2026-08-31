@@ -48,31 +48,39 @@ public final class RootContainer: ObservableObject {
     public let repoManager: RepoManager
     public let appVM: AppVM
     public let pluginService: PluginService
-    public let themeService: ThemeService
-    public let gitCoreService: GitCoreService
-    public let gitOKProjectService: GitOKProjectService
-    public let navigationService: AppNavigationService
+    public let themeService: any GitOKThemeServicing
+    public let gitCoreService: any GitOKRepositoryServicing & GitOKActivityServicing & GitOKGitCommandServicing
+    public let gitOKProjectService: any GitOKProjectServicing
+    public let navigationService: any GitOKNavigationServicing
     public let pluginDependencies: GitOKPluginDependencies
 
     public let dataVM: DataVM
     public let projectVM: ProjectVM
     public let themeVM: AppThemeVM
 
-    public init(composition: Composition, startPlugins: Bool = false) {
+    public init(
+        composition: Composition,
+        providerFactory: (any ProviderFactory)? = nil,
+        kernel: KernelCoreContainer? = nil,
+        startPlugins: Bool = false
+    ) {
+        let providerFactory = providerFactory ?? DefaultProviderFactory()
         os_log(.info, "RootContainer initialized with \(composition.plugins.count, privacy: .public) plugins")
-        self.kernel = KernelCoreContainer()
+        self.kernel = kernel ?? KernelCoreContainer()
+        let kernel = self.kernel
         let container = AppConfig.getContainer()
         self.repoManager = RepoManager(modelContext: ModelContext(container))
 
-        self.pluginDependencies = GitOKPluginDependencies()
+        self.pluginDependencies = GitOKPluginDependencies(kernel: kernel)
         self.appVM = AppVM(repoManager: repoManager)
-        self.pluginService = PluginService(
-            pluginDependencies: pluginDependencies,
+        self.pluginService = providerFactory.makePluginProvider(
+            kernel: kernel,
+            dependencies: pluginDependencies,
             pluginTypes: composition.plugins
         )
         self.themeVM = AppThemeVM(pluginProvider: pluginService)
-        self.themeService = ThemeService(themeVM: themeVM)
-        self.navigationService = AppNavigationService(appVM: appVM)
+        self.themeService = providerFactory.makeThemeProvider(themeVM: themeVM)
+        self.navigationService = providerFactory.makeNavigationProvider(appVM: appVM)
 
         var initialProject: Project?
         do {
@@ -93,8 +101,12 @@ public final class RootContainer: ObservableObject {
             self.projectVM = ProjectVM(project: initialProject, repoManager: repoManager)
         }
 
-        self.gitCoreService = GitCoreService(dataVM: dataVM, projectVM: projectVM)
-        self.gitOKProjectService = GitOKProjectService(dataVM: dataVM, projectVM: projectVM)
+        self.gitCoreService = providerFactory.makeGitProvider(dataVM: dataVM, projectVM: projectVM)
+        self.gitOKProjectService = providerFactory.makeProjectProvider(dataVM: dataVM, projectVM: projectVM)
+
+        // Kernel is the source of truth. The legacy registry is mirrored
+        // below only after the typed Provider graph is complete.
+        registerProviders()
 
         pluginDependencies.register(gitOKProjectService, for: GitOKProjectServicing.self)
         pluginDependencies.register(gitCoreService, for: GitOKRepositoryServicing.self)
@@ -113,8 +125,6 @@ public final class RootContainer: ObservableObject {
         composition.configurePluginRuntimes?(gitOKProjectService)
 
         GitOKFactoryChrome.sidebarToolbarItem = composition.sidebarToolbarItem
-
-        registerProviders()
 
         if startPlugins {
             try? kernel.start()
@@ -135,10 +145,6 @@ public final class RootContainer: ObservableObject {
             try kernel.registerProvider(RepoManager.self, repoManager)
             try kernel.registerProvider(AppVM.self, appVM)
             try kernel.registerProvider(PluginService.self, pluginService)
-            try kernel.registerProvider(ThemeService.self, themeService)
-            try kernel.registerProvider(GitCoreService.self, gitCoreService)
-            try kernel.registerProvider(GitOKProjectService.self, gitOKProjectService)
-            try kernel.registerProvider(AppNavigationService.self, navigationService)
             try kernel.registerProvider(GitOKPluginDependencies.self, pluginDependencies)
             try kernel.registerProvider(DataVM.self, dataVM)
             try kernel.registerProvider(ProjectVM.self, projectVM)

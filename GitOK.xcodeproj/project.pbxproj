@@ -10,19 +10,22 @@
 		02876C46801E9A3DF5BC2FEA /* GitOKApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880FB53D03ED896EA489BC55 /* GitOKApp.swift */; };
 		07DEF9A9438697DC0192D870 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B679096B352FF3F00852CF /* main.swift */; };
 		0F5BE5E28C52B160DA2F856E /* ProviderProject in Frameworks */ = {isa = PBXBuildFile; productRef = D05E9DE7338679D137A2C087 /* ProviderProject */; };
-		11E5996DF849C3F4DB0835B9 /* KitGitCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BDF7CC73908543964D7CEE7 /* KitGitCore */; };
+		11E5996DF849C3F4DB0835B9 /* KitGitOKUpdate in Frameworks */ = {isa = PBXBuildFile; productRef = 43E658693F6DBAD5F2163B53 /* KitGitOKUpdate */; };
 		2B094A76F6DD21069E0507D5 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = E337B624E88FA1CDC0835C2D /* GitOKUI */; };
 		3C2528D06C17CBD502690E76 /* KitGitOKSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 9CC43BFAE9CDC3FE2336A7E7 /* KitGitOKSupport */; };
-		438F91BA256724F8253B526F /* KitGitOKUpdate in Frameworks */ = {isa = PBXBuildFile; productRef = 43E658693F6DBAD5F2163B53 /* KitGitOKUpdate */; };
+		438F91BA256724F8253B526F /* KitGitOKCore in Frameworks */ = {isa = PBXBuildFile; productRef = B76527B152C97E34BC0C6258 /* KitGitOKCore */; };
 		58411979BDE9BA8D1EC015A4 /* KitGitCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2606349671D7FFED7FD490B8 /* KitGitCore */; };
-		8FB0AD722943EF381E106F42 /* KernelCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD310BDD05591D11A6C8D3D8 /* KernelCore */; };
-		9730547FFF6C26BE7BCBDD65 /* FactoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 48825A0157545D14F47E8D67 /* FactoryCore */; };
+		5BC9912FE36317A11BDDB316 /* KernelCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD310BDD05591D11A6C8D3D8 /* KernelCore */; };
+		8FB0AD722943EF381E106F42 /* GitOKAppCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1BFD598CC0F5EF710324ABEE /* GitOKAppCore */; };
+		9730547FFF6C26BE7BCBDD65 /* FactoryGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = 5B22F798E4AE15172F878763 /* FactoryGitOK */; };
 		9785FC5031C5CAA63753C70E /* GitOperationService.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7F44E5735D00E5EEEE54A327 /* GitOperationService.xpc */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F41C77D6B713E408E8A06DC /* KitGitOKCore in Frameworks */ = {isa = PBXBuildFile; productRef = B76527B152C97E34BC0C6258 /* KitGitOKCore */; };
+		9B0DE195496061BA0A12900D /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 1375C08FA6BFA5769BCA5B2D /* Sparkle */; };
+		9E374C1679CC99ECF86C5B18 /* KitGitCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BDF7CC73908543964D7CEE7 /* KitGitCore */; };
+		9F41C77D6B713E408E8A06DC /* ProviderGit in Frameworks */ = {isa = PBXBuildFile; productRef = 516180A9C070365B40C0636D /* ProviderGit */; };
 		A3AF4381B8C95734FE0CA7E2 /* KitProjectSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 01FBE598541D4E70E21EF2E7 /* KitProjectSupport */; };
-		BA1BD4CC5350F3E83047C063 /* FactoryGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = 5B22F798E4AE15172F878763 /* FactoryGitOK */; };
-		E736C98A6207206C2FD1191F /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 1375C08FA6BFA5769BCA5B2D /* Sparkle */; };
-		EB668512FE5E485F8F19E3DD /* GitOKAppCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1BFD598CC0F5EF710324ABEE /* GitOKAppCore */; };
+		BA1BD4CC5350F3E83047C063 /* ProviderTheme in Frameworks */ = {isa = PBXBuildFile; productRef = 5F770FAEED3FA029D7F01176 /* ProviderTheme */; };
+		E736C98A6207206C2FD1191F /* FactoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 48825A0157545D14F47E8D67 /* FactoryCore */; };
+		EB668512FE5E485F8F19E3DD /* ProviderNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E4BB73B802FBAEDD90FD79F1 /* ProviderNavigation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,10 +52,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0A4C039CD4E658FF301EA22F /* KernelCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KernelCore; path = Packages/KernelCore; sourceTree = SOURCE_ROOT; };
+		0B08A1B3BF10A200A932751B /* GitOKAppCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GitOKAppCore; path = Packages/GitOKAppCore; sourceTree = SOURCE_ROOT; };
+		0C99FEADCB885E0FBEF16C4C /* GitOKUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GitOKUI; path = Packages/GitOKUI; sourceTree = SOURCE_ROOT; };
+		24B18BAC05C9FC5BD1D56140 /* ProviderProject */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ProviderProject; path = Packages/ProviderProject; sourceTree = SOURCE_ROOT; };
+		30B4FEEBF5FBCAABA818B1E8 /* KitGitOKSupport */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KitGitOKSupport; path = Packages/KitGitOKSupport; sourceTree = SOURCE_ROOT; };
+		4E21AC8022E13B1BFC6E833C /* KitGitOKUpdate */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KitGitOKUpdate; path = Packages/KitGitOKUpdate; sourceTree = SOURCE_ROOT; };
+		572F37E975554A4AD9FBE99C /* ProviderGit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ProviderGit; path = Packages/ProviderGit; sourceTree = SOURCE_ROOT; };
 		57B679096B352FF3F00852CF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		68BBD938E954D2DCC40D4608 /* ProviderNavigation */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ProviderNavigation; path = Packages/ProviderNavigation; sourceTree = SOURCE_ROOT; };
 		7F44E5735D00E5EEEE54A327 /* GitOperationService.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = GitOperationService.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		82645D15A3617F03D5FA03C9 /* FactoryCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FactoryCore; path = Packages/FactoryCore; sourceTree = SOURCE_ROOT; };
 		880FB53D03ED896EA489BC55 /* GitOKApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitOKApp.swift; sourceTree = "<group>"; };
+		A71D0D4CCD369DED6580BD00 /* KitProjectSupport */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KitProjectSupport; path = Packages/KitProjectSupport; sourceTree = SOURCE_ROOT; };
+		BC06C942724BBD6C85FFBD57 /* KitGitOKCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KitGitOKCore; path = Packages/KitGitOKCore; sourceTree = SOURCE_ROOT; };
+		BE200AF4FF3995FCC42D2A2F /* ProviderTheme */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ProviderTheme; path = Packages/ProviderTheme; sourceTree = SOURCE_ROOT; };
 		CCB768FACFCC2C6B7AE07940 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0DBDE111368A59550DFE660 /* FactoryGitOK */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FactoryGitOK; path = Packages/FactoryGitOK; sourceTree = SOURCE_ROOT; };
+		DA8C91FE5D3E08B49E56DF61 /* KitGitCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KitGitCore; path = Packages/KitGitCore; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,14 +81,17 @@
 				3C2528D06C17CBD502690E76 /* KitGitOKSupport in Frameworks */,
 				A3AF4381B8C95734FE0CA7E2 /* KitProjectSupport in Frameworks */,
 				0F5BE5E28C52B160DA2F856E /* ProviderProject in Frameworks */,
-				9F41C77D6B713E408E8A06DC /* KitGitOKCore in Frameworks */,
-				BA1BD4CC5350F3E83047C063 /* FactoryGitOK in Frameworks */,
-				EB668512FE5E485F8F19E3DD /* GitOKAppCore in Frameworks */,
-				438F91BA256724F8253B526F /* KitGitOKUpdate in Frameworks */,
-				9730547FFF6C26BE7BCBDD65 /* FactoryCore in Frameworks */,
-				8FB0AD722943EF381E106F42 /* KernelCore in Frameworks */,
-				11E5996DF849C3F4DB0835B9 /* KitGitCore in Frameworks */,
-				E736C98A6207206C2FD1191F /* Sparkle in Frameworks */,
+				9F41C77D6B713E408E8A06DC /* ProviderGit in Frameworks */,
+				BA1BD4CC5350F3E83047C063 /* ProviderTheme in Frameworks */,
+				EB668512FE5E485F8F19E3DD /* ProviderNavigation in Frameworks */,
+				438F91BA256724F8253B526F /* KitGitOKCore in Frameworks */,
+				9730547FFF6C26BE7BCBDD65 /* FactoryGitOK in Frameworks */,
+				8FB0AD722943EF381E106F42 /* GitOKAppCore in Frameworks */,
+				11E5996DF849C3F4DB0835B9 /* KitGitOKUpdate in Frameworks */,
+				E736C98A6207206C2FD1191F /* FactoryCore in Frameworks */,
+				5BC9912FE36317A11BDDB316 /* KernelCore in Frameworks */,
+				9E374C1679CC99ECF86C5B18 /* KitGitCore in Frameworks */,
+				9B0DE195496061BA0A12900D /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,8 +136,30 @@
 			children = (
 				325CA20BC9ACD1E2E1641FEB /* GitOKApp */,
 				81E75666537CD5D05883F951 /* GitOperationService */,
+				EF51CC9C6C854B9BA833BD97 /* Packages */,
 				1E0AE8F0BAB245387EF682E1 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		EF51CC9C6C854B9BA833BD97 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				82645D15A3617F03D5FA03C9 /* FactoryCore */,
+				D0DBDE111368A59550DFE660 /* FactoryGitOK */,
+				0B08A1B3BF10A200A932751B /* GitOKAppCore */,
+				0C99FEADCB885E0FBEF16C4C /* GitOKUI */,
+				0A4C039CD4E658FF301EA22F /* KernelCore */,
+				DA8C91FE5D3E08B49E56DF61 /* KitGitCore */,
+				BC06C942724BBD6C85FFBD57 /* KitGitOKCore */,
+				30B4FEEBF5FBCAABA818B1E8 /* KitGitOKSupport */,
+				4E21AC8022E13B1BFC6E833C /* KitGitOKUpdate */,
+				A71D0D4CCD369DED6580BD00 /* KitProjectSupport */,
+				572F37E975554A4AD9FBE99C /* ProviderGit */,
+				68BBD938E954D2DCC40D4608 /* ProviderNavigation */,
+				24B18BAC05C9FC5BD1D56140 /* ProviderProject */,
+				BE200AF4FF3995FCC42D2A2F /* ProviderTheme */,
+			);
+			path = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -161,6 +203,9 @@
 				9CC43BFAE9CDC3FE2336A7E7 /* KitGitOKSupport */,
 				01FBE598541D4E70E21EF2E7 /* KitProjectSupport */,
 				D05E9DE7338679D137A2C087 /* ProviderProject */,
+				516180A9C070365B40C0636D /* ProviderGit */,
+				5F770FAEED3FA029D7F01176 /* ProviderTheme */,
+				E4BB73B802FBAEDD90FD79F1 /* ProviderNavigation */,
 				B76527B152C97E34BC0C6258 /* KitGitOKCore */,
 				5B22F798E4AE15172F878763 /* FactoryGitOK */,
 				1BFD598CC0F5EF710324ABEE /* GitOKAppCore */,
@@ -214,7 +259,10 @@
 				A97454F86291853A2C3F20E1 /* XCLocalSwiftPackageReference "Packages/KitGitOKSupport" */,
 				4C467C6B771DDC8FE8E468E0 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */,
 				7EDD45698F101E03FCBFF9ED /* XCLocalSwiftPackageReference "Packages/KitProjectSupport" */,
+				24710EA1E039B0DB9FCCBBCC /* XCLocalSwiftPackageReference "Packages/ProviderGit" */,
+				45C0E059C5292983350A9798 /* XCLocalSwiftPackageReference "Packages/ProviderNavigation" */,
 				2280FF8444FF219675BA1765 /* XCLocalSwiftPackageReference "Packages/ProviderProject" */,
+				13D2FC1FE71EC5475B41D44A /* XCLocalSwiftPackageReference "Packages/ProviderTheme" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1E0AE8F0BAB245387EF682E1 /* Products */;
@@ -527,6 +575,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKUI;
 		};
+		13D2FC1FE71EC5475B41D44A /* XCLocalSwiftPackageReference "Packages/ProviderTheme" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderTheme;
+		};
 		1EE61FD52D333F6F7B760B61 /* XCLocalSwiftPackageReference "Packages/KitGitOKCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/KitGitOKCore;
@@ -535,9 +587,17 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/ProviderProject;
 		};
+		24710EA1E039B0DB9FCCBBCC /* XCLocalSwiftPackageReference "Packages/ProviderGit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderGit;
+		};
 		30982926F5641BC6973378DA /* XCLocalSwiftPackageReference "Packages/GitOKAppCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKAppCore;
+		};
+		45C0E059C5292983350A9798 /* XCLocalSwiftPackageReference "Packages/ProviderNavigation" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderNavigation;
 		};
 		4C467C6B771DDC8FE8E468E0 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -606,9 +666,17 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = FactoryCore;
 		};
+		516180A9C070365B40C0636D /* ProviderGit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProviderGit;
+		};
 		5B22F798E4AE15172F878763 /* FactoryGitOK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FactoryGitOK;
+		};
+		5F770FAEED3FA029D7F01176 /* ProviderTheme */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProviderTheme;
 		};
 		9CC43BFAE9CDC3FE2336A7E7 /* KitGitOKSupport */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -629,6 +697,10 @@
 		E337B624E88FA1CDC0835C2D /* GitOKUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GitOKUI;
+		};
+		E4BB73B802FBAEDD90FD79F1 /* ProviderNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProviderNavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -10,13 +10,15 @@ public enum KernelFactory {
         providerFactory: (any ProviderFactory)? = nil
     ) throws -> KernelCoreContainer {
         let factory = providerFactory ?? DefaultProviderFactory()
+        let kernel = KernelCoreContainer()
         let root = try factory.makeRootContainer(
+            kernel: kernel,
             composition: pluginFactory.makeComposition()
         )
-        if let pluginService = root.kernel.resolveProvider(PluginService.self) {
-            try root.kernel.start(plugins: [GitOKPluginKernelAdapter(pluginService: pluginService)])
+        if let pluginService = kernel.resolveProvider(PluginService.self) {
+            try kernel.start(plugins: [GitOKPluginKernelAdapter(pluginService: pluginService)])
         } else {
-            try root.kernel.start()
+            try kernel.start()
         }
         return root.kernel
     }

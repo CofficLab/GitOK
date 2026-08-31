@@ -1,5 +1,6 @@
 import Foundation
 import GitOKUI
+import KernelCore
 import SwiftUI
 
 public enum GitOKPluginPolicy: String, Sendable, Codable {
@@ -78,6 +79,14 @@ public protocol GitOKPlugin {
     /// shared dependency container here. Keep it synchronous and cheap.
     @MainActor
     static func onBoot(_ dependencies: GitOKPluginDependencies)
+
+    /// Kernel-first boot hook for new plugins. The legacy dependency bridge
+    /// is supplied as well so existing code can migrate incrementally.
+    @MainActor
+    static func onBoot(
+        kernel: KernelCoreContainer,
+        dependencies: GitOKPluginDependencies
+    )
 
     /// Phase 2 of the two-phase boot sequence.
     ///
@@ -209,6 +218,14 @@ public extension GitOKPlugin {
 
     @MainActor
     static func onBoot(_ dependencies: GitOKPluginDependencies) {}
+
+    @MainActor
+    static func onBoot(
+        kernel: KernelCoreContainer,
+        dependencies: GitOKPluginDependencies
+    ) {
+        onBoot(dependencies)
+    }
 
     @MainActor
     static func onReady(_ context: GitOKPluginContext) {}

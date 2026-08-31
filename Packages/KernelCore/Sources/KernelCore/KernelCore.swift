@@ -52,8 +52,28 @@ public final class KernelCoreContainer {
         providers[key] = provider
     }
 
+    /// Registers a provider under an erased protocol type.
+    ///
+    /// This overload is used by compatibility adapters that receive a
+    /// runtime ``Any.Type`` while migrating older dependency registries to
+    /// the typed kernel.
+    public func registerProvider(_ provider: Any, for type: Any.Type) throws {
+        let key = ObjectIdentifier(type)
+        guard providers[key] == nil else {
+            throw KernelCoreError.providerAlreadyRegistered(
+                type: String(reflecting: type)
+            )
+        }
+        providers[key] = provider
+    }
+
     public func resolveProvider<T>(_ type: T.Type = T.self) -> T? {
         providers[ObjectIdentifier(type)] as? T
+    }
+
+    /// Resolves a provider when the protocol type is only available at runtime.
+    public func resolveProviderErased(_ type: Any.Type) -> Any? {
+        providers[ObjectIdentifier(type)]
     }
 
     public func unregisterProvider<T>(_ type: T.Type = T.self) {

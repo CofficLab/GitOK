@@ -1,42 +1,7 @@
-import Combine
-import Foundation
-import GitOKUI
-
-// MARK: - Core Services
-
-@MainActor
-public protocol GitOKRepositoryServicing: AnyObject {
-    func projectExists(at url: URL) -> Bool
-    func importRepository(at url: URL) -> Bool
-}
-
-@MainActor
-public protocol GitOKThemeServicing: AnyObject {
-    func selectTheme(_ themeId: String)
-    var currentThemeId: String { get }
-}
-
-@MainActor
-public protocol GitOKActivityServicing: AnyObject {
-    var activityStatus: String? { get }
-    func setActivityStatus(_ status: String?)
-}
-
-@MainActor
-public protocol GitOKThemeContributionsProviding: AnyObject {
-    var objectWillChange: ObservableObjectPublisher { get }
-    var hasPlugins: Bool { get }
-    func themeContributions() -> [GitOKUIThemeContribution]
-}
-
-@MainActor
-public protocol GitOKNavigationServicing: AnyObject {
-    func openSettings(defaultTab: String?)
-    func openSettings(tab: String?)
-    func openPluginSettings()
-    func openRepositorySettings()
-    func openCommitStyleSettings()
-}
+import KernelCore
+import ProviderGit
+import ProviderNavigation
+import ProviderTheme
 
 // MARK: - Required Services
 
@@ -58,6 +23,13 @@ public enum GitOKRequiredServices {
     public static func missing(in dependencies: GitOKPluginDependencies) -> [String] {
         all.compactMap { service in
             dependencies.resolveAny(service) == nil ? String(describing: service) : nil
+        }
+    }
+
+    @MainActor
+    public static func missing(in kernel: KernelCoreContainer) -> [String] {
+        all.compactMap { service in
+            kernel.resolveProviderErased(service) == nil ? String(describing: service) : nil
         }
     }
 }

@@ -11,6 +11,13 @@ final class KernelCoreTests: XCTestCase {
         XCTAssertEqual(kernel.registeredProviderCount, 1)
     }
 
+    func testResolvesProviderWithRuntimeType() throws {
+        let kernel = KernelCoreContainer()
+        try kernel.registerProvider(String.self, "GitOK")
+
+        XCTAssertEqual(kernel.resolveProviderErased(String.self) as? String, "GitOK")
+    }
+
     func testRejectsDuplicateProviderType() throws {
         let kernel = KernelCoreContainer()
         try kernel.registerProvider(String.self, "first")
