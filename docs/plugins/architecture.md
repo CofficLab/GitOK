@@ -8,12 +8,12 @@
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         GitOKApp (thin shell)                        │
-│  RootContainer → PluginService → ContentView (NavigationSplitView)   │
+│  KernelCoreContainer → PluginService → ContentView (NavigationSplitView) │
 └──────────────────────────────┬──────────────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│              GitOKPluginRegistry / GeneratedPluginRegistry           │
+│              FactoryGitOK / GeneratedPluginRegistry           │
 │              显式 import 各 Plugins/* SPM 包                          │
 └──────────────────────────────┬──────────────────────────────────────┘
                                │
@@ -29,7 +29,11 @@
 App Launch
     │
     ▼
-RootContainer.shared
+GitOKApp.init
+    │
+    ├─► KernelFactory.makeKernel()
+    ├─► ProviderFactory 注册 App 服务到 Kernel（Project/Activity/GitCommand/Theme/Navigation）
+    ├─► 兼容桥同步注册 GitOKPluginDependencies
     │
     ├─► GitOKPluginBootstrap.configureRuntimes(projectService:)
     │
@@ -40,21 +44,47 @@ PluginService.init()
 GeneratedPluginRegistry.registerAll(into: runtime)
     │
     ▼
-GitOKPluginRuntime.register(any GitOKPlugin.Type)
+PluginService.startupPlugins() → GitOKPluginRuntime.startup(dependencies:)
+    │
+    ├─► ① onBoot(dependencies:)   — 全部启用插件同步注册自有服务
+    ├─► ② 校验 GitOKRequiredServices — 缺失则抛 missingRequiredServices 并列出清单
+    └─► ③ onReady(context:)       — 依赖其他服务的插件初始化
     │
     ▼
 ContentView queries PluginService for toolbar / list / detail / statusbar
+
+主窗口和设置窗口持有同一个 Kernel，不在视图更新期间重复装配；
+`RootContainer.shared` 仅供旧预览/集成代码兼容使用。
 ```
 
 **注意：** 不再使用 Objective-C Runtime 自动扫描。所有插件必须在 `GeneratedPluginRegistry` 中显式注册。
 
 ## 插件协议
 
-- **`GitOKPlugin`** — 静态 enum 协议（`metadata`、`toolbarTrailingItems` 等）
+- **`GitOKPlugin`** — 静态 enum 协议（`metadata`、`onBoot`、`onReady`、`toolbarTrailingItems` 等）
 - **`GitOKPluginContext`** — 向插件视图注入运行时快照、回调与 `resolve()` DI
-- **`GitOKPluginDependencies`** — 注册 `GitOKProjectServicing`、`GitOKNavigationServicing` 等 App 服务
+- **`GitOKPluginDependencies`** — 类型键控服务注册表，注册 `GitOKProjectServicing`、`GitOKNavigationServicing` 等 App 服务
 
 菜单导航与 Git 命令通过 `GitOKNavigationServicing` / `GitOKGitCommandServicing` 走 App 服务层。
+
+## Order 分带约定
+
+插件 `metadata.order` 决定注册与贡献排序，按 Lumi 内核规范分带：
+
+| 分带 | 含义 | 示例 |
+|------|------|------|
+| `0–99` | 核心（应用骨架，alwaysOn） | ProjectsPlugin(10)、OnboardingPlugin(20)、ProjectPickerPlugin(80) |
+| `100–199` | 基础服务（设置、状态） | GitNetworkSettingsPlugin(110)、ActivityStatusPlugin(160) |
+| `200–299` | Git 功能 | GitDetailPlugin(220)、GitBranchPlugin(230)、GitAutoPushPlugin(235)、GitStashPlugin(240) |
+| `300+` | 可选增强（optIn / 主题 / Open-In） | LicensePlugin(310)、Theme*(330+)、Open*(400+) |
+
+新增插件按归属分带取值；同带内保持 10 的步长便于插入。
+
+## 贡献 ID 纪律
+
+所有贡献项 `id` 必须是插件前缀的稳定标识（如 `metadata.id` 或 `"plugin-id.slot"`），
+禁止裸 UI 文案或临时字符串，保证排序与调试可追溯。`Scripts/check-plugin-package-boundaries.sh`
+与 `FactoryGitOK` 的守护测试负责校验。
 
 ## 贡献点
 
@@ -74,5 +104,5 @@ ContentView queries PluginService for toolbar / list / detail / statusbar
 ## 依赖规则
 
 - `Plugins/*` **不得** `import GitOKApp`
-- `GitOKCoreKit` **不得** import 任何 Feature Plugin
+- `KitGitOKCore` **不得** import 任何 Feature Plugin
 - 唯一源码根：`Plugins/<Name>Plugin/`（`Packages/Plugin*` 镜像已废弃）

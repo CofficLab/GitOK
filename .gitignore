@@ -12,6 +12,7 @@ node_modules
 temp/
 build/
 build.log
+.zcode/
 Packages/LibGit2Swift/build_result.txt
 
 # Swift Package Manager local artifacts

@@ -1,6 +1,6 @@
 import AppKit
-import GitCoreKit
-import GitOKSupportKit
+import KitGitCore
+import KitGitOKSupport
 import GitOKUI
 import MagicAlert
 import SwiftUI

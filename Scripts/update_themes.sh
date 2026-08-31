@@ -3,22 +3,22 @@
 # 批量更新主题文件，移除 isDarkTheme 和 followsSystemAppearance，使用 appearanceKind
 
 THEME_FILES=(
-    "Plugins/ThemeDraculaPlugin/Sources/DraculaTheme.swift"
-    "Plugins/ThemeEmberPlugin/Sources/EmberTheme.swift"
-    "Plugins/ThemeGlacierPlugin/Sources/GlacierTheme.swift"
-    "Plugins/ThemeGraphitePlugin/Sources/GraphiteTheme.swift"
-    "Plugins/ThemeHarborPlugin/Sources/HarborTheme.swift"
-    "Plugins/ThemeMatrixPlugin/Sources/MatrixTheme.swift"
-    "Plugins/ThemeMidnightPlugin/Sources/MidnightTheme.swift"
-    "Plugins/ThemeMountainPlugin/Sources/MountainTheme.swift"
-    "Plugins/ThemeNebulaPlugin/Sources/NebulaTheme.swift"
-    "Plugins/ThemeOneDarkPlugin/Sources/OneDarkTheme.swift"
-    "Plugins/ThemeOrchardPlugin/Sources/OrchardTheme.swift"
-    "Plugins/ThemeRiverPlugin/Sources/RiverTheme.swift"
-    "Plugins/ThemeSpringPlugin/Sources/SpringTheme.swift"
-    "Plugins/ThemeSummerPlugin/Sources/SummerTheme.swift"
-    "Plugins/ThemeWinterPlugin/Sources/WinterTheme.swift"
-    "Plugins/ThemeXcodeLightPlugin/Sources/XcodeLightTheme.swift"
+    "Plugins/PluginThemeDracula/Sources/DraculaTheme.swift"
+    "Plugins/PluginThemeEmber/Sources/EmberTheme.swift"
+    "Plugins/PluginThemeGlacier/Sources/GlacierTheme.swift"
+    "Plugins/PluginThemeGraphite/Sources/GraphiteTheme.swift"
+    "Plugins/PluginThemeHarbor/Sources/HarborTheme.swift"
+    "Plugins/PluginThemeMatrix/Sources/MatrixTheme.swift"
+    "Plugins/PluginThemeMidnight/Sources/MidnightTheme.swift"
+    "Plugins/PluginThemeMountain/Sources/MountainTheme.swift"
+    "Plugins/PluginThemeNebula/Sources/NebulaTheme.swift"
+    "Plugins/PluginThemeOneDark/Sources/OneDarkTheme.swift"
+    "Plugins/PluginThemeOrchard/Sources/OrchardTheme.swift"
+    "Plugins/PluginThemeRiver/Sources/RiverTheme.swift"
+    "Plugins/PluginThemeSpring/Sources/SpringTheme.swift"
+    "Plugins/PluginThemeSummer/Sources/SummerTheme.swift"
+    "Plugins/PluginThemeWinter/Sources/WinterTheme.swift"
+    "Plugins/PluginThemeXcodeLight/Sources/XcodeLightTheme.swift"
 )
 
 for file in "${THEME_FILES[@]}"; do

@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import GitOKSupportKit
+import KitGitOKSupport
 import SwiftData
 import OSLog
 

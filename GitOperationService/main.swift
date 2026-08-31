@@ -1,5 +1,5 @@
 import Foundation
-import GitCoreKit
+import KitGitCore
 
 final class GitOperationService: NSObject, NSXPCListenerDelegate, GitOperationXPCProtocol {
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {

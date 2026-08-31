@@ -1,5 +1,5 @@
-import GitCoreKit
-import GitOKSupportKit
+import KitGitCore
+import KitGitOKSupport
 import Combine
 import Foundation
 import OSLog

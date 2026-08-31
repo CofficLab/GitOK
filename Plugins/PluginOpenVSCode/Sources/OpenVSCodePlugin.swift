@@ -1,0 +1,42 @@
+import Foundation
+import KitGitOKCore
+import SwiftUI
+
+public enum OpenVSCodePlugin: GitOKPlugin {
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "OpenVSCode",
+        displayName: OpenVSCodePluginLocalization.string("Open VS Code"),
+        description: OpenVSCodePluginLocalization.string("Open the current project folder in VS Code."),
+        iconName: "chevron.left.forwardslash.chevron.right",
+        order: 430,
+        policy: .optIn,
+        tableName: OpenVSCodePluginLocalization.table
+    )
+
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .openIn }
+
+    @MainActor
+    public static func pluginIntroductionView(context: GitOKPluginContext) -> AnyView? {
+        pluginAboutView(
+            kind: .openIn,
+            footnote: VSCodeProjectLauncher.isInstalled ? nil : openInUnavailableFootnote()
+        )
+    }
+
+
+    @MainActor
+    public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        guard let projectURL = context.projectURL else { return [] }
+        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenVSCodeButton(projectURL: projectURL)))]
+    }
+}
+
+public enum OpenVSCodePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
+    }
+}

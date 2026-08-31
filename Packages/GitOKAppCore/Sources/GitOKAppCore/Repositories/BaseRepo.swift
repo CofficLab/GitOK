@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 import OSLog
-import GitOKSupportKit
+import KitGitOKSupport
 
 // MARK: - Repository基础协议
 

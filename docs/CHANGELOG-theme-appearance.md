@@ -59,7 +59,7 @@
 
 ### 4. 新增自适应主题
 
-**文件:** `GitOK/Plugins/ThemeGitOKPlugin/Sources/GitOKAdaptiveTheme.swift`
+**文件:** `GitOK/Plugins/PluginThemeGitOK/Sources/GitOKAdaptiveTheme.swift`
 
 创建了一个全新的 `GitOKAdaptiveTheme`，展示如何实现自动跟随系统明暗模式的主题：
 

@@ -1,4 +1,4 @@
-import GitCoreKit
+import KitGitCore
 import MagicAlert
 import SwiftUI
 

@@ -1,10 +1,10 @@
 import Foundation
-import GitCoreKit
-import GitOKCoreKit
-import GitOKSupportKit
+import KitGitCore
+import KitGitOKCore
+import KitGitOKSupport
 import OSLog
-import ProjectRulesKit
-import ProjectSupportKit
+import KitProjectRules
+import KitProjectSupport
 import SwiftData
 
 /// 项目模型类

@@ -1,5 +1,5 @@
 import Combine
-import GitOKCoreKit
+import KitGitOKCore
 import GitOKUI
 import SwiftUI
 

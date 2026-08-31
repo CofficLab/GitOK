@@ -1,3 +1,3 @@
-import ProjectKit
+import ProviderProject
 
 extension Project: GitOKProjectModeling {}
