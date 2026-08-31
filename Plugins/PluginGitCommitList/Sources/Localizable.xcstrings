@@ -4,6 +4,9 @@
     "+%lld" : {
 
     },
+    "characters" : {
+
+    },
     "Commit" : {
       "localizations" : {
         "en" : {
@@ -31,6 +34,12 @@
           }
         }
       }
+    },
+    "Full Hash" : {
+
+    },
+    "Full Time" : {
+
     },
     "Git commit management" : {
       "localizations" : {
@@ -63,16 +72,37 @@
     "Hard Reset" : {
 
     },
+    "Hash Length" : {
+
+    },
+    "ISO Format" : {
+
+    },
     "Mixed Reset" : {
 
     },
+    "Prefix Feature" : {
+
+    },
+    "Relative Time" : {
+
+    },
     "Revert" : {
+
+    },
+    "Short Hash (8 digits)" : {
 
     },
     "Soft Reset" : {
 
     },
     "Squash" : {
+
+    },
+    "Starts with 0" : {
+
+    },
+    "Unix Timestamp" : {
 
     },
     "User info not found" : {
