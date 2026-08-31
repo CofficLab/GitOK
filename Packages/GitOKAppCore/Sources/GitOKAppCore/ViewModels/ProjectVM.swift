@@ -1,6 +1,6 @@
-import GitCoreKit
-import GitOKCoreKit
-import GitOKSupportKit
+import KitGitCore
+import KitGitOKCore
+import KitGitOKSupport
 import OSLog
 import SwiftUI
 

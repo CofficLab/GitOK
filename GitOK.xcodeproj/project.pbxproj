@@ -8,19 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		0BE64B5E2FCDBB3100DA2C72 /* GitOKPluginRegistry in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500B23000000100ABC001 /* GitOKPluginRegistry */; };
+		0BE64B5E2FCDBB3100DA2C72 /* FactoryGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500B23000000100ABC001 /* FactoryGitOK */; };
 		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
-		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
+		CC73F006457981A7C3AE5D86 /* KitGitOKCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* KitGitOKCore */; };
 		E51CAF4A54BAA545689D6485 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F6C83393963F8599B29D474A /* Sparkle */; };
-		F5ABCD032FCE000100000001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5ABCD022FCE000100000001 /* ProjectSupportKit */; };
+		F5ABCD032FCE000100000001 /* KitProjectSupport in Frameworks */ = {isa = PBXBuildFile; productRef = F5ABCD022FCE000100000001 /* KitProjectSupport */; };
 		F5AC00032FCE000100000001 /* GitOKAppCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5AC00022FCE000100000001 /* GitOKAppCore */; };
-		F5E6143F2F33311F00F79149 /* GitOKSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5E6143E2F33311F00F79149 /* GitOKSupportKit */; };
-		F5FC00012F15000010000001 /* GitOKFactoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5FC00022F15000010000001 /* GitOKFactoryCore */; };
-		F5PK00032FCE000100000001 /* ProjectKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5PK00022FCE000100000001 /* ProjectKit */; };
-		F5UD00012F16000010000001 /* GitOKUpdateKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5UD00022F16000010000001 /* GitOKUpdateKit */; };
+		F5E6143F2F33311F00F79149 /* KitGitOKSupport in Frameworks */ = {isa = PBXBuildFile; productRef = F5E6143E2F33311F00F79149 /* KitGitOKSupport */; };
+		F5FC00012F15000010000001 /* FactoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5FC00022F15000010000001 /* FactoryCore */; };
+		F7C000032F00000000000001 /* KernelCore in Frameworks */ = {isa = PBXBuildFile; productRef = F7C000022F00000000000001 /* KernelCore */; };
+		F5PK00032FCE000100000001 /* ProviderProject in Frameworks */ = {isa = PBXBuildFile; productRef = F5PK00022FCE000100000001 /* ProviderProject */; };
+		F5UD00012F16000010000001 /* KitGitOKUpdate in Frameworks */ = {isa = PBXBuildFile; productRef = F5UD00022F16000010000001 /* KitGitOKUpdate */; };
 		F60000062DF2000000000001 /* GitOperationService.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = F60000052DF2000000000001 /* GitOperationService.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F60000072DF2000000000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60000032DF2000000000001 /* main.swift */; };
-		F60000082DF2000000000001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = F60000092DF2000000000001 /* GitCoreKit */; };
+		F60000082DF2000000000001 /* KitGitCore in Frameworks */ = {isa = PBXBuildFile; productRef = F60000092DF2000000000001 /* KitGitCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,16 +75,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BE64B5E2FCDBB3100DA2C72 /* GitOKPluginRegistry in Frameworks */,
+				0BE64B5E2FCDBB3100DA2C72 /* FactoryGitOK in Frameworks */,
 				0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */,
 				A1F500032F70000100ABC001 /* GitOKUI in Frameworks */,
-				F5E6143F2F33311F00F79149 /* GitOKSupportKit in Frameworks */,
-				F5ABCD032FCE000100000001 /* ProjectSupportKit in Frameworks */,
-				F5PK00032FCE000100000001 /* ProjectKit in Frameworks */,
-				CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */,
+				F5E6143F2F33311F00F79149 /* KitGitOKSupport in Frameworks */,
+				F5ABCD032FCE000100000001 /* KitProjectSupport in Frameworks */,
+				F5PK00032FCE000100000001 /* ProviderProject in Frameworks */,
+				CC73F006457981A7C3AE5D86 /* KitGitOKCore in Frameworks */,
 				F5AC00032FCE000100000001 /* GitOKAppCore in Frameworks */,
-				F5UD00012F16000010000001 /* GitOKUpdateKit in Frameworks */,
-				F5FC00012F15000010000001 /* GitOKFactoryCore in Frameworks */,
+				F5UD00012F16000010000001 /* KitGitOKUpdate in Frameworks */,
+				F5FC00012F15000010000001 /* FactoryCore in Frameworks */,
+				F7C000032F00000000000001 /* KernelCore in Frameworks */,
 				E51CAF4A54BAA545689D6485 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,7 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F60000082DF2000000000001 /* GitCoreKit in Frameworks */,
+				F60000082DF2000000000001 /* KitGitCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,14 +167,15 @@
 			name = GitOK;
 			packageProductDependencies = (
 				A1F500022F70000100ABC001 /* GitOKUI */,
-				F5E6143E2F33311F00F79149 /* GitOKSupportKit */,
-				F5ABCD022FCE000100000001 /* ProjectSupportKit */,
-				F5PK00022FCE000100000001 /* ProjectKit */,
-				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
-				A1F500B23000000100ABC001 /* GitOKPluginRegistry */,
+				F5E6143E2F33311F00F79149 /* KitGitOKSupport */,
+				F5ABCD022FCE000100000001 /* KitProjectSupport */,
+				F5PK00022FCE000100000001 /* ProviderProject */,
+				4EC50CECD060E698BF493AED /* KitGitOKCore */,
+				A1F500B23000000100ABC001 /* FactoryGitOK */,
 				F5AC00022FCE000100000001 /* GitOKAppCore */,
-				F5UD00022F16000010000001 /* GitOKUpdateKit */,
-				F5FC00022F15000010000001 /* GitOKFactoryCore */,
+				F5UD00022F16000010000001 /* KitGitOKUpdate */,
+				F5FC00022F15000010000001 /* FactoryCore */,
+				F7C000022F00000000000001 /* KernelCore */,
 				F6C83393963F8599B29D474A /* Sparkle */,
 			);
 			productName = GitOK;
@@ -192,7 +195,7 @@
 			);
 			name = GitOperationService;
 			packageProductDependencies = (
-				F60000092DF2000000000001 /* GitCoreKit */,
+				F60000092DF2000000000001 /* KitGitCore */,
 			);
 			productName = GitOperationService;
 			productReference = F60000052DF2000000000001 /* GitOperationService.xpc */;
@@ -230,14 +233,16 @@
 			mainGroup = 0B0E16742BD89A8F0078942B;
 			packageReferences = (
 				A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */,
-				F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */,
-				F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */,
-				F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectKit" */,
-				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */,
-				A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */,
+				F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/KitGitOKSupport" */,
+				F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/KitProjectSupport" */,
+				F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProviderProject" */,
+				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/KitGitOKCore" */,
+				A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */,
 				F5AC00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/GitOKAppCore" */,
-				F5UD00032F16000010000001 /* XCLocalSwiftPackageReference "Packages/GitOKUpdateKit" */,
-				F5FC00032F15000010000001 /* XCLocalSwiftPackageReference "Packages/GitOKFactoryCore" */,
+				F5UD00032F16000010000001 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */,
+				F5FC00032F15000010000001 /* XCLocalSwiftPackageReference "Packages/FactoryCore" */,
+				F7C000012F00000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */,
+				F60000042DF2000000000001 /* XCLocalSwiftPackageReference "Packages/KitGitCore" */,
 				48459E53364628BC72FB6C45 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
@@ -445,7 +450,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Plugins/GitWorkingStatePlugin/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginGitWorkingState/.build/arm64-apple-macosx/debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 3.0.11;
@@ -493,7 +498,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Plugins/GitWorkingStatePlugin/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginGitWorkingState/.build/arm64-apple-macosx/debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 3.0.11;
@@ -582,41 +587,49 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */ = {
+		917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/KitGitOKCore" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKCoreKit;
+			relativePath = Packages/KitGitOKCore;
 		};
 		A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKUI;
 		};
-		A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */ = {
+		A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKPluginRegistry;
+			relativePath = Packages/FactoryGitOK;
 		};
-		F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */ = {
+		F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/KitProjectSupport" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ProjectSupportKit;
+			relativePath = Packages/KitProjectSupport;
 		};
 		F5AC00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/GitOKAppCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKAppCore;
 		};
-		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */ = {
+		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/KitGitOKSupport" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKSupportKit;
+			relativePath = Packages/KitGitOKSupport;
 		};
-		F5FC00032F15000010000001 /* XCLocalSwiftPackageReference "Packages/GitOKFactoryCore" */ = {
+		F5FC00032F15000010000001 /* XCLocalSwiftPackageReference "Packages/FactoryCore" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKFactoryCore;
+			relativePath = Packages/FactoryCore;
 		};
-		F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectKit" */ = {
+		F7C000012F00000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ProjectKit;
+			relativePath = Packages/KernelCore;
 		};
-		F5UD00032F16000010000001 /* XCLocalSwiftPackageReference "Packages/GitOKUpdateKit" */ = {
+		F60000042DF2000000000001 /* XCLocalSwiftPackageReference "Packages/KitGitCore" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKUpdateKit;
+			relativePath = Packages/KitGitCore;
+		};
+		F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProviderProject" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderProject;
+		};
+		F5UD00032F16000010000001 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/KitGitOKUpdate;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -632,55 +645,60 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4EC50CECD060E698BF493AED /* GitOKCoreKit */ = {
+		4EC50CECD060E698BF493AED /* KitGitOKCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
-			productName = GitOKCoreKit;
+			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/KitGitOKCore" */;
+			productName = KitGitOKCore;
 		};
 		A1F500022F70000100ABC001 /* GitOKUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */;
 			productName = GitOKUI;
 		};
-		A1F500B23000000100ABC001 /* GitOKPluginRegistry */ = {
+		A1F500B23000000100ABC001 /* FactoryGitOK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */;
-			productName = GitOKPluginRegistry;
+			package = A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */;
+			productName = FactoryGitOK;
 		};
-		F5ABCD022FCE000100000001 /* ProjectSupportKit */ = {
+		F5ABCD022FCE000100000001 /* KitProjectSupport */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */;
-			productName = ProjectSupportKit;
+			package = F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/KitProjectSupport" */;
+			productName = KitProjectSupport;
 		};
 		F5AC00022FCE000100000001 /* GitOKAppCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F5AC00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/GitOKAppCore" */;
 			productName = GitOKAppCore;
 		};
-		F5E6143E2F33311F00F79149 /* GitOKSupportKit */ = {
+		F5E6143E2F33311F00F79149 /* KitGitOKSupport */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */;
-			productName = GitOKSupportKit;
+			package = F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/KitGitOKSupport" */;
+			productName = KitGitOKSupport;
 		};
-		F5FC00022F15000010000001 /* GitOKFactoryCore */ = {
+		F5FC00022F15000010000001 /* FactoryCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5FC00032F15000010000001 /* XCLocalSwiftPackageReference "Packages/GitOKFactoryCore" */;
-			productName = GitOKFactoryCore;
+			package = F5FC00032F15000010000001 /* XCLocalSwiftPackageReference "Packages/FactoryCore" */;
+			productName = FactoryCore;
 		};
-		F5PK00022FCE000100000001 /* ProjectKit */ = {
+		F7C000022F00000000000001 /* KernelCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectKit" */;
-			productName = ProjectKit;
+			package = F7C000012F00000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */;
+			productName = KernelCore;
 		};
-		F5UD00022F16000010000001 /* GitOKUpdateKit */ = {
+		F5PK00022FCE000100000001 /* ProviderProject */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5UD00032F16000010000001 /* XCLocalSwiftPackageReference "Packages/GitOKUpdateKit" */;
-			productName = GitOKUpdateKit;
+			package = F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProviderProject" */;
+			productName = ProviderProject;
 		};
-		F60000092DF2000000000001 /* GitCoreKit */ = {
+		F5UD00022F16000010000001 /* KitGitOKUpdate */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
-			productName = GitCoreKit;
+			package = F5UD00032F16000010000001 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */;
+			productName = KitGitOKUpdate;
+		};
+		F60000092DF2000000000001 /* KitGitCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F60000042DF2000000000001 /* XCLocalSwiftPackageReference "Packages/KitGitCore" */;
+			productName = KitGitCore;
 		};
 		F6C83393963F8599B29D474A /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;

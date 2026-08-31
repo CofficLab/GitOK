@@ -1,5 +1,5 @@
 import Foundation
-import GitOKCoreKit
+import KitGitOKCore
 
 extension GitOKAppTab {
   public var displayName: String {

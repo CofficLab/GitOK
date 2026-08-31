@@ -1,6 +1,6 @@
 import AppKit
 import Foundation
-import GitCoreKit
+import KitGitCore
 
 public struct DiagnosticEntry: Identifiable, Equatable {
     public let id: UUID

@@ -1,4 +1,4 @@
-import GitOKCoreKit
+import KitGitOKCore
 import MagicAlert
 
 public struct PluginRepositoryContextHandlers {

@@ -1,36 +1,45 @@
 # GitOK App Shell Architecture
 
-GitOK follows the same layered model as Lumi:
+GitOK uses the same composition-root model as Lumi:
 
 ```text
-GitOKApp/          Thin shell (= LumiApp, single file): @main scene
-                  declarations + channel-specific wiring
+GitOKApp/          Thin shell (= LumiApp): @main scenes and one shared
+                  KernelCoreContainer
 Packages/
-  GitOKFactoryCore/   Host engine (Lumi FactoryCore equivalent): RootContainer,
-                      MacAgent, RootView, layout views, app services, settings
-                      window, menu commands — plugin-agnostic
-  GitOKUpdateKit/     Sparkle auto-update (Lumi AppUpdatePlugin equivalent):
+  KernelCore/         Generic typed Provider registry + kernel lifecycle
+  FactoryCore/   Host engine (Lumi FactoryCore equivalent): KernelFactory,
+                      ProviderFactory, ViewFactory, RootContainer compatibility
+                      graph, MacAgent, RootView, layout and commands
+  KitGitOKUpdate/     Sparkle auto-update (Lumi AppUpdatePlugin equivalent):
                       UpdateManager + UpdateCommand, injected at app layer
-  GitOKCoreKit/       Plugin SDK + kernel (Lumi KernelLumi equivalent)
-  GitCoreKit/         Git engine (git CLI wrapper)
+  KitGitOKCore/       GitOK domain contracts and legacy plugin SDK bridge
+  KitGitCore/         Git engine (git CLI wrapper)
   GitOKUI/            Design system (Lumi LumiUI equivalent)
   …                   Domain kits
 Plugins/           Feature SPM packages (one plugin per directory)
-GitOKPluginRegistry/  Compile-time plugin catalog + GitOKFactory facade
-                      (Lumi FactoryLumi equivalent: makeMainWindow() /
-                      makeCommands() / makeSettingsWindow())
+FactoryGitOK/  Compile-time plugin catalog + GitOKFactory facade
+                      (Lumi FactoryLumi equivalent: makeKernel() /
+                      makeMainWindow(kernel:) / makeSettingsWindow(kernel:))
 ```
 
 ## Dependency rules
 
 | Layer | May import |
 |-------|------------|
-| GitOKApp | GitOKFactoryCore, GitOKPluginRegistry, domain kits |
-| GitOKFactoryCore | GitOKAppCore, GitOKCoreKit, GitOKUI, domain kits — **no plugins** |
-| GitOKPluginRegistry | GitOKFactoryCore + all plugins (composition layer) |
-| Plugins | GitOKCoreKit, domain kits |
-| GitOKCoreKit | Foundation, GitOKUI, GitCoreKit (no Plugins) |
-| Plugins | **Must not** import GitOKApp or GitOKFactoryCore |
+| GitOKApp | FactoryCore, FactoryGitOK, KernelCore, domain kits |
+| KernelCore | Foundation only; no GitOK or feature imports |
+| FactoryCore | KernelCore, GitOKAppCore, KitGitOKCore, GitOKUI, domain kits — **no plugins** |
+| FactoryGitOK | FactoryCore + all plugins (composition layer) |
+| Plugins | KitGitOKCore, domain kits |
+| KitGitOKCore | Foundation, GitOKUI, KitGitCore (no Plugins) |
+| Plugins | **Must not** import GitOKApp or FactoryCore |
+
+## Provider layer (Lumi-compatible)
+
+`KernelCoreContainer` is the single runtime composition object. `RootContainer`
+constructs the existing GitOK service graph, then registers concrete services
+and typed GitOK protocols into Kernel. New code resolves providers from Kernel;
+the old `GitOKPluginDependencies` resolver remains as a migration bridge.
 
 ## Service layer (replaces menu NotificationCenter)
 
@@ -46,34 +55,42 @@ App shell commands and plugins call typed services registered in `RootContainer`
 ## Plugin registration
 
 1. Implement `GitOKPlugin` in `Plugins/<Name>Plugin/`
-2. Add the plugin to `Packages/GitOKPluginRegistry/Sources/GeneratedPluginRegistry.swift`
-3. Declare the package dependency in `GitOKPluginRegistry/Package.swift`
+2. Add the plugin to `Packages/FactoryGitOK/Sources/GeneratedPluginRegistry.swift`
+3. Declare the package dependency in `FactoryGitOK/Package.swift`
 
 Runtime uses SPM explicit registration (not Objective-C runtime scanning).
 
 ## Runtime bootstrap
 
-`GitOKPluginBootstrap.configureRuntimes(projectService:)` is called from `RootContainer` after services are wired. It registers plugin singleton callbacks that need app-side providers (e.g. `AutoPushService` current-project snapshot).
+`GitOKFactory.makeKernel()` delegates to `KernelFactory`, which asks the
+registry's `PluginFactory` for the compile-time composition and the host's
+`ProviderFactory` for the service graph. The resulting Kernel is shared by the
+main window, settings window and commands.
+
+`GitOKPluginBootstrap.configureRuntimes(projectService:)` remains a compatibility
+hook called after services are wired. It registers plugin singleton callbacks
+that need app-side providers (e.g. `AutoPushService` current-project snapshot).
 
 Plugins that receive data through `GitOKPluginContext` (GitWatcher, UnpushedStatus callbacks, etc.) do not need separate bootstrap wiring.
 
 ## App shell responsibilities
 
-- Single-file `GitOKApp.swift` (= LumiApp): `@main` scene declarations
-  calling `GitOKFactory.makeMainWindow()` / `makeCommands()` /
-  `makeSettingsWindow()`, plus channel-specific wiring — the Sparkle launch
-  hook and `UpdateCommand()` from `GitOKUpdateKit` (mirrors Lumi injecting
+- Single-file `GitOKApp.swift` (= LumiApp): `@main` scene declarations. It
+  assembles one Kernel in `init`, caches the main/settings views, and calls
+  `GitOKFactory.makeMainWindow(kernel:)` / `makeCommands(kernel:)` /
+  `makeSettingsWindow(kernel:)`, plus channel-specific wiring — the Sparkle launch
+  hook and `UpdateCommand()` from `KitGitOKUpdate` (mirrors Lumi injecting
   `AppUpdatePlugin` at the `LumiApp` layer; an MAS variant could drop it)
-- `MacAgent` lives in `GitOKFactoryCore/Bootstrap/` (as in Lumi FactoryCore)
+- `MacAgent` lives in `FactoryCore/Bootstrap/` (as in Lumi FactoryCore)
   and runs channel-specific launch work through `GitOKFactoryChrome.launchHooks`
-- Plugin composition lives in `GitOKPluginRegistry/GitOKFactory`, which
-  injects the plugin catalog, plugin runtime hooks and sidebar chrome into
-  the plugin-agnostic `RootContainer` via `RootContainer.configure(_:)`
+- Plugin composition lives in `FactoryGitOK/GitOKFactory`, which
+  implements `PluginFactory` and hands its composition to `KernelFactory`.
 
 Feature UI and business logic belong in Plugins or Packages, not GitOKApp.
-The host engine (RootContainer/RootView, layout views, `PluginService`, app
-services, commands) lives in `Packages/GitOKFactoryCore`; shell-owned chrome
-is injected through `GitOKFactoryChrome` instead of hard dependencies.
+The host engine (KernelFactory, RootContainer compatibility graph, RootView,
+layout views, `PluginService`, app services, commands) lives in
+`Packages/FactoryCore`; shell-owned chrome is injected through
+`GitOKFactoryChrome` instead of hard dependencies.
 
 ## Boundary check
 

@@ -5,7 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_DIR="$ROOT_DIR/GitOKApp"
 LEGACY_APP_DIR="$ROOT_DIR/APP"
 PLUGIN_PACKAGES_DIR="$ROOT_DIR/Plugins"
-COREKIT_DIR="$ROOT_DIR/Packages/GitOKCoreKit"
+COREKIT_DIR="$ROOT_DIR/Packages/KitGitOKCore"
+KERNEL_DIR="$ROOT_DIR/Packages/KernelCore"
 
 mode="${1:-strict}"
 if [[ "$mode" != "strict" && "$mode" != "--allow-legacy" ]]; then
@@ -27,6 +28,16 @@ if [[ ! -d "$APP_DIR" ]]; then
   failures=$((failures + 1))
 fi
 
+if [[ ! -f "$KERNEL_DIR/Package.swift" ]]; then
+  echo "  kernel package missing: Packages/KernelCore/Package.swift"
+  failures=$((failures + 1))
+fi
+
+if [[ -d "$KERNEL_DIR/Sources" ]] && rg -q '^import (GitOK|.*Plugin)' "$KERNEL_DIR/Sources" 2>/dev/null; then
+  echo "  KernelCore must remain independent of GitOK and feature plugins"
+  failures=$((failures + 1))
+fi
+
 if [[ -d "$ROOT_DIR/Packages" ]]; then
   while IFS= read -r -d '' dir; do
     name="$(basename "$dir")"
@@ -38,9 +49,20 @@ fi
 if [[ -d "$PLUGIN_PACKAGES_DIR" ]]; then
   while IFS= read -r -d '' dir; do
     name="$(basename "$dir")"
+    # Ignore local build caches left by removed plugin packages. A real plugin
+    # directory has either Package.swift or source files and must be checked.
+    if [[ ! -f "$dir/Package.swift" && ! -d "$dir/Sources" ]]; then
+      continue
+    fi
     if [[ ! -f "$dir/Package.swift" ]]; then
       echo "  plugin package missing Package.swift: Plugins/$name"
       failures=$((failures + 1))
+    else
+      package_name="$(sed -n 's/^[[:space:]]*name:[[:space:]]*"\([^"]*\)"/\1/p' "$dir/Package.swift" | head -1)"
+      if [[ "$package_name" != Plugin* ]]; then
+        echo "  plugin package must use Plugin prefix: Plugins/$name ($package_name)"
+        failures=$((failures + 1))
+      fi
     fi
   done < <(find "$PLUGIN_PACKAGES_DIR" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
 else
@@ -50,7 +72,7 @@ fi
 
 if [[ -d "$COREKIT_DIR/Sources" ]]; then
   if rg -q 'import (BannerPlugin|BranchPlugin|GitWorkspacePlugin)' "$COREKIT_DIR/Sources" 2>/dev/null; then
-    echo "  GitOKCoreKit must not import feature plugin modules"
+    echo "  KitGitOKCore must not import feature plugin modules"
     failures=$((failures + 1))
   fi
 fi

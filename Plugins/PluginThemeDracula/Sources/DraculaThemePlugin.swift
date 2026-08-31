@@ -1,0 +1,40 @@
+import Foundation
+import KitGitOKCore
+
+public enum DraculaThemePlugin: GitOKPlugin {
+    public static let metadata = GitOKPluginMetadata(
+        id: "ThemeDraculaPlugin",
+        displayName: DraculaThemePluginLocalization.string("Dracula Theme"),
+        description: DraculaThemePluginLocalization.string("Classic vivid dark theme"),
+        iconName: "moon.stars",
+        order: 345,
+        policy: .alwaysOn,
+        tableName: DraculaThemePluginLocalization.table
+    )
+
+    public static var introductionContentKind: GitOKPluginAboutContentKind { .theme }
+
+
+
+    @MainActor
+    public static func themeContributions(context: GitOKPluginContext) -> [GitOKUIThemeContribution] {
+        [
+            GitOKUIThemeContribution(
+                sortKey: ThemeSortKey(pluginOrder: Self.metadata.order, themeId: DraculaTheme.dracula.identifier),
+                chromeTheme: DraculaTheme.dracula,
+                editorThemeId: DraculaTheme.dracula.identifier
+            ),
+        ]
+    }
+}
+
+
+
+public enum DraculaThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
+    }
+}
