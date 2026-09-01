@@ -28,7 +28,7 @@ public enum OpenVSCodePlugin: GitOKPlugin {
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
-        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenVSCodeButton(projectURL: projectURL)))]
+        return [GitOKToolbarItem(id: metadata.id, title: "Open in Visual Studio Code", order: 120, view: AnyView(OpenVSCodeButton(projectURL: projectURL)))]
     }
 }
 

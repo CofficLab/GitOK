@@ -77,6 +77,9 @@ struct SettingView: View, SuperLog {
         }
         .frame(minWidth: 720, minHeight: 520)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        // 设置窗口同样使用自绘 chrome（hiddenTitleBar + fullSizeContentView），
+        // 隐藏 NavigationSplitView 自动安装的原生工具栏，保证跨系统一致。
+        .toolbar(.hidden, for: .windowToolbar)
         .onAppear {
             applySelectedTab(app.defaultSettingTab ?? defaultTabID)
         }
@@ -101,6 +104,8 @@ struct SettingView: View, SuperLog {
     /// 侧边栏头部 - 应用信息
     private var sidebarHeader: some View {
         VStack(alignment: .center, spacing: 12) {
+            // hiddenTitleBar 下红绿灯悬浮于左上角；内容区已通过顶部安全区
+            // 与红绿灯保持距离，此间距维持原有留白即可。
             Spacer().frame(height: 20)
 
             if let appIcon = NSImage(named: "AppIcon") {

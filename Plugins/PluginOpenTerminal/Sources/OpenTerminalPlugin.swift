@@ -30,7 +30,7 @@ public enum OpenTerminalPlugin: GitOKPlugin {
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
-        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenTerminalButton(projectURL: projectURL)))]
+        return [GitOKToolbarItem(id: metadata.id, title: "Open in Terminal", order: 100, view: AnyView(OpenTerminalButton(projectURL: projectURL)))]
     }
 }
 

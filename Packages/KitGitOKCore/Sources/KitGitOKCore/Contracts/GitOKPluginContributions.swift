@@ -1,11 +1,23 @@
 import SwiftUI
 
+/// 工具栏项：插件通过 `toolbarLeadingItems` / `toolbarTrailingItems` 贡献。
+///
+/// 对齐 Lumi 的 `ToolbarItem`：`title` 用于按钮 tooltip 与辅助功能，
+/// `order` 控制同一 placement 内的排布顺序（数值小靠前，默认 200）。
 public struct GitOKToolbarItem: Identifiable {
     public let id: String
+    public let title: String
+    public let order: Int
     public let view: AnyView
 
     public init(id: String, view: AnyView) {
+        self.init(id: id, title: "", order: 200, view: view)
+    }
+
+    public init(id: String, title: String = "", order: Int = 200, view: AnyView) {
         self.id = id
+        self.title = title
+        self.order = order
         self.view = view
     }
 }

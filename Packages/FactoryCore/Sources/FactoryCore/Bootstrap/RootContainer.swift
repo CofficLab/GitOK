@@ -155,6 +155,8 @@ public final class RootContainer: ObservableObject {
             try kernel.registerProvider((any GitOKGitCommandServicing).self, gitCoreService)
             try kernel.registerProvider((any GitOKThemeServicing).self, themeService)
             try kernel.registerProvider((any GitOKNavigationServicing).self, navigationService)
+            try kernel.registerProvider((any GitOKRootViewProviding).self, DefaultGitOKRootViewProvider())
+            try kernel.registerProvider((any GitOKToolbarProviding).self, DefaultGitOKToolbarProvider())
         } catch {
             os_log(.fault, "Kernel provider registration failed: %{public}@", error.localizedDescription)
         }

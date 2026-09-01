@@ -1,4 +1,5 @@
 import GitOKAppCore
+import GitOKUI
 import KitGitOKCore
 import MagicAlert
 import KitGitOKSupport
@@ -15,24 +16,14 @@ struct ContentView: View, SuperLog {
     @EnvironmentObject var g: DataVM
     @EnvironmentObject var p: PluginService
     @EnvironmentObject var vm: ProjectVM
+    /// 工具栏 provider（由装配层注入环境对象）：顶栏渲染与工具栏项由它持有。
+    @EnvironmentObject var toolbarProvider: DefaultGitOKToolbarProvider
 
     /// 导航分栏视图的列可见性状态
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
-    /// 当前选中的标签页
-    @State private var tab: GitOKAppTab = AppTabCatalog.defaultTab
-
     /// 状态栏是否可见
     @State private var statusBarVisibility = true
-
-    /// 工具栏是否可见
-    @State private var toolbarVisibility = true
-
-    /// 标签页选择器是否可见
-    @State private var tabPickerVisibility = true
-
-    /// 项目操作按钮是否可见
-    @State private var projectActionsVisibility = true
 
     /// 默认状态栏可见性
     var defaultStatusBarVisibility: Bool? = nil
@@ -51,12 +42,6 @@ struct ContentView: View, SuperLog {
 
     /// 默认标签页可见性
     var defaultTabVisibility: Bool? = nil
-
-    /// 缓存工具栏前导视图贡献
-    @State private var toolbarLeadingViews: [GitOKPluginViewContribution] = []
-
-    /// 缓存工具栏后置视图贡献
-    @State private var toolbarTrailingViews: [GitOKPluginViewContribution] = []
 
     /// 缓存插件 Rail 视图贡献
     @State private var pluginRailViews: [GitOKRailItem] = []
@@ -81,52 +66,20 @@ extension ContentView {
             SidebarView()
         } detail: {
             DetailView(
-                tab: tab,
+                tab: app.currentTab,
                 pluginRailViews: pluginRailViews,
                 selectedRailID: $selectedRailID,
                 statusBarVisibility: statusBarVisibility
             )
         }
-        .gitOKToolbarVisibility(toolbarVisibility)
-        .toolbar {
-            ToolbarItem(placement: .navigation) {
-                HStack(spacing: 8) {
-                    ForEach(toolbarLeadingViews) { item in
-                        item.view
-                    }
-                }
-            }
-
-            if tabPickerVisibility, AppTabCatalog.visibleTabs.count > 1 {
-                ToolbarItem(placement: .principal) {
-                    Picker(String(localized: "Select Tab"), selection: $tab) {
-                        ForEach(AppTabCatalog.visibleTabs) { workspaceTab in
-                            Text(workspaceTab.displayName).tag(workspaceTab)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                }
-            }
-
-            if vm.project != nil, projectActionsVisibility {
-                ToolbarItem {
-                    HStack(spacing: 0) {
-                        ToolbarFlexibleSpaceAnchor()
-                            .frame(width: 0, height: 0)
-                            .accessibilityHidden(true)
-
-                        ForEach(toolbarTrailingViews) { item in
-                            item.view
-                        }
-                    }
-                }
-            }
-        }
+        // 隐藏原生 window toolbar：工具栏内容已由 toolbar provider 的自绘顶栏承担，
+        // 同时避免 NavigationSplitView 自动安装带侧栏切换的原生统一工具栏。
+        .toolbar(.hidden, for: .windowToolbar)
         .onAppear(perform: onAppear)
         .onDisappear(perform: clearCachedViews)
         .onChange(of: vm.project, onProjectChange)
         .onChange(of: vm.projectGitRepositoryStateToken, onProjectGitRepositoryStateChange)
-        .onChange(of: self.tab, onChangeOfTab)
+        .onChange(of: app.currentTab, onChangeOfTab)
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.registeredPluginCount, onPluginsLoaded)
         .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
@@ -143,92 +96,6 @@ extension ContentView {
     }
 }
 
-private extension View {
-    @ViewBuilder
-    func gitOKToolbarVisibility(_ visible: Bool) -> some View {
-        if #available(macOS 15.0, *) {
-            self.toolbarVisibility(visible ? .visible : .hidden)
-        } else {
-            self.background(WindowToolbarVisibilityBridge(isVisible: visible))
-        }
-    }
-}
-
-private struct WindowToolbarVisibilityBridge: NSViewRepresentable {
-    let isVisible: Bool
-
-    func makeNSView(context: Context) -> NSView {
-        NSView()
-    }
-
-    func updateNSView(_ nsView: NSView, context: Context) {
-        DispatchQueue.main.async {
-            nsView.window?.toolbar?.isVisible = isVisible
-        }
-    }
-}
-
-/// SwiftUI assigns automatic spacers to the sidebar toolbar section of a
-/// NavigationSplitView. Anchor AppKit's native flexible space to the actual
-/// plugin item so it remains in the detail toolbar section.
-private struct ToolbarFlexibleSpaceAnchor: NSViewRepresentable {
-    final class Coordinator {
-        weak var installedToolbar: NSToolbar?
-        weak var installedItem: NSToolbarItem?
-        var isInstalling = false
-
-        func install(for anchorView: NSView) {
-            guard !isInstalling, let toolbar = anchorView.window?.toolbar else { return }
-
-            if installedToolbar === toolbar,
-               let installedItem,
-               toolbar.items.contains(where: { $0 === installedItem }) {
-                return
-            }
-
-            guard let anchorIndex = toolbar.items.firstIndex(where: { item in
-                guard let itemView = item.view else { return false }
-                return anchorView === itemView || anchorView.isDescendant(of: itemView)
-            }) else { return }
-
-            isInstalling = true
-            defer { isInstalling = false }
-
-            toolbar.insertItem(withItemIdentifier: .flexibleSpace, at: anchorIndex)
-            installedToolbar = toolbar
-            installedItem = toolbar.items[anchorIndex]
-        }
-
-        func uninstall() {
-            guard let toolbar = installedToolbar,
-                  let installedItem,
-                  let index = toolbar.items.firstIndex(where: { $0 === installedItem }) else {
-                return
-            }
-            toolbar.removeItem(at: index)
-        }
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator() }
-
-    func makeNSView(context: Context) -> NSView {
-        NSView(frame: .zero)
-    }
-
-    func updateNSView(_ nsView: NSView, context: Context) {
-        DispatchQueue.main.async {
-            context.coordinator.install(for: nsView)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            context.coordinator.install(for: nsView)
-        }
-    }
-
-    static func dismantleNSView(_ nsView: NSView, coordinator: Coordinator) {
-        coordinator.uninstall()
-    }
-}
-
 // MARK: - Event Handler
 
 extension ContentView {
@@ -241,12 +108,12 @@ extension ContentView {
 
         let start = Date()
         if Self.verbose {
-            os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab.rawValue) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
+            os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(app.currentTab.rawValue) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
         }
 
         let leadingStart = Date()
         let repositoryHandlers = PluginRepositoryContextFactory.handlers(data: g, projectVM: vm)
-        toolbarLeadingViews = p.getEnabledToolbarLeadingViews(
+        let leadingViews = p.getEnabledToolbarLeadingViews(
             projectURL: vm.project?.url,
             branchName: g.branch?.name,
             isGitRepository: vm.currentProjectIsGitRepository,
@@ -265,12 +132,13 @@ extension ContentView {
             onActivityStatusUpdate: repositoryHandlers.onActivityStatusUpdate,
             onInfoMessage: repositoryHandlers.onInfoMessage
         )
+        toolbarProvider.setLeadingItems(leadingViews)
         if Self.verbose {
-            os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
+            os_log("\(self.t)✅ UpdateCachedViews leading count=\(leadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
         }
 
         let trailingStart = Date()
-        toolbarTrailingViews = p.getEnabledToolbarTrailingViews(
+        let trailingViews = p.getEnabledToolbarTrailingViews(
             projectURL: vm.project?.url,
             branchName: g.branch?.name,
             remoteTrackingStatus: GitOKRemoteTrackingStatus(
@@ -280,13 +148,14 @@ extension ContentView {
             ),
             isGitRepository: vm.currentProjectIsGitRepository
         )
+        toolbarProvider.setTrailingItems(trailingViews)
         if Self.verbose {
-            os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
+            os_log("\(self.t)✅ UpdateCachedViews trailing count=\(trailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
         }
 
         let railStart = Date()
         pluginRailViews = p.getEnabledRailViews(
-            tab: tab,
+            tab: app.currentTab,
             project: vm.project,
             isGitRepository: vm.currentProjectIsGitRepository
         )
@@ -301,14 +170,14 @@ extension ContentView {
         }
 
         if Self.verbose {
-            os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginRailViews.count) rail views")
+            os_log("\(self.t)✅ Cached views updated: \(leadingViews.count) leading, \(trailingViews.count) trailing, \(pluginRailViews.count) rail views")
             os_log("\(self.t)✅ UpdateCachedViews end elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
         }
     }
 
     func clearCachedViews() {
-        toolbarLeadingViews.removeAll()
-        toolbarTrailingViews.removeAll()
+        toolbarProvider.setLeadingItems([])
+        toolbarProvider.setTrailingItems([])
         pluginRailViews.removeAll()
         selectedRailID = nil
     }
@@ -340,22 +209,22 @@ extension ContentView {
         }
 
         if let d = defaultToolbarVisibility {
-            self.toolbarVisibility = d
+            toolbarProvider.setToolbarVisible(d)
         }
 
         if let d = defaultTabVisibility {
-            self.tabPickerVisibility = d
+            toolbarProvider.setTabPickerVisible(d)
         }
 
         if let d = defaultProjectActionsVisibility {
-            self.projectActionsVisibility = d
+            toolbarProvider.setProjectActionsVisible(d)
         }
 
         refreshCurrentBranch(reason: "ContentView.onAppear")
         updateCachedViews()
 
         if Self.verbose {
-            os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab.rawValue) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            os_log("\(self.t)✅ ContentView.onAppear end tab=\(app.currentTab.rawValue) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
         }
     }
 
@@ -380,7 +249,6 @@ extension ContentView {
 
     /// 处理标签页变更事件
     func onChangeOfTab() {
-        app.setTab(tab)
         updateCachedViews()
     }
 
@@ -425,18 +293,12 @@ extension ContentView {
 
     private func selectResolvedTab(preferred: GitOKAppTab?, reason: String) {
         let resolvedTab = resolvedInitialTab(preferred: preferred)
-        guard tab != resolvedTab else {
-            if app.currentTab != resolvedTab {
-                app.setTab(resolvedTab)
-            }
-            return
-        }
+        guard app.currentTab != resolvedTab else { return }
 
         if Self.verbose {
             os_log("\(self.t)Selected tab resolved reason=\(reason) tab=\(resolvedTab.rawValue)")
         }
 
-        tab = resolvedTab
         app.setTab(resolvedTab)
     }
 

@@ -112,21 +112,17 @@ public final class GitOKPluginRuntime {
             .sorted { $0.name < $1.name }
     }
 
-    public func enabledToolbarLeadingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
-        pluginTypes.flatMap { type -> [GitOKPluginViewContribution] in
+    public func enabledToolbarLeadingViews(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        pluginTypes.flatMap { type -> [GitOKToolbarItem] in
             guard isPluginEnabled(type) else { return [] }
-            return type.toolbarLeadingItems(context: context).map {
-                GitOKPluginViewContribution(id: $0.id, view: $0.view)
-            }
+            return type.toolbarLeadingItems(context: context)
         }
     }
 
-    public func enabledToolbarTrailingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
-        pluginTypes.flatMap { type -> [GitOKPluginViewContribution] in
+    public func enabledToolbarTrailingViews(context: GitOKPluginContext) -> [GitOKToolbarItem] {
+        pluginTypes.flatMap { type -> [GitOKToolbarItem] in
             guard isPluginEnabled(type) else { return [] }
-            return type.toolbarTrailingItems(context: context).map {
-                GitOKPluginViewContribution(id: $0.id, view: $0.view)
-            }
+            return type.toolbarTrailingItems(context: context)
         }
     }
 

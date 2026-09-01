@@ -29,7 +29,7 @@ public enum OpenGitHubDesktopPlugin: GitOKPlugin {
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL,
               GitHubDesktopProjectLauncher.isInstalled else { return [] }
-        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenGitHubDesktopButton(projectURL: projectURL)))]
+        return [GitOKToolbarItem(id: metadata.id, title: "Open in GitHub Desktop", order: 190, view: AnyView(OpenGitHubDesktopButton(projectURL: projectURL)))]
     }
 }
 

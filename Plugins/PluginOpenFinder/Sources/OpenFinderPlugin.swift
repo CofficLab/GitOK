@@ -20,7 +20,7 @@ public enum OpenFinderPlugin: GitOKPlugin {
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
-        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenFinderButton(projectURL: projectURL)))]
+        return [GitOKToolbarItem(id: metadata.id, title: "Reveal in Finder", order: 180, view: AnyView(OpenFinderButton(projectURL: projectURL)))]
     }
 }
 

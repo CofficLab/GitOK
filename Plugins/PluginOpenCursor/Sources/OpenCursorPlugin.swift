@@ -28,7 +28,7 @@ public enum OpenCursorPlugin: GitOKPlugin {
     @MainActor
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL else { return [] }
-        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenCursorButton(projectURL: projectURL)))]
+        return [GitOKToolbarItem(id: metadata.id, title: "Open in Cursor", order: 130, view: AnyView(OpenCursorButton(projectURL: projectURL)))]
     }
 }
 

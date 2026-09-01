@@ -75,6 +75,9 @@ public struct RootView<Content>: View, SuperEvent, SuperLog where Content: View 
 
             hostedContent
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // 让内容区延伸到窗口最顶部（标题栏/红绿灯区域），
+            // 与 Lumi 的根视图一致，使自绘顶栏可顶到窗口最上沿。
+            .ignoresSafeArea()
             .environmentObject(appProvider)
             .environmentObject(pluginProvider)
             .environmentObject(themeProvider)

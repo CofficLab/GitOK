@@ -29,7 +29,7 @@ public enum OpenTraePlugin: GitOKPlugin {
     public static func toolbarTrailingItems(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard let projectURL = context.projectURL,
               TraeProjectLauncher.isInstalled else { return [] }
-        return [GitOKToolbarItem(id: metadata.id, view: AnyView(OpenTraeButton(projectURL: projectURL)))]
+        return [GitOKToolbarItem(id: metadata.id, title: "Open in Trae", order: 140, view: AnyView(OpenTraeButton(projectURL: projectURL)))]
     }
 }
 

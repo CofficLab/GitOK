@@ -108,7 +108,7 @@ public final class PluginService: ObservableObject {
         onRepositoryImported: @escaping GitOKRepositoryImportCompletionHandler = { _ in false },
         onActivityStatusUpdate: @escaping GitOKActivityStatusUpdateHandler = { _ in },
         onInfoMessage: @escaping GitOKUserMessageHandler = { _ in }
-    ) -> [GitOKPluginViewContribution] {
+    ) -> [GitOKToolbarItem] {
         guard hasPlugins else { return [] }
         let context = makeContext(
             projectURL: projectURL,
@@ -132,7 +132,7 @@ public final class PluginService: ObservableObject {
         branchName: String? = nil,
         remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
         isGitRepository: Bool = false
-    ) -> [GitOKPluginViewContribution] {
+    ) -> [GitOKToolbarItem] {
         guard hasPlugins else { return [] }
         let context = makeContext(
             projectURL: projectURL,
@@ -218,12 +218,12 @@ public final class PluginService: ObservableObject {
         return runtime.rootViewWrapper(context: context, content: content)
     }
 
-    public func toolbarLeadingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+    public func toolbarLeadingViews(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard hasPlugins else { return [] }
         return runtime.enabledToolbarLeadingViews(context: context)
     }
 
-    public func toolbarTrailingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
+    public func toolbarTrailingViews(context: GitOKPluginContext) -> [GitOKToolbarItem] {
         guard hasPlugins else { return [] }
         return runtime.enabledToolbarTrailingViews(context: context)
     }

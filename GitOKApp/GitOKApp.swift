@@ -52,6 +52,13 @@ struct GitOKApp: App {
         WindowGroup(id: AppBootstrap.mainWindowID) {
             mainView
                 .environmentObject(appDelegate)
+                // 与 Lumi 一致：隐藏原生标题栏/工具栏，红绿灯悬浮在自绘顶栏上，
+                // 顶栏完全由应用自身渲染（跨 macOS 版本外观统一）。
+                .background {
+                    WindowAccessor { window in
+                        window.configureForGitOKMinimalChrome()
+                    }
+                }
                 .onReceive(appDelegate.$pendingOpenPath.compactMap { $0 }) { path in
                     // 通过 Combine 直接监听 appDelegate 的 @Published 属性变化
                     // 比 NotificationCenter 更可靠，不存在时序问题
@@ -68,6 +75,7 @@ struct GitOKApp: App {
                 }
         }
         .handlesExternalEvents(matching: Set()) // 阻止 WindowGroup 为外部事件创建新窗口
+        .windowStyle(.hiddenTitleBar) // 对齐 Lumi；红绿灯丢失的根因是 NavigationSplitView 创建 unified toolbar 隐藏 NSTitlebarContainerView，由 WindowAccessor 的 configureForGitOKMinimalChrome 恢复
         .windowToolbarStyle(.unified(showsTitle: false))
         .modelContainer(AppConfig.getContainer())
         .commands {
@@ -77,7 +85,13 @@ struct GitOKApp: App {
 
         Window(String(localized: "Settings"), id: AppBootstrap.settingsWindowID) {
             settingsView
+                .background {
+                    WindowAccessor { window in
+                        window.configureForGitOKMinimalChrome()
+                    }
+                }
         }
+        .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified(showsTitle: false))
         .defaultSize(
             width: AppBootstrap.defaultSettingsWindowSize.width,
