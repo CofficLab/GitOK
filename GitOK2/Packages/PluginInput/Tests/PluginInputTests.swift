@@ -1,0 +1,132 @@
+import Testing
+import Foundation
+import KernelCore
+import ProviderActivityBar
+import ProviderChatSection
+import ProviderContentView
+import ProviderRailView
+import ProviderRootView
+@testable import InputPlugin
+@testable import ProviderRootView
+
+@MainActor
+@Test func packageLoads() async throws {
+    let plugin = InputSuperPlugin()
+
+    #expect(plugin.id == "com.coffic.lumi.plugin.input-manager")
+    #expect(plugin.metadata.policy == .disabledByDefault)
+}
+
+@MainActor
+@Test func activatingPluginHidesRailAndContentHeaderAndDeactivatingRestoresThem() throws {
+    let kernel = KernelCoreContainer()
+    let activityBar = DefaultActivityBarProviding()
+    let chat = DefaultChatSectionProviding()
+    let contentView = DefaultContentViewProviding()
+    let railView = DefaultRailViewProviding()
+    let rootView = DefaultRootViewProvider()
+    rootView.setRailView(railView.makeRailView())
+    try kernel.registerProvider((any ActivityBarProviding).self, activityBar)
+    try kernel.registerProvider((any ChatSectionProviding).self, chat)
+    try kernel.registerProvider((any ContentViewProviding).self, contentView)
+    try kernel.registerProvider((any RailViewProviding).self, railView)
+    try kernel.registerProvider((any RootViewProviding).self, rootView)
+
+    let plugin = InputSuperPlugin()
+    try plugin.onBoot(kernel: kernel)
+
+    #expect(activityBar.activeItemID == "\(plugin.id).entry")
+    #expect(!chat.isVisible)
+    #expect(rootView.railView == nil)
+    #expect(rootView.isContentHeaderViewHidden)
+
+    activityBar.activateItem(id: nil)
+
+    #expect(chat.isVisible)
+    #expect(rootView.railView != nil)
+    #expect(rootView.isContentHeaderViewHidden == false)
+}
+
+@MainActor
+@Test func localStoreReportsSaveResultAndReloadsData() throws {
+    let directory = FileManager.default.temporaryDirectory
+        .appendingPathComponent("InputPluginLocalStore-\(UUID().uuidString)", isDirectory: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    let store = InputPluginLocalStore(pluginDirectory: directory)
+    let data = Data("rule-config".utf8)
+
+    #expect(store.set(data, forKey: "InputPluginConfig") == true)
+
+    let reloadedStore = InputPluginLocalStore(pluginDirectory: directory)
+    #expect(reloadedStore.data(forKey: "InputPluginConfig") == data)
+}
+
+@MainActor
+@Test func localStoreUsesPluginRootWithoutNestedSettingsDirectory() throws {
+    let root = FileManager.default.temporaryDirectory
+        .appendingPathComponent("InputPluginLocalStore-Root-\(UUID().uuidString)", isDirectory: true)
+    defer {
+        InputPluginRuntimeBridge.dataRootDirectory = nil
+        try? FileManager.default.removeItem(at: root)
+    }
+
+    InputPluginRuntimeBridge.dataRootDirectory = root
+    let store = InputPluginLocalStore()
+    #expect(store.set(Data("rule-config".utf8), forKey: "InputPluginConfig") == true)
+
+    let pluginDirectory = root.appendingPathComponent("InputPlugin", isDirectory: true)
+    #expect(FileManager.default.fileExists(atPath: pluginDirectory.appendingPathComponent("settings.plist").path))
+    #expect(!FileManager.default.fileExists(atPath: pluginDirectory.appendingPathComponent("settings", isDirectory: true).path))
+}
+
+@MainActor
+@Test func localStoreQuarantinesInvalidSettingsFileAndRecovers() throws {
+    let directory = FileManager.default.temporaryDirectory
+        .appendingPathComponent("InputPluginLocalStore-Invalid-\(UUID().uuidString)", isDirectory: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+    let settingsURL = directory.appendingPathComponent("settings.plist")
+    let corruptURL = directory.appendingPathComponent("settings.corrupt.plist")
+    let invalidData = Data("not a plist".utf8)
+    try invalidData.write(to: settingsURL)
+
+    let store = InputPluginLocalStore(pluginDirectory: directory)
+    let newData = Data("new config".utf8)
+
+    #expect(store.set(newData, forKey: "InputPluginConfig") == true)
+    #expect((try? Data(contentsOf: corruptURL)) == invalidData)
+    #expect(store.data(forKey: "InputPluginConfig") == newData)
+
+    let reloadedStore = InputPluginLocalStore(pluginDirectory: directory)
+    #expect(reloadedStore.data(forKey: "InputPluginConfig") == newData)
+}
+
+@MainActor
+@Test func localStoreReportsFailureWhenSettingsDirectoryIsBlocked() throws {
+    let tempRoot = FileManager.default.temporaryDirectory
+        .appendingPathComponent("InputPluginLocalStore-Blocked-\(UUID().uuidString)", isDirectory: true)
+    let blockedDirectory = tempRoot.appendingPathComponent("settings", isDirectory: true)
+    defer { try? FileManager.default.removeItem(at: tempRoot) }
+
+    try FileManager.default.createDirectory(at: tempRoot, withIntermediateDirectories: true)
+    try "not a directory".write(to: blockedDirectory, atomically: true, encoding: .utf8)
+
+    let store = InputPluginLocalStore(pluginDirectory: blockedDirectory)
+
+    #expect(store.set(Data("rule-config".utf8), forKey: "InputPluginConfig") == false)
+    #expect(store.data(forKey: "InputPluginConfig") == nil)
+}
+
+@MainActor
+@Test func removeRuleIgnoresStaleOffsets() {
+    let viewModel = InputSettingsViewModel()
+    viewModel.rules = [
+        InputRule(appBundleID: "com.example.one", appName: "One", inputSourceID: "source.one")
+    ]
+
+    viewModel.removeRule(at: IndexSet([2]))
+
+    #expect(viewModel.rules.count == 1)
+}
