@@ -2,42 +2,37 @@
 import PackageDescription
 
 let package = Package(
-    name: "PluginOpenIn",
+    name: "KitOpenIn",
     platforms: [
         .macOS(.v14),
     ],
     products: [
         .library(
-            name: "PluginOpenIn",
-            targets: ["PluginOpenIn"]
+            name: "KitOpenIn",
+            targets: ["KitOpenIn"]
         ),
     ],
     dependencies: [
         .package(path: "../KernelCore"),
-        .package(path: "../KitSuperLog"),
         .package(path: "../LumiUI"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderToolbar"),
     ],
     targets: [
         .target(
-            name: "PluginOpenIn",
+            name: "KitOpenIn",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToolbar", package: "ProviderToolbar"),
             ],
-            path: "Sources/PluginOpenIn"
+            path: "Sources/KitOpenIn"
         ),
         .testTarget(
-            name: "PluginOpenInTests",
-            dependencies: [
-                "PluginOpenIn",
-                .product(name: "ProviderToolbar", package: "ProviderToolbar"),
-            ],
-            path: "Tests/PluginOpenInTests"
+            name: "KitOpenInTests",
+            dependencies: ["KitOpenIn"],
+            path: "Tests/KitOpenInTests"
         ),
     ]
 )

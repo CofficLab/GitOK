@@ -5,7 +5,17 @@ import PluginCommand
 import PluginCommitList
 import PluginLogoCoffic
 import PluginLogoManager
-import PluginOpenIn
+import PluginOpenAntigravity
+import PluginOpenCursor
+import PluginOpenFinder
+import PluginOpenGitHubDesktop
+import PluginOpenKiro
+import PluginOpenLumi
+import PluginOpenRemote
+import PluginOpenTerminal
+import PluginOpenTrae
+import PluginOpenVSCode
+import PluginOpenXcode
 import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
@@ -35,7 +45,17 @@ public struct DefaultPluginFactory: PluginFactory {
             CommitListPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
-            OpenInPlugin(),
+            OpenFinderPlugin(),
+            OpenTerminalPlugin(),
+            OpenVSCodePlugin(),
+            OpenCursorPlugin(),
+            OpenXcodePlugin(),
+            OpenTraePlugin(),
+            OpenAntigravityPlugin(),
+            OpenGitHubDesktopPlugin(),
+            OpenKiroPlugin(),
+            OpenLumiPlugin(),
+            OpenRemotePlugin(),
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),
