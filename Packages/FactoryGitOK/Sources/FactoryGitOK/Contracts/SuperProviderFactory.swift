@@ -12,6 +12,7 @@ import ProviderToolbar
 #if os(macOS)
 import ProviderCommand
 import ProviderLogo
+import ProviderPluginManaging
 import ProviderSidebar
 #endif
 
@@ -34,6 +35,7 @@ public protocol ProviderFactory {
     func makeSidebarProvider() -> any SidebarProviding
     func makeRailViewProvider() -> any RailViewProviding
     func makeCommandProvider() -> any CommandProviding
+    func makePluginManagingProvider() -> any PluginManaging
     #endif
 
     func makeSettingViewProvider() -> any SettingViewProviding

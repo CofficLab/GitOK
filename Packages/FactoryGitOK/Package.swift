@@ -40,6 +40,8 @@ let package = Package(
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderLogo"),
+        .package(path: "../ProviderPluginControl"),
+        .package(path: "../ProviderPluginManaging"),
         .package(path: "../ProviderRailView"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderSettingView"),
@@ -93,6 +95,8 @@ let package = Package(
                 .product(name: "PluginThemePack", package: "PluginThemePack"),
                 .product(name: "ProviderCommand", package: "ProviderCommand"),
                 .product(name: "ProviderLogo", package: "ProviderLogo"),
+                .product(name: "ProviderPluginControl", package: "ProviderPluginControl"),
+                .product(name: "ProviderPluginManaging", package: "ProviderPluginManaging"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
             ],
             path: "Sources/FactoryGitOK"

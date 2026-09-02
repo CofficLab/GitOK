@@ -1,200 +1,218 @@
 import KernelCore
 import LumiUI
+import ProviderDocsView
+import ProviderPluginManaging
 import SwiftUI
 
-/// 设置 - 插件 详情视图。
+/// 插件管理设置页（完美复刻 Lumi）。
 ///
-/// 复刻 Lumi 的插件管理界面：列出内核中已装配的全部插件
-/// （按 `order` 排序），每行显示名称 / 描述 / 分类图标，
-/// 可配置插件提供启用开关；必需 / 固定插件显示「固定」标签且不可切换。
+/// 两栏布局：左侧为插件列表（搜索 + 分类筛选），右侧为选中插件的详情
+/// 与启用状态。UI 与旧版 `PluginManagerPlugin.PluginManagementView` 几乎一致。
 ///
-/// - 启用 / 禁用调用 `KernelCoreContainer.enablePlugin / disablePlugin`，
-///   失败时回滚本地状态并显示错误横幅（如插件存在依赖或内核未运行）。
-/// - 本视图直接持有弱引用内核，由 `PluginManagerPlugin` 注入。
+/// 数据源：`PluginManaging` Provider。列表与详情直接读取 Provider 的状态，
+/// 并通过其精准观察事件刷新。
+///
+/// 该文件只保留容器/布局/状态逻辑；具体渲染拆分为：
+/// - `PluginManagementHeader`：顶部统计
+/// - `PluginListRow`：列表单行
+/// - `PluginSettingsDetailView`：右侧详情面板
 struct PluginManagementView: View {
-    let kernel: KernelCoreContainer
+    @LumiTheme private var theme
+    @StateObject private var model: PluginManagementViewModel
 
-    /// 插件行本地状态（禁用 / 启用切换即时反映，异步落库）。
-    @State private var rows: [PluginRowModel] = []
-    @State private var errorMessage: String?
+    /// 文档视图提供器：详情面板按插件 id 匹配 about 条目并展示。
+    /// 为 nil 时（宿主未提供 DocsViewProviding）详情面板回退到元信息展示。
+    let docsProvider: (any DocsViewProviding)?
+
+    @State private var selectedPluginID: String?
+    @State private var searchText = ""
+    @State private var selectedCategory: PluginCategory?
+
+    init(manager: any PluginManaging, docsProvider: (any DocsViewProviding)? = nil) {
+        _model = StateObject(wrappedValue: PluginManagementViewModel(manager: manager))
+        self.docsProvider = docsProvider
+    }
 
     var body: some View {
-        AppSettingsContentScaffold {
-            VStack(alignment: .leading, spacing: 24) {
-                header
+        AppSettingsContentScaffold(scrollsContent: false, maxContentWidth: nil) {
+            VStack(alignment: .leading, spacing: 14) {
+                PluginManagementHeader(totalCount: plugins.count, enabledCount: enabledCount)
 
-                if rows.isEmpty {
-                    AppEmptyState(
-                        icon: "puzzlepiece.extension",
-                        title: "没有已装配的插件",
-                        description: "内核尚未注册任何插件。"
-                    )
-                } else {
-                    pluginList
+                HStack(spacing: 0) {
+                    pluginListPane
+                        .frame(width: 300)
+                        .frame(maxHeight: .infinity)
+
+                    AppDivider(.vertical)
+
+                    pluginDetailPane
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                }
+                .frame(minHeight: 520, maxHeight: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .strokeBorder(theme.divider, lineWidth: 1)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .onAppear(perform: reload)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("插件")
-                .font(.appTitle)
-                .foregroundColor(theme.textPrimary)
-            Text("管理已装配插件的启用状态（共 \(rows.count) 个）")
-                .font(.appCaption)
-                .foregroundColor(theme.textSecondary)
-        }
-    }
-
-    @LumiTheme private var theme
-
-    // MARK: - Plugin List
-
-    private var pluginList: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ForEach(Array(rows.enumerated()), id: \.element.id) { _, row in
-                pluginRow(row)
+        .onAppear {
+            if selectedPluginID == nil {
+                selectedPluginID = selectedPlugin?.id
             }
         }
-        .overlay(alignment: .top) {
-            if let errorMessage {
-                AppErrorBanner(message: LocalizedStringKey(errorMessage))
-                    .padding(.horizontal, 16)
+        .onChange(of: filteredPlugins.map(\.id)) { _, ids in
+            guard let selectedPluginID,
+                  ids.contains(selectedPluginID)
+            else {
+                self.selectedPluginID = ids.first
+                return
             }
         }
     }
 
-    private func pluginRow(_ row: PluginRowModel) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: row.systemImage)
-                .font(.system(size: 16))
-                .foregroundColor(theme.primary)
-                .frame(width: 24)
+    // MARK: - Data Source
 
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
-                    Text(row.name)
-                        .font(.appBody)
-                        .foregroundColor(theme.textPrimary)
-                    if row.isLocked {
-                        lockedBadge
-                    }
-                }
-                Text(row.description.isEmpty ? row.id : row.description)
-                    .font(.appCaption)
-                    .foregroundColor(theme.textSecondary)
-                    .lineLimit(2)
-            }
-
-            Spacer()
-
-            if row.isLocked {
-                Text("固定")
-                    .font(.appMicro)
-                    .foregroundColor(theme.textSecondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(theme.overlay, in: Capsule())
-            } else {
-                Toggle("", isOn: binding(for: row.id))
-                    .toggleStyle(.switch)
-                    .controlSize(.small)
-            }
-        }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 16)
-        .background(theme.surface.opacity(0.6), in: RoundedRectangle(cornerRadius: 10))
+    /// 列表数据源：仅显示用户可配置的插件（对齐旧版行为）。
+    /// `required` / `alwaysOn`（始终启用，不可禁用）和 `disabled`（彻底停用）
+    /// 不可配置，展示在管理列表中没有可操作控件，故过滤掉，
+    /// 只保留 `enabledByDefault` / `disabledByDefault`。
+    private var plugins: [any SuperPlugin] {
+        model.manager.allPlugins.filter { $0.metadata.policy.isConfigurable }
     }
 
-    private var lockedBadge: some View {
-        Text("必")
-            .font(.appMicro)
-            .foregroundColor(.white)
-            .padding(.horizontal, 5)
-            .padding(.vertical, 2)
-            .background(theme.primary, in: Capsule())
-    }
-
-    // MARK: - State
-
-    private func reload() {
-        rows = kernel.allPlugins
-            .map { PluginRowModel(plugin: $0, kernel: kernel) }
+    /// 列表上出现的分类（按 sortOrder 排序），用于筛选标签栏。
+    private var availableCategories: [PluginCategory] {
+        let present = Set(plugins.map(\.metadata.category))
+        return PluginCategory.displayOrder
+            .filter { present.contains($0) }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 
-    private func binding(for pluginID: String) -> Binding<Bool> {
-        Binding(
-            get: {
-                rows.first(where: { $0.id == pluginID })?.isEnabled ?? false
-            },
-            set: { newValue in
-                guard let index = rows.firstIndex(where: { $0.id == pluginID }) else { return }
-                rows[index].isEnabled = newValue
-                togglePlugin(id: pluginID, enabled: newValue)
-            }
-        )
+    private var filteredPlugins: [any SuperPlugin] {
+        let keyword = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        return plugins.filter { plugin in
+            let metadata = plugin.metadata
+            let matchesCategory = selectedCategory.map { metadata.category == $0 } ?? true
+            let matchesKeyword = keyword.isEmpty
+                || metadata.name.localizedCaseInsensitiveContains(keyword)
+                || plugin.id.localizedCaseInsensitiveContains(keyword)
+                || metadata.description.localizedCaseInsensitiveContains(keyword)
+            return matchesCategory && matchesKeyword
+        }
     }
 
-    private func togglePlugin(id: String, enabled: Bool) {
-        errorMessage = nil
-        Task { @MainActor in
-            do {
-                if enabled {
-                    try await kernel.enablePlugin(id: id)
-                } else {
-                    try await kernel.disablePlugin(id: id)
+    private var selectedPlugin: (any SuperPlugin)? {
+        if let selectedPluginID,
+           let plugin = plugins.first(where: { $0.id == selectedPluginID }) {
+            return plugin
+        }
+        return filteredPlugins.first ?? plugins.first
+    }
+
+    /// 当前列表中处于有效启用状态的可配置插件数。
+    /// 基于 `plugins`（已过滤 required / alwaysOn / disabled），与列表项数口径一致。
+    private var enabledCount: Int {
+        plugins.reduce(0) { $0 + (model.manager.isEnabled(id: $1.id) ? 1 : 0) }
+    }
+
+    // MARK: - List Pane
+
+    private var pluginListPane: some View {
+        VStack(spacing: 0) {
+            VStack(spacing: 10) {
+                AppSearchBar(
+                    text: $searchText,
+                    placeholder: LocalizedStringKey(PluginPluginManagerText.searchPlugins)
+                )
+
+                // 分类筛选标签栏
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        categoryChip(title: PluginPluginManagerText.allCategories, isSelected: selectedCategory == nil) {
+                            selectedCategory = nil
+                        }
+                        ForEach(availableCategories, id: \.self) { category in
+                            categoryChip(title: category.displayName, isSelected: selectedCategory == category) {
+                                selectedCategory = category
+                            }
+                        }
+                    }
                 }
-            } catch {
-                // 回滚本地状态，保持 UI 与内核一致。
-                if let index = rows.firstIndex(where: { $0.id == id }) {
-                    rows[index].isEnabled = !enabled
-                }
-                errorMessage = "\(enabled ? "启用" : "禁用")「\(id)」失败：\(error.localizedDescription)"
             }
+            .padding(12)
+
+            AppDivider()
+
+            ScrollView {
+                LazyVStack(spacing: 4) {
+                    ForEach(filteredPlugins, id: \.id) { plugin in
+                        PluginListRow(
+                            plugin: plugin,
+                            isSelected: selectedPluginID == plugin.id,
+                            isEnabled: model.manager.isEnabled(id: plugin.id)
+                        ) {
+                            selectedPluginID = plugin.id
+                        }
+                    }
+
+                    if filteredPlugins.isEmpty {
+                        AppEmptyState(
+                            icon: "magnifyingglass",
+                            title: PluginPluginManagerText.noPluginsFound
+                        )
+                        .padding(.vertical, 32)
+                    }
+                }
+                .padding(8)
+            }
+            .frame(maxHeight: .infinity)
+        }
+        .appSurface(style: .panel, cornerRadius: 0)
+    }
+
+    private func categoryChip(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.appCaption)
+                .foregroundStyle(isSelected ? theme.textPrimary : theme.textSecondary)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(isSelected ? theme.primary.opacity(0.14) : theme.textSecondary.opacity(0.08))
+                )
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Detail Pane
+
+    @ViewBuilder
+    private var pluginDetailPane: some View {
+        if let selectedPlugin {
+            PluginSettingsDetailView(manager: model.manager, plugin: selectedPlugin, docsProvider: docsProvider)
+        } else {
+            AppEmptyState(
+                icon: "puzzlepiece.extension",
+                title: PluginPluginManagerText.selectPlugin
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
 
-/// 插件行模型：由 `SuperPlugin.metadata` 派生展示信息。
 @MainActor
-struct PluginRowModel: Identifiable {
-    let id: String
-    let name: String
-    let description: String
-    let systemImage: String
-    let isLocked: Bool
-    let sortOrder: Int
-    var isEnabled: Bool
+private final class PluginManagementViewModel: ObservableObject {
+    let manager: any PluginManaging
+    @Published private(set) var revision = 0
+    private var observer: (any PluginManagingObserverHandle)?
 
-    init(plugin: any SuperPlugin, kernel: KernelCoreContainer) {
-        let metadata = plugin.metadata
-        id = metadata.id
-        name = metadata.name
-        description = metadata.description
-        systemImage = Self.systemImage(for: metadata.category)
-        isLocked = !metadata.policy.isConfigurable
-        sortOrder = plugin.order
-        isEnabled = kernel.isPluginEnabled(id: plugin.id)
-    }
-
-    /// 分类 → SF Symbol 图标。
-    static func systemImage(for category: PluginCategory) -> String {
-        switch category {
-        case .core: "cube"
-        case .chat: "bubble.left.and.bubble.right"
-        case .llm: "brain.head.profile"
-        case .editor: "pencil.and.outline"
-        case .project: "folder"
-        case .system: "gearshape"
-        case .design: "paintpalette"
-        case .integration: "link"
-        case .general: "square.grid.2x2"
+    init(manager: any PluginManaging) {
+        self.manager = manager
+        self.observer = manager.addPluginObserver { [weak self] _ in
+            self?.revision &+= 1
         }
     }
 }

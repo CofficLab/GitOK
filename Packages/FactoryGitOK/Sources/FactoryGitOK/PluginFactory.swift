@@ -62,7 +62,7 @@ public struct DefaultPluginFactory: PluginFactory {
             LogoCofficPlugin(),
             ThemePackPlugin(),
             SettingGeneralPlugin(),
-            PluginManagerPlugin(),
+            PluginPluginManager(),
         ]
     }
 }

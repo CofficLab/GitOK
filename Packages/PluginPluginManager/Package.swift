@@ -16,6 +16,8 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../KitSuperLog"),
         .package(path: "../LumiUI"),
+        .package(path: "../ProviderDocsView"),
+        .package(path: "../ProviderPluginManaging"),
         .package(path: "../ProviderSettingView"),
     ],
     targets: [
@@ -25,13 +27,18 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderPluginManaging", package: "ProviderPluginManaging"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
             ],
             path: "Sources/PluginPluginManager"
         ),
         .testTarget(
             name: "PluginPluginManagerTests",
-            dependencies: ["PluginPluginManager"],
+            dependencies: [
+                "PluginPluginManager",
+                .product(name: "ProviderPluginManaging", package: "ProviderPluginManaging"),
+            ],
             path: "Tests/PluginPluginManagerTests"
         ),
     ]
