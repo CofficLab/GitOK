@@ -57,22 +57,20 @@ struct CommitRailView: View {
 
     private var header: some View {
         AppToolbarContainer(
-            height: 32,
+            height: 36,
             padding: EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10)
         ) {
-            HStack(spacing: 6) {
-                Image(systemName: "clock")
-                    .font(.appCaptionEmphasized)
-                Text("Commits")
-                    .font(.appCaptionEmphasized)
-                Spacer(minLength: 8)
-                if let project = projects.currentProject {
-                    Text(project.title)
-                        .font(.appMicro)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+            HStack(spacing: 8) {
+                AppToolbarTitleLabel(icon: "clock", title: "Commits") {
+                    if let project = projects.currentProject {
+                        Text(project.title)
+                            .font(DesignTokens.Typography.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                 }
+                Spacer(minLength: 8)
             }
         }
     }
@@ -121,42 +119,41 @@ struct CommitRailView: View {
     // MARK: - Commit Row
 
     private func commitRow(_ commit: GitCommit) -> some View {
-        AppListRow(isSelected: isSelected(commit)) {
+        AppListRow(isSelected: isSelected(commit), action: { select(commit) }) {
             HStack(alignment: .top, spacing: 10) {
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 8) {
                         Text(commit.message)
-                            .font(.system(size: 13, weight: .medium))
+                            .font(DesignTokens.Typography.subheadline.weight(.medium))
                             .lineLimit(1)
                             .truncationMode(.tail)
                         Spacer(minLength: 8)
-                        Text(commit.shortHash)
-                            .font(.system(size: 10, weight: .regular, design: .monospaced))
-                            .foregroundStyle(.tertiary)
+                        AppTag(commit.shortHash, systemImage: "arrow.triangle.branch")
                     }
                     HStack(spacing: 6) {
                         authorBadge(commit.author)
                         Text(commit.author)
-                            .font(.appMicro)
+                            .font(DesignTokens.Typography.caption2)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                         Spacer(minLength: 8)
                         Text(Self.relativeTime(commit.date))
-                            .font(.appMicro)
+                            .font(DesignTokens.Typography.caption2)
                             .foregroundStyle(.secondary)
                     }
                     Text(Self.fullDate(commit.date))
-                        .font(.appMicro)
+                        .font(DesignTokens.Typography.caption2)
                         .foregroundStyle(.tertiary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 4)
+                .padding(.vertical, 2)
             }
         }
-        .onTapGesture {
-            guard let project = projects.currentProject else { return }
-            detail.selectCommit(commit, in: project.url)
-        }
+    }
+
+    private func select(_ commit: GitCommit) {
+        guard let project = projects.currentProject else { return }
+        detail.selectCommit(commit, in: project.url)
     }
 
     /// 该行是否处于选中态（以 Provider 为单一权威来源）。
