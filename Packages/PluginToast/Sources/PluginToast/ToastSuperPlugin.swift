@@ -19,6 +19,9 @@ import os
 public final class ToastSuperPlugin: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.toast", category: "Toast")
     public let id = "com.coffic.gitok.plugin.toast"
+    /// 尽早替换 ToastProviding 为真实状态机（ToastCenter），
+    /// 保证后续插件在 onBoot 中 resolve 到的是可用的 toast 能力。
+    public let order = 10
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.toast",
         name: "Toast",

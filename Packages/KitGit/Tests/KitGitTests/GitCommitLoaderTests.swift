@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import PluginCommitList
+@testable import KitGit
 
 final class GitCommitLoaderTests: XCTestCase {
     func testParseOutput() throws {

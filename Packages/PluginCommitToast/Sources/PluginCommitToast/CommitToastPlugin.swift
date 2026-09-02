@@ -22,8 +22,10 @@ import SwiftUI
 public final class CommitToastPlugin: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.commit-toast", category: "CommitToast")
     public let id = "com.coffic.gitok.plugin.commit-toast"
-    /// 需在 Toast 插件之后启动（onBoot 时 ToastProviding 已替换为真实状态机）。
-    public let order = 80
+    /// 在 ToastSuperPlugin（order 10）之后、CommitListPlugin（order 20）之前启动：
+    /// 先替换 CommitDetailProviding，保证所有 commit 消费方（列表/详情/状态栏）
+    /// resolve 到同一个 ToastCommitDetailProvider，避免状态分裂。
+    public let order = 15
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-toast",
         name: "Commit Toast",
