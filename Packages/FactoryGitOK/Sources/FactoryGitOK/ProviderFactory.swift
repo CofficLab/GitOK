@@ -10,6 +10,7 @@ import ProviderToolbar
 
 #if os(macOS)
 import ProviderCommand
+import ProviderCommitDetail
 import ProviderLogo
 import ProviderPluginManaging
 import ProviderRailView
@@ -83,6 +84,7 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any SidebarProviding).self, makeSidebarProvider())
         try kernel.registerProvider((any RailViewProviding).self, makeRailViewProvider())
         try kernel.registerProvider((any CommandProviding).self, makeCommandProvider())
+        try kernel.registerProvider((any CommitDetailProviding).self, makeCommitDetailProvider())
         let pluginManaging = makePluginManagingProvider()
         if let concrete = pluginManaging as? DefaultPluginManager {
             concrete.attach(kernel: kernel)
@@ -108,6 +110,10 @@ extension DefaultProviderFactory {
 
     public func makeCommandProvider() -> any CommandProviding {
         DefaultCommandProviding()
+    }
+
+    public func makeCommitDetailProvider() -> any CommitDetailProviding {
+        DefaultCommitDetailProvider()
     }
 
     public func makePluginManagingProvider() -> any PluginManaging {

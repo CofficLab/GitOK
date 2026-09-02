@@ -1,4 +1,6 @@
+import KitGit
 import LumiUI
+import ProviderCommitDetail
 import ProviderProjects
 import SwiftUI
 
@@ -8,11 +10,15 @@ import SwiftUI
 /// `ProjectProviding` 的观察者事件；`currentProject` 变化时异步读取
 /// 该仓库的 commit 列表（后台线程执行 git CLI，主线程更新）。
 ///
+/// 行点击时把选中的 commit 写入 `CommitDetailProviding`，主内容区
+/// （PluginCommitDetail）据此展示该 commit 的变动。
+///
 /// 视觉对齐旧版 GitOK 的 commit 行布局（message / 作者 + 相对时间 /
 /// 完整日期），并使用 LumiUI 组件（AppToolbarContainer / AppListRow /
 /// AppEmptyState / AppDivider）保证与整体设计语言一致。
 struct CommitRailView: View {
     let projects: any ProjectProviding
+    let detail: any CommitDetailProviding
     @StateObject private var observation: ProjectObservationModel
 
     @State private var commits: [GitCommit] = []
@@ -20,8 +26,9 @@ struct CommitRailView: View {
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
 
-    init(projects: any ProjectProviding) {
+    init(projects: any ProjectProviding, detail: any CommitDetailProviding) {
         self.projects = projects
+        self.detail = detail
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -138,6 +145,10 @@ struct CommitRailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 4)
             }
+        }
+        .onTapGesture {
+            guard let project = projects.currentProject else { return }
+            detail.selectCommit(commit, in: project.url)
         }
     }
 

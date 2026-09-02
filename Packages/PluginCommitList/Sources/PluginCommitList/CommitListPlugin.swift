@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderCommitDetail
 import ProviderProjects
 import ProviderRailView
 import ProviderRootView
@@ -48,10 +49,14 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip rail injection")
             return
         }
+        guard let detail = kernel.resolveProvider((any CommitDetailProviding).self) else {
+            Self.logger.error("\(self.t)CommitDetailProviding not registered; skip rail injection")
+            return
+        }
 
         // 注销默认空 RailViewProviding，避免 ViewFactory 用空 Rail 覆盖本插件的注入。
         kernel.unregisterProvider((any RailViewProviding).self)
-        rootView.setRailView(AnyView(CommitRailView(projects: projects)))
+        rootView.setRailView(AnyView(CommitRailView(projects: projects, detail: detail)))
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {

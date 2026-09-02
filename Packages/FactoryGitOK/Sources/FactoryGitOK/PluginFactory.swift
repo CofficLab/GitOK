@@ -2,6 +2,7 @@ import KernelCore
 
 #if os(macOS)
 import PluginCommand
+import PluginCommitDetail
 import PluginCommitList
 import PluginLogoCoffic
 import PluginLogoManager
@@ -44,6 +45,7 @@ public struct DefaultPluginFactory: PluginFactory {
             ProjectsPlugin(),
             SidebarPlugin(),
             CommitListPlugin(),
+            CommitDetailPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             OpenFinderPlugin(),

@@ -15,6 +15,8 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KernelCore"),
+        .package(path: "../KitGit"),
+        .package(path: "../ProviderCommitDetail"),
         .package(path: "../KitSuperLog"),
         .package(path: "../LumiUI"),
         .package(path: "../ProviderProjects"),
@@ -26,6 +28,8 @@ let package = Package(
             name: "PluginCommitList",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderCommitDetail", package: "ProviderCommitDetail"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
