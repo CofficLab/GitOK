@@ -16,6 +16,7 @@ import PluginOpenTerminal
 import PluginOpenTrae
 import PluginOpenVSCode
 import PluginOpenXcode
+import PluginPluginManager
 import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
@@ -61,6 +62,7 @@ public struct DefaultPluginFactory: PluginFactory {
             LogoCofficPlugin(),
             ThemePackPlugin(),
             SettingGeneralPlugin(),
+            PluginManagerPlugin(),
         ]
     }
 }
