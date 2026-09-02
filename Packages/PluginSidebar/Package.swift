@@ -18,6 +18,7 @@ let package = Package(
         .package(path: "../KitSuperLog"),
         .package(path: "../LumiUI"),
         .package(path: "../ProviderProjects"),
+        .package(path: "../ProviderSettingView"),
         .package(path: "../ProviderSidebar"),
     ],
     targets: [
@@ -28,6 +29,7 @@ let package = Package(
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "ProviderSidebar", package: "ProviderSidebar"),
             ],
             path: "Sources/PluginSidebar"

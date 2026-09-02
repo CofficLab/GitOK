@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderProjects
+import ProviderSettingView
 import ProviderSidebar
 
 // MARK: - Sidebar SuperPlugin
@@ -52,10 +53,25 @@ public final class SidebarPlugin: SuperPlugin, SuperLog {
         let sidebar = ProjectSidebarProviding(projects: projects)
         kernel.unregisterProvider((any SidebarProviding).self)
         try kernel.registerProvider((any SidebarProviding).self, sidebar)
+
+        // 设置窗口「项目」入口：展示现有项目列表。
+        if let settings = kernel.resolveProvider((any SettingViewProviding).self) {
+            let entry = SettingEntryItem(
+                id: "projects",
+                title: "项目",
+                systemImage: "folder",
+                order: 2
+            ) { [projects] in
+                ProjectsSettingsDetailView(projects: projects)
+            }
+            settings.addEntries([entry])
+        }
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
         kernel.unregisterProvider((any SidebarProviding).self)
+        kernel.resolveProvider((any SettingViewProviding).self)?
+            .removeEntries(ids: ["projects"])
     }
 }
 
