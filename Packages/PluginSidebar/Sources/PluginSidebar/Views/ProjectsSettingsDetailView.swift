@@ -13,9 +13,7 @@ struct ProjectsSettingsDetailView: View {
     var body: some View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
             VStack(alignment: .leading, spacing: 24) {
-#if DEBUG
-                debugHeader
-#endif
+                headerActions
                 AppSettingSection(
                     title: "项目",
                     titleAlignment: .leading
@@ -34,10 +32,15 @@ struct ProjectsSettingsDetailView: View {
         }
     }
 
-#if DEBUG
-    private var debugHeader: some View {
+    // MARK: - Header Actions
+
+    private var headerActions: some View {
         HStack(spacing: 10) {
             Spacer()
+            AppButton("添加项目", systemImage: "plus", style: .primary, size: .small) {
+                addProject()
+            }
+#if DEBUG
             AppButton(
                 LumiPluginLocalization.string("Open Data Directory", bundle: .module),
                 systemImage: "folder",
@@ -46,10 +49,23 @@ struct ProjectsSettingsDetailView: View {
             ) {
                 openDataDirectory()
             }
+#endif
         }
         .font(.appCaption)
     }
-#endif
+
+    // MARK: - Actions
+
+    private func addProject() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.allowsMultipleSelection = false
+        panel.message = "选择要添加的项目文件夹"
+        panel.prompt = "添加"
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        projects.addProject(at: url)
+    }
 
     // MARK: - Debug Helpers
 
