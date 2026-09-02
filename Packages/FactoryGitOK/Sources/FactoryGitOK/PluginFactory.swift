@@ -2,6 +2,7 @@ import KernelCore
 
 #if os(macOS)
 import PluginCommand
+import PluginCommitList
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginProjects
@@ -28,6 +29,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CommandPlugin(),
             ProjectsPlugin(),
             SidebarPlugin(),
+            CommitListPlugin(),
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),
