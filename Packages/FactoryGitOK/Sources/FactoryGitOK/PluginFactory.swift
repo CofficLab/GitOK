@@ -8,6 +8,7 @@ import PluginLogoManager
 import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
+import PluginSettingsButton
 import PluginSidebar
 import PluginStorage
 import PluginThemePack
@@ -30,6 +31,7 @@ public struct DefaultPluginFactory: PluginFactory {
             ProjectsPlugin(),
             SidebarPlugin(),
             CommitListPlugin(),
+            SettingsButtonPlugin(),
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),
