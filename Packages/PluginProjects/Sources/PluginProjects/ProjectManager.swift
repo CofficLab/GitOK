@@ -74,6 +74,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         if Self.verbose {
             Self.logger.debug("\(self.t)closed current project")
         }
+        persist()
         notify(.selectionChanged(projectID: nil))
     }
 
@@ -124,6 +125,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         } else {
             currentProject = nil
         }
+        persist()
         notify(.selectionChanged(projectID: id))
     }
 
@@ -157,7 +159,16 @@ public final class ProjectManager: ProjectProviding, SuperLog {
 
     // MARK: - Persistence
 
-    /// 重新从磁盘加载项目列表。
+    /// 磁盘存储容器：项目列表 + 上次会话的当前项目。
+    ///
+    /// `currentProjectID` 记录上次打开/选中的项目，下次启动时恢复为
+    /// `currentProject`（若该 id 在列表中仍存在）。
+    private struct ProjectStore: Codable {
+        var projects: [Project]
+        var currentProjectID: UUID?
+    }
+
+    /// 重新从磁盘加载项目列表，并恢复上次会话的当前项目。
     private func loadFromDisk() {
         guard let data = try? Data(contentsOf: storeURL) else {
             if Self.verbose {
@@ -169,13 +180,24 @@ public final class ProjectManager: ProjectProviding, SuperLog {
             return
         }
         do {
-            let decoded = try JSONDecoder().decode([Project].self, from: data)
-            projects = decoded
-            resortPinned()
-            // currentProject 不持久化，启动后保持未打开状态。
-            currentProject = nil
+            // 优先按容器格式解码（含 currentProjectID）。
+            if let store = try? JSONDecoder().decode(ProjectStore.self, from: data) {
+                projects = store.projects
+                resortPinned()
+                if let id = store.currentProjectID {
+                    currentProject = projects.first { $0.id == id }
+                } else {
+                    currentProject = nil
+                }
+            } else {
+                // 兼容旧版纯数组格式（无 currentProject 记录）。
+                let decoded = try JSONDecoder().decode([Project].self, from: data)
+                projects = decoded
+                resortPinned()
+                currentProject = nil
+            }
             if Self.verbose {
-                Self.logger.info("\(self.t)loaded \(decoded.count) projects from \(self.storeURL.path, privacy: .public)")
+                Self.logger.info("\(self.t)loaded \(self.projects.count) projects from \(self.storeURL.path, privacy: .public)")
             }
             notify(.projectsChanged)
         } catch {
@@ -191,7 +213,8 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         do {
             let encoder = JSONEncoder()
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-            let data = try encoder.encode(projects)
+            let store = ProjectStore(projects: projects, currentProjectID: currentProject?.id)
+            let data = try encoder.encode(store)
             try data.write(to: storeURL, options: .atomic)
         } catch {
             Self.logger.error("\(self.t)failed to persist projects: \(error.localizedDescription, privacy: .public)")

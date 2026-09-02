@@ -72,7 +72,43 @@ final class PluginProjectsTests: XCTestCase {
         let reloaded = ProjectManager(storeURL: storeURL)
         XCTAssertEqual(reloaded.projects.count, 2)
         XCTAssertEqual(reloaded.projects.map(\.title), ["A", "B"], "置顶 A 应排最前")
-        XCTAssertNil(reloaded.currentProject, "当前项目不持久化")
+        XCTAssertEqual(reloaded.currentProject?.title, "B", "当前项目应持久化并在重启后恢复")
+    }
+
+    func testCurrentProjectPersistsAcrossReload() throws {
+        let manager = ProjectManager(storeURL: storeURL)
+        let a = URL(fileURLWithPath: "/tmp/RepoA")
+        let b = URL(fileURLWithPath: "/tmp/RepoB")
+        manager.addProject(at: a)
+        manager.addProject(at: b)
+        manager.setCurrentProject(id: manager.projects.first(where: { $0.title == "RepoA" })!.id)
+
+        // 重新加载后应恢复上次的当前项目。
+        let reloaded = ProjectManager(storeURL: storeURL)
+        XCTAssertEqual(reloaded.currentProject?.title, "RepoA")
+    }
+
+    func testCloseCurrentProjectPersistsClear() throws {
+        let manager = ProjectManager(storeURL: storeURL)
+        manager.openProject(at: URL(fileURLWithPath: "/tmp/RepoA"))
+        manager.closeCurrentProject()
+
+        // 关闭当前项目后，重启不应恢复任何当前项目。
+        let reloaded = ProjectManager(storeURL: storeURL)
+        XCTAssertNil(reloaded.currentProject)
+    }
+
+    func testLegacyArrayFormatStillLoads() throws {
+        // 旧版存储是纯 [Project] 数组；应能兼容读取且不崩。
+        let manager = ProjectManager(storeURL: storeURL)
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/B"))
+        let legacyData = try JSONEncoder().encode(manager.projects)
+        try legacyData.write(to: storeURL)
+
+        let reloaded = ProjectManager(storeURL: storeURL)
+        XCTAssertEqual(reloaded.projects.count, 2)
+        XCTAssertNil(reloaded.currentProject)
     }
 
     func testSetStoreURLReloads() throws {
