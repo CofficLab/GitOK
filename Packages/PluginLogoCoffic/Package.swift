@@ -31,7 +31,6 @@ let package = Package(
             path: ".",
             exclude: [
                 "Tests",
-                "build",
                 "README.md",
                 "Sources/PluginLogoCoffic/Views/README.md",
                 "Sources/PluginLogoCoffic/Views/MenuBar/README.md",

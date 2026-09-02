@@ -1,4 +1,5 @@
 import LumiUI
+import ProviderStatusBar
 import ProviderTheme
 import SwiftUI
 

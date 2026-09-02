@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../LumiUI"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderChatSection"),
         .package(path: "../ProviderRailView"),

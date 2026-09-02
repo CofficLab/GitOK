@@ -1,5 +1,6 @@
 import LumiUI
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 单个「在当前项目中打开」的工具栏按钮。

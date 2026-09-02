@@ -1,13 +1,16 @@
 import SwiftUI
+import LumiUI
 
 /// 状态栏项组件：图标 + 内容的小胶囊，hover 时显示状态栏强调背景。
 ///
 /// 对齐旧版 GitOK 的 `AppStatusBarTile`（24pt 高、8pt 横向 padding、
 /// 4pt 圆角、hover 背景），配色使用 LumiUI 主题的 `statusBarItem*` 色板，
 /// 保证与状态栏容器视觉一致。
+///
+/// 该组件原属本地 LumiUI；GitOK 迁移到远程 LumiUI（其不含此组件）后，
+/// 移入本包（ProviderStatusBar）作为 GitOK 状态栏专用组件。
 public struct AppStatusBarTile<Content: View>: View {
     @LumiTheme private var theme
-    @LumiMotionPreferenceReader private var motionPreference
 
     let systemImage: String?
     let tint: Color?
@@ -40,7 +43,7 @@ public struct AppStatusBarTile<Content: View>: View {
             }
         }
         .onHover { hovering in
-            AppUI.Motion.animate(AppUI.Motion.enabled(AppUI.Motion.hover, preference: motionPreference)) {
+            withAnimation(.easeOut(duration: 0.12)) {
                 isHovered = hovering
             }
         }

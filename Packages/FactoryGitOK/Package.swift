@@ -11,7 +11,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitLocalization"),
-        .package(path: "../LumiUI"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../PluginCommand"),
         .package(path: "../PluginCommitList"),
         .package(path: "../PluginLogoCoffic"),

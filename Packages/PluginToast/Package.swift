@@ -11,7 +11,7 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../ProviderToast"),
         .package(path: "../ProviderRootView"),
-        .package(path: "../LumiUI"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
     ],
     targets: [
         .target(
