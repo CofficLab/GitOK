@@ -7,6 +7,7 @@ import PluginLogoManager
 import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
+import PluginSidebar
 import PluginStorage
 import PluginThemePack
 #endif
@@ -26,6 +27,7 @@ public struct DefaultPluginFactory: PluginFactory {
             try! StorageSuperPlugin(),
             CommandPlugin(),
             ProjectsPlugin(),
+            SidebarPlugin(),
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),
