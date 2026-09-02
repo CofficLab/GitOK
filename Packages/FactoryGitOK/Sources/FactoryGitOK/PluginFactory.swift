@@ -5,6 +5,7 @@ import PluginCommand
 import PluginCommitList
 import PluginLogoCoffic
 import PluginLogoManager
+import PluginOpenIn
 import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
@@ -34,6 +35,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CommitListPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
+            OpenInPlugin(),
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),
