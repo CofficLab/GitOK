@@ -44,7 +44,6 @@ struct GitOKApp: App {
         .defaultSize(width: 1100, height: 760)
         .commands {
             AppCommands(kernel: kernel)
-            GitOKSettingsCommands()
         }
 
         // 与 Lumi 使用相同的普通 Window Scene，避免 macOS Settings 容器
@@ -55,20 +54,5 @@ struct GitOKApp: App {
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified(showsTitle: false))
         .defaultSize(width: 1000, height: 600)
-    }
-}
-
-/// 普通 Window Scene 不会自动生成系统 Settings 命令，因此显式把入口放回
-/// 应用菜单，保持“GitOK → 设置…”的用户路径。
-private struct GitOKSettingsCommands: Commands {
-    @Environment(\.openWindow) private var openWindow
-
-    var body: some Commands {
-        CommandGroup(after: .appInfo) {
-            Button("设置…") {
-                openWindow(id: "gitok.settings")
-            }
-            .keyboardShortcut(",", modifiers: [.command])
-        }
     }
 }

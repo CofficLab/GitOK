@@ -5,6 +5,7 @@ import PluginActivityBar
 import PluginCommand
 import PluginLogoCoffic
 import PluginLogoManager
+import PluginSettingGeneral
 import PluginSettingView
 import PluginStorage
 import PluginThemePack
@@ -29,6 +30,7 @@ public struct DefaultPluginFactory: PluginFactory {
             PluginActivityBar(),
             LogoCofficPlugin(),
             ThemePackPlugin(),
+            SettingGeneralPlugin(),
         ]
     }
 }
