@@ -1,101 +1,74 @@
-import KitGitCore
-import FactoryCore
 import FactoryGitOK
-import KitGitOKUpdate
 import KernelCore
+import ProviderSettingView
 import SwiftUI
 
-/// GitOK 应用主入口（Lumi `LumiApp` 等价物）：只负责窗口场景声明与
-/// 渠道专属注入，插件组合与宿主引擎全部下沉到
-/// `FactoryGitOK/GitOKFactory` 与 `FactoryCore`。
-///
-/// 渠道专属注入（对应 Lumi 在 LumiApp 层注入 AppUpdatePlugin）：
-/// - Sparkle 自动更新（`KitGitOKUpdate`）通过启动钩子接入，
-///   上架 Mac App Store 的变体可不链接它。
 @main
 struct GitOKApp: App {
-    /// macOS 应用代理
-    @NSApplicationDelegateAdaptor private var appDelegate: MacAgent
-
-    /// Main and settings scenes share this single composition kernel.
     private let kernel: KernelCoreContainer
     private let mainView: AnyView
     private let settingsView: AnyView
+    @Environment(\.openWindow) private var openWindow
 
     init() {
-        GitRuntime.initialize()
-
-        do {
-            let assembledKernel = try GitOKFactory.makeKernel()
+        if let assembledKernel = try? FactoryGitOK.makeKernel() {
             kernel = assembledKernel
-            mainView = (try? GitOKFactory.makeMainWindow(kernel: assembledKernel))
+            mainView = (try? FactoryGitOK.makeMainView(kernel: assembledKernel))
                 ?? AnyView(Text("Failed to assemble main view"))
-            settingsView = (try? GitOKFactory.makeSettingsWindow(kernel: assembledKernel))
+            settingsView = (try? FactoryGitOK.makeSettingsView(kernel: assembledKernel))
                 ?? AnyView(Text("Failed to assemble settings view"))
-        } catch {
-            kernel = KernelCoreContainer()
-            mainView = AnyView(Text("Failed to assemble main view: \(error.localizedDescription)"))
-            settingsView = AnyView(Text("Failed to assemble settings view: \(error.localizedDescription)"))
-        }
-
-        // 同步初始化 Sparkle updater（确保菜单栏"检查更新"可用），
-        // 并异步检测 feed URL fallback。
-        GitOKFactoryChrome.launchHooks.append {
-            _ = UpdateManager.shared
-            Task {
-                await UpdateManager.shared.setupFeedURLIfNeeded()
-            }
+        } else {
+            let fallbackKernel = KernelCoreContainer()
+            kernel = fallbackKernel
+            mainView = AnyView(Text("Failed to assemble main view"))
+            settingsView = AnyView(Text("Failed to assemble settings view"))
         }
     }
 
     var body: some Scene {
-        WindowGroup(id: AppBootstrap.mainWindowID) {
+        WindowGroup("GitOK", id: "gitok.main") {
             mainView
-                .environmentObject(appDelegate)
-                // 与 Lumi 一致：隐藏原生标题栏/工具栏，红绿灯悬浮在自绘顶栏上，
-                // 顶栏完全由应用自身渲染（跨 macOS 版本外观统一）。
-                .background {
-                    WindowAccessor { window in
-                        window.configureForGitOKMinimalChrome()
+                .onReceive(NotificationCenter.default.publisher(
+                    for: SettingViewNavigation.openSettingsNotification
+                )) { notification in
+                    if let settings = kernel.resolveProvider((any SettingViewProviding).self),
+                       let entryID = notification.userInfo?[SettingViewNavigation.entryIDUserInfoKey] as? String,
+                       settings.entries.contains(where: { $0.id == entryID }) {
+                        settings.selectEntry(id: entryID)
                     }
-                }
-                .onReceive(appDelegate.$pendingOpenPath.compactMap { $0 }) { path in
-                    // 通过 Combine 直接监听 appDelegate 的 @Published 属性变化
-                    // 比 NotificationCenter 更可靠，不存在时序问题
-                    OpenProjectHandler.shared.requestOpen(path: path)
-                    appDelegate.pendingOpenPath = nil
-
-                    // 确保窗口可见并激活（处理全屏 Space 切换和冷启动场景）
-                    DispatchQueue.main.async {
-                        NSApp.activate(ignoringOtherApps: true)
-                        if let window = NSApp.windows.first(where: { $0.canBecomeKey }) {
-                            window.makeKeyAndOrderFront(nil)
-                        }
-                    }
-                }
-        }
-        .handlesExternalEvents(matching: Set()) // 阻止 WindowGroup 为外部事件创建新窗口
-        .windowStyle(.hiddenTitleBar) // 对齐 Lumi；红绿灯丢失的根因是 NavigationSplitView 创建 unified toolbar 隐藏 NSTitlebarContainerView，由 WindowAccessor 的 configureForGitOKMinimalChrome 恢复
-        .windowToolbarStyle(.unified(showsTitle: false))
-        .modelContainer(AppConfig.getContainer())
-        .commands {
-            GitOKFactory.makeCommands(kernel: kernel)
-            UpdateCommand()
-        }
-
-        Window(String(localized: "Settings"), id: AppBootstrap.settingsWindowID) {
-            settingsView
-                .background {
-                    WindowAccessor { window in
-                        window.configureForGitOKMinimalChrome()
-                    }
+                    openWindow(id: "gitok.settings")
                 }
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified(showsTitle: false))
-        .defaultSize(
-            width: AppBootstrap.defaultSettingsWindowSize.width,
-            height: AppBootstrap.defaultSettingsWindowSize.height
-        )
+        .defaultSize(width: 1100, height: 760)
+        .commands {
+            AppCommands(kernel: kernel)
+            GitOKSettingsCommands()
+        }
+
+        // 与 Lumi 使用相同的普通 Window Scene，避免 macOS Settings 容器
+        // 额外注入边距/安全区域，导致共享设置视图被裁切。
+        Window("设置", id: "gitok.settings") {
+            settingsView
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowToolbarStyle(.unified(showsTitle: false))
+        .defaultSize(width: 1000, height: 600)
+    }
+}
+
+/// 普通 Window Scene 不会自动生成系统 Settings 命令，因此显式把入口放回
+/// 应用菜单，保持“GitOK → 设置…”的用户路径。
+private struct GitOKSettingsCommands: Commands {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some Commands {
+        CommandGroup(after: .appInfo) {
+            Button("设置…") {
+                openWindow(id: "gitok.settings")
+            }
+            .keyboardShortcut(",", modifiers: [.command])
+        }
     }
 }

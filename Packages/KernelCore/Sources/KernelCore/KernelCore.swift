@@ -1,193 +1,81 @@
 import Foundation
+import os
+
+enum KernelPluginLifecyclePhase {
+    case boot
+}
 
 public enum KernelLifecycleState: String, Sendable {
     case stopped
     case starting
     case running
     case stopping
+    case failed
 }
 
-/// Generic plugin lifecycle contract used by the kernel. Domain-specific
-/// plugin systems can bridge into it without making KernelCore import them.
-@MainActor
-public protocol KernelPlugin {
-    var id: String { get }
-    var order: Int { get }
-    var dependencies: [String] { get }
-
-    func onBoot(kernel: KernelCoreContainer) throws
-    func onReady(kernel: KernelCoreContainer) throws
-    func onShutdown(kernel: KernelCoreContainer) throws
-}
-
-public extension KernelPlugin {
-    var order: Int { 0 }
-    var dependencies: [String] { [] }
-    func onReady(kernel: KernelCoreContainer) throws {}
-    func onShutdown(kernel: KernelCoreContainer) throws {}
-}
-
-/// Lumi-compatible composition kernel.
+/// KernelCore 轻量级内核核心
 ///
-/// KernelCore intentionally knows nothing about GitOK or any concrete feature.
-/// Hosts register typed Providers during bootstrap; plugins and views resolve
-/// those providers through the same container instance.
+/// 架构原则：KernelCore 只提供「注册 Provider 与访问 Provider」的通用机制，
+/// **不定义、不包含任何具体 Provider**（如 StorageProviding、ProjectProviding 等）。
+/// 具体 Provider 协议由上层（如 KernelLumi）或具体 App 声明，实现由插件注入。
+///
+/// Provider 注册/解析相关函数集中在 `KernelCore+Provider.swift` 扩展中。
+///
+/// Only holds protocol types, does not depend on concrete implementations.
+/// All concrete implementations are injected via plugins.
 @MainActor
 public final class KernelCoreContainer {
-    private var providers: [ObjectIdentifier: Any] = [:]
-    private var plugins: [String: any KernelPlugin] = [:]
-    private var pluginStartOrder: [String] = []
 
+    nonisolated static let logger = Logger(
+        subsystem: "com.coffic.lumi",
+        category: "kernel.provider"
+    )
+
+    // MARK: - Provider Registry
+
+    /// Provider 注册表：以协议类型的 `ObjectIdentifier` 为 key。
+    ///
+    /// internal：由 `KernelCore+Provider.swift` 中的 extension 读写。
+    var providers: [ObjectIdentifier: Any] = [:]
+
+    /// Provider 所属插件。不存在记录时表示由宿主注册。
+    var providerOwners: [ObjectIdentifier: String] = [:]
+
+    // MARK: - Plugin Registry
+
+    /// 插件注册表：以插件的 `id` 为 key。
+    ///
+    /// internal：由 `KernelCore+Plugin.swift` 中的 extension 读写。
+    var plugins: [String: any SuperPlugin] = [:]
+
+    var pluginStartOrder: [String] = []
+    var activePluginID: String?
+    var activePluginLifecyclePhase: KernelPluginLifecyclePhase?
+    var pluginEnabledStates: [String: Bool] = [:]
+
+    /// 插件启用状态的持久化存储；未注入时仅维护运行时状态。
+    public var stateStore: (any PluginStatePersisting)?
+
+    /// 新插件 ID 到旧插件 ID 的兼容映射。
+    /// 读取时先查新 ID，再回退旧 ID；写入时同步更新两者。
+    public var legacyPluginIDAliases: [String: String] = [:]
+
+    /// 插件写入共享 Provider/Host 的贡献，由 Kernel 统一持有和撤回。
+    var contributionTokens: [String: [PluginContributionToken]] = [:]
+
+    /// 生命周期状态是内核内部控制状态，不是 UI 发布源。
+    /// 需要感知插件生命周期的消费者应观察对应的 Provider（例如
+    /// `PluginManaging.addPluginObserver`），而不是观察 Kernel。
     public private(set) var lifecycleState: KernelLifecycleState = .stopped
+
+    // MARK: - Initialization
 
     public init() {}
 
-    public func registerProvider<T>(_ type: T.Type = T.self, _ provider: T) throws {
-        let key = ObjectIdentifier(type)
-        guard providers[key] == nil else {
-            throw KernelCoreError.providerAlreadyRegistered(
-                type: String(reflecting: type)
-            )
-        }
-        providers[key] = provider
-    }
-
-    /// Registers a provider under an erased protocol type.
-    ///
-    /// This overload is used by compatibility adapters that receive a
-    /// runtime ``Any.Type`` while migrating older dependency registries to
-    /// the typed kernel.
-    public func registerProvider(_ provider: Any, for type: Any.Type) throws {
-        let key = ObjectIdentifier(type)
-        guard providers[key] == nil else {
-            throw KernelCoreError.providerAlreadyRegistered(
-                type: String(reflecting: type)
-            )
-        }
-        providers[key] = provider
-    }
-
-    public func resolveProvider<T>(_ type: T.Type = T.self) -> T? {
-        providers[ObjectIdentifier(type)] as? T
-    }
-
-    /// Resolves a provider when the protocol type is only available at runtime.
-    public func resolveProviderErased(_ type: Any.Type) -> Any? {
-        providers[ObjectIdentifier(type)]
-    }
-
-    public func unregisterProvider<T>(_ type: T.Type = T.self) {
-        providers.removeValue(forKey: ObjectIdentifier(type))
-    }
-
-    public var registeredProviderCount: Int {
-        providers.count
-    }
-
-    public var registeredPluginCount: Int {
-        plugins.count
-    }
-
-    public func resolvePlugin(id: String) -> (any KernelPlugin)? {
-        plugins[id]
-    }
-
-    public func start() throws {
-        try start(plugins: [])
-    }
-
-    public func start(plugins incomingPlugins: [any KernelPlugin]) throws {
-        guard lifecycleState == .stopped else {
-            throw KernelCoreError.invalidLifecycleOperation(
-                operation: "start kernel",
-                state: lifecycleState
-            )
-        }
-        lifecycleState = .starting
-
-        do {
-            let orderedPlugins = try orderedPlugins(from: incomingPlugins)
-            for plugin in orderedPlugins {
-                plugins[plugin.id] = plugin
-                try plugin.onBoot(kernel: self)
-                pluginStartOrder.append(plugin.id)
-            }
-            for id in pluginStartOrder where orderedPlugins.contains(where: { $0.id == id }) {
-                try plugins[id]?.onReady(kernel: self)
-            }
-        } catch {
-            for id in pluginStartOrder.reversed() {
-                try? plugins[id]?.onShutdown(kernel: self)
-            }
-            for plugin in incomingPlugins {
-                plugins.removeValue(forKey: plugin.id)
-            }
-            pluginStartOrder.removeAll()
-            lifecycleState = .stopped
-            throw error
-        }
-        lifecycleState = .running
-    }
-
-    public func stop() throws {
-        guard lifecycleState == .running else {
-            if lifecycleState == .stopped { return }
-            throw KernelCoreError.invalidLifecycleOperation(
-                operation: "stop kernel",
-                state: lifecycleState
-            )
-        }
-        lifecycleState = .stopping
-        for id in pluginStartOrder.reversed() {
-            try? plugins[id]?.onShutdown(kernel: self)
-            plugins.removeValue(forKey: id)
-        }
-        pluginStartOrder.removeAll()
-        lifecycleState = .stopped
-    }
-
-    private func orderedPlugins(from incomingPlugins: [any KernelPlugin]) throws -> [any KernelPlugin] {
-        var byID: [String: any KernelPlugin] = [:]
-        for plugin in incomingPlugins {
-            guard plugins[plugin.id] == nil, byID[plugin.id] == nil else {
-                throw KernelCoreError.pluginAlreadyRegistered(id: plugin.id)
-            }
-            byID[plugin.id] = plugin
-        }
-
-        for plugin in incomingPlugins {
-            for dependency in plugin.dependencies
-                where plugins[dependency] == nil && byID[dependency] == nil {
-                throw KernelCoreError.pluginDependencyMissing(
-                    pluginID: plugin.id,
-                    dependencyID: dependency
-                )
-            }
-        }
-
-        var remaining = Set(byID.keys)
-        var resolved = Set(plugins.keys)
-        var result: [any KernelPlugin] = []
-        while !remaining.isEmpty {
-            let ready = remaining.compactMap { byID[$0] }
-                .filter { $0.dependencies.allSatisfy { resolved.contains($0) } }
-                .sorted { lhs, rhs in
-                    lhs.order == rhs.order ? lhs.id < rhs.id : lhs.order < rhs.order
-                }
-            guard !ready.isEmpty else {
-                throw KernelCoreError.pluginDependencyMissing(
-                    pluginID: remaining.sorted().joined(separator: ","),
-                    dependencyID: "cycle"
-                )
-            }
-            for plugin in ready {
-                remaining.remove(plugin.id)
-                resolved.insert(plugin.id)
-                result.append(plugin)
-            }
-        }
-        return result
+    func setLifecycleState(_ state: KernelLifecycleState) {
+        lifecycleState = state
     }
 }
 
+/// 兼容命名：用 `KernelCore` 实例化时，使用 `KernelCoreContainer`。
 public typealias KernelCore = KernelCoreContainer

@@ -1,45 +1,151 @@
-# GitOK
+# Lumi
 
-[![Coffic](https://img.shields.io/badge/Coffic-green)](https://coffic.cn)
-[![Maintainer](https://img.shields.io/badge/Maintainer-blue)](https://github.com/nookery)
-![GitHub License](https://img.shields.io/github/license/cofficlab/gitok)
+Lumi is an AI-powered personal desktop assistant for macOS. It combines LLM chat, an agent with tool use, a code editor, a terminal, and a broad set of system and developer utilities in a plugin-driven application.
 
-📖 [中文版](README-zh.md) | [English](README.md)
+📖 English | [中文版](README_zh.md)
 
-## What
+[![Swift](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![macOS](https://img.shields.io/badge/macOS-14.0+-blue.svg)](https://developer.apple.com/macos/)
+[![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Latest release](https://img.shields.io/badge/release-v5.17.0-blue.svg)](https://github.com/CofficLab/Lumi/releases)
 
-GitOK is a comprehensive project management tool.
+![Lumi Application](docs/hero2.png)
 
-## Screenshot
+## Features
 
-![GitOK App Screenshot](docs/hero.png)
+- **Multi-provider LLM chat** — 20+ built-in provider integrations, including OpenAI, Anthropic, DeepSeek, Zhipu, MiniMax, Kimi Code, Aliyun, StepFun, Xiaomi, OpenRouter, Codex, and local MLX models. Several integrations expose more than one provider implementation.
+- **Agent with tool use** — read and edit files, run shell commands, fetch and search the web, use browser and computer-control tools, inspect images, and request user input during a task.
+- **Built-in code editor** — project file tree, syntax highlighting, fuzzy file search, outline, references, call hierarchy, problems, language services, and Markdown preview.
+- **Developer tools** — native terminal, Git/GitHub integration, SQLite/MySQL/PostgreSQL/Redis database tools, Docker, Homebrew, ports and hosts management, and project diagnostics.
+- **System utilities** — clipboard history, disk and network monitoring, screen recording, OCR, display control, anti-sleep, downloads, and more.
+- **Project intelligence** — project-scoped agent rules, skills, memory, project file search, and local vector-based RAG for code-oriented questions.
+- **Themes and customization** — more than 100 default plugins, runtime plugin enable/disable support, and 22 built-in themes.
+- **Local HTTP API** — the built-in web server listens on the local loopback interface and aggregates routes contributed by enabled plugins.
+
+> MCP client support is not currently shipped in the default application. The repository contains MCP-related compatibility comments, but no MCP package or stdio/SSE transport implementation yet.
 
 ## Download
 
-<https://github.com/CofficLab/GitOK/releases>
+Download the latest DMG from the [Releases](https://github.com/CofficLab/Lumi/releases) page. Release automation produces architecture-specific `arm64` and `x86_64` DMGs. The direct-distribution build uses [Sparkle](https://sparkle-project.org) for updates; Debug builds disable app updates.
 
-## Why
+The Mac App Store distribution and the direct-distribution build can differ in entitlements and update integration. Check the release notes for the exact contents of each build.
 
-There are many ways to ensure a clean, efficient, and standardized workflow, such as:
+## Architecture
 
-- Enforcing documentation
-- Scripts to format code
+### Application architecture
 
-Why not use a user-friendly app to do these things?
+```mermaid
+graph TB
+    APP[LumiApp<br/>App entry]
+    FL[FactoryLumi<br/>Composition root]
+    K[KernelCore<br/>Provider registry + plugin lifecycle]
+    PF[Provider* packages<br/>Shared capability contracts]
+    PL[Plugin* packages<br/>Features and integrations]
+    UI[LumiUI<br/>Design system and themes]
 
-We need a tool to improve our work efficiency, and we'd like it to have the following features:
+    APP --> FL
+    FL --> K
+    FL --> PF
+    FL --> PL
+    K --> PF
+    K --> PL
+    FL --> UI
+    PL --> UI
+```
 
-- Manage multiple projects
-- When creating a project, the behind-the-scenes work includes but is not limited to:
-  - Scaffolding project folders
-  - Initializing Git repositories and remote repositories
-  - Preparing CI/CD scripts
-- Assisting users in writing well-formatted `commit messages`
+- **LumiApp** is the application entry point. It creates the shared kernel and hosts the main, settings, onboarding, and menu-bar surfaces.
+- **FactoryLumi** is the composition root. `KernelFactory` assembles providers, starts the default plugin catalog, and builds the main and settings views.
+- **KernelCore** is the small generic kernel. It provides typed provider registration/resolution and plugin lifecycle management without knowing concrete application services.
+- **Provider packages** define shared capability contracts such as conversations, LLMs, tools, projects, storage, web routes, and UI contributions.
+- **Plugin packages** implement product features and integrations. The default catalog is defined by [`DefaultPluginFactory`](Packages/FactoryLumi/Sources/FactoryLumi/PluginFactory.swift).
+- **LumiUI** contains shared SwiftUI components and theme rendering.
 
-## Our Other Projects
+### Plugin system
 
-* [Cisum](https://github.com/CofficLab/Cisum_SwiftUI) - A player for Apple platform
+Plugins conform to [`SuperPlugin`](Packages/KernelCore/Sources/KernelCore/Contracts/SuperPlugin.swift). A plugin can participate in registration, boot, ready, enable/disable, shutdown, and unregister phases, and can contribute providers, tools, commands, views, settings, editor extensions, menus, web routes, and other application surfaces.
 
-## References
+The main implementation layers are:
 
-- [git commit emoji usage guide (in Chinese)](https://github.com/liuchengxu/git-commit-emoji-cn)
+- [`FactoryLumi`](Packages/FactoryLumi) — composition and dependency wiring.
+- [`PluginAgentLoop`](Packages/PluginAgentLoop) — agent-loop integration.
+- [`PluginToolManager`](Packages/PluginToolManager) — tool registration, authorization, execution, and records.
+- [`KitLLM`](Packages/KitLLM) and the `ProviderLLMVendors` package — shared LLM models, adapters, and provider contracts.
+- [`PluginProjectRAG`](Packages/PluginProjectRAG) — project indexing and local vector search.
+- [`PluginWebServer`](Packages/PluginWebServer) — plugin route registration for the local web server.
+
+### Agent workflow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant S as MessageSendingProviding
+    participant R as AgentLoopProviding
+    participant L as SuperLLMProvider
+    participant T as ToolManagerProviding
+
+    U->>S: Send message
+    S->>R: Start agent turn
+    R->>L: Streaming request
+    L-->>R: Streaming response
+    alt Tool call requested
+        R->>T: Authorization and execution
+        T-->>R: Tool result
+        R->>L: Next request with tool result
+        L-->>R: Final response
+    end
+    R-->>U: Persist and display result
+```
+
+The concrete provider contracts live under `Packages/Provider*`; the feature implementations live under `Packages/Plugin*`. This keeps the agent loop, tool execution, persistence, and UI responsibilities separate.
+
+## Requirements
+
+- macOS 14.0 or later
+- Xcode 26.x (the release workflow currently uses Xcode 26.3)
+- Swift 6.0 or later
+
+Some features require additional macOS permissions. For example, Computer Use and screen capture require the corresponding Accessibility, Automation, or Screen Recording permissions.
+
+## Build and run
+
+### Open in Xcode
+
+```bash
+git clone https://github.com/CofficLab/Lumi.git
+cd Lumi
+open Lumi.xcodeproj
+```
+
+Select the **Lumi** scheme, then build and run with ⌘B / ⌘R. On first launch, configure an LLM provider and its API key in Settings.
+
+### Build from the command line
+
+For a reproducible local Debug build using the checked-in package resolutions:
+
+```bash
+xcodebuild \
+  -project Lumi.xcodeproj \
+  -scheme Lumi \
+  -configuration Debug \
+  -sdk macosx \
+  -disableAutomaticPackageResolution \
+  -onlyUsePackageVersionsFromResolvedFile \
+  build
+```
+
+Package tests are run from their individual package directories, for example:
+
+```bash
+swift test --package-path Packages/FactoryLumi
+swift test --package-path Packages/PluginAgentLoop
+```
+
+There is no root `Package.swift`; the application is built through `Lumi.xcodeproj`, while the reusable components are Swift packages under [`Packages/`](Packages/).
+
+## Contributing
+
+Issues and pull requests are welcome at [CofficLab/Lumi](https://github.com/CofficLab/Lumi). New features are generally implemented as `Plugin*` packages and composed in [`DefaultPluginFactory`](Packages/FactoryLumi/Sources/FactoryLumi/PluginFactory.swift). Start with [`SuperPlugin`](Packages/KernelCore/Sources/KernelCore/Contracts/SuperPlugin.swift), an existing plugin, and the relevant `Provider*` contract.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE) for details.

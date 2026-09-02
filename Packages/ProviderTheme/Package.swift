@@ -3,18 +3,27 @@ import PackageDescription
 
 let package = Package(
     name: "ProviderTheme",
-    platforms: [.macOS(.v14)],
+    defaultLocalization: "en",
+    platforms: [
+        .macOS(.v14),
+        .iOS(.v17)
+    ],
     products: [
-        .library(name: "ProviderTheme", targets: ["ProviderTheme"]),
+        .library(
+            name: "ProviderTheme",
+            targets: ["ProviderTheme"]
+        ),
     ],
     dependencies: [
-        .package(path: "../GitOKUI"),
     ],
     targets: [
         .target(
             name: "ProviderTheme",
-            dependencies: ["GitOKUI"],
-            path: "Sources"
+            path: "Sources/ProviderTheme"
         ),
+        .testTarget(
+            name: "ProviderThemeTests",
+            dependencies: ["ProviderTheme"]
+        )
     ]
 )

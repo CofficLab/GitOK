@@ -7,182 +7,43 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-
-		AI2AFB000000000000000001 /* FactoryAppIconDesigner in Frameworks */ = {isa = PBXBuildFile; productRef = AI2AFD000000000000000001 /* FactoryAppIconDesigner */; };
-		BM2BFB000000000000000B001 /* FactoryBookletMaker in Frameworks */ = {isa = PBXBuildFile; productRef = BM2AFB0000000000000000001 /* FactoryBookletMaker */; };
-		CD2AFB000000000000000001 /* FactoryCADDesigner in Frameworks */ = {isa = PBXBuildFile; productRef = CD2AFD000000000000000001 /* FactoryCADDesigner */; };
-		DB2AFB000000000000000001 /* FactoryDatabaseManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB2AFD000000000000000001 /* FactoryDatabaseManager */; };
-		F53C3ED12F1A3CB000929321 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F53C3ECB2F1A3CB000929321 /* Assets.xcassets */; };
-
-
-
+		GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = GK2AFB0000000000000000001 /* FactoryGitOK */; };
 		LF000000000000000015 /* KitSuperLog in Frameworks */ = {isa = PBXBuildFile; productRef = LF000000000000000016 /* KitSuperLog */; };
 		LF00000000000000001A /* KitLocalization in Frameworks */ = {isa = PBXBuildFile; productRef = LF000000000000000019 /* KitLocalization */; };
 /* End PBXBuildFile section */
-	GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = GK2AFB0000000000000000001 /* FactoryGitOK */; };
-
-/* Begin PBXContainerItemProxy section */
-
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		08B37721AB3348660D4B2D5E /* DatabaseManager.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = DatabaseManager.xcconfig; path = DatabaseManagerApp/DatabaseManager.xcconfig; sourceTree = "<group>"; };
-		10DD2383E811EBAC5B6264D5 /* AppIconDesigner.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = AppIconDesigner.xcconfig; path = AppIconDesignerApp/AppIconDesigner.xcconfig; sourceTree = "<group>"; };
-
-
-		70E0C23EA196F323323F057B /* CADDesigner.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = CADDesigner.xcconfig; path = CADDesignerApp/CADDesigner.xcconfig; sourceTree = "<group>"; };
 		7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Project-Debug.xcconfig"; path = "LumiApp/Config/Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		AE205FD720E849E1FFA4D49C /* Project-Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Project-Release.xcconfig"; path = "LumiApp/Config/Project-Release.xcconfig"; sourceTree = "<group>"; };
-		AI0000000000000000000002 /* AppIconDesigner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppIconDesigner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB5089FCE8F5EB98AEF0906 /* LumiFinder-Debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "LumiFinder-Debug.xcconfig"; path = "Packages/PluginRClick/FinderExtension/LumiFinder-Debug.xcconfig"; sourceTree = "<group>"; };
-		BM0000000000000000000002 /* BookletMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookletMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD0000000000000000000002 /* CADDesigner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CADDesigner.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB0000000000000000000002 /* DatabaseManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DatabaseManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DD36141333F791471BC94F98 /* BookletMaker.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = BookletMaker.xcconfig; path = BookletMakerApp/BookletMaker.xcconfig; sourceTree = "<group>"; };
 		ED0129D9D619E8053070A012 /* LumiFinder-Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "LumiFinder-Release.xcconfig"; path = "Packages/PluginRClick/FinderExtension/LumiFinder-Release.xcconfig"; sourceTree = "<group>"; };
-		F53C3ECB2F1A3CB000929321 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-
+		GK0000000000000000000002 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = GitOK.xcconfig; path = GitOKApp/GitOK.xcconfig; sourceTree = "<group>"; };
 		LF000000000000000001 /* LumiFinder.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LumiFinder.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-	GK0000000000000000000002 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
-	GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = GitOK.xcconfig; path = GitOKApp/GitOK.xcconfig; sourceTree = "<group>"; };
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		AI0000000000000000000003 /* Exceptions for "AppIconDesignerApp" folder in "AppIconDesigner" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"AppIconDesigner-Info.plist",
-			);
-			target = AI0000000000000000000009 /* AppIconDesigner */;
-		};
-		BM0000000000000000000003 /* Exceptions for "BookletMakerApp" folder in "BookletMaker" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"BookletMaker-Info.plist",
-			);
-			target = BM0000000000000000000009 /* BookletMaker */;
-		};
-		CD0000000000000000000003 /* Exceptions for "CADDesignerApp" folder in "CADDesigner" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"CADDesigner-Info.plist",
-			);
-			target = CD0000000000000000000009 /* CADDesigner */;
-		};
-		DB0000000000000000000003 /* Exceptions for "DatabaseManagerApp" folder in "DatabaseManager" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"DatabaseManager-Info.plist",
-			);
-			target = DB0000000000000000000009 /* DatabaseManager */;
-		};
-
-		LF000000000000000010 /* Exceptions for "Packages/PluginRClick/FinderExtension" folder in "LumiFinder" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = LF000000000000000002 /* LumiFinder */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-	GK0000000000000000000003 /* Exceptions for "GitOKApp" folder in "GitOK" target */ = {
-		isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-		membershipExceptions = (
-			"GitOK-Info.plist",
-		);
-		target = GK0000000000000000000009 /* GitOK */;
-	};
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		AI0000000000000000000004 /* AppIconDesignerApp */ = {
+		GK0000000000000000000004 /* GitOKApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				AI0000000000000000000003 /* Exceptions for "AppIconDesignerApp" folder in "AppIconDesigner" target */,
-			);
-			path = AppIconDesignerApp;
+			path = GitOKApp;
 			sourceTree = "<group>";
 		};
-		BM0000000000000000000004 /* BookletMakerApp */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BM0000000000000000000003 /* Exceptions for "BookletMakerApp" folder in "BookletMaker" target */,
-			);
-			path = BookletMakerApp;
-			sourceTree = "<group>";
-		};
-		CD0000000000000000000004 /* CADDesignerApp */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CD0000000000000000000003 /* Exceptions for "CADDesignerApp" folder in "CADDesigner" target */,
-			);
-			path = CADDesignerApp;
-			sourceTree = "<group>";
-		};
-		DB0000000000000000000004 /* DatabaseManagerApp */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				DB0000000000000000000003 /* Exceptions for "DatabaseManagerApp" folder in "DatabaseManager" target */,
-			);
-			path = DatabaseManagerApp;
-			sourceTree = "<group>";
-		};
-
 		LF000000000000000009 /* Packages/PluginRClick/FinderExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				LF000000000000000010 /* Exceptions for "Packages/PluginRClick/FinderExtension" folder in "LumiFinder" target */,
-			);
 			path = Packages/PluginRClick/FinderExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
-	GK0000000000000000000004 /* GitOKApp */ = {
-		isa = PBXFileSystemSynchronizedRootGroup;
-		exceptions = (
-			GK0000000000000000000003 /* Exceptions for "GitOKApp" folder in "GitOK" target */,
-		);
-		path = GitOKApp;
-		sourceTree = "<group>";
-	};
 
 /* Begin PBXFrameworksBuildPhase section */
-		AI0000000000000000000005 /* Frameworks */ = {
+		GK0000000000000000000005 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AI2AFB000000000000000001 /* FactoryAppIconDesigner in Frameworks */,
+				GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BM0000000000000000000005 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BM2BFB000000000000000B001 /* FactoryBookletMaker in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD0000000000000000000005 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CD2AFB000000000000000001 /* FactoryCADDesigner in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB0000000000000000000005 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DB2AFB000000000000000001 /* FactoryDatabaseManager in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-
 		LF000000000000000004 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -193,14 +54,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
-	GK0000000000000000000005 /* Frameworks */ = {
-		isa = PBXFrameworksBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-			GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */,
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
 
 /* Begin PBXGroup section */
 		0BBD822C30067A13005CCD05 /* Frameworks */ = {
@@ -213,27 +66,14 @@
 		F54F8C752F1A3B6500AABB2A = {
 			isa = PBXGroup;
 			children = (
-				F53C3ECB2F1A3CB000929321 /* Assets.xcassets */,
-				AI0000000000000000000004 /* AppIconDesignerApp */,
-				BM0000000000000000000004 /* BookletMakerApp */,
 				GK0000000000000000000004 /* GitOKApp */,
-				CD0000000000000000000004 /* CADDesignerApp */,
-				DB0000000000000000000004 /* DatabaseManagerApp */,
 				LF000000000000000009 /* Packages/PluginRClick/FinderExtension */,
-				AI0000000000000000000002 /* AppIconDesigner.app */,
-				BM0000000000000000000002 /* BookletMaker.app */,
 				GK0000000000000000000002 /* GitOK.app */,
-				CD0000000000000000000002 /* CADDesigner.app */,
-				DB0000000000000000000002 /* DatabaseManager.app */,
 				LF000000000000000001 /* LumiFinder.appex */,
 				0BBD822C30067A13005CCD05 /* Frameworks */,
 				7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */,
 				AE205FD720E849E1FFA4D49C /* Project-Release.xcconfig */,
-				10DD2383E811EBAC5B6264D5 /* AppIconDesigner.xcconfig */,
-				DD36141333F791471BC94F98 /* BookletMaker.xcconfig */,
 				GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */,
-				70E0C23EA196F323323F057B /* CADDesigner.xcconfig */,
-				08B37721AB3348660D4B2D5E /* DatabaseManager.xcconfig */,
 				BEB5089FCE8F5EB98AEF0906 /* LumiFinder-Debug.xcconfig */,
 				ED0129D9D619E8053070A012 /* LumiFinder-Release.xcconfig */,
 			);
@@ -242,99 +82,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AI0000000000000000000009 /* AppIconDesigner */ = {
+		GK0000000000000000000009 /* GitOK */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AI000000000000000000000F /* Build configuration list for PBXNativeTarget "AppIconDesigner" */;
+			buildConfigurationList = GK000000000000000000000F /* Build configuration list for PBXNativeTarget "GitOK" */;
 			buildPhases = (
-				AI0000000000000000000007 /* Sources */,
-				AI0000000000000000000005 /* Frameworks */,
-				AI0000000000000000000006 /* Resources */,
+				GK0000000000000000000007 /* Sources */,
+				GK0000000000000000000005 /* Frameworks */,
+				GK0000000000000000000006 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				AI0000000000000000000004 /* AppIconDesignerApp */,
+				GK0000000000000000000004 /* GitOKApp */,
 			);
-			name = AppIconDesigner;
+			name = GitOK;
 			packageProductDependencies = (
-				AI2AFD000000000000000001 /* FactoryAppIconDesigner */,
+				GK2AFB0000000000000000001 /* FactoryGitOK */,
 			);
-			productName = AppIconDesigner;
-			productReference = AI0000000000000000000002 /* AppIconDesigner.app */;
+			productName = GitOK;
+			productReference = GK0000000000000000000002 /* GitOK.app */;
 			productType = "com.apple.product-type.application";
 		};
-		BM0000000000000000000009 /* BookletMaker */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BM000000000000000000000F /* Build configuration list for PBXNativeTarget "BookletMaker" */;
-			buildPhases = (
-				BM0000000000000000000007 /* Sources */,
-				BM0000000000000000000005 /* Frameworks */,
-				BM0000000000000000000006 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				BM0000000000000000000004 /* BookletMakerApp */,
-			);
-			name = BookletMaker;
-			packageProductDependencies = (
-				BM2AFB0000000000000000001 /* FactoryBookletMaker */,
-			);
-			productName = BookletMaker;
-			productReference = BM0000000000000000000002 /* BookletMaker.app */;
-			productType = "com.apple.product-type.application";
-		};
-		CD0000000000000000000009 /* CADDesigner */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CD000000000000000000000F /* Build configuration list for PBXNativeTarget "CADDesigner" */;
-			buildPhases = (
-				CD0000000000000000000007 /* Sources */,
-				CD0000000000000000000005 /* Frameworks */,
-				CD0000000000000000000006 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				CD0000000000000000000004 /* CADDesignerApp */,
-			);
-			name = CADDesigner;
-			packageProductDependencies = (
-				CD2AFD000000000000000001 /* FactoryCADDesigner */,
-			);
-			productName = CADDesigner;
-			productReference = CD0000000000000000000002 /* CADDesigner.app */;
-			productType = "com.apple.product-type.application";
-		};
-		DB0000000000000000000009 /* DatabaseManager */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DB000000000000000000000F /* Build configuration list for PBXNativeTarget "DatabaseManager" */;
-			buildPhases = (
-				DB0000000000000000000007 /* Sources */,
-				DB0000000000000000000005 /* Frameworks */,
-				DB0000000000000000000006 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				DB0000000000000000000004 /* DatabaseManagerApp */,
-			);
-			name = DatabaseManager;
-			packageProductDependencies = (
-				DB2AFD000000000000000001 /* FactoryDatabaseManager */,
-			);
-			productName = DatabaseManager;
-			productReference = DB0000000000000000000002 /* DatabaseManager.app */;
-			productType = "com.apple.product-type.application";
-		};
-
 		LF000000000000000002 /* LumiFinder */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = LF000000000000000008 /* Build configuration list for PBXNativeTarget "LumiFinder" */;
@@ -360,29 +130,6 @@
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
-	GK0000000000000000000009 /* GitOK */ = {
-		isa = PBXNativeTarget;
-		buildConfigurationList = GK000000000000000000000F /* Build configuration list for PBXNativeTarget "GitOK" */;
-		buildPhases = (
-			GK0000000000000000000007 /* Sources */,
-			GK0000000000000000000005 /* Frameworks */,
-			GK0000000000000000000006 /* Resources */,
-		);
-		buildRules = (
-		);
-		dependencies = (
-		);
-		fileSystemSynchronizedGroups = (
-					GK0000000000000000000004 /* GitOKApp */,
-		);
-		name = GitOK;
-		packageProductDependencies = (
-			GK2AFB0000000000000000001 /* FactoryGitOK */,
-		);
-		productName = GitOK;
-		productReference = GK0000000000000000000002 /* GitOK.app */;
-		productType = "com.apple.product-type.application";
-	};
 
 /* Begin PBXProject section */
 		F54F8C762F1A3B6500AABB2A /* Project object */ = {
@@ -392,19 +139,7 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					AI0000000000000000000009 = {
-						CreatedOnToolsVersion = 16.4;
-					};
-					BM0000000000000000000009 = {
-						CreatedOnToolsVersion = 16.4;
-					};
-					CD0000000000000000000009 = {
-						CreatedOnToolsVersion = 16.4;
-					};
-					DB0000000000000000000009 = {
 					GK0000000000000000000009 = {
-						CreatedOnToolsVersion = 16.4;
-					};
 						CreatedOnToolsVersion = 16.4;
 					};
 					LF000000000000000002 = {
@@ -427,10 +162,6 @@
 			packageReferences = (
 				LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */,
 				LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */,
-				BM2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryBookletMaker" */,
-				AI2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryAppIconDesigner" */,
-				CD2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryCADDesigner" */,
-				DB2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryDatabaseManager" */,
 				GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -438,10 +169,6 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BM0000000000000000000009 /* BookletMaker */,
-				AI0000000000000000000009 /* AppIconDesigner */,
-				CD0000000000000000000009 /* CADDesigner */,
-				DB0000000000000000000009 /* DatabaseManager */,
 				GK0000000000000000000009 /* GitOK */,
 				LF000000000000000002 /* LumiFinder */,
 			);
@@ -449,35 +176,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		AI0000000000000000000006 /* Resources */ = {
+		GK0000000000000000000006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BM0000000000000000000006 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD0000000000000000000006 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB0000000000000000000006 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-
 		LF000000000000000005 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -486,48 +191,15 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-	GK0000000000000000000006 /* Resources */ = {
-		isa = PBXResourcesBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
-
-/* Begin PBXShellScriptBuildPhase section */
-
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		AI0000000000000000000007 /* Sources */ = {
+		GK0000000000000000000007 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BM0000000000000000000007 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD0000000000000000000007 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB0000000000000000000007 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-
 		LF000000000000000003 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -536,75 +208,8 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-	GK0000000000000000000007 /* Sources */ = {
-		isa = PBXSourcesBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
-
-/* Begin PBXTargetDependency section */
-
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		AI000000000000000000000D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 10DD2383E811EBAC5B6264D5 /* AppIconDesigner.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		AI000000000000000000000E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 10DD2383E811EBAC5B6264D5 /* AppIconDesigner.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		BM000000000000000000000D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DD36141333F791471BC94F98 /* BookletMaker.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		BM000000000000000000000E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DD36141333F791471BC94F98 /* BookletMaker.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		CD000000000000000000000D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 70E0C23EA196F323323F057B /* CADDesigner.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		CD000000000000000000000E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 70E0C23EA196F323323F057B /* CADDesigner.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		DB000000000000000000000D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 08B37721AB3348660D4B2D5E /* DatabaseManager.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		DB000000000000000000000E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 08B37721AB3348660D4B2D5E /* DatabaseManager.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
 		F54F8C882F1A3B6600AABB2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */;
@@ -619,8 +224,20 @@
 			};
 			name = Release;
 		};
-
-
+		GK000000000000000000000D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		GK000000000000000000000E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		LF000000000000000006 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BEB5089FCE8F5EB98AEF0906 /* LumiFinder-Debug.xcconfig */;
@@ -636,58 +253,8 @@
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
-	GK000000000000000000000D /* Debug */ = {
-		isa = XCBuildConfiguration;
-		baseConfigurationReference = GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */;
-		buildSettings = {
-		};
-		name = Debug;
-	};
-	GK000000000000000000000E /* Release */ = {
-		isa = XCBuildConfiguration;
-		baseConfigurationReference = GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */;
-		buildSettings = {
-		};
-		name = Release;
-	};
 
 /* Begin XCConfigurationList section */
-		AI000000000000000000000F /* Build configuration list for PBXNativeTarget "AppIconDesigner" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AI000000000000000000000D /* Debug */,
-				AI000000000000000000000E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BM000000000000000000000F /* Build configuration list for PBXNativeTarget "BookletMaker" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BM000000000000000000000D /* Debug */,
-				BM000000000000000000000E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CD000000000000000000000F /* Build configuration list for PBXNativeTarget "CADDesigner" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CD000000000000000000000D /* Debug */,
-				CD000000000000000000000E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DB000000000000000000000F /* Build configuration list for PBXNativeTarget "DatabaseManager" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DB000000000000000000000D /* Debug */,
-				DB000000000000000000000E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		F54F8C792F1A3B6500AABB2A /* Build configuration list for PBXProject "GitOK2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -697,7 +264,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-
+		GK000000000000000000000F /* Build configuration list for PBXNativeTarget "GitOK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				GK000000000000000000000D /* Debug */,
+				GK000000000000000000000E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		LF000000000000000008 /* Build configuration list for PBXNativeTarget "LumiFinder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -708,36 +283,12 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-	GK000000000000000000000F /* Build configuration list for PBXNativeTarget "GitOK" */ = {
-		isa = XCConfigurationList;
-		buildConfigurations = (
-			GK000000000000000000000D /* Debug */,
-			GK000000000000000000000E /* Release */,
-		);
-		defaultConfigurationIsVisible = 0;
-		defaultConfigurationName = Release;
-	};
 
 /* Begin XCLocalSwiftPackageReference section */
-		AI2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryAppIconDesigner" */ = {
+		GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/FactoryAppIconDesigner;
+			relativePath = Packages/FactoryGitOK;
 		};
-		BM2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryBookletMaker" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/FactoryBookletMaker;
-		};
-		CD2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryCADDesigner" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/FactoryCADDesigner;
-		};
-		DB2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryDatabaseManager" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/FactoryDatabaseManager;
-		};
-
-
-
 		LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/KitSuperLog;
@@ -747,35 +298,13 @@
 			relativePath = Packages/KitLocalization;
 		};
 /* End XCLocalSwiftPackageReference section */
-	GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */ = {
-		isa = XCLocalSwiftPackageReference;
-		relativePath = Packages/FactoryGitOK;
-	};
 
 /* Begin XCSwiftPackageProductDependency section */
-		AI2AFD000000000000000001 /* FactoryAppIconDesigner */ = {
+		GK2AFB0000000000000000001 /* FactoryGitOK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = AI2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryAppIconDesigner" */;
-			productName = FactoryAppIconDesigner;
+			package = GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */;
+			productName = FactoryGitOK;
 		};
-		BM2AFB0000000000000000001 /* FactoryBookletMaker */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BM2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryBookletMaker" */;
-			productName = FactoryBookletMaker;
-		};
-		CD2AFD000000000000000001 /* FactoryCADDesigner */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CD2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryCADDesigner" */;
-			productName = FactoryCADDesigner;
-		};
-		DB2AFD000000000000000001 /* FactoryDatabaseManager */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DB2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryDatabaseManager" */;
-			productName = FactoryDatabaseManager;
-		};
-
-
-
 		LF000000000000000016 /* KitSuperLog */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KitSuperLog;
@@ -785,11 +314,6 @@
 			productName = KitLocalization;
 		};
 /* End XCSwiftPackageProductDependency section */
-	GK2AFB0000000000000000001 /* FactoryGitOK */ = {
-		isa = XCSwiftPackageProductDependency;
-		package = GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */;
-		productName = FactoryGitOK;
-	};
 	};
 	rootObject = F54F8C762F1A3B6500AABB2A /* Project object */;
 }
