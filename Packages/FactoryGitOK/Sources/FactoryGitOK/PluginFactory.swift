@@ -4,6 +4,7 @@ import KernelCore
 import PluginCommand
 import PluginLogoCoffic
 import PluginLogoManager
+import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
 import PluginStorage
@@ -24,6 +25,7 @@ public struct DefaultPluginFactory: PluginFactory {
             // 基础服务必须先于业务插件启动。
             try! StorageSuperPlugin(),
             CommandPlugin(),
+            ProjectsPlugin(),
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),
