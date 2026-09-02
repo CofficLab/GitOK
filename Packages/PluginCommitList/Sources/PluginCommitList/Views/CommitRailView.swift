@@ -1,6 +1,6 @@
 import KitGit
 import LumiUI
-import ProviderCommitDetail
+import ProviderCommit
 import ProviderProjects
 import SwiftUI
 

@@ -2,7 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderCommitDetail
+import ProviderCommit
 import ProviderProjects
 import ProviderRailView
 import ProviderRootView

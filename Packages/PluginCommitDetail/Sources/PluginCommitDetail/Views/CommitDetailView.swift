@@ -1,6 +1,6 @@
 import KitGit
 import LumiUI
-import ProviderCommitDetail
+import ProviderCommit
 import SwiftUI
 
 /// Commit 详情主内容视图。

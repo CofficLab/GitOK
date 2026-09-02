@@ -3,6 +3,7 @@ import KernelCore
 #if os(macOS)
 import PluginCommand
 import PluginCommitDetail
+import PluginCommitToast
 import PluginCommitList
 import PluginLogoCoffic
 import PluginLogoManager
@@ -50,6 +51,7 @@ public struct DefaultPluginFactory: PluginFactory {
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             ToastSuperPlugin(),
+            CommitToastPlugin(),
             OpenFinderPlugin(),
             OpenTerminalPlugin(),
             OpenVSCodePlugin(),

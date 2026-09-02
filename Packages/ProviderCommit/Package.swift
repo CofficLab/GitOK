@@ -2,28 +2,28 @@
 import PackageDescription
 
 let package = Package(
-    name: "ProviderCommitDetail",
+    name: "ProviderCommit",
     platforms: [
         .macOS(.v14),
     ],
     products: [
-        .library(name: "ProviderCommitDetail", targets: ["ProviderCommitDetail"]),
+        .library(name: "ProviderCommit", targets: ["ProviderCommit"]),
     ],
     dependencies: [
         .package(path: "../KitGit"),
     ],
     targets: [
         .target(
-            name: "ProviderCommitDetail",
+            name: "ProviderCommit",
             dependencies: [
                 .product(name: "KitGit", package: "KitGit"),
             ],
-            path: "Sources/ProviderCommitDetail"
+            path: "Sources/ProviderCommit"
         ),
         .testTarget(
-            name: "ProviderCommitDetailTests",
-            dependencies: ["ProviderCommitDetail"],
-            path: "Tests/ProviderCommitDetailTests"
+            name: "ProviderCommitTests",
+            dependencies: ["ProviderCommit"],
+            path: "Tests/ProviderCommitTests"
         ),
     ]
 )

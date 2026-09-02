@@ -12,7 +12,7 @@ import ProviderToolbar
 
 #if os(macOS)
 import ProviderCommand
-import ProviderCommitDetail
+import ProviderCommit
 import ProviderLogo
 import ProviderPluginManaging
 import ProviderSidebar

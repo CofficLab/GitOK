@@ -1,7 +1,7 @@
 import Foundation
 import KitGit
 import XCTest
-@testable import ProviderCommitDetail
+@testable import ProviderCommit
 
 @MainActor
 final class CommitDetailProviderTests: XCTestCase {

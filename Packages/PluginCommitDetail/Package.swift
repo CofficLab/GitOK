@@ -14,7 +14,7 @@ let package = Package(
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(path: "../LumiUI"),
-        .package(path: "../ProviderCommitDetail"),
+        .package(path: "../ProviderCommit"),
         .package(path: "../ProviderContentView"),
     ],
     targets: [
@@ -25,7 +25,7 @@ let package = Package(
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "ProviderCommitDetail", package: "ProviderCommitDetail"),
+                .product(name: "ProviderCommit", package: "ProviderCommit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
             ],
             path: "Sources/PluginCommitDetail"

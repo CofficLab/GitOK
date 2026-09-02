@@ -1,6 +1,6 @@
 import Foundation
 import KernelCore
-import ProviderCommitDetail
+import ProviderCommit
 import ProviderContentView
 import XCTest
 @testable import PluginCommitDetail
