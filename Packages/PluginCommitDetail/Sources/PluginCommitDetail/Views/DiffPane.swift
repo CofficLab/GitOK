@@ -7,6 +7,7 @@ struct DiffPane: View {
     let commit: GitCommit
     let projectURL: URL
     let filePath: String
+    @LumiTheme private var theme
 
     @State private var diffText: String?
     @State private var isLoading = false
@@ -36,7 +37,7 @@ struct DiffPane: View {
             if let diffText {
                 Text("\(diffText.count)")
                     .font(.appMicro)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(theme.textTertiary)
             }
         }
         .padding(.horizontal, 12)

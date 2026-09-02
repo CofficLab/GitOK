@@ -22,6 +22,7 @@ import SwiftUI
 struct CommitRailView: View {
     let projects: any ProjectProviding
     let detail: any CommitDetailProviding
+    @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
     @StateObject private var detailObservation: CommitDetailObservationModel
 
@@ -121,10 +122,11 @@ struct CommitRailView: View {
     private func commitRow(_ commit: GitCommit) -> some View {
         AppListRow(isSelected: isSelected(commit), action: { select(commit) }) {
             HStack(alignment: .top, spacing: 10) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 8) {
                         Text(commit.message)
                             .font(DesignTokens.Typography.subheadline.weight(.medium))
+                            .foregroundStyle(theme.textPrimary)
                             .lineLimit(1)
                             .truncationMode(.tail)
                         Spacer(minLength: 8)
@@ -134,16 +136,16 @@ struct CommitRailView: View {
                         authorBadge(commit.author)
                         Text(commit.author)
                             .font(DesignTokens.Typography.caption2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(theme.textSecondary)
                             .lineLimit(1)
                         Spacer(minLength: 8)
                         Text(Self.relativeTime(commit.date))
                             .font(DesignTokens.Typography.caption2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(theme.textTertiary)
                     }
                     Text(Self.fullDate(commit.date))
                         .font(DesignTokens.Typography.caption2)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(theme.textTertiary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 2)

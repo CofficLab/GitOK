@@ -10,6 +10,7 @@ import SwiftUI
 struct CommitDetailLayout: View {
     let commit: GitCommit
     let projectURL: URL
+    @LumiTheme private var theme
 
     @Binding var selectedFilePath: String?
 
@@ -93,7 +94,7 @@ struct CommitDetailLayout: View {
             Spacer()
             Text("\(changes.count)")
                 .font(.appMicro)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(theme.textTertiary)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
