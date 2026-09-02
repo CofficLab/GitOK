@@ -19,18 +19,19 @@ final class PluginProjectsTests: XCTestCase {
         try? FileManager.default.removeItem(at: tempDir)
     }
 
-    func testOpenProjectAddsAndSortsByRecency() throws {
+    func testOpenProjectAddsNewProjectsToFrontWithoutReorderingOnOpen() throws {
         let manager = ProjectManager(storeURL: storeURL)
         let a = URL(fileURLWithPath: "/tmp/RepoA")
         let b = URL(fileURLWithPath: "/tmp/RepoB")
 
         manager.openProject(at: a)
         manager.openProject(at: b)
-        XCTAssertEqual(manager.projects.map(\.title), ["RepoB", "RepoA"])
+        XCTAssertEqual(manager.projects.map(\.title), ["RepoB", "RepoA"], "新项目插入最前")
         XCTAssertEqual(manager.currentProject?.title, "RepoB")
 
+        // 再次打开已存在的项目：只切换当前项目，不重排（对齐旧版）。
         manager.openProject(at: a)
-        XCTAssertEqual(manager.projects.map(\.title), ["RepoA", "RepoB"], "最近打开应排最前")
+        XCTAssertEqual(manager.projects.map(\.title), ["RepoB", "RepoA"], "打开已有项目不应改变列表顺序")
         XCTAssertEqual(manager.currentProject?.title, "RepoA")
     }
 
@@ -58,8 +59,9 @@ final class PluginProjectsTests: XCTestCase {
         manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))
         manager.addProject(at: URL(fileURLWithPath: "/tmp/B"))
 
+        // 新项目在前：["B", "A"]；置顶 A 应使其排到最前。
         manager.pinProject(id: manager.projects[1].id, isPinned: true)
-        XCTAssertEqual(manager.projects.map(\.title), ["B", "A"])
+        XCTAssertEqual(manager.projects.map(\.title), ["A", "B"])
     }
 
     func testPersistenceRoundTrip() throws {

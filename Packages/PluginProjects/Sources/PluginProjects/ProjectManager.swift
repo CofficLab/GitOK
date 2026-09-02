@@ -52,14 +52,16 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         let standardized = url.standardizedFileURL
         var openedID: UUID?
         if let index = projects.firstIndex(where: { $0.url.standardizedFileURL == standardized }) {
+            // 已存在项目：仅更新最近打开时间并设为当前项目，不重排列表
+            // （对齐旧版：点击项目只切换当前项目，列表顺序保持固定）。
             var project = projects[index]
             project.lastOpenedAt = Date()
-            projects.remove(at: index)
-            moveToRecentFront(project)
+            projects[index] = project
             openedID = project.id
         } else {
-            let project = Project(url: standardized)
-            moveToRecentFront(project)
+            // 新项目：插入非置顶区最前（对齐旧版新建项目 order=-1 显示在最前）。
+            let project = Project(url: standardized, lastOpenedAt: Date())
+            insertToFront(project)
             openedID = project.id
         }
         currentProject = projects.first(where: { $0.url.standardizedFileURL == standardized })
@@ -86,7 +88,8 @@ public final class ProjectManager: ProjectProviding, SuperLog {
             }
             return
         }
-        projects.append(Project(url: standardized))
+        // 新项目插入非置顶区最前（对齐旧版新建项目 order=-1 排最前）。
+        insertToFront(Project(url: standardized))
         resortPinned()
         persist()
         notify(.projectsChanged)
@@ -223,9 +226,10 @@ public final class ProjectManager: ProjectProviding, SuperLog {
 
     // MARK: - Ordering
 
-    /// 把项目移到「非置顶区」最前（recent 语义，不依赖时间戳比较）：
-    /// 保持所有置顶项目在前，把指定项目插入到置顶区之后、其余最近打开项目之前。
-    private func moveToRecentFront(_ project: Project) {
+    /// 把新项目插入「非置顶区」最前（旧版新建项目 order=-1 的语义）：
+    /// 保持所有置顶项目在前，把新项目插入到置顶区之后、其余项目之前。
+    /// 仅用于新增项目；点击/打开已有项目不重排。
+    private func insertToFront(_ project: Project) {
         var list = projects.filter { $0.id != project.id }
         let pinnedCount = list.filter { $0.isPinned }.count
         list.insert(project, at: pinnedCount)
