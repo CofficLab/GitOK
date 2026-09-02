@@ -1,3 +1,4 @@
+import AppKit
 import LumiUI
 import ProviderProjects
 import SwiftUI
@@ -12,6 +13,9 @@ struct ProjectsSettingsDetailView: View {
     var body: some View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
             VStack(alignment: .leading, spacing: 24) {
+#if DEBUG
+                debugHeader
+#endif
                 AppSettingSection(
                     title: "项目",
                     titleAlignment: .leading
@@ -29,6 +33,35 @@ struct ProjectsSettingsDetailView: View {
             // 触发 body 重算，读取最新项目列表。
         }
     }
+
+#if DEBUG
+    private var debugHeader: some View {
+        HStack(spacing: 10) {
+            Spacer()
+            AppButton(
+                LumiPluginLocalization.string("Open Data Directory", bundle: .module),
+                systemImage: "folder",
+                style: .warning,
+                size: .small
+            ) {
+                openDataDirectory()
+            }
+        }
+        .font(.appCaption)
+    }
+#endif
+
+    // MARK: - Debug Helpers
+
+    #if DEBUG
+    private func openDataDirectory() {
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent(Bundle.main.bundleIdentifier ?? "com.coffic.gitok", isDirectory: true)
+        guard let url = appSupport else { return }
+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        NSWorkspace.shared.open(url)
+    }
+    #endif
 
     // MARK: - 项目列表
 
