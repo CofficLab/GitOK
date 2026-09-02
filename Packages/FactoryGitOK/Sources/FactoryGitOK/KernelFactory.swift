@@ -47,7 +47,7 @@ public enum KernelFactory {
 
     // MARK: - Main View Assembly
 
-    /// 创建内核并组装完整主视图（工具栏 + ActivityBar + Rail + 内容区）。
+    /// 创建内核并组装完整主视图（工具栏 + 侧边栏 + Rail + 内容区）。
     ///
     /// 视图组装逻辑由 `ViewFactory` 完成（默认 `DefaultViewFactory`）；
     /// 宿主只需要一个视图，无需关心内核如何把各 Provider 的能力组合起来。

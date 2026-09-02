@@ -162,32 +162,32 @@ struct ProviderRootViewTests {
         #expect(type(of: view) == AnyView.self)
     }
 
-    @Test("注入 ActivityBar 后返回根视图")
-    func defaultProviderReturnsRootViewWithActivityBar() {
+    @Test("注入侧边栏后返回根视图")
+    func defaultProviderReturnsRootViewWithSidebar() {
         let provider = DefaultRootViewProvider()
-        provider.setActivityBarView(AnyView(Text("activity bar")))
+        provider.setSidebarView(AnyView(Text("sidebar")))
 
         let view = provider.makeRootView()
 
         #expect(type(of: view) == AnyView.self)
     }
 
-    @Test("同时注入工具栏与 ActivityBar 后返回根视图")
-    func defaultProviderReturnsRootViewWithToolbarAndActivityBar() {
+    @Test("同时注入工具栏与侧边栏后返回根视图")
+    func defaultProviderReturnsRootViewWithToolbarAndSidebar() {
         let provider = DefaultRootViewProvider()
         provider.setToolbarView(AnyView(Text("toolbar")))
-        provider.setActivityBarView(AnyView(Text("activity bar")))
+        provider.setSidebarView(AnyView(Text("sidebar")))
 
         let view = provider.makeRootView()
 
         #expect(type(of: view) == AnyView.self)
     }
 
-    @Test("同时注入工具栏、ActivityBar、Rail 与内容后返回根视图")
+    @Test("同时注入工具栏、侧边栏、Rail 与内容后返回根视图")
     func defaultProviderReturnsRootViewWithAllInjections() {
         let provider = DefaultRootViewProvider()
         provider.setToolbarView(AnyView(Text("toolbar")))
-        provider.setActivityBarView(AnyView(Text("activity bar")))
+        provider.setSidebarView(AnyView(Text("sidebar")))
         provider.setRailView(AnyView(Text("rail")))
         provider.setContentHeaderView(AnyView(Text("content header")))
         provider.setContentView(AnyView(Text("content")))
@@ -203,7 +203,7 @@ struct ProviderRootViewTests {
     func providerAccessibleThroughProtocol() {
         let provider: any RootViewProviding = DefaultRootViewProvider()
         provider.setToolbarView(AnyView(Text("toolbar")))
-        provider.setActivityBarView(AnyView(Text("activity bar")))
+        provider.setSidebarView(AnyView(Text("sidebar")))
         provider.setRailView(AnyView(Text("rail")))
         provider.setContentView(AnyView(Text("content")))
 
@@ -214,7 +214,7 @@ struct ProviderRootViewTests {
     func customProviderWorks() {
         @MainActor final class CustomRootView: RootViewProviding {
             @Published var toolbarView: AnyView?
-            @Published var activityBarView: AnyView?
+            @Published var sidebarView: AnyView?
             @Published var railView: AnyView?
             @Published var contentHeaderView: AnyView?
             @Published var contentView: AnyView?
@@ -225,8 +225,8 @@ struct ProviderRootViewTests {
                 toolbarView = view
             }
 
-            func setActivityBarView(_ view: AnyView?) {
-                activityBarView = view
+            func setSidebarView(_ view: AnyView?) {
+                sidebarView = view
             }
 
             func setRailView(_ view: AnyView?) {
@@ -253,7 +253,7 @@ struct ProviderRootViewTests {
                 AnyView(VStack {
                     if let toolbarView { toolbarView }
                     HStack {
-                        if let activityBarView { activityBarView }
+                        if let sidebarView { sidebarView }
                         if let railView { railView }
                         VStack {
                             if let contentHeaderView { contentHeaderView }
@@ -268,7 +268,7 @@ struct ProviderRootViewTests {
 
         let provider: any RootViewProviding = CustomRootView()
         provider.setToolbarView(AnyView(Text("custom toolbar")))
-        provider.setActivityBarView(AnyView(Text("custom activity bar")))
+        provider.setSidebarView(AnyView(Text("custom sidebar")))
         provider.setRailView(AnyView(Text("custom rail")))
         provider.setContentHeaderView(AnyView(Text("custom content header")))
         provider.setContentView(AnyView(Text("custom content")))

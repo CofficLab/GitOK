@@ -2,16 +2,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "ProviderActivityBar",
+    name: "ProviderSidebar",
     defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
-        .iOS(.v17)
     ],
     products: [
         .library(
-            name: "ProviderActivityBar",
-            targets: ["ProviderActivityBar"]
+            name: "ProviderSidebar",
+            targets: ["ProviderSidebar"]
         ),
     ],
     dependencies: [
@@ -19,15 +18,16 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "ProviderActivityBar",
+            name: "ProviderSidebar",
             dependencies: [
                 .product(name: "LumiUI", package: "LumiUI"),
             ],
-            path: "Sources/ProviderActivityBar"
+            path: "Sources/ProviderSidebar"
         ),
         .testTarget(
-            name: "ProviderActivityBarTests",
-            dependencies: ["ProviderActivityBar"]
-        )
+            name: "ProviderSidebarTests",
+            dependencies: ["ProviderSidebar"],
+            path: "Tests/ProviderSidebarTests"
+        ),
     ]
 )

@@ -10,7 +10,7 @@ import SwiftUI
 /// （如注入额外的工具条、替换设置侧边栏头部等）。
 @MainActor
 public protocol ViewFactory {
-    /// 使用已装配的内核组装完整主视图（工具栏 + ActivityBar + Rail + 内容区）。
+    /// 使用已装配的内核组装完整主视图（工具栏 + 侧边栏 + Rail + 内容区）。
     ///
     /// - Parameter kernel: 已装配的 `KernelCoreContainer`（由 `KernelFactory`
     ///   `makeKernel` 产出；主窗口 / 设置窗口 / 菜单栏共享同一实例）。

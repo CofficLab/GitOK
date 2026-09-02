@@ -9,20 +9,20 @@ import ProviderToolbar
 import SwiftUI
 
 #if os(macOS)
-import ProviderActivityBar
 import ProviderRailView
+import ProviderSidebar
 #endif
 
 /// 默认 `ViewFactory` 实现：使用内核已注册的 Provider 组装主视图与设置视图。
 ///
-/// 视图组装逻辑（工具栏 / ActivityBar / Rail / 内容区注入、LumiUI 主题桥接）
+/// 视图组装逻辑（工具栏 / 侧边栏 / Rail / 内容区注入、LumiUI 主题桥接）
 /// 集中在此；`KernelFactory.makeMainView(kernel:)` 等入口
 /// 委托本实现，宿主可通过自定义 `ViewFactory` 覆盖视图组装行为。
 @MainActor
 public struct DefaultViewFactory: ViewFactory {
     public init() {}
 
-    /// 使用已装配的内核组装完整主视图（工具栏 + ActivityBar + Rail + 内容区）。
+    /// 使用已装配的内核组装完整主视图（工具栏 + 侧边栏 + Rail + 内容区）。
     public func makeMainView(kernel: KernelCoreContainer) throws -> AnyView {
         guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
             return AnyView(Text(LumiPluginLocalization.string("RootViewProviding not registered", bundle: .main)))
@@ -40,8 +40,8 @@ public struct DefaultViewFactory: ViewFactory {
             rootView.setToolbarView(toolbar.makeToolbarView())
         }
         #if os(macOS)
-        if let activityBar = kernel.resolveProvider((any ActivityBarProviding).self) {
-            rootView.setActivityBarView(activityBar.makeActivityBarView())
+        if let sidebar = kernel.resolveProvider((any SidebarProviding).self) {
+            rootView.setSidebarView(sidebar.makeSidebarView())
         }
         if let rail = kernel.resolveProvider((any RailViewProviding).self) {
             rootView.setRailView(rail.makeRailView())

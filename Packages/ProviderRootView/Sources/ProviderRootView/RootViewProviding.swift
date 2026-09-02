@@ -10,9 +10,9 @@ import ProviderRailView
 ///
 /// 根布局模仿 Lumi 的 AppLayoutView 结构：
 /// - 顶部工具栏（通过 `setToolbarView(_:)` 注入，通常来自 `ToolbarProviding`）；
-/// - 内容区左侧的竖直 ActivityBar（通过 `setActivityBarView(_:)` 注入，
-///   通常来自 `ActivityBarProviding`）；
-/// - ActivityBar 右侧的侧边栏 Rail（通过 `setRailView(_:)` 注入，
+/// - 内容区左侧的侧边栏（通过 `setSidebarView(_:)` 注入，
+///   通常来自 `SidebarProviding`）；
+/// - 侧边栏右侧的侧边栏 Rail（通过 `setRailView(_:)` 注入，
 ///   通常来自 `RailViewProviding`）；
 /// - 内容区顶部的 Header（通过 `setContentHeaderView(_:)` 注入，
 ///   例如打开文件标签栏）；
@@ -40,16 +40,16 @@ public protocol RootViewProviding: AnyObject, ObservableObject
     /// 宿主通常把 `ToolbarProviding.makeToolbarView()` 的结果注入进来。
     func setToolbarView(_ view: AnyView?)
 
-    /// 注入 ActivityBar 视图（传 `nil` 表示无 ActivityBar）。
+    /// 注入侧边栏视图（传 `nil` 表示无侧边栏）。
     ///
-    /// 宿主通常把 `ActivityBarProviding.makeActivityBarView()` 的结果注入进来，
-    /// 显示在内容区左侧；ActivityBar 自身负责在需要显示时绘制分隔线。
-    func setActivityBarView(_ view: AnyView?)
+    /// 宿主通常把 `SidebarProviding.makeSidebarView()` 的结果注入进来，
+    /// 显示在内容区左侧；侧边栏自身负责在需要显示时绘制分隔线。
+    func setSidebarView(_ view: AnyView?)
 
     /// 注入 Rail 视图（传 `nil` 表示无 Rail）。
     ///
     /// 宿主通常把 `RailViewProviding.makeRailView()` 的结果注入进来，
-    /// 显示在 ActivityBar 右侧。
+    /// 显示在侧边栏右侧。
     func setRailView(_ view: AnyView?)
 
     /// Rail 是否有可见内容。为 false 时根布局不为 Rail 保留空间。
@@ -81,7 +81,7 @@ public protocol RootViewProviding: AnyObject, ObservableObject
     /// 注入主内容视图（传 `nil` 表示回退到占位）。
     ///
     /// 宿主通常把 `ContentViewProviding.makeContentView()` 的结果注入进来，
-    /// 显示在内容区（ActivityBar / Rail 右侧）。
+    /// 显示在内容区（侧边栏 / Rail 右侧）。
     func setContentView(_ view: AnyView?)
 
     /// 注入主内容区底部视图（传 `nil` 表示没有 Footer）。
@@ -130,7 +130,7 @@ public protocol RootViewProviding: AnyObject, ObservableObject
     /// 接入根布局。面板的显隐状态和尺寸元数据由 `RootTrailingPane` 持有。
     func setTrailingPane(_ pane: RootTrailingPane?)
 
-    /// 返回根布局视图（工具栏 + 内容区，内容区左侧可带 ActivityBar 与 Rail）。
+    /// 返回根布局视图（工具栏 + 内容区，内容区左侧可带侧边栏与 Rail）。
     func makeRootView() -> AnyView
 }
 
@@ -215,7 +215,7 @@ public final class RootTrailingPane: ObservableObject {
 
     /// 将面板显隐状态绑定到 ChatSection Provider。
     ///
-    /// ChatPanel 通过 `ChatSectionProviding` 响应 ActivityBar 切换；根布局
+    /// ChatPanel 通过 `ChatSectionProviding` 响应侧边栏切换；根布局
     /// 直接观察这个状态。
     @MainActor
     public func bindVisibility(to provider: any ChatSectionProviding) {

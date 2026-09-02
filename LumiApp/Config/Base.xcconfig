@@ -1,7 +1,7 @@
 //
 // Base.xcconfig
 // 所有 target 与项目级 build configuration 共享的最基础设置。
-// 被 Project-Debug/Release.xcconfig、App-Shared.xcconfig、LumiFinder-*.xcconfig include。
+// 被 Project-Debug/Release.xcconfig、App-Shared.xcconfig include。
 //
 
 // 签名

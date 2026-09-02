@@ -9,9 +9,9 @@ import ProviderTheme
 import ProviderToolbar
 
 #if os(macOS)
-import ProviderActivityBar
 import ProviderCommand
 import ProviderLogo
+import ProviderSidebar
 #endif
 
 /// GitOK 宿主需要的最小 Provider 装配契约。
@@ -29,7 +29,7 @@ public protocol ProviderFactory {
 
     #if os(macOS)
     func makeLogoProvider() -> any LogoProviding
-    func makeActivityBarProvider() -> any ActivityBarProviding
+    func makeSidebarProvider() -> any SidebarProviding
     func makeRailViewProvider() -> any RailViewProviding
     func makeCommandProvider() -> any CommandProviding
     #endif

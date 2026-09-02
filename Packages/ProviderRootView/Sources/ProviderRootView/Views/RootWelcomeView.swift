@@ -26,7 +26,7 @@ struct RootWelcomeView: View {
                         .font(.appTitle)
                         .foregroundStyle(theme.textPrimary)
 
-                    Text(LumiPluginLocalization.string("Select an item from the ActivityBar to get started", bundle: .module))
+                    Text(LumiPluginLocalization.string("Select an item from the sidebar to get started", bundle: .module))
                         .font(.appBody)
                         .foregroundStyle(theme.textSecondary)
                         .multilineTextAlignment(.center)

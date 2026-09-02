@@ -8,10 +8,10 @@ import ProviderTheme
 import ProviderToolbar
 
 #if os(macOS)
-import ProviderActivityBar
 import ProviderCommand
 import ProviderLogo
 import ProviderRailView
+import ProviderSidebar
 #endif
 
 /// GitOK 的最小 Provider 装配。
@@ -73,7 +73,7 @@ public struct DefaultProviderFactory: ProviderFactory {
 
         #if os(macOS)
         try kernel.registerProvider((any LogoProviding).self, makeLogoProvider())
-        try kernel.registerProvider((any ActivityBarProviding).self, makeActivityBarProvider())
+        try kernel.registerProvider((any SidebarProviding).self, makeSidebarProvider())
         try kernel.registerProvider((any RailViewProviding).self, makeRailViewProvider())
         try kernel.registerProvider((any CommandProviding).self, makeCommandProvider())
         #endif
@@ -86,8 +86,8 @@ extension DefaultProviderFactory {
         DefaultLogoProviding()
     }
 
-    public func makeActivityBarProvider() -> any ActivityBarProviding {
-        DefaultActivityBarProviding()
+    public func makeSidebarProvider() -> any SidebarProviding {
+        DefaultSidebarProviding()
     }
 
     public func makeRailViewProvider() -> any RailViewProviding {

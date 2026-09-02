@@ -131,7 +131,7 @@ struct ProviderToolbarTests {
         #expect(provider.visibleToolbarItems.map(\.id) == ["global", "project"])
     }
 
-    @Test("临时隐藏分类不会覆盖 ActivityBar 的基础分类")
+    @Test("临时隐藏分类不会覆盖基础分类")
     func temporaryHiddenCategoriesOverlayBaseCategories() {
         let provider = DefaultToolbarProviding()
         provider.setVisibleCategories([.global, .chat, .project])

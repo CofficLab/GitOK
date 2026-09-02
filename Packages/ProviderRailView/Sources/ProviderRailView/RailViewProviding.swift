@@ -111,7 +111,7 @@ public final class FileRailViewWidthStore: RailViewWidthStoring {
 ///
 /// 定义「内核 → 侧边栏 Rail 视图」这一段的最小契约：宿主在启动时
 /// 通过内核解析 `RailViewProviding`，拿到 Rail 视图后放置到窗口左侧
-/// （通常位于 ActivityBar 右侧、内容区左侧）。
+/// （通常位于侧边栏右侧、内容区左侧）。
 ///
 /// 协议只声明能力，不关心具体实现：
 /// - 外部通过 `registerTabs(_:)` 注入 `RailTabItem`；

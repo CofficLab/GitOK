@@ -5,13 +5,13 @@ import os
 import ProviderRailView
 import SwiftUI
 
-/// `RootViewProviding` 的默认实现：持有注入的工具栏、ActivityBar、Rail、内容 Header、
-/// 主内容视图与 Footer，组合成「顶部工具栏 + 内容区（左侧 ActivityBar，右侧 Rail）」
+/// `RootViewProviding` 的默认实现：持有注入的工具栏、侧边栏、Rail、内容 Header、
+/// 主内容视图与 Footer，组合成「顶部工具栏 + 内容区（左侧侧边栏，右侧 Rail）」
 /// 的根布局（与旧版 `AppLayoutView` 完全一致）。
 ///
 /// 与旧版 `AppLayoutView` 对齐的行为：
 /// - 主内容未注入、且无活跃内容时显示 `WelcomeView` 风格的欢迎占位；
-/// - ActivityBar 在存在至少两个入口时显示；
+/// - 侧边栏在存在至少两个入口时显示；
 /// - Rail 由宿主统一注入后常驻显示，不受当前插件容器影响；
 /// - 根视图应用主题背景、`appThemedAppearance`、`ThemeWindowAppearanceBridge`
 ///   与 `AppThemeVM` 环境对象（复刻旧版主题链）。
@@ -22,7 +22,7 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     nonisolated static let verbose = false
 
     @Published var toolbarView: AnyView?
-    @Published var activityBarView: AnyView?
+    @Published var sidebarView: AnyView?
     @Published var railView: AnyView?
     @Published var contentHeaderView: AnyView?
     @Published var contentView: AnyView?
@@ -62,11 +62,11 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
 
     public func removeOverlays(ids: Set<String>) { overlays.removeAll { ids.contains($0.id) } }
 
-    public func setActivityBarView(_ view: AnyView?) {
-        guard !isSameView(activityBarView, view) else { return }
-        activityBarView = view
+    public func setSidebarView(_ view: AnyView?) {
+        guard !isSameView(sidebarView, view) else { return }
+        sidebarView = view
         if Self.verbose {
-            Self.logger.debug("\(self.t)set activity bar view: \(view == nil ? "nil" : "injected")")
+            Self.logger.debug("\(self.t)set sidebar view: \(view == nil ? "nil" : "injected")")
         }
     }
 
@@ -236,7 +236,7 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
 
     public func makeRootView() -> AnyView {
         if Self.verbose {
-            Self.logger.debug("\(self.t)make root view: toolbar=\(self.toolbarView == nil ? "nil" : "set"), activityBar=\(self.activityBarView == nil ? "nil" : "set"), rail=\(self.railView == nil ? "nil" : "set"), content=\(self.contentView == nil ? "nil" : "set"), footer=\(self.contentFooterView == nil ? "nil" : "set")")
+            Self.logger.debug("\(self.t)make root view: toolbar=\(self.toolbarView == nil ? "nil" : "set"), sidebar=\(self.sidebarView == nil ? "nil" : "set"), rail=\(self.railView == nil ? "nil" : "set"), content=\(self.contentView == nil ? "nil" : "set"), footer=\(self.contentFooterView == nil ? "nil" : "set")")
         }
         var root = AnyView(DefaultRootHostView(provider: self))
         for overlay in overlays { root = overlay.wrap(root) }
@@ -248,7 +248,7 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     /// 是否存在可渲染的活跃内容。
     ///
     /// 内容插件的容器状态不是根视图渲染的必要条件。ChatPanel 由
-    /// ActivityBar + ChatSection 驱动，只要 trailing pane 可见就应正常显示。
+    /// 侧边栏 + ChatSection 驱动，只要 trailing pane 可见就应正常显示。
     var hasActiveContent: Bool {
         return contentHeaderView != nil
             || contentView != nil

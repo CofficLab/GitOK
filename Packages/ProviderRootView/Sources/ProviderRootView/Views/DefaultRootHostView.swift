@@ -16,8 +16,8 @@ struct DefaultRootHostView: View {
             }
 
             HStack(spacing: 0) {
-                if let activityBarView = provider.activityBarView {
-                    activityBarView
+                if let sidebarView = provider.sidebarView {
+                    sidebarView
                 }
 
                 WorkbenchSplitView(provider: provider)

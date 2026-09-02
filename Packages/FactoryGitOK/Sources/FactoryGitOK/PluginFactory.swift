@@ -1,7 +1,6 @@
 import KernelCore
 
 #if os(macOS)
-import PluginActivityBar
 import PluginCommand
 import PluginLogoCoffic
 import PluginLogoManager
@@ -27,7 +26,6 @@ public struct DefaultPluginFactory: PluginFactory {
             CommandPlugin(),
             PluginSettingView(),
             PluginLogoManager(),
-            PluginActivityBar(),
             LogoCofficPlugin(),
             ThemePackPlugin(),
             SettingGeneralPlugin(),
