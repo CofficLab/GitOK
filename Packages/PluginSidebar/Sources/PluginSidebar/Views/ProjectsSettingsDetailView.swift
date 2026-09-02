@@ -9,6 +9,12 @@ import SwiftUI
 /// 右侧提供「打开」操作。数据变化时通过 `objectWillChange` 触发重算。
 struct ProjectsSettingsDetailView: View {
     let projects: any ProjectProviding
+    @StateObject private var observation: ProjectObservationModel
+
+    init(projects: any ProjectProviding) {
+        self.projects = projects
+        _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+    }
 
     var body: some View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
@@ -27,8 +33,8 @@ struct ProjectsSettingsDetailView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .onReceive(projects.objectWillChange) { _ in
-            // 触发 body 重算，读取最新项目列表。
+        .onReceive(observation.$revision) { _ in
+            // 项目状态变化时重算 body，读取最新项目列表。
         }
     }
 

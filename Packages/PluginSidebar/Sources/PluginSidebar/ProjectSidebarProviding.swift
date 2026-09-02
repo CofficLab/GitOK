@@ -36,6 +36,12 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
 /// 项目列表侧边栏视图：从 `ProjectProviding` 读取项目。
 private struct ProjectSidebarView: View {
     let projects: any ProjectProviding
+    @StateObject private var observation: ProjectObservationModel
+
+    init(projects: any ProjectProviding) {
+        self.projects = projects
+        _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+    }
 
     var body: some View {
         AppSettingsSidebarContainer(width: 220) {
@@ -56,8 +62,8 @@ private struct ProjectSidebarView: View {
             .frame(maxHeight: .infinity)
         }
         .frame(maxHeight: .infinity)
-        .onReceive(projects.objectWillChange) { _ in
-            // objectWillChange 触发时重算 body，读取最新项目列表。
+        .onReceive(observation.$revision) { _ in
+            // 项目状态变化时重算 body，读取最新项目列表。
         }
     }
 
@@ -92,5 +98,20 @@ private struct EmptyProjectsPlaceholder: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+/// 项目观察模型：订阅 `ProjectProviding` 的观察者事件，
+/// 把变化转成 `@Published revision` 以驱动 SwiftUI 视图重算。
+/// （参考 Lumi `ThemeSettingsObservationModel`。）
+@MainActor
+final class ProjectObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    private var handle: (any ProjectProvidingObserverHandle)?
+
+    init(projects: any ProjectProviding) {
+        handle = projects.addObserver { [weak self] _ in
+            self?.revision += 1
+        }
     }
 }

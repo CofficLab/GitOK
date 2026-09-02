@@ -16,9 +16,13 @@ final class PluginSidebarTests: XCTestCase {
 
 /// 测试用项目管理桩。
 @MainActor
-private final class MockProjectProviding: ProjectProviding, ObservableObject {
-    @Published private(set) var projects: [Project] = []
-    @Published private(set) var currentProject: Project?
+private final class MockProjectProviding: ProjectProviding {
+    private(set) var projects: [Project] = []
+    private(set) var currentProject: Project?
+
+    func addObserver(_ callback: @escaping (ProjectProvidingEvent) -> Void) -> any ProjectProvidingObserverHandle {
+        NoopObserver(callback: callback)
+    }
 
     func openProject(at url: URL) {}
     func closeCurrentProject() {}
@@ -28,4 +32,14 @@ private final class MockProjectProviding: ProjectProviding, ObservableObject {
     func setCurrentProject(id: UUID?) {}
     func refresh() {}
     func persist() {}
+
+    private final class NoopObserver: ProjectProvidingObserverHandle {
+        private let callback: (ProjectProvidingEvent) -> Void
+
+        init(callback: @escaping (ProjectProvidingEvent) -> Void) {
+            self.callback = callback
+        }
+
+        func cancel() {}
+    }
 }

@@ -77,9 +77,13 @@ public final class SidebarPlugin: SuperPlugin, SuperLog {
 
 /// 占位项目管理实现（内核尚未装配 `ProjectProviding` 前的兜底）。
 @MainActor
-private final class PlaceholderProjectProviding: ProjectProviding, ObservableObject {
-    @Published private(set) var projects: [Project] = []
-    @Published private(set) var currentProject: Project?
+private final class PlaceholderProjectProviding: ProjectProviding {
+    private(set) var projects: [Project] = []
+    private(set) var currentProject: Project?
+
+    func addObserver(_ callback: @escaping (ProjectProvidingEvent) -> Void) -> any ProjectProvidingObserverHandle {
+        NoopObserver(callback: callback)
+    }
 
     func openProject(at url: URL) {}
     func closeCurrentProject() {}
@@ -89,4 +93,15 @@ private final class PlaceholderProjectProviding: ProjectProviding, ObservableObj
     func setCurrentProject(id: UUID?) {}
     func refresh() {}
     func persist() {}
+
+    /// 占位实现的空观察者（永不触发）。
+    private final class NoopObserver: ProjectProvidingObserverHandle {
+        private let callback: (ProjectProvidingEvent) -> Void
+
+        init(callback: @escaping (ProjectProvidingEvent) -> Void) {
+            self.callback = callback
+        }
+
+        func cancel() {}
+    }
 }

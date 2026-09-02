@@ -12,17 +12,23 @@ import ProviderProjects
 /// 排序规则（与旧版一致）：
 /// - 置顶（pinned）项目在最上方；
 /// - 其余按最近打开时间降序（未打开过的排最后）。
+///
+/// 状态变化通过观察者体系通知（`addObserver` / `ProjectProvidingObserverHandle`），
+/// 与 Lumi 其他 Provider（如 `ThemeProviding`）保持一致，不依赖 Combine。
 @MainActor
-public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog {
+public final class ProjectManager: ProjectProviding, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.projects", category: "Projects")
     nonisolated public static let emoji = "📁"
     nonisolated static let verbose = false
 
-    @Published public private(set) var projects: [Project] = []
-    @Published public private(set) var currentProject: Project?
+    public private(set) var projects: [Project] = []
+    public private(set) var currentProject: Project?
 
     /// 项目列表 JSON 文件的 URL。
     public private(set) var storeURL: URL
+
+    /// 观察者集合（弱引用，自动清理失联者）。
+    private var observers: [WeakObserver] = []
 
     public init(storeURL: URL) {
         self.storeURL = storeURL
@@ -44,16 +50,22 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
 
     public func openProject(at url: URL) {
         let standardized = url.standardizedFileURL
+        var openedID: UUID?
         if let index = projects.firstIndex(where: { $0.url.standardizedFileURL == standardized }) {
             var project = projects[index]
             project.lastOpenedAt = Date()
             projects.remove(at: index)
             moveToRecentFront(project)
+            openedID = project.id
         } else {
-            moveToRecentFront(Project(url: standardized))
+            let project = Project(url: standardized)
+            moveToRecentFront(project)
+            openedID = project.id
         }
         currentProject = projects.first(where: { $0.url.standardizedFileURL == standardized })
         persist()
+        notify(.projectsChanged)
+        notify(.selectionChanged(projectID: openedID))
     }
 
     public func closeCurrentProject() {
@@ -62,6 +74,7 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
         if Self.verbose {
             Self.logger.debug("\(self.t)closed current project")
         }
+        notify(.selectionChanged(projectID: nil))
     }
 
     public func addProject(at url: URL) {
@@ -75,16 +88,21 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
         projects.append(Project(url: standardized))
         resortPinned()
         persist()
+        notify(.projectsChanged)
     }
 
     public func removeProject(id: UUID) {
         let oldCount = projects.count
         projects.removeAll { $0.id == id }
-        if projects.count != oldCount {
-            if currentProject?.id == id {
-                currentProject = nil
-            }
-            persist()
+        guard projects.count != oldCount else { return }
+        let removedCurrent = currentProject?.id == id
+        if removedCurrent {
+            currentProject = nil
+        }
+        persist()
+        notify(.projectsChanged)
+        if removedCurrent {
+            notify(.selectionChanged(projectID: nil))
         }
     }
 
@@ -96,6 +114,7 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
         projects[index] = project
         resortPinned()
         persist()
+        notify(.projectsChanged)
     }
 
     public func setCurrentProject(id: UUID?) {
@@ -105,6 +124,7 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
         } else {
             currentProject = nil
         }
+        notify(.selectionChanged(projectID: id))
     }
 
     public func refresh() {
@@ -113,6 +133,26 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
 
     public func persist() {
         writeToDisk()
+    }
+
+    // MARK: - Observation
+
+    @discardableResult
+    public func addObserver(_ callback: @escaping (ProjectProvidingEvent) -> Void) -> any ProjectProvidingObserverHandle {
+        let observer = Observer(owner: self, callback: callback)
+        observers.append(WeakObserver(observer))
+        return observer
+    }
+
+    private func remove(_ observer: Observer) {
+        observers.removeAll { $0.observer === observer }
+    }
+
+    private func notify(_ event: ProjectProvidingEvent) {
+        observers.removeAll { $0.observer == nil }
+        for observer in observers {
+            observer.observer?.invoke(event)
+        }
     }
 
     // MARK: - Persistence
@@ -125,6 +165,7 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
             }
             projects = []
             currentProject = nil
+            notify(.projectsChanged)
             return
         }
         do {
@@ -136,10 +177,12 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
             if Self.verbose {
                 Self.logger.info("\(self.t)loaded \(decoded.count) projects from \(self.storeURL.path, privacy: .public)")
             }
+            notify(.projectsChanged)
         } catch {
             Self.logger.error("\(self.t)failed to decode projects: \(error.localizedDescription, privacy: .public)")
             projects = []
             currentProject = nil
+            notify(.projectsChanged)
         }
     }
 
@@ -171,5 +214,37 @@ public final class ProjectManager: ProjectProviding, ObservableObject, SuperLog 
         let pinned = projects.filter { $0.isPinned }
         let unpinned = projects.filter { !$0.isPinned }
         projects = pinned + unpinned
+    }
+
+    // MARK: - Observer Types
+
+    private final class Observer: ProjectProvidingObserverHandle {
+        private weak var owner: ProjectManager?
+        private let callback: (ProjectProvidingEvent) -> Void
+        private var cancelled = false
+
+        init(owner: ProjectManager, callback: @escaping (ProjectProvidingEvent) -> Void) {
+            self.owner = owner
+            self.callback = callback
+        }
+
+        func cancel() {
+            guard !cancelled else { return }
+            cancelled = true
+            owner?.remove(self)
+        }
+
+        func invoke(_ event: ProjectProvidingEvent) {
+            guard !cancelled else { return }
+            callback(event)
+        }
+    }
+
+    private final class WeakObserver {
+        weak var observer: Observer?
+
+        init(_ observer: Observer) {
+            self.observer = observer
+        }
     }
 }
