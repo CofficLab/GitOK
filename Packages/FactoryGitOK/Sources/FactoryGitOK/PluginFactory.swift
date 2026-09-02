@@ -25,6 +25,7 @@ import PluginSettingsButton
 import PluginSidebar
 import PluginStatusBar
 import PluginStorage
+import PluginToast
 import PluginThemePack
 #endif
 
@@ -48,6 +49,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CommitDetailPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
+            ToastSuperPlugin(),
             OpenFinderPlugin(),
             OpenTerminalPlugin(),
             OpenVSCodePlugin(),

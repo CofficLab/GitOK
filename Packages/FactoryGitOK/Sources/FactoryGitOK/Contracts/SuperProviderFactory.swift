@@ -7,6 +7,7 @@ import ProviderSettingView
 import ProviderStorage
 import ProviderStatusBar
 import ProviderTheme
+import ProviderToast
 import ProviderToolbar
 
 #if os(macOS)
@@ -37,6 +38,7 @@ public protocol ProviderFactory {
     func makeRailViewProvider() -> any RailViewProviding
     func makeCommandProvider() -> any CommandProviding
     func makeCommitDetailProvider() -> any CommitDetailProviding
+    func makeToastProvider() -> any ToastProviding
     func makePluginManagingProvider() -> any PluginManaging
     #endif
 

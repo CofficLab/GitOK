@@ -6,6 +6,7 @@ import ProviderSettingView
 import ProviderStatusBar
 import ProviderStorage
 import ProviderTheme
+import ProviderToast
 import ProviderToolbar
 
 #if os(macOS)
@@ -85,6 +86,7 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any RailViewProviding).self, makeRailViewProvider())
         try kernel.registerProvider((any CommandProviding).self, makeCommandProvider())
         try kernel.registerProvider((any CommitDetailProviding).self, makeCommitDetailProvider())
+        try kernel.registerProvider((any ToastProviding).self, makeToastProvider())
         let pluginManaging = makePluginManagingProvider()
         if let concrete = pluginManaging as? DefaultPluginManager {
             concrete.attach(kernel: kernel)
@@ -114,6 +116,11 @@ extension DefaultProviderFactory {
 
     public func makeCommitDetailProvider() -> any CommitDetailProviding {
         DefaultCommitDetailProvider()
+    }
+
+    /// 产出 `ToastProviding` 实现（默认 no-op；由 PluginToast 在 onBoot 替换为真实状态机）。
+    public func makeToastProvider() -> any ToastProviding {
+        DefaultToastProviding()
     }
 
     public func makePluginManagingProvider() -> any PluginManaging {
