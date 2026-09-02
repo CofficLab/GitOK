@@ -3,6 +3,7 @@ import ProviderContentView
 import ProviderDocsView
 import ProviderRootView
 import ProviderSettingView
+import ProviderStatusBar
 import ProviderStorage
 import ProviderTheme
 import ProviderToolbar
@@ -39,6 +40,10 @@ public struct DefaultProviderFactory: ProviderFactory {
         DefaultToolbarProviding()
     }
 
+    public func makeStatusBarProvider() -> any StatusBarProviding {
+        DefaultStatusBarProviding()
+    }
+
     public func makeRootViewProvider() -> any RootViewProviding {
         DefaultRootViewProvider()
     }
@@ -68,6 +73,7 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any ContentViewProviding).self, makeContentViewProvider())
         try kernel.registerProvider((any DocsViewProviding).self, makeDocsViewProvider())
         try kernel.registerProvider((any ToolbarProviding).self, makeToolbarProvider())
+        try kernel.registerProvider((any StatusBarProviding).self, makeStatusBarProvider())
         try kernel.registerProvider((any RootViewProviding).self, makeRootViewProvider())
         try kernel.registerProvider((any SettingViewProviding).self, makeSettingViewProvider())
 

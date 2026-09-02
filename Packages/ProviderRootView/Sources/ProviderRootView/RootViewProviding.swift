@@ -40,6 +40,12 @@ public protocol RootViewProviding: AnyObject, ObservableObject
     /// 宿主通常把 `ToolbarProviding.makeToolbarView()` 的结果注入进来。
     func setToolbarView(_ view: AnyView?)
 
+    /// 注入窗口底部状态栏视图（传 `nil` 表示无状态栏）。
+    ///
+    /// 宿主通常把 `StatusBarProviding.makeStatusBarView()` 的结果注入进来，
+    /// 显示在整条窗口底部（工具栏的对称位置）。
+    func setStatusBarView(_ view: AnyView?)
+
     /// 注入侧边栏视图（传 `nil` 表示无侧边栏）。
     ///
     /// 宿主通常把 `SidebarProviding.makeSidebarView()` 的结果注入进来，
@@ -143,6 +149,7 @@ public extension RootViewProviding {
     func removeOverlays(ids: Set<String>) {}
     func setContentViewHidden(_ hidden: Bool) {}
     func setContentHeaderViewHidden(_ hidden: Bool) {}
+    func setStatusBarView(_ view: AnyView?) {}
     var isContentFooterViewHidden: Bool { false }
     func setContentFooterViewHidden(_ hidden: Bool) {}
     func setRailViewVisible(_ visible: Bool) {}

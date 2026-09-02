@@ -23,6 +23,11 @@ struct DefaultRootHostView: View {
                 WorkbenchSplitView(provider: provider)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            // 窗口底部状态栏（工具栏的对称位置）。
+            if let statusBarView = provider.statusBarView {
+                statusBarView
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(theme.background)

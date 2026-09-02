@@ -4,6 +4,7 @@ import LumiUI
 import ProviderContentView
 import ProviderRootView
 import ProviderSettingView
+import ProviderStatusBar
 import ProviderTheme
 import ProviderToolbar
 import SwiftUI
@@ -38,6 +39,9 @@ public struct DefaultViewFactory: ViewFactory {
 
         if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {
             rootView.setToolbarView(toolbar.makeToolbarView())
+        }
+        if let statusBar = kernel.resolveProvider((any StatusBarProviding).self) {
+            rootView.setStatusBarView(statusBar.makeStatusBarView())
         }
         #if os(macOS)
         if let sidebar = kernel.resolveProvider((any SidebarProviding).self) {

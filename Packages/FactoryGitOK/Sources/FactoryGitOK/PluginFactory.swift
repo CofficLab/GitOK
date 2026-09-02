@@ -10,6 +10,7 @@ import PluginSettingGeneral
 import PluginSettingView
 import PluginSettingsButton
 import PluginSidebar
+import PluginStatusBar
 import PluginStorage
 import PluginThemePack
 #endif
@@ -32,6 +33,7 @@ public struct DefaultPluginFactory: PluginFactory {
             SidebarPlugin(),
             CommitListPlugin(),
             SettingsButtonPlugin(),
+            StatusBarPlugin(),
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),

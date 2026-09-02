@@ -22,6 +22,7 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     nonisolated static let verbose = false
 
     @Published var toolbarView: AnyView?
+    @Published var statusBarView: AnyView?
     @Published var sidebarView: AnyView?
     @Published var railView: AnyView?
     @Published var contentHeaderView: AnyView?
@@ -52,6 +53,14 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
         toolbarView = view
         if Self.verbose {
             Self.logger.debug("\(self.t)set toolbar view: \(view == nil ? "nil" : "injected")")
+        }
+    }
+
+    public func setStatusBarView(_ view: AnyView?) {
+        guard !isSameView(statusBarView, view) else { return }
+        statusBarView = view
+        if Self.verbose {
+            Self.logger.debug("\(self.t)set status bar view: \(view == nil ? "nil" : "injected")")
         }
     }
 
