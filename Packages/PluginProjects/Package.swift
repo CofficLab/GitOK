@@ -32,7 +32,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginProjectsTests",
-            dependencies: ["PluginProjects"],
+            dependencies: [
+                "PluginProjects",
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+            ],
             path: "Tests/PluginProjectsTests"
         ),
     ]

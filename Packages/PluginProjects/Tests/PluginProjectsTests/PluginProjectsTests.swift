@@ -1,4 +1,5 @@
 import Foundation
+import ProviderProjects
 import XCTest
 @testable import PluginProjects
 
@@ -85,5 +86,62 @@ final class PluginProjectsTests: XCTestCase {
         manager.addProject(at: URL(fileURLWithPath: "/tmp/B"))
         let reloaded = ProjectManager(storeURL: otherURL)
         XCTAssertEqual(reloaded.projects.map(\.title), ["B"])
+    }
+
+    // MARK: - Observation
+
+    func testAddProjectNotifiesProjectsChanged() {
+        let manager = ProjectManager(storeURL: storeURL)
+        var events: [ProjectProvidingEvent] = []
+        let handle = manager.addObserver { events.append($0) }
+
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))
+
+        XCTAssertTrue(events.contains { if case .projectsChanged = $0 { return true }; return false },
+                      "添加项目应通知 projectsChanged，驱动 UI 刷新")
+        handle.cancel()
+    }
+
+    func testOpenProjectNotifiesSelectionAndProjectsChanged() {
+        let manager = ProjectManager(storeURL: storeURL)
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))
+
+        var events: [ProjectProvidingEvent] = []
+        let handle = manager.addObserver { events.append($0) }
+
+        manager.openProject(at: URL(fileURLWithPath: "/tmp/A"))
+
+        XCTAssertTrue(events.contains { if case .projectsChanged = $0 { return true }; return false })
+        XCTAssertTrue(events.contains {
+            if case .selectionChanged = $0 { return true }; return false
+        }, "打开项目应通知 selectionChanged")
+        handle.cancel()
+    }
+
+    func testCloseCurrentProjectNotifiesSelectionChanged() {
+        let manager = ProjectManager(storeURL: storeURL)
+        manager.openProject(at: URL(fileURLWithPath: "/tmp/A"))
+
+        var events: [ProjectProvidingEvent] = []
+        let handle = manager.addObserver { events.append($0) }
+
+        manager.closeCurrentProject()
+
+        XCTAssertTrue(events.contains {
+            if case .selectionChanged(projectID: nil) = $0 { return true }; return false
+        })
+        handle.cancel()
+    }
+
+    func testCancelStopsNotifications() {
+        let manager = ProjectManager(storeURL: storeURL)
+        var count = 0
+        let handle = manager.addObserver { _ in count += 1 }
+
+        handle.cancel()
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))
+        manager.openProject(at: URL(fileURLWithPath: "/tmp/A"))
+
+        XCTAssertEqual(count, 0, "cancel 后不应再收到事件")
     }
 }
