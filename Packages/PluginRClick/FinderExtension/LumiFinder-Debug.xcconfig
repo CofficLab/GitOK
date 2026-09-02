@@ -7,7 +7,7 @@
 #include "../../../LumiApp/Config/Base.xcconfig"
 
 // 产物
-PRODUCT_BUNDLE_IDENTIFIER = com.coffic.lumi.debug.finder
+PRODUCT_BUNDLE_IDENTIFIER = com.coffic.gitok.debug.finder
 INFOPLIST_FILE = Packages/PluginRClick/FinderExtension/Info.plist
 GENERATE_INFOPLIST_FILE = NO
 
@@ -24,10 +24,10 @@ CODE_SIGN_ENTITLEMENTS = Packages/PluginRClick/FinderExtension/LumiFinder.entitl
 // 部署目标（与项目级一致，显式声明保留原状）
 MACOSX_DEPLOYMENT_TARGET = 14.0
 
-// Lumi 环境标识（Debug）
-LUMI_APP_GROUP_IDENTIFIER = group.com.coffic.lumi.debug
-LUMI_FINDER_DISPLAY_NAME = "Lumi Finder (Debug)"
-LUMI_URL_SCHEME = lumi-debug
+// GitOK 环境标识（Debug）
+LUMI_APP_GROUP_IDENTIFIER = group.com.coffic.gitok.debug
+LUMI_FINDER_DISPLAY_NAME = "GitOK Finder (Debug)"
+LUMI_URL_SCHEME = gitok-debug
 
 // 版本号（各自独立）
 MARKETING_VERSION = 5.0.0

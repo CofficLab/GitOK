@@ -61,13 +61,13 @@ public final class DefaultStorageProvider: StorageProviding, SuperLog {
     /// `<Application Support>/<bundleID>/db_<debug|production>_v<majorVersion>/`。
     ///
     /// 与旧版 `StoragePlugin.makeDefaultDataRootDirectory()` 完全一致：
-    /// - bundleID：主 bundle 标识，回退 `com.coffic.Lumi`；
+    /// - bundleID：主 bundle 标识，回退 `com.coffic.gitok`；
     /// - 环境名：DEBUG 构建 `db_debug_*`，Release 构建 `db_production_*`；
     /// - 主版本号：取 `CFBundleShortVersionString` 第一段，回退 4。
     public static func makeDefaultDataRootDirectory() -> URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
-        let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.Lumi"
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.gitok"
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "4"
         let majorVersion = Self.majorVersion(from: version)
 

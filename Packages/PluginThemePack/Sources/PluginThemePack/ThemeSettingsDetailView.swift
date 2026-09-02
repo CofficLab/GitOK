@@ -196,7 +196,7 @@ struct ThemeSettingsDetailView: View {
     #if DEBUG
     private func openDataDirectory() {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
-            .appendingPathComponent("com.coffic.Lumi", isDirectory: true)
+            .appendingPathComponent(Bundle.main.bundleIdentifier ?? "com.coffic.gitok", isDirectory: true)
         guard let url = appSupport else { return }
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         NSWorkspace.shared.open(url)

@@ -57,7 +57,7 @@ public final class StorageSuperPlugin: SuperPlugin, SuperLog {
             create: true
         )
 
-        let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.Lumi"
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.gitok"
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "4"
         let majorVersion = version.split(separator: ".").first.flatMap { Int($0) } ?? 4
 

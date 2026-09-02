@@ -12,8 +12,8 @@ public class RClickConfigManager: ObservableObject, SuperLog {
     public nonisolated static let emoji = "🖱️"
     public nonisolated static let verbose: Bool = false
 
-    /// 与 `LumiFinder/FinderSync` 保持一致，并按 Debug/Release 使用独立容器。
-    public nonisolated static let appGroupId = Bundle.main.object(forInfoDictionaryKey: "LumiAppGroupIdentifier") as? String ?? "group.com.coffic.lumi"
+    /// 与 Finder 扩展保持一致，并按 Debug/Release 使用独立容器。
+    public nonisolated static let appGroupId = Bundle.main.object(forInfoDictionaryKey: "LumiAppGroupIdentifier") as? String ?? "group.com.coffic.gitok"
     public nonisolated static let sharedConfigFilename = "RClickConfig.json"
     public nonisolated static let corruptSharedConfigFilename = "RClickConfig.corrupt.json"
 

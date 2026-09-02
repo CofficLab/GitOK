@@ -194,7 +194,7 @@ public final class DefaultThemeProviding: ThemeProviding {
     private static var defaultStorageDirectory: URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
-        let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.Lumi"
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.gitok"
         return base
             .appendingPathComponent(bundleID, isDirectory: true)
             .appendingPathComponent(Self.pluginName, isDirectory: true)

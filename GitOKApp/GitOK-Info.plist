@@ -12,5 +12,7 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LumiAppGroupIdentifier</key>
+	<string>group.com.coffic.gitok</string>
 </dict>
 </plist>
