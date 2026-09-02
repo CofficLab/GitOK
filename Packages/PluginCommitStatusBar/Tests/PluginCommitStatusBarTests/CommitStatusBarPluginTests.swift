@@ -55,4 +55,16 @@ final class CommitStatusBarPluginTests: XCTestCase {
         XCTAssertNotNil(item)
         XCTAssertEqual(item?.placement, .leading)
     }
+
+    /// 验证观察模型在 commit 变化时确实递增 revision（驱动 SwiftUI 重算）。
+    func testObservationModelFiresOnSelectionChange() throws {
+        let detail = DefaultCommitDetailProvider()
+        let model = CommitDetailObservationModel(detail: detail)
+
+        XCTAssertEqual(model.revision, 0)
+        detail.selectCommit(commit("abc1234567890abc1234567890abc1234567890"), in: URL(fileURLWithPath: "/tmp/repo"))
+        XCTAssertEqual(model.revision, 1, "observer should fire when a commit is selected")
+        detail.clearSelection()
+        XCTAssertEqual(model.revision, 2)
+    }
 }

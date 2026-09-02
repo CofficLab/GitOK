@@ -117,7 +117,15 @@ let package = Package(
         ),
         .testTarget(
             name: "FactoryGitOKTests",
-            dependencies: ["FactoryGitOK"],
+            dependencies: [
+                "FactoryGitOK",
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderCommit", package: "ProviderCommit"),
+                .product(name: "ProviderToast", package: "ProviderToast"),
+                .product(name: "PluginToast", package: "PluginToast"),
+                .product(name: "PluginCommitToast", package: "PluginCommitToast"),
+                .product(name: "PluginCommitStatusBar", package: "PluginCommitStatusBar"),
+            ],
             path: "Tests/FactoryGitOKTests"
         ),
     ]
