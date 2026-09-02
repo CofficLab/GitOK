@@ -79,8 +79,8 @@ final class GitCommitLoaderTests: XCTestCase {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
 
         XCTAssertThrowsError(try GitCommitLoader.loadCommits(in: dir)) { error in
-            guard case GitCommitLoaderError.gitFailed = error else {
-                return XCTFail("expected gitFailed, got \(error)")
+            guard case GitCommitLoaderError.notARepository = error else {
+                return XCTFail("expected notARepository, got \(error)")
             }
         }
     }

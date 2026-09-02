@@ -29,6 +29,12 @@ public enum GitCommitLoader {
         guard repository.hasDirectoryPath || FileManager.default.fileExists(atPath: repository.path) else {
             throw GitCommitLoaderError.notARepository(repository)
         }
+        // 快速判定是否为 git 仓库：目录下存在 `.git` 或本身是 bare 仓库。
+        let gitDir = repository.appendingPathComponent(".git")
+        let isBare = FileManager.default.fileExists(atPath: repository.appendingPathComponent("HEAD").path)
+        guard FileManager.default.fileExists(atPath: gitDir.path) || isBare else {
+            throw GitCommitLoaderError.notARepository(repository)
+        }
         return [
             "/usr/bin/git", "-C", repository.path,
             "log",
@@ -92,8 +98,19 @@ public enum GitCommitLoader {
 }
 
 /// Git 提交加载错误。
-public enum GitCommitLoaderError: Error, Equatable {
+public enum GitCommitLoaderError: Error, Equatable, LocalizedError {
     case notARepository(URL)
     case gitUnavailable(String)
     case gitFailed(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .notARepository(let url):
+            "该目录不是 Git 仓库：\(url.lastPathComponent)"
+        case .gitUnavailable:
+            "未找到 git 命令，请确认系统已安装 git"
+        case .gitFailed(let message):
+            message
+        }
+    }
 }
