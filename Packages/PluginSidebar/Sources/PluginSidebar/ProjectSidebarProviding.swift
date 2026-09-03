@@ -77,7 +77,7 @@ private struct ProjectSidebarView: View {
                 }
                 Group {
                     if filteredProjects.isEmpty {
-                        EmptyProjectsPlaceholder()
+                        EmptyProjectsPlaceholder(projects: projects)
                     } else {
                         ScrollView(.vertical, showsIndicators: false) {
                             LazyVStack(spacing: 2) {
@@ -145,18 +145,53 @@ private struct ProjectSidebarView: View {
     }
 }
 
-/// 侧边栏暂无项目时的占位视图。
+/// 侧边栏暂无项目时的占位视图（对齐旧版 Onboarding 空态引导）。
 private struct EmptyProjectsPlaceholder: View {
+    let projects: any ProjectProviding
+
+    init(projects: any ProjectProviding) {
+        self.projects = projects
+    }
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 14) {
+            Spacer(minLength: 24)
             Image(systemName: "folder.badge.plus")
-                .font(.system(size: 28))
+                .font(.system(size: 40))
                 .foregroundStyle(.secondary)
-            Text("No Projects")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+            VStack(spacing: 4) {
+                Text("Get Started with GitOK")
+                    .font(.callout.weight(.semibold))
+                Text("Add an existing repository, or clone a new one.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 170)
+            }
+            AppButton(
+                "Add Project",
+                systemImage: "folder",
+                style: .primary,
+                size: .small
+            ) {
+                addExistingProject()
+            }
+            Spacer(minLength: 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func addExistingProject() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Add"
+        panel.message = "Choose a repository folder to add to GitOK"
+        if panel.runModal() == .OK, let url = panel.url {
+            projects.addProject(at: url)
+            projects.openProject(at: url)
+        }
     }
 }
 
