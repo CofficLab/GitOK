@@ -6,6 +6,7 @@ import PluginCommitDetail
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
+import PluginGitDiff
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -49,6 +50,7 @@ public struct DefaultPluginFactory: PluginFactory {
             SidebarPlugin(),
             CommitListPlugin(),
             CommitDetailPlugin(),
+            GitDiffPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             ToastSuperPlugin(),

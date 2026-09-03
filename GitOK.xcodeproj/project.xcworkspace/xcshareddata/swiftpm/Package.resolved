@@ -9,6 +9,15 @@
         "branch" : "main",
         "revision" : "fd9e3686f010e61a6fdb2f00b35071e090a4f7fd"
       }
+    },
+    {
+      "identity" : "magicdiffview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicDiffView.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b97553a3cb8d877981ec787f5f94e5fd0301c9cd"
+      }
     }
   ],
   "version" : 3

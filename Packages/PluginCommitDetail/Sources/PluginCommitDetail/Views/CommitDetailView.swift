@@ -6,14 +6,13 @@ import SwiftUI
 /// Commit 详情主内容视图。
 ///
 /// 订阅 `CommitDetailProviding`：无选中 commit 时显示占位；
-/// 有选中时展示 commit 信息头 + （文件列表 | diff 详情）两栏，
-/// 对齐旧版 GitDetail 布局（header + HSplitView）。
+/// 有选中时展示 commit 信息头 + 文件列表。文件列表选中某文件时
+/// 通过 Provider 写入 `selectedFile`，右侧的 git diff 插件（trailing pane）
+/// 据此展示该文件的 diff——diff 渲染已从本视图拆分出去。
 struct CommitDetailView: View {
     let detail: any CommitDetailProviding
 
     @StateObject private var observation: CommitDetailObservationModel
-    @State private var selectedFilePath: String?
-    @State private var lastHandledHash: String?
 
     init(detail: any CommitDetailProviding) {
         self.detail = detail
@@ -27,7 +26,8 @@ struct CommitDetailView: View {
                 CommitDetailLayout(
                     commit: commit,
                     projectURL: projectURL,
-                    selectedFilePath: $selectedFilePath
+                    selectedFile: detail.selectedFile,
+                    onSelectFile: { detail.selectFile($0) }
                 )
             } else {
                 AppEmptyState(
@@ -40,19 +40,7 @@ struct CommitDetailView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onReceive(observation.$revision) { _ in
-            handleSelectionChange()
-        }
-        .onAppear {
-            handleSelectionChange()
-        }
-    }
-
-    /// 选中 commit 变化后重置文件选择（保持与当前 commit 同步）。
-    private func handleSelectionChange() {
-        guard let commit = detail.selectedCommit else { return }
-        if commit.hash != lastHandledHash {
-            lastHandledHash = commit.hash
-            selectedFilePath = nil
+            // Provider 状态变化时重算 body，读取最新的 selectedCommit / selectedFile。
         }
     }
 }

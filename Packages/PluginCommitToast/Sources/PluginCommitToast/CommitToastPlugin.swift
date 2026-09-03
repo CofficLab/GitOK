@@ -77,12 +77,17 @@ public final class ToastCommitDetailProvider: CommitDetailProviding {
 
     public var selectedCommit: GitCommit? { inner.selectedCommit }
     public var selectedProjectURL: URL? { inner.selectedProjectURL }
+    public var selectedFile: String? { inner.selectedFile }
 
     @discardableResult
     public func addObserver(
         _ callback: @escaping (CommitDetailEvent) -> Void
     ) -> any CommitDetailObserverHandle {
         inner.addObserver(callback)
+    }
+
+    public func selectFile(_ path: String?) {
+        inner.selectFile(path)
     }
 
     public func selectCommit(_ commit: GitCommit, in projectURL: URL) {

@@ -8,6 +8,10 @@ import KitGit
 public enum CommitDetailEvent {
     /// 选中的 commit 发生变化；回调执行时 `selectedCommit` / `selectedProjectURL` 已是新值。
     case selectionChanged
+
+    /// 当前 commit 内选中的文件发生变化；回调执行时 `selectedFile` 已是新值。
+    /// （例如 commit 详情文件列表选中某文件，git diff 等消费方据此刷新。）
+    case selectedFileChanged
 }
 
 // MARK: - Observer Handle
@@ -39,12 +43,23 @@ public protocol CommitDetailProviding: AnyObject {
     /// 选中 commit 所属的项目路径。
     var selectedProjectURL: URL? { get }
 
-    /// 监听选中状态变化。
+    /// 当前选中的 commit 内选中的文件路径；未选中文件时为 nil。
+    ///
+    /// 该状态与 `selectedCommit` 联动：切换 commit 时自动清空（新 commit 无选中文件）。
+    var selectedFile: String? { get }
+
+    /// 监听选中状态变化（commit 或文件变化都会触发）。
     @discardableResult
     func addObserver(_ callback: @escaping (CommitDetailEvent) -> Void) -> any CommitDetailObserverHandle
 
     /// 选中一个 commit（写入状态并广播事件）。
+    ///
+    /// 会同时清空 `selectedFile`，因为新 commit 尚无选中的文件。
     func selectCommit(_ commit: GitCommit, in projectURL: URL)
+
+    /// 选中当前 commit 内的某个文件（写入状态并广播 `selectedFileChanged`）。
+    /// 传 `nil` 表示取消文件选择。
+    func selectFile(_ path: String?)
 
     /// 清除选中状态（例如切换项目或关闭项目时）。
     func clearSelection()
@@ -60,6 +75,7 @@ public protocol CommitDetailProviding: AnyObject {
 public final class DefaultCommitDetailProvider: CommitDetailProviding {
     public private(set) var selectedCommit: GitCommit?
     public private(set) var selectedProjectURL: URL?
+    public private(set) var selectedFile: String?
 
     /// 当前注册的观察者集合（弱引用持有令牌）。
     private var observers: [WeakCommitDetailObserver] = []
@@ -71,14 +87,31 @@ public final class DefaultCommitDetailProvider: CommitDetailProviding {
         guard selectedCommit?.hash != commit.hash || selectedProjectURL != projectURL else { return }
         selectedCommit = commit
         selectedProjectURL = projectURL
+        // 新 commit 尚无选中文件：清空并广播文件变化，让 diff 等消费方跟随。
+        let hadFile = selectedFile != nil
+        selectedFile = nil
         notifyObservers(.selectionChanged)
+        if hadFile {
+            notifyObservers(.selectedFileChanged)
+        }
+    }
+
+    public func selectFile(_ path: String?) {
+        guard selectedFile != path else { return }
+        selectedFile = path
+        notifyObservers(.selectedFileChanged)
     }
 
     public func clearSelection() {
-        guard selectedCommit != nil || selectedProjectURL != nil else { return }
+        guard selectedCommit != nil || selectedProjectURL != nil || selectedFile != nil else { return }
+        let hadFile = selectedFile != nil
         selectedCommit = nil
         selectedProjectURL = nil
+        selectedFile = nil
         notifyObservers(.selectionChanged)
+        if hadFile {
+            notifyObservers(.selectedFileChanged)
+        }
     }
 
     @discardableResult

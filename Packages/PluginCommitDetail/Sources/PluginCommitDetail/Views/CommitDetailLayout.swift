@@ -4,15 +4,18 @@ import SwiftUI
 
 /// Commit 详情的整体布局（对齐旧版 GitDetailContentLayout）。
 ///
-/// 顶部为 commit 信息头，下方为文件列表 + diff 详情两栏（macOS HSplitView）。
-/// 文件列表由内部状态机异步加载（git diff-tree），选中文件后右侧异步加载
-/// unified diff（git show）。
+/// 顶部为 commit 信息头，下方为文件列表。文件列表由内部状态机异步加载
+/// （git diff-tree），选中文件时通过 `onSelectFile` 写入 Provider 的
+/// `selectedFile`——diff 渲染由右侧的 git diff 插件（rootview trailing pane）
+/// 订阅 Provider 后独立展示。
 struct CommitDetailLayout: View {
     let commit: GitCommit
     let projectURL: URL
+    /// 当前选中的文件（Provider 的单一权威来源）。
+    let selectedFile: String?
+    /// 用户点击文件行时回调（由宿主写入 Provider）。
+    let onSelectFile: (String?) -> Void
     @LumiTheme private var theme
-
-    @Binding var selectedFilePath: String?
 
     @State private var changes: [GitFileChange] = []
     @State private var isLoadingChanges = false
@@ -22,17 +25,8 @@ struct CommitDetailLayout: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             CommitInfoHeaderView(commit: commit)
-
-            HSplitView {
-                fileListPane
-                    .frame(idealWidth: 220)
-                    .frame(minWidth: 180, maxWidth: 420)
-                    .layoutPriority(1)
-
-                diffPane
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            AppDivider()
+            fileListPane
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { loadIfNeeded() }
@@ -44,7 +38,7 @@ struct CommitDetailLayout: View {
     private func loadIfNeeded() {
         guard loadedHash != commit.hash else { return }
         loadedHash = commit.hash
-        selectedFilePath = nil
+        // 新 commit 时由 Provider 清空选中文件；这里无需自行重置。
         isLoadingChanges = true
         changes = []
         loadError = nil
@@ -58,11 +52,6 @@ struct CommitDetailLayout: View {
                 switch result {
                 case .success(let loaded):
                     changes = loaded
-                    // 默认选中第一个非删除文件，让 diff 面板立即有内容。
-                    if selectedFilePath == nil,
-                       let first = loaded.first(where: { $0.status != .deleted }) {
-                        selectedFilePath = first.path
-                    }
                 case .failure(let error):
                     loadError = (error as? LocalizedError)?.errorDescription
                         ?? error.localizedDescription
@@ -119,34 +108,14 @@ struct CommitDetailLayout: View {
                     ForEach(changes) { change in
                         FileChangeRow(
                             change: change,
-                            isSelected: selectedFilePath == change.path
+                            isSelected: selectedFile == change.path
                         ) {
-                            selectedFilePath = change.path
+                            onSelectFile(change.path)
                         }
                     }
                 }
                 .padding(.vertical, 2)
             }
-        }
-    }
-
-    // MARK: - Diff Pane
-
-    @ViewBuilder
-    private var diffPane: some View {
-        if let selectedFilePath {
-            DiffPane(
-                commit: commit,
-                projectURL: projectURL,
-                filePath: selectedFilePath
-            )
-        } else {
-            AppEmptyState(
-                icon: "text.alignleft",
-                title: "Select a File",
-                description: "Choose a changed file to view its diff."
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
@@ -259,8 +228,8 @@ struct FileChangeRow: View {
             Image(systemName: "arrow.right.circle.fill")
                 .foregroundStyle(theme.info)
         case .unmerged:
-            Image(systemName: "exclamationmark.circle.fill")
-                .foregroundStyle(theme.warning)
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(theme.error)
         case .unknown:
             Image(systemName: "questionmark.circle")
                 .foregroundStyle(theme.textTertiary)
