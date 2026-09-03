@@ -70,4 +70,43 @@ final class GitDiffLoaderTests: XCTestCase {
         // 中文内容应被解码（GB18030 成功）而非被吞掉。
         XCTAssertTrue(diff.contains("中文"), "GBK 内容应被解码出来")
     }
+
+    /// 工作区状态：干净与有变更两种场景。
+    func testLoadStatusCleanAndDirty() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-statusprobe-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        func run(_ args: [String]) throws {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            p.arguments = args
+            p.currentDirectoryURL = repo
+            p.standardOutput = Pipe()
+            p.standardError = Pipe()
+            try p.run()
+            p.waitUntilExit()
+        }
+        try run(["init", "-q"])
+        try run(["config", "user.email", "t@t.com"])
+        try run(["config", "user.name", "t"])
+        try run(["checkout", "-q", "-b", "dev"])
+        try Data("hello\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try run(["add", "-A"])
+        try run(["commit", "-qm", "init"])
+
+        // clean
+        var status = try GitStatusLoader.loadStatus(in: repo)
+        XCTAssertTrue(status.isClean)
+        XCTAssertEqual(status.changeCount, 0)
+        XCTAssertEqual(status.branch, "dev")
+
+        // dirty：修改一个文件
+        try Data("hello world\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        status = try GitStatusLoader.loadStatus(in: repo)
+        XCTAssertFalse(status.isClean)
+        XCTAssertEqual(status.changeCount, 1)
+        XCTAssertEqual(status.branch, "dev")
+    }
 }
