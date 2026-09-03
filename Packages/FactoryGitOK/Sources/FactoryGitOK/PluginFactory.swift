@@ -19,6 +19,7 @@ import PluginGitCommitStyleSettings
 import PluginGitStash
 import PluginGitConflictResolver
 import PluginFileInfo
+import PluginAboutSettings
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -75,6 +76,7 @@ public struct DefaultPluginFactory: PluginFactory {
             GitStashPlugin(),
             GitConflictResolverPlugin(),
             FileInfoPlugin(),
+            AboutSettingsPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             ActivityStatusPlugin(),
