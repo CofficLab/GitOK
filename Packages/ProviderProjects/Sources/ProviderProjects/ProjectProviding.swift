@@ -9,6 +9,11 @@ public enum ProjectProvidingEvent {
     case projectsChanged
     /// 当前项目发生变化；回调执行时 `currentProject` 已是新值。
     case selectionChanged(projectID: UUID?)
+    /// 当前项目的仓库数据可能已变化（如提交 / 推送 / 分支切换后）。
+    ///
+    /// 消费方（commit 列表 / 工作区状态 / diff）应重新加载展示，
+    /// 但**不改变**当前项目选择。
+    case dataChanged
 }
 
 // MARK: - Observer Handle
@@ -71,6 +76,10 @@ public protocol ProjectProviding: AnyObject {
 
     /// 从磁盘重新加载项目列表。
     func refresh()
+
+    /// 通知消费方当前项目的仓库数据已变化（提交 / 推送等），
+    /// 不改变项目列表与当前项目选择。
+    func notifyDataChanged()
 
     /// 持久化到磁盘。
     func persist()

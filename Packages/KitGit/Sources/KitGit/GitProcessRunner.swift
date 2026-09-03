@@ -55,6 +55,7 @@ public enum GitProcessRunner {
     /// 修复：文件内容为非 UTF-8 时 `String(data:, encoding: .utf8)`
     /// 返回 nil，导致 diff 被判定为 "No Text Diff"。
     private static func decode(_ data: Data, fallback: String = "") -> String {
+        if data.isEmpty { return fallback }
         if let utf8 = String(data: data, encoding: .utf8) {
             return utf8
         }

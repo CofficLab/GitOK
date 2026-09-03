@@ -33,6 +33,12 @@ struct WorkingTreeStatusView: View {
             }
         }
         .onReceive(projectObservation.$revision) { _ in reloadIfNeeded() }
+        // dataChanged（提交/推送后）→ 强制刷新工作区状态。
+        .onReceive(projectObservation.$lastEvent) { event in
+            if case .dataChanged = event {
+                reloadIfNeeded(force: true)
+            }
+        }
         .onAppear { reloadIfNeeded() }
     }
 
@@ -88,15 +94,15 @@ struct WorkingTreeStatusView: View {
 
     // MARK: - Loading
 
-    /// 项目变化时重新加载工作区状态。
-    private func reloadIfNeeded() {
+    /// 项目变化时重新加载工作区状态；`force` 为 true（提交/推送后）时强制刷新。
+    private func reloadIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
             loadedProjectURL = nil
             status = nil
             isLoading = false
             return
         }
-        guard loadedProjectURL != project.url else { return }
+        if loadedProjectURL == project.url && !force { return }
 
         loadedProjectURL = project.url
         status = nil
@@ -120,10 +126,12 @@ struct WorkingTreeStatusView: View {
 @MainActor
 final class ProjectObservationModel: ObservableObject {
     @Published private(set) var revision = 0
+    @Published private(set) var lastEvent: ProjectProvidingEvent?
     private var handle: (any ProjectProvidingObserverHandle)?
 
     init(projects: any ProjectProviding) {
-        handle = projects.addObserver { [weak self] _ in
+        handle = projects.addObserver { [weak self] event in
+            self?.lastEvent = event
             self?.revision += 1
         }
     }

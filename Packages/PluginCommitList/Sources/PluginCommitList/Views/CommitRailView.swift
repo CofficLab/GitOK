@@ -49,6 +49,12 @@ struct CommitRailView: View {
             Color(nsColor: .underPageBackgroundColor)
         }
         .onReceive(projectObservation.$revision) { _ in reloadIfNeeded() }
+        // dataChanged（提交/推送后）→ 即使项目未变也强制刷新列表。
+        .onReceive(projectObservation.$lastEvent) { event in
+            if case .dataChanged = event {
+                reloadIfNeeded(force: true)
+            }
+        }
         // 选中 commit 变化（可能来自本列表，也可能来自其它消费方）→ 刷新选中态。
         .onReceive(detailObservation.$revision) { _ in refreshSelectionState() }
         .onAppear { reloadIfNeeded() }
@@ -196,7 +202,10 @@ struct CommitRailView: View {
 
     /// 项目变化时重新加载 commit 列表；切换项目时联动清空 Provider 的选中状态，
     /// 避免旧项目的选中 commit 残留在主内容区。
-    private func reloadIfNeeded() {
+    ///
+    /// `force` 为 true（如提交 / 推送后收到 `dataChanged`）时即使项目未变也重载，
+    /// 以便展示新提交。
+    private func reloadIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
             if loadedProjectURL != nil {
                 loadedProjectURL = nil
@@ -207,7 +216,7 @@ struct CommitRailView: View {
             }
             return
         }
-        guard loadedProjectURL != project.url else { return }
+        if loadedProjectURL == project.url && !force { return }
 
         // 项目确实发生了变化：清空旧选中。
         if loadedProjectURL != nil {
@@ -246,10 +255,12 @@ struct CommitRailView: View {
 @MainActor
 final class ProjectObservationModel: ObservableObject {
     @Published private(set) var revision = 0
+    @Published private(set) var lastEvent: ProjectProvidingEvent?
     private var handle: (any ProjectProvidingObserverHandle)?
 
     init(projects: any ProjectProviding) {
-        handle = projects.addObserver { [weak self] _ in
+        handle = projects.addObserver { [weak self] event in
+            self?.lastEvent = event
             self?.revision += 1
         }
     }

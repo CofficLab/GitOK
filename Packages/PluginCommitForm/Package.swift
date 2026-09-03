@@ -2,44 +2,42 @@
 import PackageDescription
 
 let package = Package(
-    name: "PluginCommitDetail",
+    name: "PluginCommitForm",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
     products: [
-        .library(name: "PluginCommitDetail", targets: ["PluginCommitDetail"]),
+        .library(
+            name: "PluginCommitForm",
+            targets: ["PluginCommitForm"]
+        ),
     ],
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
-        .package(path: "../PluginCommitForm"),
-        .package(path: "../ProviderCommit"),
         .package(path: "../ProviderCommitForm"),
-        .package(path: "../ProviderContentView"),
         .package(path: "../ProviderProjects"),
     ],
     targets: [
         .target(
-            name: "PluginCommitDetail",
+            name: "PluginCommitForm",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "PluginCommitForm", package: "PluginCommitForm"),
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
-                .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
-            path: "Sources/PluginCommitDetail"
+            path: "Sources/PluginCommitForm"
         ),
         .testTarget(
-            name: "PluginCommitDetailTests",
-            dependencies: ["PluginCommitDetail"],
-            path: "Tests/PluginCommitDetailTests"
+            name: "PluginCommitFormTests",
+            dependencies: ["PluginCommitForm"],
+            path: "Tests/PluginCommitFormTests"
         ),
     ]
 )

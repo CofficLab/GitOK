@@ -136,6 +136,10 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         loadFromDisk()
     }
 
+    public func notifyDataChanged() {
+        notify(.dataChanged)
+    }
+
     public func persist() {
         writeToDisk()
     }

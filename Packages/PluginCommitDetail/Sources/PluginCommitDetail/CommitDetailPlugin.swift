@@ -3,7 +3,9 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderCommit
+import ProviderCommitForm
 import ProviderContentView
+import ProviderProjects
 import SwiftUI
 
 // MARK: - Commit Detail SuperPlugin
@@ -47,8 +49,15 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)CommitDetailProviding not registered; skip content injection")
             return
         }
+        guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
+            Self.logger.error("\(self.t)ProjectProviding not registered; skip content injection")
+            return
+        }
 
-        contentView.setContentView(AnyView(CommitDetailView(detail: detail)))
+        let form = kernel.resolveProvider((any CommitFormProviding).self)
+        contentView.setContentView(
+            AnyView(CommitDetailView(detail: detail, projects: projects, form: form))
+        )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {

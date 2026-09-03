@@ -3,6 +3,7 @@ import KernelCore
 #if os(macOS)
 import PluginCommand
 import PluginCommitDetail
+import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
@@ -52,6 +53,7 @@ public struct DefaultPluginFactory: PluginFactory {
             WorktreeStatusPlugin(),
             CommitListPlugin(),
             CommitDetailPlugin(),
+            CommitFormPlugin(),
             GitDiffPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),

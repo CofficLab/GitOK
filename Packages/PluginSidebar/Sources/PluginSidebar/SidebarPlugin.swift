@@ -92,6 +92,7 @@ private final class PlaceholderProjectProviding: ProjectProviding {
     func pinProject(id: UUID, isPinned: Bool) {}
     func setCurrentProject(id: UUID?) {}
     func refresh() {}
+    func notifyDataChanged() {}
     func persist() {}
 
     /// 占位实现的空观察者（永不触发）。

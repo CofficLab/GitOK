@@ -1,42 +1,63 @@
 import KitGit
 import LumiUI
+import PluginCommitForm
 import ProviderCommit
+import ProviderCommitForm
+import ProviderProjects
 import SwiftUI
 
 /// Commit 详情主内容视图。
 ///
-/// 订阅 `CommitDetailProviding`：无选中 commit 时显示占位；
+/// 顶部嵌入提交表单（有 `CommitFormProviding` 时，对齐旧版 header 常驻表单）；
+/// 下方订阅 `CommitDetailProviding`：无选中 commit 时显示占位；
 /// 有选中时展示 commit 信息头 + 文件列表。文件列表选中某文件时
 /// 通过 Provider 写入 `selectedFile`，右侧的 git diff 插件（trailing pane）
 /// 据此展示该文件的 diff——diff 渲染已从本视图拆分出去。
 struct CommitDetailView: View {
     let detail: any CommitDetailProviding
+    let projects: any ProjectProviding
+    let form: (any CommitFormProviding)?
 
     @StateObject private var observation: CommitDetailObservationModel
 
-    init(detail: any CommitDetailProviding) {
+    init(
+        detail: any CommitDetailProviding,
+        projects: any ProjectProviding,
+        form: (any CommitFormProviding)?
+    ) {
         self.detail = detail
+        self.projects = projects
+        self.form = form
         _observation = StateObject(wrappedValue: CommitDetailObservationModel(detail: detail))
     }
 
     var body: some View {
-        Group {
-            if let commit = detail.selectedCommit,
-               let projectURL = detail.selectedProjectURL {
-                CommitDetailLayout(
-                    commit: commit,
-                    projectURL: projectURL,
-                    selectedFile: detail.selectedFile,
-                    onSelectFile: { detail.selectFile($0) }
-                )
-            } else {
-                AppEmptyState(
-                    icon: "doc.text.magnifyingglass",
-                    title: "No Commit Selected",
-                    description: "Select a commit from the commit list to see its changes."
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack(spacing: 0) {
+            // 提交表单常驻详情区顶部（对齐旧版 GitDetailContentLayout header）。
+            if let form {
+                CommitFormView(projects: projects, form: form)
+                AppDivider()
             }
+
+            Group {
+                if let commit = detail.selectedCommit,
+                   let projectURL = detail.selectedProjectURL {
+                    CommitDetailLayout(
+                        commit: commit,
+                        projectURL: projectURL,
+                        selectedFile: detail.selectedFile,
+                        onSelectFile: { detail.selectFile($0) }
+                    )
+                } else {
+                    AppEmptyState(
+                        icon: "doc.text.magnifyingglass",
+                        title: "No Commit Selected",
+                        description: "Select a commit from the commit list to see its changes."
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onReceive(observation.$revision) { _ in
