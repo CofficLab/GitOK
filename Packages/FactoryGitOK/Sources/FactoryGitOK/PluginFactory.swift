@@ -24,6 +24,7 @@ import PluginGitIgnore
 import PluginGitAutoPush
 import PluginLicense
 import PluginGitRemoteRepository
+import PluginDiagnosticsSettings
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -85,6 +86,7 @@ public struct DefaultPluginFactory: PluginFactory {
             GitAutoPushPlugin(),
             LicensePlugin(),
             GitRemoteRepositoryPlugin(),
+            DiagnosticsSettingsPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             ActivityStatusPlugin(),
