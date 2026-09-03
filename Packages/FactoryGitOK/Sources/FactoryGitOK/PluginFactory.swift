@@ -14,6 +14,7 @@ import PluginGitBranchStatus
 import PluginGitUnpushedStatus
 import PluginGitUserSettings
 import PluginGitNetworkSettings
+import PluginGitRepositorySettings
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -65,6 +66,7 @@ public struct DefaultPluginFactory: PluginFactory {
             GitDiffPlugin(),
             GitUserSettingsPlugin(),
             GitNetworkSettingsPlugin(),
+            GitRepositorySettingsPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             ActivityStatusPlugin(),
