@@ -1,0 +1,43 @@
+// swift-tools-version: 6.0
+import PackageDescription
+
+let package = Package(
+    name: "PluginGitConflictResolver",
+    defaultLocalization: "en",
+    platforms: [
+        .macOS(.v14),
+    ],
+    products: [
+        .library(
+            name: "PluginGitConflictResolver",
+            targets: ["PluginGitConflictResolver"]
+        ),
+    ],
+    dependencies: [
+        .package(path: "../KernelCore"),
+        .package(path: "../KitGit"),
+        .package(path: "../KitSuperLog"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
+        .package(path: "../ProviderProjects"),
+        .package(path: "../ProviderStatusBar"),
+    ],
+    targets: [
+        .target(
+            name: "PluginGitConflictResolver",
+            dependencies: [
+                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "LumiUI", package: "LumiUI"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
+            ],
+            path: "Sources/PluginGitConflictResolver"
+        ),
+        .testTarget(
+            name: "PluginGitConflictResolverTests",
+            dependencies: ["PluginGitConflictResolver"],
+            path: "Tests/PluginGitConflictResolverTests"
+        ),
+    ]
+)
