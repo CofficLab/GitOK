@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderCloneRepository
 import ProviderProjects
 import ProviderSettingView
 import ProviderSidebar
@@ -49,8 +50,11 @@ public final class SidebarPlugin: SuperPlugin, SuperLog {
             return
         }
 
+        // 克隆仓库能力（PluginCloneRepository 注册）；无则为 nil（不显示克隆入口）。
+        let cloneProvider = kernel.resolveProvider((any CloneRepositoryProviding).self)
+
         // 用真实项目管理服务重新装配侧边栏，并替换默认实现。
-        let sidebar = ProjectSidebarProviding(projects: projects)
+        let sidebar = ProjectSidebarProviding(projects: projects, cloneProvider: cloneProvider)
         kernel.unregisterProvider((any SidebarProviding).self)
         try kernel.registerProvider((any SidebarProviding).self, sidebar)
 

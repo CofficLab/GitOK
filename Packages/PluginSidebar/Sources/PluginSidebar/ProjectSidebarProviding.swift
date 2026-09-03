@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import LumiUI
+import ProviderCloneRepository
 import ProviderProjects
 import ProviderSidebar
 import SwiftUI
@@ -17,8 +18,15 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     /// 项目数据源（契约）。
     private let projects: any ProjectProviding
 
-    public init(projects: any ProjectProviding) {
+    /// 克隆仓库能力（由 PluginCloneRepository 注册）；为 nil 时不显示克隆入口。
+    private let cloneProvider: (any CloneRepositoryProviding)?
+
+    public init(
+        projects: any ProjectProviding,
+        cloneProvider: (any CloneRepositoryProviding)? = nil
+    ) {
         self.projects = projects
+        self.cloneProvider = cloneProvider
     }
 
     public func registerItems(_ items: [SidebarItem]) {
@@ -29,18 +37,24 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     public func activateItem(id: String?) {}
 
     public func makeSidebarView() -> AnyView {
-        AnyView(ProjectSidebarView(projects: projects))
+        AnyView(ProjectSidebarView(projects: projects, cloneProvider: cloneProvider))
     }
 }
 
 /// 项目列表侧边栏视图：从 `ProjectProviding` 读取项目。
 private struct ProjectSidebarView: View {
     let projects: any ProjectProviding
+    let cloneProvider: (any CloneRepositoryProviding)?
     @StateObject private var observation: ProjectObservationModel
     @State private var searchText = ""
+    @State private var isPresentingClone = false
 
-    init(projects: any ProjectProviding) {
+    init(
+        projects: any ProjectProviding,
+        cloneProvider: (any CloneRepositoryProviding)?
+    ) {
         self.projects = projects
+        self.cloneProvider = cloneProvider
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -76,12 +90,40 @@ private struct ProjectSidebarView: View {
                     }
                 }
                 .frame(maxHeight: .infinity)
+
+                // 底部操作栏：克隆仓库入口（由 PluginCloneRepository 提供）。
+                if let cloneProvider {
+                    AppDivider()
+                    sidebarFooter(cloneProvider)
+                }
             }
         }
         .frame(maxHeight: .infinity)
         .onReceive(observation.$revision) { _ in
             // 项目状态变化时重算 body，读取最新项目列表。
         }
+        .sheet(isPresented: $isPresentingClone) {
+            if let cloneProvider {
+                cloneProvider.makeCloneSheetView()
+            }
+        }
+    }
+
+    /// 侧边栏底部操作栏（对齐旧版底部的项目操作区）。
+    private func sidebarFooter(_ cloneProvider: any CloneRepositoryProviding) -> some View {
+        HStack(spacing: 8) {
+            Spacer()
+            AppButton(
+                "Clone Repository",
+                systemImage: "arrow.triangle.branch",
+                style: .secondary,
+                size: .small
+            ) {
+                isPresentingClone = true
+            }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
     }
 
     private func projectRow(_ project: Project) -> some View {

@@ -2,50 +2,46 @@
 import PackageDescription
 
 let package = Package(
-    name: "PluginSidebar",
+    name: "PluginCloneRepository",
     defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
     products: [
         .library(
-            name: "PluginSidebar",
-            targets: ["PluginSidebar"]
+            name: "PluginCloneRepository",
+            targets: ["PluginCloneRepository"]
         ),
     ],
     dependencies: [
         .package(path: "../KernelCore"),
-        .package(path: "../KitLocalization"),
+        .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
+        .package(path: "../ProviderActivity"),
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../ProviderProjects"),
-        .package(path: "../ProviderSettingView"),
-        .package(path: "../ProviderSidebar"),
+        .package(path: "../ProviderToast"),
     ],
     targets: [
         .target(
-            name: "PluginSidebar",
+            name: "PluginCloneRepository",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
+                .product(name: "ProviderActivity", package: "ProviderActivity"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
-                .product(name: "ProviderSettingView", package: "ProviderSettingView"),
-                .product(name: "ProviderSidebar", package: "ProviderSidebar"),
+                .product(name: "ProviderToast", package: "ProviderToast"),
             ],
-            path: "Sources/PluginSidebar",
-            resources: [.process("../../Resources/Localizable.xcstrings")]
+            path: "Sources/PluginCloneRepository"
         ),
         .testTarget(
-            name: "PluginSidebarTests",
-            dependencies: [
-                "PluginSidebar",
-                .product(name: "ProviderProjects", package: "ProviderProjects"),
-            ],
-            path: "Tests/PluginSidebarTests"
+            name: "PluginCloneRepositoryTests",
+            dependencies: ["PluginCloneRepository"],
+            path: "Tests/PluginCloneRepositoryTests"
         ),
     ]
 )

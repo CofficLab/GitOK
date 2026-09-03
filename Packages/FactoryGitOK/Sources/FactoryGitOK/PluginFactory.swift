@@ -8,6 +8,7 @@ import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
+import PluginCloneRepository
 import PluginGitDiff
 import PluginGitUserSettings
 import PluginLogoCoffic
@@ -51,6 +52,7 @@ public struct DefaultPluginFactory: PluginFactory {
             try! StorageSuperPlugin(),
             CommandPlugin(),
             ProjectsPlugin(),
+            CloneRepositoryPlugin(),
             SidebarPlugin(),
             WorktreeStatusPlugin(),
             CommitListPlugin(),
