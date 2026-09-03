@@ -58,6 +58,7 @@ let package = Package(
         .package(path: "../ProviderTheme"),
         .package(path: "../ProviderToast"),
         .package(path: "../PluginToast"),
+        .package(path: "../PluginWorktreeStatus"),
         .package(path: "../ProviderToolbar"),
     ],
     targets: [
@@ -78,6 +79,7 @@ let package = Package(
                 .product(name: "ProviderTheme", package: "ProviderTheme"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
                 .product(name: "PluginToast", package: "PluginToast"),
+                .product(name: "PluginWorktreeStatus", package: "PluginWorktreeStatus"),
                 .product(name: "ProviderToolbar", package: "ProviderToolbar"),
                 .product(name: "PluginCommand", package: "PluginCommand"),
                 .product(name: "PluginCommitList", package: "PluginCommitList"),

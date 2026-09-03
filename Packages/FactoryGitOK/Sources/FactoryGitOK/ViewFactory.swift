@@ -49,7 +49,7 @@ public struct DefaultViewFactory: ViewFactory {
         }
         if let rail = kernel.resolveProvider((any RailViewProviding).self) {
             rootView.setRailView(rail.makeRailView())
-            rootView.setRailViewVisible(rail.hasVisibleTabs)
+            rootView.setRailViewVisible(rail.hasVisibleTabs || rail.hasVisibleSections)
             rootView.bindRailViewVisibility(to: rail.railVisibilityPublisher)
             rootView.bindRailViewWidth(
                 to: rail.railWidthPublisher,

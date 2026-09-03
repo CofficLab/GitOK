@@ -13,14 +13,19 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
     @Published public private(set) var visibleTabID: String?
     @Published public private(set) var activeTabID: String?
     @Published public private(set) var hasVisibleTabs = false
+    @Published public private(set) var sections: [RailSectionItem] = []
     @Published public private(set) var railWidth: RailViewWidth
 
     private let defaultWidthStore: (any RailViewWidthStoring)?
     private var activeWidthStore: (any RailViewWidthStoring)?
     private var activeWidthOwnerID: String?
 
+    public var hasVisibleSections: Bool { !sections.isEmpty }
+
     public var railVisibilityPublisher: AnyPublisher<Bool, Never> {
-        $hasVisibleTabs.eraseToAnyPublisher()
+        $hasVisibleTabs.combineLatest($sections.map { !$0.isEmpty })
+            .map { $0 || $1 }
+            .eraseToAnyPublisher()
     }
 
     public init(
@@ -39,6 +44,24 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
         self.tabs = tabs.sorted { $0.order < $1.order }
         reconcileActiveTab()
         updateVisibleTabState()
+    }
+
+    // MARK: - Sections
+
+    public func registerSections(_ newSections: [RailSectionItem]) {
+        sections = newSections.sorted { $0.order < $1.order }
+    }
+
+    public func addSections(_ newSections: [RailSectionItem]) {
+        var merged = sections
+        for section in newSections where !merged.contains(where: { $0.id == section.id }) {
+            merged.append(section)
+        }
+        registerSections(merged)
+    }
+
+    public func removeSections(ids: Set<String>) {
+        registerSections(sections.filter { !ids.contains($0.id) })
     }
 
     public func activateTab(id: String?) {
@@ -147,7 +170,19 @@ private struct RailView: View {
     var body: some View {
         let visibleTabs = provider.visibleTabs
 
-        if visibleTabs.isEmpty {
+        if !provider.sections.isEmpty {
+            // 多区块模式：VStack 纵向堆叠各插件贡献的 Rail 区块。
+            // 区块自身决定高度策略：固定高度区块占自然高度，
+            // 弹性区块（maxHeight: .infinity）填满剩余空间。
+            VStack(spacing: 0) {
+                ForEach(provider.sections) { section in
+                    section.makeView()
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .frame(minWidth: 200, maxWidth: .infinity, maxHeight: .infinity)
+            .background(theme.surface)
+        } else if visibleTabs.isEmpty {
             EmptyView()
         } else {
             VStack(spacing: 0) {

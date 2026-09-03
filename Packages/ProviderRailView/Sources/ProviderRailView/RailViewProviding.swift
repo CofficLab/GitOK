@@ -141,6 +141,24 @@ public protocol RailViewProviding: AnyObject, ObservableObject
     /// 不要求上层了解具体的 tab 分类或过滤规则。
     var hasVisibleTabs: Bool { get }
 
+    /// 当前已注入的 Rail 纵向区块视图。
+    var sections: [RailSectionItem] { get }
+
+    /// 当前是否存在可见的 Rail 区块视图。
+    ///
+    /// 与 `hasVisibleTabs` 独立：区块模式（VStack 纵向堆叠）下，
+    /// 根布局同样需要为 Rail 保留空间。
+    var hasVisibleSections: Bool { get }
+
+    /// 替换全部 Rail 区块视图。
+    func registerSections(_ sections: [RailSectionItem])
+
+    /// 追加插件贡献的 Rail 区块视图，不覆盖其他插件的贡献。
+    func addSections(_ sections: [RailSectionItem])
+
+    /// 按 id 撤回插件贡献的 Rail 区块视图。
+    func removeSections(ids: Set<String>)
+
     /// 可见 tab 状态变化发布器。
     var railVisibilityPublisher: AnyPublisher<Bool, Never> { get }
 
@@ -197,8 +215,18 @@ public extension RailViewProviding {
 
     var hasVisibleTabs: Bool { !tabs.isEmpty }
 
+    var sections: [RailSectionItem] { [] }
+
+    var hasVisibleSections: Bool { !sections.isEmpty }
+
+    func registerSections(_ sections: [RailSectionItem]) {}
+
+    func addSections(_ sections: [RailSectionItem]) {}
+
+    func removeSections(ids: Set<String>) {}
+
     var railVisibilityPublisher: AnyPublisher<Bool, Never> {
-        Just(hasVisibleTabs).eraseToAnyPublisher()
+        Just(hasVisibleTabs || hasVisibleSections).eraseToAnyPublisher()
     }
 
     var railWidth: RailViewWidth { .standard }

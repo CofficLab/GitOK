@@ -2,36 +2,34 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderCommit
 import ProviderProjects
 import ProviderRailView
 import SwiftUI
 
-// MARK: - Commit List SuperPlugin
+// MARK: - Worktree Status SuperPlugin
 
-/// Commit 列表插件
+/// 工作区状态插件
 ///
 /// 在 `onBoot` 阶段解析 `RailViewProviding` 与 `ProjectProviding`，
-/// 向 Rail 注入一个纵向区块（section），展示当前打开项目的 commit 列表。
+/// 向 Rail 注入一个纵向区块（section），显示当前项目的工作区状态
+/// （干净 / 未提交变更数 + 分支名）。
 ///
 /// 遵循 Lumi 架构：Rail 支持多区块（`VStack` 组合），本插件贡献
-/// commit 列表区块；工作区状态等其它区块由各自插件贡献。根布局的
-/// `setRailView(rail.makeRailView())` 由 `ViewFactory` 在插件启动后
-/// 统一装配，组合所有区块。
+/// 工作区状态区块，位于 commit 列表区块上方。
 @MainActor
-public final class CommitListPlugin: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.commit-list", category: "CommitList")
-    nonisolated public static let emoji = "🕑"
+public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.worktree-status", category: "WorktreeStatus")
+    nonisolated public static let emoji = "🌿"
     nonisolated static let verbose = false
 
-    public let id = "com.coffic.gitok.plugin.commit-list"
-    /// 依赖项目管理服务先启动。
-    public let order = 20
+    public let id = "com.coffic.gitok.plugin.worktree-status"
+    /// 依赖项目管理服务先启动；需排在 commit 列表区块之前。
+    public let order = 15
     public let dependencies = ["com.coffic.lumi.plugin.projects"]
     public let metadata = PluginMetadata(
-        id: "com.coffic.gitok.plugin.commit-list",
-        name: "Commit List",
-        description: "Rail section showing the commit history of the current project",
+        id: "com.coffic.gitok.plugin.worktree-status",
+        name: "Worktree Status",
+        description: "Rail section showing the working tree status of the current project",
         category: .project,
         stage: .stable,
         policy: .alwaysOn
@@ -48,14 +46,10 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip rail section injection")
             return
         }
-        guard let detail = kernel.resolveProvider((any CommitDetailProviding).self) else {
-            Self.logger.error("\(self.t)CommitDetailProviding not registered; skip rail section injection")
-            return
-        }
 
         rail.addSections([
-            RailSectionItem(id: "\(id).section", order: 20) {
-                CommitRailView(projects: projects, detail: detail)
+            RailSectionItem(id: "\(id).section", order: 15) {
+                WorkingTreeStatusView(projects: projects)
             },
         ])
     }

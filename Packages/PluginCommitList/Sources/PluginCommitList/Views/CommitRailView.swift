@@ -31,9 +31,6 @@ struct CommitRailView: View {
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
 
-    @State private var worktreeStatus: GitWorktreeStatus?
-    @State private var isLoadingStatus = false
-
     init(projects: any ProjectProviding, detail: any CommitDetailProviding) {
         self.projects = projects
         self.detail = detail
@@ -44,7 +41,6 @@ struct CommitRailView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            statusRow
             AppDivider()
             content
         }
@@ -76,57 +72,6 @@ struct CommitRailView: View {
                     }
                 }
                 Spacer(minLength: 8)
-            }
-        }
-    }
-
-    // MARK: - Working Tree Status Row
-
-    /// 工作区状态行：干净（绿勾 + "Working Tree Clean"）或未提交变更计数。
-    /// 右侧附当前分支名（对齐旧版 commit 列表顶部的状态头）。
-    @ViewBuilder
-    private var statusRow: some View {
-        if projects.currentProject != nil {
-            HStack(spacing: 6) {
-                if let status = worktreeStatus {
-                    if status.isClean {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(theme.success)
-                        Text("Working Tree Clean")
-                            .font(DesignTokens.Typography.caption2.weight(.medium))
-                            .foregroundStyle(theme.textPrimary)
-                        Text("All Changes Committed")
-                            .font(DesignTokens.Typography.caption2)
-                            .foregroundStyle(theme.textTertiary)
-                    } else {
-                        Image(systemName: "exclamationmark.circle.fill")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(theme.error)
-                        Text("\(status.changeCount) Uncommitted Change\(status.changeCount == 1 ? "" : "s")")
-                            .font(DesignTokens.Typography.caption2.weight(.medium))
-                            .foregroundStyle(theme.textPrimary)
-                    }
-                    Spacer(minLength: 8)
-                    if let branch = status.branch {
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrow.triangle.branch")
-                                .font(.system(size: 9))
-                            Text(branch)
-                                .font(DesignTokens.Typography.caption2.weight(.medium))
-                        }
-                        .foregroundStyle(theme.textTertiary)
-                        .lineLimit(1)
-                    }
-                } else if isLoadingStatus {
-                    ProgressView()
-                        .controlSize(.small)
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 5)
-            .background {
-                Color(nsColor: .underPageBackgroundColor)
             }
         }
     }
@@ -258,8 +203,6 @@ struct CommitRailView: View {
                 commits = []
                 isLoading = false
                 loadError = nil
-                worktreeStatus = nil
-                isLoadingStatus = false
                 detail.clearSelection()
             }
             return
@@ -275,25 +218,18 @@ struct CommitRailView: View {
         isLoading = true
         commits = []
         loadError = nil
-        worktreeStatus = nil
-        isLoadingStatus = true
 
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result { try GitCommitLoader.loadCommits(in: url) }
-            let statusResult = Result { try GitStatusLoader.loadStatus(in: url) }
             await MainActor.run {
                 isLoading = false
-                isLoadingStatus = false
                 switch result {
                 case .success(let loaded):
                     commits = loaded
                 case .failure(let error):
                     loadError = (error as? GitCommitLoaderError)?.localizedDescription
                         ?? error.localizedDescription
-                }
-                if case .success(let status) = statusResult {
-                    worktreeStatus = status
                 }
             }
         }

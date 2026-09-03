@@ -30,6 +30,7 @@ import PluginStatusBar
 import PluginStorage
 import PluginToast
 import PluginThemePack
+import PluginWorktreeStatus
 #endif
 
 /// GitOK 的专用插件目录。
@@ -48,6 +49,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CommandPlugin(),
             ProjectsPlugin(),
             SidebarPlugin(),
+            WorktreeStatusPlugin(),
             CommitListPlugin(),
             CommitDetailPlugin(),
             GitDiffPlugin(),

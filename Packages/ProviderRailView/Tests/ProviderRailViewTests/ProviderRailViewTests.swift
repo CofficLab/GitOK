@@ -268,4 +268,58 @@ struct ProviderRailViewTests {
 
         #expect(provider.railWidth.idealWidth == 360)
     }
+
+    // MARK: - Sections
+
+    @Test("RailSectionItem 可创建且携带信息")
+    func sectionBasics() {
+        let section = RailSectionItem(id: "status", order: 10) {
+            Text("status")
+        }
+        #expect(section.id == "status")
+        #expect(section.order == 10)
+    }
+
+    @Test("addSections 按 order 排序且去重")
+    func addSectionsSortsAndDeduplicates() {
+        let provider = DefaultRailViewProviding()
+        provider.addSections([
+            RailSectionItem(id: "commit", order: 20) { Text("commit") },
+            RailSectionItem(id: "status", order: 10) { Text("status") },
+        ])
+        #expect(provider.sections.map(\.id) == ["status", "commit"])
+        #expect(provider.hasVisibleSections)
+
+        // 同 id 追加不重复
+        provider.addSections([RailSectionItem(id: "status", order: 5) { Text("status") }])
+        #expect(provider.sections.count == 2)
+
+        // removeSections 按 id 撤回
+        provider.removeSections(ids: ["status"])
+        #expect(provider.sections.map(\.id) == ["commit"])
+
+        // 全部撤回后不再占用 Rail 空间
+        provider.removeSections(ids: ["commit"])
+        #expect(provider.sections.isEmpty)
+        #expect(!provider.hasVisibleSections)
+    }
+
+    @Test("registerSections 替换全部区块")
+    func registerSectionsReplacesAll() {
+        let provider = DefaultRailViewProviding()
+        provider.addSections([RailSectionItem(id: "a", order: 10) { Text("A") }])
+        provider.registerSections([RailSectionItem(id: "b", order: 10) { Text("B") }])
+        #expect(provider.sections.map(\.id) == ["b"])
+    }
+
+    @Test("railVisibilityPublisher 覆盖区块可见性")
+    func visibilityPublisherCoversSections() throws {
+        let provider = DefaultRailViewProviding()
+        var received: [Bool] = []
+        let sub = provider.railVisibilityPublisher.sink { received.append($0) }
+        defer { sub.cancel() }
+
+        provider.addSections([RailSectionItem(id: "status", order: 10) { Text("status") }])
+        #expect(received.last == true)
+    }
 }
