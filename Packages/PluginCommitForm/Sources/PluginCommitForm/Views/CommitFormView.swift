@@ -19,7 +19,7 @@ public struct CommitFormView: View {
 
     @State private var subject: String = ""
     @State private var category: CommitCategory = .Chore
-    @State private var style: CommitStyle = .emoji
+    @State private var style: CommitStyle = CommitStyleStore.current
     @State private var coAuthors: [CoAuthor] = []
     @State private var user: (name: String?, email: String?)?
     @State private var showCoAuthorSheet = false
