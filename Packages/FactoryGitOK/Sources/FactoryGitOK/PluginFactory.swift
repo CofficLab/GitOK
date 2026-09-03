@@ -16,6 +16,7 @@ import PluginGitUserSettings
 import PluginGitNetworkSettings
 import PluginGitRepositorySettings
 import PluginGitCommitStyleSettings
+import PluginGitStash
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -69,6 +70,7 @@ public struct DefaultPluginFactory: PluginFactory {
             GitNetworkSettingsPlugin(),
             GitRepositorySettingsPlugin(),
             GitCommitStyleSettingsPlugin(),
+            GitStashPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             ActivityStatusPlugin(),
