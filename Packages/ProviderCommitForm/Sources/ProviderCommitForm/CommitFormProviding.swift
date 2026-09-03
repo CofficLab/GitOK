@@ -91,6 +91,11 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
     public private(set) var isSubmitting = false
     public private(set) var lastErrorMessage: String?
 
+    /// 活动上报器（可选）：提交 / 推送进行中向状态栏等活动消费方报告阶段。
+    ///
+    /// 通过闭包解耦（不依赖具体 Activity 包）；调用方在 Factory 装配时注入。
+    public var activityReporter: (@MainActor (String?) -> Void)?
+
     private var observers: [WeakCommitFormObserver] = []
 
     public init(
@@ -150,11 +155,14 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
                 commitOnly: commitOnly
             )
 
+            activityReporter?("Committing...")
             try GitCommitOperation.addAll(in: repository)
             try GitCommitOperation.commit(message: plan.message, in: repository)
             if plan.pushesAfterCommit {
+                activityReporter?("Pushing...")
                 try GitCommitOperation.push(in: repository)
             }
+            activityReporter?(nil)
 
             isSubmitting = false
             // 提交成功后重置 subject 为默认信息（对齐旧版 onProjectDidCommit）。
@@ -162,6 +170,7 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
             notifyObservers(.stateChanged)
             notifyObservers(.committed)
         } catch {
+            activityReporter?(nil)
             isSubmitting = false
             lastErrorMessage = error.localizedDescription
             notifyObservers(.stateChanged)

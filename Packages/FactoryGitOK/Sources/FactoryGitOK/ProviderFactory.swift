@@ -10,6 +10,7 @@ import ProviderToast
 import ProviderToolbar
 
 #if os(macOS)
+import ProviderActivity
 import ProviderCommand
 import ProviderCommit
 import ProviderCommitForm
@@ -87,7 +88,11 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any RailViewProviding).self, makeRailViewProvider())
         try kernel.registerProvider((any CommandProviding).self, makeCommandProvider())
         try kernel.registerProvider((any CommitDetailProviding).self, makeCommitDetailProvider())
-        try kernel.registerProvider((any CommitFormProviding).self, makeCommitFormProvider())
+        try kernel.registerProvider((any ActivityProviding).self, makeActivityProvider())
+        try kernel.registerProvider(
+            (any CommitFormProviding).self,
+            makeCommitFormProvider(activity: kernel.resolveProvider((any ActivityProviding).self))
+        )
         try kernel.registerProvider((any ToastProviding).self, makeToastProvider())
         let pluginManaging = makePluginManagingProvider()
         if let concrete = pluginManaging as? DefaultPluginManager {
@@ -120,8 +125,23 @@ extension DefaultProviderFactory {
         DefaultCommitDetailProvider()
     }
 
-    public func makeCommitFormProvider() -> any CommitFormProviding {
-        DefaultCommitFormProvider()
+    public func makeActivityProvider() -> any ActivityProviding {
+        DefaultActivityProvider()
+    }
+
+    /// 提交表单 Provider：把提交 / 推送阶段上报到 Activity 提供者（状态栏活动指示）。
+    public func makeCommitFormProvider(activity: (any ActivityProviding)?) -> any CommitFormProviding {
+        let form = DefaultCommitFormProvider()
+        if let activity {
+            form.activityReporter = { [weak activity] message in
+                if let message {
+                    activity?.setActivity(message)
+                } else {
+                    activity?.clearActivity()
+                }
+            }
+        }
+        return form
     }
 
     /// 产出 `ToastProviding` 实现（默认 no-op；由 PluginToast 在 onBoot 替换为真实状态机）。

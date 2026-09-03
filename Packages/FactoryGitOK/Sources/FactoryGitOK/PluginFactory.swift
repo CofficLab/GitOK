@@ -1,6 +1,7 @@
 import KernelCore
 
 #if os(macOS)
+import PluginActivityStatus
 import PluginCommand
 import PluginCommitDetail
 import PluginCommitForm
@@ -8,6 +9,7 @@ import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
 import PluginGitDiff
+import PluginGitUserSettings
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -55,8 +57,10 @@ public struct DefaultPluginFactory: PluginFactory {
             CommitDetailPlugin(),
             CommitFormPlugin(),
             GitDiffPlugin(),
+            GitUserSettingsPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
+            ActivityStatusPlugin(),
             ToastSuperPlugin(),
             CommitToastPlugin(),
             CommitStatusBarPlugin(),
