@@ -21,6 +21,7 @@ import PluginGitConflictResolver
 import PluginFileInfo
 import PluginAboutSettings
 import PluginGitIgnore
+import PluginGitAutoPush
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -79,6 +80,7 @@ public struct DefaultPluginFactory: PluginFactory {
             FileInfoPlugin(),
             AboutSettingsPlugin(),
             GitIgnorePlugin(),
+            GitAutoPushPlugin(),
             SettingsButtonPlugin(),
             StatusBarPlugin(),
             ActivityStatusPlugin(),
