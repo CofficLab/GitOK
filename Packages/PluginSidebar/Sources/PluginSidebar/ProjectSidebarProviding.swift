@@ -37,29 +37,46 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
 private struct ProjectSidebarView: View {
     let projects: any ProjectProviding
     @StateObject private var observation: ProjectObservationModel
+    @State private var searchText = ""
 
     init(projects: any ProjectProviding) {
         self.projects = projects
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
+    /// 过滤后的项目（仅在有搜索词时过滤）。
+    private var filteredProjects: [Project] {
+        let list = projects.projects
+        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else { return list }
+        let needle = searchText.trimmingCharacters(in: .whitespaces)
+        return list.filter { $0.title.localizedCaseInsensitiveContains(needle) }
+    }
+
     var body: some View {
         AppSettingsSidebarContainer(width: 220) {
-            Group {
-                if projects.projects.isEmpty {
-                    EmptyProjectsPlaceholder()
-                } else {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        LazyVStack(spacing: 2) {
-                            ForEach(projects.projects) { project in
-                                projectRow(project)
+            VStack(spacing: 0) {
+                // 项目较多时显示搜索框（对齐旧版）。
+                if projects.projects.count > 10 {
+                    AppSearchBar(text: $searchText, placeholder: "Search")
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                }
+                Group {
+                    if filteredProjects.isEmpty {
+                        EmptyProjectsPlaceholder()
+                    } else {
+                        ScrollView(.vertical, showsIndicators: false) {
+                            LazyVStack(spacing: 2) {
+                                ForEach(filteredProjects) { project in
+                                    projectRow(project)
+                                }
                             }
+                            .padding(.vertical, 8)
                         }
-                        .padding(.vertical, 8)
                     }
                 }
+                .frame(maxHeight: .infinity)
             }
-            .frame(maxHeight: .infinity)
         }
         .frame(maxHeight: .infinity)
         .onReceive(observation.$revision) { _ in
