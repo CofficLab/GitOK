@@ -28,4 +28,46 @@ final class GitDiffLoaderTests: XCTestCase {
         let diff = try GitDiffLoader.loadDiff(commit: head.hash, filePath: textFile.path, in: repo)
         XCTAssertFalse(diff.isEmpty, "diff should not be empty for \(textFile.path)")
     }
+
+    /// 非 UTF-8（GBK）编码文件：diff 不应被判定为空（回退 GB18030 / lossy 解码）。
+    func testLoadDiffOnGBKFileIsNotEmpty() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-diffprobe-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        func run(_ args: [String]) throws {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            p.arguments = args
+            p.currentDirectoryURL = repo
+            p.standardOutput = Pipe()
+            p.standardError = Pipe()
+            try p.run()
+            p.waitUntilExit()
+        }
+        try run(["init", "-q"])
+        try run(["config", "user.email", "t@t.com"])
+        try run(["config", "user.name", "t"])
+
+        // 用 NSString 以 GBK 编码写出，确保字节非 UTF-8。
+        let content = "{\"name\":\"中文数据\",\"desc\":\"测试\"}\n" as NSString
+        let gbEncoding = CFStringConvertEncodingToNSStringEncoding(
+            CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)
+        )
+        let gbBytes = try XCTUnwrap(content.data(using: gbEncoding))
+        let fileURL = repo.appendingPathComponent("gbk_data.json")
+        try gbBytes.write(to: fileURL)
+
+        try run(["add", "-A"])
+        try run(["commit", "-qm", "add gbk"])
+        let hash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let diff = try GitDiffLoader.loadDiff(commit: hash, filePath: "gbk_data.json", in: repo)
+        XCTAssertFalse(diff.isEmpty, "GBK file diff must not be empty")
+        XCTAssertTrue(diff.contains("gbk_data.json"))
+        // 中文内容应被解码（GB18030 成功）而非被吞掉。
+        XCTAssertTrue(diff.contains("中文"), "GBK 内容应被解码出来")
+    }
 }

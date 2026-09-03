@@ -43,9 +43,30 @@ public enum GitProcessRunner {
         let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
 
         guard process.terminationStatus == 0 else {
-            let message = String(data: errorData, encoding: .utf8) ?? "unknown error"
+            let message = Self.decode(errorData, fallback: "unknown error")
             throw Error.gitFailed(message)
         }
-        return String(data: outputData, encoding: .utf8) ?? ""
+        return Self.decode(outputData)
+    }
+
+    /// 容错解码 git 输出：优先 UTF-8（无损保留）；失败则回退 GB18030
+    /// （覆盖 GBK/GB2312，国内仓库常见编码）；仍失败则 lossy 解码
+    /// （非法字节替换为 U+FFFD，保证不吞掉整段 diff）。
+    /// 修复：文件内容为非 UTF-8 时 `String(data:, encoding: .utf8)`
+    /// 返回 nil，导致 diff 被判定为 "No Text Diff"。
+    private static func decode(_ data: Data, fallback: String = "") -> String {
+        if let utf8 = String(data: data, encoding: .utf8) {
+            return utf8
+        }
+        let gb18030 = String.Encoding(
+            rawValue: CFStringConvertEncodingToNSStringEncoding(
+                CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)
+            )
+        )
+        if let gb = String(data: data, encoding: gb18030) {
+            return gb
+        }
+        let lossy = String(decoding: data, as: UTF8.self)
+        return lossy.isEmpty ? fallback : lossy
     }
 }

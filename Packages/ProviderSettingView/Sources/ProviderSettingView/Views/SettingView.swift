@@ -1,5 +1,6 @@
 import SwiftUI
 import LumiUI
+import KitLocalization
 
 /// 公开工厂函数：为任意 `SettingViewProviding & ObservableObject` 实现渲染设置界面。
 ///
