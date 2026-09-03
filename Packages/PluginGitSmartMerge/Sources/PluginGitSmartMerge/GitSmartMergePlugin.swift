@@ -1,0 +1,61 @@
+import Foundation
+import KernelCore
+import KitSuperLog
+import os
+import ProviderProjects
+import ProviderStatusBar
+import SwiftUI
+
+// MARK: - Git Smart Merge SuperPlugin
+
+/// 智能合并插件：状态栏箭头图标，弹出分支合并表单
+/// （对齐旧版 PluginGitSmartMerge）。
+@MainActor
+public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.git-smart-merge", category: "GitSmartMerge")
+    nonisolated public static let emoji = "🔀"
+    nonisolated static let verbose = false
+
+    public let id = "com.coffic.gitok.plugin.git-smart-merge"
+    public let order = 48
+    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let metadata = PluginMetadata(
+        id: "com.coffic.gitok.plugin.git-smart-merge",
+        name: "Smart Merge",
+        description: "Merge branches from the status bar",
+        category: .project,
+        stage: .stable,
+        policy: .alwaysOn
+    )
+
+    static let itemID = "com.coffic.gitok.plugin.git-smart-merge.id"
+
+    public init() {}
+
+    public func onBoot(kernel: KernelCoreContainer) throws {
+        guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
+            Self.logger.error("\(self.t)StatusBarProviding not registered; skip merge item")
+            return
+        }
+        guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
+            Self.logger.error("\(self.t)ProjectProviding not registered; skip merge item")
+            return
+        }
+
+        statusBar.addStatusBarItems([
+            StatusBarItem(
+                id: Self.itemID,
+                title: "Merge",
+                placement: .leading,
+                order: 24
+            ) {
+                MergeStatusTile(projects: projects)
+            },
+        ])
+    }
+
+    public func onShutdown(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any StatusBarProviding).self)?
+            .removeStatusBarItems(ids: [Self.itemID])
+    }
+}
