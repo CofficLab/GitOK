@@ -3,11 +3,12 @@ import LumiUI
 import ProviderProjects
 import SwiftUI
 
-/// 当前分支状态 tile：显示当前分支名（有项目且非 detached 时）。
+/// 当前分支状态 tile：点击弹出分支管理面板（对齐旧版 BranchStatusTile）。
 public struct BranchStatusTile: View {
     let projects: any ProjectProviding
     @StateObject private var observation: ProjectObservationModel
     @State private var branch: String?
+    @State private var isPresented = false
 
     public init(projects: any ProjectProviding) {
         self.projects = projects
@@ -16,19 +17,26 @@ public struct BranchStatusTile: View {
 
     public var body: some View {
         Group {
-            if let branch, !branch.isEmpty {
+            if projects.currentProject != nil {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.triangle.branch")
                         .font(.system(size: 10))
-                    Text(branch)
+                    Text(branch ?? "No Branch")
                         .font(.appCaption)
                         .lineLimit(1)
                 }
-                .help("Current branch")
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    isPresented.toggle()
+                }
+                .help("Manage Branches")
+                .popover(isPresented: $isPresented, arrowEdge: .bottom) {
+                    BranchManagementView(projects: projects)
+                        .frame(width: 560, height: 520)
+                }
             }
         }
         .onReceive(observation.$revision) { _ in load() }
-        // dataChanged（提交/推送/分支切换后）→ 强制刷新分支名。
         .onReceive(observation.$lastEvent) { event in
             if case .dataChanged = event {
                 load()
