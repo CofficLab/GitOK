@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderCommit
 import ProviderProjects
 import SwiftUI
 
@@ -13,9 +14,11 @@ private func loc(_ key: String) -> String {
 /// （显示 ↑/↓ 计数，点击执行 fetch/pull/push 主操作）。
 ///
 /// 功能：未提交更改计数、未推送/未拉取计数、远程跟踪状态、
-/// fetch/pull/push 操作、活动状态显示。项目变化或提交/推送后自动刷新。
+/// fetch/pull/push 操作、活动状态显示。点击状态区域时清除当前选中
+/// commit（`detail.clearSelection()`），触发详情区展示工作区变动文件。
 struct WorkingTreeStatusView: View {
     let projects: any ProjectProviding
+    let detail: any CommitDetailProviding
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
 
@@ -36,8 +39,9 @@ struct WorkingTreeStatusView: View {
     @State private var loadedProjectURL: URL?
     @State private var isLoading = false
 
-    init(projects: any ProjectProviding) {
+    init(projects: any ProjectProviding, detail: any CommitDetailProviding) {
         self.projects = projects
+        self.detail = detail
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -69,6 +73,11 @@ struct WorkingTreeStatusView: View {
         .frame(maxWidth: .infinity)
         .background {
             theme.surface
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            // 点击工作区状态条 → 清除当前选中 commit，触发详情区展示工作区变动文件。
+            detail.clearSelection()
         }
     }
 

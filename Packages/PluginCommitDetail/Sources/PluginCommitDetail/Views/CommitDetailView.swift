@@ -49,12 +49,8 @@ struct CommitDetailView: View {
                         onSelectFile: { detail.selectFile($0) }
                     )
                 } else {
-                    AppEmptyState(
-                        icon: "doc.text.magnifyingglass",
-                        title: "No Commit Selected",
-                        description: "Select a commit from the commit list to see its changes."
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // 无选中 commit 时展示工作区变动文件列表（用户点击工作区状态条触发）。
+                    WorktreeChangesView(projects: projects, detail: detail)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
