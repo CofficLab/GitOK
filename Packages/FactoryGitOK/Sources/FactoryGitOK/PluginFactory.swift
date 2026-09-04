@@ -9,6 +9,7 @@ import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
 import PluginCloneRepository
+import PluginRootView
 import PluginGitDiff
 import PluginGitBranchStatus
 import PluginGitUnpushedStatus
@@ -67,6 +68,7 @@ public struct DefaultPluginFactory: PluginFactory {
         [
             // 基础服务必须先于业务插件启动。
             try! StorageSuperPlugin(),
+            RootViewPlugin(),
             CommandPlugin(),
             ProjectsPlugin(),
             CloneRepositoryPlugin(),
