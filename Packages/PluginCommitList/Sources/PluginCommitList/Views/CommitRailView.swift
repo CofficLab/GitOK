@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import SwiftUI
 
@@ -8,6 +9,9 @@ import SwiftUI
 /// 作为 Rail 注入根布局（位于侧边栏右侧、内容区左侧）。订阅
 /// `ProjectProviding` 的观察者事件；`currentProject` 变化时异步读取
 /// 该仓库的 commit 列表（后台线程执行 git CLI，主线程更新）。
+///
+/// 同时订阅 `GitRepositoryWatching` 事件（FSEventStream 监听 `.git` 目录），
+/// 感知外部修改（终端 `git commit` / `git checkout` / 其他工具改仓库）后自动刷新。
 ///
 /// 选中 commit 的状态由 `ProjectProviding` 统一维护（Lumi 式"单 Provider
 /// 多处消费"）：
@@ -22,8 +26,10 @@ import SwiftUI
 /// 设计语言一致。
 struct CommitRailView: View {
     let projects: any ProjectProviding
+    let gitWatch: (any GitRepositoryWatching)?
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
+    @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
 
     @State private var commits: [GitCommit] = []
     @State private var unpushedHashes: Set<String> = []
@@ -36,9 +42,11 @@ struct CommitRailView: View {
     @State private var isPushing = false
     @State private var pushError: String?
 
-    init(projects: any ProjectProviding) {
+    init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
         self.projects = projects
+        self.gitWatch = gitWatch
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+        _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
 
     var body: some View {
@@ -59,6 +67,11 @@ struct CommitRailView: View {
             if case .dataChanged = event {
                 reloadIfNeeded(force: true)
             }
+        }
+        // .git 目录变化（HEAD / refs 等）→ 强制刷新 commit 列表
+        // 感知外部修改（终端 git commit / checkout / 其他工具改仓库）
+        .onReceive(gitWatchObservation.$revision) { _ in
+            reloadIfNeeded(force: true)
         }
         .onAppear { reloadIfNeeded() }
     }
@@ -356,6 +369,28 @@ final class ProjectObservationModel: ObservableObject {
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
+            self?.lastEvent = event
+            self?.revision += 1
+        }
+    }
+}
+
+/// Git 仓库监听观察模型：订阅 `GitRepositoryWatching` 的事件，
+/// 把 .git 目录变化（HEAD / index / stash / refs）转成 `@Published revision`
+/// 以驱动 SwiftUI 视图强制刷新。
+///
+/// 当外部修改仓库（如终端 `git commit` / `git checkout` / 其他工具改仓库）时，
+/// FSEventStream 监听到 .git 目录变化，`GitRepositoryWatching` 广播事件，
+/// 本模型接收并触发视图刷新，从而能感知外部修改。
+@MainActor
+final class GitRepositoryWatchObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    @Published private(set) var lastEvent: GitRepositoryWatchingEvent?
+    private var handle: (any GitRepositoryWatchingObserverHandle)?
+
+    init(gitWatch: (any GitRepositoryWatching)?) {
+        guard let gitWatch else { return }
+        handle = gitWatch.addObserver { [weak self] event in
             self?.lastEvent = event
             self?.revision += 1
         }

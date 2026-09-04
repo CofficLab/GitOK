@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderRailView
 import SwiftUI
@@ -52,9 +53,12 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             return
         }
 
+        // GitRepositoryWatching 可选：插件可能未注册（例如测试环境），此时仅依赖 ProjectProviding 刷新
+        let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
+
         rail.addSections([
             RailSectionItem(id: "\(id).section", order: 20) {
-                CommitRailView(projects: projects)
+                CommitRailView(projects: projects, gitWatch: gitWatch)
             },
         ])
     }

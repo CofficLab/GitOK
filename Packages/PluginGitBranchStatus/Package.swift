@@ -19,6 +19,7 @@ let package = Package(
         .package(path: "../KitSuperLog"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
+        .package(path: "../ProviderToolbar"),
     ],
     targets: [
         .target(
@@ -29,6 +30,7 @@ let package = Package(
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
+                .product(name: "ProviderToolbar", package: "ProviderToolbar"),
             ],
             path: "Sources/PluginGitBranchStatus"
         ),
