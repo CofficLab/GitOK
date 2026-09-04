@@ -22,7 +22,10 @@ let package = Package(
             dependencies: [
                 .product(name: "LumiUI", package: "LumiUI"),
             ],
-            path: "Sources/ProviderSidebar"
+            path: "Sources/ProviderSidebar",
+            resources: [
+                .process("Resources"),
+            ]
         ),
         .testTarget(
             name: "ProviderSidebarTests",

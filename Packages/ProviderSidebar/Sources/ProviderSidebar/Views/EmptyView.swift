@@ -1,13 +1,13 @@
 import SwiftUI
 
 /// 侧边栏暂无条目时的占位视图。
-struct EmptySidebarPlaceholder: View {
+struct EmptyView: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: "folder")
                 .font(.system(size: 20))
                 .foregroundStyle(.secondary)
-            Text("No Items")
+            Text("sidebar.empty.title")
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }

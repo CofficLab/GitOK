@@ -12,7 +12,7 @@ struct SidebarView: View {
         AppSettingsSidebarContainer(width: 220) {
             VStack(spacing: 0) {
                 if provider.items.isEmpty {
-                    EmptySidebarPlaceholder()
+                    EmptyView()
                 } else {
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 2) {
