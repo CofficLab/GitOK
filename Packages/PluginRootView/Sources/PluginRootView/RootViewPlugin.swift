@@ -205,6 +205,12 @@ public final class GitOKRootViewProvider: RootViewProviding, ObservableObject, S
         inner.setSidebarView(view)
     }
 
+    public var isSidebarViewHidden: Bool { inner.isSidebarViewHidden }
+
+    public func setSidebarViewHidden(_ hidden: Bool) {
+        inner.setSidebarViewHidden(hidden)
+    }
+
     // MARK: - Rail
 
     public func setRailView(_ view: AnyView?) {

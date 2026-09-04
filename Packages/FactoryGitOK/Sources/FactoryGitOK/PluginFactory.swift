@@ -48,6 +48,7 @@ import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
 import PluginSettingsButton
+import PluginSidebarToggle
 import PluginStatusBar
 import PluginStorage
 import PluginToast
@@ -95,6 +96,7 @@ public struct DefaultPluginFactory: PluginFactory {
             GitSubmodulePlugin(),
             GitRepositoryWatchPlugin(),
             SettingsButtonPlugin(),
+            SidebarTogglePlugin(),
             StatusBarPlugin(),
             ActivityStatusPlugin(),
             GitBranchStatusPlugin(),
