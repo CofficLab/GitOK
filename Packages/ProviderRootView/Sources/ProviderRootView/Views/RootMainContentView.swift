@@ -58,7 +58,7 @@ struct RootMainContentView: View {
     }
 
     /// 覆盖式布局下内容区左侧需要露出的宽度（面板整体往右偏移的量）。
-    private var paneRevealWidth: CGFloat { 48 }
+    private var paneRevealWidth: CGFloat { 120 }
 
     /// 覆盖式浮层面板宽度：占满内容区宽度，仅左侧露出 `paneRevealWidth`。
     ///
@@ -69,11 +69,13 @@ struct RootMainContentView: View {
     }
 
     /// 覆盖式浮层面板：面板内容 + 左边缘分隔线 + 左上角返回按钮 + 投影。
+    ///
+    /// 背景使用毛玻璃材质，让下方的 contentview 隐约可见。
     private func floatingTrailingPane(containerWidth: CGFloat) -> some View {
         trailingPaneContent
             .frame(width: paneWidth(containerWidth: containerWidth))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(theme.surface)
+            .background(.ultraThinMaterial)
             .overlay(alignment: .leading) {
                 // 左边缘分隔线：区分浮层与下方露出的内容区。
                 Rectangle()
