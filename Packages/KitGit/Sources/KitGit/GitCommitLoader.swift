@@ -43,8 +43,9 @@ public enum GitCommitLoader {
         ]
     }
 
-    /// 字段分隔：`%H \x1f %h \x1f %s \x1f %an \x1f %aI`。
-    private static let format = "%H%x1f%h%x1f%s%x1f%an%x1f%aI"
+    /// 字段分隔：`%H \x1f %h \x1f %s \x1f %an \x1f %aI \x1f %P \x1f %D`
+    /// （完整哈希 / 短哈希 / 主题 / 作者 / ISO 时间 / 父哈希 / ref 名）。
+    private static let format = "%H%x1f%h%x1f%s%x1f%an%x1f%aI%x1f%P%x1f%D"
 
     // MARK: - Process
 
@@ -86,14 +87,40 @@ public enum GitCommitLoader {
             guard fields.count >= 5 else { return nil }
             let hash = fields[0]
             guard !hash.isEmpty, let date = ISO8601DateFormatter().date(from: fields[4]) else { return nil }
+            let parents = fields.count > 5
+                ? fields[5].split(separator: " ").map(String.init)
+                : []
+            let tags = fields.count > 6
+                ? parseTags(from: fields[6])
+                : []
             return GitCommit(
                 hash: hash,
                 shortHash: fields[1],
                 message: fields[2],
                 author: fields[3],
-                date: date
+                date: date,
+                parentHashes: parents,
+                tags: tags
             )
         }
+    }
+
+    /// 从 git log `%D` 输出解析 tag 名。`%D` 形如 `HEAD -> main, tag: v1.0, origin/main`，
+    /// 只提取 `tag: <name>` 部分，剔除 `<name>^{}` 的 peeled 标记。
+    static func parseTags(from refNames: String) -> [String] {
+        guard !refNames.isEmpty else { return [] }
+        return refNames
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .compactMap { ref -> String? in
+                guard ref.hasPrefix("tag:") else { return nil }
+                var name = ref.dropFirst(4).trimmingCharacters(in: .whitespaces)
+                guard !name.isEmpty else { return nil }
+                if name.hasSuffix("^{}") {
+                    name.removeLast(3)
+                }
+                return name
+            }
     }
 }
 

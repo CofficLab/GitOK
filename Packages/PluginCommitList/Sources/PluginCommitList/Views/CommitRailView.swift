@@ -16,9 +16,10 @@ import SwiftUI
 /// - 本视图据 Provider 的选中状态高亮当前行；
 /// - 切换项目时联动清空选择，避免旧项目的选中残留。
 ///
-/// 视觉对齐旧版 GitOK 的 commit 行布局（message / 作者 + 相对时间 /
-/// 完整日期），并使用 LumiUI 组件（AppToolbarContainer / AppListRow /
-/// AppEmptyState / AppDivider）保证与整体设计语言一致。
+/// 视觉对齐旧版 GitOK 的 commit 行布局（commit graph + message / 作者 +
+/// 相对时间 / 完整日期 / tag），并使用 LumiUI 组件（AppToolbarContainer /
+/// AppListRow / AppAvatar / AppTag / AppEmptyState / AppDivider）保证与整体
+/// 设计语言一致。
 struct CommitRailView: View {
     let projects: any ProjectProviding
     let detail: any CommitDetailProviding
@@ -27,6 +28,8 @@ struct CommitRailView: View {
     @StateObject private var detailObservation: CommitDetailObservationModel
 
     @State private var commits: [GitCommit] = []
+    @State private var graphRows: [String: CommitGraphLayoutRules.Row] = [:]
+    @State private var hasWorkingChanges = false
     @State private var isLoading = false
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
@@ -41,6 +44,8 @@ struct CommitRailView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
+            AppDivider()
+            workingStateBar
             AppDivider()
             content
         }
@@ -78,8 +83,35 @@ struct CommitRailView: View {
                     }
                 }
                 Spacer(minLength: 8)
+                AppIconButton(
+                    systemImage: "arrow.clockwise",
+                    label: "Refresh",
+                    tint: theme.textSecondary,
+                    size: .compact,
+                    isActive: false
+                ) {
+                    reloadIfNeeded(force: true)
+                    refreshWorkingState()
+                }
             }
         }
+    }
+
+    // MARK: - Working State Bar
+
+    /// 工作区状态条：显示是否有未提交更改（对齐旧版「有未提交的更改」提示）。
+    private var workingStateBar: some View {
+        HStack(spacing: 6) {
+            Image(systemName: hasWorkingChanges ? "circle.fill" : "checkmark.circle")
+                .font(.system(size: 10))
+                .foregroundStyle(hasWorkingChanges ? theme.warning : theme.success)
+            Text(hasWorkingChanges ? "Working Tree Has Changes" : "Working Tree Clean")
+                .font(DesignTokens.Typography.caption2)
+                .foregroundStyle(hasWorkingChanges ? theme.warning : theme.textSecondary)
+            Spacer(minLength: 8)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
     }
 
     // MARK: - Content
@@ -114,7 +146,7 @@ struct CommitRailView: View {
                         commitRow(commit)
                         if commit.id != commits.last?.id {
                             AppDivider()
-                                .padding(.leading, 12)
+                                .padding(.leading, 34)
                         }
                     }
                 }
@@ -127,8 +159,10 @@ struct CommitRailView: View {
 
     private func commitRow(_ commit: GitCommit) -> some View {
         AppListRow(isSelected: isSelected(commit), action: { select(commit) }) {
-            HStack(alignment: .top, spacing: 10) {
-                VStack(alignment: .leading, spacing: 3) {
+            HStack(alignment: .center, spacing: 8) {
+                CommitGraphView(row: graphRows[commit.hash])
+                    .padding(.leading, 2)
+                VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 8) {
                         Text(commit.message)
                             .font(DesignTokens.Typography.subheadline.weight(.medium))
@@ -136,7 +170,12 @@ struct CommitRailView: View {
                             .lineLimit(1)
                             .truncationMode(.tail)
                         Spacer(minLength: 8)
-                        AppTag(commit.shortHash, systemImage: "arrow.triangle.branch")
+                        if !commit.tags.isEmpty {
+                            ForEach(commit.tags.prefix(2), id: \.self) { tag in
+                                AppTag(tag, systemImage: "tag", style: .accent)
+                            }
+                        }
+                        AppTag(commit.shortHash, systemImage: "arrow.triangle.branch", style: .subtle)
                     }
                     HStack(spacing: 6) {
                         authorBadge(commit.author)
@@ -154,8 +193,9 @@ struct CommitRailView: View {
                         .foregroundStyle(theme.textTertiary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 2)
+                .padding(.vertical, 5)
             }
+            .padding(.trailing, 4)
         }
     }
 
@@ -169,18 +209,19 @@ struct CommitRailView: View {
         detail.selectedCommit?.hash == commit.hash
     }
 
-    /// 作者首字母小徽标（基于名字稳定取色）。
+    /// 作者头像徽标（LumiUI AppAvatar，基于名字稳定取色，hover 有动效）。
     private func authorBadge(_ author: String) -> some View {
         let initial = author.trimmingCharacters(in: .whitespaces).first.map(String.init) ?? "?"
         let hue = Double(abs(author.hashValue % 360)) / 360.0
-        let color = Color(hue: hue, saturation: 0.45, brightness: 0.8)
+        let color = Color(hue: hue, saturation: 0.5, brightness: 0.72)
         return ZStack {
-            Circle().fill(color.opacity(0.18))
-            Text(initial.uppercased())
-                .font(.system(size: 9, weight: .semibold))
-                .foregroundStyle(color)
+            AppAvatar(
+                systemImage: "\(initial.uppercased())",
+                tint: color,
+                backgroundTint: color.opacity(0.15),
+                size: 18
+            )
         }
-        .frame(width: 16, height: 16)
     }
 
     // MARK: - Time Formatting
@@ -210,6 +251,7 @@ struct CommitRailView: View {
             if loadedProjectURL != nil {
                 loadedProjectURL = nil
                 commits = []
+                graphRows = [:]
                 isLoading = false
                 loadError = nil
                 detail.clearSelection()
@@ -226,6 +268,7 @@ struct CommitRailView: View {
         loadedProjectURL = project.url
         isLoading = true
         commits = []
+        graphRows = [:]
         loadError = nil
 
         let url = project.url
@@ -236,10 +279,38 @@ struct CommitRailView: View {
                 switch result {
                 case .success(let loaded):
                     commits = loaded
+                    graphRows = Self.computeGraphRows(for: loaded)
                 case .failure(let error):
                     loadError = (error as? GitCommitLoaderError)?.localizedDescription
                         ?? error.localizedDescription
                 }
+            }
+        }
+        refreshWorkingState()
+    }
+
+    /// 计算 commit graph 布局（按提交顺序新→旧，与 `loadCommits` 排序一致）。
+    private static func computeGraphRows(for commits: [GitCommit]) -> [String: CommitGraphLayoutRules.Row] {
+        let nodes = commits.map { CommitGraphLayoutRules.Node(id: $0.hash, parentIDs: $0.parentHashes) }
+        let rows = CommitGraphLayoutRules.layout(nodes: nodes)
+        var byID: [String: CommitGraphLayoutRules.Row] = [:]
+        for row in rows {
+            byID[row.commitID] = row
+        }
+        return byID
+    }
+
+    /// 读取工作区是否有未提交更改（对齐旧版「有未提交的更改」）。
+    private func refreshWorkingState() {
+        guard let project = projects.currentProject else {
+            hasWorkingChanges = false
+            return
+        }
+        let url = project.url
+        Task.detached(priority: .utility) {
+            let changed = GitStashOperation.hasChanges(in: url)
+            await MainActor.run {
+                hasWorkingChanges = changed
             }
         }
     }

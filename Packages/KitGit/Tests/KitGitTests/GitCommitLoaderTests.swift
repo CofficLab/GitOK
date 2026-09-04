@@ -30,6 +30,20 @@ final class GitCommitLoaderTests: XCTestCase {
         XCTAssertTrue(commits.isEmpty)
     }
 
+    func testParseParentsAndTags() {
+        let output = """
+        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\u{1f}aaaaaaa\u{1f}fix: initial commit\u{1f}Alice\u{1f}2026-09-01T10:00:00+08:00\u{1f}\u{1f}HEAD -> main, tag: v1.0.0
+        bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\u{1f}bbbbbbb\u{1f}feat: add feature\u{1f}Bob\u{1f}2026-09-02T08:30:00Z\u{1f}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\u{1f}tag: release^{}, origin/main
+        """
+        let commits = GitCommitLoader.parse(output)
+
+        XCTAssertEqual(commits[0].parentHashes, [])
+        XCTAssertEqual(commits[0].tags, ["v1.0.0"])
+
+        XCTAssertEqual(commits[1].parentHashes, [String(repeating: "a", count: 40)])
+        XCTAssertEqual(commits[1].tags, ["release"])
+    }
+
     func testParseEmptyOutput() {
         XCTAssertTrue(GitCommitLoader.parse("").isEmpty)
     }
