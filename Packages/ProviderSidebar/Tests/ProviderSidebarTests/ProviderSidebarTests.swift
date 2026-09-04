@@ -4,7 +4,7 @@ import XCTest
 @MainActor
 final class ProviderSidebarTests: XCTestCase {
     func testRegisterAndActivate() {
-        let provider = DefaultSidebarProviding()
+        let provider = DefaultSidebarProvider()
         let items = [
             SidebarItem(id: "a", title: "A", systemImage: "folder", order: 2),
             SidebarItem(id: "b", title: "B", systemImage: "folder", order: 1),
@@ -22,7 +22,7 @@ final class ProviderSidebarTests: XCTestCase {
     }
 
     func testAddAndRemoveItems() {
-        let provider = DefaultSidebarProviding()
+        let provider = DefaultSidebarProvider()
         provider.registerItems([SidebarItem(id: "a", title: "A", systemImage: "folder")])
         provider.addItems([SidebarItem(id: "b", title: "B", systemImage: "folder")])
         provider.addItems([SidebarItem(id: "a", title: "A2", systemImage: "folder")])
@@ -35,7 +35,7 @@ final class ProviderSidebarTests: XCTestCase {
     }
 
     func testMakeSidebarView() {
-        let provider = DefaultSidebarProviding()
+        let provider = DefaultSidebarProvider()
         provider.registerItems([SidebarItem(id: "a", title: "A", systemImage: "folder")])
         let view = provider.makeSidebarView()
         XCTAssertNotNil(view)

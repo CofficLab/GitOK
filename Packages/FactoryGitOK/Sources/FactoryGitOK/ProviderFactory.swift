@@ -110,7 +110,7 @@ extension DefaultProviderFactory {
     }
 
     public func makeSidebarProvider() -> any SidebarProviding {
-        DefaultSidebarProviding()
+        DefaultSidebarProvider()
     }
 
     public func makeRailViewProvider() -> any RailViewProviding {

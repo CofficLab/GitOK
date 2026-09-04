@@ -1,4 +1,3 @@
-import LumiUI
 import SwiftUI
 
 /// `SidebarProviding` 的默认实现：持有注入的 `SidebarItem`，
@@ -7,7 +6,7 @@ import SwiftUI
 /// 当前为通用列表容器；后续迁移旧版 GitOK 的「项目列表」时，
 /// 由注入的 `SidebarItem` 承载各项目入口即可。
 @MainActor
-public final class DefaultSidebarProviding: SidebarProviding, ObservableObject {
+public final class DefaultSidebarProvider: SidebarProviding, ObservableObject {
     @Published public private(set) var items: [SidebarItem] = []
     @Published public private(set) var activeItemID: String?
 
@@ -48,53 +47,5 @@ public final class DefaultSidebarProviding: SidebarProviding, ObservableObject {
            let nextItem = items.first(where: { $0.id == id }), id != previousID {
             nextItem.onActivationChanged(.activated)
         }
-    }
-}
-
-/// 渲染侧边栏项的列表视图。
-private struct SidebarView: View {
-    @ObservedObject var provider: DefaultSidebarProviding
-
-    var body: some View {
-        AppSettingsSidebarContainer(width: 220) {
-            VStack(spacing: 0) {
-                if provider.items.isEmpty {
-                    EmptySidebarPlaceholder()
-                } else {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 2) {
-                            ForEach(provider.items) { item in
-                                AppSettingsSidebarItem(
-                                    title: item.title,
-                                    systemImage: item.systemImage,
-                                    isSelected: provider.activeItemID == item.id
-                                ) {
-                                    provider.activateItem(id: item.id)
-                                }
-                                .id(item.id)
-                            }
-                        }
-                        .padding(.vertical, 8)
-                    }
-                }
-            }
-            .frame(maxHeight: .infinity)
-        }
-        .frame(maxHeight: .infinity)
-    }
-}
-
-/// 侧边栏暂无条目时的占位视图。
-private struct EmptySidebarPlaceholder: View {
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "folder")
-                .font(.system(size: 20))
-                .foregroundStyle(.secondary)
-            Text("No Items")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
