@@ -17,7 +17,7 @@ struct DefaultRootHostView: View {
             }
 
             HStack(spacing: 0) {
-                if let sidebarView = provider.sidebarView {
+                if let sidebarView = provider.sidebarView, !provider.isSidebarViewHidden {
                     sidebarView
                         .debugBlockBadge("侧边栏", alignment: .bottomLeading)
                 }

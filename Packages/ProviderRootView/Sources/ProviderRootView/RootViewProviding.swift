@@ -52,6 +52,18 @@ public protocol RootViewProviding: AnyObject, ObservableObject
     /// 显示在内容区左侧；侧边栏自身负责在需要显示时绘制分隔线。
     func setSidebarView(_ view: AnyView?)
 
+    /// 侧边栏是否完全隐藏（不渲染、不占用空间）。
+    ///
+    /// 与 `setSidebarView(nil)` 的区别：后者会丢失视图引用；
+    /// 隐藏后仍保留注入的视图状态，可随时恢复显示。
+    var isSidebarViewHidden: Bool { get }
+
+    /// 设置侧边栏是否完全隐藏。
+    ///
+    /// 隐藏后侧边栏不渲染、不占用空间，但保留已注入的视图引用，
+    /// 调用 `setSidebarViewHidden(false)` 即可恢复显示。
+    func setSidebarViewHidden(_ hidden: Bool)
+
     /// 注入 Rail 视图（传 `nil` 表示无 Rail）。
     ///
     /// 宿主通常把 `RailViewProviding.makeRailView()` 的结果注入进来，
@@ -144,11 +156,13 @@ public extension RootViewProviding {
     var overlays: [RootOverlayItem] { [] }
     var isContentViewHidden: Bool { false }
     var isContentHeaderViewHidden: Bool { false }
+    var isSidebarViewHidden: Bool { false }
     var isRailViewVisible: Bool { true }
     func addOverlays(_ overlays: [RootOverlayItem]) {}
     func removeOverlays(ids: Set<String>) {}
     func setContentViewHidden(_ hidden: Bool) {}
     func setContentHeaderViewHidden(_ hidden: Bool) {}
+    func setSidebarViewHidden(_ hidden: Bool) {}
     func setStatusBarView(_ view: AnyView?) {}
     var isContentFooterViewHidden: Bool { false }
     func setContentFooterViewHidden(_ hidden: Bool) {}

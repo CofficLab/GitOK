@@ -36,6 +36,7 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     @Published public private(set) var isContentViewHidden: Bool = false
     @Published public private(set) var isContentHeaderViewHidden: Bool = false
     @Published public private(set) var isContentFooterViewHidden: Bool = false
+    @Published public private(set) var isSidebarViewHidden: Bool = false
     private var railVisibilitySubscription: AnyCancellable?
     private var railWidthSubscription: AnyCancellable?
     private var railWidthResizeHandler: (@MainActor (CGFloat) -> Void)?
@@ -76,6 +77,14 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
         sidebarView = view
         if Self.verbose {
             Self.logger.debug("\(self.t)set sidebar view: \(view == nil ? "nil" : "injected")")
+        }
+    }
+
+    public func setSidebarViewHidden(_ hidden: Bool) {
+        guard isSidebarViewHidden != hidden else { return }
+        isSidebarViewHidden = hidden
+        if Self.verbose {
+            Self.logger.debug("\(self.t)set sidebar view hidden: \(hidden)")
         }
     }
 
