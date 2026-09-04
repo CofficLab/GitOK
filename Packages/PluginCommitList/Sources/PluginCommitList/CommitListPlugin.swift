@@ -34,7 +34,7 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
         description: "Rail section showing the commit history of the current project",
         category: .project,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
 
     public init() {}

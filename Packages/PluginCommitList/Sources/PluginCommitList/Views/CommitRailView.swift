@@ -29,7 +29,6 @@ struct CommitRailView: View {
 
     @State private var commits: [GitCommit] = []
     @State private var graphRows: [String: CommitGraphLayoutRules.Row] = [:]
-    @State private var hasWorkingChanges = false
     @State private var isLoading = false
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
@@ -44,8 +43,6 @@ struct CommitRailView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            AppDivider()
-            workingStateBar
             AppDivider()
             content
         }
@@ -91,27 +88,9 @@ struct CommitRailView: View {
                     isActive: false
                 ) {
                     reloadIfNeeded(force: true)
-                    refreshWorkingState()
                 }
             }
         }
-    }
-
-    // MARK: - Working State Bar
-
-    /// 工作区状态条：显示是否有未提交更改（对齐旧版「有未提交的更改」提示）。
-    private var workingStateBar: some View {
-        HStack(spacing: 6) {
-            Image(systemName: hasWorkingChanges ? "circle.fill" : "checkmark.circle")
-                .font(.system(size: 10))
-                .foregroundStyle(hasWorkingChanges ? theme.warning : theme.success)
-            Text(hasWorkingChanges ? "Working Tree Has Changes" : "Working Tree Clean")
-                .font(DesignTokens.Typography.caption2)
-                .foregroundStyle(hasWorkingChanges ? theme.warning : theme.textSecondary)
-            Spacer(minLength: 8)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
     }
 
     // MARK: - Content
@@ -286,7 +265,6 @@ struct CommitRailView: View {
                 }
             }
         }
-        refreshWorkingState()
     }
 
     /// 计算 commit graph 布局（按提交顺序新→旧，与 `loadCommits` 排序一致）。
@@ -298,21 +276,6 @@ struct CommitRailView: View {
             byID[row.commitID] = row
         }
         return byID
-    }
-
-    /// 读取工作区是否有未提交更改（对齐旧版「有未提交的更改」）。
-    private func refreshWorkingState() {
-        guard let project = projects.currentProject else {
-            hasWorkingChanges = false
-            return
-        }
-        let url = project.url
-        Task.detached(priority: .utility) {
-            let changed = GitStashOperation.hasChanges(in: url)
-            await MainActor.run {
-                hasWorkingChanges = changed
-            }
-        }
     }
 
     /// Provider 选中状态变化时刷新视图（驱动 SwiftUI 重算选中态高亮）。
