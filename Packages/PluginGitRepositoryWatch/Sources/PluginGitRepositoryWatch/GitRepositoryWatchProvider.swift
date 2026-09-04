@@ -3,9 +3,13 @@ import ProviderGitRepositoryWatch
 
 /// `GitRepositoryWatching` 的真正实现。
 ///
-/// 内部用 `GitDirectoryWatcher`（FSEventStream）监听 `.git` 目录，
-/// 收到事件后 debounce 500ms 重新读取快照，按维度（HEAD / index / stash /
-/// refs）对比上次快照，把真正变化的维度广播给订阅方。
+/// 内部用两个 FSEventStream 监听器：
+/// - `GitDirectoryWatcher` 监听 `.git` 目录，检测 git 内部状态变化；
+/// - `WorkingTreeWatcher` 监听项目根目录，检测工作区文件变化。
+///
+/// 收到事件后 debounce 500ms：
+/// - `.git` 变化：重新读取快照，按维度（HEAD / index / stash / refs）对比，广播对应事件；
+/// - 工作区变化：广播 `.workingTreeChanged`（消费方如工作区状态条应重新计算变更文件数）。
 ///
 /// 对齐旧版 `GitWatcherCoordinator`：
 /// - 500ms debounce 合并突发事件（比如提交会同时改 HEAD + index + refs）；
@@ -22,11 +26,17 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
     /// 上次快照，用于 diff；未监听时为 nil。
     private var lastSnapshot: GitDirectorySnapshot?
 
-    /// FSEventStream 监听器；未监听时为 nil。
+    /// FSEventStream 监听器（`.git` 目录）；未监听时为 nil。
     private var watcher: GitDirectoryWatcher?
 
-    /// debounce 任务；每次 onChange 取消前一个并重建。
+    /// 工作区 FSEventStream 监听器（项目根目录）；未监听时为 nil。
+    private var workingTreeWatcher: WorkingTreeWatcher?
+
+    /// `.git` 目录 debounce 任务；每次 onChange 取消前一个并重建。
     private var debounceTask: Task<Void, Never>?
+
+    /// 工作区 debounce 任务。
+    private var workingTreeDebounceTask: Task<Void, Never>?
 
     /// 订阅方列表（拷贝后再遍历，避免回调内增删订阅导致迭代失效）。
     private var observers: [(id: UUID, callback: (GitRepositoryWatchingEvent) -> Void)] = []
@@ -69,6 +79,11 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
                 self?.scheduleChangeCheck()
             }
 
+            // 启动工作区监听（监听项目根目录，检测文件变化）
+            self.workingTreeWatcher = try WorkingTreeWatcher(url: standardized) { [weak self] in
+                self?.scheduleWorkingTreeChangeCheck()
+            }
+
             broadcast(.started(repositoryURL: standardized))
         } catch {
             // 解析失败（非 git 仓库 / .git 不可读）→ 静默，不广播。
@@ -99,6 +114,10 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
         debounceTask = nil
         watcher?.stop()
         watcher = nil
+        workingTreeDebounceTask?.cancel()
+        workingTreeDebounceTask = nil
+        workingTreeWatcher?.stop()
+        workingTreeWatcher = nil
         watchedGitDirectory = nil
         lastSnapshot = nil
         watchingRepositoryURL = nil
@@ -147,6 +166,21 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
         }
         if refsChanged {
             broadcast(.refsChanged)
+        }
+    }
+
+    // MARK: - Working Tree
+
+    /// 调度工作区变化检查（debounce 500ms）。
+    ///
+    /// 工作区变化不需要像 `.git` 目录那样做快照对比（文件太多，对比成本高），
+    /// 直接广播 `.workingTreeChanged`，让消费方自行调用 `git status` 重算。
+    private func scheduleWorkingTreeChangeCheck() {
+        workingTreeDebounceTask?.cancel()
+        workingTreeDebounceTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            guard !Task.isCancelled else { return }
+            self?.broadcast(.workingTreeChanged)
         }
     }
 

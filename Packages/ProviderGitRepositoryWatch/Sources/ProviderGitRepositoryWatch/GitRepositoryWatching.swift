@@ -8,7 +8,8 @@ import Foundation
 /// 检测到 `.git` 目录内容变动时广播给订阅方。事件分两类：
 /// - 监听生命周期：`.started` / `.stopped`；
 /// - `.git` 内部状态变化（按维度细分，便于订阅方按需刷新）：
-///   `.headChanged` / `.indexChanged` / `.stashChanged` / `.refsChanged`。
+///   `.headChanged` / `.indexChanged` / `.stashChanged` / `.refsChanged`；
+/// - 工作区文件变化：`.workingTreeChanged`（外部编辑 / 新增 / 删除文件）。
 ///
 /// 对齐旧版 `GitDirectoryWatcher` 的 5 类通知
 /// （`projectGitDirectoryDidChange` / `Head` / `Index` / `Stash` / `Refs`），
@@ -30,6 +31,11 @@ public enum GitRepositoryWatchingEvent: Equatable, Sendable {
     case stashChanged
     /// refs（分支 / 标签 / 远程引用 / `packed-refs`）发生变化。
     case refsChanged
+    /// 工作区文件发生变化（外部编辑 / 新增 / 删除文件）。
+    ///
+    /// 当用户在其他编辑器中修改文件、或在 Finder 中操作文件时触发。
+    /// 消费方（如工作区状态条）应重新计算变更文件数量。
+    case workingTreeChanged
 }
 
 // MARK: - Observer Handle
