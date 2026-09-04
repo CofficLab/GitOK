@@ -3,6 +3,10 @@ import LumiUI
 import ProviderProjects
 import SwiftUI
 
+private func loc(_ key: String) -> String {
+    WorktreeStatusLocalization.string(key, bundle: .module)
+}
+
 /// 工作区状态 Rail 区块视图：复刻旧版 GitOK 的 commit 列表顶部状态头。
 ///
 /// 视觉：72pt 高，左侧两行文字（标题+副标题），右侧蓝色同步按钮
@@ -90,20 +94,20 @@ struct WorkingTreeStatusView: View {
             return activityStatus
         }
         if isClean {
-            return "Working Tree Clean"
+            return loc("Working Tree Clean")
         } else {
-            return "Changes Pending"
+            return loc("Changes Pending")
         }
     }
 
     private var statusSubtitle: String {
         if !isClean {
-            return "(\(changeCount)) Uncommitted"
+            return String(format: loc("(%lld) Uncommitted"), changeCount)
         }
         if trackingStatus.hasUpstream, trackingStatus.behind > 0 {
-            return "\(trackingStatus.behind) remote commit\(trackingStatus.behind == 1 ? "" : "s") available to pull"
+            return String(format: loc("%lld remote commits available to pull"), trackingStatus.behind)
         }
-        return "All Changes Committed"
+        return loc("All Changes Committed")
     }
 
     // MARK: - Sync Button (右侧蓝色同步按钮，复刻旧版 WorkspaceSyncButton)
@@ -166,10 +170,10 @@ struct WorkingTreeStatusView: View {
 
     private var primaryActionHelp: String {
         switch primaryAction {
-        case .fetch: return "Fetch from remote"
-        case .pull: return "Pull from remote"
+        case .fetch: return loc("Fetch from remote")
+        case .pull: return loc("Pull from remote")
         case .push:
-            return trackingStatus.hasUpstream ? "Push to remote" : "Publish branch"
+            return trackingStatus.hasUpstream ? loc("Push to remote") : loc("Publish branch")
         }
     }
 
@@ -200,7 +204,7 @@ struct WorkingTreeStatusView: View {
     private func performFetch() {
         guard let project = projects.currentProject else { return }
         isFetching = true
-        activityStatus = "Fetching"
+        activityStatus = loc("Fetching")
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result { try GitRemoteOperation.fetch(in: url) }
@@ -217,7 +221,7 @@ struct WorkingTreeStatusView: View {
     private func performPull() {
         guard let project = projects.currentProject else { return }
         isPulling = true
-        activityStatus = "Pulling"
+        activityStatus = loc("Pulling")
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result { try GitRemoteOperation.pull(in: url) }
@@ -234,7 +238,7 @@ struct WorkingTreeStatusView: View {
     private func performPush() {
         guard let project = projects.currentProject else { return }
         isPushing = true
-        activityStatus = "Pushing"
+        activityStatus = loc("Pushing")
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result { try GitCommitOperation.push(in: url) }

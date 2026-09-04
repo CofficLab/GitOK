@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
+        .package(path: "../KitLocalization"),
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderProjects"),
@@ -27,12 +28,16 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
             ],
-            path: "Sources/PluginWorktreeStatus"
+            path: "Sources/PluginWorktreeStatus",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings"),
+            ]
         ),
         .testTarget(
             name: "PluginWorktreeStatusTests",

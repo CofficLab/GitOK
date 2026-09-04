@@ -1,0 +1,126 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "(%lld) Uncommitted" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(%lld) 未提交"
+          }
+        }
+      }
+    },
+    "All Changes Committed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有更改已提交"
+          }
+        }
+      }
+    },
+    "Changes Pending" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有未提交的更改"
+          }
+        }
+      }
+    },
+    "Fetch from remote" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从远程获取"
+          }
+        }
+      }
+    },
+    "Fetching" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在获取"
+          }
+        }
+      }
+    },
+    "Publish branch" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发布分支"
+          }
+        }
+      }
+    },
+    "Pull from remote" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从远程拉取"
+          }
+        }
+      }
+    },
+    "Pulling" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在拉取"
+          }
+        }
+      }
+    },
+    "Push to remote" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送到远程"
+          }
+        }
+      }
+    },
+    "Pushing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在推送"
+          }
+        }
+      }
+    },
+    "Working Tree Clean" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作区干净"
+          }
+        }
+      }
+    },
+    "%lld remote commits available to pull" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个远程提交可拉取"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
