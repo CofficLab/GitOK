@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderRailView
 import SwiftUI
@@ -46,10 +47,13 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip rail section injection")
             return
         }
+        // GitRepositoryWatching 可选：插件可能未注册（例如测试环境），此时仅依赖
+        // ProjectProviding.dataChanged 刷新；真实运行时由 PluginGitRepositoryWatch 提供。
+        let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
 
         rail.addSections([
             RailSectionItem(id: "\(id).section", order: 15) {
-                WorkingTreeStatusView(projects: projects)
+                WorkingTreeStatusView(projects: projects, gitWatch: gitWatch)
             },
         ])
     }

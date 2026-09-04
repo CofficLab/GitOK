@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import SwiftUI
 
@@ -21,8 +22,10 @@ private func loc(_ key: String) -> String {
 /// 用户点选 commit 行后取消选中，背景恢复 `theme.surface`。
 struct WorkingTreeStatusView: View {
     let projects: any ProjectProviding
+    let gitWatch: (any GitRepositoryWatching)?
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
+    @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
 
     // 工作区状态
     @State private var changeCount: Int = 0
@@ -41,9 +44,11 @@ struct WorkingTreeStatusView: View {
     @State private var loadedProjectURL: URL?
     @State private var isLoading = false
 
-    init(projects: any ProjectProviding) {
+    init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
         self.projects = projects
+        self.gitWatch = gitWatch
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+        _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
 
     var body: some View {
@@ -57,6 +62,10 @@ struct WorkingTreeStatusView: View {
             if case .dataChanged = event {
                 reloadIfNeeded(force: true)
             }
+        }
+        .onReceive(gitWatchObservation.$revision) { _ in
+            // .git 目录变化（HEAD / index / stash / refs 任一变化）→ 强制刷新工作区状态
+            reloadIfNeeded(force: true)
         }
         .onAppear { reloadIfNeeded() }
     }
@@ -324,6 +333,28 @@ final class ProjectObservationModel: ObservableObject {
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
+            self?.lastEvent = event
+            self?.revision += 1
+        }
+    }
+}
+
+/// Git 仓库监听观察模型：订阅 `GitRepositoryWatching` 的事件，
+/// 把 .git 目录变化（HEAD / index / stash / refs）转成 `@Published revision`
+/// 以驱动 SwiftUI 视图强制刷新。
+///
+/// 当外部修改仓库（如终端 `git stash` / `git checkout` / 其他工具改仓库）时，
+/// FSEventStream 监听到 .git 目录变化，`GitRepositoryWatching` 广播事件，
+/// 本模型接收并触发视图刷新，从而能感知外部修改。
+@MainActor
+final class GitRepositoryWatchObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    @Published private(set) var lastEvent: GitRepositoryWatchingEvent?
+    private var handle: (any GitRepositoryWatchingObserverHandle)?
+
+    init(gitWatch: (any GitRepositoryWatching)?) {
+        guard let gitWatch else { return }
+        handle = gitWatch.addObserver { [weak self] event in
             self?.lastEvent = event
             self?.revision += 1
         }

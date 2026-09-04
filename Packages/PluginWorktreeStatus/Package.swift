@@ -21,6 +21,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRailView"),
+        .package(path: "../ProviderGitRepositoryWatch"),
     ],
     targets: [
         .target(
@@ -33,6 +34,7 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
             ],
             path: "Sources/PluginWorktreeStatus",
             resources: [

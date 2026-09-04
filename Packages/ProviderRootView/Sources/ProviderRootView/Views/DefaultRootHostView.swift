@@ -11,7 +11,7 @@ struct DefaultRootHostView: View {
         VStack(spacing: 0) {
             if let toolbarView = provider.toolbarView {
                 toolbarView
-                    .debugBlockBadge("工具栏")
+                    .debugBlockBadge("工具栏", alignment: .bottomLeading)
                 // 与旧版 AppLayoutView 一致：工具栏下方使用主题分隔线。
                 AppDivider()
             }
@@ -19,7 +19,7 @@ struct DefaultRootHostView: View {
             HStack(spacing: 0) {
                 if let sidebarView = provider.sidebarView {
                     sidebarView
-                        .debugBlockBadge("侧边栏")
+                        .debugBlockBadge("侧边栏", alignment: .bottomLeading)
                 }
 
                 WorkbenchSplitView(provider: provider)
