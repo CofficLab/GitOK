@@ -77,12 +77,7 @@ struct WorktreeChangesView: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if entries.isEmpty {
-            AppEmptyState(
-                icon: "checkmark.circle",
-                title: loc("Working Tree Clean"),
-                description: loc("No uncommitted changes.")
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            cleanStateView
         } else {
             // 与其他列表（CommitRailView / CommitDetailLayout）一致：
             // ScrollView + LazyVStack + AppListRow（自带选中 / hover 背景与描边），
@@ -98,6 +93,37 @@ struct WorktreeChangesView: View {
                 }
                 .padding(.vertical, 4)
             }
+        }
+    }
+
+    // MARK: - Clean State View
+
+    private var cleanStateView: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 20) {
+                // 工作区干净提示
+                VStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle")
+                        .font(.system(size: 48))
+                        .foregroundStyle(.green)
+
+                    Text(loc("Working Tree Clean"))
+                        .font(.title3)
+                        .fontWeight(.medium)
+
+                    Text(loc("No uncommitted changes."))
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 20)
+
+                // 仓库信息
+                if let project = projects.currentProject {
+                    CleanStateInfoView(project: project)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
     }
 
