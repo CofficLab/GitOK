@@ -16,7 +16,7 @@ import SwiftUI
 /// - 本视图据 Provider 的选中状态高亮当前行；
 /// - 切换项目时 Provider 内部联动清空选择，避免旧项目的选中残留。
 ///
-/// 视觉对齐旧版 GitOK 的 commit 行布局（commit graph + message / 作者 +
+/// 视觉对齐旧版 GitOK 的 commit 行布局（message / 作者 +
 /// 相对时间 / 完整日期 / tag），并使用 LumiUI 组件（AppToolbarContainer /
 /// AppListRow / AppAvatar / AppTag / AppEmptyState / AppDivider）保证与整体
 /// 设计语言一致。
@@ -26,7 +26,6 @@ struct CommitRailView: View {
     @StateObject private var projectObservation: ProjectObservationModel
 
     @State private var commits: [GitCommit] = []
-    @State private var graphRows: [String: CommitGraphLayoutRules.Row] = [:]
     @State private var isLoading = false
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
@@ -90,7 +89,6 @@ struct CommitRailView: View {
                         commitRow(commit)
                         if commit.id != commits.last?.id {
                             AppDivider()
-                                .padding(.leading, 34)
                         }
                     }
                 }
@@ -103,42 +101,37 @@ struct CommitRailView: View {
 
     private func commitRow(_ commit: GitCommit) -> some View {
         AppListRow(isSelected: isSelected(commit), action: { select(commit) }) {
-            HStack(alignment: .center, spacing: 8) {
-                CommitGraphView(row: graphRows[commit.hash])
-                    .padding(.leading, 2)
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 8) {
-                        Text(commit.message)
-                            .font(DesignTokens.Typography.subheadline.weight(.medium))
-                            .foregroundStyle(theme.textPrimary)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                        Spacer(minLength: 8)
-                        if !commit.tags.isEmpty {
-                            ForEach(commit.tags.prefix(2), id: \.self) { tag in
-                                AppTag(tag, systemImage: "tag", style: .accent)
-                            }
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    Text(commit.message)
+                        .font(DesignTokens.Typography.subheadline.weight(.medium))
+                        .foregroundStyle(theme.textPrimary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Spacer(minLength: 8)
+                    if !commit.tags.isEmpty {
+                        ForEach(commit.tags.prefix(2), id: \.self) { tag in
+                            AppTag(tag, systemImage: "tag", style: .accent)
                         }
                     }
-                    HStack(spacing: 6) {
-                        authorBadge(commit.author)
-                        Text(commit.author)
-                            .font(DesignTokens.Typography.caption2)
-                            .foregroundStyle(theme.textSecondary)
-                            .lineLimit(1)
-                        Spacer(minLength: 8)
-                        Text(Self.relativeTime(commit.date))
-                            .font(DesignTokens.Typography.caption2)
-                            .foregroundStyle(theme.textTertiary)
-                    }
-                    Text(Self.fullDate(commit.date))
+                }
+                HStack(spacing: 6) {
+                    authorBadge(commit.author)
+                    Text(commit.author)
+                        .font(DesignTokens.Typography.caption2)
+                        .foregroundStyle(theme.textSecondary)
+                        .lineLimit(1)
+                    Spacer(minLength: 8)
+                    Text(Self.relativeTime(commit.date))
                         .font(DesignTokens.Typography.caption2)
                         .foregroundStyle(theme.textTertiary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 5)
+                Text(Self.fullDate(commit.date))
+                    .font(DesignTokens.Typography.caption2)
+                    .foregroundStyle(theme.textTertiary)
             }
-            .padding(.trailing, 4)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 5)
         }
     }
 
@@ -193,7 +186,6 @@ struct CommitRailView: View {
             if loadedProjectURL != nil {
                 loadedProjectURL = nil
                 commits = []
-                graphRows = [:]
                 isLoading = false
                 loadError = nil
             }
@@ -204,7 +196,6 @@ struct CommitRailView: View {
         loadedProjectURL = project.url
         isLoading = true
         commits = []
-        graphRows = [:]
         loadError = nil
 
         let url = project.url
@@ -215,24 +206,12 @@ struct CommitRailView: View {
                 switch result {
                 case .success(let loaded):
                     commits = loaded
-                    graphRows = Self.computeGraphRows(for: loaded)
                 case .failure(let error):
                     loadError = (error as? GitCommitLoaderError)?.localizedDescription
                         ?? error.localizedDescription
                 }
             }
         }
-    }
-
-    /// 计算 commit graph 布局（按提交顺序新→旧，与 `loadCommits` 排序一致）。
-    private static func computeGraphRows(for commits: [GitCommit]) -> [String: CommitGraphLayoutRules.Row] {
-        let nodes = commits.map { CommitGraphLayoutRules.Node(id: $0.hash, parentIDs: $0.parentHashes) }
-        let rows = CommitGraphLayoutRules.layout(nodes: nodes)
-        var byID: [String: CommitGraphLayoutRules.Row] = [:]
-        for row in rows {
-            byID[row.commitID] = row
-        }
-        return byID
     }
 
     /// Provider 选中状态变化时刷新视图（驱动 SwiftUI 重算选中态高亮）。
