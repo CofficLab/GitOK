@@ -78,14 +78,7 @@ public struct CommitFormView: View {
                 firstRow
                 secondRow
                 if let error = form.lastErrorMessage, !error.isEmpty {
-                    HStack(spacing: 5) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 10))
-                        Text(error)
-                            .font(DesignTokens.Typography.caption2)
-                            .lineLimit(2)
-                    }
-                    .foregroundStyle(theme.error)
+                    AppErrorBanner(message: LocalizedStringKey(error))
                 }
             }
             .padding(.horizontal, 12)
@@ -180,21 +173,16 @@ public struct CommitFormView: View {
     @ViewBuilder
     private var userBadge: some View {
         if let user, let name = user.name, !name.isEmpty {
-            HStack(spacing: 5) {
-                Image(systemName: "person.crop.circle")
-                    .font(DesignTokens.Typography.caption2)
-                Text(user.email?.isEmpty == false ? "\(name) <\(user.email!)>" : name)
-                    .font(DesignTokens.Typography.caption2)
-            }
-            .foregroundStyle(theme.textSecondary)
+            AppTag(
+                user.email?.isEmpty == false ? "\(name) <\(user.email!)>" : name,
+                systemImage: "person.crop.circle"
+            )
             .lineLimit(1)
         } else {
-            HStack(spacing: 5) {
-                Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 10))
-                Text(loc("Git user not configured"))
-                    .font(DesignTokens.Typography.caption2)
-            }
+            AppTag(
+                loc("Git user not configured"),
+                systemImage: "exclamationmark.triangle"
+            )
             .foregroundStyle(theme.error)
         }
     }
@@ -231,10 +219,7 @@ public struct CommitFormView: View {
             .foregroundStyle(coAuthors.isEmpty ? theme.textTertiary : theme.textPrimary)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(theme.textSecondary.opacity(0.08))
-            )
+            .appSurface(style: .subtle, cornerRadius: DesignTokens.Radius.sm)
         }
         .menuStyle(.borderlessButton)
         .fixedSize()
@@ -367,9 +352,9 @@ private struct CoAuthorEditorSheet: View {
             AppDivider()
 
             HStack(spacing: 8) {
-                TextField(loc("Name"), text: $newName)
-                TextField(loc("Email"), text: $newEmail)
-                Button(loc("Add")) {
+                AppInputField(LocalizedStringKey(loc("Name")), text: $newName)
+                AppInputField(LocalizedStringKey(loc("Email")), text: $newEmail)
+                AppButton(loc("Add"), style: .secondary, size: .small, action: {
                     let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
                     let trimmedEmail = newEmail.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmedName.isEmpty, !trimmedEmail.isEmpty else { return }
@@ -378,19 +363,18 @@ private struct CoAuthorEditorSheet: View {
                     selected.append(author)
                     newName = ""
                     newEmail = ""
-                }
+                })
                 .disabled(newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                     || newEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
 
             HStack {
                 Spacer()
-                Button(loc("Cancel")) { dismiss() }
-                Button(loc("Done")) {
+                AppButton(loc("Cancel"), style: .ghost, size: .small, action: { dismiss() })
+                AppButton(loc("Done"), style: .primary, size: .small, action: {
                     onCommit(selected)
                     dismiss()
-                }
-                .buttonStyle(.borderedProminent)
+                })
             }
         }
         .padding(16)
