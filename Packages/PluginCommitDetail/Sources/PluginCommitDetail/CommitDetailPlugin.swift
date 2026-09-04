@@ -102,7 +102,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         contentView.addContentView(
             AnyView(
                 CommitDetailView(projects: projects, viewModel: viewModel)
-                    // Debug 构建下左上角叠加插件名 badge，便于识别内容区来源。
+                    // Debug 构建下右下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
             ),
             id: "\(id).content",
