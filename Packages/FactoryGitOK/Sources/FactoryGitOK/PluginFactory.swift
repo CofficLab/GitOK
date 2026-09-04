@@ -47,7 +47,6 @@ import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
 import PluginSettingsButton
-import PluginSidebar
 import PluginStatusBar
 import PluginStorage
 import PluginToast
@@ -71,7 +70,6 @@ public struct DefaultPluginFactory: PluginFactory {
             CommandPlugin(),
             ProjectsPlugin(),
             CloneRepositoryPlugin(),
-            SidebarPlugin(),
             WorktreeStatusPlugin(),
             CommitListPlugin(),
             CommitDetailPlugin(),

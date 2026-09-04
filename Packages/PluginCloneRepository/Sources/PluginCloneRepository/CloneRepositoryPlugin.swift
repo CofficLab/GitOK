@@ -13,7 +13,7 @@ import SwiftUI
 /// 克隆仓库插件
 ///
 /// 提供克隆仓库能力：实现 `CloneRepositoryProviding`，向内核注册
-/// `CloneRepositorySheet` 视图；PluginSidebar 等入口在侧边栏底部
+/// `CloneRepositorySheet` 视图；PluginProjects 等入口在侧边栏底部
 /// 以 sheet 展示该视图。克隆完成后打开项目并提示。
 @MainActor
 public final class CloneRepositoryPlugin: SuperPlugin, SuperLog {
@@ -22,7 +22,7 @@ public final class CloneRepositoryPlugin: SuperPlugin, SuperLog {
     nonisolated static let verbose = false
 
     public let id = "com.coffic.gitok.plugin.clone-repository"
-    /// 在侧边栏插件（PluginSidebar, order 10）之前注册 provider，入口按钮才能解析到。
+    /// 在侧边栏插件（PluginProjects, order 10）之前注册 provider，入口按钮才能解析到。
     public let order = 5
     public let dependencies = ["com.coffic.lumi.plugin.projects"]
     public let metadata = PluginMetadata(
