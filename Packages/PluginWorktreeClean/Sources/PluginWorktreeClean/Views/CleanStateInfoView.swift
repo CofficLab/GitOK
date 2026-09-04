@@ -5,10 +5,11 @@ import ProviderProjects
 import SwiftUI
 
 private func loc(_ key: String) -> String {
-    CommitDetailLocalization.string(key, bundle: .module)
+    WorktreeCleanLocalization.string(key, bundle: .module)
 }
 
 /// 工作区干净状态下的信息视图：展示仓库信息与 Git 用户配置。
+/// 由 `PluginWorktreeClean` 独立提供（从 CommitDetail 插件迁移）。
 struct CleanStateInfoView: View {
     let project: Project
 

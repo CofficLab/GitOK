@@ -53,6 +53,7 @@ import PluginStatusBar
 import PluginStorage
 import PluginToast
 import PluginThemePack
+import PluginWorktreeClean
 import PluginWorktreeStatus
 #endif
 
@@ -79,6 +80,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CommitFormPlugin(),
             GitDiffPlugin(),
             GitUserSettingsPlugin(),
+            WorktreeCleanPlugin(),
             GitNetworkSettingsPlugin(),
             GitRepositorySettingsPlugin(),
             GitCommitStyleSettingsPlugin(),

@@ -13,6 +13,10 @@ private func loc(_ key: String) -> String {
 /// 且当前项目有未提交变更时展示。加载 `git status --porcelain` 文件列表，
 /// 选中文件时通过 `projects.selectFile` 写入 Provider，右侧 git diff 插件据此展示 diff。
 ///
+/// 工作区干净（无未提交变更）时不渲染任何内容、不占布局——「干净状态视图」
+/// （仓库信息 + Git 用户配置）已独立到 `PluginWorktreeClean` 插件，作为主内容区
+/// 的另一块贡献展示，两个插件的内容块互斥。
+///
 /// 外部仓库数据变化（提交 / 推送 / 分支切换）由 `CommitDetailObserver` 翻译成
 /// ViewModel 的 `worktreeRevision`，这里只订阅 ViewModel，不直接监听通知。
 struct WorktreeChangesView: View {
@@ -26,17 +30,50 @@ struct WorktreeChangesView: View {
     @State private var loadedProjectURL: URL?
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 工作区干净（无未提交更改）时隐藏顶部「更改」标题栏，
-            // 只保留干净状态的提示与仓库信息。
-            if !entries.isEmpty {
-                header
+        Group {
+            if isLoading && entries.isEmpty {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background {
+                        theme.surface
+                    }
+            } else if let loadError {
+                AppEmptyState(
+                    icon: "exclamationmark.triangle",
+                    title: loc("Unable to Load Changes"),
+                    description: loadError
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background {
+                    theme.surface
+                }
+            } else if entries.isEmpty {
+                // 工作区干净（或未打开项目）：不渲染任何内容、不占布局，
+                // 干净状态视图由 PluginWorktreeClean 插件独立展示。
+                EmptyView()
+            } else {
+                VStack(spacing: 0) {
+                    header
+                    // 与其他列表（CommitRailView / CommitDetailLayout）一致：
+                    // ScrollView + LazyVStack + AppListRow（自带选中 / hover 背景与描边），
+                    // 行间用 AppDivider 分隔。
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVStack(spacing: 0) {
+                            ForEach(entries) { entry in
+                                fileRow(entry)
+                                if entry.id != entries.last?.id {
+                                    AppDivider()
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background {
+                    theme.surface
+                }
             }
-            content
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            theme.surface
         }
         .onAppear { reloadIfNeeded() }
         .onReceive(viewModel.$worktreeRevision) { _ in
@@ -64,71 +101,6 @@ struct WorktreeChangesView: View {
             }
         }
         .borderBottom()
-    }
-
-    // MARK: - Content
-
-    @ViewBuilder
-    private var content: some View {
-        if isLoading && entries.isEmpty {
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let loadError {
-            AppEmptyState(
-                icon: "exclamationmark.triangle",
-                title: loc("Unable to Load Changes"),
-                description: loadError
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if entries.isEmpty {
-            cleanStateView
-        } else {
-            // 与其他列表（CommitRailView / CommitDetailLayout）一致：
-            // ScrollView + LazyVStack + AppListRow（自带选中 / hover 背景与描边），
-            // 行间用 AppDivider 分隔。
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 0) {
-                    ForEach(entries) { entry in
-                        fileRow(entry)
-                        if entry.id != entries.last?.id {
-                            AppDivider()
-                        }
-                    }
-                }
-                .padding(.vertical, 4)
-            }
-        }
-    }
-
-    // MARK: - Clean State View
-
-    private var cleanStateView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 20) {
-                // 工作区干净提示
-                VStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle")
-                        .font(.system(size: 48))
-                        .foregroundStyle(.green)
-
-                    Text(loc("Working Tree Clean"))
-                        .font(.title3)
-                        .fontWeight(.medium)
-
-                    Text(loc("No uncommitted changes."))
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.vertical, 20)
-
-                // 仓库信息
-                if let project = projects.currentProject {
-                    CleanStateInfoView(project: project)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-        }
     }
 
     private func fileRow(_ entry: GitStatusEntry) -> some View {

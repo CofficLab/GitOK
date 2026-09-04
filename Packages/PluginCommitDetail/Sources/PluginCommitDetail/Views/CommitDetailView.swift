@@ -16,28 +16,32 @@ import SwiftUI
 /// `ProjectProviding` 统一维护；视图只绑定注入的 ViewModel 与 Provider 的
 /// 写操作，不再注册任何插件级外部监听（选中状态 / 仓库数据变化由
 /// `CommitDetailObserver` 负责翻译进 ViewModel）。
+///
+/// 尺寸约定：只有 commit 详情（`CommitDetailLayout`）由本视图统一用
+/// `.frame(maxHeight: .infinity)` 弹性填充；工作区模式交给
+/// `WorktreeChangesView` 自行决定尺寸——工作区干净时它渲染 `EmptyView`
+/// 不占布局，干净状态视图由 `PluginWorktreeClean` 插件作为另一块内容展示。
 struct CommitDetailView: View {
     let projects: any ProjectProviding
     @ObservedObject var viewModel: CommitDetailViewModel
 
     var body: some View {
-        Group {
-            if let commit = viewModel.selectedCommit,
-               let projectURL = viewModel.selectedProjectURL {
-                CommitDetailLayout(
-                    commit: commit,
-                    projectURL: projectURL,
-                    selectedFile: viewModel.selectedFile,
-                    changes: viewModel.currentCommitFiles ?? [],
-                    isLoadingChanges: viewModel.isLoadingCommitFiles && viewModel.currentCommitFiles == nil,
-                    loadError: viewModel.commitFilesLoadError,
-                    onSelectFile: { projects.selectFile($0) }
-                )
-            } else {
-                // 无选中 commit 时展示工作区变动文件列表（用户点击工作区状态条触发）。
-                WorktreeChangesView(projects: projects, viewModel: viewModel)
-            }
+        if let commit = viewModel.selectedCommit,
+           let projectURL = viewModel.selectedProjectURL {
+            CommitDetailLayout(
+                commit: commit,
+                projectURL: projectURL,
+                selectedFile: viewModel.selectedFile,
+                changes: viewModel.currentCommitFiles ?? [],
+                isLoadingChanges: viewModel.isLoadingCommitFiles && viewModel.currentCommitFiles == nil,
+                loadError: viewModel.commitFilesLoadError,
+                onSelectFile: { projects.selectFile($0) }
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            // 无选中 commit 时展示工作区变动文件列表（用户点击工作区状态条触发）。
+            // 尺寸由 WorktreeChangesView 自决：干净 → EmptyView 不占布局。
+            WorktreeChangesView(projects: projects, viewModel: viewModel)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

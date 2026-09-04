@@ -123,6 +123,7 @@ final class CommitDetailPluginTests: XCTestCase {
     ) -> CommitDetailObserver {
         CommitDetailObserver(
             projects: projects,
+            gitWatch: nil,
             onSelectionChanged: { [weak viewModel, weak projects] in
                 guard let projects else { return }
                 viewModel?.handleSelectionChanged(
@@ -140,6 +141,9 @@ final class CommitDetailPluginTests: XCTestCase {
                 )
             },
             onProjectDataChanged: { [weak viewModel] in
+                viewModel?.handleProjectDataChanged()
+            },
+            onWorkingTreeChanged: { [weak viewModel] in
                 viewModel?.handleProjectDataChanged()
             }
         )
