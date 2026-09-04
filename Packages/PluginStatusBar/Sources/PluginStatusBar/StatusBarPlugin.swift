@@ -30,7 +30,7 @@ public final class StatusBarPlugin: SuperPlugin, SuperLog {
         description: "Window bottom status bar: current project + theme switch",
         category: .system,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     /// 状态栏项 id（onShutdown 时按前缀撤回）。

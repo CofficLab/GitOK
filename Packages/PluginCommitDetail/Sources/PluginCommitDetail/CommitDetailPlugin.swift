@@ -35,7 +35,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         description: "Main content view showing the changes of the selected commit",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

@@ -32,7 +32,7 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         description: "Rail section showing the working tree status of the current project",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

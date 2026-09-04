@@ -33,7 +33,7 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         description: "Automatically push after each commit",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-auto-push.id"

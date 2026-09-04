@@ -25,7 +25,7 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
         description: "View the .gitignore file from the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-ignore.id"

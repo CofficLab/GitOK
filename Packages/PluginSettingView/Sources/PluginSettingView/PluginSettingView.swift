@@ -28,7 +28,7 @@ public final class PluginSettingView: SuperPlugin, SuperLog {
         description: "",
         category: .general,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
 

@@ -25,7 +25,7 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
         description: "Manage git stashes from the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-stash.id"

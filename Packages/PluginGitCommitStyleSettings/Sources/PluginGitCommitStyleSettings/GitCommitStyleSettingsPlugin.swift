@@ -24,7 +24,7 @@ public final class GitCommitStyleSettingsPlugin: SuperPlugin, SuperLog {
         description: "Choose the global default commit message style",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

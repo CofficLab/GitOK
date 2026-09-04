@@ -24,7 +24,7 @@ public final class DiagnosticsSettingsPlugin: SuperPlugin, SuperLog {
         description: "App diagnostic information and logs",
         category: .system,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

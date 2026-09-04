@@ -20,7 +20,7 @@ public final class StorageSuperPlugin: SuperPlugin, SuperLog {
         description: "",
         category: .system,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
 

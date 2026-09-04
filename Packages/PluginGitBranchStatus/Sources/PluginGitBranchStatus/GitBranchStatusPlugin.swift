@@ -24,7 +24,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
         description: "Show the current branch in the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-branch-status.id"

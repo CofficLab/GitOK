@@ -31,7 +31,7 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
         description: "Commit workflow: staged message, category, style and commit & push",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     private var formHandle: (any CommitFormObserverHandle)?

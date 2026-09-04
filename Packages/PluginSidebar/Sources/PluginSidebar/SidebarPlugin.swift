@@ -33,7 +33,7 @@ public final class SidebarPlugin: SuperPlugin, SuperLog {
         description: "Sidebar that lists projects from ProjectProviding",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     /// 侧边栏服务实例（注册进内核的 SidebarProviding 实现）。

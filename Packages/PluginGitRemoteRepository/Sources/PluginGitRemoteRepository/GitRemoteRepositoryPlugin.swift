@@ -25,7 +25,7 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
         description: "Manage remote repositories from the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-remote-repository.id"

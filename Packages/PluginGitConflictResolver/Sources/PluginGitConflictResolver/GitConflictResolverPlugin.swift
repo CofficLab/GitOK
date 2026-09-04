@@ -25,7 +25,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         description: "Show and list merge conflicts from the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-conflict-resolver.id"

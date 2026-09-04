@@ -26,7 +26,7 @@ public final class GitLFSPlugin: SuperPlugin, SuperLog {
         description: "Git LFS status and large file recommendations",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-lfs.id"

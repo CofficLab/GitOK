@@ -27,7 +27,7 @@ public final class ActivityStatusPlugin: SuperPlugin, SuperLog {
         description: "Show current long-running activity (commit/push) in the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.activity-status.id"

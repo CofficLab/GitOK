@@ -25,7 +25,7 @@ public final class ProjectPickerPlugin: SuperPlugin, SuperLog {
         description: "Switch the current project from the toolbar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.project-picker.id"

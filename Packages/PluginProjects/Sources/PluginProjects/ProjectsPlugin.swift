@@ -30,7 +30,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
         description: "GitOK project management (list / open / persist)",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     /// 项目服务实例（注册进内核的 ProjectProviding 实现）。

@@ -26,7 +26,7 @@ public final class CommandPlugin: SuperPlugin, SuperLog {
         description: "",
         category: .core,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public let commandService = CommandManager()

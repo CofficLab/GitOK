@@ -26,7 +26,7 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
         description: "Git submodule status and updates",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-submodule.id"

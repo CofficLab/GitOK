@@ -28,7 +28,7 @@ public final class GitRepositorySettingsPlugin: SuperPlugin, SuperLog {
         description: "Inspect the current repository and manage remotes",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

@@ -8,43 +8,29 @@ import PluginCommitStatusBar
 import PluginCommitToast
 import PluginToast
 
-/// 真实内核装配集成测试：验证启动后所有 commit 消费方拿到同一个
-/// `CommitDetailProviding` 实例（toast 包装实现），点击 commit 时状态栏
-/// 观察的 provider 会同步更新。
+/// 真实内核装配集成测试：验证内核启动基线。
+///
+/// 所有插件在注册文件中声明 `disabled`（彻底停用，不可配置），因此启动后
+/// 插件 onBoot 不会运行，Provider 保持宿主 `DefaultProviderFactory` 注册的
+/// 默认实现；启用插件的替换逻辑在插件被逐个恢复为可配置策略后再验证。
 @MainActor
 final class KernelBootIntegrationTests: XCTestCase {
-    func testBootResolvesUnifiedCommitProvider() throws {
+    /// 默认全 disabled：插件 onBoot 未运行，provider 保持宿主默认实现。
+    func testBootDefaultsToDisabledPlugins() throws {
         let kernel = try KernelFactory.makeKernel()
 
-        // 1) CommitToastPlugin（order 15）应已把宿主默认实现替换为 toast 包装。
-        let detail = kernel.resolveProvider((any CommitDetailProviding).self)
-        XCTAssertTrue(
-            detail is ToastCommitDetailProvider,
-            "CommitDetailProviding should be replaced by ToastCommitDetailProvider, got \(String(describing: type(of: detail)))"
+        // 宿主仍注册了默认 provider（保证 app 不崩、可渲染空壳）。
+        XCTAssertNotNil(kernel.resolveProvider((any CommitDetailProviding).self))
+        XCTAssertNotNil(kernel.resolveProvider((any ToastProviding).self))
+
+        // 但插件 onBoot 的替换没有发生。
+        XCTAssertFalse(
+            kernel.resolveProvider((any CommitDetailProviding).self) is ToastCommitDetailProvider,
+            "commit-toast should be disabled; provider should stay the host default"
         )
-
-        // 2) ToastProviding 应已是真实状态机（非 no-op）。
-        let toast = kernel.resolveProvider((any ToastProviding).self)
-        XCTAssertTrue(toast is ToastCenter, "ToastProviding should be ToastCenter, got \(String(describing: type(of: toast)))")
-
-        // 3) 模拟 commit 列表点击：selectCommit 后，同一 provider 上应能读到新选择。
-        let commit = GitCommit(
-            hash: String(repeating: "a", count: 40),
-            shortHash: "aaaaaaa",
-            message: "fix: demo",
-            author: "tester",
-            date: Date()
+        XCTAssertFalse(
+            kernel.resolveProvider((any ToastProviding).self) is ToastCenter,
+            "toast should be disabled; provider should stay the host no-op"
         )
-        let url = URL(fileURLWithPath: "/tmp/fake-repo")
-        detail?.selectCommit(commit, in: url)
-
-        XCTAssertEqual(detail?.selectedCommit?.shortHash, "aaaaaaa", "status bar reads selectedCommit from the same provider")
-        XCTAssertEqual(detail?.selectedProjectURL, url)
-
-        // 4) toast 状态机应收到通知。
-        if let center = toast as? ToastCenter {
-            XCTAssertEqual(center.currentToast?.style, .info)
-            XCTAssertTrue(center.currentToast?.detail?.contains("aaaaaaa") == true)
-        }
     }
 }

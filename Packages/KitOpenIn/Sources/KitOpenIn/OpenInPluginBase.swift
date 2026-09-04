@@ -44,7 +44,7 @@ open class OpenInPluginBase: SuperPlugin {
             description: "Open the current project folder in \(target.displayName).",
             category: pluginCategory,
             stage: .stable,
-            policy: .alwaysOn
+            policy: .disabled
         )
     }
 

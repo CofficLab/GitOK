@@ -31,7 +31,7 @@ public final class CloneRepositoryPlugin: SuperPlugin, SuperLog {
         description: "Clone a remote repository and add it to your projects",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

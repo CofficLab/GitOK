@@ -25,7 +25,7 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
         description: "Show the selected file path and file actions in the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.file-info.id"

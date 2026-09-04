@@ -28,7 +28,7 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
         description: "Manage Git user presets and apply them to the current project",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

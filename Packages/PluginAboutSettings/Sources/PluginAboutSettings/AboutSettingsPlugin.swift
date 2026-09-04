@@ -23,7 +23,7 @@ public final class AboutSettingsPlugin: SuperPlugin, SuperLog {
         description: "App version and information",
         category: .system,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

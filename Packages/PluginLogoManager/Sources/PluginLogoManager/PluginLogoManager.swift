@@ -28,7 +28,7 @@ public final class PluginLogoManager: SuperPlugin, SuperLog {
         description: "",
         category: .design,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
 

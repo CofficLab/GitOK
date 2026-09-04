@@ -32,7 +32,7 @@ public final class CommitStatusBarPlugin: SuperPlugin, SuperLog {
         description: "Show the selected commit id in the status bar",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.commit-status-bar.id"

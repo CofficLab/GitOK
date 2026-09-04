@@ -35,7 +35,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
         description: "Trailing pane showing the diff of the selected file in the selected commit",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

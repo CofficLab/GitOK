@@ -32,7 +32,7 @@ public final class CommitToastPlugin: SuperPlugin, SuperLog {
         description: "Notify via toast when the selected commit changes",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     /// 内部实现：状态 + 观察者由 `DefaultCommitDetailProvider` 提供，

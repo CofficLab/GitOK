@@ -23,7 +23,7 @@ public final class GitNetworkSettingsPlugin: SuperPlugin, SuperLog {
         description: "Configure git proxy and SSL settings",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     public init() {}

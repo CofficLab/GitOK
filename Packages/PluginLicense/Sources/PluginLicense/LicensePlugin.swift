@@ -25,7 +25,7 @@ public final class LicensePlugin: SuperPlugin, SuperLog {
         description: "View or create the LICENSE file",
         category: .project,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     static let itemID = "com.coffic.gitok.plugin.license.id"

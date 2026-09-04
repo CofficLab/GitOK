@@ -30,7 +30,7 @@ public final class SettingsButtonPlugin: SuperPlugin, SuperLog {
         description: "Toolbar entry that opens the settings window",
         category: .system,
         stage: .stable,
-        policy: .alwaysOn
+        policy: .disabled
     )
 
     /// 工具栏项 id。
