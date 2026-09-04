@@ -7,6 +7,7 @@ import ProviderProjects
 import ProviderSettingView
 import ProviderSidebar
 import ProviderStorage
+import ProviderToolbar
 
 // MARK: - Projects SuperPlugin
 
@@ -94,6 +95,21 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
             }
             settings.addEntries([entry])
         }
+
+        // 4) 工具栏中间项目控件：显示当前项目，点击弹出项目列表（Lumi 风格）。
+        if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {
+            toolbar.addToolbarItems([
+                ToolbarItem(
+                    id: "\(id).toolbar",
+                    title: "Project",
+                    placement: .center,
+                    category: .project,
+                    order: 5
+                ) {
+                    ProjectToolbarControlView(projects: projects)
+                },
+            ])
+        }
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
@@ -101,6 +117,8 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
         kernel.unregisterProvider((any SidebarProviding).self)
         kernel.resolveProvider((any SettingViewProviding).self)?
             .removeEntries(ids: ["projects"])
+        kernel.resolveProvider((any ToolbarProviding).self)?
+            .removeToolbarItems(ids: ["\(id).toolbar"])
         sidebarService = nil
     }
 }

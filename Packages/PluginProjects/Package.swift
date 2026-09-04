@@ -23,6 +23,7 @@ let package = Package(
         .package(path: "../ProviderSettingView"),
         .package(path: "../ProviderSidebar"),
         .package(path: "../ProviderStorage"),
+        .package(path: "../ProviderToolbar"),
     ],
     targets: [
         .target(
@@ -37,6 +38,7 @@ let package = Package(
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "ProviderSidebar", package: "ProviderSidebar"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),
+                .product(name: "ProviderToolbar", package: "ProviderToolbar"),
             ],
             path: "Sources/PluginProjects",
             resources: [.process("../../Resources/Localizable.xcstrings")]

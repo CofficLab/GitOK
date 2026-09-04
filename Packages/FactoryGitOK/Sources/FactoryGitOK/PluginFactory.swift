@@ -42,7 +42,6 @@ import PluginOpenTrae
 import PluginOpenVSCode
 import PluginOpenXcode
 import PluginPluginManager
-import PluginProjectPicker
 import PluginProjects
 import PluginSettingGeneral
 import PluginSettingView
@@ -96,7 +95,6 @@ public struct DefaultPluginFactory: PluginFactory {
             ActivityStatusPlugin(),
             GitBranchStatusPlugin(),
             GitUnpushedStatusPlugin(),
-            ProjectPickerPlugin(),
             ToastSuperPlugin(),
             CommitToastPlugin(),
             CommitStatusBarPlugin(),
