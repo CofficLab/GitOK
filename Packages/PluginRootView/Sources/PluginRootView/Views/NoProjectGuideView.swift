@@ -34,11 +34,11 @@ struct NoProjectGuideView: View {
                     .frame(maxHeight: 80)
 
                 VStack(spacing: DesignTokens.Spacing.sm) {
-                    Text("Welcome to GitOK")
+                    Text("Welcome to GitOK", bundle: .module)
                         .font(.appTitle)
                         .foregroundStyle(theme.textPrimary)
 
-                    Text("Add an existing Git repository, or clone a new one to get started.")
+                    Text("Add an existing Git repository, or clone a new one to get started.", bundle: .module)
                         .font(.appBody)
                         .foregroundStyle(theme.textSecondary)
                         .multilineTextAlignment(.center)
@@ -47,7 +47,7 @@ struct NoProjectGuideView: View {
 
                 VStack(spacing: DesignTokens.Spacing.md) {
                     AppButton(
-                        "Add Project",
+                        LocalizedStringKey("Add Project"),
                         systemImage: "folder",
                         style: .primary,
                         size: .medium
@@ -57,7 +57,7 @@ struct NoProjectGuideView: View {
 
                     if cloneProvider != nil {
                         AppButton(
-                            "Clone Repository",
+                            LocalizedStringKey("Clone Repository"),
                             systemImage: "arrow.triangle.branch",
                             style: .secondary,
                             size: .medium
@@ -106,8 +106,8 @@ struct NoProjectGuideView: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = "Add"
-        panel.message = "Choose a Git repository folder to add to GitOK"
+        panel.prompt = String(localized: "Add", bundle: .module)
+        panel.message = String(localized: "Choose a Git repository folder to add to GitOK", bundle: .module)
         if panel.runModal() == .OK, let url = panel.url {
             projects.addProject(at: url)
             projects.openProject(at: url)

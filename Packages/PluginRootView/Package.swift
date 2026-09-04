@@ -25,7 +25,8 @@ let package = Package(
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "LumiUI", package: "LumiUI"),
             ],
-            path: "Sources/PluginRootView"
+            path: "Sources/PluginRootView",
+            resources: [.process("../../Resources/Localizable.xcstrings")]
         ),
         .testTarget(
             name: "PluginRootViewTests",
