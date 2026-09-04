@@ -73,6 +73,11 @@ public enum GitRemoteOperation {
         _ = try GitProcessRunner.run(["pull"], in: repository)
     }
 
+    /// 推送到远程（`git push`）。
+    public static func push(in repository: URL) throws {
+        _ = try GitProcessRunner.run(["push"], in: repository)
+    }
+
     /// 从远程 URL 生成 Web 链接（HTTPS 或 SSH 地址转 https:// 形式）。
     public static func webLink(for url: String) -> URL? {
         if url.hasPrefix("https://") || url.hasPrefix("http://") {

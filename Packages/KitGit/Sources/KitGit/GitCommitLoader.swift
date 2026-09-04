@@ -43,6 +43,21 @@ public enum GitCommitLoader {
         ]
     }
 
+    /// 获取未推送到远程的提交哈希集合。
+    ///
+    /// 使用 `git log @{upstream}..HEAD --format=%H` 获取当前分支领先上游的提交。
+    /// 若无上游分支（未设置 tracking）则返回空集合。
+    public static func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
+        let output = try GitProcessRunner.run(
+            ["log", "@{upstream}..HEAD", "--format=%H"],
+            in: repository
+        )
+        let hashes = output
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .map(String.init)
+        return Set(hashes)
+    }
+
     /// 字段分隔：`%H \x1f %h \x1f %s \x1f %an \x1f %aI \x1f %P \x1f %D`
     /// （完整哈希 / 短哈希 / 主题 / 作者 / ISO 时间 / 父哈希 / ref 名）。
     private static let format = "%H%x1f%h%x1f%s%x1f%an%x1f%aI%x1f%P%x1f%D"

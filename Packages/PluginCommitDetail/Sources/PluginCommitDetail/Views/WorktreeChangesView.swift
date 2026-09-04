@@ -27,7 +27,11 @@ struct WorktreeChangesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
+            // 工作区干净（无未提交更改）时隐藏顶部「更改」标题栏，
+            // 只保留干净状态的提示与仓库信息。
+            if !entries.isEmpty {
+                header
+            }
             content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

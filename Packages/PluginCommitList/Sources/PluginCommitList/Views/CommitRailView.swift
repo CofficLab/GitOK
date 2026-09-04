@@ -26,9 +26,15 @@ struct CommitRailView: View {
     @StateObject private var projectObservation: ProjectObservationModel
 
     @State private var commits: [GitCommit] = []
+    @State private var unpushedHashes: Set<String> = []
     @State private var isLoading = false
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
+
+    // Push 状态
+    @State private var pushPopoverCommitHash: String?
+    @State private var isPushing = false
+    @State private var pushError: String?
 
     init(projects: any ProjectProviding) {
         self.projects = projects
@@ -100,7 +106,8 @@ struct CommitRailView: View {
     // MARK: - Commit Row
 
     private func commitRow(_ commit: GitCommit) -> some View {
-        AppListRow(isSelected: isSelected(commit), action: { select(commit) }) {
+        let isUnpushed = unpushedHashes.contains(commit.hash)
+        return AppListRow(isSelected: isSelected(commit), action: { select(commit) }) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(commit.message)
@@ -113,6 +120,10 @@ struct CommitRailView: View {
                         ForEach(commit.tags.prefix(2), id: \.self) { tag in
                             AppTag(tag, systemImage: "tag", style: .accent)
                         }
+                    }
+                    // 未推送 commit 显示 push 按钮
+                    if isUnpushed {
+                        pushButton(for: commit)
                     }
                 }
                 HStack(spacing: 6) {
@@ -132,6 +143,114 @@ struct CommitRailView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 5)
+        }
+        .popover(
+            isPresented: Binding(
+                get: { pushPopoverCommitHash == commit.hash },
+                set: { if !$0 { pushPopoverCommitHash = nil; pushError = nil } }
+            )
+        ) {
+            pushPopoverContent(for: commit)
+        }
+    }
+
+    // MARK: - Push Button & Popover
+
+    private func pushButton(for commit: GitCommit) -> some View {
+        AppIconButton(systemImage: "arrow.up.circle.fill", tint: .orange, size: .compact) {
+            pushPopoverCommitHash = commit.hash
+            pushError = nil
+        }
+        .help("Click to push to remote")
+    }
+
+    private func pushPopoverContent(for commit: GitCommit) -> some View {
+        VStack(spacing: 16) {
+            HStack {
+                Image(systemName: "arrow.up.circle.fill")
+                    .foregroundColor(.orange)
+                Text("Push to Remote")
+                    .font(.headline)
+                Spacer()
+            }
+
+            Divider()
+
+            if isPushing {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Pushing...")
+                        .font(.body)
+                        .foregroundStyle(theme.textSecondary)
+                }
+                .frame(maxWidth: .infinity, minHeight: 60)
+            } else {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundColor(.orange)
+                        Text("Current commit has not been pushed to remote")
+                            .font(.body)
+                    }
+
+                    if let error = pushError {
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text("Push failed: \(error)")
+                                .font(.caption)
+                                .foregroundStyle(theme.textSecondary)
+                        }
+                    }
+
+                    HStack(spacing: 12) {
+                        AppButton("Cancel", style: .secondary, size: .small) {
+                            pushPopoverCommitHash = nil
+                            pushError = nil
+                        }
+                        .keyboardShortcut(.cancelAction)
+
+                        AppButton(
+                            pushError == nil ? "Push" : "Retry",
+                            systemImage: pushError == nil ? "arrow.up.circle" : "arrow.clockwise",
+                            style: .primary,
+                            size: .small
+                        ) {
+                            performPush()
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    }
+
+                    Spacer()
+                }
+            }
+        }
+        .padding(16)
+        .frame(width: 280, height: pushError != nil ? 200 : (isPushing ? 120 : 180))
+    }
+
+    private func performPush() {
+        guard let project = projects.currentProject else { return }
+        isPushing = true
+        pushError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitRemoteOperation.push(in: url)
+                await MainActor.run {
+                    isPushing = false
+                    pushPopoverCommitHash = nil
+                    pushError = nil
+                    // 推送成功后刷新列表
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    isPushing = false
+                    pushError = error.localizedDescription
+                }
+            }
         }
     }
 
@@ -186,6 +305,7 @@ struct CommitRailView: View {
             if loadedProjectURL != nil {
                 loadedProjectURL = nil
                 commits = []
+                unpushedHashes = []
                 isLoading = false
                 loadError = nil
             }
@@ -196,19 +316,25 @@ struct CommitRailView: View {
         loadedProjectURL = project.url
         isLoading = true
         commits = []
+        unpushedHashes = []
         loadError = nil
 
         let url = project.url
         Task.detached(priority: .userInitiated) {
-            let result = Result { try GitCommitLoader.loadCommits(in: url) }
+            let commitsResult = Result { try GitCommitLoader.loadCommits(in: url) }
+            // 获取未推送的 commit 哈希（无 upstream 时返回空集合）
+            let unpushedResult = Result { try GitCommitLoader.unpushedCommitHashes(in: url) }
             await MainActor.run {
                 isLoading = false
-                switch result {
+                switch commitsResult {
                 case .success(let loaded):
                     commits = loaded
                 case .failure(let error):
                     loadError = (error as? GitCommitLoaderError)?.localizedDescription
                         ?? error.localizedDescription
+                }
+                if case .success(let hashes) = unpushedResult {
+                    unpushedHashes = hashes
                 }
             }
         }
