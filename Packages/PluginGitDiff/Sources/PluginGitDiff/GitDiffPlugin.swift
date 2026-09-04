@@ -11,9 +11,11 @@ import SwiftUI
 /// 在 `onBoot` 阶段解析 `RootViewProviding` 与 `ProjectProviding`，
 /// 通过 RootView 的右侧面板槽位（trailing pane）注册 diff 视图：
 /// 装配阶段创建自有 `GitDiffViewModel` 与插件级 `GitDiffObserver`；
-/// 当「当前 commit + 当前文件」（+ 当前项目路径）变化时，Observer 把外部
-/// 事件翻译进 ViewModel，驱动本视图异步加载该文件在该 commit 中的
-/// unified diff；用旧版同款渲染组件 `MagicDiffView` 展示（git 原生 diff 文本）。
+/// 当「当前文件」（+ 可选 commit + 项目路径）变化时，Observer 把外部
+/// 事件翻译进 ViewModel，驱动本视图异步加载该文件的 unified diff——
+/// 有 commit 时加载该文件在该 commit 中的 diff，无 commit（工作区变动）时
+/// 加载该文件相对工作区的 diff；用旧版同款渲染组件 `MagicDiffView` 展示
+/// （git 原生 diff 文本）。
 ///
 /// 遵循 Lumi 架构：RootView 通过 `setTrailingPane(_:)` 提供右侧面板槽位，
 /// 插件在装配阶段注入自己的内容视图；插件入口是插件级外部监听的唯一
