@@ -16,6 +16,7 @@ let package = Package(
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderContentView"),
+        .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
     ],
     targets: [
@@ -28,6 +29,7 @@ let package = Package(
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
             path: "Sources/PluginCommitDetail",

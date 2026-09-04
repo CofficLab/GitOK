@@ -57,25 +57,18 @@ struct RootMainContentView: View {
             .debugBlockBadge("右侧面板", alignment: .bottomTrailing)
     }
 
-    /// 覆盖式布局下内容区左侧需要露出的宽度（面板整体往右偏移的量）。
-    private var paneRevealWidth: CGFloat { 120 }
-
-    /// 覆盖式浮层面板宽度：占满内容区宽度，仅左侧露出 `paneRevealWidth`。
-    ///
-    /// 内容区过窄时回退到面板 `minWidth`（最多占满整个内容区）。
+    /// 覆盖式浮层面板宽度：固定为面板的 idealWidth，右对齐，
+    /// 自然让出左侧空间给下方的 contentview 展示。
     private func paneWidth(containerWidth: CGFloat) -> CGFloat {
-        let revealedWidth = containerWidth - paneRevealWidth
-        return min(containerWidth, max(trailingPane.minWidth, revealedWidth))
+        min(containerWidth, trailingPane.idealWidth)
     }
 
     /// 覆盖式浮层面板：面板内容 + 左边缘分隔线 + 左上角返回按钮 + 投影。
-    ///
-    /// 背景使用毛玻璃材质，让下方的 contentview 隐约可见。
     private func floatingTrailingPane(containerWidth: CGFloat) -> some View {
         trailingPaneContent
             .frame(width: paneWidth(containerWidth: containerWidth))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.ultraThinMaterial)
+            .background(theme.surface)
             .overlay(alignment: .leading) {
                 // 左边缘分隔线：区分浮层与下方露出的内容区。
                 Rectangle()
@@ -169,29 +162,28 @@ struct RootMainContentView: View {
                     trailingPaneContent
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-            } else if trailingPane.isVisible {
-                if hasMainContent {
-                    // 覆盖式浮层面板：盖在内容区上方、右侧对齐，整体往右偏移
-                    // `paneRevealWidth`，露出内容区左侧一小块；左上角返回按钮
-                    // 点击后收起面板。
-                    GeometryReader { proxy in
-                        ZStack(alignment: .trailing) {
-                            contentWithHeaderAndFooter
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            if trailingPane.isVisible {
-                                floatingTrailingPane(containerWidth: proxy.size.width)
-                                    .transition(.move(edge: .trailing).combined(with: .opacity))
-                                    .zIndex(1)
-                            }
+            } else if hasMainContent {
+                // 主内容始终渲染在底层，右侧面板作为浮层叠加在上方。
+                // 面板显隐只切换 ZStack 内的浮层，不会销毁重建主内容，
+                // 避免出现"面板消失时内容区重新渲染"的视觉闪烁。
+                GeometryReader { proxy in
+                    ZStack(alignment: .trailing) {
+                        contentWithHeaderAndFooter
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        if trailingPane.isVisible {
+                            floatingTrailingPane(containerWidth: proxy.size.width)
+                                .transition(.move(edge: .trailing).combined(with: .opacity))
+                                .zIndex(1)
                         }
                     }
-                    .animation(.easeInOut(duration: 0.22), value: trailingPane.isVisible)
-                } else {
-                    // 无主内容（contentView 为 nil）：trailing pane 独占，不渲染占位视图
-                    trailingPaneContent
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
+                .animation(.easeInOut(duration: 0.22), value: trailingPane.isVisible)
+            } else if trailingPane.isVisible {
+                // 无主内容（contentView 为 nil）：trailing pane 独占，不渲染占位视图
+                trailingPaneContent
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
+                // 无主内容且无面板：渲染占位视图（与原行为一致）
                 contentWithHeaderAndFooter
             }
         }

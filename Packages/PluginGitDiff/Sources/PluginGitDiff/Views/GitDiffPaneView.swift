@@ -35,6 +35,9 @@ struct GitDiffPaneView: View {
             content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            theme.surface
+        }
         .onReceive(viewModel.$revision) { _ in loadIfNeeded() }
         .onAppear { loadIfNeeded() }
     }

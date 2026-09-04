@@ -38,6 +38,13 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
     /// 工作区 debounce 任务。
     private var workingTreeDebounceTask: Task<Void, Never>?
 
+    /// 上次广播 .workingTreeChanged 的时间戳；用于 throttle，避免 FSEventStream
+    /// 持续触发导致消费方（如文件列表）频繁刷新。
+    private var lastWorkingTreeChangeDate: Date?
+
+    /// .workingTreeChanged 节流间隔；同一窗口内只广播一次。
+    private static let workingTreeChangeThrottle: TimeInterval = 2.0
+
     /// 订阅方列表（拷贝后再遍历，避免回调内增删订阅导致迭代失效）。
     private var observers: [(id: UUID, callback: (GitRepositoryWatchingEvent) -> Void)] = []
 
@@ -120,6 +127,7 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
         workingTreeWatcher = nil
         watchedGitDirectory = nil
         lastSnapshot = nil
+        lastWorkingTreeChangeDate = nil
         watchingRepositoryURL = nil
         if emitStoppedEvent {
             broadcast(.stopped)
@@ -171,17 +179,31 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
 
     // MARK: - Working Tree
 
-    /// 调度工作区变化检查（debounce 500ms）。
+    /// 调度工作区变化检查（debounce 500ms + throttle 2s）。
     ///
     /// 工作区变化不需要像 `.git` 目录那样做快照对比（文件太多，对比成本高），
     /// 直接广播 `.workingTreeChanged`，让消费方自行调用 `git status` 重算。
+    ///
+    /// 为应对 FSEventStream 持续触发（如 IDE 编译时不断写文件），增加 2 秒节流：
+    /// 同一窗口内只广播一次，避免消费方（如文件列表）频繁刷新。
     private func scheduleWorkingTreeChangeCheck() {
         workingTreeDebounceTask?.cancel()
         workingTreeDebounceTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: 500_000_000)
             guard !Task.isCancelled else { return }
-            self?.broadcast(.workingTreeChanged)
+            self?.broadcastWorkingTreeChangeIfThrottleAllows()
         }
+    }
+
+    /// 节流广播 `.workingTreeChanged`；2 秒窗口内只广播一次。
+    private func broadcastWorkingTreeChangeIfThrottleAllows() {
+        let now = Date()
+        if let last = lastWorkingTreeChangeDate,
+           now.timeIntervalSince(last) < Self.workingTreeChangeThrottle {
+            return
+        }
+        lastWorkingTreeChangeDate = now
+        broadcast(.workingTreeChanged)
     }
 
     private func broadcast(_ event: GitRepositoryWatchingEvent) {

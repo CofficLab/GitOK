@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderContentView
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import SwiftUI
 
@@ -60,6 +61,11 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
             return
         }
 
+        // 解析 GitRepositoryWatching（可选依赖，用于监听工作区文件变化）。
+        // 当外部修改工作区（如其他编辑器修改文件）时，FSEventStream 广播
+        // .workingTreeChanged，Observer 接收并触发工作区变动列表刷新。
+        let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
+
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
         // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照，
         // 避免注册时机导致 UI 永久使用默认值。
@@ -67,6 +73,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         self.viewModel = viewModel
         observer = CommitDetailObserver(
             projects: projects,
+            gitWatch: gitWatch,
             onSelectionChanged: { [weak viewModel, weak projects] in
                 guard let projects else { return }
                 viewModel?.handleSelectionChanged(
@@ -84,6 +91,11 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
                 )
             },
             onProjectDataChanged: { [weak viewModel] in
+                viewModel?.handleProjectDataChanged()
+            },
+            onWorkingTreeChanged: { [weak viewModel] in
+                // 工作区文件变化 → 触发工作区变动列表重载。
+                // 复用 worktreeRevision 递增机制（与 dataChanged 相同）。
                 viewModel?.handleProjectDataChanged()
             }
         )
