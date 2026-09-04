@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import SwiftUI
 
 /// 打开应用目标的执行器。
 ///
@@ -50,6 +51,35 @@ public enum AppLauncher {
             return URL(fileURLWithPath: path)
         }
         return nil
+    }
+
+    // MARK: - App Icon
+
+    /// 目标应用的真实图标（用于工具栏按钮，与旧版 `PluginOpen*` 一致）。
+    ///
+    /// - 常规应用：解析应用 URL 后取 `NSWorkspace` 的正式图标；
+    /// - Remote：取系统默认浏览器（https scheme handler）的图标，
+    ///   与旧版 `DefaultBrowserIcon` 行为一致；
+    /// - 应用未安装 / 无法解析时返回 `nil`，由调用方回退 SF Symbol。
+    static func iconImage(for target: OpenTarget) -> Image? {
+        #if os(macOS)
+        if target.isAlwaysAvailable {
+            return defaultBrowserIcon()
+        }
+        guard let appURL = applicationURL(for: target) else { return nil }
+        return Image(nsImage: NSWorkspace.shared.icon(forFile: appURL.path))
+        #else
+        return nil
+        #endif
+    }
+
+    /// 系统默认浏览器（https scheme）的应用图标；解析失败返回 `nil`。
+    private static func defaultBrowserIcon() -> Image? {
+        guard let webURL = URL(string: "https://"),
+              let appURL = NSWorkspace.shared.urlForApplication(toOpen: webURL) else {
+            return nil
+        }
+        return Image(nsImage: NSWorkspace.shared.icon(forFile: appURL.path))
     }
 
     // MARK: - Remote Web URL
