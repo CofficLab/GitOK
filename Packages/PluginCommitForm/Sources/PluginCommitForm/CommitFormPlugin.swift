@@ -63,7 +63,7 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
             contentView.addContentView(
                 AnyView(
                     CommitFormView(projects: projects, form: form)
-                        // Debug 构建下左上角叠加插件名 badge，便于识别内容区来源。
+                        // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                         .debugPluginBadge(metadata.name)
                 ),
                 id: "\(id).content",
