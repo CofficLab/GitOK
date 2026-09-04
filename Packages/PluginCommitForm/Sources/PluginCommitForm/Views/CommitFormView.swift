@@ -21,6 +21,7 @@ public struct CommitFormView: View {
     let form: any CommitFormProviding
     @LumiTheme private var theme
     @StateObject private var formObservation: CommitFormObservationModel
+    @StateObject private var projectObservation: ProjectObservationModel
 
     @State private var subject: String = ""
     @State private var category: CommitCategory = .Chore
@@ -29,13 +30,49 @@ public struct CommitFormView: View {
     @State private var user: (name: String?, email: String?)?
     @State private var showCoAuthorSheet = false
 
+    /// 当前项目工作区是否干净（无未提交 / 未跟踪变更）。
+    /// 对齐旧版 `GitDetailPresentationRules`：工作区干净时提交表单隐藏自身。
+    @State private var isClean: Bool = true
+    /// 已加载工作区状态的项目 URL（避免同一项目重复加载）。
+    @State private var loadedProjectURL: URL?
+
     public init(projects: any ProjectProviding, form: any CommitFormProviding) {
         self.projects = projects
         self.form = form
         _formObservation = StateObject(wrappedValue: CommitFormObservationModel(form: form))
+        _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
+    @ViewBuilder
     public var body: some View {
+        // 对齐旧版 GitDetailPresentationRules.headerContentMode：
+        // - 选中（历史）commit → 隐藏表单，详情区展示 commit 信息；
+        // - 未选中 commit 且工作区不干净（isClean == false）→ 显示提交表单；
+        // - 未选中 commit 且工作区干净 → 隐藏表单。
+        Group {
+            if projects.currentCommit == nil && !isClean {
+                formContent
+            }
+        }
+        // commit 选择 / 项目切换 / 仓库数据变化 → 重算显隐（干净时隐藏表单）。
+        .onReceive(projectObservation.$revision) { _ in
+            reloadWorktreeStatusIfNeeded()
+        }
+        .onReceive(projectObservation.$lastEvent) { event in
+            if case .dataChanged = event {
+                reloadWorktreeStatusIfNeeded(force: true)
+            }
+        }
+        .onAppear {
+            reloadWorktreeStatusIfNeeded(force: true)
+        }
+        .onChange(of: projects.currentProject?.url) { _, _ in
+            reloadWorktreeStatusIfNeeded()
+        }
+    }
+
+    @ViewBuilder
+    private var formContent: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 6) {
                 firstRow
@@ -263,6 +300,28 @@ public struct CommitFormView: View {
             }
         }
     }
+
+    // MARK: - Worktree Status
+
+    /// 项目 / 仓库数据变化时重算工作区是否干净；force 为 true 时强制刷新。
+    /// 工作区干净（isClean == true）时表单隐藏自身，对齐旧版 GitDetail 行为。
+    private func reloadWorktreeStatusIfNeeded(force: Bool = false) {
+        guard let project = projects.currentProject else {
+            loadedProjectURL = nil
+            isClean = true
+            return
+        }
+        if loadedProjectURL == project.url && !force { return }
+        loadedProjectURL = project.url
+
+        let url = project.url
+        Task.detached(priority: .utility) {
+            let status = try? GitStatusLoader.loadStatus(in: url)
+            await MainActor.run {
+                isClean = status?.isClean ?? true
+            }
+        }
+    }
 }
 
 /// 共同作者编辑 sheet：列出已存作者，勾选 / 新增。
@@ -348,6 +407,24 @@ final class CommitFormObservationModel: ObservableObject {
 
     init(form: any CommitFormProviding) {
         handle = form.addObserver { [weak self] _ in
+            self?.revision += 1
+        }
+    }
+}
+
+/// 项目观察模型：订阅 `ProjectProviding` 事件（commit 选择 / 项目切换 /
+/// 仓库数据变化），转成 `@Published revision` 与 `lastEvent` 驱动 SwiftUI 重算——
+/// 用户选中（历史）commit 时表单隐藏自身，清除选择后恢复显示；
+/// 仓库数据变化（提交 / 推送等）时强制重算工作区干净状态。
+@MainActor
+final class ProjectObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    @Published private(set) var lastEvent: ProjectProvidingEvent?
+    private var handle: (any ProjectProvidingObserverHandle)?
+
+    init(projects: any ProjectProviding) {
+        handle = projects.addObserver { [weak self] event in
+            self?.lastEvent = event
             self?.revision += 1
         }
     }
