@@ -62,6 +62,12 @@ final class GitDiffPluginTests: XCTestCase {
             let current = observers
             for observer in current { observer.callback(.currentFileChanged) }
         }
+        /// 测试辅助：模拟「选中状态变化」（commit 或 文件任一变）并广播。
+        func notifySelectionChanged() {
+            let current = observers
+            for observer in current { observer.callback(.commitSelectionChanged) }
+            notifyCurrentFileChanged()
+        }
     }
 
     private final class MockHandle: ProjectProvidingObserverHandle {
@@ -108,6 +114,36 @@ final class GitDiffPluginTests: XCTestCase {
 
         try plugin.onShutdown(kernel: kernel)
         XCTAssertNil(rootView.trailingPane)
+    }
+
+    // MARK: - Trailing pane 显隐联动（observer 监听当前文件）
+
+    /// 无选中文件时 onBoot 后面板初始为隐藏；选中文件后面板显示；
+    /// 清除文件选择（切换 commit / 清空选择）后面板再次隐藏。
+    func testTrailingPaneVisibilityFollowsSelectedFile() throws {
+        let kernel = KernelCoreContainer()
+        let rootView = DefaultRootViewProvider()
+        let projects = MockProjects()
+        try kernel.registerProvider((any RootViewProviding).self, rootView)
+        try kernel.registerProvider((any ProjectProviding).self, projects)
+
+        let plugin = GitDiffPlugin()
+        // 初始无选中文件 → 面板应隐藏，不再渲染空占位。
+        try plugin.onBoot(kernel: kernel)
+        XCTAssertEqual(rootView.trailingPane?.id, "\(plugin.id).trailing")
+        XCTAssertFalse(rootView.trailingPane?.isVisible ?? true, "无选中文件时 diff 面板应隐藏")
+
+        // 选中文件 → 面板显示并加载该文件 diff。
+        projects.selectFile("src/a.swift")
+        projects.notifySelectionChanged()
+        XCTAssertTrue(rootView.trailingPane?.isVisible ?? false, "选中文件后 diff 面板应显示")
+
+        // 清除 commit 选择（联动清空文件）→ 面板隐藏。
+        projects.clearCommitSelection()
+        projects.notifySelectionChanged()
+        XCTAssertFalse(rootView.trailingPane?.isVisible ?? true, "清除文件选择后 diff 面板应隐藏")
+
+        try plugin.onShutdown(kernel: kernel)
     }
 
     // MARK: - Observer → ViewModel wiring

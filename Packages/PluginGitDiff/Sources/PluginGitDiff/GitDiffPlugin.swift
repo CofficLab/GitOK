@@ -61,6 +61,30 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
         // 避免注册时机导致 UI 永久使用默认值。
         let viewModel = GitDiffViewModel()
         self.viewModel = viewModel
+
+        let pane = RootTrailingPane(
+            id: "\(id).trailing",
+            minWidth: 320,
+            idealWidth: 420,
+            maxWidth: .infinity,
+            // 初始可见性与当前是否有选中文件一致；无选中文件时右侧面板隐藏，
+            // 避免空占位（下方 observer 会在文件选择变化时同步显隐）。
+            isVisible: projects.currentFile != nil,
+            content: AnyView(
+                GitDiffPaneView(viewModel: viewModel)
+                    // Debug 构建下左下角叠加插件名 badge，便于识别视图来源。
+                    .debugPluginBadge(metadata.name)
+            )
+        )
+        rootView.setTrailingPane(pane)
+
+        // 选中文件是 diff 面板的唯一驱动：选中文件时显示面板，
+        // 清除文件选择（切换 commit / 清空 commit 选择）时隐藏面板，
+        // 不再由面板自身渲染空占位。
+        let syncPaneVisibility = { [weak pane] in
+            pane?.isVisible = projects.currentFile != nil
+        }
+
         observer = GitDiffObserver(
             projects: projects,
             onSelectionChanged: { [weak viewModel, weak projects] in
@@ -70,6 +94,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
                     projectURL: projects.currentProject?.url,
                     file: projects.currentFile
                 )
+                syncPaneVisibility()
             },
             onProjectDataChanged: { [weak viewModel] in
                 viewModel?.handleProjectDataChanged()
@@ -80,20 +105,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             projectURL: projects.currentProject?.url,
             file: projects.currentFile
         )
-
-        let pane = RootTrailingPane(
-            id: "\(id).trailing",
-            minWidth: 320,
-            idealWidth: 420,
-            maxWidth: .infinity,
-            isVisible: true,
-            content: AnyView(
-                GitDiffPaneView(viewModel: viewModel)
-                    // Debug 构建下左上角叠加插件名 badge，便于识别视图来源。
-                    .debugPluginBadge(metadata.name)
-            )
-        )
-        rootView.setTrailingPane(pane)
+        syncPaneVisibility()
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {

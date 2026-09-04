@@ -13,7 +13,9 @@ import SwiftUI
 /// - 未选中 commit + 文件（工作区变动）：加载该文件相对工作区的 diff
 ///   （`GitDiffLoader.loadWorktreeDiff`）。
 /// 用旧版同款组件 `MagicDiffView` 渲染（git 原生 unified diff 文本）。
-/// 无选中文件时显示占位。
+/// 无选中文件时右侧面板整体隐藏（由 `GitDiffPlugin` 通过 observer 监听
+/// 当前文件变化控制 `RootTrailingPane.isVisible`，不渲染本视图），
+/// 因此本视图内不再需要空占位状态。
 ///
 /// 视图只绑定注入的 ViewModel，不再直接读取 Provider 或注册任何外部监听
 /// （commit / 文件 / 仓库数据变化由 `GitDiffObserver` 负责翻译进 ViewModel）。
