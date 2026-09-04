@@ -71,6 +71,52 @@ final class GitDiffLoaderTests: XCTestCase {
         XCTAssertTrue(diff.contains("中文"), "GBK 内容应被解码出来")
     }
 
+    /// 工作区 diff：已跟踪修改 / 未跟踪文件 / 未跟踪目录三种场景。
+    func testLoadWorktreeDiff() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-worktreediff-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        func run(_ args: [String]) throws {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            p.arguments = args
+            p.currentDirectoryURL = repo
+            p.standardOutput = Pipe()
+            p.standardError = Pipe()
+            try p.run()
+            p.waitUntilExit()
+        }
+        try run(["init", "-q"])
+        try run(["config", "user.email", "t@t.com"])
+        try run(["config", "user.name", "t"])
+
+        // 已跟踪文件：提交后修改 → 工作区 diff 相对 HEAD 非空。
+        try Data("line1\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        try run(["add", "tracked.txt"])
+        try run(["commit", "-qm", "init"])
+        try Data("line1\nline2\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        let trackedDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "tracked.txt", in: repo)
+        XCTAssertTrue(trackedDiff.contains("tracked.txt"), "tracked 修改应有 diff")
+        XCTAssertTrue(trackedDiff.contains("+line2"))
+
+        // 未跟踪文件：整文件作为新增展示。
+        try Data("{\"name\":\"x\"}\n".utf8).write(to: repo.appendingPathComponent("untracked.json"))
+        let untrackedDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "untracked.json", in: repo)
+        XCTAssertTrue(untrackedDiff.contains("new file mode"), "untracked 文件应以新增展示")
+        XCTAssertTrue(untrackedDiff.contains("untracked.json"))
+
+        // 未跟踪目录：git 无法生成文本 diff → 返回空串。
+        try FileManager.default.createDirectory(
+            at: repo.appendingPathComponent("newdir"),
+            withIntermediateDirectories: true
+        )
+        try Data("icon".utf8).write(to: repo.appendingPathComponent("newdir/a.txt"))
+        let dirDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "newdir/", in: repo)
+        XCTAssertTrue(dirDiff.isEmpty, "未跟踪目录应返回空 diff")
+    }
+
     /// 工作区状态：干净与有变更两种场景。
     func testLoadStatusCleanAndDirty() throws {
         let repo = FileManager.default.temporaryDirectory

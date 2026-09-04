@@ -122,4 +122,41 @@ public enum GitDiffLoader {
         )
         return output
     }
+
+    /// 读取工作区（未提交）中某个文件的 unified diff。
+    ///
+    /// 与 `loadDiff(commit:filePath:in:)`（commit 内某文件的 diff）对应，
+    /// 用于"未选中 commit、只选中工作区变动文件"的场景：
+    /// - 已跟踪文件（含暂存 / 未暂存）：`git diff HEAD -- <path>`，相对
+    ///   最后一次提交展示该文件当前的全部改动；无 HEAD（如只有暂存、尚无
+    ///   提交）时回退 `git diff --cached -- <path>`。
+    /// - 未跟踪文件：`git diff --no-index /dev/null -- <path>`，整文件作为新增展示。
+    /// - 未跟踪目录（路径以 `/` 结尾）：git 无法对目录生成文本 diff，返回空串，
+    ///   由视图层提示 "No Text Diff"。
+    public static func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
+        if filePath.hasSuffix("/") {
+            return ""
+        }
+        let entries = try GitStatusLoader.loadEntries(in: repository)
+        let isUntracked = entries.contains { $0.path == filePath && $0.isUntracked }
+        if isUntracked {
+            // `git diff --no-index` 有差异时退出码为 1，属正常结果，需容忍。
+            return try GitProcessRunner.run(
+                ["diff", "--no-index", "/dev/null", "--", filePath],
+                in: repository,
+                successExitCodes: [0, 1]
+            )
+        }
+        do {
+            return try GitProcessRunner.run(
+                ["diff", "HEAD", "--", filePath],
+                in: repository
+            )
+        } catch {
+            return try GitProcessRunner.run(
+                ["diff", "--cached", "--", filePath],
+                in: repository
+            )
+        }
+    }
 }

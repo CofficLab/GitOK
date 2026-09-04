@@ -21,7 +21,14 @@ public enum GitProcessRunner {
 
     /// 在指定仓库目录执行 git 命令并返回标准输出（UTF-8）。
     /// 非零退出码抛 `gitFailed`，输出与 stderr 一并带出。
-    public static func run(_ arguments: [String], in repository: URL) throws -> String {
+    ///
+    /// `successExitCodes` 用于容忍"有差异即返回非零"的命令（如
+    /// `git diff --no-index` 有差异时退出码为 1，属正常结果）。
+    public static func run(
+        _ arguments: [String],
+        in repository: URL,
+        successExitCodes: Set<Int32> = [0]
+    ) throws -> String {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
         process.arguments = arguments
@@ -42,7 +49,7 @@ public enum GitProcessRunner {
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
         let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
 
-        guard process.terminationStatus == 0 else {
+        guard successExitCodes.contains(process.terminationStatus) else {
             let message = Self.decode(errorData, fallback: "unknown error")
             throw Error.gitFailed(message)
         }
