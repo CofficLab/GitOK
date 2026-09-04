@@ -69,15 +69,21 @@ private struct ProjectSidebarView: View {
     var body: some View {
         AppSettingsSidebarContainer(width: 220) {
             VStack(spacing: 0) {
-                // 项目较多时显示搜索框（对齐旧版）。
-                if projects.projects.count > 10 {
-                    AppSearchBar(text: $searchText, placeholder: "Search")
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 6)
-                }
+                // 搜索框常驻（对齐旧版顶部搜索）。
+                AppSearchBar(text: $searchText, placeholder: "Search")
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
                 Group {
                     if filteredProjects.isEmpty {
-                        EmptyProjectsPlaceholder(projects: projects)
+                        if projects.projects.isEmpty {
+                            EmptyProjectsPlaceholder(projects: projects)
+                        } else {
+                            AppEmptyState(
+                                icon: "magnifyingglass",
+                                title: "No Results",
+                                description: "No projects match \"\(searchText)\"."
+                            )
+                        }
                     } else {
                         ScrollView(.vertical, showsIndicators: false) {
                             LazyVStack(spacing: 2) {
