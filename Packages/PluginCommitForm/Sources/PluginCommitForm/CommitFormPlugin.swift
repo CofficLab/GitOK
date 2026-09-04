@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderCommitForm
 import ProviderContentView
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import SwiftUI
 
@@ -60,9 +61,13 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
 
         // 提交表单 UI 作为独立内容块贡献到主内容区顶部（VStack 中 order 较小置顶）。
         if let contentView = kernel.resolveProvider((any ContentViewProviding).self) {
+            // GitRepositoryWatching 可选：未注册（如测试环境）时仅依赖
+            // ProjectProviding.dataChanged 刷新；真实运行时由 PluginGitRepositoryWatch 提供，
+            // 使外部把工作区改干净后表单也能隐藏。
+            let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
             contentView.addContentView(
                 AnyView(
-                    CommitFormView(projects: projects, form: form)
+                    CommitFormView(projects: projects, form: form, gitWatch: gitWatch)
                         // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                         .debugPluginBadge(metadata.name)
                 ),

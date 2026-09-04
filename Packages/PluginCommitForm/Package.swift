@@ -21,6 +21,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderCommitForm"),
         .package(path: "../ProviderContentView"),
+        .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
     ],
     targets: [
@@ -34,6 +35,7 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
             path: "Sources/PluginCommitForm",
@@ -43,7 +45,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginCommitFormTests",
-            dependencies: ["PluginCommitForm"],
+            dependencies: [
+                "PluginCommitForm",
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+            ],
             path: "Tests/PluginCommitFormTests"
         ),
     ]

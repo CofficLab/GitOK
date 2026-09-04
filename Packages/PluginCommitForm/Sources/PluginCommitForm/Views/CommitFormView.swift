@@ -1,6 +1,7 @@
 import KitGit
 import LumiUI
 import ProviderCommitForm
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import SwiftUI
 
@@ -19,9 +20,14 @@ private func loc(_ key: String) -> String {
 public struct CommitFormView: View {
     let projects: any ProjectProviding
     let form: any CommitFormProviding
+    /// 仓库监听（可选）：订阅 `.git` 目录变化（HEAD / index / stash / refs /
+    /// 工作区文件），外部修改（终端 commit / checkout / stash 等）也能触发
+    /// 工作区干净状态重算，避免工作区已干净但表单仍显示的漏刷新。
+    let gitWatch: (any GitRepositoryWatching)?
     @LumiTheme private var theme
     @StateObject private var formObservation: CommitFormObservationModel
     @StateObject private var projectObservation: ProjectObservationModel
+    @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
 
     @State private var subject: String = ""
     @State private var category: CommitCategory = .Chore
@@ -35,12 +41,20 @@ public struct CommitFormView: View {
     @State private var isClean: Bool = true
     /// 已加载工作区状态的项目 URL（避免同一项目重复加载）。
     @State private var loadedProjectURL: URL?
+    /// 工作区状态加载序号：仅最后一次加载结果落地，防止旧任务（脏）覆盖新结果（干净）。
+    @State private var worktreeStatusLoadToken = 0
 
-    public init(projects: any ProjectProviding, form: any CommitFormProviding) {
+    public init(
+        projects: any ProjectProviding,
+        form: any CommitFormProviding,
+        gitWatch: (any GitRepositoryWatching)? = nil
+    ) {
         self.projects = projects
         self.form = form
+        self.gitWatch = gitWatch
         _formObservation = StateObject(wrappedValue: CommitFormObservationModel(form: form))
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+        _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
 
     @ViewBuilder
@@ -62,6 +76,12 @@ public struct CommitFormView: View {
             if case .dataChanged = event {
                 reloadWorktreeStatusIfNeeded(force: true)
             }
+        }
+        // 外部修改仓库（终端 commit / checkout / stash / 其他工具改仓库）时，
+        // FSEventStream 监听 .git 目录广播事件 → 强制重算工作区干净状态，
+        // 否则外部把工作区改干净后表单仍残留显示。
+        .onReceive(gitWatchObservation.$revision) { _ in
+            reloadWorktreeStatusIfNeeded(force: true)
         }
         .onAppear {
             reloadWorktreeStatusIfNeeded(force: true)
@@ -290,20 +310,27 @@ public struct CommitFormView: View {
 
     /// 项目 / 仓库数据变化时重算工作区是否干净；force 为 true 时强制刷新。
     /// 工作区干净（isClean == true）时表单隐藏自身，对齐旧版 GitDetail 行为。
+    ///
+    /// 用 `worktreeStatusLoadToken` 保证并发下只有最后一次加载的结果会落地，
+    /// 避免旧的「脏」结果覆盖新的「干净」结果导致表单残留。
     private func reloadWorktreeStatusIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
             loadedProjectURL = nil
             isClean = true
+            worktreeStatusLoadToken &+= 1
             return
         }
         if loadedProjectURL == project.url && !force { return }
         loadedProjectURL = project.url
 
+        worktreeStatusLoadToken &+= 1
+        let token = worktreeStatusLoadToken
         let url = project.url
         Task.detached(priority: .utility) {
             let status = try? GitStatusLoader.loadStatus(in: url)
             await MainActor.run {
-                isClean = status?.isClean ?? true
+                guard token == self.worktreeStatusLoadToken else { return }
+                self.isClean = status?.isClean ?? true
             }
         }
     }
@@ -409,6 +436,26 @@ final class ProjectObservationModel: ObservableObject {
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
             self?.lastEvent = event
+            self?.revision += 1
+        }
+    }
+}
+
+/// Git 仓库监听观察模型：订阅 `GitRepositoryWatching` 的事件，
+/// 把 `.git` 目录变化（HEAD / index / stash / refs）与工作区文件变化转成
+/// `@Published revision` 以驱动 SwiftUI 强制重算工作区干净状态。
+///
+/// 当外部修改仓库（如终端 `git commit` / `git checkout` / `git stash` /
+/// 其他工具改仓库）时，FSEventStream 监听到变化并广播事件，本模型接收后
+/// 触发表单重算——这是表单在「工作区被外部改干净」时仍残留显示的修复关键。
+@MainActor
+final class GitRepositoryWatchObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    private var handle: (any GitRepositoryWatchingObserverHandle)?
+
+    init(gitWatch: (any GitRepositoryWatching)?) {
+        guard let gitWatch else { return }
+        handle = gitWatch.addObserver { [weak self] _ in
             self?.revision += 1
         }
     }

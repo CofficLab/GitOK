@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderCommitForm
 import ProviderContentView
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import Testing
 @testable import PluginCommitForm
@@ -86,5 +87,22 @@ struct PluginCommitFormTests {
         try kernel.registerProvider((any CommitFormProviding).self, DefaultCommitFormProvider())
 
         try CommitFormPlugin().onBoot(kernel: kernel)
+    }
+
+    @Test("GitRepositoryWatchObservationModel 订阅仓库监听事件并递增 revision")
+    func gitWatchObservationForwardsEvents() {
+        let watch = DefaultGitRepositoryWatching()
+        let model = GitRepositoryWatchObservationModel(gitWatch: watch)
+
+        let before = model.revision
+        watch.broadcast(.headChanged(previousHead: "a", head: "b"))
+        watch.broadcast(.workingTreeChanged)
+        #expect(model.revision == before + 2)
+    }
+
+    @Test("GitRepositoryWatchObservationModel 无监听时保持静止")
+    func gitWatchObservationNoOpWithoutWatcher() {
+        let model = GitRepositoryWatchObservationModel(gitWatch: nil)
+        #expect(model.revision == 0)
     }
 }
