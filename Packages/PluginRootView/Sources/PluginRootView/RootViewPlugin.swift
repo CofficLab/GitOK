@@ -3,6 +3,8 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderCloneRepository
+import ProviderProjects
 import ProviderRailView
 import ProviderRootView
 import SwiftUI
@@ -16,6 +18,10 @@ import SwiftUI
 /// 通过 `kernel.resolveProvider(RootViewProviding.self)` 解析到的是本插件
 /// 注册的实现，行为与默认实现完全兼容（所有 setter / overlay / trailing pane
 /// 语义不变）。
+///
+/// 同时监听 `ProjectProviding` 的项目列表变化：当没有任何项目时，
+/// 通过 overlay 在根视图最上层显示 `NoProjectGuideView`，引导用户添加或克隆仓库；
+/// 项目列表不再为空时自动隐藏引导视图。
 ///
 /// 替换式注册模式与 `ToastSuperPlugin` 一致：尽早完成替换（`order = 5`），
 /// 保证后续插件在 `onBoot` 中 resolve 到的是真实实现。
@@ -40,6 +46,15 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
     /// 插件自有的根视图 Provider，替换默认实现。
     public let provider: GitOKRootViewProvider
 
+    /// 项目监听者：装配阶段创建，卸载时取消。
+    private var observer: RootViewProjectObserver?
+
+    /// 引导视图显隐状态：驱动 overlay 内容切换。
+    private let guideState = NoProjectGuideState()
+
+    /// overlay 稳定 ID（供挂载 / 撤回）。
+    static let noProjectOverlayID = "no-project-guide"
+
     public init() {
         self.provider = GitOKRootViewProvider()
     }
@@ -51,14 +66,83 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         if Self.verbose {
             Self.logger.info("\(self.t)Replaced default RootViewProviding with GitOKRootViewProvider")
         }
+
+        // 解析项目服务与克隆仓库能力。
+        guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
+            Self.logger.error("\(self.t)ProjectProviding not registered; skip no-project guide")
+            return
+        }
+        let cloneProvider = kernel.resolveProvider((any CloneRepositoryProviding).self)
+
+        // 初始同步：如果启动时就没有项目，立即显示引导视图。
+        guideState.showGuide = projects.projects.isEmpty
+
+        // 创建项目监听：项目列表变化时更新引导视图显隐。
+        let guideState = self.guideState
+        observer = RootViewProjectObserver(
+            projects: projects,
+            onProjectsChanged: { [weak guideState, weak projects] in
+                guard let guideState, let projects else { return }
+                guideState.showGuide = projects.projects.isEmpty
+            }
+        )
+
+        // 挂载引导 overlay：始终注册，内容根据 guideState 条件渲染。
+        provider.addOverlays([
+            RootOverlayItem(id: Self.noProjectOverlayID, order: -100) { [guideState] content in
+                NoProjectGuideOverlay(
+                    content: content,
+                    guideState: guideState,
+                    projects: projects,
+                    cloneProvider: cloneProvider
+                )
+            },
+        ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        observer?.cancel()
+        observer = nil
+        provider.removeOverlays(ids: [Self.noProjectOverlayID])
+
         // 恢复默认实现，保证后续流程仍可解析 RootViewProviding。
         kernel.unregisterProvider((any RootViewProviding).self)
         try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
         if Self.verbose {
             Self.logger.info("\(self.t)Restored default RootViewProviding")
+        }
+    }
+}
+
+// MARK: - NoProjectGuideState
+
+/// 引导视图显隐状态：ObservableObject 驱动 overlay 内容响应式切换。
+@MainActor
+final class NoProjectGuideState: ObservableObject {
+    @Published var showGuide: Bool
+    init(showGuide: Bool = false) {
+        self.showGuide = showGuide
+    }
+}
+
+// MARK: - NoProjectGuideOverlay
+
+/// 引导 overlay：根据 `guideState.showGuide` 条件渲染。
+///
+/// 显示引导视图时覆盖整个根视图；隐藏时透明传递底层内容。
+@MainActor
+private struct NoProjectGuideOverlay: View {
+    let content: AnyView
+    @ObservedObject var guideState: NoProjectGuideState
+    let projects: any ProjectProviding
+    let cloneProvider: (any CloneRepositoryProviding)?
+
+    var body: some View {
+        ZStack {
+            content
+            if guideState.showGuide {
+                NoProjectGuideView(projects: projects, cloneProvider: cloneProvider)
+            }
         }
     }
 }
