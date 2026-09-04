@@ -106,13 +106,18 @@ public enum GitDiffLoader {
     ///
     /// 使用 `git show --format= --no-color --find-renames <hash> -- <path>`。
     /// 对新增文件仍会返回其补丁（内容全部为 `+` 行）。
+    ///
+    /// 注意：`--` 只能作为 `<hash>` 与 `<path>` 之间的分隔符出现一次；若在
+    /// hash 前再加一个 `--`（`... -- <hash> -- <path>`），某些仓库中 git 会把
+    /// 输出解析为空（实测 west-home-mini 等仓库返回空 diff），导致误判为
+    /// "No Text Diff"。标准形式在任意仓库均稳定返回。
     public static func loadDiff(
         commit hash: String,
         filePath: String,
         in repository: URL
     ) throws -> String {
         let output = try GitProcessRunner.run(
-            ["show", "--format=", "--no-color", "--find-renames", "--", hash, "--", filePath],
+            ["show", "--format=", "--no-color", "--find-renames", hash, "--", filePath],
             in: repository
         )
         return output
