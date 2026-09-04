@@ -144,6 +144,10 @@ private struct NoProjectGuideOverlay: View {
                 NoProjectGuideView(projects: projects, cloneProvider: cloneProvider)
             }
         }
+        // RootView is rendered in a hidden-title-bar window. The overlay is
+        // outside DefaultRootHostView's safe-area configuration, so it must
+        // opt out explicitly to cover the title-bar/toolbar region as well.
+        .ignoresSafeArea()
     }
 }
 
