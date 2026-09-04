@@ -42,8 +42,6 @@ struct CommitRailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
-            AppDivider()
             content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -60,37 +58,6 @@ struct CommitRailView: View {
         // 选中 commit 变化（可能来自本列表，也可能来自其它消费方）→ 刷新选中态。
         .onReceive(detailObservation.$revision) { _ in refreshSelectionState() }
         .onAppear { reloadIfNeeded() }
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        AppToolbarContainer(
-            height: 36,
-            padding: EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10)
-        ) {
-            HStack(spacing: 8) {
-                AppToolbarTitleLabel(icon: "clock", title: "Commits") {
-                    if let project = projects.currentProject {
-                        Text(project.title)
-                            .font(DesignTokens.Typography.caption2)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                    }
-                }
-                Spacer(minLength: 8)
-                AppIconButton(
-                    systemImage: "arrow.clockwise",
-                    label: "Refresh",
-                    tint: theme.textSecondary,
-                    size: .compact,
-                    isActive: false
-                ) {
-                    reloadIfNeeded(force: true)
-                }
-            }
-        }
     }
 
     // MARK: - Content
