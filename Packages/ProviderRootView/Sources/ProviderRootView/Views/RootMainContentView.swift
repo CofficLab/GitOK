@@ -49,7 +49,7 @@ struct RootMainContentView: View {
 
     private var mainContent: some View {
         (contentView ?? AnyView(ContentPlaceholderView()))
-            .debugBlockBadge("内容区")
+            .debugBlockBadge("内容区", alignment: .bottomTrailing)
     }
 
     /// 右侧面板（trailing pane）内容，右下角叠加区块名 badge。
