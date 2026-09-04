@@ -31,20 +31,23 @@ open class OpenInPluginBase: SuperPlugin {
 
     open var pluginOrder: Int { target.toolbarOrder }
 
+    /// 插件加载策略，子类可覆盖（默认 `.disabled`，由宿主按需启用）。
+    open var pluginPolicy: PluginEnablePolicy { .disabled }
+
     // MARK: - SuperPlugin
 
     public var id: String { pluginID }
 
     public var order: Int { pluginOrder }
 
-    public var metadata: PluginMetadata {
+    open var metadata: PluginMetadata {
         PluginMetadata(
             id: pluginID,
             name: pluginDisplayName,
             description: "Open the current project folder in \(target.displayName).",
             category: pluginCategory,
             stage: .stable,
-            policy: .disabled
+            policy: pluginPolicy
         )
     }
 

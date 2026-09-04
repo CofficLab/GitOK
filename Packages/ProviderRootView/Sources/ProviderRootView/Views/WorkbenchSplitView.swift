@@ -25,11 +25,13 @@ struct WorkbenchSplitView: View {
                             initialPosition: provider.railWidth.idealWidth,
                             onResize: provider.saveRailViewWidth
                         )
+                        .debugBlockBadge("Rail")
                     provider.hasActiveContent ? AnyView(mainContent) : AnyView(RootWelcomeView())
                 }
                 #else
                 HStack(spacing: 0) {
                     provider.railView!
+                        .debugBlockBadge("Rail")
                     Divider()
                     provider.hasActiveContent ? AnyView(mainContent) : AnyView(RootWelcomeView())
                 }

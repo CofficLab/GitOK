@@ -56,7 +56,11 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
 
         let form = kernel.resolveProvider((any CommitFormProviding).self)
         contentView.setContentView(
-            AnyView(CommitDetailView(detail: detail, projects: projects, form: form))
+            AnyView(
+                CommitDetailView(detail: detail, projects: projects, form: form)
+                    // Debug 构建下左上角叠加插件名 badge，便于识别内容区来源。
+                    .debugPluginBadge(metadata.name)
+            )
         )
     }
 

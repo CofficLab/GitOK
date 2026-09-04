@@ -47,8 +47,15 @@ struct RootMainContentView: View {
         ))
     }
 
-    private var mainContent: AnyView {
-        contentView ?? AnyView(ContentPlaceholderView())
+    private var mainContent: some View {
+        (contentView ?? AnyView(ContentPlaceholderView()))
+            .debugBlockBadge("内容区")
+    }
+
+    /// 右侧面板（trailing pane）内容，右上角叠加区块名 badge。
+    private var trailingPaneContent: some View {
+        trailingPane.content
+            .debugBlockBadge("右侧面板")
     }
 
     @ViewBuilder
@@ -71,6 +78,7 @@ struct RootMainContentView: View {
                         maxHeight: contentFooterHeight.maxHeight
                     )
                     .zIndex(1)
+                    .debugBlockBadge("Footer")
             }
             #else
             VStack(spacing: 0) {
@@ -90,6 +98,7 @@ struct RootMainContentView: View {
         VStack(spacing: 0) {
             if let contentHeaderView, !isContentHeaderViewHidden {
                 contentHeaderView
+                    .debugBlockBadge("Header")
                     .zIndex(1)
             }
             mainContent
@@ -116,7 +125,7 @@ struct RootMainContentView: View {
                 // 主内容区被完全隐藏（如 ChatPanel 调用 setContentViewHidden(true)）：
                 // 不渲染内容区，trailing pane 独占全部空间。
                 if trailingPane.isVisible {
-                    trailingPane.content
+                    trailingPaneContent
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             } else if trailingPane.isVisible {
@@ -131,7 +140,7 @@ struct RootMainContentView: View {
                                 initialPosition: trailingPane.width.idealWidth,
                                 onResize: trailingPane.saveWidth
                             )
-                        trailingPane.content
+                        trailingPaneContent
                             .frame(
                                 minWidth: trailingPane.minWidth,
                                 idealWidth: trailingPane.idealWidth,
@@ -143,13 +152,13 @@ struct RootMainContentView: View {
                     HStack(spacing: 0) {
                         contentWithHeaderAndFooter
                         Divider()
-                        trailingPane.content
+                        trailingPaneContent
                             .frame(minWidth: trailingPane.minWidth, idealWidth: trailingPane.idealWidth, maxWidth: trailingPane.maxWidth)
                     }
                     #endif
                 } else {
                     // 无主内容（contentView 为 nil）：trailing pane 独占，不渲染占位视图
-                    trailingPane.content
+                    trailingPaneContent
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             } else {
