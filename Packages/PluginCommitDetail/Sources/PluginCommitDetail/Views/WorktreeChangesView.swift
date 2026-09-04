@@ -28,7 +28,6 @@ struct WorktreeChangesView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            AppDivider()
             content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -44,18 +43,23 @@ struct WorktreeChangesView: View {
     // MARK: - Header
 
     private var header: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "doc.on.doc")
-                .font(.appCaptionEmphasized)
-            Text(loc("Changes"))
-                .font(.appCaptionEmphasized)
-            Spacer()
-            Text("\(entries.count)")
-                .font(.appMicro)
-                .foregroundStyle(theme.textTertiary)
+        AppToolbarContainer(
+            height: 32,
+            backgroundStyle: .panel,
+            padding: EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10)
+        ) {
+            HStack(spacing: 6) {
+                Image(systemName: "doc.on.doc")
+                    .font(.appCaptionEmphasized)
+                Text(loc("Changes"))
+                    .font(.appCaptionEmphasized)
+                Spacer()
+                Text("\(entries.count)")
+                    .font(.appMicro)
+                    .foregroundStyle(theme.textTertiary)
+            }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .borderBottom()
     }
 
     // MARK: - Content
@@ -80,22 +84,26 @@ struct WorktreeChangesView: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
-                ForEach(entries) { entry in
-                    fileRow(entry)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+            // 与其他列表（CommitRailView / CommitDetailLayout）一致：
+            // ScrollView + LazyVStack + AppListRow（自带选中 / hover 背景与描边），
+            // 行间用 AppDivider 分隔。
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 0) {
+                    ForEach(entries) { entry in
+                        fileRow(entry)
+                        if entry.id != entries.last?.id {
+                            AppDivider()
+                        }
+                    }
                 }
+                .padding(.vertical, 4)
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
         }
     }
 
     private func fileRow(_ entry: GitStatusEntry) -> some View {
         let isSelected = viewModel.selectedFile == entry.path
-        return Button(action: { projects.selectFile(entry.path) }) {
+        return AppListRow(isSelected: isSelected, action: { projects.selectFile(entry.path) }) {
             HStack(spacing: 8) {
                 Image(systemName: statusIcon(entry))
                     .font(.system(size: 11))
@@ -118,14 +126,7 @@ struct WorktreeChangesView: View {
 
                 Spacer(minLength: 8)
             }
-            .padding(.vertical, 5)
-            .padding(.horizontal, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
-            )
         }
-        .buttonStyle(.plain)
     }
 
     // MARK: - Status Helpers

@@ -42,7 +42,6 @@ struct CommitDetailLayout: View {
     private var fileListPane: some View {
         VStack(spacing: 0) {
             fileListHeader
-            AppDivider()
             fileListContent
         }
         .background {
@@ -51,18 +50,23 @@ struct CommitDetailLayout: View {
     }
 
     private var fileListHeader: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "doc.on.doc")
-                .font(.appCaptionEmphasized)
-            Text(loc("Files"))
-                .font(.appCaptionEmphasized)
-            Spacer()
-            Text("\(changes.count)")
-                .font(.appMicro)
-                .foregroundStyle(theme.textTertiary)
+        AppToolbarContainer(
+            height: 32,
+            backgroundStyle: .panel,
+            padding: EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10)
+        ) {
+            HStack(spacing: 6) {
+                Image(systemName: "doc.on.doc")
+                    .font(.appCaptionEmphasized)
+                Text(loc("Files"))
+                    .font(.appCaptionEmphasized)
+                Spacer()
+                Text("\(changes.count)")
+                    .font(.appMicro)
+                    .foregroundStyle(theme.textTertiary)
+            }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .borderBottom()
     }
 
     @ViewBuilder
@@ -76,8 +80,10 @@ struct CommitDetailLayout: View {
                 title: loc("Unable to Load Changes"),
                 description: loadError
             )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if changes.isEmpty {
             AppEmptyState(icon: "doc", title: loc("No Changes"), description: loc("This commit has no file changes."))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 0) {
@@ -87,6 +93,9 @@ struct CommitDetailLayout: View {
                             isSelected: selectedFile == change.path
                         ) {
                             onSelectFile(change.path)
+                        }
+                        if change.id != changes.last?.id {
+                            AppDivider()
                         }
                     }
                 }
