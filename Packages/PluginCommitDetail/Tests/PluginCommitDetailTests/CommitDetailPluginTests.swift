@@ -62,6 +62,14 @@ final class CommitDetailPluginTests: XCTestCase {
             let current = observers
             for observer in current { observer.callback(.currentFileChanged) }
         }
+        /// 测试辅助：模拟「当前项目切换」并广播（真实 ProjectManager 在
+        /// setCurrentProject / openProject / closeCurrentProject 后自动广播）。
+        func notifySelectionChanged() {
+            let current = observers
+            for observer in current {
+                observer.callback(.selectionChanged(projectID: currentProject?.id))
+            }
+        }
     }
 
     private final class MockHandle: ProjectProvidingObserverHandle {
@@ -172,6 +180,26 @@ final class CommitDetailPluginTests: XCTestCase {
         projects.notifyDataChanged()
         XCTAssertEqual(viewModel.worktreeRevision, 1)
         projects.notifyDataChanged()
+        XCTAssertEqual(viewModel.worktreeRevision, 2)
+    }
+
+    /// 切换 / 打开 / 关闭项目时，即使没有选中 commit（场景 B），
+    /// 也应递增 worktreeRevision 触发工作区 / 仓库信息视图重载，
+    /// 避免残留旧项目的仓库信息。
+    func testObserverTranslatesSelectionChangedToWorktreeRevision() {
+        let projects = MockProjects()
+        let viewModel = CommitDetailViewModel()
+        let observer = makeObserver(projects: projects, viewModel: viewModel)
+        defer { observer.cancel() }
+
+        XCTAssertEqual(viewModel.worktreeRevision, 0)
+        // 场景 B：未选中任何 commit，直接切换项目。
+        XCTAssertNil(viewModel.selectedCommit)
+        projects.notifySelectionChanged()
+        XCTAssertEqual(viewModel.worktreeRevision, 1)
+
+        // 关闭项目同样触发重载。
+        projects.notifySelectionChanged()
         XCTAssertEqual(viewModel.worktreeRevision, 2)
     }
 

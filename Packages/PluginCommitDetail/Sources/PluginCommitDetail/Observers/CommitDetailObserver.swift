@@ -12,7 +12,9 @@ import ProviderProjects
 /// - `.commitSelectionChanged` / `.currentFileChanged`：当前 commit / 文件
 ///   （含 commit 变动文件加载状态）变化；
 /// - `.dataChanged`：提交 / 推送 / 分支切换后仓库数据变化（工作区变动列表
-///   据此重载）。
+///   据此重载）；
+/// - `.selectionChanged`：切换 / 打开 / 关闭当前项目（即使未选中 commit，
+///   工作区与仓库信息视图也要据此重载，避免残留旧项目数据）。
 @MainActor
 final class CommitDetailObserver {
     private var projectsHandle: (any ProjectProvidingObserverHandle)?
@@ -31,6 +33,10 @@ final class CommitDetailObserver {
             case .currentFileChanged:
                 onSelectionChanged()
             case .dataChanged:
+                onProjectDataChanged()
+            // 切换 / 打开 / 关闭当前项目：即使没有 commit 选择（场景 B），
+            // 工作区变动列表与仓库信息视图也必须重载，否则残留旧项目数据。
+            case .selectionChanged:
                 onProjectDataChanged()
             default:
                 break
