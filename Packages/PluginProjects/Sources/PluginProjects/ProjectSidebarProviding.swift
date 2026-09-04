@@ -91,6 +91,7 @@ private struct ProjectSidebarView: View {
                                     projectRow(project)
                                 }
                             }
+                            .padding(.horizontal, 8)
                             .padding(.vertical, 8)
                         }
                     }

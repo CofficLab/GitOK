@@ -15,6 +15,10 @@ private func loc(_ key: String) -> String {
 /// 功能：未提交更改计数、未推送/未拉取计数、远程跟踪状态、
 /// fetch/pull/push 操作、活动状态显示。点击状态区域时清除当前选中
 /// commit（`projects.clearCommitSelection()`），触发详情区展示工作区变动文件。
+///
+/// 选中态（对齐旧版 WorkingStateSummaryView）：未选中任何 commit 时工作区
+/// 处于选中态，背景高亮（`theme.appListRowSelectedBackground` + 主色描边）；
+/// 用户点选 commit 行后取消选中，背景恢复 `theme.surface`。
 struct WorkingTreeStatusView: View {
     let projects: any ProjectProviding
     @LumiTheme private var theme
@@ -59,6 +63,12 @@ struct WorkingTreeStatusView: View {
 
     // MARK: - Summary Row (复刻旧版 WorkingStateSummaryView，72pt 高)
 
+    /// 工作区是否处于选中态（对齐旧版 `isWorkingStateSelected`）：
+    /// 当前项目下未选中任何 commit 即视为选中工作区。
+    private var isSelected: Bool {
+        projects.currentCommit == nil
+    }
+
     private var summaryRow: some View {
         HStack(spacing: 14) {
             statusText
@@ -69,7 +79,18 @@ struct WorkingTreeStatusView: View {
         .frame(height: 72)
         .frame(maxWidth: .infinity)
         .background {
-            theme.surface
+            // 选中态背景高亮（与 commit 行 AppListRow 选中样式一致）。
+            if isSelected {
+                theme.appListRowSelectedBackground
+            } else {
+                theme.surface
+            }
+        }
+        .overlay {
+            if isSelected {
+                Rectangle()
+                    .stroke(theme.primary.opacity(0.3), lineWidth: 1)
+            }
         }
         .contentShape(Rectangle())
         .onTapGesture {
