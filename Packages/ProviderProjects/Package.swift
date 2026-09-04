@@ -13,9 +13,15 @@ let package = Package(
             targets: ["ProviderProjects"]
         ),
     ],
+    dependencies: [
+        .package(path: "../KitGit"),
+    ],
     targets: [
         .target(
             name: "ProviderProjects",
+            dependencies: [
+                .product(name: "KitGit", package: "KitGit"),
+            ],
             path: "Sources/ProviderProjects"
         ),
         .testTarget(

@@ -11,7 +11,7 @@ let package = Package(
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
-        .package(path: "../ProviderCommit"),
+        .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
     ],
     targets: [
@@ -22,7 +22,7 @@ let package = Package(
                 .product(name: "KitGit", package: "KitGit"),
                 "KitSuperLog",
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
             ],
             path: "Sources/PluginCommitStatusBar"
@@ -32,7 +32,7 @@ let package = Package(
             dependencies: [
                 "PluginCommitStatusBar",
                 .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
             ],
             path: "Tests/PluginCommitStatusBarTests"

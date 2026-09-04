@@ -1,12 +1,13 @@
 import LumiUI
 import ProviderProjects
-import ProviderStatusBar
 import SwiftUI
 
 /// 单个「在当前项目中打开」的工具栏按钮。
 ///
-/// 订阅 `ProjectProviding` 观察者事件：无当前项目时隐藏（保留占位尺寸，
-/// 避免工具栏跳动）；有项目时点击调用 `AppLauncher` 打开。
+/// 按钮样式与 `SettingsButtonView` 对齐：使用 `AppIconButton`（纯图标按钮，
+/// `.regular` 尺寸）。订阅 `ProjectProviding` 观察者事件：无当前项目时隐藏
+/// （保留与按钮一致的占位尺寸，避免工具栏跳动）；有项目时点击调用
+/// `AppLauncher` 打开。
 struct OpenInButton: View {
     let target: OpenTarget
     let projects: any ProjectProviding
@@ -20,16 +21,15 @@ struct OpenInButton: View {
 
     var body: some View {
         if let project = projects.currentProject {
-            AppStatusBarTile(systemImage: target.systemImage, action: {
+            AppIconButton(systemImage: target.systemImage, size: .regular) {
                 AppLauncher.open(target, projectURL: project.url)
-            }) {
-                EmptyView()
             }
             .help(target.helpText)
         } else {
-            // 无当前项目：保留 24pt 占位，避免工具栏布局跳动。
+            // 无当前项目：保留与 AppIconButton(.regular) 一致的占位尺寸，
+            // 避免工具栏布局跳动。
             Color.clear
-                .frame(width: 24, height: 24)
+                .frame(width: 30, height: 30)
         }
     }
 }

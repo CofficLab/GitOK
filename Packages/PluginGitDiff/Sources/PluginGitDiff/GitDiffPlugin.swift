@@ -2,23 +2,22 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderCommit
+import ProviderProjects
 import ProviderRootView
 import SwiftUI
 
-// MARK: - Git Diff SuperPlugin
-
 /// Git Diff 插件
 ///
-/// 在 `onBoot` 阶段解析 `RootViewProviding` 与 `CommitDetailProviding`，
-/// 通过 RootView 的右侧面板槽位（trailing pane）注册 diff 视图。
-/// 视图订阅 `CommitDetailProviding`：
-/// - `selectedCommit` + `selectedFile` + `selectedProjectURL` 变化时，
-///   异步加载该文件在该 commit 中的 unified diff；
-/// - 用旧版同款渲染组件 `MagicDiffView` 展示（git 原生 diff 文本）。
+/// 在 `onBoot` 阶段解析 `RootViewProviding` 与 `ProjectProviding`，
+/// 通过 RootView 的右侧面板槽位（trailing pane）注册 diff 视图：
+/// 装配阶段创建自有 `GitDiffViewModel` 与插件级 `GitDiffObserver`；
+/// 当「当前 commit + 当前文件」（+ 当前项目路径）变化时，Observer 把外部
+/// 事件翻译进 ViewModel，驱动本视图异步加载该文件在该 commit 中的
+/// unified diff；用旧版同款渲染组件 `MagicDiffView` 展示（git 原生 diff 文本）。
 ///
 /// 遵循 Lumi 架构：RootView 通过 `setTrailingPane(_:)` 提供右侧面板槽位，
-/// 插件在装配阶段注入自己的内容视图。
+/// 插件在装配阶段注入自己的内容视图；插件入口是插件级外部监听的唯一
+/// 持有者（`Observers` 目录）。
 @MainActor
 public final class GitDiffPlugin: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.git-diff", category: "GitDiff")
@@ -35,8 +34,13 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
         description: "Trailing pane showing the diff of the selected file in the selected commit",
         category: .project,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
+
+    /// 插件自有 ViewModel：由外部 Observer 驱动，视图只绑定它。
+    private var viewModel: GitDiffViewModel?
+    /// 插件级外部 Observer：装配阶段创建并持有，卸载时取消。
+    private var observer: GitDiffObserver?
 
     public init() {}
 
@@ -45,10 +49,35 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)RootViewProviding not registered; skip trailing pane injection")
             return
         }
-        guard let detail = kernel.resolveProvider((any CommitDetailProviding).self) else {
-            Self.logger.error("\(self.t)CommitDetailProviding not registered; skip trailing pane injection")
+        guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
+            Self.logger.error("\(self.t)ProjectProviding not registered; skip trailing pane injection")
             return
         }
+
+        // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
+        // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照，
+        // 避免注册时机导致 UI 永久使用默认值。
+        let viewModel = GitDiffViewModel()
+        self.viewModel = viewModel
+        observer = GitDiffObserver(
+            projects: projects,
+            onSelectionChanged: { [weak viewModel, weak projects] in
+                guard let projects else { return }
+                viewModel?.handleSelectionChanged(
+                    commit: projects.currentCommit,
+                    projectURL: projects.currentProject?.url,
+                    file: projects.currentFile
+                )
+            },
+            onProjectDataChanged: { [weak viewModel] in
+                viewModel?.handleProjectDataChanged()
+            }
+        )
+        viewModel.handleSelectionChanged(
+            commit: projects.currentCommit,
+            projectURL: projects.currentProject?.url,
+            file: projects.currentFile
+        )
 
         let pane = RootTrailingPane(
             id: "\(id).trailing",
@@ -56,12 +85,19 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             idealWidth: 420,
             maxWidth: .infinity,
             isVisible: true,
-            content: AnyView(GitDiffPaneView(detail: detail))
+            content: AnyView(
+                GitDiffPaneView(viewModel: viewModel)
+                    // Debug 构建下左上角叠加插件名 badge，便于识别视图来源。
+                    .debugPluginBadge(metadata.name)
+            )
         )
         rootView.setTrailingPane(pane)
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        observer?.cancel()
+        observer = nil
+        viewModel = nil
         kernel.resolveProvider((any RootViewProviding).self)?.setTrailingPane(nil)
     }
 }

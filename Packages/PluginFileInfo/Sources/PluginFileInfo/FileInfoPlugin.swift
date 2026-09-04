@@ -2,7 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderCommit
+import ProviderProjects
 import ProviderStatusBar
 import SwiftUI
 
@@ -37,8 +37,8 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)StatusBarProviding not registered; skip file info item")
             return
         }
-        guard let commit = kernel.resolveProvider((any CommitDetailProviding).self) else {
-            Self.logger.error("\(self.t)CommitDetailProviding not registered; skip file info item")
+        guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
+            Self.logger.error("\(self.t)ProjectProviding not registered; skip file info item")
             return
         }
 
@@ -49,7 +49,7 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
                 placement: .leading,
                 order: 19
             ) {
-                FileInfoTile(commit: commit)
+                FileInfoTile(projects: projects)
             },
         ])
     }

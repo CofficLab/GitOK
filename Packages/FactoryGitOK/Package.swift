@@ -63,7 +63,6 @@ let package = Package(
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../ProviderCommand"),
         .package(path: "../KitGit"),
-        .package(path: "../ProviderCommit"),
         .package(path: "../ProviderCommitForm"),
         .package(path: "../PluginCommitToast"),
         .package(path: "../PluginCommitStatusBar"),
@@ -156,7 +155,6 @@ let package = Package(
                 .product(name: "ProviderActivity", package: "ProviderActivity"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "KitGit", package: "KitGit"),
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
                 .product(name: "PluginCommitToast", package: "PluginCommitToast"),
                 .product(name: "PluginCommitStatusBar", package: "PluginCommitStatusBar"),
@@ -172,7 +170,6 @@ let package = Package(
             dependencies: [
                 "FactoryGitOK",
                 .product(name: "KitGit", package: "KitGit"),
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
                 .product(name: "PluginToast", package: "PluginToast"),
                 .product(name: "PluginCommitToast", package: "PluginCommitToast"),

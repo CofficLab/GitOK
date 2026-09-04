@@ -2,25 +2,30 @@ import KitGit
 import LumiUI
 import SwiftUI
 
+private func loc(_ key: String) -> String {
+    CommitDetailLocalization.string(key, bundle: .module)
+}
+
 /// Commit 详情的整体布局（对齐旧版 GitDetailContentLayout）。
 ///
-/// 顶部为 commit 信息头，下方为文件列表。文件列表由内部状态机异步加载
-/// （git diff-tree），选中文件时通过 `onSelectFile` 写入 Provider 的
-/// `selectedFile`——diff 渲染由右侧的 git diff 插件（rootview trailing pane）
-/// 订阅 Provider 后独立展示。
+/// 顶部为 commit 信息头，下方为文件列表。「当前 commit 下的变动的文件」由
+/// `ProjectProviding` 统一加载维护，本视图只做展示；选中文件时通过
+/// `onSelectFile` 写入 Provider 的 `currentFile`——diff 渲染由右侧的 git diff
+/// 插件（rootview trailing pane）订阅 Provider 后独立展示。
 struct CommitDetailLayout: View {
     let commit: GitCommit
     let projectURL: URL
     /// 当前选中的文件（Provider 的单一权威来源）。
     let selectedFile: String?
+    /// 当前 commit 下的变动的文件（由 Provider 加载维护）。
+    let changes: [GitFileChange]
+    /// 是否正在加载变动文件。
+    let isLoadingChanges: Bool
+    /// 变动文件加载失败的错误描述。
+    let loadError: String?
     /// 用户点击文件行时回调（由宿主写入 Provider）。
     let onSelectFile: (String?) -> Void
     @LumiTheme private var theme
-
-    @State private var changes: [GitFileChange] = []
-    @State private var isLoadingChanges = false
-    @State private var loadError: String?
-    @State private var loadedHash: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -29,35 +34,6 @@ struct CommitDetailLayout: View {
             fileListPane
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear { loadIfNeeded() }
-        .onChange(of: commit.hash) { _, _ in loadIfNeeded() }
-    }
-
-    // MARK: - Data
-
-    private func loadIfNeeded() {
-        guard loadedHash != commit.hash else { return }
-        loadedHash = commit.hash
-        // 新 commit 时由 Provider 清空选中文件；这里无需自行重置。
-        isLoadingChanges = true
-        changes = []
-        loadError = nil
-
-        let url = projectURL
-        let hash = commit.hash
-        Task.detached(priority: .userInitiated) {
-            let result = Result { try GitDiffLoader.loadChanges(commit: hash, in: url) }
-            await MainActor.run {
-                isLoadingChanges = false
-                switch result {
-                case .success(let loaded):
-                    changes = loaded
-                case .failure(let error):
-                    loadError = (error as? LocalizedError)?.errorDescription
-                        ?? error.localizedDescription
-                }
-            }
-        }
     }
 
     // MARK: - File List Pane
@@ -78,7 +54,7 @@ struct CommitDetailLayout: View {
         HStack(spacing: 6) {
             Image(systemName: "doc.on.doc")
                 .font(.appCaptionEmphasized)
-            Text("Files")
+            Text(loc("Files"))
                 .font(.appCaptionEmphasized)
             Spacer()
             Text("\(changes.count)")
@@ -97,11 +73,11 @@ struct CommitDetailLayout: View {
         } else if let loadError {
             AppEmptyState(
                 icon: "exclamationmark.triangle",
-                title: "Unable to Load Changes",
+                title: loc("Unable to Load Changes"),
                 description: loadError
             )
         } else if changes.isEmpty {
-            AppEmptyState(icon: "doc", title: "No Changes", description: "This commit has no file changes.")
+            AppEmptyState(icon: "doc", title: loc("No Changes"), description: loc("This commit has no file changes."))
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 0) {

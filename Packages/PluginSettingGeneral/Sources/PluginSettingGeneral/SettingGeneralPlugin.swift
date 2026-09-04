@@ -27,7 +27,7 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
         description: "在设置视图中注册「通用」入口，包含应用信息与说明书。",
         category: .system,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
 
     /// 版本字符串提供器；默认读取 App bundle 版本，可注入以便测试。

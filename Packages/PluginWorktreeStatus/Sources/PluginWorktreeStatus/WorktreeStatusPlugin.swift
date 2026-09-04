@@ -2,7 +2,6 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderCommit
 import ProviderProjects
 import ProviderRailView
 import SwiftUI
@@ -47,14 +46,10 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip rail section injection")
             return
         }
-        guard let detail = kernel.resolveProvider((any CommitDetailProviding).self) else {
-            Self.logger.error("\(self.t)CommitDetailProviding not registered; skip rail section injection")
-            return
-        }
 
         rail.addSections([
             RailSectionItem(id: "\(id).section", order: 15) {
-                WorkingTreeStatusView(projects: projects, detail: detail)
+                WorkingTreeStatusView(projects: projects)
             },
         ])
     }

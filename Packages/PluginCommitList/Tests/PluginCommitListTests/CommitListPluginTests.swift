@@ -1,7 +1,8 @@
 import Foundation
 import KernelCore
-import ProviderCommit
+import KitGit
 import ProviderProjects
+import ProviderRailView
 import ProviderRootView
 import SwiftUI
 import XCTest
@@ -14,6 +15,11 @@ final class CommitListPluginTests: XCTestCase {
     private final class MockProjects: ProjectProviding {
         var projects: [Project] = []
         var currentProject: Project?
+        var currentCommit: GitCommit?
+        var currentFile: String?
+        var currentCommitFiles: [GitFileChange]?
+        var isLoadingCommitFiles = false
+        var currentCommitFilesLoadError: String?
         func addObserver(
             _ callback: @escaping (ProjectProvidingEvent) -> Void
         ) -> any ProjectProvidingObserverHandle { MockHandle() }
@@ -25,43 +31,52 @@ final class CommitListPluginTests: XCTestCase {
         func setCurrentProject(id: UUID?) {}
         func refresh() {}
         func persist() {}
+        func selectCommit(_ commit: GitCommit) { currentCommit = commit }
+        func selectFile(_ path: String?) { currentFile = path }
+        func clearCommitSelection() {
+            currentCommit = nil
+            currentFile = nil
+            currentCommitFiles = nil
+        }
+        func notifyDataChanged() {}
     }
 
     private final class MockHandle: ProjectProvidingObserverHandle {
         func cancel() {}
     }
 
-    private func makeKernel(withDetail: Bool) throws -> (
+    private func makeKernel() throws -> (
         kernel: KernelCoreContainer,
-        root: DefaultRootViewProvider
+        rail: DefaultRailViewProviding
     ) {
         let kernel = KernelCoreContainer()
-        let root = DefaultRootViewProvider()
-        try kernel.registerProvider((any RootViewProviding).self, root)
+        let rail = DefaultRailViewProviding()
+        try kernel.registerProvider((any RailViewProviding).self, rail)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
-        if withDetail {
-            try kernel.registerProvider((any CommitDetailProviding).self, DefaultCommitDetailProvider())
-        }
-        return (kernel, root)
+        return (kernel, rail)
     }
 
-    func testOnBootInjectsRailView() throws {
-        let (kernel, root) = try makeKernel(withDetail: true)
-        try CommitListPlugin().onBoot(kernel: kernel)
-        XCTAssertNotNil(root.railView, "rail view should be injected on boot")
+    func testOnBootAddsRailSection() throws {
+        let (kernel, rail) = try makeKernel()
+        let plugin = CommitListPlugin()
+        try plugin.onBoot(kernel: kernel)
+        XCTAssertTrue(rail.sections.contains { $0.id == "\(plugin.id).section" })
     }
 
-    func testOnShutdownClearsRailView() throws {
-        let (kernel, root) = try makeKernel(withDetail: true)
+    func testOnShutdownRemovesRailSection() throws {
+        let (kernel, rail) = try makeKernel()
         let plugin = CommitListPlugin()
         try plugin.onBoot(kernel: kernel)
         try plugin.onShutdown(kernel: kernel)
-        XCTAssertNil(root.railView)
+        XCTAssertFalse(rail.sections.contains { $0.id == "\(plugin.id).section" })
     }
 
-    func testOnBootSkipsWhenCommitDetailMissing() throws {
-        let (kernel, root) = try makeKernel(withDetail: false)
+    func testOnBootSkipsWhenProjectsMissing() throws {
+        let kernel = KernelCoreContainer()
+        let rail = DefaultRailViewProviding()
+        try kernel.registerProvider((any RailViewProviding).self, rail)
+        // 不注册 ProjectProviding。
         try CommitListPlugin().onBoot(kernel: kernel)
-        XCTAssertNil(root.railView, "no rail injection when CommitDetailProviding is missing")
+        XCTAssertTrue(rail.sections.isEmpty, "no rail section when ProjectProviding is missing")
     }
 }

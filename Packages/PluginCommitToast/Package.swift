@@ -10,7 +10,7 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
-        .package(path: "../ProviderCommit"),
+        .package(path: "../ProviderProjects"),
         .package(path: "../ProviderToast"),
     ],
     targets: [
@@ -20,7 +20,7 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
                 "KitSuperLog",
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
             ],
             path: "Sources/PluginCommitToast"
@@ -30,7 +30,7 @@ let package = Package(
             dependencies: [
                 "PluginCommitToast",
                 .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
             ],
             path: "Tests/PluginCommitToastTests"

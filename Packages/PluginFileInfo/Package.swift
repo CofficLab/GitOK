@@ -17,7 +17,7 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
-        .package(path: "../ProviderCommit"),
+        .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
     ],
     targets: [
@@ -27,7 +27,7 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "ProviderCommit", package: "ProviderCommit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
             ],
             path: "Sources/PluginFileInfo"

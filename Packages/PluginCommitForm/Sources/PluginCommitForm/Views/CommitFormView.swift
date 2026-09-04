@@ -4,6 +4,11 @@ import ProviderCommitForm
 import ProviderProjects
 import SwiftUI
 
+/// 本地化 helper：按当前系统语言从本插件 catalog 取文案（默认英语）。
+private func loc(_ key: String) -> String {
+    CommitFormLocalization.string(key, bundle: .module)
+}
+
 /// 提交表单视图（对齐旧版 CommitFormLayout）。
 ///
 /// 显示在详情区顶部：第一行「提交风格 + 提交类别 + 消息输入」，
@@ -98,7 +103,7 @@ public struct CommitFormView: View {
 
             Spacer(minLength: 8)
 
-            AppInputField("commit", text: Binding(
+            AppInputField(LocalizedStringKey(loc("commit")), text: Binding(
                 get: { subject },
                 set: {
                     subject = $0
@@ -121,12 +126,12 @@ public struct CommitFormView: View {
                 ProgressView()
                     .controlSize(.small)
             } else {
-                AppButton("Commit", systemImage: "checkmark.circle", style: .secondary, action: {
+                AppButton(loc("Commit"), systemImage: "checkmark.circle", style: .secondary, size: .small, action: {
                     submit(commitOnly: true)
                 })
                 .disabled(!canSubmit)
 
-                AppButton("Commit & Push", systemImage: "arrow.up.circle", style: .primary, action: {
+                AppButton(loc("Commit & Push"), systemImage: "arrow.up.circle", style: .primary, size: .small, action: {
                     submit(commitOnly: false)
                 })
                 .disabled(!canSubmit)
@@ -150,7 +155,7 @@ public struct CommitFormView: View {
             HStack(spacing: 5) {
                 Image(systemName: "exclamationmark.triangle")
                     .font(.system(size: 10))
-                Text("Git user not configured")
+                Text(loc("Git user not configured"))
                     .font(DesignTokens.Typography.caption2)
             }
             .foregroundStyle(theme.error)
@@ -175,7 +180,7 @@ public struct CommitFormView: View {
             Button {
                 showCoAuthorSheet = true
             } label: {
-                Label("Add Co-author", systemImage: "plus.circle")
+                Label(loc("Add Co-author"), systemImage: "plus.circle")
             }
         } label: {
             HStack(spacing: 4) {
@@ -271,7 +276,7 @@ private struct CoAuthorEditorSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Co-authors")
+            Text(loc("Co-authors"))
                 .font(.headline)
 
             let all = CoAuthorStore.shared.loadCoAuthors()
@@ -303,9 +308,9 @@ private struct CoAuthorEditorSheet: View {
             AppDivider()
 
             HStack(spacing: 8) {
-                TextField("Name", text: $newName)
-                TextField("Email", text: $newEmail)
-                Button("Add") {
+                TextField(loc("Name"), text: $newName)
+                TextField(loc("Email"), text: $newEmail)
+                Button(loc("Add")) {
                     let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
                     let trimmedEmail = newEmail.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmedName.isEmpty, !trimmedEmail.isEmpty else { return }
@@ -321,8 +326,8 @@ private struct CoAuthorEditorSheet: View {
 
             HStack {
                 Spacer()
-                Button("Cancel") { dismiss() }
-                Button("Done") {
+                Button(loc("Cancel")) { dismiss() }
+                Button(loc("Done")) {
                     onCommit(selected)
                     dismiss()
                 }

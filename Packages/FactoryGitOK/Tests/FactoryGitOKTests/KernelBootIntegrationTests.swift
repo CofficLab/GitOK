@@ -1,7 +1,6 @@
 import XCTest
 @testable import FactoryGitOK
 import KitGit
-import ProviderCommit
 import ProviderProjects
 import ProviderToast
 import PluginCommitStatusBar
@@ -20,14 +19,10 @@ final class KernelBootIntegrationTests: XCTestCase {
         let kernel = try KernelFactory.makeKernel()
 
         // 宿主仍注册了默认 provider（保证 app 不崩、可渲染空壳）。
-        XCTAssertNotNil(kernel.resolveProvider((any CommitDetailProviding).self))
+        XCTAssertNotNil(kernel.resolveProvider((any ProjectProviding).self))
         XCTAssertNotNil(kernel.resolveProvider((any ToastProviding).self))
 
         // 但插件 onBoot 的替换没有发生。
-        XCTAssertFalse(
-            kernel.resolveProvider((any CommitDetailProviding).self) is ToastCommitDetailProvider,
-            "commit-toast should be disabled; provider should stay the host default"
-        )
         XCTAssertFalse(
             kernel.resolveProvider((any ToastProviding).self) is ToastCenter,
             "toast should be disabled; provider should stay the host no-op"

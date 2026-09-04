@@ -3,18 +3,22 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderCommitForm
+import ProviderContentView
 import ProviderProjects
+import SwiftUI
 
 // MARK: - Commit Form SuperPlugin
 
 /// 提交表单插件
 ///
-/// 订阅 `CommitFormProviding` 的提交事件：一次提交（或提交并推送）成功后，
-/// 向 `ProjectProviding` 发送 `dataChanged` 信号，让 commit 列表、工作区状态、
-/// diff 等消费方刷新展示。
+/// 两份职责：
+/// 1. 订阅 `CommitFormProviding` 的提交事件：一次提交（或提交并推送）成功后，
+///    向 `ProjectProviding` 发送 `dataChanged` 信号，让 commit 列表、工作区状态、
+///    diff 等消费方刷新展示。
+/// 2. 把 `CommitFormView` 作为一块独立内容贡献到主内容区（`ContentViewProviding`）
+///    VStack 的顶部：提交表单 UI 由本插件持有，不再由 CommitDetail 插件内嵌。
 ///
-/// 提交表单的 UI（`CommitFormView`）由 PluginCommitDetail 在详情区顶部嵌入，
-/// 状态与提交动作的权威源是 `CommitFormProviding`。
+/// 表单状态与提交动作的权威源是 `CommitFormProviding`。
 @MainActor
 public final class CommitFormPlugin: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.commit-form", category: "CommitForm")
@@ -31,7 +35,7 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
         description: "Commit workflow: staged message, category, style and commit & push",
         category: .project,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
 
     private var formHandle: (any CommitFormObserverHandle)?
@@ -53,10 +57,27 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
             // 提交成功后通知消费方刷新（commit 列表 / 工作区状态 / diff）。
             projects?.notifyDataChanged()
         }
+
+        // 提交表单 UI 作为独立内容块贡献到主内容区顶部（VStack 中 order 较小置顶）。
+        if let contentView = kernel.resolveProvider((any ContentViewProviding).self) {
+            contentView.addContentView(
+                AnyView(
+                    CommitFormView(projects: projects, form: form)
+                        // Debug 构建下左上角叠加插件名 badge，便于识别内容区来源。
+                        .debugPluginBadge(metadata.name)
+                ),
+                id: "\(id).content",
+                order: 10
+            )
+        } else {
+            Self.logger.error("\(self.t)ContentViewProviding not registered; skip content contribution")
+        }
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
         formHandle?.cancel()
         formHandle = nil
+        kernel.resolveProvider((any ContentViewProviding).self)?
+            .removeContentView(id: "\(id).content")
     }
 }

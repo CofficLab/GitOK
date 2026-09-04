@@ -1,17 +1,23 @@
 import KitGit
 import LumiUI
-import ProviderCommit
 import ProviderProjects
 import SwiftUI
 
+private func loc(_ key: String) -> String {
+    CommitDetailLocalization.string(key, bundle: .module)
+}
+
 /// 工作区变动文件列表视图。
 ///
-/// 当 `CommitDetailProviding.selectedCommit` 为 nil（用户点击了工作区状态条）
+/// 当 `CommitDetailViewModel.selectedCommit` 为 nil（用户点击了工作区状态条）
 /// 且当前项目有未提交变更时展示。加载 `git status --porcelain` 文件列表，
-/// 选中文件时通过 `detail.selectFile` 写入 Provider，右侧 git diff 插件据此展示 diff。
+/// 选中文件时通过 `projects.selectFile` 写入 Provider，右侧 git diff 插件据此展示 diff。
+///
+/// 外部仓库数据变化（提交 / 推送 / 分支切换）由 `CommitDetailObserver` 翻译成
+/// ViewModel 的 `worktreeRevision`，这里只订阅 ViewModel，不直接监听通知。
 struct WorktreeChangesView: View {
     let projects: any ProjectProviding
-    let detail: any CommitDetailProviding
+    @ObservedObject var viewModel: CommitDetailViewModel
     @LumiTheme private var theme
 
     @State private var entries: [GitStatusEntry] = []
@@ -30,7 +36,7 @@ struct WorktreeChangesView: View {
             theme.surface
         }
         .onAppear { reloadIfNeeded() }
-        .onReceive(NotificationCenter.default.publisher(for: .gitokWorktreeDataChanged)) { _ in
+        .onReceive(viewModel.$worktreeRevision) { _ in
             reloadIfNeeded(force: true)
         }
     }
@@ -41,7 +47,7 @@ struct WorktreeChangesView: View {
         HStack(spacing: 6) {
             Image(systemName: "doc.on.doc")
                 .font(.appCaptionEmphasized)
-            Text("Changes")
+            Text(loc("Changes"))
                 .font(.appCaptionEmphasized)
             Spacer()
             Text("\(entries.count)")
@@ -62,15 +68,15 @@ struct WorktreeChangesView: View {
         } else if let loadError {
             AppEmptyState(
                 icon: "exclamationmark.triangle",
-                title: "Unable to Load Changes",
+                title: loc("Unable to Load Changes"),
                 description: loadError
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if entries.isEmpty {
             AppEmptyState(
                 icon: "checkmark.circle",
-                title: "Working Tree Clean",
-                description: "No uncommitted changes."
+                title: loc("Working Tree Clean"),
+                description: loc("No uncommitted changes.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -88,8 +94,8 @@ struct WorktreeChangesView: View {
     }
 
     private func fileRow(_ entry: GitStatusEntry) -> some View {
-        let isSelected = detail.selectedFile == entry.path
-        return Button(action: { detail.selectFile(entry.path) }) {
+        let isSelected = viewModel.selectedFile == entry.path
+        return Button(action: { projects.selectFile(entry.path) }) {
             HStack(spacing: 8) {
                 Image(systemName: statusIcon(entry))
                     .font(.system(size: 11))
@@ -144,10 +150,10 @@ struct WorktreeChangesView: View {
     }
 
     private func statusLabel(_ entry: GitStatusEntry) -> String {
-        if entry.isUntracked { return "Untracked" }
-        if entry.isStaged && entry.isWorktreeModified { return "Staged + Modified" }
-        if entry.isStaged { return "Staged" }
-        return "Not Staged"
+        if entry.isUntracked { return loc("Untracked") }
+        if entry.isStaged && entry.isWorktreeModified { return loc("Staged + Modified") }
+        if entry.isStaged { return loc("Staged") }
+        return loc("Not Staged")
     }
 
     // MARK: - Loading
@@ -180,9 +186,4 @@ struct WorktreeChangesView: View {
             }
         }
     }
-}
-
-extension Notification.Name {
-    /// 工作区数据变化通知（提交/推送后由其他插件发送，触发文件列表刷新）。
-    static let gitokWorktreeDataChanged = Notification.Name("com.coffic.gitok.worktreeDataChanged")
 }

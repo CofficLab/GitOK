@@ -1,23 +1,23 @@
 import AppKit
 import LumiUI
-import ProviderCommit
+import ProviderProjects
 import SwiftUI
 
 /// 文件信息 tile：显示当前选中文件路径，点击弹出文件操作
 /// （对齐旧版 FileInfoTile）。
 public struct FileInfoTile: View {
-    let commit: any CommitDetailProviding
-    @StateObject private var observation: CommitObservationModel
+    let projects: any ProjectProviding
+    @StateObject private var observation: ProjectObservationModel
     @State private var isPopoverPresented = false
 
-    public init(commit: any CommitDetailProviding) {
-        self.commit = commit
-        _observation = StateObject(wrappedValue: CommitObservationModel(commit: commit))
+    public init(projects: any ProjectProviding) {
+        self.projects = projects
+        _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
     public var body: some View {
         Group {
-            if let file = commit.selectedFile, !file.isEmpty {
+            if let file = projects.currentFile, !file.isEmpty {
                 HStack(spacing: 4) {
                     Image(systemName: "doc.text")
                         .font(.system(size: 10))
@@ -87,7 +87,7 @@ public struct FileInfoTile: View {
     }
 
     private var projectURL: URL? {
-        commit.selectedProjectURL
+        projects.currentProject?.url
     }
 
     private func revealInFinder(file: String) {
@@ -108,14 +108,14 @@ public struct FileInfoTile: View {
     @LumiTheme private var theme: LumiUITheme
 }
 
-/// 提交详情观察模型：订阅 `CommitDetailProviding` 事件。
+/// 项目观察模型：订阅 `ProjectProviding` 事件。
 @MainActor
-final class CommitObservationModel: ObservableObject {
+final class ProjectObservationModel: ObservableObject {
     @Published private(set) var revision = 0
-    private var handle: (any CommitDetailObserverHandle)?
+    private var handle: (any ProjectProvidingObserverHandle)?
 
-    init(commit: any CommitDetailProviding) {
-        handle = commit.addObserver { [weak self] _ in
+    init(projects: any ProjectProviding) {
+        handle = projects.addObserver { [weak self] _ in
             self?.revision += 1
         }
     }

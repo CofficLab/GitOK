@@ -1,9 +1,9 @@
 import Foundation
-import os
 import KernelCore
+import KitSuperLog
+import os
 import ProviderLogo
 import ProviderSettingView
-import KitSuperLog
 
 /// 设置视图管理器插件（KernelCore 生态）。
 ///
@@ -17,7 +17,7 @@ import KitSuperLog
 @MainActor
 public final class PluginSettingView: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.setting-view", category: "Plugin")
-    nonisolated public static let emoji = "⚙️"
+    public nonisolated static let emoji = "⚙️"
     nonisolated static let verbose = false
 
     public let id = "com.coffic.lumi.plugin.setting-view"
@@ -28,9 +28,8 @@ public final class PluginSettingView: SuperPlugin, SuperLog {
         description: "",
         category: .general,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
-
 
     /// 本插件装配的 SettingViewManager 实现。
     private var manager: SettingViewManager?

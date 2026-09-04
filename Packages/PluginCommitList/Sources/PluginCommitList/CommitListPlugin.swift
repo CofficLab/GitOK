@@ -2,7 +2,6 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderCommit
 import ProviderProjects
 import ProviderRailView
 import SwiftUI
@@ -13,6 +12,10 @@ import SwiftUI
 ///
 /// 在 `onBoot` 阶段解析 `RailViewProviding` 与 `ProjectProviding`，
 /// 向 Rail 注入一个纵向区块（section），展示当前打开项目的 commit 列表。
+///
+/// 选中 commit 的状态由 `ProjectProviding` 统一维护：行点击写入
+/// `ProjectProviding.selectCommit`，主内容区（PluginCommitDetail）与 diff
+/// 视图（PluginGitDiff）据此展示。
 ///
 /// 遵循 Lumi 架构：Rail 支持多区块（`VStack` 组合），本插件贡献
 /// commit 列表区块；工作区状态等其它区块由各自插件贡献。根布局的
@@ -48,14 +51,10 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip rail section injection")
             return
         }
-        guard let detail = kernel.resolveProvider((any CommitDetailProviding).self) else {
-            Self.logger.error("\(self.t)CommitDetailProviding not registered; skip rail section injection")
-            return
-        }
 
         rail.addSections([
             RailSectionItem(id: "\(id).section", order: 20) {
-                CommitRailView(projects: projects, detail: detail)
+                CommitRailView(projects: projects)
             },
         ])
     }

@@ -12,7 +12,6 @@ import ProviderToolbar
 #if os(macOS)
 import ProviderActivity
 import ProviderCommand
-import ProviderCommit
 import ProviderCommitForm
 import ProviderLogo
 import ProviderPluginManaging
@@ -87,7 +86,6 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any SidebarProviding).self, makeSidebarProvider())
         try kernel.registerProvider((any RailViewProviding).self, makeRailViewProvider())
         try kernel.registerProvider((any CommandProviding).self, makeCommandProvider())
-        try kernel.registerProvider((any CommitDetailProviding).self, makeCommitDetailProvider())
         try kernel.registerProvider((any ActivityProviding).self, makeActivityProvider())
         try kernel.registerProvider(
             (any CommitFormProviding).self,
@@ -119,10 +117,6 @@ extension DefaultProviderFactory {
 
     public func makeCommandProvider() -> any CommandProviding {
         DefaultCommandProviding()
-    }
-
-    public func makeCommitDetailProvider() -> any CommitDetailProviding {
-        DefaultCommitDetailProvider()
     }
 
     public func makeActivityProvider() -> any ActivityProviding {

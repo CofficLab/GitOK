@@ -1,6 +1,5 @@
 import KitGit
 import LumiUI
-import ProviderCommit
 import ProviderProjects
 import SwiftUI
 
@@ -10,11 +9,12 @@ import SwiftUI
 /// `ProjectProviding` 的观察者事件；`currentProject` 变化时异步读取
 /// 该仓库的 commit 列表（后台线程执行 git CLI，主线程更新）。
 ///
-/// 同时订阅 `CommitDetailProviding`（Lumi 式"单 Provider 多处消费"）：
+/// 选中 commit 的状态由 `ProjectProviding` 统一维护（Lumi 式"单 Provider
+/// 多处消费"）：
 /// - 行点击把选中的 commit 写入 Provider，主内容区（PluginCommitDetail）
-///   据此展示该 commit 的变动；
+///   与 diff 视图（PluginGitDiff）据此展示；
 /// - 本视图据 Provider 的选中状态高亮当前行；
-/// - 切换项目时联动清空选择，避免旧项目的选中残留。
+/// - 切换项目时 Provider 内部联动清空选择，避免旧项目的选中残留。
 ///
 /// 视觉对齐旧版 GitOK 的 commit 行布局（commit graph + message / 作者 +
 /// 相对时间 / 完整日期 / tag），并使用 LumiUI 组件（AppToolbarContainer /
@@ -22,10 +22,8 @@ import SwiftUI
 /// 设计语言一致。
 struct CommitRailView: View {
     let projects: any ProjectProviding
-    let detail: any CommitDetailProviding
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
-    @StateObject private var detailObservation: CommitDetailObservationModel
 
     @State private var commits: [GitCommit] = []
     @State private var graphRows: [String: CommitGraphLayoutRules.Row] = [:]
@@ -33,11 +31,9 @@ struct CommitRailView: View {
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
 
-    init(projects: any ProjectProviding, detail: any CommitDetailProviding) {
+    init(projects: any ProjectProviding) {
         self.projects = projects
-        self.detail = detail
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
-        _detailObservation = StateObject(wrappedValue: CommitDetailObservationModel(detail: detail))
     }
 
     var body: some View {
@@ -48,15 +44,17 @@ struct CommitRailView: View {
         .background {
             theme.surface
         }
-        .onReceive(projectObservation.$revision) { _ in reloadIfNeeded() }
+        // 项目 / 选中 commit / 仓库数据变化 → 刷新列表或选中态高亮。
+        .onReceive(projectObservation.$revision) { _ in
+            reloadIfNeeded()
+            refreshSelectionState()
+        }
         // dataChanged（提交/推送后）→ 即使项目未变也强制刷新列表。
         .onReceive(projectObservation.$lastEvent) { event in
             if case .dataChanged = event {
                 reloadIfNeeded(force: true)
             }
         }
-        // 选中 commit 变化（可能来自本列表，也可能来自其它消费方）→ 刷新选中态。
-        .onReceive(detailObservation.$revision) { _ in refreshSelectionState() }
         .onAppear { reloadIfNeeded() }
     }
 
@@ -145,13 +143,12 @@ struct CommitRailView: View {
     }
 
     private func select(_ commit: GitCommit) {
-        guard let project = projects.currentProject else { return }
-        detail.selectCommit(commit, in: project.url)
+        projects.selectCommit(commit)
     }
 
     /// 该行是否处于选中态（以 Provider 为单一权威来源）。
     private func isSelected(_ commit: GitCommit) -> Bool {
-        detail.selectedCommit?.hash == commit.hash
+        projects.currentCommit?.hash == commit.hash
     }
 
     /// 作者头像徽标（LumiUI AppAvatar，基于名字稳定取色，hover 有动效）。
@@ -186,8 +183,8 @@ struct CommitRailView: View {
 
     // MARK: - Loading
 
-    /// 项目变化时重新加载 commit 列表；切换项目时联动清空 Provider 的选中状态，
-    /// 避免旧项目的选中 commit 残留在主内容区。
+    /// 项目变化时重新加载 commit 列表。切换项目时 Provider 内部已联动清空
+    /// 选中状态（`ProjectManager` 保证选择属于当前项目）。
     ///
     /// `force` 为 true（如提交 / 推送后收到 `dataChanged`）时即使项目未变也重载，
     /// 以便展示新提交。
@@ -199,16 +196,10 @@ struct CommitRailView: View {
                 graphRows = [:]
                 isLoading = false
                 loadError = nil
-                detail.clearSelection()
             }
             return
         }
         if loadedProjectURL == project.url && !force { return }
-
-        // 项目确实发生了变化：清空旧选中。
-        if loadedProjectURL != nil {
-            detail.clearSelection()
-        }
 
         loadedProjectURL = project.url
         isLoading = true
@@ -261,20 +252,6 @@ final class ProjectObservationModel: ObservableObject {
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
             self?.lastEvent = event
-            self?.revision += 1
-        }
-    }
-}
-
-/// Commit 详情观察模型：订阅 `CommitDetailProviding` 的观察者事件，
-/// 把变化转成 `@Published revision` 以驱动 SwiftUI 视图重算（选中行高亮）。
-@MainActor
-final class CommitDetailObservationModel: ObservableObject {
-    @Published private(set) var revision = 0
-    private var handle: (any CommitDetailObserverHandle)?
-
-    init(detail: any CommitDetailProviding) {
-        handle = detail.addObserver { [weak self] _ in
             self?.revision += 1
         }
     }

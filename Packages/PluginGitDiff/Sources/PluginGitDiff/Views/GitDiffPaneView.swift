@@ -1,28 +1,25 @@
 import KitGit
 import LumiUI
 import MagicDiffView
-import ProviderCommit
 import SwiftUI
 
 /// Git Diff 右侧面板视图。
 ///
-/// 订阅 `CommitDetailProviding`，当选中 commit + 文件变化时异步加载
+/// 绑定插件自有的 `GitDiffViewModel`：当「当前 commit + 当前文件」变化时
+/// （由 `GitDiffObserver` 从 `ProjectProviding` 翻译进 ViewModel），异步加载
 /// 该文件的 unified diff（`GitDiffLoader.loadDiff`），用旧版同款组件
 /// `MagicDiffView` 渲染。无选中 commit / 文件时显示占位。
+///
+/// 视图只绑定注入的 ViewModel，不再直接读取 Provider 或注册任何外部监听
+/// （commit / 文件 / 仓库数据变化由 `GitDiffObserver` 负责翻译进 ViewModel）。
 struct GitDiffPaneView: View {
-    let detail: any CommitDetailProviding
+    @ObservedObject var viewModel: GitDiffViewModel
     @LumiTheme private var theme
-    @StateObject private var observation: CommitDetailObservationModel
 
     @State private var diffText: String?
     @State private var isLoading = false
     @State private var loadError: String?
     @State private var loadedKey: String?
-
-    init(detail: any CommitDetailProviding) {
-        self.detail = detail
-        _observation = StateObject(wrappedValue: CommitDetailObservationModel(detail: detail))
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -34,7 +31,7 @@ struct GitDiffPaneView: View {
         .background {
             theme.surface
         }
-        .onReceive(observation.$revision) { _ in loadIfNeeded() }
+        .onReceive(viewModel.$revision) { _ in loadIfNeeded() }
         .onAppear { loadIfNeeded() }
     }
 
@@ -49,7 +46,7 @@ struct GitDiffPaneView: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
             Spacer(minLength: 8)
-            if let hash = detail.selectedCommit?.shortHash {
+            if let hash = viewModel.selectedCommit?.shortHash {
                 Text(hash)
                     .font(.system(size: 10, weight: .medium, design: .monospaced))
                     .foregroundStyle(theme.textTertiary)
@@ -59,20 +56,20 @@ struct GitDiffPaneView: View {
         .padding(.vertical, 6)
     }
 
-    private var filePath: String? { detail.selectedFile }
+    private var filePath: String? { viewModel.selectedFile }
 
     // MARK: - Content
 
     @ViewBuilder
     private var content: some View {
-        if detail.selectedCommit == nil {
+        if viewModel.selectedCommit == nil {
             AppEmptyState(
                 icon: "doc.text.magnifyingglass",
                 title: "No Commit Selected",
                 description: "Select a commit to view its file diffs."
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if detail.selectedFile == nil {
+        } else if viewModel.selectedFile == nil {
             AppEmptyState(
                 icon: "doc.on.doc",
                 title: "Select a File",
@@ -107,9 +104,9 @@ struct GitDiffPaneView: View {
 
     /// 当「commit + 文件」组合变化时重新加载 diff。
     private func loadIfNeeded() {
-        guard let commit = detail.selectedCommit,
-              let projectURL = detail.selectedProjectURL,
-              let path = detail.selectedFile else {
+        guard let commit = viewModel.selectedCommit,
+              let projectURL = viewModel.selectedProjectURL,
+              let path = viewModel.selectedFile else {
             // 无完整上下文：清空并回到占位。
             if loadedKey != nil {
                 loadedKey = nil
@@ -141,19 +138,6 @@ struct GitDiffPaneView: View {
                         ?? error.localizedDescription
                 }
             }
-        }
-    }
-}
-
-/// 观察模型：订阅 Provider 的观察者事件，转成 @Published revision。
-@MainActor
-final class CommitDetailObservationModel: ObservableObject {
-    @Published private(set) var revision = 0
-    private var handle: (any CommitDetailObserverHandle)?
-
-    init(detail: any CommitDetailProviding) {
-        handle = detail.addObserver { [weak self] _ in
-            self?.revision += 1
         }
     }
 }

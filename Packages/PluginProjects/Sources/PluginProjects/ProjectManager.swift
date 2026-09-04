@@ -1,4 +1,5 @@
 import Foundation
+import KitGit
 import KitSuperLog
 import os
 import ProviderProjects
@@ -8,6 +9,10 @@ import ProviderProjects
 /// 管理 GitOK 项目列表（侧边栏数据源），并把项目列表持久化到
 /// 插件数据目录下的 `projects.json`（目录遵循 Lumi 存储规律：
 /// `~/Library/Application Support/<bundleID>/db_<env>_v<major>/Projects/`）。
+///
+/// 同时作为「当前 commit / 当前文件 / 当前 commit 下的变动的文件」这些
+/// 会话级选择状态的唯一权威来源：commit 列表写入选择，commit 详情 / diff /
+/// 状态栏等消费方读取。切换项目时自动清空选择，保证选择永远属于当前项目。
 ///
 /// 排序规则（与旧版一致）：
 /// - 置顶（pinned）项目在最上方；
@@ -23,6 +28,18 @@ public final class ProjectManager: ProjectProviding, SuperLog {
 
     public private(set) var projects: [Project] = []
     public private(set) var currentProject: Project?
+
+    // MARK: - Commit 选择状态（唯一权威来源）
+
+    public private(set) var currentCommit: GitCommit?
+    public private(set) var currentFile: String?
+    public private(set) var currentCommitFiles: [GitFileChange]?
+    public private(set) var isLoadingCommitFiles = false
+    /// 当前 commit 变动文件加载失败的错误描述（成功 / 未加载时为 nil）。
+    public private(set) var currentCommitFilesLoadError: String?
+
+    /// 变动文件加载任务序号：仅最后一次加载的结果会落地，防止旧任务覆盖新选择。
+    private var commitFilesLoadToken = 0
 
     /// 项目列表 JSON 文件的 URL。
     public private(set) var storeURL: URL
@@ -64,7 +81,12 @@ public final class ProjectManager: ProjectProviding, SuperLog {
             insertToFront(project)
             openedID = project.id
         }
+        let oldProject = currentProject
         currentProject = projects.first(where: { $0.url.standardizedFileURL == standardized })
+        // 切换了当前项目 → 联动清空 commit 选择，避免旧项目选中残留。
+        if oldProject?.id != currentProject?.id {
+            clearCommitSelection()
+        }
         persist()
         notify(.projectsChanged)
         notify(.selectionChanged(projectID: openedID))
@@ -73,6 +95,8 @@ public final class ProjectManager: ProjectProviding, SuperLog {
     public func closeCurrentProject() {
         guard currentProject != nil else { return }
         currentProject = nil
+        // 关闭项目 → 联动清空 commit 选择。
+        clearCommitSelection()
         if Self.verbose {
             Self.logger.debug("\(self.t)closed current project")
         }
@@ -102,6 +126,8 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         let removedCurrent = currentProject?.id == id
         if removedCurrent {
             currentProject = nil
+            // 移除的是当前项目 → 联动清空 commit 选择。
+            clearCommitSelection()
         }
         persist()
         notify(.projectsChanged)
@@ -128,6 +154,8 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         } else {
             currentProject = nil
         }
+        // 当前项目变化 → 联动清空 commit 选择。
+        clearCommitSelection()
         persist()
         notify(.selectionChanged(projectID: id))
     }
@@ -142,6 +170,80 @@ public final class ProjectManager: ProjectProviding, SuperLog {
 
     public func persist() {
         writeToDisk()
+    }
+
+    // MARK: - Commit 选择
+
+    public func selectCommit(_ commit: GitCommit) {
+        // 以 hash 为 commit 唯一标识做去重（date 等元信息每次加载可能不同）。
+        guard currentCommit?.hash != commit.hash else { return }
+        currentCommit = commit
+        // 新 commit 尚无选中文件：清空并广播文件变化，让 diff 等消费方跟随。
+        let hadFile = currentFile != nil
+        currentFile = nil
+        // 变动文件重新加载：先清空旧列表并进入加载态。
+        currentCommitFiles = nil
+        currentCommitFilesLoadError = nil
+        isLoadingCommitFiles = true
+        notify(.commitSelectionChanged)
+        if hadFile {
+            notify(.currentFileChanged)
+        }
+        loadCommitFiles(for: commit)
+    }
+
+    public func selectFile(_ path: String?) {
+        guard currentFile != path else { return }
+        currentFile = path
+        notify(.currentFileChanged)
+    }
+
+    public func clearCommitSelection() {
+        guard currentCommit != nil || currentFile != nil
+            || currentCommitFiles != nil || isLoadingCommitFiles else { return }
+        let hadFile = currentFile != nil
+        currentCommit = nil
+        currentFile = nil
+        currentCommitFiles = nil
+        currentCommitFilesLoadError = nil
+        isLoadingCommitFiles = false
+        // 失效所有在途的变动文件加载任务。
+        commitFilesLoadToken &+= 1
+        notify(.commitSelectionChanged)
+        if hadFile {
+            notify(.currentFileChanged)
+        }
+    }
+
+    /// 异步加载当前 commit 的变动文件（git diff-tree）。
+    ///
+    /// 仅最后一次发起的加载会把结果写入状态（`commitFilesLoadToken` 保证
+    /// 竞态下不被旧任务覆盖）；加载完成后广播 `commitSelectionChanged`。
+    private func loadCommitFiles(for commit: GitCommit) {
+        guard let project = currentProject else {
+            isLoadingCommitFiles = false
+            return
+        }
+        let url = project.url
+        let hash = commit.hash
+        commitFilesLoadToken &+= 1
+        let token = commitFilesLoadToken
+        Task.detached(priority: .userInitiated) {
+            let result = Result { try GitDiffLoader.loadChanges(commit: hash, in: url) }
+            await MainActor.run {
+                guard token == self.commitFilesLoadToken else { return }
+                self.isLoadingCommitFiles = false
+                switch result {
+                case .success(let loaded):
+                    self.currentCommitFiles = loaded
+                case .failure(let error):
+                    self.currentCommitFiles = []
+                    self.currentCommitFilesLoadError =
+                        (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                }
+                self.notify(.commitSelectionChanged)
+            }
+        }
     }
 
     // MARK: - Observation
