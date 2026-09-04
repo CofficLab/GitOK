@@ -26,7 +26,9 @@ public final class CommandPlugin: SuperPlugin, SuperLog {
         description: "",
         category: .core,
         stage: .stable,
-        policy: .disabled
+        // 与 Lumi 一致：命令服务必须在启动时可用，否则系统菜单栏的
+        // 调试等顶级菜单不会出现（policy 为 .disabled 的插件会被内核过滤）。
+        policy: .alwaysOn
     )
 
     public let commandService = CommandManager()

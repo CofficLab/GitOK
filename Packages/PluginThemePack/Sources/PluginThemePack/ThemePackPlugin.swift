@@ -28,7 +28,9 @@ public final class ThemePackPlugin: SuperPlugin, SuperLog {
         description: "批量注册 19 个旧版主题，并在设置中提供外观切换入口。",
         category: .design,
         stage: .stable,
-        policy: .disabled
+        // 与 Lumi 一致：必须启动才能注册「主题」系统菜单与外观设置入口
+        // （policy 为 .disabled 的插件会被内核过滤，菜单不会出现）。
+        policy: .required
     )
 
     public init() {}
