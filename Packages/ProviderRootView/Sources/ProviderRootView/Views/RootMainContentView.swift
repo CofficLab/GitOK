@@ -71,7 +71,8 @@ struct RootMainContentView: View {
     /// 覆盖式浮层面板：面板内容 + 左边缘分隔线 + 左上角返回按钮 + 投影。
     private func floatingTrailingPane(containerWidth: CGFloat) -> some View {
         trailingPaneContent
-            .frame(width: paneWidth(containerWidth: containerWidth), maxHeight: .infinity)
+            .frame(width: paneWidth(containerWidth: containerWidth))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(theme.surface)
             .overlay(alignment: .leading) {
                 // 左边缘分隔线：区分浮层与下方露出的内容区。

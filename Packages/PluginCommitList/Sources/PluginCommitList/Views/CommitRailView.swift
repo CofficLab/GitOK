@@ -70,8 +70,14 @@ struct CommitRailView: View {
         }
         // .git 目录变化（HEAD / refs 等）→ 强制刷新 commit 列表
         // 感知外部修改（终端 git commit / checkout / 其他工具改仓库）
-        .onReceive(gitWatchObservation.$revision) { _ in
-            reloadIfNeeded(force: true)
+        // 注意：不响应 workingTreeChanged，工作区文件变化不影响 commit 列表
+        .onReceive(gitWatchObservation.$lastEvent) { event in
+            switch event {
+            case .headChanged, .refsChanged:
+                reloadIfNeeded(force: true)
+            default:
+                break
+            }
         }
         .onAppear { reloadIfNeeded() }
     }
