@@ -1,7 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "No Projects" : {
+    "Add an existing repository, or clone a new one." : {
+
+    },
+    "Get Started with GitOK" : {
 
     },
     "Open Data Directory" : {

@@ -18,7 +18,7 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.file-info"
     public let order = 37
-    public let dependencies = ["com.coffic.lumi.plugin.commit"]
+    public let dependencies = ["com.coffic.gitok.plugin.commit-detail"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.file-info",
         name: "File Info",

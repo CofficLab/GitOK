@@ -24,7 +24,7 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
     public let order = 39
     public let dependencies = [
         "com.coffic.lumi.plugin.projects",
-        "com.coffic.lumi.plugin.commit-form",
+        "com.coffic.gitok.plugin.commit-form",
         "com.coffic.lumi.plugin.storage",
     ]
     public let metadata = PluginMetadata(
