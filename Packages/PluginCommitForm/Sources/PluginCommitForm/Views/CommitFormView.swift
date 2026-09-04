@@ -50,7 +50,7 @@ public struct CommitFormView: View {
             .padding(.vertical, 8)
         }
         .background {
-            Color(nsColor: .controlBackgroundColor)
+            theme.surface
         }
         .onReceive(formObservation.$revision) { _ in syncFromForm() }
         .onAppear {
@@ -140,7 +140,7 @@ public struct CommitFormView: View {
         if let user, let name = user.name, !name.isEmpty {
             HStack(spacing: 5) {
                 Image(systemName: "person.crop.circle")
-                    .font(.system(size: 11))
+                    .font(DesignTokens.Typography.caption2)
                 Text(user.email?.isEmpty == false ? "\(name) <\(user.email!)>" : name)
                     .font(DesignTokens.Typography.caption2)
             }
@@ -171,7 +171,7 @@ public struct CommitFormView: View {
                     }
                 }
             }
-            Divider()
+            AppDivider()
             Button {
                 showCoAuthorSheet = true
             } label: {
@@ -185,7 +185,7 @@ public struct CommitFormView: View {
                         .font(DesignTokens.Typography.caption2.weight(.semibold))
                 }
             }
-            .font(.system(size: 12))
+            .font(DesignTokens.Typography.caption1)
             .foregroundStyle(coAuthors.isEmpty ? theme.textTertiary : theme.textPrimary)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -300,7 +300,7 @@ private struct CoAuthorEditorSheet: View {
             }
             .frame(minHeight: 100, maxHeight: 200)
 
-            Divider()
+            AppDivider()
 
             HStack(spacing: 8) {
                 TextField("Name", text: $newName)

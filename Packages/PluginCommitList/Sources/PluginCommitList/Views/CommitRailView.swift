@@ -51,7 +51,7 @@ struct CommitRailView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
-            Color(nsColor: .controlBackgroundColor)
+            theme.surface
         }
         .onReceive(projectObservation.$revision) { _ in reloadIfNeeded() }
         // dataChanged（提交/推送后）→ 即使项目未变也强制刷新列表。

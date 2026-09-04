@@ -70,7 +70,7 @@ struct CommitDetailLayout: View {
             fileListContent
         }
         .background {
-            Color(nsColor: .controlBackgroundColor)
+            theme.surface
         }
     }
 
@@ -131,7 +131,7 @@ struct CommitInfoHeaderView: View {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(commit.message)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(DesignTokens.Typography.subheadline.weight(.semibold))
                     .lineLimit(1)
                     .truncationMode(.tail)
                 HStack(spacing: 6) {
@@ -191,7 +191,7 @@ struct FileChangeRow: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(change.displayPath)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(DesignTokens.Typography.caption1.weight(.medium))
                         .foregroundStyle(theme.textPrimary)
                         .lineLimit(1)
                         .truncationMode(.middle)
