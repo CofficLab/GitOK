@@ -121,7 +121,6 @@ struct CommitRailView: View {
                                 AppTag(tag, systemImage: "tag", style: .accent)
                             }
                         }
-                        AppTag(commit.shortHash, systemImage: "arrow.triangle.branch", style: .subtle)
                     }
                     HStack(spacing: 6) {
                         authorBadge(commit.author)
