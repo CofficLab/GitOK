@@ -262,6 +262,14 @@ public final class RootTrailingPane: ObservableObject {
         }
     }
 
+    /// 直接设置面板宽度（由面板调整回调调用），自动 clamp 到 min/max 范围内。
+    @MainActor
+    public func setWidth(_ width: CGFloat) {
+        let updatedWidth = self.width.withIdealWidth(self.width.clamped(width))
+        guard self.width != updatedWidth else { return }
+        self.width = updatedWidth
+    }
+
     /// 转发用户拖拽后的面板宽度。
     @MainActor
     public func saveWidth(_ width: CGFloat) {
