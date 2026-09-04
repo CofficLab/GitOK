@@ -37,7 +37,7 @@ public enum GitMergeOperation {
         sourceBranch: String,
         targetBranch: String
     ) throws -> String {
-        try GitProcessRunner.run(["checkout", targetBranch], in: repository)
+        _ = try GitProcessRunner.run(["checkout", targetBranch], in: repository)
         do {
             return try GitProcessRunner.run(["merge", sourceBranch], in: repository)
         } catch {

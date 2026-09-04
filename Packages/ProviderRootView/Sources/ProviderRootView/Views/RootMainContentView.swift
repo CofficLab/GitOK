@@ -52,10 +52,10 @@ struct RootMainContentView: View {
             .debugBlockBadge("内容区")
     }
 
-    /// 右侧面板（trailing pane）内容，右上角叠加区块名 badge。
+    /// 右侧面板（trailing pane）内容，右下角叠加区块名 badge。
     private var trailingPaneContent: some View {
         trailingPane.content
-            .debugBlockBadge("右侧面板")
+            .debugBlockBadge("右侧面板", alignment: .bottomTrailing)
     }
 
     @ViewBuilder
