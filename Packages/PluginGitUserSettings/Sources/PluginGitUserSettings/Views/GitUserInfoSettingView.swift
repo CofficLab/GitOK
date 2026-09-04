@@ -1,20 +1,23 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import ProviderToast
 import SwiftUI
 
 /// Git 用户信息设置视图（对齐旧版 `GitUserInfoSettingView`）。
 ///
+/// 预设的存储与增删改由 `GitUserPresetProviding`（ProviderGit）管理，
+/// 本视图只负责「展示预设 + 应用到当前项目 git 配置」：
 /// - 「Existing Presets」：展示已保存的预设，点击可写入当前项目 git 配置；
 /// - 「Add New Preset」：输入用户名 / 邮箱保存为预设（同时写入当前项目）。
 public struct GitUserInfoSettingView: View {
     let projects: any ProjectProviding
-    let store: GitUserConfigStore
+    let provider: any GitUserPresetProviding
     let toast: (any ToastProviding)?
     @LumiTheme private var theme
 
-    @State private var presets: [GitUserConfig] = []
+    @State private var presets: [GitUserPreset] = []
     @State private var userName = ""
     @State private var userEmail = ""
     @State private var isSaving = false
@@ -22,11 +25,11 @@ public struct GitUserInfoSettingView: View {
 
     public init(
         projects: any ProjectProviding,
-        store: GitUserConfigStore,
+        provider: any GitUserPresetProviding,
         toast: (any ToastProviding)?
     ) {
         self.projects = projects
-        self.store = store
+        self.provider = provider
         self.toast = toast
     }
 
@@ -51,25 +54,25 @@ public struct GitUserInfoSettingView: View {
     private var existingPresetsSection: some View {
         AppSettingSection(title: "Existing Presets", titleAlignment: .leading) {
             VStack(spacing: 0) {
-                ForEach(presets) { config in
+                ForEach(presets) { preset in
                     AppSettingRow(
-                        title: config.name,
-                        description: config.email,
+                        title: preset.title,
+                        description: preset.email,
                         icon: "person.crop.circle"
                     ) {
                         HStack(spacing: 8) {
                             AppButton("Apply", systemImage: "checkmark.circle", style: .secondary, size: .small) {
-                                apply(config)
+                                apply(preset)
                             }
                             AppIconButton(
                                 systemImage: "trash",
                                 tint: theme.error,
-                                action: { delete(config) }
+                                action: { delete(preset) }
                             )
                             .help("Delete this preset")
                         }
                     }
-                    if config != presets.last {
+                    if preset != presets.last {
                         Divider().padding(.leading, 16)
                     }
                 }
@@ -127,24 +130,24 @@ public struct GitUserInfoSettingView: View {
         errorMessage = nil
         isSaving = true
 
-        let config = store.addPreset(name: trimmedName, email: trimmedEmail)
-        presets = store.loadPresets()
+        let preset = provider.addPreset(name: trimmedName, email: trimmedEmail)
+        presets = provider.loadPresets()
         userName = ""
         userEmail = ""
         isSaving = false
 
-        writeToCurrentProject(name: config.name, email: config.email, successTitle: "Saved User Preset")
+        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: "Saved User Preset")
     }
 
     /// 应用某预设到当前项目 git 配置。
-    private func apply(_ config: GitUserConfig) {
+    private func apply(_ preset: GitUserPreset) {
         errorMessage = nil
-        writeToCurrentProject(name: config.name, email: config.email, successTitle: "Applied User Info")
+        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: "Applied User Info")
     }
 
-    private func delete(_ config: GitUserConfig) {
-        store.deletePreset(id: config.id)
-        presets = store.loadPresets()
+    private func delete(_ preset: GitUserPreset) {
+        provider.deletePreset(id: preset.id)
+        presets = provider.loadPresets()
     }
 
     /// 将用户名 / 邮箱写入当前项目（仓库级 git config）。
@@ -170,6 +173,6 @@ public struct GitUserInfoSettingView: View {
     }
 
     private func reload() {
-        presets = store.loadPresets()
+        presets = provider.loadPresets()
     }
 }

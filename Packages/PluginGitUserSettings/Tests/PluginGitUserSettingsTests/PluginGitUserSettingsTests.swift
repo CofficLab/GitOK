@@ -1,5 +1,6 @@
 import Foundation
 import KernelCore
+import ProviderGit
 import Testing
 @testable import PluginGitUserSettings
 
@@ -12,7 +13,7 @@ struct PluginGitUserSettingsTests {
         let plugin = GitUserSettingsPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-user-settings")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
         #expect(plugin.dependencies.contains("com.coffic.lumi.plugin.setting-view"))
     }
 
@@ -23,15 +24,15 @@ struct PluginGitUserSettingsTests {
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: dir) }
 
-        let store = GitUserConfigStore(directory: dir)
-        let a = store.addPreset(name: "Alice", email: "alice@example.com")
-        let b = store.addPreset(name: "Bob", email: "bob@example.com")
+        let provider = DefaultGitUserPresetProvider(directory: dir)
+        let a = provider.addPreset(name: "Alice", email: "alice@example.com")
+        let b = provider.addPreset(name: "Bob", email: "bob@example.com")
 
-        #expect(store.loadPresets().count == 2)
+        #expect(provider.loadPresets().count == 2)
         #expect(a.isDefault == true)
-        #expect(store.findDefault()?.name == "Alice")
+        #expect(provider.findDefault()?.name == "Alice")
 
-        store.deletePreset(id: b.id)
-        #expect(store.loadPresets().count == 1)
+        provider.deletePreset(id: b.id)
+        #expect(provider.loadPresets().count == 1)
     }
 }
