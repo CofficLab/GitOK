@@ -69,10 +69,16 @@ private struct ProjectSidebarView: View {
     var body: some View {
         AppSettingsSidebarContainer(width: 220) {
             VStack(spacing: 0) {
-                // 搜索框常驻（对齐旧版顶部搜索）。
-                AppSearchBar(text: $searchText, placeholder: "Search")
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
+                // 搜索框 + 添加项目按钮
+                HStack(spacing: 4) {
+                    AppSearchBar(text: $searchText, placeholder: "Search")
+                    AppIconButton(systemImage: "plus", size: .compact) {
+                        addExistingProject()
+                    }
+                    .help("Add Project")
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
                 Group {
                     if filteredProjects.isEmpty {
                         if projects.projects.isEmpty {
@@ -148,6 +154,19 @@ private struct ProjectSidebarView: View {
             } label: {
                 Label("Remove Project", systemImage: "trash")
             }
+        }
+    }
+
+    private func addExistingProject() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Add"
+        panel.message = "Choose a repository folder to add to GitOK"
+        if panel.runModal() == .OK, let url = panel.url {
+            projects.addProject(at: url)
+            projects.openProject(at: url)
         }
     }
 }
