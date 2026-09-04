@@ -7,7 +7,7 @@ struct EmptyView: View {
             Image(systemName: "folder")
                 .font(.system(size: 20))
                 .foregroundStyle(.secondary)
-            Text("sidebar.empty.title")
+            Text(ProviderSidebarLocalization.string("No Items"))
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }

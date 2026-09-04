@@ -1,6 +1,0 @@
-/*
-  ProviderSidebar — English (default) localization.
-  Keep keys semantic; values are the user-facing English strings.
-*/
-
-"sidebar.empty.title" = "No Items";
