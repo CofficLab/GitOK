@@ -50,7 +50,7 @@ public struct CommitFormView: View {
             .padding(.vertical, 8)
         }
         .background {
-            Color(nsColor: .underPageBackgroundColor)
+            Color(nsColor: .controlBackgroundColor)
         }
         .onReceive(formObservation.$revision) { _ in syncFromForm() }
         .onAppear {

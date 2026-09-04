@@ -70,7 +70,7 @@ struct CommitDetailLayout: View {
             fileListContent
         }
         .background {
-            Color(nsColor: .underPageBackgroundColor)
+            Color(nsColor: .controlBackgroundColor)
         }
     }
 

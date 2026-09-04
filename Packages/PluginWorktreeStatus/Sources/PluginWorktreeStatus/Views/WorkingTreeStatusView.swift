@@ -88,7 +88,7 @@ struct WorkingTreeStatusView: View {
         .padding(.vertical, 5)
         .frame(maxWidth: .infinity)
         .background {
-            Color(nsColor: .underPageBackgroundColor)
+            Color(nsColor: .controlBackgroundColor)
         }
     }
 

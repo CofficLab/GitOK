@@ -32,7 +32,7 @@ struct GitDiffPaneView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
-            Color(nsColor: .underPageBackgroundColor)
+            Color(nsColor: .controlBackgroundColor)
         }
         .onReceive(observation.$revision) { _ in loadIfNeeded() }
         .onAppear { loadIfNeeded() }
