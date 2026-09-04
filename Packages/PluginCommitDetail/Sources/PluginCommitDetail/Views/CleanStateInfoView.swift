@@ -10,7 +10,7 @@ private func loc(_ key: String) -> String {
 
 /// 工作区干净状态下的信息视图：展示仓库信息与 Git 用户配置。
 struct CleanStateInfoView: View {
-    let project: any ProjectProviding.Project
+    let project: Project
 
     @State private var remotes: [GitRemoteSummary] = []
     @State private var branchName: String?
