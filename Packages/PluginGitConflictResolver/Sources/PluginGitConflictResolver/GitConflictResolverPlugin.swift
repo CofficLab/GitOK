@@ -51,7 +51,8 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitConflictResolverSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitConflictResolverSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitConflictResolverSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
