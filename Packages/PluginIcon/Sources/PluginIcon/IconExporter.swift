@@ -34,7 +34,19 @@ public enum IconExporter {
         slots: [Slot] = defaultSlots,
         fileManager: FileManager = .default
     ) throws {
-        guard let image = NSImage(contentsOf: sourceURL),
+        let icon = IconData(imageURL: sourceURL, path: "")
+        try exportAppIcon(from: icon, to: destinationURL, slots: slots, fileManager: fileManager)
+    }
+
+    /// Exports an AppIcon set using the same composition settings shown in the editor.
+    public static func exportAppIcon(
+        from icon: IconData,
+        to destinationURL: URL,
+        slots: [Slot] = defaultSlots,
+        fileManager: FileManager = .default
+    ) throws {
+        guard let sourceURL = icon.imageURL,
+              let image = NSImage(contentsOf: sourceURL),
               let sourceImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             throw IconExportError.invalidSourceImage
         }
@@ -42,7 +54,7 @@ public enum IconExporter {
         try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
         for slot in slots {
             let outputURL = destinationURL.appendingPathComponent(slot.filename)
-            try writePNG(sourceImage, pixelSize: slot.pixelSize, to: outputURL)
+            try writePNG(sourceImage, icon: icon, pixelSize: slot.pixelSize, to: outputURL)
         }
 
         let contents: [String: Any] = [
@@ -55,7 +67,7 @@ public enum IconExporter {
         try data.write(to: destinationURL.appendingPathComponent("Contents.json"), options: [.atomic])
     }
 
-    private static func writePNG(_ image: CGImage, pixelSize: Int, to url: URL) throws {
+    private static func writePNG(_ image: CGImage, icon: IconData, pixelSize: Int, to url: URL) throws {
         guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
               let context = CGContext(
                   data: nil,
@@ -76,7 +88,30 @@ public enum IconExporter {
         }
 
         context.interpolationQuality = .high
-        context.draw(image, in: CGRect(x: 0, y: 0, width: pixelSize, height: pixelSize))
+        drawBackground(for: icon.backgroundId, opacity: icon.opacity, in: context, size: pixelSize)
+
+        let padding = min(max(icon.padding, 0), 0.45)
+        let scale = max(icon.scale ?? 1, 0)
+        let available = CGFloat(pixelSize) * (1 - padding * 2)
+        let aspect = min(CGFloat(pixelSize) / CGFloat(image.width), CGFloat(pixelSize) / CGFloat(image.height))
+        let imageSize = min(available, min(CGFloat(image.width), CGFloat(image.height)) * aspect) * scale
+        let drawSize = min(imageSize, available)
+        let drawRect = CGRect(
+            x: (CGFloat(pixelSize) - drawSize) / 2,
+            y: (CGFloat(pixelSize) - drawSize) / 2,
+            width: drawSize,
+            height: drawSize
+        )
+
+        context.saveGState()
+        let radius = min(max(icon.cornerRadius, 0), CGFloat(pixelSize) / 2)
+        if radius > 0 {
+            context.addPath(CGPath(roundedRect: CGRect(x: 0, y: 0, width: pixelSize, height: pixelSize), cornerWidth: radius, cornerHeight: radius, transform: nil))
+            context.clip()
+        }
+        context.setAlpha(max(0, min(icon.opacity, 1)))
+        context.draw(image, in: drawRect)
+        context.restoreGState()
         guard let outputImage = context.makeImage() else {
             throw IconExportError.cannotCreateImageContext
         }
@@ -84,6 +119,30 @@ public enum IconExporter {
         guard CGImageDestinationFinalize(destination) else {
             throw IconExportError.writeFailed
         }
+    }
+
+    private static func drawBackground(for id: String, opacity: Double, in context: CGContext, size: Int) {
+        let colors: [CGColor]
+        switch id {
+        case "2":
+            colors = [NSColor.systemPurple.cgColor, NSColor.systemIndigo.cgColor]
+        case "3":
+            colors = [NSColor.systemOrange.cgColor, NSColor.systemPink.cgColor]
+        default:
+            colors = [NSColor.systemBlue.cgColor, NSColor.systemTeal.cgColor]
+        }
+        guard let gradient = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB), colors: colors as CFArray, locations: [0, 1]) else {
+            return
+        }
+        context.saveGState()
+        context.setAlpha(max(0, min(opacity, 1)))
+        context.drawLinearGradient(
+            gradient,
+            start: CGPoint(x: 0, y: size),
+            end: CGPoint(x: size, y: 0),
+            options: []
+        )
+        context.restoreGState()
     }
 }
 

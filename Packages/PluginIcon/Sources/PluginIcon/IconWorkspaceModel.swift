@@ -115,12 +115,18 @@ public final class IconWorkspaceModel: ObservableObject {
     }
 
     public func exportSelectedIcon(to destinationURL: URL) {
-        guard let imageURL else {
+        guard var icon = selectedIcon else {
             message = "Import an image before exporting"
             return
         }
+        icon.title = title
+        icon.backgroundId = backgroundID
+        icon.opacity = opacity
+        icon.scale = scale
+        icon.padding = padding
+        icon.imageURL = imageURL
         do {
-            try IconExporter.exportAppIcon(from: imageURL, to: destinationURL)
+            try IconExporter.exportAppIcon(from: icon, to: destinationURL)
             message = "AppIcon set exported"
         } catch {
             message = error.localizedDescription
