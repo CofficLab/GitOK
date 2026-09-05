@@ -4,6 +4,17 @@ import Testing
 
 @Suite("PluginBanner")
 struct PluginBannerTests {
+    @Test("template data keeps the legacy classic and minimal IDs")
+    func templateDataRoundTrips() throws {
+        var banner = BannerFile(path: "/tmp/banner.json", projectURL: URL(fileURLWithPath: "/tmp/project"))
+        banner.classicData = ClassicBannerData(title: "Demo", subTitle: "Ship it")
+        banner.minimalData = MinimalBannerData(title: "Minimal")
+
+        #expect(banner.classicData?.title == "Demo")
+        #expect(banner.minimalData?.title == "Minimal")
+        #expect(banner.templateData.keys.sorted() == [BannerTemplateID.classic, BannerTemplateID.minimal])
+    }
+
     @Test("creates and reloads a banner using the legacy project path")
     func createsAndReloadsBanner() throws {
         let projectURL = FileManager.default.temporaryDirectory

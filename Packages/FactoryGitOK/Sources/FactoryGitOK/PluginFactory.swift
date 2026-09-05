@@ -21,6 +21,7 @@ import PluginGitStash
 import PluginGitConflictResolver
 import PluginFileInfo
 import PluginAboutSettings
+import PluginBanner
 import PluginGitIgnore
 import PluginGitAutoPush
 import PluginLicense
@@ -87,6 +88,7 @@ public struct DefaultPluginFactory: PluginFactory {
             GitStashPlugin(),
             GitConflictResolverPlugin(),
             FileInfoPlugin(),
+            BannerPlugin(),
             AboutSettingsPlugin(),
             GitIgnorePlugin(),
             GitAutoPushPlugin(),
