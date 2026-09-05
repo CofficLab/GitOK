@@ -301,6 +301,13 @@ jobs:
               exit 1
             fi
 
+            if ! grep -Eq 'sparkle:edSignature="[^"]+"' "$input_dir/appcast.xml"; then
+              echo "❌ appcast for $arch has no Sparkle EdDSA signature"
+              echo "The SPARKLE_PRIVATE_KEY_GITOK secret is missing, invalid, or does not match the public key bundled by GitOK 3.0.22."
+              cat "$input_dir/appcast.xml"
+              exit 1
+            fi
+
             cp "$input_dir/appcast.xml" "$appcast_file"
             dmg_file=$(basename "$(ls "$input_dir"/*.dmg | head -n 1)")
             export u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file"

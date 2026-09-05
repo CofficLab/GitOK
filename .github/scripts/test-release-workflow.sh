@@ -45,6 +45,7 @@ grep -q 'CODE_SIGN_ENTITLEMENTS=""' "$RELEASE_WORKFLOW" || fail "unsigned archiv
 grep -q '.github/scripts/sign_app.sh' "$RELEASE_WORKFLOW" || fail "manual signing script missing"
 grep -q 'hdiutil create' "$RELEASE_WORKFLOW" || fail "native DMG creation missing"
 grep -q 'xcrun notarytool submit' "$RELEASE_WORKFLOW" || fail "notarization command missing"
+grep -q 'sparkle:edSignature' "$RELEASE_WORKFLOW" || fail "appcast signature guard missing"
 pass "archive without provisioning profile and manual signing"
 
 echo "=== 4. tag + changelog logic ==="
