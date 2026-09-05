@@ -16,27 +16,17 @@ jobs:
   bump:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: 安装依赖
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -fsSL \
-            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            --header 'user-agent: GitOK-Release-Workflow' \
-            https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
       - name: 更新版本号
-        run: servon xcode bump
-      - name: 更新构建号
-        uses: yanamura/ios-bump-version@v1
+        run: bash .github/scripts/bump-version.sh
       - name: 生成标签（pre 分支）
         if: github.ref == 'refs/heads/pre'
         run: |
           version=$(bash .github/scripts/get-version.sh)
           echo "版本号->$version"
-          build=$(agvtool what-version -terse)
+          build=$(bash .github/scripts/get-version.sh --build)
           echo "tag=p$version($build)" >> $GITHUB_ENV
       - name: 生成标签（main 分支）
         if: github.ref == 'refs/heads/main'
@@ -53,6 +43,13 @@ jobs:
           tagging_message: ${{ env.tag }}
           push_options: "--tags"
           branch: ${{ github.ref_name }}
+      - name: 记录发布 commit
+        run: git rev-parse HEAD > release-commit.txt
+      - name: 保存发布 commit
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-metadata
+          path: release-commit.txt
 
   rebase:
     if: github.ref == 'refs/heads/main'
@@ -61,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 拉取 pre 分支
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: pre
       - name: 拉取 main 分支
