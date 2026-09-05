@@ -11,18 +11,23 @@ public final class IconWorkspaceModel: ObservableObject {
     @Published public var scale = 1.0
     @Published public var padding = 0.12
     @Published public private(set) var imageURL: URL?
+    @Published public private(set) var sourceAssets: [IconSourceAsset] = []
+    @Published public var selectedSourceID = IconSourceID.projectImages
     @Published public private(set) var message: String?
 
     private let projects: any ProjectProviding
     private let repository: IconRepository
+    private let sourceProvider: any IconSourceProviding
     private var projectObserver: (any ProjectProvidingObserverHandle)?
 
     public init(
         projects: any ProjectProviding,
-        repository: IconRepository = IconRepository()
+        repository: IconRepository = IconRepository(),
+        sourceProvider: any IconSourceProviding = DefaultIconSourceProvider()
     ) {
         self.projects = projects
         self.repository = repository
+        self.sourceProvider = sourceProvider
         projectObserver = projects.addObserver { [weak self] event in
             guard case .selectionChanged = event else { return }
             self?.reload()
@@ -44,11 +49,43 @@ public final class IconWorkspaceModel: ObservableObject {
             return
         }
         icons = repository.getIcons(from: project.url)
+        loadSourceAssets(in: project.url)
         if let selectedIconID, icons.contains(where: { $0.id == selectedIconID }) {
             loadDraft(from: selectedIcon)
         } else {
             selectedIconID = icons.first?.id
             loadDraft(from: icons.first)
+        }
+    }
+
+    public var sourceDescriptors: [IconSourceDescriptor] { sourceProvider.sources }
+
+    public func selectSource(_ sourceID: String) {
+        guard sourceProvider.sources.contains(where: { $0.id == sourceID }) else { return }
+        selectedSourceID = sourceID
+        if let project = projects.currentProject {
+            loadSourceAssets(in: project.url)
+        }
+    }
+
+    public func importSourceAsset(_ asset: IconSourceAsset) {
+        guard let project = projects.currentProject else { return }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                let importedURL: URL
+                if asset.url.isFileURL {
+                    importedURL = try repository.importImage(asset.url, for: project.url)
+                } else {
+                    importedURL = try await repository.importRemoteImage(asset.url, for: project.url)
+                }
+                imageURL = importedURL
+                if selectedIcon == nil { createIcon() }
+                saveDraft()
+                message = "Icon imported from \(asset.title)"
+            } catch {
+                message = error.localizedDescription
+            }
         }
     }
 
@@ -172,5 +209,19 @@ public final class IconWorkspaceModel: ObservableObject {
         scale = 1
         padding = 0.12
         imageURL = nil
+        sourceAssets = []
+    }
+
+    private func loadSourceAssets(in projectURL: URL) {
+        let sourceID = selectedSourceID
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                sourceAssets = try await sourceProvider.assets(for: sourceID, in: projectURL)
+            } catch {
+                sourceAssets = []
+                message = error.localizedDescription
+            }
+        }
     }
 }

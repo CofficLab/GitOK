@@ -4,6 +4,22 @@ import Testing
 
 @Suite("PluginIcon")
 struct PluginIconTests {
+    @Test("project image source provider scans supported image files")
+    func scansProjectImageSource() async throws {
+        let projectURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PluginIconSources-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: projectURL) }
+        let directory = projectURL.appendingPathComponent(".gitok/images", isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try Data([0, 1]).write(to: directory.appendingPathComponent("a.png"))
+        try Data([0, 1]).write(to: directory.appendingPathComponent("ignored.txt"))
+
+        let provider = DefaultIconSourceProvider()
+        let assets = try await provider.assets(for: IconSourceID.projectImages, in: projectURL)
+        #expect(assets.map(\.title) == ["a"])
+        #expect(assets.first?.sourceID == IconSourceID.projectImages)
+    }
+
     @Test("legacy icon JSON accepts integer icon IDs")
     func acceptsIntegerIconID() throws {
         let data = Data(#"{"title":"Demo","iconId":7,"backgroundId":"3"}"#.utf8)

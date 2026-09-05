@@ -65,6 +65,16 @@ public struct IconWorkspaceView: View {
 
                 TextField("Title", text: $model.title)
                     .textFieldStyle(.roundedBorder)
+                Picker("Asset Source", selection: Binding(
+                    get: { model.selectedSourceID },
+                    set: { model.selectSource($0) }
+                )) {
+                    ForEach(model.sourceDescriptors) { source in
+                        Text(source.title).tag(source.id)
+                    }
+                }
+                .pickerStyle(.segmented)
+                sourceAssetPicker
                 Picker("Background", selection: $model.backgroundID) {
                     Text("Blue").tag("1")
                     Text("Purple").tag("2")
@@ -77,6 +87,37 @@ public struct IconWorkspaceView: View {
                     .frame(maxWidth: .infinity, minHeight: 300)
             }
             .padding(24)
+        }
+    }
+
+    private var sourceAssetPicker: some View {
+        Group {
+            if model.sourceAssets.isEmpty {
+                Text("No source assets available")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(model.sourceAssets) { asset in
+                            Button {
+                                model.importSourceAsset(asset)
+                            } label: {
+                                VStack(spacing: 4) {
+                                    SourceAssetThumbnail(asset: asset)
+                                        .frame(width: 64, height: 64)
+                                    Text(asset.title)
+                                        .font(.caption2)
+                                        .lineLimit(1)
+                                }
+                                .frame(width: 76)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+            }
         }
     }
 
@@ -96,6 +137,28 @@ public struct IconWorkspaceView: View {
         if panel.runModal() == .OK, let url = panel.url {
             model.exportSelectedIconSets(to: url)
         }
+    }
+}
+
+private struct SourceAssetThumbnail: View {
+    let asset: IconSourceAsset
+
+    var body: some View {
+        Group {
+            if asset.url.isFileURL, let image = NSImage(contentsOf: asset.url) {
+                Image(nsImage: image).resizable().scaledToFit()
+            } else {
+                AsyncImage(url: asset.url) { phase in
+                    if case let .success(image) = phase {
+                        image.resizable().scaledToFit()
+                    } else {
+                        Image(systemName: "photo").font(.title2)
+                    }
+                }
+            }
+        }
+        .padding(6)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
     }
 }
 

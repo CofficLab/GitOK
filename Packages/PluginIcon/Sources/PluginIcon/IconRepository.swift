@@ -47,12 +47,25 @@ public final class IconRepository: @unchecked Sendable {
     }
 
     public func importImage(_ sourceURL: URL, for projectURL: URL) throws -> URL {
+        try importImageData(Data(contentsOf: sourceURL), fileExtension: sourceURL.pathExtension, for: projectURL)
+    }
+
+    public func importRemoteImage(_ sourceURL: URL, for projectURL: URL) async throws -> URL {
+        let (data, response) = try await URLSession.shared.data(from: sourceURL)
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200..<300).contains(httpResponse.statusCode) else {
+            throw IconRepositoryError.remoteDownloadFailed
+        }
+        return try importImageData(data, fileExtension: sourceURL.pathExtension, for: projectURL)
+    }
+
+    private func importImageData(_ data: Data, fileExtension: String, for projectURL: URL) throws -> URL {
         let directoryURL = Self.iconDirectoryURL(for: projectURL)
             .appendingPathComponent(Self.imageDirectoryName)
         try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
-        let ext = sourceURL.pathExtension.isEmpty ? "png" : sourceURL.pathExtension.lowercased()
+        let ext = fileExtension.isEmpty ? "png" : fileExtension.lowercased()
         let destinationURL = directoryURL.appendingPathComponent("\(UUID().uuidString).\(ext)")
-        try fileManager.copyItem(at: sourceURL, to: destinationURL)
+        try data.write(to: destinationURL, options: [.atomic])
         return destinationURL
     }
 
@@ -76,5 +89,15 @@ public final class IconRepository: @unchecked Sendable {
                 return icon
             }
             .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+}
+
+public enum IconRepositoryError: Error, LocalizedError, Equatable {
+    case remoteDownloadFailed
+
+    public var errorDescription: String? {
+        switch self {
+        case .remoteDownloadFailed: "Unable to download the selected icon."
+        }
     }
 }
