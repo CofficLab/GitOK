@@ -331,4 +331,19 @@ final class CommitDetailPluginTests: XCTestCase {
         XCTAssertTrue(viewModel.animatedFilePaths.isEmpty)
         XCTAssertFalse(viewModel.isLoadingCommitFiles)
     }
+
+    // MARK: - 工作区刷新保留与去重
+
+    func testWorktreeRefreshPolicyIgnoresIdenticalEntries() {
+        let entries = [GitStatusEntry(path: "Sources/App.swift", stagedStatus: " ", worktreeStatus: "M")]
+
+        XCTAssertFalse(WorktreeEntriesRefreshPolicy.changed(previous: entries, current: entries))
+    }
+
+    func testWorktreeRefreshPolicyDetectsStatusChanges() {
+        let previous = [GitStatusEntry(path: "Sources/App.swift", stagedStatus: " ", worktreeStatus: "M")]
+        let current = [GitStatusEntry(path: "Sources/App.swift", stagedStatus: "M", worktreeStatus: " ")]
+
+        XCTAssertTrue(WorktreeEntriesRefreshPolicy.changed(previous: previous, current: current))
+    }
 }
