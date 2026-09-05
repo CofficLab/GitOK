@@ -36,6 +36,10 @@ struct CommitRailView: View {
     @State private var isLoading = false
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
+    /// 加载序号：只接受最后一次刷新结果，避免旧任务覆盖新项目或新快照。
+    @State private var loadToken = 0
+    /// 本次刷新新增的 commit，只用于触发顶部进入动画。
+    @State private var animatedCommitHashes: Set<String> = []
 
     // Push 状态
     @State private var pushPopoverCommitHash: String?
@@ -95,7 +99,7 @@ struct CommitRailView: View {
         } else if isLoading && commits.isEmpty {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let loadError {
+        } else if commits.isEmpty, let loadError {
             AppEmptyState(
                 icon: "exclamationmark.triangle",
                 title: LumiPluginLocalization.string("Unable to Load Commits", bundle: .module),
@@ -108,16 +112,37 @@ struct CommitRailView: View {
                 description: LumiPluginLocalization.string("This repository has no commits yet.", bundle: .module)
             )
         } else {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 0) {
-                    ForEach(commits) { commit in
-                        commitRow(commit)
-                        if commit.id != commits.last?.id {
-                            AppDivider()
+            VStack(spacing: 0) {
+                if let loadError {
+                    Text(loadError)
+                        .font(.appCaption)
+                        .foregroundStyle(theme.error)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .background(theme.error.opacity(0.08))
+                }
+
+                ZStack(alignment: .top) {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVStack(spacing: 0) {
+                            ForEach(commits) { commit in
+                                commitRow(commit)
+                                if commit.id != commits.last?.id {
+                                    AppDivider()
+                                }
+                            }
                         }
+                        .padding(.vertical, 4)
+                    }
+
+                    if isLoading {
+                        ProgressView()
+                            .progressViewStyle(.linear)
+                            .frame(height: 2)
+                            .padding(.horizontal, 2)
                     }
                 }
-                .padding(.vertical, 4)
             }
         }
     }
@@ -163,6 +188,14 @@ struct CommitRailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 5)
         }
+        .transition(
+            animatedCommitHashes.contains(commit.hash)
+                ? .asymmetric(
+                    insertion: .move(edge: .top).combined(with: .opacity),
+                    removal: .opacity
+                )
+                : .identity
+        )
         .popover(
             isPresented: Binding(
                 get: { pushPopoverCommitHash == commit.hash },
@@ -321,21 +354,29 @@ struct CommitRailView: View {
     /// 以便展示新提交。
     private func reloadIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
+            loadToken &+= 1
             if loadedProjectURL != nil {
                 loadedProjectURL = nil
                 commits = []
                 unpushedHashes = []
                 isLoading = false
                 loadError = nil
+                animatedCommitHashes = []
             }
             return
         }
         if loadedProjectURL == project.url && !force { return }
 
+        loadToken &+= 1
+        let token = loadToken
+        let isRefreshingExistingProject = loadedProjectURL == project.url && !commits.isEmpty
         loadedProjectURL = project.url
         isLoading = true
-        commits = []
-        unpushedHashes = []
+        if !isRefreshingExistingProject {
+            commits = []
+            unpushedHashes = []
+            animatedCommitHashes = []
+        }
         loadError = nil
 
         let url = project.url
@@ -344,10 +385,29 @@ struct CommitRailView: View {
             // 获取未推送的 commit 哈希（无 upstream 时返回空集合）
             let unpushedResult = Result { try GitCommitLoader.unpushedCommitHashes(in: url) }
             await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else { return }
                 isLoading = false
                 switch commitsResult {
                 case .success(let loaded):
-                    commits = loaded
+                    let insertedHashes = CommitListRefreshPolicy.insertedCommitHashes(
+                        previous: commits,
+                        current: loaded
+                    )
+                    let shouldAnimateInsertion = isRefreshingExistingProject && !insertedHashes.isEmpty
+                    if shouldAnimateInsertion {
+                        animatedCommitHashes = insertedHashes
+                        withAnimation(.snappy(duration: 0.38)) {
+                            commits = loaded
+                        }
+                        let animationToken = token
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 500_000_000)
+                            guard animationToken == loadToken else { return }
+                            animatedCommitHashes = []
+                        }
+                    } else {
+                        commits = loaded
+                    }
                 case .failure(let error):
                     loadError = (error as? GitCommitLoaderError)?.localizedDescription
                         ?? error.localizedDescription
@@ -362,6 +422,14 @@ struct CommitRailView: View {
     /// Provider 选中状态变化时刷新视图（驱动 SwiftUI 重算选中态高亮）。
     private func refreshSelectionState() {
         // 只需触发 body 重算；选中态以 Provider 为权威来源（isSelected 实时读取）。
+    }
+}
+
+/// Commit 刷新时的纯数据判断，供 UI 增量更新和测试复用。
+enum CommitListRefreshPolicy {
+    static func insertedCommitHashes(previous: [GitCommit], current: [GitCommit]) -> Set<String> {
+        let previousHashes = Set(previous.map(\.hash))
+        return Set(current.lazy.map(\.hash)).subtracting(previousHashes)
     }
 }
 

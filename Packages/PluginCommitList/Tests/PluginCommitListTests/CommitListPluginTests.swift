@@ -45,6 +45,16 @@ final class CommitListPluginTests: XCTestCase {
         func cancel() {}
     }
 
+    private func commit(_ hash: String, date: Date = Date()) -> GitCommit {
+        GitCommit(
+            hash: hash,
+            shortHash: String(hash.prefix(7)),
+            message: "Commit " + hash,
+            author: "Author",
+            date: date
+        )
+    }
+
     private func makeKernel() throws -> (
         kernel: KernelCoreContainer,
         rail: DefaultRailViewProviding
@@ -69,6 +79,23 @@ final class CommitListPluginTests: XCTestCase {
         try plugin.onBoot(kernel: kernel)
         try plugin.onShutdown(kernel: kernel)
         XCTAssertFalse(rail.sections.contains { $0.id == "\(plugin.id).section" })
+    }
+
+    func testRefreshPolicyOnlyMarksNewCommitHashes() {
+        let existing = [
+            commit("old", date: Date(timeIntervalSince1970: 2)),
+            commit("older", date: Date(timeIntervalSince1970: 1)),
+        ]
+        let refreshed = [
+            commit("new", date: Date(timeIntervalSince1970: 3)),
+            existing[0],
+            existing[1],
+        ]
+
+        XCTAssertEqual(
+            CommitListRefreshPolicy.insertedCommitHashes(previous: existing, current: refreshed),
+            ["new"]
+        )
     }
 
     func testOnBootSkipsWhenProjectsMissing() throws {
