@@ -79,7 +79,7 @@ public struct GitNetworkSettingView: View {
                 }
 
                 HStack(spacing: 8) {
-                    AppInputField(GitNetworkSettingsLocalization.string("CA file path", bundle: .module), text: $settings.sslCAInfo)
+                    AppInputField(LocalizedStringKey(GitNetworkSettingsLocalization.string("CA file path", bundle: .module)), text: $settings.sslCAInfo)
                         .disabled(settings.isLoading || settings.isSaving)
                     AppButton(GitNetworkSettingsLocalization.string("Choose", bundle: .module), systemImage: "folder", style: .secondary, size: .small) {
                         chooseCertificateFile()

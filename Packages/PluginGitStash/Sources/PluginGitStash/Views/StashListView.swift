@@ -73,7 +73,7 @@ public struct StashListView: View {
             Text(GitStashLocalization.string("Stash", bundle: .module))
                 .font(.headline)
             HStack(spacing: 8) {
-                AppInputField(GitStashLocalization.string("Stash message (optional)", bundle: .module), text: $stashMessage)
+                AppInputField(LocalizedStringKey(GitStashLocalization.string("Stash message (optional)", bundle: .module)), text: $stashMessage)
                 AppButton(GitStashLocalization.string("Save", bundle: .module), systemImage: "plus", style: .primary, size: .small) {
                     saveStash()
                 }

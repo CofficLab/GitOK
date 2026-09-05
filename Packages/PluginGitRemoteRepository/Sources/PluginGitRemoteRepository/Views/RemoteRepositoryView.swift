@@ -206,8 +206,8 @@ private struct AddRemoteForm: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(GitRemoteRepositoryLocalization.string("Add Remote Repository", bundle: .module))
                 .font(.headline)
-            AppInputField(GitRemoteRepositoryLocalization.string("Remote name (e.g. origin)", bundle: .module), text: $name)
-            AppInputField(GitRemoteRepositoryLocalization.string("Repository URL", bundle: .module), text: $url)
+            AppInputField(LocalizedStringKey(GitRemoteRepositoryLocalization.string("Remote name (e.g. origin)", bundle: .module)), text: $name)
+            AppInputField(LocalizedStringKey(GitRemoteRepositoryLocalization.string("Repository URL", bundle: .module)), text: $url)
             HStack {
                 Spacer()
                 AppButton(GitRemoteRepositoryLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
