@@ -234,6 +234,15 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "混合重置失敗：%@" } }
       }
     },
+    "Hard reset failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Hard reset failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "硬重置失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "硬重置失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "硬重置失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "硬重置失敗：%@" } }
+      }
+    },
     "The working tree must be clean before resetting history.": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before resetting history." } },

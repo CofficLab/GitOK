@@ -385,4 +385,39 @@ final class GitCommitOperationTests: XCTestCase {
             expectedHead
         )
     }
+
+    func testHardResetDiscardsTrackedChangesAndMovesHead() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        try Data("uncommitted\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+
+        _ = try GitHistoryOperation.hardReset(
+            to: targetHash,
+            expectedHead: expectedHead,
+            in: repo
+        )
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            targetHash
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "initial\n"
+        )
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
 }

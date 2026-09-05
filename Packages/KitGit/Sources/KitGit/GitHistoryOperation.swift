@@ -11,6 +11,7 @@ public enum GitHistoryOperation {
         case undoFailed(String)
         case softResetFailed(String)
         case mixedResetFailed(String)
+        case hardResetFailed(String)
 
         public var errorDescription: String? {
             switch self {
@@ -24,6 +25,8 @@ public enum GitHistoryOperation {
                 String(format: LumiPluginLocalization.string("Soft reset failed: %@", bundle: .module), message)
             case .mixedResetFailed(let message):
                 String(format: LumiPluginLocalization.string("Mixed reset failed: %@", bundle: .module), message)
+            case .hardResetFailed(let message):
+                String(format: LumiPluginLocalization.string("Hard reset failed: %@", bundle: .module), message)
             }
         }
     }
@@ -151,6 +154,43 @@ public enum GitHistoryOperation {
         } catch {
             let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
             throw Error.mixedResetFailed(message)
+        }
+    }
+
+    /// 将 HEAD、暂存区和已跟踪工作区文件硬重置到指定提交。
+    ///
+    /// 这是破坏性操作：目标提交之后的本地提交和已跟踪未提交改动都会被 Git
+    /// 丢弃。调用方必须先展示明确的确认弹窗；这里仍校验 HEAD，避免旧列表误操作。
+    @discardableResult
+    public static func hardReset(
+        to targetHash: String,
+        expectedHead: String,
+        in repository: URL
+    ) throws -> String {
+        let trimmedTargetHash = targetHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedExpectedHead = expectedHead.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTargetHash.isEmpty, !trimmedExpectedHead.isEmpty else {
+            throw Error.invalidCommit
+        }
+
+        do {
+            let head = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repository)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard head == trimmedExpectedHead else {
+                throw Error.hardResetFailed(
+                    LumiPluginLocalization.string("The current HEAD changed before the reset could start.", bundle: .module)
+                )
+            }
+
+            return try GitProcessRunner.run(
+                ["reset", "--hard", trimmedTargetHash],
+                in: repository
+            )
+        } catch let error as Error {
+            throw error
+        } catch {
+            let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
+            throw Error.hardResetFailed(message)
         }
     }
 

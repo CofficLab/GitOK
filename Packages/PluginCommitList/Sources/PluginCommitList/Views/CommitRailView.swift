@@ -51,10 +51,12 @@ struct CommitRailView: View {
     @State private var pendingRevert: GitCommit?
     @State private var pendingSoftReset: GitCommit?
     @State private var pendingMixedReset: GitCommit?
+    @State private var pendingHardReset: GitCommit?
     @State private var undoingHash: String?
     @State private var revertingHash: String?
     @State private var softResettingHash: String?
     @State private var mixedResettingHash: String?
+    @State private var hardResettingHash: String?
     @State private var historyError: String?
 
     init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
@@ -163,6 +165,29 @@ struct CommitRailView: View {
         } message: {
             Text(LumiPluginLocalization.string(
                 "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged.",
+                bundle: .module
+            ))
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Hard Reset?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingHardReset != nil },
+                set: { isPresented in
+                    if !isPresented { pendingHardReset = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingHardReset = nil
+            }
+            Button(LumiPluginLocalization.string("Hard Reset", bundle: .module), role: .destructive) {
+                guard let commit = pendingHardReset else { return }
+                pendingHardReset = nil
+                performHardReset(to: commit)
+            }
+        } message: {
+            Text(LumiPluginLocalization.string(
+                "HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone.",
                 bundle: .module
             ))
         }
@@ -334,6 +359,7 @@ struct CommitRailView: View {
                         || revertingHash != nil
                         || softResettingHash != nil
                         || mixedResettingHash != nil
+                        || hardResettingHash != nil
                 )
 
                 Divider()
@@ -353,6 +379,7 @@ struct CommitRailView: View {
                     || revertingHash != nil
                     || softResettingHash != nil
                     || mixedResettingHash != nil
+                    || hardResettingHash != nil
                     || commit.parentHashes.count > 1
             )
 
@@ -377,6 +404,15 @@ struct CommitRailView: View {
                         systemImage: "list.bullet.rectangle"
                     )
                 }
+                Button(role: .destructive) {
+                    historyError = nil
+                    pendingHardReset = commit
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Hard Reset", bundle: .module),
+                        systemImage: "trash"
+                    )
+                }
             } label: {
                 Label(
                     LumiPluginLocalization.string("Reset to Here", bundle: .module),
@@ -388,6 +424,7 @@ struct CommitRailView: View {
                     || revertingHash != nil
                     || softResettingHash != nil
                     || mixedResettingHash != nil
+                    || hardResettingHash != nil
             )
         }
     }
@@ -589,6 +626,34 @@ struct CommitRailView: View {
             }
             await MainActor.run {
                 mixedResettingHash = nil
+                switch result {
+                case .success:
+                    projects.clearCommitSelection()
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    historyError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performHardReset(to commit: GitCommit) {
+        guard let project = projects.currentProject,
+              let expectedHead = commits.first?.hash else { return }
+
+        hardResettingHash = commit.hash
+        historyError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitHistoryOperation.hardReset(
+                    to: commit.hash,
+                    expectedHead: expectedHead,
+                    in: url
+                )
+            }
+            await MainActor.run {
+                hardResettingHash = nil
                 switch result {
                 case .success:
                     projects.clearCommitSelection()

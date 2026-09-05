@@ -416,6 +416,33 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在工作區但不會暫存。" } }
       }
     },
+    "Confirm Hard Reset?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Hard Reset?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认硬重置？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認硬重置？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認硬重置？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認硬重置？" } }
+      }
+    },
+    "Hard Reset": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Hard Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "硬重置" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "硬重置" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "硬重置" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "硬重置" } }
+      }
+    },
+    "HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "HEAD、暂存区和已跟踪工作区文件都会回退到此提交，且无法撤销。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "HEAD、暫存區和已追蹤工作區檔案都會回退到此提交，且無法撤銷。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "HEAD、暫存區和已追蹤工作區檔案都會回退到此提交，且無法撤銷。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD、暫存區和已追蹤工作區檔案都會回退到此提交，且無法撤銷。" } }
+      }
+    },
     "Confirm Revert": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Confirm Revert" } },
