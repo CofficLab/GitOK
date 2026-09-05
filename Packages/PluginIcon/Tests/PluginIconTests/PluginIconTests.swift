@@ -20,6 +20,33 @@ struct PluginIconTests {
         #expect(assets.first?.sourceID == IconSourceID.projectImages)
     }
 
+    @Test("generated source exposes the legacy MagicAsset set")
+    func exposesGeneratedAssets() async throws {
+        let provider = DefaultIconSourceProvider()
+        let assets = try await provider.assets(
+            for: IconSourceID.generatedAssets,
+            in: FileManager.default.temporaryDirectory
+        )
+        #expect(assets.count == 9)
+        #expect(assets.allSatisfy { $0.sourceID == IconSourceID.generatedAssets })
+        #expect(assets.contains { $0.title == "Camera" })
+    }
+
+    @Test("bundled source scans category folders when provided")
+    func scansBundledSource() async throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PluginIconBundled-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let category = root.appendingPathComponent("Abstract", isDirectory: true)
+        try FileManager.default.createDirectory(at: category, withIntermediateDirectories: true)
+        try Data([0, 1]).write(to: category.appendingPathComponent("asset.svg"))
+
+        let provider = DefaultIconSourceProvider(bundledIconsURL: root)
+        let assets = try await provider.assets(for: IconSourceID.bundledIcons, in: root)
+        #expect(provider.sources.first?.id == IconSourceID.bundledIcons)
+        #expect(assets.first?.category == "Abstract")
+    }
+
     @Test("legacy icon JSON accepts integer icon IDs")
     func acceptsIntegerIconID() throws {
         let data = Data(#"{"title":"Demo","iconId":7,"backgroundId":"3"}"#.utf8)

@@ -1,4 +1,6 @@
+import AppKit
 import Foundation
+import ImageIO
 import ProjectRulesKit
 
 /// Persists project icon configurations and imported source images.
@@ -59,6 +61,16 @@ public final class IconRepository: @unchecked Sendable {
         return try importImageData(data, fileExtension: sourceURL.pathExtension, for: projectURL)
     }
 
+    public func importSystemSymbol(_ symbolName: String, for projectURL: URL) throws -> URL {
+        guard let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: symbolName),
+              let tiff = image.tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiff),
+              let png = bitmap.representation(using: .png, properties: [:]) else {
+            throw IconRepositoryError.generatedAssetFailed
+        }
+        return try importImageData(png, fileExtension: "png", for: projectURL)
+    }
+
     private func importImageData(_ data: Data, fileExtension: String, for projectURL: URL) throws -> URL {
         let directoryURL = Self.iconDirectoryURL(for: projectURL)
             .appendingPathComponent(Self.imageDirectoryName)
@@ -94,10 +106,12 @@ public final class IconRepository: @unchecked Sendable {
 
 public enum IconRepositoryError: Error, LocalizedError, Equatable {
     case remoteDownloadFailed
+    case generatedAssetFailed
 
     public var errorDescription: String? {
         switch self {
         case .remoteDownloadFailed: "Unable to download the selected icon."
+        case .generatedAssetFailed: "Unable to generate the selected icon."
         }
     }
 }

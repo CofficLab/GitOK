@@ -145,16 +145,25 @@ private struct SourceAssetThumbnail: View {
 
     var body: some View {
         Group {
-            if asset.url.isFileURL, let image = NSImage(contentsOf: asset.url) {
-                Image(nsImage: image).resizable().scaledToFit()
-            } else {
-                AsyncImage(url: asset.url) { phase in
+            switch asset.payload {
+            case let .file(url):
+                if let image = NSImage(contentsOf: url) {
+                    Image(nsImage: image).resizable().scaledToFit()
+                } else {
+                    Image(systemName: "photo").font(.title2)
+                }
+            case let .remote(url):
+                AsyncImage(url: url) { phase in
                     if case let .success(image) = phase {
                         image.resizable().scaledToFit()
                     } else {
                         Image(systemName: "photo").font(.title2)
                     }
                 }
+            case let .systemSymbol(symbol):
+                Image(systemName: symbol)
+                    .font(.title2)
+                    .foregroundStyle(.tint)
             }
         }
         .padding(6)

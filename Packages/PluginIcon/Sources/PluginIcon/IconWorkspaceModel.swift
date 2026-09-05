@@ -74,10 +74,13 @@ public final class IconWorkspaceModel: ObservableObject {
             guard let self else { return }
             do {
                 let importedURL: URL
-                if asset.url.isFileURL {
-                    importedURL = try repository.importImage(asset.url, for: project.url)
-                } else {
-                    importedURL = try await repository.importRemoteImage(asset.url, for: project.url)
+                switch asset.payload {
+                case let .file(url):
+                    importedURL = try repository.importImage(url, for: project.url)
+                case let .remote(url):
+                    importedURL = try await repository.importRemoteImage(url, for: project.url)
+                case let .systemSymbol(symbol):
+                    importedURL = try repository.importSystemSymbol(symbol, for: project.url)
                 }
                 imageURL = importedURL
                 if selectedIcon == nil { createIcon() }
