@@ -96,6 +96,39 @@ final class GitCommitLoaderTests: XCTestCase {
         XCTAssertFalse(commits[0].shortHash.isEmpty)
     }
 
+    func testLoadCommitsSupportsOffsetPagination() throws {
+        guard FileManager.default.isExecutableFile(atPath: "/usr/bin/git") else {
+            throw XCTSkip("git not available")
+        }
+
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GitCommitLoaderPaginationTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        try run(["git", "-C", repo.path, "init", "-q", "-b", "main"])
+        for index in 1...3 {
+            try run(
+                [
+                    "git", "-C", repo.path,
+                    "-c", "user.name=Test User", "-c", "user.email=test@example.com",
+                    "commit", "-q", "--allow-empty", "-m", "commit \(index)",
+                ],
+                env: [
+                    "GIT_AUTHOR_DATE": "2026-09-0\(index)T09:00:00+08:00",
+                    "GIT_COMMITTER_DATE": "2026-09-0\(index)T09:00:00+08:00",
+                ]
+            )
+        }
+
+        let firstPage = try GitCommitLoader.loadCommits(in: repo, limit: 2, offset: 0)
+        let secondPage = try GitCommitLoader.loadCommits(in: repo, limit: 2, offset: 2)
+
+        XCTAssertEqual(firstPage.map(\.message), ["commit 3", "commit 2"])
+        XCTAssertEqual(secondPage.map(\.message), ["commit 1"])
+        XCTAssertTrue(Set(firstPage.map(\.hash)).isDisjoint(with: secondPage.map(\.hash)))
+    }
+
     func testLoadCommitsInNonRepositoryThrows() {
         let dir = FileManager.default.temporaryDirectory
             .appendingPathComponent("NotARepo-\(UUID().uuidString)", isDirectory: true)

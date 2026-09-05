@@ -2,6 +2,7 @@ import KitGit
 import LumiUI
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderToast
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -23,6 +24,7 @@ private func loc(_ key: String) -> String {
 struct WorkingTreeStatusView: View {
     let projects: any ProjectProviding
     let gitWatch: (any GitRepositoryWatching)?
+    let toast: (any ToastProviding)?
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
     @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
@@ -44,9 +46,14 @@ struct WorkingTreeStatusView: View {
     @State private var loadedProjectURL: URL?
     @State private var isLoading = false
 
-    init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
+    init(
+        projects: any ProjectProviding,
+        gitWatch: (any GitRepositoryWatching)? = nil,
+        toast: (any ToastProviding)? = nil
+    ) {
         self.projects = projects
         self.gitWatch = gitWatch
+        self.toast = toast
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
@@ -247,8 +254,11 @@ struct WorkingTreeStatusView: View {
             await MainActor.run {
                 isFetching = false
                 activityStatus = nil
-                if case .success = result {
+                switch result {
+                case .success:
                     reloadIfNeeded(force: true)
+                case let .failure(error):
+                    presentSyncFailure(operation: "Fetch", error: error)
                 }
             }
         }
@@ -264,8 +274,11 @@ struct WorkingTreeStatusView: View {
             await MainActor.run {
                 isPulling = false
                 activityStatus = nil
-                if case .success = result {
+                switch result {
+                case .success:
                     reloadIfNeeded(force: true)
+                case let .failure(error):
+                    presentSyncFailure(operation: "Pull", error: error)
                 }
             }
         }
@@ -281,11 +294,26 @@ struct WorkingTreeStatusView: View {
             await MainActor.run {
                 isPushing = false
                 activityStatus = nil
-                if case .success = result {
+                switch result {
+                case .success:
                     reloadIfNeeded(force: true)
+                case let .failure(error):
+                    presentSyncFailure(operation: "Push", error: error)
                 }
             }
         }
+    }
+
+    /// 同步失败不能静默结束：Toast 通过 RootView Overlay 显示标题和 Git 原始错误。
+    @MainActor
+    private func presentSyncFailure(operation: String, error: Error) {
+        toast?.show(
+            loc("\(operation) failed"),
+            detail: error.localizedDescription,
+            style: .error,
+            duration: 8
+        )
+        reloadIfNeeded(force: true)
     }
 
     // MARK: - Loading
