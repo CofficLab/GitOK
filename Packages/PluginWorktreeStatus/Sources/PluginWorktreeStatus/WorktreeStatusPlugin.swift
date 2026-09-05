@@ -67,8 +67,9 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
             }
         }
         self.sceneViewModel = sceneViewModel
+        let sceneCapability = WorktreeStatusSceneCapabilityAdapter(scene: scene)
         self.sceneObserver = WorktreeStatusSceneObserver(
-            scene: scene,
+            capability: sceneCapability,
             viewModel: sceneViewModel,
             onVisibilityChanged: { [weak rail] isVisible in
                 guard let rail else { return }
