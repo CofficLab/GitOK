@@ -1,4 +1,5 @@
 import AppKit
+import KitGitOKSupport
 import ProviderProjects
 import SwiftUI
 
@@ -92,9 +93,9 @@ public struct IconWorkspaceView: View {
                 }
                 sourceAssetPicker
                 Picker(IconLocalization.string("Background", bundle: .module), selection: $model.backgroundID) {
-                    Text(IconLocalization.string("Blue", bundle: .module)).tag("1")
-                    Text(IconLocalization.string("Purple", bundle: .module)).tag("2")
-                    Text(IconLocalization.string("Orange", bundle: .module)).tag("3")
+                    ForEach(MagicBackgroundGroup.all, id: \.rawValue) { gradient in
+                        Text(gradient.displayName).tag(gradient.rawValue)
+                    }
                 }
                 Slider(value: $model.scale, in: 0.5...1.5) { Text(IconLocalization.string("Scale", bundle: .module)) }
                 Slider(value: $model.padding, in: 0...0.3) { Text(IconLocalization.string("Padding", bundle: .module)) }
@@ -256,10 +257,6 @@ private struct IconPreview: View {
     }
 
     private var background: some View {
-        switch backgroundID {
-        case "2": LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "3": LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)
-        default: LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
-        }
+        MagicBackgroundGroup(for: backgroundID)
     }
 }

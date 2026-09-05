@@ -1,4 +1,5 @@
 import Foundation
+import KitGitOKSupport
 import ProviderProjects
 
 @MainActor
@@ -11,7 +12,7 @@ public final class BannerWorkspaceModel: ObservableObject {
     @Published public var featuresText = ""
     @Published public private(set) var imageURL: URL?
     @Published public var selectedDeviceID = BannerExportDevice.iPhoneBig.rawValue
-    @Published public var backgroundID = "1"
+    @Published public var backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
     @Published public var opacity = 1.0
     @Published public private(set) var message: String?
 
@@ -191,7 +192,7 @@ public final class BannerWorkspaceModel: ObservableObject {
             featuresText = data.features.joined(separator: "\n")
             imageURL = data.imageId.map { repository.imageURL(for: $0, in: projects.currentProject?.url ?? URL(fileURLWithPath: "/")) }
             selectedDeviceID = data.selectedDevice ?? BannerExportDevice.iPhoneBig.rawValue
-            backgroundID = data.backgroundId
+            backgroundID = MagicBackgroundGroup.gradientName(for: data.backgroundId).rawValue
             opacity = data.opacity
         } else if let data = banner.minimalData {
             title = data.title
@@ -199,7 +200,7 @@ public final class BannerWorkspaceModel: ObservableObject {
             featuresText = ""
             imageURL = data.imageId.map { repository.imageURL(for: $0, in: projects.currentProject?.url ?? URL(fileURLWithPath: "/")) }
             selectedDeviceID = data.selectedDevice ?? BannerExportDevice.iPhoneBig.rawValue
-            backgroundID = data.backgroundId
+            backgroundID = MagicBackgroundGroup.gradientName(for: data.backgroundId).rawValue
             opacity = data.opacity
         } else {
             resetDraft()
@@ -213,7 +214,7 @@ public final class BannerWorkspaceModel: ObservableObject {
         featuresText = ""
         imageURL = nil
         selectedDeviceID = BannerExportDevice.iPhoneBig.rawValue
-        backgroundID = "1"
+        backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
         opacity = 1
     }
 }

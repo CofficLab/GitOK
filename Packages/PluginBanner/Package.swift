@@ -11,6 +11,7 @@ let package = Package(
     dependencies: [
         .package(path: "../BannerCoreKit"),
         .package(path: "../KernelCore"),
+        .package(path: "../KitGitOKSupport"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProjectRulesKit"),
         .package(path: "../ProviderContentView"),
@@ -22,6 +23,7 @@ let package = Package(
             dependencies: [
                 .product(name: "BannerCoreKit", package: "BannerCoreKit"),
                 .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KitGitOKSupport", package: "KitGitOKSupport"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),

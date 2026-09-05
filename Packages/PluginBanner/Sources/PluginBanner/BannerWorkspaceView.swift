@@ -1,4 +1,5 @@
 import AppKit
+import KitGitOKSupport
 import ProviderProjects
 import SwiftUI
 
@@ -83,9 +84,9 @@ public struct BannerWorkspaceView: View {
                         .lineLimit(3...8)
                 }
                 Picker(BannerLocalization.string("Background", bundle: .module), selection: $model.backgroundID) {
-                    Text(BannerLocalization.string("Blue", bundle: .module)).tag("1")
-                    Text(BannerLocalization.string("Purple", bundle: .module)).tag("2")
-                    Text(BannerLocalization.string("Orange", bundle: .module)).tag("3")
+                    ForEach(MagicBackgroundGroup.all, id: \.rawValue) { gradient in
+                        Text(gradient.displayName).tag(gradient.rawValue)
+                    }
                 }
                 Picker(BannerLocalization.string("Device", bundle: .module), selection: $model.selectedDeviceID) {
                     ForEach(BannerExportDevice.allCases, id: \.rawValue) { device in

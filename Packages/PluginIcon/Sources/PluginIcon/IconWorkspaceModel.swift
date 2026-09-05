@@ -1,4 +1,5 @@
 import Foundation
+import KitGitOKSupport
 import ProviderProjects
 
 @MainActor
@@ -6,7 +7,7 @@ public final class IconWorkspaceModel: ObservableObject {
     @Published public private(set) var icons: [IconData] = []
     @Published public private(set) var selectedIconID: String?
     @Published public var title = "New Icon"
-    @Published public var backgroundID = "1"
+    @Published public var backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
     @Published public var opacity = 1.0
     @Published public var scale = 1.0
     @Published public var padding = 0.12
@@ -265,7 +266,7 @@ public final class IconWorkspaceModel: ObservableObject {
             return
         }
         title = icon.title
-        backgroundID = icon.backgroundId
+        backgroundID = MagicBackgroundGroup.gradientName(for: icon.backgroundId).rawValue
         opacity = icon.opacity
         scale = icon.scale ?? 1
         padding = icon.padding
@@ -289,7 +290,7 @@ public final class IconWorkspaceModel: ObservableObject {
 
     private func resetDraft() {
         title = "New Icon"
-        backgroundID = "1"
+        backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
         opacity = 1
         scale = 1
         padding = 0.12

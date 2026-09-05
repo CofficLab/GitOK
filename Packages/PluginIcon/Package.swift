@@ -10,6 +10,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KernelCore"),
+        .package(path: "../KitGitOKSupport"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProjectRulesKit"),
         .package(path: "../ProviderContentView"),
@@ -20,6 +21,7 @@ let package = Package(
             name: "PluginIcon",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KitGitOKSupport", package: "KitGitOKSupport"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),

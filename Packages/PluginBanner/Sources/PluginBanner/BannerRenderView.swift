@@ -1,4 +1,5 @@
 import AppKit
+import KitGitOKSupport
 import SwiftUI
 
 /// Shared preview/rendering view so the editor and exports cannot drift apart.
@@ -33,11 +34,7 @@ public struct BannerRenderView: View {
     }
 
     private var background: some View {
-        switch configuration.backgroundID {
-        case "2": LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "3": LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)
-        default: LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
-        }
+        MagicBackgroundGroup(for: configuration.backgroundID)
     }
 
     private var isMacDevice: Bool {
