@@ -441,6 +441,42 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "分支比較失敗：%@" } }
       }
     },
+    "A conflicted file path is required.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A conflicted file path is required." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要指定冲突文件路径。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要指定衝突檔案路徑。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要指定衝突檔案路徑。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要指定衝突檔案路徑。" } }
+      }
+    },
+    "No merge is currently in progress.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No merge is currently in progress." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "当前没有正在进行的合并。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "目前沒有正在進行的合併。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "目前沒有正在進行的合併。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "目前沒有正在進行的合併。" } }
+      }
+    },
+    "Resolve all conflicts before continuing the merge.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Resolve all conflicts before continuing the merge." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "请先解决所有冲突，再继续合并。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } }
+      }
+    },
+    "Merge operation failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Merge operation failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "合并操作失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "合併操作失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "合併操作失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "合併操作失敗：%@" } }
+      }
+    },
     "Git unavailable: %@": {
       "localizations": {
         "en": {

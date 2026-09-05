@@ -9,7 +9,11 @@ public struct ConflictResolverList: View {
     let projects: any ProjectProviding
     @State private var files: [String] = []
     @State private var isLoading = true
-    @State private var selectedFile: String?
+    @State private var conflictDiff: String?
+    @State private var isMerging = false
+    @State private var isActionRunning = false
+    @State private var actionError: String?
+    @State private var showAbortConfirmation = false
 
     public init(projects: any ProjectProviding) {
         self.projects = projects
@@ -18,6 +22,12 @@ public struct ConflictResolverList: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
+            actionBar
+            if let actionError {
+                Text(actionError)
+                    .font(.caption)
+                    .foregroundStyle(theme.warning)
+            }
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
@@ -43,6 +53,37 @@ public struct ConflictResolverList: View {
         }
         .padding(16)
         .onAppear(perform: load)
+        .alert(
+            LumiPluginLocalization.string("Confirm Abort Merge?", bundle: .module),
+            isPresented: $showAbortConfirmation
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
+            Button(LumiPluginLocalization.string("Abort Merge", bundle: .module), role: .destructive) {
+                abortMerge()
+            }
+        } message: {
+            Text(LumiPluginLocalization.string(
+                "This discards the in-progress merge and restores the pre-merge state.",
+                bundle: .module
+            ))
+        }
+        .sheet(
+            isPresented: Binding(
+                get: { conflictDiff != nil },
+                set: { isPresented in
+                    if !isPresented { conflictDiff = nil }
+                }
+            )
+        ) {
+            ScrollView {
+                Text(conflictDiff ?? "")
+                    .font(.system(.body, design: .monospaced))
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+            }
+            .frame(minWidth: 640, minHeight: 420)
+        }
     }
 
     private var header: some View {
@@ -52,6 +93,37 @@ public struct ConflictResolverList: View {
             Text(files.isEmpty ? LumiPluginLocalization.string("No conflicted files", bundle: .module) : String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), files.count))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
+        }
+    }
+
+    private var actionBar: some View {
+        HStack(spacing: 8) {
+            Button {
+                continueMerge()
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Continue Merge", bundle: .module),
+                    systemImage: "arrow.right.circle"
+                )
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!isMerging || !files.isEmpty || isActionRunning)
+
+            Button(role: .destructive) {
+                showAbortConfirmation = true
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Abort Merge", bundle: .module),
+                    systemImage: "xmark.circle"
+                )
+            }
+            .buttonStyle(.bordered)
+            .disabled(!isMerging || isActionRunning)
+
+            if isActionRunning {
+                ProgressView()
+                    .controlSize(.small)
+            }
         }
     }
 
@@ -70,14 +142,50 @@ public struct ConflictResolverList: View {
             AppIconButton(systemImage: "folder", label: LumiPluginLocalization.string("Reveal in Finder", bundle: .module), tint: theme.textSecondary) {
                 reveal(file)
             }
+            Menu {
+                Button {
+                    checkout(file, version: .ours)
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Use Ours", bundle: .module),
+                        systemImage: "arrow.left"
+                    )
+                }
+                Button {
+                    checkout(file, version: .theirs)
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Use Theirs", bundle: .module),
+                        systemImage: "arrow.right"
+                    )
+                }
+                Button {
+                    checkout(file, version: .base)
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Use Base", bundle: .module),
+                        systemImage: "arrow.uturn.backward"
+                    )
+                }
+                Divider()
+                Button {
+                    showDiff(file)
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("View Conflict Diff", bundle: .module),
+                        systemImage: "doc.text.magnifyingglass"
+                    )
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .menuStyle(.borderlessButton)
+            .disabled(isActionRunning)
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
         .background(theme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 6))
-        .onTapGesture {
-            selectedFile = file
-        }
     }
 
     @MainActor
@@ -90,9 +198,102 @@ public struct ConflictResolverList: View {
         isLoading = true
         Task.detached(priority: .userInitiated) {
             let loaded = GitMergeOperation.conflictFiles(in: url)
+            let merging = GitMergeOperation.isMerging(in: url)
             await MainActor.run {
                 files = loaded
+                isMerging = merging
                 isLoading = false
+            }
+        }
+    }
+
+    private func checkout(_ file: String, version: GitMergeFileVersion) {
+        guard let url = projects.currentProject?.url else { return }
+        isActionRunning = true
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitMergeOperation.checkoutMergeFileVersion(path: file, version: version, in: url)
+                await MainActor.run {
+                    isActionRunning = false
+                    projects.notifyDataChanged()
+                    load()
+                }
+            } catch {
+                await MainActor.run {
+                    isActionRunning = false
+                    actionError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func continueMerge() {
+        guard let url = projects.currentProject?.url else { return }
+        guard files.isEmpty else {
+            actionError = LumiPluginLocalization.string(
+                "Resolve all conflicts before continuing the merge.",
+                bundle: .module
+            )
+            return
+        }
+        isActionRunning = true
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                _ = try GitMergeOperation.continueMerge(in: url)
+                await MainActor.run {
+                    isActionRunning = false
+                    projects.notifyDataChanged()
+                    load()
+                }
+            } catch {
+                await MainActor.run {
+                    isActionRunning = false
+                    actionError = error.localizedDescription
+                    load()
+                }
+            }
+        }
+    }
+
+    private func abortMerge() {
+        guard let url = projects.currentProject?.url else { return }
+        isActionRunning = true
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                _ = try GitMergeOperation.abortMerge(in: url)
+                await MainActor.run {
+                    isActionRunning = false
+                    projects.notifyDataChanged()
+                    load()
+                }
+            } catch {
+                await MainActor.run {
+                    isActionRunning = false
+                    actionError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func showDiff(_ file: String) {
+        guard let url = projects.currentProject?.url else { return }
+        isActionRunning = true
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                let diff = try GitMergeOperation.mergeFileDiff(path: file, in: url)
+                await MainActor.run {
+                    isActionRunning = false
+                    conflictDiff = diff
+                }
+            } catch {
+                await MainActor.run {
+                    isActionRunning = false
+                    actionError = error.localizedDescription
+                }
             }
         }
     }

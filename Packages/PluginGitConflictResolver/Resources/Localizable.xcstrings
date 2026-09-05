@@ -374,6 +374,87 @@
           }
         }
       }
+    },
+    "Abort Merge": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Abort Merge" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "终止合并" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "終止合併" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "終止合併" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "終止合併" } }
+      }
+    },
+    "Confirm Abort Merge?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Abort Merge?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认终止合并？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認終止合併？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認終止合併？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認終止合併？" } }
+      }
+    },
+    "Continue Merge": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Continue Merge" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "继续合并" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "繼續合併" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "繼續合併" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "繼續合併" } }
+      }
+    },
+    "Resolve all conflicts before continuing the merge.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Resolve all conflicts before continuing the merge." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "请先解决所有冲突，再继续合并。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } }
+      }
+    },
+    "This discards the in-progress merge and restores the pre-merge state.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This discards the in-progress merge and restores the pre-merge state." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "这会放弃正在进行的合并并恢复合并前状态。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } }
+      }
+    },
+    "Use Base": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Use Base" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "使用基准" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "使用基準" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "使用基準" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "使用基準" } }
+      }
+    },
+    "Use Ours": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Use Ours" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "使用我们的版本" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "使用我們的版本" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "使用我們的版本" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "使用我們的版本" } }
+      }
+    },
+    "Use Theirs": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Use Theirs" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "使用对方版本" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "使用對方版本" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "使用對方版本" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "使用對方版本" } }
+      }
+    },
+    "View Conflict Diff": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "View Conflict Diff" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "查看冲突差异" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "查看衝突差異" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "查看衝突差異" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "查看衝突差異" } }
+      }
     }
   },
   "version": "1.0"

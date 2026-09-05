@@ -1,7 +1,41 @@
 import Foundation
 
+public enum GitMergeFileVersion: String, CaseIterable, Equatable, Sendable {
+    case base
+    case ours
+    case theirs
+
+    public var stageNumber: Int {
+        switch self {
+        case .base: 1
+        case .ours: 2
+        case .theirs: 3
+        }
+    }
+}
+
 /// 合并操作与冲突检测（对齐旧版 GitRepositoryCLI 合并能力）。
 public enum GitMergeOperation {
+    public enum Error: Swift.Error, LocalizedError {
+        case invalidPath
+        case notMerging
+        case unresolvedConflicts
+        case operationFailed(String)
+
+        public var errorDescription: String? {
+            switch self {
+            case .invalidPath:
+                LumiPluginLocalization.string("A conflicted file path is required.", bundle: .module)
+            case .notMerging:
+                LumiPluginLocalization.string("No merge is currently in progress.", bundle: .module)
+            case .unresolvedConflicts:
+                LumiPluginLocalization.string("Resolve all conflicts before continuing the merge.", bundle: .module)
+            case .operationFailed(let message):
+                String(format: LumiPluginLocalization.string("Merge operation failed: %@", bundle: .module), message)
+            }
+        }
+    }
+
     /// 是否有进行中的合并（`.git/MERGE_HEAD` 存在）。
     public static func isMerging(in repository: URL) -> Bool {
         let gitDirURL = repository.appendingPathComponent(".git")
@@ -49,6 +83,101 @@ public enum GitMergeOperation {
             }
             throw error
         }
+    }
+
+    /// 读取冲突文件的 base、ours 或 theirs 版本。
+    public static func mergeFileContent(
+        path: String,
+        version: GitMergeFileVersion,
+        in repository: URL
+    ) throws -> String {
+        let path = try validatedPath(path)
+        guard isMerging(in: repository) else { throw Error.notMerging }
+        let stage: Int
+        switch version {
+        case .base: stage = 1
+        case .ours: stage = 2
+        case .theirs: stage = 3
+        }
+        do {
+            return try GitProcessRunner.run(["show", ":\(stage):\(path)"], in: repository)
+        } catch {
+            throw Error.operationFailed(Self.message(for: error))
+        }
+    }
+
+    /// 读取指定冲突文件的 combined diff。
+    public static func mergeFileDiff(path: String, in repository: URL) throws -> String {
+        let path = try validatedPath(path)
+        guard isMerging(in: repository) else { throw Error.notMerging }
+        do {
+            return try GitProcessRunner.run(["diff", "--cc", "--", path], in: repository)
+        } catch {
+            throw Error.operationFailed(Self.message(for: error))
+        }
+    }
+
+    /// 选择冲突文件的某个版本并将其加入暂存区。
+    public static func checkoutMergeFileVersion(
+        path: String,
+        version: GitMergeFileVersion,
+        in repository: URL
+    ) throws {
+        let path = try validatedPath(path)
+        guard isMerging(in: repository) else { throw Error.notMerging }
+        do {
+            switch version {
+            case .base:
+                _ = try GitProcessRunner.run(["checkout-index", "--stage=1", "--", path], in: repository)
+            case .ours:
+                _ = try GitProcessRunner.run(["checkout", "--ours", "--", path], in: repository)
+            case .theirs:
+                _ = try GitProcessRunner.run(["checkout", "--theirs", "--", path], in: repository)
+            }
+            _ = try GitProcessRunner.run(["add", "--", path], in: repository)
+        } catch {
+            throw Error.operationFailed(Self.message(for: error))
+        }
+    }
+
+    /// 在所有冲突已解决并暂存后完成当前合并。
+    @discardableResult
+    public static func continueMerge(in repository: URL) throws -> String {
+        guard isMerging(in: repository) else { throw Error.notMerging }
+        guard conflictFiles(in: repository).isEmpty else { throw Error.unresolvedConflicts }
+        do {
+            return try GitProcessRunner.run(["commit", "--no-edit"], in: repository)
+        } catch {
+            throw Error.operationFailed(Self.message(for: error))
+        }
+    }
+
+    /// 放弃当前合并并恢复到合并前状态。
+    @discardableResult
+    public static func abortMerge(in repository: URL) throws -> String {
+        guard isMerging(in: repository) else { throw Error.notMerging }
+        do {
+            return try GitProcessRunner.run(["merge", "--abort"], in: repository)
+        } catch {
+            throw Error.operationFailed(Self.message(for: error))
+        }
+    }
+
+    /// 若合并没有未解决冲突，则尝试完成遗留的合并状态。
+    @discardableResult
+    public static func finalizeMergeIfNeeded(in repository: URL) throws -> String? {
+        guard isMerging(in: repository), conflictFiles(in: repository).isEmpty else { return nil }
+        return try continueMerge(in: repository)
+    }
+
+    private static func validatedPath(_ path: String) throws -> String {
+        let trimmed = path.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { throw Error.invalidPath }
+        return trimmed
+    }
+
+    private static func message(for error: Swift.Error) -> String {
+        (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
     }
 }
 
