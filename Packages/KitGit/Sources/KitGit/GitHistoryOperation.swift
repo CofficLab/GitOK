@@ -9,6 +9,7 @@ public enum GitHistoryOperation {
         case invalidCommit
         case revertFailed(String)
         case undoFailed(String)
+        case softResetFailed(String)
 
         public var errorDescription: String? {
             switch self {
@@ -18,6 +19,8 @@ public enum GitHistoryOperation {
                 String(format: LumiPluginLocalization.string("Revert failed: %@", bundle: .module), message)
             case .undoFailed(let message):
                 String(format: LumiPluginLocalization.string("Undo failed: %@", bundle: .module), message)
+            case .softResetFailed(let message):
+                String(format: LumiPluginLocalization.string("Soft reset failed: %@", bundle: .module), message)
             }
         }
     }
@@ -62,6 +65,49 @@ public enum GitHistoryOperation {
         } catch {
             let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
             throw Error.undoFailed(message)
+        }
+    }
+
+    /// 将 HEAD 软重置到指定提交，并把后续提交的文件改动保留在暂存区。
+    ///
+    /// 只允许在工作区干净且 HEAD 仍匹配调用方加载到的值时执行，防止旧列表中的
+    /// 提交在用户或其他工具已经改变仓库后被误操作。
+    @discardableResult
+    public static func softReset(
+        to targetHash: String,
+        expectedHead: String,
+        in repository: URL
+    ) throws -> String {
+        let trimmedTargetHash = targetHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedExpectedHead = expectedHead.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTargetHash.isEmpty, !trimmedExpectedHead.isEmpty else {
+            throw Error.invalidCommit
+        }
+
+        do {
+            guard try GitStatusLoader.loadStatus(in: repository).isClean else {
+                throw Error.softResetFailed(
+                    LumiPluginLocalization.string("The working tree must be clean before resetting history.", bundle: .module)
+                )
+            }
+
+            let head = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repository)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard head == trimmedExpectedHead else {
+                throw Error.softResetFailed(
+                    LumiPluginLocalization.string("The current HEAD changed before the reset could start.", bundle: .module)
+                )
+            }
+
+            return try GitProcessRunner.run(
+                ["reset", "--soft", trimmedTargetHash],
+                in: repository
+            )
+        } catch let error as Error {
+            throw error
+        } catch {
+            let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
+            throw Error.softResetFailed(message)
         }
     }
 

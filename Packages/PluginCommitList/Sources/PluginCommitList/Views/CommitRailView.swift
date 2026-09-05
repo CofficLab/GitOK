@@ -46,11 +46,13 @@ struct CommitRailView: View {
     @State private var isPushing = false
     @State private var pushError: String?
 
-    // Revert 状态
+    // 历史操作状态
     @State private var pendingUndo: GitCommit?
     @State private var pendingRevert: GitCommit?
+    @State private var pendingSoftReset: GitCommit?
     @State private var undoingHash: String?
     @State private var revertingHash: String?
+    @State private var softResettingHash: String?
     @State private var historyError: String?
 
     init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
@@ -113,6 +115,29 @@ struct CommitRailView: View {
         } message: {
             Text(LumiPluginLocalization.string(
                 "After undoing, this commit's changes will remain in the working tree.",
+                bundle: .module
+            ))
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Soft Reset?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingSoftReset != nil },
+                set: { isPresented in
+                    if !isPresented { pendingSoftReset = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingSoftReset = nil
+            }
+            Button(LumiPluginLocalization.string("Soft Reset", bundle: .module)) {
+                guard let commit = pendingSoftReset else { return }
+                pendingSoftReset = nil
+                performSoftReset(to: commit)
+            }
+        } message: {
+            Text(LumiPluginLocalization.string(
+                "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area.",
                 bundle: .module
             ))
         }
@@ -294,6 +319,26 @@ struct CommitRailView: View {
                 )
             }
             .disabled(undoingHash != nil || revertingHash != nil || commit.parentHashes.count > 1)
+
+            Divider()
+
+            Menu {
+                Button {
+                    historyError = nil
+                    pendingSoftReset = commit
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Soft Reset", bundle: .module),
+                        systemImage: "text.badge.checkmark"
+                    )
+                }
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Reset to Here", bundle: .module),
+                    systemImage: "arrow.down.to.line"
+                )
+            }
+            .disabled(undoingHash != nil || revertingHash != nil || softResettingHash != nil)
         }
     }
 
@@ -438,6 +483,34 @@ struct CommitRailView: View {
             }
             await MainActor.run {
                 undoingHash = nil
+                switch result {
+                case .success:
+                    projects.clearCommitSelection()
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    historyError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performSoftReset(to commit: GitCommit) {
+        guard let project = projects.currentProject,
+              let expectedHead = commits.first?.hash else { return }
+
+        softResettingHash = commit.hash
+        historyError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitHistoryOperation.softReset(
+                    to: commit.hash,
+                    expectedHead: expectedHead,
+                    in: url
+                )
+            }
+            await MainActor.run {
+                softResettingHash = nil
                 switch result {
                 case .success:
                     projects.clearCommitSelection()

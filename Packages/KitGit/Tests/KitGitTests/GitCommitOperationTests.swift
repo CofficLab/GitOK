@@ -257,4 +257,68 @@ final class GitCommitOperationTests: XCTestCase {
             commitHash
         )
     }
+
+    func testSoftResetMovesHeadAndStagesSubsequentChanges() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        _ = try GitHistoryOperation.softReset(
+            to: targetHash,
+            expectedHead: expectedHead,
+            in: repo
+        )
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            targetHash
+        )
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        let changed = try XCTUnwrap(entries.first(where: { $0.path == "a.txt" }))
+        XCTAssertEqual(changed.stagedStatus, "M")
+        XCTAssertEqual(changed.worktreeStatus, " ")
+    }
+
+    func testSoftResetRejectsDirtyWorktree() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        try Data("uncommitted\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+
+        XCTAssertThrowsError(
+            try GitHistoryOperation.softReset(to: targetHash, expectedHead: expectedHead, in: repo)
+        ) { error in
+            guard case GitHistoryOperation.Error.softResetFailed = error else {
+                return XCTFail("expected softResetFailed, got \(error)")
+            }
+        }
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            expectedHead
+        )
+    }
 }

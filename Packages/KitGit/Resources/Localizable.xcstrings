@@ -216,6 +216,33 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "選取的提交已不是目前 HEAD。" } }
       }
     },
+    "Soft reset failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Soft reset failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "软重置失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "軟重置失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "軟重置失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "軟重置失敗：%@" } }
+      }
+    },
+    "The working tree must be clean before resetting history.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before resetting history." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置历史前工作区必须干净。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重置歷史前工作區必須乾淨。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "重置歷史前工作區必須乾淨。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "重置歷史前工作區必須乾淨。" } }
+      }
+    },
+    "The current HEAD changed before the reset could start.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The current HEAD changed before the reset could start." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置开始前当前 HEAD 已发生变化。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重置開始前目前 HEAD 已發生變化。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "重置開始前目前 HEAD 已發生變化。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "重置開始前目前 HEAD 已發生變化。" } }
+      }
+    },
     "Git unavailable: %@": {
       "localizations": {
         "en": {

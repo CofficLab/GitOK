@@ -353,6 +353,42 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "不支援撤銷初始提交。" } }
       }
     },
+    "Confirm Soft Reset?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Soft Reset?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认软重置？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認軟重置？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認軟重置？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認軟重置？" } }
+      }
+    },
+    "Soft Reset": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Soft Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "软重置" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "軟重置" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "軟重置" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "軟重置" } }
+      }
+    },
+    "Reset to Here": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reset to Here" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置到此处" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重置到此處" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "重置到此處" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "重置到此處" } }
+      }
+    },
+    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "HEAD 将移动到此提交，后续提交的改动会保留在暂存区。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在暫存區。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在暫存區。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在暫存區。" } }
+      }
+    },
     "Confirm Revert": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Confirm Revert" } },
