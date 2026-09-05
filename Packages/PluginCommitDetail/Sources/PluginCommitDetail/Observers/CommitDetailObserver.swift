@@ -26,25 +26,19 @@ final class CommitDetailObserver {
     private var gitWatchHandle: (any GitRepositoryWatchingObserverHandle)?
 
     init(
-        projects: any ProjectProviding,
+        capability: any CommitDetailProjectCapability,
         gitWatch: (any GitRepositoryWatching)?,
         viewModel: CommitDetailViewModel
     ) {
         self.viewModel = viewModel
 
-        projectsHandle = projects.addObserver { [weak self, weak projects] event in
-            guard let self, let projects else { return }
-            self.handle(event, projects: projects)
+        projectsHandle = capability.addObserver { [weak self] event in
+            self?.handle(event, capability: capability)
         }
 
-        // Observer 持有初始快照的同步责任，插件定义只负责装配依赖。
-        syncSelection(from: projects)
-        syncCommitFiles(from: projects)
+        syncSelection(from: capability)
+        syncCommitFiles(from: capability)
 
-        // 监听 GitRepositoryWatching 事件，感知工作区文件变化。
-        // 当外部修改工作区（如其他编辑器修改文件、Finder 操作文件）时，
-        // FSEventStream 监听到变化并广播 .workingTreeChanged，
-        // 本 Observer 接收并触发工作区变动列表刷新。
         gitWatchHandle = gitWatch?.addObserver { [weak self] event in
             guard let self else { return }
             switch event {
@@ -56,17 +50,30 @@ final class CommitDetailObserver {
         }
     }
 
-    private func handle(_ event: ProjectProvidingEvent, projects: any ProjectProviding) {
+    @available(*, deprecated, message: "Inject CommitDetailProjectCapability from CommitDetailPlugin")
+    convenience init(
+        projects: any ProjectProviding,
+        gitWatch: (any GitRepositoryWatching)?,
+        viewModel: CommitDetailViewModel
+    ) {
+        self.init(
+            capability: CommitDetailProjectCapabilityAdapter(projects: projects),
+            gitWatch: gitWatch,
+            viewModel: viewModel
+        )
+    }
+
+    private func handle(_ event: ProjectProvidingEvent, capability: any CommitDetailProjectCapability) {
         switch event {
         case .commitSelectionChanged:
-            syncSelection(from: projects)
-            syncCommitFiles(from: projects)
+            syncSelection(from: capability)
+            syncCommitFiles(from: capability)
         case .currentFileChanged:
-            syncSelection(from: projects)
+            syncSelection(from: capability)
         case .selectionChanged:
             // 项目切换时同步完整快照，尤其是没有 commit 选择时的项目路径。
-            syncSelection(from: projects)
-            syncCommitFiles(from: projects)
+            syncSelection(from: capability)
+            syncCommitFiles(from: capability)
             viewModel.handleProjectDataChanged()
         case .dataChanged:
             viewModel.handleProjectDataChanged()
@@ -75,20 +82,20 @@ final class CommitDetailObserver {
         }
     }
 
-    private func syncSelection(from projects: any ProjectProviding) {
+    private func syncSelection(from capability: any CommitDetailProjectCapability) {
         viewModel.handleSelectionChanged(
-            commit: projects.currentCommit,
-            projectURL: projects.currentProject?.url,
-            file: projects.currentFile
+            commit: capability.currentCommit,
+            projectURL: capability.currentProjectURL,
+            file: capability.currentFile
         )
     }
 
-    private func syncCommitFiles(from projects: any ProjectProviding) {
+    private func syncCommitFiles(from capability: any CommitDetailProjectCapability) {
         viewModel.handleCommitFilesChanged(
-            files: projects.currentCommitFiles,
-            isLoading: projects.isLoadingCommitFiles,
-            loadError: projects.currentCommitFilesLoadError,
-            commitHash: projects.currentCommit?.hash
+            files: capability.currentCommitFiles,
+            isLoading: capability.isLoadingCommitFiles,
+            loadError: capability.currentCommitFilesLoadError,
+            commitHash: capability.currentCommit?.hash
         )
     }
 

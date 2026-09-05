@@ -77,23 +77,25 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
         // 插件入口是插件级外部监听的唯一持有者）。Observer 负责订阅外部
         // providing、读取快照并直接更新 ViewModel。
+        let capability = CommitDetailProjectCapabilityAdapter(projects: projects)
         let viewModel = CommitDetailViewModel()
         self.viewModel = viewModel
         observer = CommitDetailObserver(
-            projects: projects,
+            capability: capability,
             gitWatch: gitWatch,
             viewModel: viewModel
         )
 
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = CommitDetailSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = CommitDetailSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = CommitDetailSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
-        let selectFile: (String?) -> Void = { [weak projects] path in
-            projects?.selectFile(path)
+        let selectFile: (String?) -> Void = { path in
+            capability.selectFile(path)
         }
-        let notifyDataChanged: () -> Void = { [weak projects] in
-            projects?.notifyDataChanged()
+        let notifyDataChanged: () -> Void = {
+            capability.notifyDataChanged()
         }
 
         // 作为主内容区的一块贡献（order 大于 Commit Form，VStack 中位于表单下方）。
