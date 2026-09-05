@@ -53,6 +53,31 @@ public enum GitCommitOperation {
         _ = try GitProcessRunner.run(["reset", "--"] + filePaths, in: repository)
     }
 
+    /// 丢弃指定文件的全部工作区改动（包括暂存内容），不可逆。
+    ///
+    /// HEAD 中已有的文件恢复到 HEAD；未纳入 HEAD 的文件在取消暂存后从工作区删除。
+    public static func discardFileChanges(_ filePath: String, in repository: URL) throws {
+        guard !filePath.isEmpty else { return }
+
+        let trackedInHead = try isTrackedInHead(filePath, in: repository)
+        try unstageFiles([filePath], in: repository)
+
+        if trackedInHead {
+            _ = try GitProcessRunner.run(["restore", "--worktree", "--", filePath], in: repository)
+        } else {
+            try removeWorkingTreeItem(filePath, in: repository)
+        }
+    }
+
+    /// 丢弃指定文件的全部工作区改动（包括暂存内容），不可逆。
+    ///
+    /// 文件按传入顺序逐个处理，空路径列表按 no-op 处理。
+    public static func discardFiles(_ filePaths: [String], in repository: URL) throws {
+        for filePath in filePaths {
+            try discardFileChanges(filePath, in: repository)
+        }
+    }
+
     /// 创建提交。
     ///
     /// 消息按空行分段为多个 `-m`（git 会用空行连接各段），支持
@@ -100,5 +125,36 @@ public enum GitCommitOperation {
             let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
             throw Error.pushFailed(message)
         }
+    }
+
+    private static func isTrackedInHead(_ filePath: String, in repository: URL) throws -> Bool {
+        do {
+            let output = try GitProcessRunner.run(
+                ["ls-tree", "-r", "--name-only", "HEAD", "--", filePath],
+                in: repository
+            )
+            return output.split(separator: "\n").contains { $0 == filePath }
+        } catch GitProcessRunner.Error.gitFailed {
+            // 没有首个 commit 时 HEAD 不存在，当前路径只能是新增文件。
+            return false
+        }
+    }
+
+    private static func removeWorkingTreeItem(_ filePath: String, in repository: URL) throws {
+        let repositoryURL = repository.standardizedFileURL
+        let targetURL = URL(fileURLWithPath: filePath, relativeTo: repositoryURL).standardizedFileURL
+        let repositoryPath = repositoryURL.path
+
+        guard targetURL.path != repositoryPath,
+              targetURL.path.hasPrefix(repositoryPath + "/") else {
+            throw NSError(
+                domain: "KitGit.GitCommitOperation",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "非法文件路径: \(filePath)"]
+            )
+        }
+
+        guard FileManager.default.fileExists(atPath: targetURL.path) else { return }
+        try FileManager.default.removeItem(at: targetURL)
     }
 }

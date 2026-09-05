@@ -93,6 +93,59 @@ final class GitCommitOperationTests: XCTestCase {
         XCTAssertEqual(stillStaged.worktreeStatus, " ")
     }
 
+    func testDiscardFileChangesRestoresTrackedFileAndRemovesStagedUntrackedFile() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        try GitCommitOperation.stageFiles(["tracked.txt"], in: repo)
+        try GitCommitOperation.discardFileChanges("tracked.txt", in: repo)
+
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("tracked.txt"), encoding: .utf8),
+            "initial\n"
+        )
+
+        let newFile = repo.appendingPathComponent("new.txt")
+        try Data("new\n".utf8).write(to: newFile)
+        try GitCommitOperation.stageFiles(["new.txt"], in: repo)
+        try GitCommitOperation.discardFileChanges("new.txt", in: repo)
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: newFile.path))
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
+
+    func testDiscardFilesOnlyDiscardsSelectedTrackedAndUntrackedFiles() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("initial a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("initial b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("changed b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try Data("new\n".utf8).write(to: repo.appendingPathComponent("new.txt"))
+        try GitCommitOperation.stageFiles(["a.txt", "b.txt", "new.txt"], in: repo)
+
+        try GitCommitOperation.discardFiles(["a.txt", "new.txt"], in: repo)
+
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "initial a\n"
+        )
+        XCTAssertFalse(FileManager.default.fileExists(atPath: repo.appendingPathComponent("new.txt").path))
+
+        let remaining = try XCTUnwrap(
+            GitStatusLoader.loadEntries(in: repo).first(where: { $0.path == "b.txt" })
+        )
+        XCTAssertEqual(remaining.stagedStatus, "M")
+        XCTAssertEqual(remaining.worktreeStatus, " ")
+    }
+
     func testCommitWithNothingToCommitThrows() throws {
         let repo = try makeRepo()
         defer { try? FileManager.default.removeItem(at: repo) }
