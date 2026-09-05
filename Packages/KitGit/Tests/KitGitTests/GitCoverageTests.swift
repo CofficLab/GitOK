@@ -361,6 +361,113 @@ final class GitRemoteOperationTests: XCTestCase {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         XCTAssertNotEqual(before, afterFetch)
     }
+
+    func testSynchronizeFastForwardsRemoteOnlyChanges() throws {
+        let origin = try makeRepo()
+        let clone = try makeClone(of: origin)
+        defer {
+            try? FileManager.default.removeItem(at: origin)
+            try? FileManager.default.removeItem(at: clone)
+        }
+
+        try Data("remote-change\n".utf8).write(to: origin.appendingPathComponent("remote.txt"))
+        try GitCommitOperation.addAll(in: origin)
+        try GitCommitOperation.commit(message: "remote-change", in: origin)
+
+        let status = try GitRemoteOperation.synchronize(in: clone)
+
+        XCTAssertEqual(status, .init(ahead: 0, behind: 0, hasUpstream: true))
+        XCTAssertEqual(
+            try runGit(["rev-parse", "HEAD"], in: clone).trimmingCharacters(in: .whitespacesAndNewlines),
+            try runGit(["rev-parse", "main"], in: origin).trimmingCharacters(in: .whitespacesAndNewlines)
+        )
+    }
+
+    func testSynchronizePushesLocalOnlyChanges() throws {
+        let origin = try makeRepo()
+        let clone = try makeClone(of: origin)
+        defer {
+            try? FileManager.default.removeItem(at: origin)
+            try? FileManager.default.removeItem(at: clone)
+        }
+
+        try Data("local-change\n".utf8).write(to: clone.appendingPathComponent("local.txt"))
+        try GitCommitOperation.addAll(in: clone)
+        try GitCommitOperation.commit(message: "local-change", in: clone)
+
+        let status = try GitRemoteOperation.synchronize(in: clone)
+
+        XCTAssertEqual(status, .init(ahead: 0, behind: 0, hasUpstream: true))
+        XCTAssertEqual(
+            try runGit(["rev-parse", "HEAD"], in: clone).trimmingCharacters(in: .whitespacesAndNewlines),
+            try runGit(["rev-parse", "main"], in: origin).trimmingCharacters(in: .whitespacesAndNewlines)
+        )
+    }
+
+    func testSynchronizeMergesDivergedChangesThenPushes() throws {
+        let origin = try makeRepo()
+        let clone = try makeClone(of: origin)
+        defer {
+            try? FileManager.default.removeItem(at: origin)
+            try? FileManager.default.removeItem(at: clone)
+        }
+
+        try Data("remote-change\n".utf8).write(to: origin.appendingPathComponent("remote.txt"))
+        try GitCommitOperation.addAll(in: origin)
+        try GitCommitOperation.commit(message: "remote-change", in: origin)
+
+        try Data("local-change\n".utf8).write(to: clone.appendingPathComponent("local.txt"))
+        try GitCommitOperation.addAll(in: clone)
+        try GitCommitOperation.commit(message: "local-change", in: clone)
+
+        let status = try GitRemoteOperation.synchronize(in: clone)
+
+        XCTAssertEqual(status, .init(ahead: 0, behind: 0, hasUpstream: true))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: clone.appendingPathComponent("remote.txt").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: clone.appendingPathComponent("local.txt").path))
+        XCTAssertEqual(
+            try runGit(["rev-parse", "HEAD"], in: clone).trimmingCharacters(in: .whitespacesAndNewlines),
+            try runGit(["rev-parse", "main"], in: origin).trimmingCharacters(in: .whitespacesAndNewlines)
+        )
+    }
+
+    func testSynchronizeReportsMergeConflictAndLeavesOperationOpen() throws {
+        let origin = try makeRepo()
+        let clone = try makeClone(of: origin)
+        defer {
+            try? FileManager.default.removeItem(at: origin)
+            try? FileManager.default.removeItem(at: clone)
+        }
+
+        try Data("remote-change\n".utf8).write(to: origin.appendingPathComponent("README.md"))
+        try GitCommitOperation.addAll(in: origin)
+        try GitCommitOperation.commit(message: "remote-change", in: origin)
+
+        try Data("local-change\n".utf8).write(to: clone.appendingPathComponent("README.md"))
+        try GitCommitOperation.addAll(in: clone)
+        try GitCommitOperation.commit(message: "local-change", in: clone)
+
+        do {
+            _ = try GitRemoteOperation.synchronize(in: clone)
+            XCTFail("expected merge conflict")
+        } catch let error as GitRemoteOperation.SyncError {
+            if case .merge = error.step {
+                XCTAssertTrue(GitMergeOperation.isMerging(in: clone))
+            } else {
+                XCTFail("expected merge step, got \(error.step)")
+            }
+        }
+
+        _ = try GitMergeOperation.abortMerge(in: clone)
+    }
+
+    private func makeClone(of origin: URL) throws -> URL {
+        let clone = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-remoteclone-\(UUID().uuidString)")
+        _ = try runGit(["clone", "-q", origin.path, clone.path], in: FileManager.default.temporaryDirectory)
+        _ = try runGit(["config", "receive.denyCurrentBranch", "ignore"], in: origin)
+        return clone
+    }
 }
 
 // MARK: - GitStashOperation

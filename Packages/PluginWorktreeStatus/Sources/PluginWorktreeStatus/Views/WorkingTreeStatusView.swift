@@ -8,6 +8,16 @@ private func loc(_ key: String) -> String {
     WorktreeStatusLocalization.string(key, bundle: .module)
 }
 
+private extension GitRemoteOperation.SyncStep {
+    var localizationKey: String {
+        switch self {
+        case .fetch: "Fetch failed"
+        case .merge: "Merge failed"
+        case .push: "Push failed"
+        }
+    }
+}
+
 /// 工作区状态 Rail 区块视图：复刻旧版 GitOK 的 commit 列表顶部状态头。
 ///
 /// 视觉：72pt 高，左侧两行文字（标题+副标题），右侧蓝色同步按钮
@@ -38,8 +48,7 @@ struct WorkingTreeStatusView: View {
 
     // 活动状态
     @State private var activityStatus: String?
-    @State private var isFetching = false
-    @State private var isPulling = false
+    @State private var isSynchronizing = false
     @State private var isPushing = false
 
     @State private var loadedProjectURL: URL?
@@ -156,7 +165,7 @@ struct WorkingTreeStatusView: View {
 
     @ViewBuilder
     private var syncButton: some View {
-        let isWorking = isFetching || isPulling || isPushing
+        let isWorking = isSynchronizing || isPushing
         Button(action: performPrimaryAction) {
             HStack(spacing: 6) {
                 if isWorking {
@@ -186,37 +195,12 @@ struct WorkingTreeStatusView: View {
         .fixedSize(horizontal: true, vertical: false)
     }
 
-    private enum SyncPrimaryAction {
-        case fetch
-        case pull
-        case push
-    }
-
-    private var primaryAction: SyncPrimaryAction {
-        if trackingStatus.hasUpstream, trackingStatus.behind > 0 {
-            return .pull
-        }
-        if trackingStatus.hasUpstream, trackingStatus.ahead == 0 {
-            return .fetch
-        }
-        return .push
-    }
-
     private var primaryActionIcon: String {
-        switch primaryAction {
-        case .fetch: return "arrow.clockwise"
-        case .pull: return "arrow.down"
-        case .push: return "arrow.up"
-        }
+        trackingStatus.hasUpstream ? "arrow.triangle.2.circlepath" : "arrow.up"
     }
 
     private var primaryActionHelp: String {
-        switch primaryAction {
-        case .fetch: return loc("Fetch from remote")
-        case .pull: return loc("Pull from remote")
-        case .push:
-            return trackingStatus.hasUpstream ? loc("Push to remote") : loc("Publish branch")
-        }
+        trackingStatus.hasUpstream ? loc("Synchronize with remote") : loc("Publish branch")
     }
 
     private var syncBadgeText: String? {
@@ -234,50 +218,30 @@ struct WorkingTreeStatusView: View {
     }
 
     private func performPrimaryAction() {
-        switch primaryAction {
-        case .fetch: performFetch()
-        case .pull: performPull()
-        case .push: performPush()
+        if trackingStatus.hasUpstream {
+            performSynchronize()
+        } else {
+            performPush()
         }
     }
 
     // MARK: - Remote Operations
 
-    private func performFetch() {
+    private func performSynchronize() {
         guard let project = projects.currentProject else { return }
-        isFetching = true
-        activityStatus = loc("Fetching")
+        isSynchronizing = true
+        activityStatus = loc("Synchronizing")
         let url = project.url
         Task.detached(priority: .userInitiated) {
-            let result = Result { try GitRemoteOperation.fetch(in: url) }
+            let result = Result { try GitRemoteOperation.synchronize(in: url) }
             await MainActor.run {
-                isFetching = false
+                isSynchronizing = false
                 activityStatus = nil
                 switch result {
                 case .success:
                     reloadIfNeeded(force: true)
                 case let .failure(error):
-                    presentSyncFailure(operation: "Fetch", error: error)
-                }
-            }
-        }
-    }
-
-    private func performPull() {
-        guard let project = projects.currentProject else { return }
-        isPulling = true
-        activityStatus = loc("Pulling")
-        let url = project.url
-        Task.detached(priority: .userInitiated) {
-            let result = Result { try GitRemoteOperation.pull(in: url) }
-            await MainActor.run {
-                isPulling = false
-                activityStatus = nil
-                switch result {
-                case .success:
-                    reloadIfNeeded(force: true)
-                case let .failure(error):
-                    presentSyncFailure(operation: "Pull", error: error)
+                    presentSyncFailure(error: error, repository: url)
                 }
             }
         }
@@ -297,7 +261,10 @@ struct WorkingTreeStatusView: View {
                 case .success:
                     reloadIfNeeded(force: true)
                 case let .failure(error):
-                    presentSyncFailure(operation: "Push", error: error)
+                    presentSyncFailure(
+                        operation: loc("Push failed"),
+                        message: error.localizedDescription
+                    )
                 }
             }
         }
@@ -305,11 +272,29 @@ struct WorkingTreeStatusView: View {
 
     /// 同步失败进入持久化的根视图错误面板，避免 Toast 自动消失或截断关键信息。
     @MainActor
-    private func presentSyncFailure(operation: String, error: Error) {
-        syncFailureCenter?.present(
-            operation: loc("\(operation) failed"),
-            message: error.localizedDescription
-        )
+    private func presentSyncFailure(error: Error, repository: URL) {
+        let operation: String
+        let message: String
+        if let syncError = error as? GitRemoteOperation.SyncError {
+            // Merge 冲突由 GitConflictResolverPlugin 接管并自动打开冲突面板；
+            // 不再叠加阻断层，避免把可操作的冲突解决 UI 盖住。
+            if case .merge = syncError.step,
+               GitMergeOperation.hasConflictOperation(in: repository) {
+                reloadIfNeeded(force: true)
+                return
+            }
+            operation = loc(syncError.step.localizationKey)
+            message = syncError.message
+        } else {
+            operation = loc("Sync failed")
+            message = error.localizedDescription
+        }
+        presentSyncFailure(operation: operation, message: message)
+    }
+
+    @MainActor
+    private func presentSyncFailure(operation: String, message: String) {
+        syncFailureCenter?.present(operation: operation, message: message)
         reloadIfNeeded(force: true)
     }
 

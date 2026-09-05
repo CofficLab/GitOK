@@ -19,6 +19,26 @@ public struct GitRemoteSummary: Identifiable, Equatable, Hashable, Sendable {
 
 /// 远程仓库操作：列表、添加、删除（对齐旧版远程仓库能力）。
 public enum GitRemoteOperation {
+    /// 工作区同步过程中失败的步骤。
+    public enum SyncStep: Sendable {
+        case fetch
+        case merge
+        case push
+    }
+
+    /// 智能同步失败；保留失败步骤和 Git 原始错误，交给 UI 决定展示方式。
+    public struct SyncError: Swift.Error, LocalizedError, Sendable {
+        public let step: SyncStep
+        public let message: String
+
+        public init(step: SyncStep, message: String) {
+            self.step = step
+            self.message = message
+        }
+
+        public var errorDescription: String? { message }
+    }
+
     /// 列出远程仓库（`git remote -v` 解析）。
     public static func listRemotes(in repository: URL) -> [GitRemoteSummary] {
         guard let out = try? GitProcessRunner.run(["remote", "-v"], in: repository) else { return [] }
@@ -73,12 +93,75 @@ public enum GitRemoteOperation {
 
     /// 从上游拉取并合并（`git pull`）。
     public static func pull(in repository: URL) throws {
-        _ = try GitProcessRunner.run(["pull"], in: repository)
+        try pull(in: repository, strategy: .merge)
+    }
+
+    /// 拉取并整合当前 upstream。
+    ///
+    /// `.fastForwardOnly` 只允许远程领先的安全快进；`.merge` 显式关闭
+    /// rebase 选择并接受默认合并消息，避免新版 Git 因未配置策略而拒绝执行。
+    public enum PullStrategy: Sendable {
+        case fastForwardOnly
+        case merge
+    }
+
+    public static func pull(in repository: URL, strategy: PullStrategy) throws {
+        switch strategy {
+        case .fastForwardOnly:
+            _ = try GitProcessRunner.run(["pull", "--ff-only"], in: repository)
+        case .merge:
+            _ = try GitProcessRunner.run(["pull", "--no-rebase", "--no-edit"], in: repository)
+        }
     }
 
     /// 推送到远程（`git push`）。
     public static func push(in repository: URL) throws {
         _ = try GitProcessRunner.run(["push"], in: repository)
+    }
+
+    /// Fetch 后根据本地与 upstream 的真实关系自动同步。
+    ///
+    /// 远程引用已经由 Fetch 更新，因此整合阶段直接使用 `@{u}`，不重复发起
+    /// 网络请求。双方分叉时采用保留双方历史的 Merge；Merge 成功后才 Push。
+    @discardableResult
+    public static func synchronize(in repository: URL) throws -> GitRefReader.RemoteTrackingStatus {
+        do {
+            try fetch(in: repository)
+        } catch {
+            throw SyncError(step: .fetch, message: error.localizedDescription)
+        }
+
+        let status = GitRefReader.remoteTrackingStatus(in: repository)
+        guard status.hasUpstream else { return status }
+
+        if status.behind > 0 {
+            do {
+                let strategy: PullStrategy = status.ahead > 0 ? .merge : .fastForwardOnly
+                try mergeFetchedRemote(in: repository, strategy: strategy)
+            } catch {
+                throw SyncError(step: .merge, message: error.localizedDescription)
+            }
+        }
+
+        if status.ahead > 0 {
+            do {
+                try push(in: repository)
+            } catch {
+                throw SyncError(step: .push, message: error.localizedDescription)
+            }
+        }
+
+        return GitRefReader.remoteTrackingStatus(in: repository)
+    }
+
+    /// 将最近一次 Fetch 更新的 upstream 引用整合进当前分支。
+    private static func mergeFetchedRemote(in repository: URL, strategy: PullStrategy) throws {
+        switch strategy {
+        case .fastForwardOnly:
+            _ = try GitProcessRunner.run(["merge", "--ff-only", "@{u}"], in: repository)
+        case .merge:
+            _ = try GitProcessRunner.run(["merge", "--no-edit", "@{u}"], in: repository)
+        }
     }
 
     /// 从远程 URL 生成 Web 链接（HTTPS 或 SSH 地址转 https:// 形式）。
