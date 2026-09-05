@@ -11,6 +11,16 @@
         }
       }
     },
+    "%lld remote commits available to pull" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个远程提交可拉取"
+          }
+        }
+      }
+    },
     "All Changes Committed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -31,22 +41,23 @@
         }
       }
     },
+    "Fetch failed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取失败"
+          }
+        }
+      }
+    },
     "Fetch from remote" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "从远程获取"
-          }
-        }
-      }
-    },
-    "Fetch failed" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "获取失败"
           }
         }
       }
@@ -71,22 +82,23 @@
         }
       }
     },
+    "Pull failed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拉取失败"
+          }
+        }
+      }
+    },
     "Pull from remote" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "从远程拉取"
-          }
-        }
-      }
-    },
-    "Pull failed" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拉取失败"
           }
         }
       }
@@ -101,22 +113,23 @@
         }
       }
     },
+    "Push failed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送失败"
+          }
+        }
+      }
+    },
     "Push to remote" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送到远程"
-          }
-        }
-      }
-    },
-    "Push failed" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送失败"
           }
         }
       }
@@ -137,16 +150,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "工作区干净"
-          }
-        }
-      }
-    },
-    "%lld remote commits available to pull" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个远程提交可拉取"
           }
         }
       }
