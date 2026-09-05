@@ -1,0 +1,215 @@
+import Foundation
+import KitGitOKSupport
+import ProviderProjects
+
+@MainActor
+public final class BannerWorkspaceModel: ObservableObject {
+    @Published public private(set) var banners: [BannerFile] = []
+    @Published public private(set) var selectedBannerID: String?
+    @Published public var templateID = BannerTemplateID.classic
+    @Published public var title = "Banner Title"
+    @Published public var subTitle = "Banner SubTitle"
+    @Published public var featuresText = ""
+    @Published public private(set) var imageURL: URL?
+    @Published public var selectedDeviceID = BannerExportDevice.iPhoneBig.rawValue
+    @Published public var backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
+    @Published public var opacity = 1.0
+    @Published public private(set) var message: String?
+
+    private let capability: any BannerProjectCapability
+    private let repository: BannerRepository
+
+    public init(
+        capability: any BannerProjectCapability,
+        repository: BannerRepository = BannerRepository()
+    ) {
+        self.capability = capability
+        self.repository = repository
+        reload()
+    }
+
+    public var currentProject: Project? { capability.currentProject }
+    public var selectedBanner: BannerFile? {
+        guard let selectedBannerID else { return nil }
+        return banners.first { $0.id == selectedBannerID }
+    }
+
+    public func reload() {
+        guard let project = capability.currentProject else {
+            banners = []
+            selectedBannerID = nil
+            resetDraft()
+            return
+        }
+
+        banners = repository.getBanners(from: project.url)
+        if let selectedBannerID, banners.contains(where: { $0.id == selectedBannerID }) {
+            loadDraft(from: banners.first { $0.id == selectedBannerID })
+        } else {
+            selectedBannerID = banners.first?.id
+            loadDraft(from: banners.first)
+        }
+    }
+
+    public func selectBanner(id: String?) {
+        guard id == nil || banners.contains(where: { $0.id == id }) else { return }
+        selectedBannerID = id
+        loadDraft(from: selectedBanner)
+    }
+
+    public func createBanner() {
+        guard let project = capability.currentProject else { return }
+        do {
+            let banner = try repository.createBanner(in: project.url)
+            reload()
+            selectedBannerID = banner.id
+            loadDraft(from: banner)
+            message = BannerLocalization.string("Banner created", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func deleteSelectedBanner() {
+        guard let banner = selectedBanner else { return }
+        do {
+            try repository.delete(banner)
+            reload()
+            message = BannerLocalization.string("Banner deleted", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func saveDraft() {
+        guard var banner = selectedBanner else { return }
+        if templateID == BannerTemplateID.classic {
+            banner.classicData = ClassicBannerData(
+                title: title,
+                subTitle: subTitle,
+                features: featuresText
+                    .split(separator: "\n")
+                    .map(String.init)
+                    .filter { !$0.isEmpty },
+                imageId: imageURL.map { repository.imageID(for: $0, projectURL: capability.currentProject?.url) },
+                selectedDevice: selectedDeviceID,
+                backgroundId: backgroundID,
+                opacity: opacity
+            )
+        } else {
+            banner.minimalData = MinimalBannerData(
+                title: title,
+                imageId: imageURL.map { repository.imageID(for: $0, projectURL: capability.currentProject?.url) },
+                selectedDevice: selectedDeviceID,
+                backgroundId: backgroundID,
+                opacity: opacity
+            )
+        }
+        banner.lastSelectedTemplateId = templateID
+
+        do {
+            try repository.save(banner)
+            reload()
+            selectedBannerID = banner.id
+            loadDraft(from: banner)
+            message = BannerLocalization.string("Banner saved", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func importImage(from sourceURL: URL) {
+        guard let project = capability.currentProject else { return }
+        do {
+            let imageID = try repository.importImage(from: sourceURL, for: project.url)
+            imageURL = repository.imageURL(for: imageID, in: project.url)
+            if selectedBanner == nil {
+                createBanner()
+            }
+            saveDraft()
+            message = BannerLocalization.string("Banner image imported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportStandardPNG(to folderURL: URL) {
+        do {
+            try BannerExporter.exportStandardPNG(configuration: renderConfiguration, to: folderURL)
+            message = BannerLocalization.string("Standard PNG banners exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportMacAppStoreScreenshots(to folderURL: URL) {
+        do {
+            try BannerExporter.exportMacAppStoreScreenshots(configuration: renderConfiguration, to: folderURL)
+            message = BannerLocalization.string("Mac App Store screenshots exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportIPhoneAppStoreScreenshots(to folderURL: URL) {
+        do {
+            try BannerExporter.exportIPhoneAppStoreScreenshots(configuration: renderConfiguration, to: folderURL)
+            message = BannerLocalization.string("iPhone App Store screenshots exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public var renderConfiguration: BannerRenderConfiguration {
+        BannerRenderConfiguration(
+            templateID: templateID,
+            title: title,
+            subTitle: subTitle,
+            features: featuresText.split(separator: "\n").map(String.init).filter { !$0.isEmpty },
+            imageURL: imageURL,
+            deviceID: selectedDeviceID,
+            backgroundID: backgroundID,
+            opacity: opacity
+        )
+    }
+
+    private func loadDraft(from banner: BannerFile?) {
+        guard let banner else {
+            resetDraft()
+            return
+        }
+        templateID = BannerTemplateID.all.contains(banner.lastSelectedTemplateId)
+            ? banner.lastSelectedTemplateId
+            : BannerTemplateID.classic
+        if let data = banner.classicData, templateID == BannerTemplateID.classic {
+            title = data.title
+            subTitle = data.subTitle
+            featuresText = data.features.joined(separator: "\n")
+            imageURL = data.imageId.map { repository.imageURL(for: $0, in: capability.currentProject?.url ?? URL(fileURLWithPath: "/")) }
+            selectedDeviceID = data.selectedDevice ?? BannerExportDevice.iPhoneBig.rawValue
+            backgroundID = MagicBackgroundGroup.gradientName(for: data.backgroundId).rawValue
+            opacity = data.opacity
+        } else if let data = banner.minimalData {
+            title = data.title
+            subTitle = ""
+            featuresText = ""
+            imageURL = data.imageId.map { repository.imageURL(for: $0, in: capability.currentProject?.url ?? URL(fileURLWithPath: "/")) }
+            selectedDeviceID = data.selectedDevice ?? BannerExportDevice.iPhoneBig.rawValue
+            backgroundID = MagicBackgroundGroup.gradientName(for: data.backgroundId).rawValue
+            opacity = data.opacity
+        } else {
+            resetDraft()
+        }
+    }
+
+    private func resetDraft() {
+        templateID = BannerTemplateID.classic
+        title = "Banner Title"
+        subTitle = "Banner SubTitle"
+        featuresText = ""
+        imageURL = nil
+        selectedDeviceID = BannerExportDevice.iPhoneBig.rawValue
+        backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
+        opacity = 1
+    }
+}

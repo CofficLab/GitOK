@@ -1,0 +1,78 @@
+import Foundation
+import KernelCore
+import KitSuperLog
+import os
+import ProviderProjects
+import ProviderStatusBar
+import ProviderWorkspaceScene
+import SwiftUI
+
+// MARK: - Git Conflict Resolver SuperPlugin
+
+/// 冲突解决插件：状态栏显示合并冲突状态，点击弹出冲突文件列表
+/// （对齐旧版 PluginGitConflictResolver）。
+@MainActor
+public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.git-conflict-resolver", category: "GitConflictResolver")
+    nonisolated public static let emoji = "⚠️"
+    nonisolated static let verbose = false
+
+    public let id = "com.coffic.gitok.plugin.git-conflict-resolver"
+    public let order = 36
+    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let metadata = PluginMetadata(
+        id: "com.coffic.gitok.plugin.git-conflict-resolver",
+        name: "Conflict Resolver",
+        description: "Show and list merge conflicts from the status bar",
+        category: .project,
+        stage: .stable,
+        policy: .alwaysOn
+    )
+
+    static let itemID = "com.coffic.gitok.plugin.git-conflict-resolver.id"
+
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: GitConflictResolverSceneObserver?
+
+    public init() {}
+
+    public func onBoot(kernel: KernelCoreContainer) throws {
+        guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
+            Self.logger.error("\(self.t)StatusBarProviding not registered; skip conflict item")
+            return
+        }
+        guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
+            Self.logger.error("\(self.t)ProjectProviding not registered; skip conflict item")
+            return
+        }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        let sceneCapability = GitConflictResolverSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitConflictResolverSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
+
+        statusBar.addStatusBarItems([
+            StatusBarItem(
+                id: Self.itemID,
+                title: LumiPluginLocalization.string("Conflict Resolver", bundle: .module),
+                placement: .leading,
+                order: 18
+            ) {
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    ConflictStatusTile(projects: projects)
+                }
+            },
+        ])
+    }
+
+    public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
+        kernel.resolveProvider((any StatusBarProviding).self)?
+            .removeStatusBarItems(ids: [Self.itemID])
+    }
+}

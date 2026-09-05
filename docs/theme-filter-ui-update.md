@@ -148,7 +148,7 @@ count: registry.themes.filter { $0.chromeTheme.appearanceKind == .dark }.count
 
 ### 修改的文件
 
-- `GitOK/Plugins/ThemeStatusBarPlugin/Sources/ThemePickerPopover.swift`
+- `GitOK/Plugins/PluginThemeStatusBar/Sources/ThemePickerPopover.swift`
 
 ### 新增代码
 

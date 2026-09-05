@@ -1,0 +1,714 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Choose a project from the sidebar to see its commits.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a project from the sidebar to see its commits."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从侧边栏选择项目以查看其提交。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從側邊欄選擇專案以查看其提交。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從側邊欄選擇專案以查看其提交。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從側邊欄選擇專案以查看其提交。"
+          }
+        }
+      }
+    },
+    "Click to push to remote": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click to push to remote"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击推送到远程"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊推送到遠端"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊推送到遠端"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊推送到遠端"
+          }
+        }
+      }
+    },
+    "Commit List": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commit List"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交列表"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交清單"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交清單"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交清單"
+          }
+        }
+      }
+    },
+    "Current commit has not been pushed to remote": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current commit has not been pushed to remote"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前提交尚未推送到远程"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前提交尚未推送到遠端"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前提交尚未推送到遠端"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前提交尚未推送到遠端"
+          }
+        }
+      }
+    },
+    "No Commits": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Commits"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有提交"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有提交"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有提交"
+          }
+        }
+      }
+    },
+    "Push failed: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Push failed: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失败：%@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失敗：%@"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失敗：%@"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失敗：%@"
+          }
+        }
+      }
+    },
+    "Push to Remote": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Push to Remote"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送到远程"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送到遠端"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送到遠端"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送到遠端"
+          }
+        }
+      }
+    },
+    "Pushing...": {},
+    "Select a Project": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a Project"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个项目"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇一個專案"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇一個專案"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇一個專案"
+          }
+        }
+      }
+    },
+    "This repository has no commits yet.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This repository has no commits yet."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此仓库还没有提交。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此儲存庫還沒有提交。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此儲存庫還沒有提交。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此儲存庫還沒有提交。"
+          }
+        }
+      }
+    },
+    "Confirm Undo Commit?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Undo Commit?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认撤销提交？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認撤銷提交？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認撤銷提交？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認撤銷提交？" } }
+      }
+    },
+    "Undo": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undo" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷" } }
+      }
+    },
+    "Undo Commit": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undo Commit" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销提交" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷提交" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷提交" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷提交" } }
+      }
+    },
+    "After undoing, this commit's changes will remain in the working tree.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "After undoing, this commit's changes will remain in the working tree." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销后，此提交的文件改动会保留在工作区。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷後，此提交的檔案變更會保留在工作區。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷後，此提交的檔案變更會保留在工作區。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷後，此提交的檔案變更會保留在工作區。" } }
+      }
+    },
+    "Undoing the initial commit is not supported.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undoing the initial commit is not supported." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "不支持撤销初始提交。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "不支援撤銷初始提交。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "不支援撤銷初始提交。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "不支援撤銷初始提交。" } }
+      }
+    },
+    "Confirm Soft Reset?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Soft Reset?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认软重置？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認軟重置？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認軟重置？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認軟重置？" } }
+      }
+    },
+    "Soft Reset": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Soft Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "软重置" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "軟重置" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "軟重置" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "軟重置" } }
+      }
+    },
+    "Reset to Here": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reset to Here" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置到此处" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重置到此處" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "重置到此處" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "重置到此處" } }
+      }
+    },
+    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "HEAD 将移动到此提交，后续提交的改动会保留在暂存区。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在暫存區。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在暫存區。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在暫存區。" } }
+      }
+    },
+    "Confirm Mixed Reset?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Mixed Reset?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认混合重置？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認混合重置？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認混合重置？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認混合重置？" } }
+      }
+    },
+    "Mixed Reset": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mixed Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "混合重置" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "混合重置" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "混合重置" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "混合重置" } }
+      }
+    },
+    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "HEAD 将移动到此提交，后续提交的改动会保留在工作区但不会暂存。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在工作區但不會暫存。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在工作區但不會暫存。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在工作區但不會暫存。" } }
+      }
+    },
+    "Confirm Hard Reset?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Hard Reset?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认硬重置？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認硬重置？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認硬重置？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認硬重置？" } }
+      }
+    },
+    "Hard Reset": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Hard Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "硬重置" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "硬重置" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "硬重置" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "硬重置" } }
+      }
+    },
+    "HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "HEAD、暂存区和已跟踪工作区文件都会回退到此提交，且无法撤销。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "HEAD、暫存區和已追蹤工作區檔案都會回退到此提交，且無法撤銷。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "HEAD、暫存區和已追蹤工作區檔案都會回退到此提交，且無法撤銷。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD、暫存區和已追蹤工作區檔案都會回退到此提交，且無法撤銷。" } }
+      }
+    },
+    "Confirm Squash Commits?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Squash Commits?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认压缩提交？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認壓縮提交？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認壓縮提交？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認壓縮提交？" } }
+      }
+    },
+    "Squash": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Squash" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮" } }
+      }
+    },
+    "Squash to Here": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Squash to Here" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩到此处" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮到此處" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮到此處" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮到此處" } }
+      }
+    },
+    "Squash commit message": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Squash commit message" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩后的提交信息" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮後的提交訊息" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮後的提交訊息" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮後的提交訊息" } }
+      }
+    },
+    "This will combine %lld commits from HEAD to this commit into one.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This will combine %lld commits from HEAD to this commit into one." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "这会将从 HEAD 到此提交的 %lld 个提交合并为一个。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "這會將從 HEAD 到此提交的 %lld 個提交合併為一個。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "這會將從 HEAD 到此提交的 %lld 個提交合併為一個。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "這會將從 HEAD 到此提交的 %lld 個提交合併為一個。" } }
+      }
+    },
+    "Confirm Revert": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Revert" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认反转提交" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認反轉提交" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認反轉提交" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認反轉提交" } }
+      }
+    },
+    "Revert": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Revert" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "反转" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "反轉" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "反轉" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "反轉" } }
+      }
+    },
+    "Revert This Commit": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Revert This Commit" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "反转此提交" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "反轉此提交" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "反轉此提交" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "反轉此提交" } }
+      }
+    },
+    "Revert commit \"%@\"? This creates a new commit.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Revert commit \"%@\"? This creates a new commit." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "要反转提交“%@”吗？这会创建一个新提交。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "要反轉提交「%@」嗎？這會建立一個新提交。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "要反轉提交「%@」嗎？這會建立一個新提交。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "要反轉提交「%@」嗎？這會建立一個新提交。" } }
+      }
+    },
+    "Unable to Load Commits": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unable to Load Commits"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法加载提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法載入提交"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法載入提交"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法載入提交"
+          }
+        }
+      }
+    },
+    "Create Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Create Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立標籤" } }
+      }
+    },
+    "Create Annotated Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Create Annotated Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建附注标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立附註標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立附註標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立附註標籤" } }
+      }
+    },
+    "Tag name": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tag name" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "标签名称" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "標籤名稱" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "標籤名稱" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "標籤名稱" } }
+      }
+    },
+    "Tag message": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tag message" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "标签说明" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "標籤說明" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "標籤說明" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "標籤說明" } }
+      }
+    },
+    "Create": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Create" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立" } }
+      }
+    },
+    "Manage Tags": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Manage Tags" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "管理标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "管理標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "管理標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "管理標籤" } }
+      }
+    },
+    "Push Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Push Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "推送标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "推送標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "推送標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "推送標籤" } }
+      }
+    },
+    "Delete Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除標籤" } }
+      }
+    },
+    "Delete Remote Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete Remote Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除远程标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤" } }
+      }
+    },
+    "Confirm Delete Tag?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Delete Tag?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认删除标签？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認刪除標籤？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認刪除標籤？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認刪除標籤？" } }
+      }
+    },
+    "Confirm Delete Remote Tag?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Delete Remote Tag?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认删除远程标签？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認刪除遠端標籤？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認刪除遠端標籤？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認刪除遠端標籤？" } }
+      }
+    },
+    "Delete tag \"%@\"? This cannot be undone.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete tag \"%@\"? This cannot be undone." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "要删除标签“%@”吗？此操作无法撤销。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "要刪除標籤「%@」嗎？此操作無法復原。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "要刪除標籤「%@」嗎？此操作無法復原。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "要刪除標籤「%@」嗎？此操作無法復原。" } }
+      }
+    },
+    "Delete remote tag \"%@\"?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete remote tag \"%@\"?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "要删除远程标签“%@”吗？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "要刪除遠端標籤「%@」嗎？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "要刪除遠端標籤「%@」嗎？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "要刪除遠端標籤「%@」嗎？" } }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

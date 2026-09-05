@@ -3,10 +3,10 @@
 # 修复亮色主题的不透明度值
 
 LIGHT_THEME_FILES=(
-    "Plugins/ThemeSpringPlugin/Sources/SpringTheme.swift"
-    "Plugins/ThemeSummerPlugin/Sources/SummerTheme.swift"
-    "Plugins/ThemeWinterPlugin/Sources/WinterTheme.swift"
-    "Plugins/ThemeXcodeLightPlugin/Sources/XcodeLightTheme.swift"
+    "Plugins/PluginThemeSpring/Sources/SpringTheme.swift"
+    "Plugins/PluginThemeSummer/Sources/SummerTheme.swift"
+    "Plugins/PluginThemeWinter/Sources/WinterTheme.swift"
+    "Plugins/PluginThemeXcodeLight/Sources/XcodeLightTheme.swift"
 )
 
 for file in "${LIGHT_THEME_FILES[@]}"; do

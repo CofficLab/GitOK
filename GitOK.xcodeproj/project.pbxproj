@@ -3,719 +3,344 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B559D792F1A5D41005C6809 /* Assets.xcassets */; };
-		0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		0BE64B5E2FCDBB3100DA2C72 /* GitOKPluginRegistry in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500B23000000100ABC001 /* GitOKPluginRegistry */; };
-		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
-		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
-		E51CAF4A54BAA545689D6485 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F6C83393963F8599B29D474A /* Sparkle */; };
-		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
-		F5ABCD032FCE000100000001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5ABCD022FCE000100000001 /* ProjectSupportKit */; };
-		F5AC00032FCE000100000001 /* GitOKAppCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5AC00022FCE000100000001 /* GitOKAppCore */; };
-		F5E6143F2F33311F00F79149 /* GitOKSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5E6143E2F33311F00F79149 /* GitOKSupportKit */; };
-		F5PK00032FCE000100000001 /* ProjectKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5PK00022FCE000100000001 /* ProjectKit */; };
-		F60000062DF2000000000001 /* GitOperationService.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = F60000052DF2000000000001 /* GitOperationService.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F60000072DF2000000000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60000032DF2000000000001 /* main.swift */; };
-		F60000082DF2000000000001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = F60000092DF2000000000001 /* GitCoreKit */; };
-/* End PBXBuildFile section */
 
+
+
+
+
+
+
+
+
+
+/* End PBXBuildFile section */
+	GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = GK2AFB0000000000000000001 /* FactoryGitOK */; };
+
+/* Begin PBXContainerItemProxy section */
+
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		0BCC6D552BDA19D4006ADA94 /* Embed XPC Services */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
-			dstSubfolderSpec = 16;
-			files = (
-				F60000062DF2000000000001 /* GitOperationService.xpc in Embed XPC Services */,
-			);
-			name = "Embed XPC Services";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0B0E16882BD89A910078942B /* GitOK.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitOK.entitlements; sourceTree = "<group>"; };
-		0B332F062BDA02BC00DFA5BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0B559D792F1A5D41005C6809 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0B55A0222F1B0F38005C6809 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		F60000032DF2000000000001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		F60000052DF2000000000001 /* GitOperationService.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = GitOperationService.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		F60000162DF2000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+
+
+
+
+
+		7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Project-Debug.xcconfig"; path = "LumiApp/Config/Project-Debug.xcconfig"; sourceTree = "<group>"; };
+		AE205FD720E849E1FFA4D49C /* Project-Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Project-Release.xcconfig"; path = "LumiApp/Config/Project-Release.xcconfig"; sourceTree = "<group>"; };
+
+
+
+
+
+
+
+
+
 /* End PBXFileReference section */
+	GK0000000000000000000002 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
+	GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = GitOK.xcconfig; path = GitOKApp/GitOK.xcconfig; sourceTree = "<group>"; };
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F5B1DB072FCE800F00A9544C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ActivityStatusPlugin,
-				BannerPlugin,
-				FileInfoPlugin,
-				GitAutoPushPlugin,
-				GitBranchPlugin,
-				GitCleanStatusPlugin,
-				GitCommitListPlugin,
-				GitConflictResolverPlugin,
-				GitDetailPlugin,
-				GitIgnorePlugin,
-				GitLFSPlugin,
-				GitRemoteRepositoryPlugin,
-				GitMergePlugin,
-				GitStashPlugin,
-				GitSubmodulePlugin,
-				GitUnpushedStatusPlugin,
-				GitWatcherPlugin,
-				GitWorkingStatePlugin,
-				IconPlugin,
-				LicensePlugin,
-				OpenAntigravityPlugin,
-				OpenCursorPlugin,
-				OpenFinderPlugin,
-				OpenGitHubDesktopPlugin,
-				OpenKiroPlugin,
-				OpenRemotePlugin,
-				OpenTerminalPlugin,
-				OpenTraePlugin,
-				OpenVSCodePlugin,
-				OpenXcodePlugin,
-				ProjectPickerPlugin,
-				ProjectsPlugin,
-				ReadmePlugin,
-				SettingsButtonPlugin,
-				ThemeAuroraPlugin,
-				ThemeDraculaPlugin,
-				ThemeEmberPlugin,
-				ThemeGitHubLightPlugin,
-				ThemeGitOKPlugin,
-				ThemeGlacierPlugin,
-				ThemeGraphitePlugin,
-				ThemeHarborPlugin,
-				ThemeMatrixPlugin,
-				ThemeMidnightPlugin,
-				ThemeMountainPlugin,
-				ThemeNebulaPlugin,
-				ThemeOneDarkPlugin,
-				ThemeOrchardPlugin,
-				ThemeRiverPlugin,
-				ThemeSpringPlugin,
-				ThemeStatusBarPlugin,
-				ThemeSummerPlugin,
-				ThemeWinterPlugin,
-				ThemeXcodeLightPlugin,
-			);
-			target = 0B0E167C2BD89A8F0078942B /* GitOK */;
-		};
+
+
+
+
+
+
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+	GK0000000000000000000003 /* Exceptions for "GitOKApp" folder in "GitOK" target */ = {
+		isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+		membershipExceptions = (
+			"GitOK-Info.plist",
+		);
+		target = GK0000000000000000000009 /* GitOK */;
+	};
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		F526CF512FADB9FB00EFAB27 /* Packages */ = {
-			isa = PBXGroup;
-			path = Packages;
-			sourceTree = "<group>";
-		};
-		F5AE82732FAB49C900F014F8 /* GitOKApp */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = GitOKApp; sourceTree = "<group>"; };
-		F5B1DB062FCE800F00A9544C /* Plugins */ = {
-			isa = PBXGroup;
-			path = Plugins;
-			sourceTree = "<group>";
-		};
+
+
+
+
+
+
 /* End PBXFileSystemSynchronizedRootGroup section */
+	GK0000000000000000000004 /* GitOKApp */ = {
+		isa = PBXFileSystemSynchronizedRootGroup;
+		exceptions = (
+			GK0000000000000000000003 /* Exceptions for "GitOKApp" folder in "GitOK" target */,
+		);
+		path = GitOKApp;
+		sourceTree = "<group>";
+	};
 
 /* Begin PBXFrameworksBuildPhase section */
-		0B0E167A2BD89A8F0078942B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0BE64B5E2FCDBB3100DA2C72 /* GitOKPluginRegistry in Frameworks */,
-				0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */,
-				A1F500032F70000100ABC001 /* GitOKUI in Frameworks */,
-				F5E6143F2F33311F00F79149 /* GitOKSupportKit in Frameworks */,
-				F5ABCD032FCE000100000001 /* ProjectSupportKit in Frameworks */,
-				F5PK00032FCE000100000001 /* ProjectKit in Frameworks */,
-				CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */,
-				F5AC00032FCE000100000001 /* GitOKAppCore in Frameworks */,
-				E51CAF4A54BAA545689D6485 /* Sparkle in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F600000C2DF2000000000001 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F60000082DF2000000000001 /* GitCoreKit in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+
+
+
+
+
+
 /* End PBXFrameworksBuildPhase section */
+	GK0000000000000000000005 /* Frameworks */ = {
+		isa = PBXFrameworksBuildPhase;
+		buildActionMask = 2147483647;
+		files = (
+			GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */,
+		);
+		runOnlyForDeploymentPostprocessing = 0;
+	};
 
 /* Begin PBXGroup section */
-		0B0E16742BD89A8F0078942B = {
+		0BBD822C30067A13005CCD05 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
-				0B55A0222F1B0F38005C6809 /* GitOK.app */,
-				0B0E16882BD89A910078942B /* GitOK.entitlements */,
-				F5AE82732FAB49C900F014F8 /* GitOKApp */,
-				F60000022DF2000000000001 /* GitOperationService */,
-				0B332F062BDA02BC00DFA5BB /* Info.plist */,
-				F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */,
-				F526CF512FADB9FB00EFAB27 /* Packages */,
-				F5B1DB062FCE800F00A9544C /* Plugins */,
-				F5016B8B2FD8EA3C00E84B36 /* Recovered References */,
 			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F5016B8B2FD8EA3C00E84B36 /* Recovered References */ = {
+		F54F8C752F1A3B6500AABB2A = {
 			isa = PBXGroup;
 			children = (
-				F60000052DF2000000000001 /* GitOperationService.xpc */,
+				GK0000000000000000000004 /* GitOKApp */,
+				GK0000000000000000000002 /* GitOK.app */,
+				0BBD822C30067A13005CCD05 /* Frameworks */,
+				7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */,
+				AE205FD720E849E1FFA4D49C /* Project-Release.xcconfig */,
+				GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */,
 			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
-		F60000022DF2000000000001 /* GitOperationService */ = {
-			isa = PBXGroup;
-			children = (
-				F60000162DF2000000000001 /* Info.plist */,
-				F60000032DF2000000000001 /* main.swift */,
-			);
-			path = GitOperationService;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0B0E167C2BD89A8F0078942B /* GitOK */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0B0E168E2BD89A910078942B /* Build configuration list for PBXNativeTarget "GitOK" */;
-			buildPhases = (
-				0B0E16792BD89A8F0078942B /* Sources */,
-				0B0E167A2BD89A8F0078942B /* Frameworks */,
-				0B0E167B2BD89A8F0078942B /* Resources */,
-				0BCC6D552BDA19D4006ADA94 /* Embed XPC Services */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F60000122DF2000000000001 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				F5AE82732FAB49C900F014F8 /* GitOKApp */,
-			);
-			name = GitOK;
-			packageProductDependencies = (
-				A1F500022F70000100ABC001 /* GitOKUI */,
-				F5E6143E2F33311F00F79149 /* GitOKSupportKit */,
-				F5ABCD022FCE000100000001 /* ProjectSupportKit */,
-				F5PK00022FCE000100000001 /* ProjectKit */,
-				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
-				A1F500B23000000100ABC001 /* GitOKPluginRegistry */,
-				F5AC00022FCE000100000001 /* GitOKAppCore */,
-				F6C83393963F8599B29D474A /* Sparkle */,
-			);
-			productName = GitOK;
-			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
-			productType = "com.apple.product-type.application";
-		};
-		F600000A2DF2000000000001 /* GitOperationService */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F60000152DF2000000000001 /* Build configuration list for PBXNativeTarget "GitOperationService" */;
-			buildPhases = (
-				F600000B2DF2000000000001 /* Sources */,
-				F600000C2DF2000000000001 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = GitOperationService;
-			packageProductDependencies = (
-				F60000092DF2000000000001 /* GitCoreKit */,
-			);
-			productName = GitOperationService;
-			productReference = F60000052DF2000000000001 /* GitOperationService.xpc */;
-			productType = "com.apple.product-type.xpc-service";
-		};
+
+
+
+
+
+
 /* End PBXNativeTarget section */
+	GK0000000000000000000009 /* GitOK */ = {
+		isa = PBXNativeTarget;
+		buildConfigurationList = GK000000000000000000000F /* Build configuration list for PBXNativeTarget "GitOK" */;
+		buildPhases = (
+			GK0000000000000000000007 /* Sources */,
+			GK0000000000000000000005 /* Frameworks */,
+			GK0000000000000000000006 /* Resources */,
+		);
+		buildRules = (
+		);
+		dependencies = (
+		);
+		fileSystemSynchronizedGroups = (
+					GK0000000000000000000004 /* GitOKApp */,
+		);
+		name = GitOK;
+		packageProductDependencies = (
+			GK2AFB0000000000000000001 /* FactoryGitOK */,
+		);
+		productName = GitOK;
+		productReference = GK0000000000000000000002 /* GitOK.app */;
+		productType = "com.apple.product-type.application";
+	};
 
 /* Begin PBXProject section */
-		0B0E16752BD89A8F0078942B /* Project object */ = {
+		F54F8C762F1A3B6500AABB2A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 2600;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					0B0E167C2BD89A8F0078942B = {
-						CreatedOnToolsVersion = 15.3;
-					};
-					F600000A2DF2000000000001 = {
-						CreatedOnToolsVersion = 15.3;
+					GK0000000000000000000009 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
-			buildConfigurationList = 0B0E16782BD89A8F0078942B /* Build configuration list for PBXProject "GitOK" */;
-			compatibilityVersion = "Xcode 14.0";
+			buildConfigurationList = F54F8C792F1A3B6500AABB2A /* Build configuration list for PBXProject "GitOK" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 				"zh-Hans",
-				"zh-HK",
 				"zh-Hant",
+				"zh-HK",
 			);
-			mainGroup = 0B0E16742BD89A8F0078942B;
+			mainGroup = F54F8C752F1A3B6500AABB2A;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */,
-				F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */,
-				F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */,
-				F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectKit" */,
-				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */,
-				A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */,
-				F5AC00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/GitOKAppCore" */,
-				48459E53364628BC72FB6C45 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */,
+				LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */,
+				GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */,
 			);
-			productRefGroup = 0B0E16742BD89A8F0078942B;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F54F8C752F1A3B6500AABB2A;
 			projectDirPath = "";
-			projectReferences = (
-			);
 			projectRoot = "";
 			targets = (
-				0B0E167C2BD89A8F0078942B /* GitOK */,
-				F600000A2DF2000000000001 /* GitOperationService */,
+				GK0000000000000000000009 /* GitOK */,
 			);
 		};
 /* End PBXProject section */
 
-
 /* Begin PBXResourcesBuildPhase section */
-		0B0E167B2BD89A8F0078942B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */,
-				0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+
+
+
+
+
+
 /* End PBXResourcesBuildPhase section */
+	GK0000000000000000000006 /* Resources */ = {
+		isa = PBXResourcesBuildPhase;
+		buildActionMask = 2147483647;
+		files = (
+		);
+		runOnlyForDeploymentPostprocessing = 0;
+	};
+
+/* Begin PBXShellScriptBuildPhase section */
+
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0B0E16792BD89A8F0078942B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F600000B2DF2000000000001 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F60000072DF2000000000001 /* main.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+
+
+
+
+
+
 /* End PBXSourcesBuildPhase section */
+	GK0000000000000000000007 /* Sources */ = {
+		isa = PBXSourcesBuildPhase;
+		buildActionMask = 2147483647;
+		files = (
+		);
+		runOnlyForDeploymentPostprocessing = 0;
+	};
 
 /* Begin PBXTargetDependency section */
-		F60000122DF2000000000001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F600000A2DF2000000000001 /* GitOperationService */;
-			targetProxy = F60000112DF2000000000001 /* PBXContainerItemProxy */;
-		};
+
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0B0E168C2BD89A910078942B /* Debug */ = {
+
+
+
+
+
+
+
+
+		F54F8C882F1A3B6600AABB2A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		0B0E168D2BD89A910078942B /* Release */ = {
+		F54F8C892F1A3B6600AABB2A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AE205FD720E849E1FFA4D49C /* Project-Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Release;
 		};
-		0B0E168F2BD89A910078942B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 382;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "";
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = GitOK;
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Plugins/GitWorkingStatePlugin/.build/arm64-apple-macosx/debug",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 3.0.22;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = macosx;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		0B0E16902BD89A910078942B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 382;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "";
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = GitOK;
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Plugins/GitWorkingStatePlugin/.build/arm64-apple-macosx/debug",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 3.0.22;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = macosx;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		F60000132DF2000000000001 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = GitOperationService/Info.plist;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK.GitOperationService;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		F60000142DF2000000000001 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = GitOperationService/Info.plist;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK.GitOperationService;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
+
+
+
+
 /* End XCBuildConfiguration section */
+	GK000000000000000000000D /* Debug */ = {
+		isa = XCBuildConfiguration;
+		baseConfigurationReference = GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */;
+		buildSettings = {
+		};
+		name = Debug;
+	};
+	GK000000000000000000000E /* Release */ = {
+		isa = XCBuildConfiguration;
+		baseConfigurationReference = GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */;
+		buildSettings = {
+		};
+		name = Release;
+	};
 
 /* Begin XCConfigurationList section */
-		0B0E16782BD89A8F0078942B /* Build configuration list for PBXProject "GitOK" */ = {
+
+
+
+
+		F54F8C792F1A3B6500AABB2A /* Build configuration list for PBXProject "GitOK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0B0E168C2BD89A910078942B /* Debug */,
-				0B0E168D2BD89A910078942B /* Release */,
+				F54F8C882F1A3B6600AABB2A /* Debug */,
+				F54F8C892F1A3B6600AABB2A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0B0E168E2BD89A910078942B /* Build configuration list for PBXNativeTarget "GitOK" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0B0E168F2BD89A910078942B /* Debug */,
-				0B0E16902BD89A910078942B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F60000152DF2000000000001 /* Build configuration list for PBXNativeTarget "GitOperationService" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F60000132DF2000000000001 /* Debug */,
-				F60000142DF2000000000001 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
+
+
 /* End XCConfigurationList section */
+	GK000000000000000000000F /* Build configuration list for PBXNativeTarget "GitOK" */ = {
+		isa = XCConfigurationList;
+		buildConfigurations = (
+			GK000000000000000000000D /* Debug */,
+			GK000000000000000000000E /* Release */,
+		);
+		defaultConfigurationIsVisible = 0;
+		defaultConfigurationName = Release;
+	};
 
 /* Begin XCLocalSwiftPackageReference section */
-		917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */ = {
+
+
+
+
+
+
+
+		LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKCoreKit;
+			relativePath = Packages/KitSuperLog;
 		};
-		A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */ = {
+		LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKUI;
-		};
-		A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKPluginRegistry;
-		};
-		F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ProjectSupportKit;
-		};
-		F5AC00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/GitOKAppCore" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKAppCore;
-		};
-		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKSupportKit;
-		};
-		F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ProjectKit;
+			relativePath = Packages/KitLocalization;
 		};
 /* End XCLocalSwiftPackageReference section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		48459E53364628BC72FB6C45 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sparkle-project/Sparkle";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.6.4;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
+	GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */ = {
+		isa = XCLocalSwiftPackageReference;
+		relativePath = Packages/FactoryGitOK;
+	};
 
 /* Begin XCSwiftPackageProductDependency section */
-		4EC50CECD060E698BF493AED /* GitOKCoreKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
-			productName = GitOKCoreKit;
-		};
-		A1F500022F70000100ABC001 /* GitOKUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */;
-			productName = GitOKUI;
-		};
-		A1F500B23000000100ABC001 /* GitOKPluginRegistry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */;
-			productName = GitOKPluginRegistry;
-		};
-		F5ABCD022FCE000100000001 /* ProjectSupportKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5ABCD012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */;
-			productName = ProjectSupportKit;
-		};
-		F5AC00022FCE000100000001 /* GitOKAppCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5AC00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/GitOKAppCore" */;
-			productName = GitOKAppCore;
-		};
-		F5E6143E2F33311F00F79149 /* GitOKSupportKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/GitOKSupportKit" */;
-			productName = GitOKSupportKit;
-		};
-		F5PK00022FCE000100000001 /* ProjectKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5PK00012FCE000100000001 /* XCLocalSwiftPackageReference "Packages/ProjectKit" */;
-			productName = ProjectKit;
-		};
-		F60000092DF2000000000001 /* GitCoreKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
-			productName = GitCoreKit;
-		};
-		F6C83393963F8599B29D474A /* Sparkle */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 48459E53364628BC72FB6C45 /* XCRemoteSwiftPackageReference "Sparkle" */;
-			productName = Sparkle;
-		};
+
+
+
+
+
+
+
+
+
 /* End XCSwiftPackageProductDependency section */
+	GK2AFB0000000000000000001 /* FactoryGitOK */ = {
+		isa = XCSwiftPackageProductDependency;
+		package = GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */;
+		productName = FactoryGitOK;
 	};
-	rootObject = 0B0E16752BD89A8F0078942B /* Project object */;
+	};
+	rootObject = F54F8C762F1A3B6500AABB2A /* Project object */;
 }

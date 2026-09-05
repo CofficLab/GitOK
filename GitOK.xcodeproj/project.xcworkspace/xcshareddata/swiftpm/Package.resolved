@@ -1,13 +1,13 @@
 {
-  "originHash" : "73f7fb29c94f7212a40868ddc3641c357465c5a6a7bed4c04cb19c5924e56802",
+  "originHash" : "86f55ff5357206cc0a9fa29b7edc99f6df4a603010c2d747f53494dd36bd44d9",
   "pins" : [
     {
-      "identity" : "libgit2swift",
+      "identity" : "lumiui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/LibGit2Swift.git",
+      "location" : "https://github.com/CofficLab/LumiUI.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "34bf2854d385bab71518bfd527a4dd72f010b21d"
+        "revision" : "22eaba744553dc9e83766a237ac7ca2a44f4feff",
+        "version" : "1.2.1"
       }
     },
     {
@@ -17,24 +17,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "b97553a3cb8d877981ec787f5f94e5fd0301c9cd"
-      }
-    },
-    {
-      "identity" : "magiclog",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/MagicLog.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5"
-      }
-    },
-    {
-      "identity" : "sparkle",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sparkle-project/Sparkle",
-      "state" : {
-        "revision" : "5581748cef2bae787496fe6d61139aebe0a451f6",
-        "version" : "2.8.1"
       }
     }
   ],

@@ -631,7 +631,7 @@ struct MyPlugin: SuperPlugin, SuperLog {
 
 ```swift
 import Foundation
-import GitOKSupportKit
+import KitGitOKSupport
 import OSLog
 import SwiftUI
 

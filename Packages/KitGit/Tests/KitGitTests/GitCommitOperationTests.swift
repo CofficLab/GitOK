@@ -1,0 +1,470 @@
+import Foundation
+import XCTest
+@testable import KitGit
+
+/// `GitCommitOperation` 提交工作流的集成测试（真实 git CLI + 临时仓库）。
+final class GitCommitOperationTests: XCTestCase {
+
+    private func makeRepo() throws -> URL {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-commitop-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+        func run(_ args: [String]) throws {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            p.arguments = args
+            p.currentDirectoryURL = repo
+            p.standardOutput = Pipe()
+            p.standardError = Pipe()
+            try p.run()
+            p.waitUntilExit()
+        }
+        try run(["init", "-q"])
+        try run(["config", "user.email", "t@t.com"])
+        try run(["config", "user.name", "t"])
+        try run(["checkout", "-q", "-b", "dev"])
+        return repo
+    }
+
+    func testAddAllAndCommitWithMultiParagraphMessage() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("hello\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+
+        XCTAssertFalse(try GitCommitOperation.hasStagedChanges(in: repo))
+        try GitCommitOperation.addAll(in: repo)
+        XCTAssertTrue(try GitCommitOperation.hasStagedChanges(in: repo))
+
+        let message = "✨ Chore: Minor adjustments\n\nCo-authored-by: Jane <jane@t.com>"
+        try GitCommitOperation.commit(message: message, in: repo)
+
+        // 提交成功后工作区应干净，且 message 含 Co-authored-by 段。
+        let status = try GitStatusLoader.loadStatus(in: repo)
+        XCTAssertTrue(status.isClean)
+
+        let output = try GitProcessRunner.run(["log", "-1", "--format=%B"], in: repo)
+        XCTAssertTrue(output.contains("Minor adjustments"))
+        XCTAssertTrue(output.contains("Co-authored-by: Jane <jane@t.com>"))
+    }
+
+    func testStageFilesStagesOnlyRequestedFilesAndEmptyInputIsNoOp() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+
+        try GitCommitOperation.stageFiles([], in: repo)
+        var entries = try GitStatusLoader.loadEntries(in: repo)
+        XCTAssertEqual(entries.count, 2)
+        XCTAssertTrue(entries.allSatisfy(\.isUntracked))
+
+        try GitCommitOperation.stageFiles(["a.txt"], in: repo)
+        entries = try GitStatusLoader.loadEntries(in: repo)
+
+        let staged = try XCTUnwrap(entries.first(where: { $0.path == "a.txt" }))
+        XCTAssertEqual(staged.stagedStatus, "A")
+        XCTAssertEqual(staged.worktreeStatus, " ")
+
+        let untouched = try XCTUnwrap(entries.first(where: { $0.path == "b.txt" }))
+        XCTAssertTrue(untouched.isUntracked)
+    }
+
+    func testUnstageFilesUnstagesOnlyRequestedFilesAndKeepsWorktreeChanges() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("initial a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("initial b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("changed b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try GitCommitOperation.stageFiles(["a.txt", "b.txt"], in: repo)
+        try GitCommitOperation.unstageFiles([], in: repo)
+        try GitCommitOperation.unstageFiles(["a.txt"], in: repo)
+
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        let unstaged = try XCTUnwrap(entries.first(where: { $0.path == "a.txt" }))
+        XCTAssertEqual(unstaged.stagedStatus, " ")
+        XCTAssertEqual(unstaged.worktreeStatus, "M")
+
+        let stillStaged = try XCTUnwrap(entries.first(where: { $0.path == "b.txt" }))
+        XCTAssertEqual(stillStaged.stagedStatus, "M")
+        XCTAssertEqual(stillStaged.worktreeStatus, " ")
+    }
+
+    func testDiscardFileChangesRestoresTrackedFileAndRemovesStagedUntrackedFile() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        try GitCommitOperation.stageFiles(["tracked.txt"], in: repo)
+        try GitCommitOperation.discardFileChanges("tracked.txt", in: repo)
+
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("tracked.txt"), encoding: .utf8),
+            "initial\n"
+        )
+
+        let newFile = repo.appendingPathComponent("new.txt")
+        try Data("new\n".utf8).write(to: newFile)
+        try GitCommitOperation.stageFiles(["new.txt"], in: repo)
+        try GitCommitOperation.discardFileChanges("new.txt", in: repo)
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: newFile.path))
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
+
+    func testDiscardFilesOnlyDiscardsSelectedTrackedAndUntrackedFiles() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("initial a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("initial b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("changed b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try Data("new\n".utf8).write(to: repo.appendingPathComponent("new.txt"))
+        try GitCommitOperation.stageFiles(["a.txt", "b.txt", "new.txt"], in: repo)
+
+        try GitCommitOperation.discardFiles(["a.txt", "new.txt"], in: repo)
+
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "initial a\n"
+        )
+        XCTAssertFalse(FileManager.default.fileExists(atPath: repo.appendingPathComponent("new.txt").path))
+
+        let remaining = try XCTUnwrap(
+            GitStatusLoader.loadEntries(in: repo).first(where: { $0.path == "b.txt" })
+        )
+        XCTAssertEqual(remaining.stagedStatus, "M")
+        XCTAssertEqual(remaining.worktreeStatus, " ")
+    }
+
+    func testCommitWithNothingToCommitThrows() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("hello\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "first", in: repo)
+
+        // 再次提交（无改动）应抛 nothingToCommit。
+        XCTAssertThrowsError(try GitCommitOperation.commit(message: "second", in: repo)) { error in
+            guard case GitCommitOperation.Error.nothingToCommit = error else {
+                return XCTFail("expected nothingToCommit, got \(error)")
+            }
+        }
+    }
+
+    func testRevertCommitCreatesAnInverseCommit() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+
+        let changedHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        _ = try GitHistoryOperation.revertCommit(changedHash, in: repo)
+
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "initial\n"
+        )
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+        let message = try GitProcessRunner.run(["log", "-1", "--format=%s"], in: repo)
+        XCTAssertEqual(message.trimmingCharacters(in: .whitespacesAndNewlines), "Revert \"change\"")
+    }
+
+    func testRevertCommitRejectsAnEmptyHash() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        XCTAssertThrowsError(try GitHistoryOperation.revertCommit("  ", in: repo)) { error in
+            guard case GitHistoryOperation.Error.invalidCommit = error else {
+                return XCTFail("expected invalidCommit, got \(error)")
+            }
+        }
+    }
+
+    func testUndoCommitMovesHeadToParentAndKeepsCommittedChangesInWorktree() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+
+        let commitHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let parentHash = try GitProcessRunner.run(["rev-parse", "HEAD^"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        _ = try GitHistoryOperation.undoCommit(commitHash, parentHash: parentHash, in: repo)
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            parentHash
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "changed\n"
+        )
+        XCTAssertFalse(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
+
+    func testUndoCommitRejectsDirtyWorktree() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+
+        try Data("uncommitted\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        let commitHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let parentHash = try GitProcessRunner.run(["rev-parse", "HEAD^"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        XCTAssertThrowsError(
+            try GitHistoryOperation.undoCommit(commitHash, parentHash: parentHash, in: repo)
+        ) { error in
+            guard case GitHistoryOperation.Error.undoFailed = error else {
+                return XCTFail("expected undoFailed, got \(error)")
+            }
+        }
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            commitHash
+        )
+    }
+
+    func testSoftResetMovesHeadAndStagesSubsequentChanges() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        _ = try GitHistoryOperation.softReset(
+            to: targetHash,
+            expectedHead: expectedHead,
+            in: repo
+        )
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            targetHash
+        )
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        let changed = try XCTUnwrap(entries.first(where: { $0.path == "a.txt" }))
+        XCTAssertEqual(changed.stagedStatus, "M")
+        XCTAssertEqual(changed.worktreeStatus, " ")
+    }
+
+    func testSoftResetRejectsDirtyWorktree() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        try Data("uncommitted\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+
+        XCTAssertThrowsError(
+            try GitHistoryOperation.softReset(to: targetHash, expectedHead: expectedHead, in: repo)
+        ) { error in
+            guard case GitHistoryOperation.Error.softResetFailed = error else {
+                return XCTFail("expected softResetFailed, got \(error)")
+            }
+        }
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            expectedHead
+        )
+    }
+
+    func testMixedResetMovesHeadAndLeavesSubsequentChangesUnstaged() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        _ = try GitHistoryOperation.mixedReset(
+            to: targetHash,
+            expectedHead: expectedHead,
+            in: repo
+        )
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            targetHash
+        )
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        let changed = try XCTUnwrap(entries.first(where: { $0.path == "a.txt" }))
+        XCTAssertEqual(changed.stagedStatus, " ")
+        XCTAssertEqual(changed.worktreeStatus, "M")
+    }
+
+    func testMixedResetRejectsDirtyWorktree() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        try Data("uncommitted\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+
+        XCTAssertThrowsError(
+            try GitHistoryOperation.mixedReset(to: targetHash, expectedHead: expectedHead, in: repo)
+        ) { error in
+            guard case GitHistoryOperation.Error.mixedResetFailed = error else {
+                return XCTFail("expected mixedResetFailed, got \(error)")
+            }
+        }
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            expectedHead
+        )
+    }
+
+    func testHardResetDiscardsTrackedChangesAndMovesHead() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        try Data("uncommitted\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+
+        _ = try GitHistoryOperation.hardReset(
+            to: targetHash,
+            expectedHead: expectedHead,
+            in: repo
+        )
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            targetHash
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "initial\n"
+        )
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
+
+    func testSquashCombinesTargetThroughHeadWithNewMessage() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("one\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "one", in: repo)
+        let parentHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("two\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "two", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("three\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "three", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        _ = try GitHistoryOperation.squash(
+            to: targetHash,
+            parentHash: parentHash,
+            expectedHead: expectedHead,
+            message: "two and three",
+            in: repo
+        )
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD^"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            parentHash
+        )
+        XCTAssertEqual(
+            try GitProcessRunner.run(["log", "-1", "--format=%s"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            "two and three"
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "three\n"
+        )
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
+}

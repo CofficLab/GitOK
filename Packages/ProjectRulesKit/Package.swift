@@ -13,16 +13,10 @@ let package = Package(
             targets: ["ProjectRulesKit"]
         ),
     ],
-    dependencies: [
-        .package(path: "../GitCoreKit"),
-    ],
     targets: [
         .target(
             name: "ProjectRulesKit",
-            dependencies: [
-                "GitCoreKit",
-            ],
-            resources: [.process("Localizable.xcstrings")]
+            resources: []
         ),
         .testTarget(
             name: "ProjectRulesKitTests",

@@ -1,0 +1,125 @@
+name: GitOK
+
+options:
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  developmentLanguage: zh-Hans
+  projectFormat: xcode16_0
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: Y6HZ9JJYV6
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    SWIFT_VERSION: "5.0"
+
+packages:
+  GitOKUI:
+    path: Packages/GitOKUI
+  KitGitOKSupport:
+    path: Packages/KitGitOKSupport
+  KitProjectSupport:
+    path: Packages/KitProjectSupport
+  ProviderProject:
+    path: Packages/ProviderProject
+  ProviderGit:
+    path: Packages/ProviderGit
+  ProviderTheme:
+    path: Packages/ProviderTheme
+  ProviderNavigation:
+    path: Packages/ProviderNavigation
+  KitGitOKCore:
+    path: Packages/KitGitOKCore
+  FactoryGitOK:
+    path: Packages/FactoryGitOK
+  GitOKAppCore:
+    path: Packages/GitOKAppCore
+  KitGitOKUpdate:
+    path: Packages/KitGitOKUpdate
+  FactoryCore:
+    path: Packages/FactoryCore
+  KernelCore:
+    path: Packages/KernelCore
+  KitGitCore:
+    path: Packages/KitGitCore
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.6.4
+
+targets:
+  GitOK:
+    type: application
+    platform: macOS
+    sources:
+      - path: GitOKApp
+        excludes:
+          - Assets.xcassets
+          - Info.plist
+          - GitOK.entitlements
+          - Localizable.xcstrings
+    resources:
+      - path: GitOKApp/Assets.xcassets
+      - path: GitOKApp/Localizable.xcstrings
+    dependencies:
+      - target: GitOperationService
+      - package: GitOKUI
+      - package: KitGitOKSupport
+      - package: KitProjectSupport
+      - package: ProviderProject
+      - package: ProviderGit
+      - package: ProviderTheme
+      - package: ProviderNavigation
+      - package: KitGitOKCore
+      - package: FactoryGitOK
+      - package: GitOKAppCore
+      - package: KitGitOKUpdate
+      - package: FactoryCore
+      - package: KernelCore
+      - package: KitGitCore
+      - package: Sparkle
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_ENTITLEMENTS: GitOKApp/GitOK.entitlements
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Automatic
+        CURRENT_PROJECT_VERSION: 371
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_PREVIEWS: YES
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: GitOKApp/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: GitOK
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
+        MARKETING_VERSION: 3.0.11
+        PRODUCT_BUNDLE_IDENTIFIER: com.yueyi.GitOK
+        PRODUCT_NAME: "$(TARGET_NAME)"
+        SUPPORTED_PLATFORMS: macosx
+        SUPPORTS_MACCATALYST: NO
+        SWIFT_EMIT_LOC_STRINGS: YES
+        SWIFT_VERSION: "5.0"
+    scheme:
+      shared: true
+
+  GitOperationService:
+    type: xpc-service
+    platform: macOS
+    sources:
+      - path: GitOperationService
+        excludes:
+          - Info.plist
+    dependencies:
+      - package: KitGitCore
+    settings:
+      base:
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_HARDENED_RUNTIME: YES
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: GitOperationService/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.yueyi.GitOK.GitOperationService
+        PRODUCT_NAME: "$(TARGET_NAME)"
+        SKIP_INSTALL: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
+        SWIFT_VERSION: "5.0"

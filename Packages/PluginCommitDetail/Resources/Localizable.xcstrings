@@ -1,0 +1,225 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "+%lld" : {
+
+    },
+    "−%lld" : {
+
+    },
+    "Cancel" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Changes" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改"
+          }
+        }
+      }
+    },
+    "Clear Selection" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除选择"
+          }
+        }
+      }
+    },
+    "Confirm Discard" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认丢弃"
+          }
+        }
+      }
+    },
+    "Discard" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "丢弃"
+          }
+        }
+      }
+    },
+    "Discard changes for %@? This cannot be undone." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要丢弃文件 %@ 的更改吗？此操作不可撤销。"
+          }
+        }
+      }
+    },
+    "Files" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件"
+          }
+        }
+      }
+    },
+    "No Changes" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无更改"
+          }
+        }
+      }
+    },
+    "Not Staged" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未暂存"
+          }
+        }
+      }
+    },
+    "Select All Current" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全选当前"
+          }
+        }
+      }
+    },
+    "Select File" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择文件"
+          }
+        }
+      }
+    },
+    "Selected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择"
+          }
+        }
+      }
+    },
+    "Stage" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂存"
+          }
+        }
+      }
+    },
+    "Staged" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂存"
+          }
+        }
+      }
+    },
+    "Staged + Modified" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂存 + 已修改"
+          }
+        }
+      }
+    },
+    "This commit has no file changes." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此提交没有文件更改。"
+          }
+        }
+      }
+    },
+    "Unable to Load Changes" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法加载更改"
+          }
+        }
+      }
+    },
+    "Discard changes for %lld selected files? This cannot be undone." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要丢弃已选择的 %lld 个文件的更改吗？此操作不可撤销。"
+          }
+        }
+      }
+    },
+    "Unstage" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消暂存"
+          }
+        }
+      }
+    },
+    "Untracked" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未跟踪"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

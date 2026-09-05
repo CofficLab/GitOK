@@ -12,7 +12,12 @@ node_modules
 temp/
 build/
 build.log
+.zcode/
+.lumi-project
 Packages/LibGit2Swift/build_result.txt
+
+# Old-version backup (moved out of tree)
+Backup/
 
 # Swift Package Manager local artifacts
 Packages/*/.build/

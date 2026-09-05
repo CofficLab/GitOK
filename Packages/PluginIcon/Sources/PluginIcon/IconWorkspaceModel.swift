@@ -1,0 +1,315 @@
+import Foundation
+import KitGitOKSupport
+import ProviderProjects
+
+@MainActor
+public final class IconWorkspaceModel: ObservableObject {
+    @Published public private(set) var icons: [IconData] = []
+    @Published public private(set) var selectedIconID: String?
+    @Published public var title = "New Icon"
+    @Published public var backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
+    @Published public var opacity = 1.0
+    @Published public var scale = 1.0
+    @Published public var padding = 0.12
+    @Published public var cornerRadius = 0.0
+    @Published public private(set) var imageURL: URL?
+    @Published public private(set) var selectedAssetID: String?
+    @Published public private(set) var sourceAssets: [IconSourceAsset] = []
+    @Published public var selectedSourceID = IconSourceID.projectImages
+    @Published public var selectedSourceCategory: String?
+    @Published public private(set) var message: String?
+
+    private let capability: any IconProjectCapability
+    private let repository: IconRepository
+    private let sourceProvider: any IconSourceProviding
+
+    public init(
+        capability: any IconProjectCapability,
+        repository: IconRepository = IconRepository(),
+        sourceProvider: any IconSourceProviding = DefaultIconSourceProvider()
+    ) {
+        self.capability = capability
+        self.repository = repository
+        self.sourceProvider = sourceProvider
+        reload()
+    }
+
+    public var currentProject: Project? { capability.currentProject }
+    public var selectedIcon: IconData? {
+        guard let selectedIconID else { return nil }
+        return icons.first { $0.id == selectedIconID }
+    }
+
+    public func reload() {
+        guard let project = capability.currentProject else {
+            icons = []
+            selectedIconID = nil
+            resetDraft()
+            return
+        }
+        icons = repository.getIcons(from: project.url)
+        loadSourceAssets(in: project.url)
+        if let selectedIconID, icons.contains(where: { $0.id == selectedIconID }) {
+            loadDraft(from: selectedIcon)
+        } else {
+            selectedIconID = icons.first?.id
+            loadDraft(from: icons.first)
+        }
+    }
+
+    public var sourceDescriptors: [IconSourceDescriptor] { sourceProvider.sources }
+    public var sourceCategories: [String] {
+        Array(Set(sourceAssets.compactMap(\.category))).sorted()
+    }
+    public var filteredSourceAssets: [IconSourceAsset] {
+        guard let selectedSourceCategory else { return sourceAssets }
+        return sourceAssets.filter { $0.category == selectedSourceCategory }
+    }
+
+    public func selectSource(_ sourceID: String) {
+        guard sourceProvider.sources.contains(where: { $0.id == sourceID }) else { return }
+        selectedSourceID = sourceID
+        selectedSourceCategory = nil
+        if let project = capability.currentProject {
+            loadSourceAssets(in: project.url)
+        }
+    }
+
+    public func chooseCustomSourceFolder(_ url: URL) {
+        sourceProvider.setCustomFolderURL(url)
+        selectedSourceID = IconSourceID.customFolder
+        selectedSourceCategory = nil
+        if let project = capability.currentProject {
+            loadSourceAssets(in: project.url)
+        }
+    }
+
+    public func importSourceAsset(_ asset: IconSourceAsset) {
+        guard let project = capability.currentProject else { return }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                let importedURL: URL
+                switch asset.payload {
+                case let .file(url):
+                    importedURL = try repository.importImage(url, for: project.url)
+                case let .remote(url):
+                    importedURL = try await repository.importRemoteImage(url, for: project.url)
+                case let .systemSymbol(symbol):
+                    importedURL = try repository.importSystemSymbol(symbol, for: project.url)
+                }
+                selectedAssetID = asset.id
+                imageURL = importedURL
+                if selectedIcon == nil { createIcon() }
+                saveDraft()
+                message = String(format: IconLocalization.string("Icon imported from %@", bundle: .module), asset.title)
+            } catch {
+                message = error.localizedDescription
+            }
+        }
+    }
+
+    public func selectIcon(id: String?) {
+        guard id == nil || icons.contains(where: { $0.id == id }) else { return }
+        selectedIconID = id
+        loadDraft(from: selectedIcon)
+    }
+
+    public func createIcon() {
+        guard let project = capability.currentProject else { return }
+        do {
+            let icon = try repository.createIcon(in: project.url)
+            reload()
+            selectedIconID = icon.id
+            loadDraft(from: icon)
+            message = IconLocalization.string("Icon created", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func importImage(from sourceURL: URL) {
+        guard let project = capability.currentProject else { return }
+        do {
+            let importedURL = try repository.importImage(sourceURL, for: project.url)
+            if selectedIcon == nil { createIcon() }
+            selectedAssetID = importedURL.path
+            imageURL = importedURL
+            saveDraft()
+            message = IconLocalization.string("Image imported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func saveDraft() {
+        guard var icon = selectedIcon else { return }
+        icon.title = title
+        icon.backgroundId = backgroundID
+        icon.opacity = opacity
+        icon.scale = scale
+        icon.padding = padding
+        icon.cornerRadius = cornerRadius
+        icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
+        do {
+            try repository.save(icon)
+            reload()
+            selectedIconID = icon.id
+            loadDraft(from: icon)
+            message = IconLocalization.string("Icon saved", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func deleteSelectedIcon() {
+        guard let icon = selectedIcon else { return }
+        do {
+            try repository.delete(icon)
+            reload()
+            message = IconLocalization.string("Icon deleted", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportSelectedIcon(to destinationURL: URL) {
+        guard var icon = selectedIcon else {
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
+            return
+        }
+        icon.title = title
+        icon.backgroundId = backgroundID
+        icon.opacity = opacity
+        icon.scale = scale
+        icon.padding = padding
+        icon.cornerRadius = cornerRadius
+        icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
+        do {
+            try IconExporter.exportAppIcon(from: icon, to: destinationURL)
+            message = IconLocalization.string("AppIcon set exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportSelectedIconSets(to destinationURL: URL) {
+        guard var icon = selectedIcon else {
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
+            return
+        }
+        icon.title = title
+        icon.backgroundId = backgroundID
+        icon.opacity = opacity
+        icon.scale = scale
+        icon.padding = padding
+        icon.cornerRadius = cornerRadius
+        icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
+        do {
+            try IconExporter.exportXcodeIconSets(from: icon, to: destinationURL)
+            message = IconLocalization.string("Legacy and modern Xcode icon sets exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportPNGSet(to destinationURL: URL) {
+        guard let icon = currentDraftIcon() else {
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
+            return
+        }
+        do {
+            try IconExporter.exportPNGSet(from: icon, to: destinationURL)
+            message = IconLocalization.string("PNG set exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportImageSet(to destinationURL: URL) {
+        guard let icon = currentDraftIcon() else {
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
+            return
+        }
+        do {
+            try IconExporter.exportImageSet(from: icon, to: destinationURL)
+            message = IconLocalization.string("Image Set exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportFavicon(to destinationURL: URL) {
+        guard let icon = currentDraftIcon() else {
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
+            return
+        }
+        do {
+            try IconExporter.exportFavicon(from: icon, to: destinationURL)
+            message = IconLocalization.string("Favicon exported", bundle: .module)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    private func loadDraft(from icon: IconData?) {
+        guard let icon else {
+            resetDraft()
+            return
+        }
+        title = icon.title
+        backgroundID = MagicBackgroundGroup.gradientName(for: icon.backgroundId).rawValue
+        opacity = icon.opacity
+        scale = icon.scale ?? 1
+        padding = icon.padding
+        cornerRadius = icon.cornerRadius
+        imageURL = icon.imageURL
+        selectedAssetID = icon.iconId
+    }
+
+    private func currentDraftIcon() -> IconData? {
+        guard var icon = selectedIcon else { return nil }
+        icon.title = title
+        icon.backgroundId = backgroundID
+        icon.opacity = opacity
+        icon.scale = scale
+        icon.padding = padding
+        icon.cornerRadius = cornerRadius
+        icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
+        return icon
+    }
+
+    private func resetDraft() {
+        title = "New Icon"
+        backgroundID = MagicBackgroundGroup.GradientName.blue2cyan.rawValue
+        opacity = 1
+        scale = 1
+        padding = 0.12
+        cornerRadius = 0
+        imageURL = nil
+        selectedAssetID = nil
+        sourceAssets = []
+    }
+
+    private func loadSourceAssets(in projectURL: URL) {
+        let sourceID = selectedSourceID
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                sourceAssets = try await sourceProvider.assets(for: sourceID, in: projectURL)
+                if let selectedSourceCategory,
+                   !sourceAssets.contains(where: { $0.category == selectedSourceCategory }) {
+                    self.selectedSourceCategory = nil
+                }
+            } catch {
+        sourceAssets = []
+        selectedSourceCategory = nil
+                message = error.localizedDescription
+            }
+        }
+    }
+}
