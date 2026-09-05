@@ -4,7 +4,7 @@ import Foundation
 ///
 /// 执行 `git -C <目录> log` 并用 `\x1f` 分隔字段解析，避免 subject 中的
 /// 空格 / 特殊字符影响解析。输出格式：
-/// `%H\x1f%h\x1f%s\x1f%an\x1f%aI`（完整哈希 / 短哈希 / 主题 / 作者 / ISO 时间）。
+/// `%H\x1f%h\x1f%s\x1f%an\x1f%ae\x1f%aI`（完整哈希 / 短哈希 / 主题 / 作者 / 邮箱 / ISO 时间）。
 ///
 /// 说明：当前阶段使用系统自带 git（macOS 预装）以零第三方依赖读取提交；
 /// 后续若迁移到 LibGit2（旧版方案），只需替换本加载器的实现。
@@ -58,9 +58,9 @@ public enum GitCommitLoader {
         return Set(hashes)
     }
 
-    /// 字段分隔：`%H \x1f %h \x1f %s \x1f %an \x1f %aI \x1f %P \x1f %D`
-    /// （完整哈希 / 短哈希 / 主题 / 作者 / ISO 时间 / 父哈希 / ref 名）。
-    private static let format = "%H%x1f%h%x1f%s%x1f%an%x1f%aI%x1f%P%x1f%D"
+    /// 字段分隔：`%H \x1f %h \x1f %s \x1f %an \x1f %ae \x1f %aI \x1f %P \x1f %D`
+    /// （完整哈希 / 短哈希 / 主题 / 作者 / 邮箱 / ISO 时间 / 父哈希 / ref 名）。
+    private static let format = "%H%x1f%h%x1f%s%x1f%an%x1f%ae%x1f%aI%x1f%P%x1f%D"
 
     // MARK: - Process
 
@@ -101,18 +101,37 @@ public enum GitCommitLoader {
             let fields = line.split(separator: "\u{1f}", omittingEmptySubsequences: false).map(String.init)
             guard fields.count >= 5 else { return nil }
             let hash = fields[0]
-            guard !hash.isEmpty, let date = ISO8601DateFormatter().date(from: fields[4]) else { return nil }
-            let parents = fields.count > 5
-                ? fields[5].split(separator: " ").map(String.init)
+            let formatter = ISO8601DateFormatter()
+            // 兼容旧缓存/调用方传入的五字段格式：邮箱缺失时仍可显示提交。
+            let authorEmail: String
+            let date: Date
+            let parentIndex: Int
+            let tagsIndex: Int
+            if let legacyDate = formatter.date(from: fields[4]) {
+                authorEmail = ""
+                date = legacyDate
+                parentIndex = 5
+                tagsIndex = 6
+            } else {
+                guard fields.count >= 6, let currentDate = formatter.date(from: fields[5]) else { return nil }
+                authorEmail = fields[4]
+                date = currentDate
+                parentIndex = 6
+                tagsIndex = 7
+            }
+            guard !hash.isEmpty else { return nil }
+            let parents = fields.count > parentIndex
+                ? fields[parentIndex].split(separator: " ").map(String.init)
                 : []
-            let tags = fields.count > 6
-                ? parseTags(from: fields[6])
+            let tags = fields.count > tagsIndex
+                ? parseTags(from: fields[tagsIndex])
                 : []
             return GitCommit(
                 hash: hash,
                 shortHash: fields[1],
                 message: fields[2],
                 author: fields[3],
+                authorEmail: authorEmail,
                 date: date,
                 parentHashes: parents,
                 tags: tags
