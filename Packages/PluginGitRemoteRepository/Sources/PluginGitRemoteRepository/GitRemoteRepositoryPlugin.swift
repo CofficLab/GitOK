@@ -47,7 +47,8 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Remote Repository",
                 placement: .leading,
-                order: 23
+                order: 23,
+                sceneScope: .git
             ) {
                 RemoteRepositoryStatusButton(projects: projects)
             },

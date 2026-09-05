@@ -47,7 +47,8 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "File Info",
                 placement: .leading,
-                order: 19
+                order: 19,
+                sceneScope: .git
             ) {
                 FileInfoTile(projects: projects)
             },

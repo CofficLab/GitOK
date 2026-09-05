@@ -96,7 +96,8 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
                     .debugPluginBadge(metadata.name)
             ),
             id: "\(id).content",
-            order: 20
+            order: 20,
+            sceneScope: .git
         )
     }
 

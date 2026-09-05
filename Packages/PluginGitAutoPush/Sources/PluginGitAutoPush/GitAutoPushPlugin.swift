@@ -74,7 +74,8 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: LumiPluginLocalization.string("Auto Push", bundle: .module),
                 placement: .leading,
-                order: 21
+                order: 21,
+                sceneScope: .git
             ) {
                 AutoPushStatusIcon(
                     projects: projects,

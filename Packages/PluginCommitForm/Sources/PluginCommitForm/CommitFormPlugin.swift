@@ -72,7 +72,8 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
                         .debugPluginBadge(metadata.name)
                 ),
                 id: "\(id).content",
-                order: 10
+                order: 10,
+                sceneScope: .git
             )
         } else {
             Self.logger.error("\(self.t)ContentViewProviding not registered; skip content contribution")

@@ -48,7 +48,8 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                     title: LumiPluginLocalization.string("Current Branch", bundle: .module),
                     placement: .trailing,
                     category: .project,
-                    order: 40
+                    order: 40,
+                    sceneScope: .git
                 ) {
                     BranchPickerView(projects: projects)
                 },
@@ -67,7 +68,8 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: LumiPluginLocalization.string("Current Branch", bundle: .module),
                 placement: .leading,
-                order: 15
+                order: 15,
+                sceneScope: .git
             ) {
                 BranchStatusTile(projects: projects)
             },

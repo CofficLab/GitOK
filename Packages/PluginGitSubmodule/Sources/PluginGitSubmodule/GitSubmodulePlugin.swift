@@ -48,7 +48,8 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Submodule",
                 placement: .leading,
-                order: 26
+                order: 26,
+                sceneScope: .git
             ) {
                 SubmoduleStatusTile(projects: projects)
             },

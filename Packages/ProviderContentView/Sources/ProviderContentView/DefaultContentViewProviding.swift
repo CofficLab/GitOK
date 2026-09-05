@@ -24,10 +24,10 @@ public final class DefaultContentViewProviding: ContentViewProviding, Observable
     /// 已注册内容块的 id 列表（按 order 升序）。仅供模块内测试断言使用。
     internal var registeredIDs: [String] { entries.map(\.id) }
 
-    public init(sceneProvider: (any WorkspaceSceneProviding)? = nil) {
-        if let sceneProvider {
-            bindWorkspaceSceneProvider(sceneProvider)
-        }
+    public init() {}
+
+    public init(sceneProvider: any WorkspaceSceneProviding) {
+        bindWorkspaceSceneProvider(sceneProvider)
     }
 
     public func addContentView(

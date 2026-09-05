@@ -47,7 +47,8 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Merge",
                 placement: .leading,
-                order: 24
+                order: 24,
+                sceneScope: .git
             ) {
                 MergeStatusTile(projects: projects)
             },

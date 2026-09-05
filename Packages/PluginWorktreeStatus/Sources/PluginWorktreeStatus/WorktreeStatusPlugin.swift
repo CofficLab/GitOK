@@ -52,7 +52,7 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
 
         rail.addSections([
-            RailSectionItem(id: "\(id).section", order: 15) {
+            RailSectionItem(id: "\(id).section", order: 15, sceneScope: .git) {
                 WorkingTreeStatusView(projects: projects, gitWatch: gitWatch)
             },
         ])

@@ -47,7 +47,8 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: LumiPluginLocalization.string("Conflict Resolver", bundle: .module),
                 placement: .leading,
-                order: 18
+                order: 18,
+                sceneScope: .git
             ) {
                 ConflictStatusTile(projects: projects)
             },

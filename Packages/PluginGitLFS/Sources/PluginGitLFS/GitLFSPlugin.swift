@@ -48,7 +48,8 @@ public final class GitLFSPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Git LFS",
                 placement: .leading,
-                order: 25
+                order: 25,
+                sceneScope: .git
             ) {
                 GitLFSStatusTile(projects: projects)
             },

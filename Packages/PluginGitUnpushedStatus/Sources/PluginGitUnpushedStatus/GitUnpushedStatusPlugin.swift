@@ -47,7 +47,8 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Unpushed Commits",
                 placement: .leading,
-                order: 16
+                order: 16,
+                sceneScope: .git
             ) {
                 UnpushedStatusTile(projects: projects)
             },

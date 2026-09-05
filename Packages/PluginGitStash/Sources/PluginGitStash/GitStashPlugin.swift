@@ -47,7 +47,8 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Stash",
                 placement: .leading,
-                order: 17
+                order: 17,
+                sceneScope: .git
             ) {
                 StashStatusTile(projects: projects)
             },

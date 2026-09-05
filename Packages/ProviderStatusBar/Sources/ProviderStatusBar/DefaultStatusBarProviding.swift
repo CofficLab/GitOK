@@ -17,10 +17,10 @@ public final class DefaultStatusBarProviding: StatusBarProviding, ObservableObje
     private var sceneObserver: (any WorkspaceSceneObserverHandle)?
     private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
 
-    public init(sceneProvider: (any WorkspaceSceneProviding)? = nil) {
-        if let sceneProvider {
-            bindWorkspaceSceneProvider(sceneProvider)
-        }
+    public init() {}
+
+    public init(sceneProvider: any WorkspaceSceneProviding) {
+        bindWorkspaceSceneProvider(sceneProvider)
     }
 
     public func registerStatusBarItems(_ items: [StatusBarItem]) {

@@ -57,7 +57,7 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
 
         rail.addSections([
-            RailSectionItem(id: "\(id).section", order: 20) {
+            RailSectionItem(id: "\(id).section", order: 20, sceneScope: .git) {
                 CommitRailView(projects: projects, gitWatch: gitWatch)
             },
         ])

@@ -42,6 +42,10 @@ public enum WorkspaceSceneScope: Equatable, Sendable {
         .scenes([scene])
     }
 
+    public static var git: Self { .scene(.git) }
+    public static var banner: Self { .scene(.banner) }
+    public static var icon: Self { .scene(.icon) }
+
     public func matches(_ scene: GitOKWorkspaceScene) -> Bool {
         switch self {
         case .global:

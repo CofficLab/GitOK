@@ -47,7 +47,8 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Git Ignore",
                 placement: .leading,
-                order: 20
+                order: 20,
+                sceneScope: .git
             ) {
                 GitIgnoreStatusIcon(projects: projects)
             },

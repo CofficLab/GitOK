@@ -54,7 +54,8 @@ public final class CommitStatusBarPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: "Selected Commit",
                 placement: .leading,
-                order: 20
+                order: 20,
+                sceneScope: .git
             ) {
                 CommitStatusBarItem(projects: projects)
             },

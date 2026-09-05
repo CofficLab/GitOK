@@ -37,7 +37,7 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
         visibleCategories: Set<RailViewCategory> = Set(RailViewCategory.allCases),
         visibleTabID: String? = nil,
         widthStore: (any RailViewWidthStoring)? = nil,
-        sceneProvider: (any WorkspaceSceneProviding)? = nil
+        sceneProvider: (any WorkspaceSceneProviding)?
     ) {
         self.visibleCategories = visibleCategories
         self.visibleTabID = visibleTabID
@@ -47,6 +47,19 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
         if let sceneProvider {
             bindWorkspaceSceneProvider(sceneProvider)
         }
+    }
+
+    public convenience init(
+        visibleCategories: Set<RailViewCategory> = Set(RailViewCategory.allCases),
+        visibleTabID: String? = nil,
+        widthStore: (any RailViewWidthStoring)? = nil
+    ) {
+        self.init(
+            visibleCategories: visibleCategories,
+            visibleTabID: visibleTabID,
+            widthStore: widthStore,
+            sceneProvider: nil
+        )
     }
 
     public func registerTabs(_ tabs: [RailTabItem]) {
