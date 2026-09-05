@@ -8,6 +8,7 @@ import SwiftUI
 public struct ConflictResolverList: View {
     let projects: any ProjectProviding
     @ObservedObject private var viewModel: GitConflictResolverViewModel
+    private let onDismiss: (() -> Void)?
     @State private var conflictDiff: String?
     @State private var isActionRunning = false
     @State private var actionError: String?
@@ -15,10 +16,12 @@ public struct ConflictResolverList: View {
 
     public init(
         projects: any ProjectProviding,
-        viewModel: GitConflictResolverViewModel
+        viewModel: GitConflictResolverViewModel,
+        onDismiss: (() -> Void)? = nil
     ) {
         self.projects = projects
         _viewModel = ObservedObject(wrappedValue: viewModel)
+        self.onDismiss = onDismiss
     }
 
     public var body: some View {
@@ -99,12 +102,25 @@ public struct ConflictResolverList: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(LumiPluginLocalization.string("Conflict Resolution", bundle: .module))
-                .font(.headline)
-            Text(viewModel.conflictedFiles.isEmpty ? LumiPluginLocalization.string("No conflicted files", bundle: .module) : String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), viewModel.conflictedFiles.count))
-                .font(.caption)
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(LumiPluginLocalization.string("Conflict Resolution", bundle: .module))
+                    .font(.headline)
+                Text(viewModel.conflictedFiles.isEmpty ? LumiPluginLocalization.string("No conflicted files", bundle: .module) : String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), viewModel.conflictedFiles.count))
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+            }
+            Spacer(minLength: 0)
+            if let onDismiss {
+                Button {
+                    onDismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(.borderless)
                 .foregroundStyle(theme.textSecondary)
+                .help(LumiPluginLocalization.string("Close", bundle: .module))
+            }
         }
     }
 

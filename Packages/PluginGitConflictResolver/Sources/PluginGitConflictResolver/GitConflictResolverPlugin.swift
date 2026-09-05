@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderRootView
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
@@ -30,6 +31,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-conflict-resolver.id"
+    static let overlayID = "com.coffic.gitok.plugin.git-conflict-resolver.overlay"
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: GitConflictResolverSceneObserver?
@@ -51,6 +53,10 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
         }
+        guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
+            Self.logger.error("\(self.t)RootViewProviding not registered; skip conflict overlay")
+            return
+        }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
         let sceneCapability = GitConflictResolverSceneCapabilityAdapter(scene: scene)
@@ -63,6 +69,16 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
             capability: conflictCapability,
             viewModel: conflictViewModel
         )
+
+        rootView.addOverlays([
+            RootOverlayItem(id: Self.overlayID, order: 9000) { content in
+                ConflictResolverOverlayHost(
+                    content: content,
+                    projects: projects,
+                    viewModel: conflictViewModel
+                )
+            },
+        ])
 
         statusBar.addStatusBarItems([
             StatusBarItem(
@@ -79,6 +95,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        conflictViewModel?.dismiss()
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
@@ -87,5 +104,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         conflictViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
+        kernel.resolveProvider((any RootViewProviding).self)?
+            .removeOverlays(ids: [Self.overlayID])
     }
 }
