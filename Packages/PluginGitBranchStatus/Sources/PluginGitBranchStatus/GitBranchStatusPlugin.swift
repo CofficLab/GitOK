@@ -50,7 +50,8 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
 
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitBranchStatusSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitBranchStatusSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitBranchStatusSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         // 工具栏右上角：分支选择器（显示当前分支 + 切换分支）。
         if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {
