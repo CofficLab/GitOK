@@ -72,8 +72,9 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             }
         }
         self.sceneViewModel = sceneViewModel
+        let sceneCapability = CommitListSceneCapabilityAdapter(scene: scene)
         self.sceneObserver = CommitListSceneObserver(
-            scene: scene,
+            capability: sceneCapability,
             viewModel: sceneViewModel,
             onVisibilityChanged: { [weak rail] isVisible in
                 guard let rail else { return }
