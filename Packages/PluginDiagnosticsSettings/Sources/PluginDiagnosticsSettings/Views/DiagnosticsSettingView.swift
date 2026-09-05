@@ -21,7 +21,7 @@ public struct DiagnosticsSettingView: View {
     private var statusSection: some View {
         AppSettingSection(title: "Status", titleAlignment: .leading) {
             AppSettingRow(
-                title: "Last launch",
+                title: LumiPluginLocalization.string("Last launch", bundle: .module),
                 description: "Normal",
                 icon: "checkmark.circle"
             ) {
@@ -31,11 +31,11 @@ public struct DiagnosticsSettingView: View {
     }
 
     private var actionsSection: some View {
-        AppSettingSection(title: "Diagnostic information", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string("Diagnostic information", bundle: .module), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 AppSettingRow(
-                    title: "Copy diagnostic information",
-                    description: copiedReport ? "Copied to clipboard" : "Copy app, git and system info to the clipboard",
+                    title: LumiPluginLocalization.string("Copy diagnostic information", bundle: .module),
+                    description: copiedReport ? LumiPluginLocalization.string("Copied to clipboard", bundle: .module) : LumiPluginLocalization.string("Copy app, git and system info to the clipboard", bundle: .module),
                     icon: "doc.on.doc"
                 ) {
                     EmptyView()
@@ -46,8 +46,8 @@ public struct DiagnosticsSettingView: View {
                 }
                 Divider()
                 AppSettingRow(
-                    title: "Open Application Support",
-                    description: "Reveal the GitOK data directory in Finder",
+                    title: LumiPluginLocalization.string("Open Application Support", bundle: .module),
+                    description: LumiPluginLocalization.string("Reveal the GitOK data directory in Finder", bundle: .module),
                     icon: "folder"
                 ) {
                     EmptyView()

@@ -60,16 +60,16 @@ struct GeneralSettingsDetailView: View {
 
     private var manualsSection: some View {
         AppSettingSection(
-            title: "说明书",
+            title: LumiPluginLocalization.string("User Manual", bundle: .module),
             titleAlignment: .leading
         ) {
             AppSettingRow(
-                title: "说明书",
-                description: "各功能的使用指南。",
+                title: LumiPluginLocalization.string("User Manual", bundle: .module),
+                description: LumiPluginLocalization.string("Guides for each feature.", bundle: .module),
                 icon: "book"
             ) {
                 AppButton(
-                    "打开",
+                    LumiPluginLocalization.string("Open", bundle: .module),
                     systemImage: "book.pages",
                     style: .secondary,
                     size: .small
@@ -89,7 +89,7 @@ struct GeneralSettingsDetailView: View {
         ) {
             VStack(spacing: 0) {
                 AppSettingRow(
-                    title: "Name",
+                    title: LumiPluginLocalization.string("Name", bundle: .module),
                     description: bundleInfo.name,
                     icon: "app"
                 ) {
@@ -98,7 +98,7 @@ struct GeneralSettingsDetailView: View {
                 Divider()
                     .padding(.vertical, 8)
                 AppSettingRow(
-                    title: "Bundle ID",
+                    title: LumiPluginLocalization.string("Bundle ID", bundle: .module),
                     description: bundleInfo.bundleIdentifier,
                     icon: "number"
                 ) {
@@ -107,8 +107,8 @@ struct GeneralSettingsDetailView: View {
                 Divider()
                     .padding(.vertical, 8)
                 AppSettingRow(
-                    title: "Version",
-                    description: bundleInfo.version ?? "Not Set",
+                    title: LumiPluginLocalization.string("Version", bundle: .module),
+                    description: bundleInfo.version ?? LumiPluginLocalization.string("Not Set", bundle: .module),
                     icon: "info.circle"
                 ) {
                     EmptyView()
@@ -116,8 +116,8 @@ struct GeneralSettingsDetailView: View {
                 Divider()
                     .padding(.vertical, 8)
                 AppSettingRow(
-                    title: "Build",
-                    description: bundleInfo.build ?? "Not Set",
+                    title: LumiPluginLocalization.string("Build", bundle: .module),
+                    description: bundleInfo.build ?? LumiPluginLocalization.string("Not Set", bundle: .module),
                     icon: "hammer"
                 ) {
                     EmptyView()

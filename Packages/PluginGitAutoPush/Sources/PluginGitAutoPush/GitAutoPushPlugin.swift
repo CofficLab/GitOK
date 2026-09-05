@@ -72,7 +72,7 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Auto Push",
+                title: LumiPluginLocalization.string("Auto Push", bundle: .module),
                 placement: .leading,
                 order: 21
             ) {

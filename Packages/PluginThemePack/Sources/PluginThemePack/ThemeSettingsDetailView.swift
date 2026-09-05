@@ -13,10 +13,10 @@ private enum ThemeAppearanceFilter: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .all: "全部"
-        case .dark: "深色"
-        case .light: "浅色"
-        case .system: "跟随系统"
+        case .all: LumiPluginLocalization.string("All", bundle: .module)
+        case .dark: LumiPluginLocalization.string("Dark", bundle: .module)
+        case .light: LumiPluginLocalization.string("Light", bundle: .module)
+        case .system: LumiPluginLocalization.string("Follow System", bundle: .module)
         }
     }
 
@@ -97,10 +97,10 @@ struct ThemeSettingsDetailView: View {
 
     private var headerStats: some View {
         HStack(spacing: 10) {
-            Label("\(theme.themes.count) 个主题", systemImage: "paintpalette")
+            Label(String(format: LumiPluginLocalization.string("%lld Themes", bundle: .module), theme.themes.count), systemImage: "paintpalette")
             if let activeID = theme.selectedThemeId,
                let active = theme.themes.first(where: { $0.id == activeID }) {
-                Text("当前：\(active.displayName)")
+                Text(String(format: LumiPluginLocalization.string("Current: %@", bundle: .module), active.displayName))
             }
             Spacer()
 #if DEBUG
@@ -116,8 +116,8 @@ struct ThemeSettingsDetailView: View {
     private var themeListPane: some View {
         VStack(spacing: 0) {
             VStack(spacing: 10) {
-                AppSearchBar(text: $searchText, placeholder: "搜索主题")
-                Picker("主题类型", selection: $appearanceFilter) {
+                AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search Themes", bundle: .module)))
+                Picker(LumiPluginLocalization.string("Theme Type", bundle: .module), selection: $appearanceFilter) {
                     ForEach(ThemeAppearanceFilter.allCases) { filter in
                         Text(filter.title).tag(filter)
                     }
@@ -133,7 +133,7 @@ struct ThemeSettingsDetailView: View {
                 LazyVStack(spacing: 4) {
                     ForEach(filteredThemes) { item in themeListRow(item) }
                     if filteredThemes.isEmpty {
-                        AppEmptyState(icon: "magnifyingglass", title: "没有找到主题")
+                        AppEmptyState(icon: "magnifyingglass", title: LumiPluginLocalization.string("No Themes Found", bundle: .module))
                             .padding(.vertical, 32)
                     }
                 }
@@ -186,7 +186,7 @@ struct ThemeSettingsDetailView: View {
                 onApply: { try? theme.selectTheme(id: selectedTheme.id) }
             )
         } else {
-            AppEmptyState(icon: "paintpalette", title: "选择一个主题")
+            AppEmptyState(icon: "paintpalette", title: LumiPluginLocalization.string("Select a Theme", bundle: .module))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
@@ -268,39 +268,39 @@ private struct ThemePreviewPane: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if isActive {
-                AppTag("当前使用", style: .accent)
+                AppTag(LumiPluginLocalization.string("Currently Using", bundle: .module), style: .accent)
             } else {
-                AppButton("使用此主题", systemImage: "paintbrush.fill", style: .primary, size: .small, action: onApply)
+                AppButton(LumiPluginLocalization.string("Apply Theme", bundle: .module), systemImage: "paintbrush.fill", style: .primary, size: .small, action: onApply)
             }
         }
     }
 
     private var appearanceLabel: String {
         switch item.appearanceKind {
-        case .dark: "深色主题"
-        case .light: "浅色主题"
-        case .system: "跟随系统外观"
+        case .dark: LumiPluginLocalization.string("Dark Theme", bundle: .module)
+        case .light: LumiPluginLocalization.string("Light Theme", bundle: .module)
+        case .system: LumiPluginLocalization.string("Follow System Appearance", bundle: .module)
         }
     }
 
     private var preview: some View {
-        AppSettingsSection(title: "组件预览", subtitle: "查看常用组件在此主题下的效果", spacing: 12) {
+        AppSettingsSection(title: LumiPluginLocalization.string("Component Preview", bundle: .module), subtitle: LumiPluginLocalization.string("See how common components look with this theme", bundle: .module), spacing: 12) {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(LumiPluginLocalization.string("Primary Text", bundle: .module)).font(.appBody).foregroundStyle(textPrimary)
                     Text(LumiPluginLocalization.string("Secondary Text", bundle: .module)).font(.appCaption).foregroundStyle(textSecondary)
-                    Text("主题颜色与层级预览").font(.appMicro).foregroundStyle(textSecondary.opacity(0.75))
+                    Text(LumiPluginLocalization.string("Theme Color & Elevation Preview", bundle: .module)).font(.appMicro).foregroundStyle(textSecondary.opacity(0.75))
                 }
                 HStack(spacing: 8) {
-                    previewButton("主要操作", fill: primary, foreground: .white)
-                    previewButton("次要操作", fill: elevated, foreground: textPrimary)
-                    previewButton("辅助操作", fill: secondary.opacity(0.18), foreground: secondary)
+                    previewButton(LumiPluginLocalization.string("Primary Action", bundle: .module), fill: primary, foreground: .white)
+                    previewButton(LumiPluginLocalization.string("Secondary Action", bundle: .module), fill: elevated, foreground: textPrimary)
+                    previewButton(LumiPluginLocalization.string("Tertiary Action", bundle: .module), fill: secondary.opacity(0.18), foreground: secondary)
                 }
                 HStack(spacing: 10) {
-                    colorSwatch("主色", primary)
-                    colorSwatch("辅色", secondary)
-                    colorSwatch("背景", background)
-                    colorSwatch("抬升", elevated)
+                    colorSwatch(LumiPluginLocalization.string("Primary Color", bundle: .module), primary)
+                    colorSwatch(LumiPluginLocalization.string("Secondary Color", bundle: .module), secondary)
+                    colorSwatch(LumiPluginLocalization.string("Background", bundle: .module), background)
+                    colorSwatch(LumiPluginLocalization.string("Elevated", bundle: .module), elevated)
                 }
             }
             .padding(16)

@@ -28,8 +28,7 @@ public struct AppCommands: Commands {
             if let checkForUpdates {
                 Button(LumiPluginLocalization.string("Check for Updates...", bundle: LumiPluginLocalization.bundle)) {
                     checkForUpdates()
-                }
-            }
+                }            }
             PluginCommandContent(kernel: kernel, placement: .appMenu)
         }
 

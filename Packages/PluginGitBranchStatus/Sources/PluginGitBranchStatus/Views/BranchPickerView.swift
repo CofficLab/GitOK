@@ -35,7 +35,7 @@ public struct BranchPickerView: View {
                     ProgressView()
                         .controlSize(.small)
                 } else {
-                    Text(currentBranch ?? "No Branch")
+                    Text(currentBranch ?? LumiPluginLocalization.string("No Branch", bundle: .module))
                         .font(.system(size: 13, weight: .medium))
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -66,7 +66,7 @@ public struct BranchPickerView: View {
                 load()
             }
         }
-        .help("Switch Branch")
+        .help(LumiPluginLocalization.string("Switch Branch", bundle: .module))
     }
 
     /// 控件是否应显示高亮（悬停或弹层已展开）。

@@ -23,7 +23,7 @@ public final class LogoCofficPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.lumi.plugin.logo-coffic",
         name: "Coffic Logo",
-        description: "贡献咖啡主题 Logo，提供动画咖啡杯图标。",
+        description: "Contributes the Coffic coffee-themed logo with an animated coffee cup icon.",
         category: .design,
         stage: .stable,
         policy: .disabled

@@ -75,7 +75,7 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
 
         let entry = SettingEntryItem(
             id: "userInfo",
-            title: "User Info",
+            title: LumiPluginLocalization.string("User Info", bundle: .module),
             systemImage: "person.circle",
             order: 20
         ) { [projects, provider, toast] in

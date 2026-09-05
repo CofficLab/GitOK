@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
@@ -171,7 +171,13 @@ let package = Package(
                 .product(name: "ProviderPluginManaging", package: "ProviderPluginManaging"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
             ],
-            path: "Sources/FactoryGitOK"
+            path: "Sources/FactoryGitOK",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         ),
         .testTarget(
             name: "FactoryGitOKTests",
@@ -183,7 +189,10 @@ let package = Package(
                 .product(name: "PluginCommitToast", package: "PluginCommitToast"),
                 .product(name: "PluginCommitStatusBar", package: "PluginCommitStatusBar"),
             ],
-            path: "Tests/FactoryGitOKTests"
+            path: "Tests/FactoryGitOKTests",
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         ),
     ]
 )

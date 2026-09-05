@@ -3,16 +3,26 @@ import PackageDescription
 
 let package = Package(
     name: "KitGit",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
     products: [
         .library(name: "KitGit", targets: ["KitGit"]),
     ],
+    dependencies: [
+        .package(path: "../KitLocalization"),
+    ],
     targets: [
         .target(
             name: "KitGit",
-            path: "Sources/KitGit"
+            dependencies: [
+                .product(name: "KitLocalization", package: "KitLocalization"),
+            ],
+            path: "Sources/KitGit",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "KitGitTests",

@@ -1,5 +1,5 @@
 {
-  "originHash" : "db1f5908bf1b9f87e385c58562ee8df234045ef62c6bf54044121603c72b248d",
+  "originHash" : "86f55ff5357206cc0a9fa29b7edc99f6df4a603010c2d747f53494dd36bd44d9",
   "pins" : [
     {
       "identity" : "lumiui",
@@ -7,13 +7,13 @@
       "location" : "https://github.com/CofficLab/LumiUI.git",
       "state" : {
         "branch" : "main",
-        "revision" : "fd9e3686f010e61a6fdb2f00b35071e090a4f7fd"
+        "revision" : "22eaba744553dc9e83766a237ac7ca2a44f4feff"
       }
     },
     {
       "identity" : "magicdiffview",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/MagicDiffView.git",
+      "location" : "https://github.com/nookery/MagicDiffView",
       "state" : {
         "branch" : "main",
         "revision" : "b97553a3cb8d877981ec787f5f94e5fd0301c9cd"

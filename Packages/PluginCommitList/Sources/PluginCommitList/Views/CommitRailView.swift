@@ -89,8 +89,8 @@ struct CommitRailView: View {
         if projects.currentProject == nil {
             AppEmptyState(
                 icon: "folder",
-                title: "Select a Project",
-                description: "Choose a project from the sidebar to see its commits."
+                title: LumiPluginLocalization.string("Select a Project", bundle: .module),
+                description: LumiPluginLocalization.string("Choose a project from the sidebar to see its commits.", bundle: .module)
             )
         } else if isLoading && commits.isEmpty {
             ProgressView()
@@ -98,14 +98,14 @@ struct CommitRailView: View {
         } else if let loadError {
             AppEmptyState(
                 icon: "exclamationmark.triangle",
-                title: "Unable to Load Commits",
+                title: LumiPluginLocalization.string("Unable to Load Commits", bundle: .module),
                 description: loadError
             )
         } else if commits.isEmpty {
             AppEmptyState(
                 icon: "clock",
-                title: "No Commits",
-                description: "This repository has no commits yet."
+                title: LumiPluginLocalization.string("No Commits", bundle: .module),
+                description: LumiPluginLocalization.string("This repository has no commits yet.", bundle: .module)
             )
         } else {
             ScrollView(.vertical, showsIndicators: false) {
@@ -180,7 +180,7 @@ struct CommitRailView: View {
             pushPopoverCommitHash = commit.hash
             pushError = nil
         }
-        .help("Click to push to remote")
+        .help(LumiPluginLocalization.string("Click to push to remote", bundle: .module))
     }
 
     private func pushPopoverContent(for commit: GitCommit) -> some View {
@@ -188,7 +188,7 @@ struct CommitRailView: View {
             HStack {
                 Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.orange)
-                Text("Push to Remote")
+                Text(LumiPluginLocalization.string("Push to Remote", bundle: .module))
                     .font(.headline)
                 Spacer()
             }
@@ -209,7 +209,7 @@ struct CommitRailView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle.fill")
                             .foregroundColor(.orange)
-                        Text("Current commit has not been pushed to remote")
+                        Text(LumiPluginLocalization.string("Current commit has not been pushed to remote", bundle: .module))
                             .font(.body)
                     }
 
@@ -217,7 +217,7 @@ struct CommitRailView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.red)
-                            Text("Push failed: \(error)")
+                            Text(String(format: LumiPluginLocalization.string("Push failed: %@", bundle: .module), error))
                                 .font(.caption)
                                 .foregroundStyle(theme.textSecondary)
                         }

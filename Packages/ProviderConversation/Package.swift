@@ -16,14 +16,19 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
     ],
     targets: [
         .target(
             name: "ProviderConversation",
             dependencies: [
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
             ],
-            path: "Sources/ProviderConversation"
+            path: "Sources/ProviderConversation",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "ProviderConversationTests",

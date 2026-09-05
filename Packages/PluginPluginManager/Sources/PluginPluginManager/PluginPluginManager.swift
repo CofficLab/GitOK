@@ -15,8 +15,8 @@ public final class PluginPluginManager: SuperPlugin, SuperLog {
 
     public let metadata = PluginMetadata(
         id: "com.coffic.lumi.plugin.plugin-manager",
-        name: "插件管理",
-        description: "管理所有已注册插件。",
+        name: "Plugin Management",
+        description: "Manage all registered plugins.",
         version: "1.0.0",
         category: .system,
         stage: .stable,
@@ -55,7 +55,7 @@ public final class PluginPluginManager: SuperPlugin, SuperLog {
 
         let entry = SettingEntryItem(
             id: Self.settingsEntryID,
-            title: "插件管理",
+            title: LumiPluginLocalization.string("Plugin Management", bundle: .module),
             systemImage: "puzzlepiece.extension",
             order: 3
         ) { [manager, docsProvider] in

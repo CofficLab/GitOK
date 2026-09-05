@@ -24,8 +24,8 @@ public final class ThemePackPlugin: SuperPlugin, SuperLog {
     public let order = 100
     public let metadata = PluginMetadata(
         id: "com.coffic.lumi.plugin.theme-pack",
-        name: "主题包",
-        description: "批量注册 19 个旧版主题，并在设置中提供外观切换入口。",
+        name: "Theme Pack",
+        description: "Registers 19 legacy themes and provides an appearance switcher in settings.",
         category: .design,
         stage: .stable,
         // 与 Lumi 一致：必须启动才能注册「主题」系统菜单与外观设置入口
@@ -53,7 +53,7 @@ public final class ThemePackPlugin: SuperPlugin, SuperLog {
             settings.addEntries([
                 SettingEntryItem(
                     id: "appearance",
-                    title: "外观",
+                    title: LumiPluginLocalization.string("Appearance", bundle: .module),
                     systemImage: "paintpalette",
                     order: 2
                 ) {

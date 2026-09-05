@@ -148,9 +148,9 @@ public enum GitCommitLoaderError: Error, Equatable, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notARepository(let url):
-            "该目录不是 Git 仓库：\(url.lastPathComponent)"
+            String(format: LumiPluginLocalization.string("This directory is not a Git repository: %@", bundle: .module), url.lastPathComponent)
         case .gitUnavailable:
-            "未找到 git 命令，请确认系统已安装 git"
+            LumiPluginLocalization.string("Git command not found. Please make sure git is installed.", bundle: .module)
         case .gitFailed(let message):
             message
         }

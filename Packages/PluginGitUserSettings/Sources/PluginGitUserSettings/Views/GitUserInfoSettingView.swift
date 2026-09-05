@@ -52,7 +52,7 @@ public struct GitUserInfoSettingView: View {
     // MARK: - Existing Presets
 
     private var existingPresetsSection: some View {
-        AppSettingSection(title: "Existing Presets", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string("Existing Presets", bundle: .module), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(presets) { preset in
                     AppSettingRow(
@@ -69,7 +69,7 @@ public struct GitUserInfoSettingView: View {
                                 tint: theme.error,
                                 action: { delete(preset) }
                             )
-                            .help("Delete this preset")
+                            .help(LumiPluginLocalization.string("Delete this preset", bundle: .module))
                         }
                     }
                     if preset != presets.last {
@@ -83,16 +83,16 @@ public struct GitUserInfoSettingView: View {
     // MARK: - Add New Preset
 
     private var addNewPresetSection: some View {
-        AppSettingSection(title: "Add New Preset", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string(LumiPluginLocalization.string("Add New Preset", bundle: .module), bundle: .module), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 12) {
-                userInput(title: "Username", placeholder: "Enter username", text: $userName)
+                userInput(title: LumiPluginLocalization.string("Username", bundle: .module), placeholder: LumiPluginLocalization.string("Enter username", bundle: .module), text: $userName)
                 Divider()
-                userInput(title: "Email", placeholder: "Enter email", text: $userEmail)
+                userInput(title: LumiPluginLocalization.string("Email", bundle: .module), placeholder: LumiPluginLocalization.string("Enter email", bundle: .module), text: $userEmail)
                 Divider()
                 HStack {
                     Spacer()
                     AppButton(
-                        "Add New Preset",
+                        LumiPluginLocalization.string("Add New Preset", bundle: .module),
                         systemImage: "plus",
                         style: .secondary,
                         size: .small
@@ -136,13 +136,13 @@ public struct GitUserInfoSettingView: View {
         userEmail = ""
         isSaving = false
 
-        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: "Saved User Preset")
+        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: LumiPluginLocalization.string("Saved User Preset", bundle: .module))
     }
 
     /// 应用某预设到当前项目 git 配置。
     private func apply(_ preset: GitUserPreset) {
         errorMessage = nil
-        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: "Applied User Info")
+        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: LumiPluginLocalization.string("Applied User Info", bundle: .module))
     }
 
     private func delete(_ preset: GitUserPreset) {
@@ -153,7 +153,7 @@ public struct GitUserInfoSettingView: View {
     /// 将用户名 / 邮箱写入当前项目（仓库级 git config）。
     private func writeToCurrentProject(name: String, email: String, successTitle: String) {
         guard let project = projects.currentProject else {
-            toast?.show("No Project", detail: "Open a project to apply git user info.", style: .info)
+            toast?.show(LumiPluginLocalization.string("No Project", bundle: .module), detail: LumiPluginLocalization.string("Open a project to apply git user info.", bundle: .module), style: .info)
             return
         }
         let url = project.url
@@ -162,11 +162,11 @@ public struct GitUserInfoSettingView: View {
                 try GitConfigReader.setValue("user.name", name, in: url)
                 try GitConfigReader.setValue("user.email", email, in: url)
                 await MainActor.run {
-                    toast?.show(successTitle, detail: "\(name) <\(email)>", style: .success)
+                    toast?.show(successTitle, detail: String(format: LumiPluginLocalization.string("%@ <%@>", bundle: .module), name, email), style: .success)
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = "Save failed: \(error.localizedDescription)"
+                    errorMessage = String(format: LumiPluginLocalization.string("Save failed: %@", bundle: .module), error.localizedDescription)
                 }
             }
         }

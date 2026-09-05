@@ -87,7 +87,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
         if let settings = kernel.resolveProvider((any SettingViewProviding).self) {
             let entry = SettingEntryItem(
                 id: "projects",
-                title: "项目",
+                title: LumiPluginLocalization.string("Projects", bundle: .module),
                 systemImage: "folder",
                 order: 2
             ) { [projects] in

@@ -22,7 +22,7 @@ struct CleanStateInfoView: View {
     var body: some View {
         VStack(spacing: 16) {
             // 仓库信息
-            AppSettingSection(title: loc("仓库信息"), titleAlignment: .leading) {
+            AppSettingSection(title: loc("Repository Info"), titleAlignment: .leading) {
                 VStack(spacing: 0) {
                     localRepositoryRow
 
@@ -47,7 +47,7 @@ struct CleanStateInfoView: View {
             }
 
             // Git 用户配置
-            AppSettingSection(title: loc("Git 用户配置"), titleAlignment: .leading) {
+            AppSettingSection(title: loc("Git User Configuration"), titleAlignment: .leading) {
                 VStack(spacing: 0) {
                     userNameRow
                     Divider().padding(.vertical, 8)
@@ -62,7 +62,7 @@ struct CleanStateInfoView: View {
 
     private var localRepositoryRow: some View {
         AppSettingRow(
-            title: loc("本地仓库"),
+            title: loc("Local Repository"),
             description: project.url.path,
             icon: "folder"
         ) {
@@ -78,7 +78,7 @@ struct CleanStateInfoView: View {
 
     private func currentBranchRow(branchName: String) -> some View {
         AppSettingRow(
-            title: loc("当前分支"),
+            title: loc("Current Branch"),
             description: branchName,
             icon: "arrow.triangle.branch"
         ) {
@@ -90,7 +90,7 @@ struct CleanStateInfoView: View {
 
     private func remoteRepositoryRow(for remote: GitRemoteSummary) -> some View {
         AppSettingRow(
-            title: String(format: loc("远程仓库 (%@)"), remote.name),
+            title: String(format: loc("Remote Repository (%@)"), remote.name),
             description: remote.url,
             icon: "cloud"
         ) {
@@ -108,8 +108,8 @@ struct CleanStateInfoView: View {
 
     private var noRemoteRow: some View {
         AppSettingRow(
-            title: loc("远程仓库"),
-            description: loc("未配置"),
+            title: loc("Remote Repository"),
+            description: loc("Not Configured"),
             icon: "cloud"
         ) {
             EmptyView()
@@ -120,8 +120,8 @@ struct CleanStateInfoView: View {
 
     private var userNameRow: some View {
         AppSettingRow(
-            title: loc("用户名"),
-            description: userName.isEmpty ? loc("未配置 user.name") : userName,
+            title: loc("User Name"),
+            description: userName.isEmpty ? loc("user.name not configured") : userName,
             icon: "person"
         ) {
             if isLoadingInfo {
@@ -134,8 +134,8 @@ struct CleanStateInfoView: View {
 
     private var userEmailRow: some View {
         AppSettingRow(
-            title: loc("邮箱"),
-            description: userEmail.isEmpty ? loc("未配置 user.email") : userEmail,
+            title: loc("Email"),
+            description: userEmail.isEmpty ? loc("user.email not configured") : userEmail,
             icon: "envelope"
         ) {
             if isLoadingInfo {

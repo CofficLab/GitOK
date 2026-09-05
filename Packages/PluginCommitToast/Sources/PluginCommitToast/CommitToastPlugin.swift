@@ -51,13 +51,13 @@ public final class CommitToastPlugin: SuperPlugin, SuperLog {
             guard case .commitSelectionChanged = event, let projects else { return }
             if let commit = projects.currentCommit {
                 toast?.show(
-                    "已选择提交",
+                    LumiPluginLocalization.string("Commit selected", bundle: .module),
                     detail: commit.shortHash,
                     style: .info
                 )
             } else {
                 toast?.show(
-                    "已清除提交选择",
+                    LumiPluginLocalization.string("Commit selection cleared", bundle: .module),
                     style: .info
                 )
             }

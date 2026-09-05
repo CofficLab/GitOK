@@ -12,7 +12,7 @@ public enum GitProcessRunner {
         public var errorDescription: String? {
             switch self {
             case .gitUnavailable(let message):
-                "Git 不可用：\(message)"
+                String(format: LumiPluginLocalization.string("Git unavailable: %@", bundle: .module), message)
             case .gitFailed(let message):
                 message
             }

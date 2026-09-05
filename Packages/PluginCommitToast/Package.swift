@@ -10,6 +10,7 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderToast"),
     ],
@@ -20,10 +21,14 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
                 "KitSuperLog",
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
             ],
-            path: "Sources/PluginCommitToast"
+            path: "Sources/PluginCommitToast",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginCommitToastTests",

@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderSettingView"),
     ],
@@ -25,10 +26,14 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
             ],
-            path: "Sources/PluginDiagnosticsSettings"
+            path: "Sources/PluginDiagnosticsSettings",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginDiagnosticsSettingsTests",

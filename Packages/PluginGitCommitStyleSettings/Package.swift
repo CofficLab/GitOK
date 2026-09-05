@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderCommitForm"),
         .package(path: "../ProviderSettingView"),
@@ -26,11 +27,15 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
             ],
-            path: "Sources/PluginGitCommitStyleSettings"
+            path: "Sources/PluginGitCommitStyleSettings",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginGitCommitStyleSettingsTests",

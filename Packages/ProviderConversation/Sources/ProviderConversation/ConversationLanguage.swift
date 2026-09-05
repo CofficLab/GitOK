@@ -23,11 +23,14 @@ public enum ConversationLanguage: CaseIterable, Codable, Identifiable, RawRepres
     }
 
     public var shortCode: String {
-        switch self { case .chinese: "中"; case .english: "EN" }
+        switch self { case .chinese: LumiPluginLocalization.string("ZH", bundle: .module); case .english: "EN" }
     }
 
     public var displayName: String {
-        switch self { case .chinese: "中文"; case .english: "English" }
+        switch self {
+        case .chinese: LumiPluginLocalization.string("Chinese", bundle: .module)
+        case .english: LumiPluginLocalization.string("English", bundle: .module)
+        }
     }
 
     public var iconName: String {

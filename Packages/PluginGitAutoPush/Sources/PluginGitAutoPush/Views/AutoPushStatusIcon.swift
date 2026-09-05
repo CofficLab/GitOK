@@ -32,8 +32,8 @@ public struct AutoPushStatusIcon: View {
                         isSheetPresented.toggle()
                     }
                     .help(isEnabled
-                        ? "Auto-push is enabled - Click to manage"
-                        : "Auto-push is disabled - Click to configure")
+                        ? LumiPluginLocalization.string("Auto-push is enabled - Click to manage", bundle: .module)
+                        : LumiPluginLocalization.string("Auto-push is disabled - Click to configure", bundle: .module))
                     .sheet(isPresented: $isSheetPresented) {
                         AutoPushConfigView(projects: projects, autoPush: autoPush)
                             .frame(minWidth: 460, minHeight: 260)
@@ -65,23 +65,23 @@ public struct AutoPushConfigView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Auto Push")
+            Text(LumiPluginLocalization.string("Auto Push", bundle: .module))
                 .font(.headline)
 
             if let project = projects.currentProject {
                 AppSettingRow(
-                    title: "Auto-push after commit",
+                    title: LumiPluginLocalization.string("Auto-push after commit", bundle: .module),
                     description: project.title,
                     icon: "arrow.up.circle"
                 ) {
                     Toggle("", isOn: $isEnabled)
                         .labelsHidden()
                 }
-                Text("When enabled, GitOK pushes the current branch after every successful commit.")
+                Text(LumiPluginLocalization.string("When enabled, GitOK pushes the current branch after every successful commit.", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             } else {
-                Text("Please select a project first")
+                Text(LumiPluginLocalization.string("Please select a project first", bundle: .module))
                     .font(.system(size: 13))
                     .foregroundStyle(theme.textSecondary)
             }

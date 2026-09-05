@@ -21,7 +21,7 @@ public struct BranchStatusTile: View {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.triangle.branch")
                         .font(.system(size: 10))
-                    Text(branch ?? "No Branch")
+                    Text(branch ?? LumiPluginLocalization.string("No Branch", bundle: .module))
                         .font(.appCaption)
                         .lineLimit(1)
                 }
@@ -29,7 +29,7 @@ public struct BranchStatusTile: View {
                 .onTapGesture {
                     isPresented.toggle()
                 }
-                .help("Manage Branches")
+                .help(LumiPluginLocalization.string("Manage Branches", bundle: .module))
                 .popover(isPresented: $isPresented, arrowEdge: .bottom) {
                     BranchManagementView(projects: projects)
                         .frame(width: 560, height: 520)

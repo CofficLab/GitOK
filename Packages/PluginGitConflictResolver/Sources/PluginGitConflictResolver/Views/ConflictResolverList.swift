@@ -22,14 +22,14 @@ public struct ConflictResolverList: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
                     if isLoading {
-                        ProgressView("Checking conflicts…")
+                        ProgressView(LumiPluginLocalization.string("Checking conflicts…", bundle: .module))
                             .frame(maxWidth: .infinity, minHeight: 120)
                     } else if files.isEmpty {
                         VStack(spacing: 6) {
                             Image(systemName: "checkmark.circle")
                                 .font(.system(size: 22))
                                 .foregroundStyle(theme.success)
-                            Text("No merge conflicts")
+                            Text(LumiPluginLocalization.string("No merge conflicts", bundle: .module))
                                 .font(.system(size: 13, weight: .medium))
                         }
                         .frame(maxWidth: .infinity, minHeight: 120)
@@ -47,9 +47,9 @@ public struct ConflictResolverList: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Conflict Resolution")
+            Text(LumiPluginLocalization.string("Conflict Resolution", bundle: .module))
                 .font(.headline)
-            Text(files.isEmpty ? "No conflicted files" : "\(files.count) conflicted file(s)")
+            Text(files.isEmpty ? LumiPluginLocalization.string("No conflicted files", bundle: .module) : String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), files.count))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
         }
@@ -64,10 +64,10 @@ public struct ConflictResolverList: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
             Spacer()
-            AppIconButton(systemImage: "doc.on.doc", label: "Copy Path", tint: theme.textSecondary) {
+            AppIconButton(systemImage: "doc.on.doc", label: LumiPluginLocalization.string("Copy Path", bundle: .module), tint: theme.textSecondary) {
                 copyText(file)
             }
-            AppIconButton(systemImage: "folder", label: "Reveal in Finder", tint: theme.textSecondary) {
+            AppIconButton(systemImage: "folder", label: LumiPluginLocalization.string("Reveal in Finder", bundle: .module), tint: theme.textSecondary) {
                 reveal(file)
             }
         }

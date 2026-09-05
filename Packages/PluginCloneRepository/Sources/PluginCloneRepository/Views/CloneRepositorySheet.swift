@@ -52,13 +52,13 @@ public struct CloneRepositorySheet: View {
 
     private var validationMessage: String? {
         if trimmedRemoteURL.isEmpty {
-            return "Enter a remote repository URL."
+            return LumiPluginLocalization.string("Enter a remote repository URL.", bundle: .module)
         }
         if trimmedName.isEmpty {
-            return "Enter a repository name."
+            return LumiPluginLocalization.string("Enter a repository name.", bundle: .module)
         }
         guard let destination = destinationURL else {
-            return "Invalid destination path."
+            return LumiPluginLocalization.string("Invalid destination path.", bundle: .module)
         }
         do {
             try GitCloneOperation.validateDestination(destination)
@@ -66,7 +66,7 @@ public struct CloneRepositorySheet: View {
             return error.localizedDescription
         }
         if projects.projects.contains(where: { $0.url == destination }) {
-            return "This repository is already in your projects."
+            return LumiPluginLocalization.string("This repository is already in your projects.", bundle: .module)
         }
         return nil
     }
@@ -109,7 +109,7 @@ public struct CloneRepositorySheet: View {
                 .font(.system(size: 18))
                 .foregroundStyle(theme.primary)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Clone Repository")
+                Text(LumiPluginLocalization.string("Clone Repository", bundle: .module))
                     .font(.headline)
                 Text("Clone a remote repository and add it to your projects.")
                     .font(.caption)
@@ -121,7 +121,7 @@ public struct CloneRepositorySheet: View {
 
     private var remoteSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Remote URL")
+            Text(LumiPluginLocalization.string("Remote URL", bundle: .module))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             AppInputField("https://github.com/owner/repo.git", text: $remoteURL)
@@ -208,7 +208,7 @@ public struct CloneRepositorySheet: View {
         guard let destination = destinationURL else { return }
         errorMessage = nil
         isCloning = true
-        activity?.setActivity("Cloning \(trimmedName)...")
+        activity?.setActivity(String(format: LumiPluginLocalization.string("Cloning %@...", bundle: .module), trimmedName))
 
         // 捕获脱离主 actor 使用的值。
         let remote = trimmedRemoteURL
@@ -228,7 +228,7 @@ public struct CloneRepositorySheet: View {
             await MainActor.run {
                 isCloning = false
                 activity?.clearActivity()
-                errorMessage = "Clone failed: \(error.localizedDescription)"
+                errorMessage = String(format: LumiPluginLocalization.string("Clone failed: %@", bundle: .module), error.localizedDescription)
             }
         }
     }

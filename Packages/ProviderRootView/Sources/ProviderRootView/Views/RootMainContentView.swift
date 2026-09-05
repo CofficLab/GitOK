@@ -51,13 +51,13 @@ struct RootMainContentView: View {
 
     private var mainContent: some View {
         (contentView ?? AnyView(ContentPlaceholderView()))
-            .debugBlockBadge("内容区", alignment: .bottomTrailing)
+            .debugBlockBadge(LumiPluginLocalization.string("Content Area", bundle: .module), alignment: .bottomTrailing)
     }
 
     /// 右侧面板（trailing pane）内容，右下角叠加区块名 badge。
     private var trailingPaneContent: some View {
         trailingPane.content
-            .debugBlockBadge("右侧面板", alignment: .bottomTrailing)
+            .debugBlockBadge(LumiPluginLocalization.string("Right Panel", bundle: .module), alignment: .bottomTrailing)
     }
 
     @ViewBuilder
@@ -236,7 +236,7 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
 
             // 正式视图内容
             trailingPane.content
-                .debugBlockBadge("右侧面板", alignment: .bottomTrailing)
+                .debugBlockBadge(LumiPluginLocalization.string("Right Panel", bundle: .module), alignment: .bottomTrailing)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -294,7 +294,7 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
                 trailingPane.isVisible = false
             }
         }
-        .help("收起右侧面板")
+        .help(LumiPluginLocalization.string("Collapse Right Panel", bundle: .module))
     }
 }
 

@@ -23,7 +23,7 @@ public struct ConflictStatusTile: View {
                     Image(systemName: isMerging ? "exclamationmark.triangle.fill" : "checkmark.circle")
                         .font(.system(size: 10))
                         .foregroundStyle(isMerging ? theme.warning : theme.textTertiary)
-                    Text(isMerging ? "Conflicts \(conflictCount)" : "Merge OK")
+                    Text(isMerging ? String(format: LumiPluginLocalization.string("Conflicts %lld", bundle: .module), conflictCount) : LumiPluginLocalization.string("Merge OK", bundle: .module))
                         .font(.appCaption)
                         .foregroundStyle(isMerging ? theme.warning : theme.textTertiary)
                         .lineLimit(1)
@@ -33,8 +33,8 @@ public struct ConflictStatusTile: View {
                     isPresented.toggle()
                 }
                 .help(isMerging
-                    ? "There are \(conflictCount) conflicted files. Click to resolve them."
-                    : "No merge conflicts")
+                    ? String(format: LumiPluginLocalization.string("There are %lld conflicted files. Click to resolve them.", bundle: .module), conflictCount)
+                    : LumiPluginLocalization.string("No merge conflicts", bundle: .module))
                 .popover(isPresented: $isPresented, arrowEdge: .bottom) {
                     ConflictResolverList(projects: projects)
                         .frame(width: 560, height: 480)

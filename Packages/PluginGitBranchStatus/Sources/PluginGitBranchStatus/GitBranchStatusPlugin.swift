@@ -45,7 +45,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
             toolbar.addToolbarItems([
                 ToolbarItem(
                     id: Self.toolbarItemID,
-                    title: "Current Branch",
+                    title: LumiPluginLocalization.string("Current Branch", bundle: .module),
                     placement: .trailing,
                     category: .project,
                     order: 40
@@ -65,7 +65,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Current Branch",
+                title: LumiPluginLocalization.string("Current Branch", bundle: .module),
                 placement: .leading,
                 order: 15
             ) {

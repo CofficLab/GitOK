@@ -36,11 +36,11 @@ public enum ReasoningEffort: String, CaseIterable, Codable, Identifiable, Sendab
 
     public var displayName: String {
         switch self {
-        case .low: "低"
-        case .medium: "中"
-        case .high: "高"
-        case .xhigh: "超高"
-        case .max: "极限"
+        case .low: LumiPluginLocalization.string("Low", bundle: .module)
+        case .medium: LumiPluginLocalization.string("Medium", bundle: .module)
+        case .high: LumiPluginLocalization.string("High", bundle: .module)
+        case .xhigh: LumiPluginLocalization.string("Very High", bundle: .module)
+        case .max: LumiPluginLocalization.string("Maximum", bundle: .module)
         }
     }
 
@@ -56,11 +56,11 @@ public enum ReasoningEffort: String, CaseIterable, Codable, Identifiable, Sendab
 
     public var description: String {
         switch self {
-        case .low: "轻量推理，适合简单问答"
-        case .medium: "标准推理，适合一般任务"
-        case .high: "深度推理，适合复杂代码和架构"
-        case .xhigh: "更高推理预算，适合硬骨头"
-        case .max: "最大推理预算，适合极致调试和难题"
+        case .low: LumiPluginLocalization.string("Lightweight reasoning, best for simple Q&A", bundle: .module)
+        case .medium: LumiPluginLocalization.string("Standard reasoning, best for general tasks", bundle: .module)
+        case .high: LumiPluginLocalization.string("Deep reasoning, best for complex code and architecture", bundle: .module)
+        case .xhigh: LumiPluginLocalization.string("Higher reasoning budget for hard problems", bundle: .module)
+        case .max: LumiPluginLocalization.string("Maximum reasoning budget for extreme debugging", bundle: .module)
         }
     }
 }

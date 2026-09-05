@@ -3,7 +3,7 @@ import Foundation
 /// Commit 消息组装规则（从旧版 GitOK 迁移核心逻辑）。
 public enum CommitMessageRules {
     public static let fallbackSubject = "Auto Committed by GitOK"
-    public static let fallbackCommitMessage = "自动提交"
+    public static let fallbackCommitMessage = "Auto commit"
 
     /// 提交执行计划。
     public struct SubmitPlan: Equatable, Sendable {

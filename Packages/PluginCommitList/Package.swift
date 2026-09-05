@@ -17,6 +17,7 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
@@ -30,13 +31,17 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
             ],
-            path: "Sources/PluginCommitList"
+            path: "Sources/PluginCommitList",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginCommitListTests",

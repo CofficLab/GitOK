@@ -84,7 +84,7 @@ struct BranchPickerPopoverView: View {
                 Image(systemName: isCreatingNew ? "xmark" : "plus")
             }
             .buttonStyle(.bordered)
-            .help(isCreatingNew ? "Cancel" : "New Branch")
+            .help(isCreatingNew ? LumiPluginLocalization.string("Cancel", bundle: .module) : LumiPluginLocalization.string("New Branch", bundle: .module))
             .disabled(isLoading)
         }
         .padding(.horizontal, 12)
@@ -93,7 +93,7 @@ struct BranchPickerPopoverView: View {
 
     private var newBranchInput: some View {
         HStack(spacing: 8) {
-            TextField("New branch name", text: $newBranchName)
+            TextField(LumiPluginLocalization.string("New branch name", bundle: .module), text: $newBranchName)
                 .textFieldStyle(.roundedBorder)
                 .focused($isNewBranchFieldFocused)
                 .onSubmit { createBranch() }
@@ -116,9 +116,9 @@ struct BranchPickerPopoverView: View {
             ProgressView()
                 .frame(maxWidth: .infinity, minHeight: 80)
         } else if branches.isEmpty {
-            emptyState(title: "No Branches", icon: "arrow.triangle.branch")
+            emptyState(title: LumiPluginLocalization.string("No Branches", bundle: .module), icon: "arrow.triangle.branch")
         } else if localBranches.isEmpty && remoteBranches.isEmpty {
-            emptyState(title: "No Results", icon: "magnifyingglass")
+            emptyState(title: LumiPluginLocalization.string("No Results", bundle: .module), icon: "magnifyingglass")
         } else {
             ScrollView {
                 VStack(spacing: 2) {

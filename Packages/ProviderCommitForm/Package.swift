@@ -15,14 +15,19 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitGit"),
+        .package(path: "../KitLocalization"),
     ],
     targets: [
         .target(
             name: "ProviderCommitForm",
             dependencies: [
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
             ],
-            path: "Sources/ProviderCommitForm"
+            path: "Sources/ProviderCommitForm",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "ProviderCommitFormTests",

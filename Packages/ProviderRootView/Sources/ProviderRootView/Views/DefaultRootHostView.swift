@@ -12,7 +12,7 @@ struct DefaultRootHostView: View {
         VStack(spacing: 0) {
             if let toolbarView = provider.toolbarView {
                 toolbarView
-                    .debugBlockBadge("工具栏", alignment: .bottomLeading)
+                    .debugBlockBadge(LumiPluginLocalization.string("Toolbar", bundle: .module), alignment: .bottomLeading)
                 // 与旧版 AppLayoutView 一致：工具栏下方使用主题分隔线。
                 AppDivider()
             }
@@ -20,7 +20,7 @@ struct DefaultRootHostView: View {
             HStack(spacing: 0) {
                 if let sidebarView = provider.sidebarView, !provider.isSidebarViewHidden {
                     sidebarView
-                        .debugBlockBadge("侧边栏", alignment: .bottomLeading)
+                        .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
                         .transition(sidebarTransition)
                 }
 
@@ -37,7 +37,7 @@ struct DefaultRootHostView: View {
             // 窗口底部状态栏（工具栏的对称位置）。
             if let statusBarView = provider.statusBarView {
                 statusBarView
-                    .debugBlockBadge("状态栏")
+                    .debugBlockBadge(LumiPluginLocalization.string("Status Bar", bundle: .module))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

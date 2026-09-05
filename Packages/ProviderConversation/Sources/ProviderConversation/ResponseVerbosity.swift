@@ -32,7 +32,11 @@ public enum ResponseVerbosity: CaseIterable, Codable, Identifiable, RawRepresent
     public var levelCode: String { rawValue.uppercased() }
 
     public var displayName: String {
-        switch self { case .brief: "简洁"; case .standard: "标准"; case .detailed: "详细" }
+        switch self {
+        case .brief: LumiPluginLocalization.string("Brief", bundle: .module)
+        case .standard: LumiPluginLocalization.string("Standard", bundle: .module)
+        case .detailed: LumiPluginLocalization.string("Detailed", bundle: .module)
+        }
     }
 
     public var iconName: String {
@@ -45,9 +49,9 @@ public enum ResponseVerbosity: CaseIterable, Codable, Identifiable, RawRepresent
 
     public var description: String {
         switch self {
-        case .brief: "只返回核心结论"
-        case .standard: "包含必要说明和步骤"
-        case .detailed: "包含完整推理和上下文"
+        case .brief: LumiPluginLocalization.string("Return only core conclusions", bundle: .module)
+        case .standard: LumiPluginLocalization.string("Include necessary explanations and steps", bundle: .module)
+        case .detailed: LumiPluginLocalization.string("Include full reasoning and context", bundle: .module)
         }
     }
 }

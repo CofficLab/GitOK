@@ -39,7 +39,7 @@ public struct RepositorySettingView: View {
                 }
             }
         }
-        .navigationTitle(Text("Repository Settings"))
+        .navigationTitle(Text(LumiPluginLocalization.string("Repository Settings", bundle: .module)))
         .onAppear(perform: loadData)
         .onReceive(observation.$lastEvent) { event in
             if case .dataChanged = event {
@@ -56,16 +56,16 @@ public struct RepositorySettingView: View {
     // MARK: - Sections
 
     private func currentProjectInfo(project: Project) -> some View {
-        AppSettingSection(title: "Current Project", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string("Current Project", bundle: .module), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 repositoryInfoRow(
-                    title: "Project Name",
+                    title: LumiPluginLocalization.string("Project Name", bundle: .module),
                     description: project.title,
                     icon: "folder"
                 )
                 Divider()
                 repositoryInfoRow(
-                    title: "Local Path",
+                    title: LumiPluginLocalization.string("Local Path", bundle: .module),
                     description: project.url.path,
                     icon: "line.3.horizontal.decrease.circle"
                 ) {
@@ -78,7 +78,7 @@ public struct RepositorySettingView: View {
     }
 
     private var remoteRepositoryList: some View {
-        AppSettingSection(title: "Remote Repository", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string("Remote Repository", bundle: .module), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(remotes) { remote in
                     remoteRepositoryRow(remote)
@@ -113,14 +113,14 @@ public struct RepositorySettingView: View {
     }
 
     private var emptyRemoteRepositoryState: some View {
-        AppSettingSection(title: "Remote Repository", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string("Remote Repository", bundle: .module), titleAlignment: .leading) {
             VStack(spacing: 6) {
                 Image(systemName: "icloud.slash")
                     .font(.system(size: 22))
                     .foregroundStyle(theme.textTertiary)
-                Text("No Remote Repository Configured")
+                Text(LumiPluginLocalization.string("No Remote Repository Configured", bundle: .module))
                     .font(.system(size: 13, weight: .medium))
-                Text("Add a remote repository to enable push and pull operations")
+                Text(LumiPluginLocalization.string("Add a remote repository to enable push and pull operations", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
@@ -131,8 +131,8 @@ public struct RepositorySettingView: View {
     private var addRemoteRepositoryButton: some View {
         AppSettingSection(titleAlignment: .leading) {
             AppSettingRow(
-                title: "Add Remote Repository",
-                description: "Add a new remote repository URL",
+                title: LumiPluginLocalization.string("Add Remote Repository", bundle: .module),
+                description: LumiPluginLocalization.string("Add a new remote repository URL", bundle: .module),
                 icon: "plus"
             ) {
                 EmptyView()
@@ -150,7 +150,7 @@ public struct RepositorySettingView: View {
                 Image(systemName: "folder.badge.questionmark")
                     .font(.system(size: 22))
                     .foregroundStyle(theme.textTertiary)
-                Text("Please Select a Project First")
+                Text(LumiPluginLocalization.string("Please Select a Project First", bundle: .module))
                     .font(.system(size: 13, weight: .medium))
             }
             .frame(maxWidth: .infinity)
@@ -197,7 +197,7 @@ public struct RepositorySettingView: View {
     @MainActor
     private func addRemoteRepository(name: String, url: String) {
         guard let projectURL = projects.currentProject?.url else {
-            errorMessage = "Please Select a Project First"
+            errorMessage = LumiPluginLocalization.string("Please Select a Project First", bundle: .module)
             return
         }
         isLoading = true
@@ -213,7 +213,7 @@ public struct RepositorySettingView: View {
             } catch {
                 await MainActor.run {
                     isLoading = false
-                    errorMessage = "Failed to add remote repository: \(error.localizedDescription)"
+                    errorMessage = String(format: LumiPluginLocalization.string("Failed to add remote repository: %@", bundle: .module), error.localizedDescription)
                 }
             }
         }
@@ -235,7 +235,7 @@ public struct RepositorySettingView: View {
             } catch {
                 await MainActor.run {
                     isLoading = false
-                    errorMessage = "Failed to delete remote repository: \(error.localizedDescription)"
+                    errorMessage = String(format: LumiPluginLocalization.string("Failed to delete remote repository: %@", bundle: .module), error.localizedDescription)
                 }
             }
         }
@@ -263,10 +263,10 @@ public struct AddRemoteRepositorySheet: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Add Remote Repository")
+            Text(LumiPluginLocalization.string("Add Remote Repository", bundle: .module))
                 .font(.headline)
-            AppInputField("Remote name (e.g. origin)", text: $name)
-            AppInputField("Repository URL", text: $url)
+            AppInputField(LocalizedStringKey(LumiPluginLocalization.string("Remote name (e.g. origin)", bundle: .module)), text: $name)
+            AppInputField(LocalizedStringKey(LumiPluginLocalization.string("Repository URL", bundle: .module)), text: $url)
             HStack {
                 Spacer()
                 AppButton("Cancel", style: .secondary, size: .small) {

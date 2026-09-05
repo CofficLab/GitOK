@@ -71,11 +71,11 @@ private struct ProjectSidebarView: View {
             VStack(spacing: 0) {
                 // 搜索框 + 添加项目按钮
                 HStack(spacing: 4) {
-                    AppSearchBar(text: $searchText, placeholder: "Search")
+                    AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search", bundle: .module)))
                     AppIconButton(systemImage: "plus", size: .compact) {
                         addExistingProject()
                     }
-                    .help("Add Project")
+                    .help(LumiPluginLocalization.string("Add Project", bundle: .module))
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 6)
@@ -86,8 +86,8 @@ private struct ProjectSidebarView: View {
                         } else {
                             AppEmptyState(
                                 icon: "magnifyingglass",
-                                title: "No Results",
-                                description: "No projects match \"\(searchText)\"."
+                                title: LumiPluginLocalization.string("No Results", bundle: .module),
+                                description: String(format: LumiPluginLocalization.string("No projects match \"%@\".", bundle: .module), searchText)
                             )
                         }
                     } else {
@@ -152,7 +152,7 @@ private struct ProjectSidebarView: View {
             Button {
                 projects.removeProject(id: project.id)
             } label: {
-                Label("Remove Project", systemImage: "trash")
+                Label(LumiPluginLocalization.string("Remove Project", bundle: .module), systemImage: "trash")
             }
         }
     }
@@ -162,8 +162,8 @@ private struct ProjectSidebarView: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = "Add"
-        panel.message = "Choose a repository folder to add to GitOK"
+        panel.prompt = LumiPluginLocalization.string("Add", bundle: .module)
+        panel.message = LumiPluginLocalization.string("Choose a repository folder to add to GitOK", bundle: .module)
         if panel.runModal() == .OK, let url = panel.url {
             projects.addProject(at: url)
             projects.openProject(at: url)
@@ -186,9 +186,9 @@ private struct EmptyProjectsPlaceholder: View {
                 .font(.system(size: 40))
                 .foregroundStyle(.secondary)
             VStack(spacing: 4) {
-                Text("Get Started with GitOK")
+                Text(LumiPluginLocalization.string("Get Started with GitOK", bundle: .module))
                     .font(.callout.weight(.semibold))
-                Text("Add an existing repository, or clone a new one.")
+                Text(LumiPluginLocalization.string("Add an existing repository, or clone a new one.", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -212,8 +212,8 @@ private struct EmptyProjectsPlaceholder: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = "Add"
-        panel.message = "Choose a repository folder to add to GitOK"
+        panel.prompt = LumiPluginLocalization.string("Add", bundle: .module)
+        panel.message = LumiPluginLocalization.string("Choose a repository folder to add to GitOK", bundle: .module)
         if panel.runModal() == .OK, let url = panel.url {
             projects.addProject(at: url)
             projects.openProject(at: url)

@@ -45,7 +45,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Conflict Resolver",
+                title: LumiPluginLocalization.string("Conflict Resolver", bundle: .module),
                 placement: .leading,
                 order: 18
             ) {

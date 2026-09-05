@@ -27,7 +27,7 @@ public struct BranchManagementView: View {
             VStack(alignment: .leading, spacing: 16) {
                 newBranchSection
                 Divider()
-                AppSearchBar(text: $searchText, placeholder: "Search branches")
+                AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search branches", bundle: .module)))
                 branchListSection
                 if !remoteBranches.isEmpty {
                     Divider()
@@ -63,13 +63,13 @@ public struct BranchManagementView: View {
 
     private var newBranchSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("New Branch")
+            Text(LumiPluginLocalization.string("New Branch", bundle: .module))
                 .font(.headline)
             HStack(spacing: 8) {
-                AppInputField("Branch name", text: $newBranchName)
+                AppInputField(LocalizedStringKey(LumiPluginLocalization.string("Branch name", bundle: .module)), text: $newBranchName)
                 AppIconButton(
                     systemImage: "plus",
-                    label: "New Branch",
+                    label: LumiPluginLocalization.string("New Branch", bundle: .module),
                     tint: theme.primary
                 ) {
                     createBranch()
@@ -81,14 +81,14 @@ public struct BranchManagementView: View {
 
     private var branchListSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Switch Branch")
+            Text(LumiPluginLocalization.string("Switch Branch", bundle: .module))
                 .font(.headline)
             if isLoading {
-                ProgressView("Loading branches...")
+                ProgressView(LumiPluginLocalization.string("Loading branches...", bundle: .module))
                     .frame(maxWidth: .infinity, minHeight: 60)
             } else if filteredBranches.isEmpty {
                 ContentUnavailableView(
-                    "No branches yet",
+                    LumiPluginLocalization.string("No branches yet", bundle: .module),
                     systemImage: "arrow.triangle.branch"
                 )
                 .frame(maxWidth: .infinity, minHeight: 60)
@@ -108,7 +108,7 @@ public struct BranchManagementView: View {
 
     private var remoteBranchesSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Remote Branches")
+            Text(LumiPluginLocalization.string("Remote Branches", bundle: .module))
                 .font(.headline)
             ForEach(filteredRemoteBranches) { branch in
                 HStack(spacing: 8) {

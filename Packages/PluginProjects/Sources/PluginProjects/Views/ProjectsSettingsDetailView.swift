@@ -21,7 +21,7 @@ struct ProjectsSettingsDetailView: View {
             VStack(alignment: .leading, spacing: 24) {
                 headerActions
                 AppSettingSection(
-                    title: "项目",
+                    title: LumiPluginLocalization.string("Projects", bundle: .module),
                     titleAlignment: .leading
                 ) {
                     if projects.projects.isEmpty {
@@ -43,7 +43,7 @@ struct ProjectsSettingsDetailView: View {
     private var headerActions: some View {
         HStack(spacing: 10) {
             Spacer()
-            AppButton("添加项目", systemImage: "plus", style: .primary, size: .small) {
+            AppButton(LumiPluginLocalization.string("Add Project", bundle: .module), systemImage: "plus", style: .primary, size: .small) {
                 addProject()
             }
 #if DEBUG
@@ -67,8 +67,8 @@ struct ProjectsSettingsDetailView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.message = "选择要添加的项目文件夹"
-        panel.prompt = "添加"
+        panel.message = LumiPluginLocalization.string("Choose a project folder to add", bundle: .module)
+        panel.prompt = LumiPluginLocalization.string("Add", bundle: .module)
         guard panel.runModal() == .OK, let url = panel.url else { return }
         projects.addProject(at: url)
     }
@@ -96,7 +96,7 @@ struct ProjectsSettingsDetailView: View {
                     icon: "folder"
                 ) {
                     AppButton(
-                        "打开",
+                        LumiPluginLocalization.string("Open", bundle: .module),
                         systemImage: "arrow.up.forward",
                         style: .secondary,
                         size: .small
@@ -118,7 +118,7 @@ struct ProjectsSettingsDetailView: View {
         HStack(spacing: 8) {
             Image(systemName: "folder.badge.plus")
                 .foregroundStyle(.secondary)
-            Text("暂无项目")
+            Text(LumiPluginLocalization.string("No Projects", bundle: .module))
                 .foregroundStyle(.secondary)
             Spacer()
         }

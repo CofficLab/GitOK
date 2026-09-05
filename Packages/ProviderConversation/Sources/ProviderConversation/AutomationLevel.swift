@@ -24,7 +24,11 @@ public enum AutomationLevel: CaseIterable, Codable, Identifiable, RawRepresentab
     public var levelCode: String { rawValue.uppercased() }
 
     public var displayName: String {
-        switch self { case .chat: "对话"; case .build: "构建"; case .autonomous: "自主" }
+        switch self {
+        case .chat: LumiPluginLocalization.string("Chat", bundle: .module)
+        case .build: LumiPluginLocalization.string("Build", bundle: .module)
+        case .autonomous: LumiPluginLocalization.string("Autonomous", bundle: .module)
+        }
     }
 
     public var iconName: String {
@@ -37,9 +41,9 @@ public enum AutomationLevel: CaseIterable, Codable, Identifiable, RawRepresentab
 
     public var description: String {
         switch self {
-        case .chat: "只进行对话，不执行任何工具"
-        case .build: "可以执行工具，高风险需要确认"
-        case .autonomous: "可以自主执行工具，持续推进任务"
+        case .chat: LumiPluginLocalization.string("Conversation only, no tools executed", bundle: .module)
+        case .build: LumiPluginLocalization.string("Can execute tools, high-risk actions require confirmation", bundle: .module)
+        case .autonomous: LumiPluginLocalization.string("Can autonomously execute tools and keep progressing", bundle: .module)
         }
     }
 

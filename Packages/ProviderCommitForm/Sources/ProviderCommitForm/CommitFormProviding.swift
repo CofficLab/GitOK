@@ -155,11 +155,11 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
                 commitOnly: commitOnly
             )
 
-            activityReporter?("Committing...")
+            activityReporter?(LumiPluginLocalization.string("Committing...", bundle: .module))
             try GitCommitOperation.addAll(in: repository)
             try GitCommitOperation.commit(message: plan.message, in: repository)
             if plan.pushesAfterCommit {
-                activityReporter?("Pushing...")
+                activityReporter?(LumiPluginLocalization.string("Pushing...", bundle: .module))
                 try GitCommitOperation.push(in: repository)
             }
             activityReporter?(nil)

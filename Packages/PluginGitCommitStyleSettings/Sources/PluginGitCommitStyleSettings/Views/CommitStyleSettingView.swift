@@ -14,9 +14,9 @@ public struct CommitStyleSettingView: View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
             VStack(alignment: .leading, spacing: 16) {
                 styleExamplesSection
-                AppSettingSection(title: "Global Default Style", titleAlignment: .leading) {
+                AppSettingSection(title: LumiPluginLocalization.string("Global Default Style", bundle: .module), titleAlignment: .leading) {
                     AppSettingRow(
-                        title: "Global Default Style",
+                        title: LumiPluginLocalization.string("Global Default Style", bundle: .module),
                         description: "Default commit message display style for new projects",
                         icon: "arrow.up.arrow.down"
                     ) {
@@ -34,29 +34,29 @@ public struct CommitStyleSettingView: View {
                 }
             }
         }
-        .navigationTitle(Text("Commit Style"))
+        .navigationTitle(Text(LumiPluginLocalization.string("Commit Style", bundle: .module)))
     }
 
     private var styleExamplesSection: some View {
-        AppSettingSection(title: "Style Examples", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string("Style Examples", bundle: .module), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Choosing a different style changes how commit messages are displayed:")
+                Text(LumiPluginLocalization.string("Choosing a different style changes how commit messages are displayed:", bundle: .module))
                     .font(.subheadline)
                     .foregroundStyle(theme.textSecondary)
 
-                exampleCard(title: "Emoji Style", examples: [
+                exampleCard(title: LumiPluginLocalization.string("Emoji Style", bundle: .module), examples: [
                     "✨ Feature: Add periodic remote status check",
                     "🐛 Fix: Plugin still shows when disabled",
                     "♻️ Refactor: Move logic to PluginProvider",
                 ])
 
-                exampleCard(title: "Plain Text Style", examples: [
+                exampleCard(title: LumiPluginLocalization.string("Plain Text Style", bundle: .module), examples: [
                     "Feature: Add periodic remote status check",
                     "Fix: Plugin still shows when disabled",
                     "Refactor: Move logic to PluginProvider",
                 ])
 
-                exampleCard(title: "Plain Text Lowercase", examples: [
+                exampleCard(title: LumiPluginLocalization.string("Plain Text Lowercase", bundle: .module), examples: [
                     "feature: Add periodic remote status check",
                     "fix: Plugin still shows when disabled",
                     "refactor: Move logic to PluginProvider",

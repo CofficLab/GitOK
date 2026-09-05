@@ -17,6 +17,7 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
         .package(path: "../ProviderActivity"),
         .package(path: "../ProviderCloneRepository"),
@@ -30,13 +31,17 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderActivity", package: "ProviderActivity"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
             ],
-            path: "Sources/PluginCloneRepository"
+            path: "Sources/PluginCloneRepository",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginCloneRepositoryTests",

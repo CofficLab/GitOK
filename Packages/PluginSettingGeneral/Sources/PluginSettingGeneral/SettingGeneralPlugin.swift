@@ -23,8 +23,8 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
     public let order = 100
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.setting-general",
-        name: "通用设置",
-        description: "在设置视图中注册「通用」入口，包含应用信息与说明书。",
+        name: "General Settings",
+        description: "Registers the General entry in the settings view with app info and user manual.",
         category: .system,
         stage: .stable,
         policy: .required
@@ -69,7 +69,7 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
 
         let entry = SettingEntryItem(
             id: "general",
-            title: "通用",
+            title: LumiPluginLocalization.string("General", bundle: .module),
             systemImage: "gearshape",
             order: 1
         ) { [docsProvider] in
