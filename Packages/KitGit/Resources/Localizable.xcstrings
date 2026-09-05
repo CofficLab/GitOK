@@ -1,516 +1,1434 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "This directory is not a Git repository: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This directory is not a Git repository: %@"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "A commit is required for the tag." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A commit is required for the tag."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "该目录不是 Git 仓库：%@"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建标签需要指定提交。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "該目錄不是 Git 儲存庫：%@"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立標籤需要指定提交。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "該目錄不是 Git 儲存庫：%@"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立標籤需要指定提交。"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "該目錄不是 Git 儲存庫：%@"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立標籤需要指定提交。"
           }
         }
       }
     },
-    "Git command not found. Please make sure git is installed.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git command not found. Please make sure git is installed."
+    "A commit is required to revert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A commit is required to revert."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未找到 git 命令，请确认系统已安装 git"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定要反转的提交。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "找不到 git 指令，請確認系統已安裝 git"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定要反轉的提交。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "找不到 git 指令，請確認系統已安裝 git"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定要反轉的提交。"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "找不到 git 指令，請確認系統已安裝 git"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定要反轉的提交。"
           }
         }
       }
     },
-    "There are no changes to commit in the current workspace.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "There are no changes to commit in the current workspace."
+    "A conflicted file path is required." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A conflicted file path is required."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当前工作区没有可提交的改动。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定冲突文件路径。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前工作區沒有可提交的變更。"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定衝突檔案路徑。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前工作區沒有可提交的變更。"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定衝突檔案路徑。"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前工作區沒有可提交的變更。"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定衝突檔案路徑。"
           }
         }
       }
     },
-    "Commit failed: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Commit failed: %@"
+    "A remote name is required for the tag." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A remote name is required for the tag."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提交失败：%@"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作远程标签需要指定远程仓库。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提交失敗：%@"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作遠端標籤需要指定遠端儲存庫。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提交失敗：%@"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作遠端標籤需要指定遠端儲存庫。"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提交失敗：%@"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作遠端標籤需要指定遠端儲存庫。"
           }
         }
       }
     },
-    "Push failed: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Push failed: %@"
+    "A remote name is required." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A remote name is required."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "推送失败：%@"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定远程仓库名称。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "推送失敗：%@"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定遠端儲存庫名稱。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "推送失敗：%@"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定遠端儲存庫名稱。"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "推送失敗：%@"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要指定遠端儲存庫名稱。"
           }
         }
       }
     },
-    "A commit is required to revert.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A commit is required to revert." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要指定要反转的提交。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要指定要反轉的提交。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要指定要反轉的提交。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要指定要反轉的提交。" } }
-      }
-    },
-    "Revert failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Revert failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "反转提交失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "反轉提交失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "反轉提交失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "反轉提交失敗：%@" } }
-      }
-    },
-    "Undo failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Undo failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销提交失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷提交失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷提交失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷提交失敗：%@" } }
-      }
-    },
-    "The working tree must be clean before undoing a commit.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before undoing a commit." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销提交前工作区必须干净。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷提交前工作區必須乾淨。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷提交前工作區必須乾淨。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷提交前工作區必須乾淨。" } }
-      }
-    },
-    "The selected commit is no longer the current HEAD.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The selected commit is no longer the current HEAD." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "选中的提交已不是当前 HEAD。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "選取的提交已不是目前 HEAD。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "選取的提交已不是目前 HEAD。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "選取的提交已不是目前 HEAD。" } }
-      }
-    },
-    "Soft reset failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Soft reset failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "软重置失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "軟重置失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "軟重置失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "軟重置失敗：%@" } }
-      }
-    },
-    "Mixed reset failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Mixed reset failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "混合重置失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "混合重置失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "混合重置失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "混合重置失敗：%@" } }
-      }
-    },
-    "Hard reset failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Hard reset failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "硬重置失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "硬重置失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "硬重置失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "硬重置失敗：%@" } }
-      }
-    },
-    "Squash failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Squash failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩提交失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮提交失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮提交失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮提交失敗：%@" } }
-      }
-    },
-    "The working tree must be clean before squashing commits.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before squashing commits." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩提交前工作区必须干净。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮提交前工作區必須乾淨。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮提交前工作區必須乾淨。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮提交前工作區必須乾淨。" } }
-      }
-    },
-    "The current HEAD changed before the squash could start.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The current HEAD changed before the squash could start." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩开始前当前 HEAD 已发生变化。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮開始前目前 HEAD 已發生變化。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮開始前目前 HEAD 已發生變化。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮開始前目前 HEAD 已發生變化。" } }
-      }
-    },
-    "The working tree must be clean before resetting history.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before resetting history." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置历史前工作区必须干净。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重置歷史前工作區必須乾淨。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "重置歷史前工作區必須乾淨。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "重置歷史前工作區必須乾淨。" } }
-      }
-    },
-    "The current HEAD changed before the reset could start.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The current HEAD changed before the reset could start." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置开始前当前 HEAD 已发生变化。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重置開始前目前 HEAD 已發生變化。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "重置開始前目前 HEAD 已發生變化。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "重置開始前目前 HEAD 已發生變化。" } }
-      }
-    },
-    "A valid tag name is required.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A valid tag name is required." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要有效的标签名称。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要有效的標籤名稱。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要有效的標籤名稱。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要有效的標籤名稱。" } }
-      }
-    },
-    "A commit is required for the tag.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A commit is required for the tag." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建标签需要指定提交。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立標籤需要指定提交。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立標籤需要指定提交。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立標籤需要指定提交。" } }
-      }
-    },
-    "An annotated tag message is required.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "An annotated tag message is required." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "附注标签需要填写说明。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "附註標籤需要填寫說明。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "附註標籤需要填寫說明。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "附註標籤需要填寫說明。" } }
-      }
-    },
-    "A remote name is required for the tag.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A remote name is required for the tag." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "操作远程标签需要指定远程仓库。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "操作遠端標籤需要指定遠端儲存庫。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "操作遠端標籤需要指定遠端儲存庫。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "操作遠端標籤需要指定遠端儲存庫。" } }
-      }
-    },
-    "Tag creation failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Tag creation failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建标签失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立標籤失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立標籤失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立標籤失敗：%@" } }
-      }
-    },
-    "Tag deletion failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Tag deletion failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除标签失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除標籤失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除標籤失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除標籤失敗：%@" } }
-      }
-    },
-    "Tag push failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Tag push failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "推送标签失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "推送標籤失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "推送標籤失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "推送標籤失敗：%@" } }
-      }
-    },
-    "Remote tag deletion failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Remote tag deletion failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除远程标签失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤失敗：%@" } }
-      }
-    },
-    "A valid branch name is required.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A valid branch name is required." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要有效的分支名称。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要有效的分支名稱。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要有效的分支名稱。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要有效的分支名稱。" } }
-      }
-    },
-    "A remote name is required.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A remote name is required." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要指定远程仓库名称。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要指定遠端儲存庫名稱。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要指定遠端儲存庫名稱。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要指定遠端儲存庫名稱。" } }
-      }
-    },
-    "The remote HEAD branch cannot be deleted.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The remote HEAD branch cannot be deleted." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "不能删除远程 HEAD 分支。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "不能刪除遠端 HEAD 分支。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "不能刪除遠端 HEAD 分支。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "不能刪除遠端 HEAD 分支。" } }
-      }
-    },
-    "Branch rename failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Branch rename failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重命名分支失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重新命名分支失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "重新命名分支失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "重新命名分支失敗：%@" } }
-      }
-    },
-    "Upstream update failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Upstream update failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "更新上游失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "更新上游失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "更新上游失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "更新上游失敗：%@" } }
-      }
-    },
-    "Branch publish failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Branch publish failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "发布分支失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "發佈分支失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "發佈分支失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "發佈分支失敗：%@" } }
-      }
-    },
-    "Remote branch deletion failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Remote branch deletion failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除远程分支失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除遠端分支失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除遠端分支失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端分支失敗：%@" } }
-      }
-    },
-    "Two branches are required for comparison.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Two branches are required for comparison." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "比较需要指定两个不同的分支。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "比較需要指定兩個不同的分支。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "比較需要指定兩個不同的分支。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "比較需要指定兩個不同的分支。" } }
-      }
-    },
-    "Branch comparison failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Branch comparison failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "分支比较失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "分支比較失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "分支比較失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "分支比較失敗：%@" } }
-      }
-    },
-    "A conflicted file path is required.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A conflicted file path is required." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要指定冲突文件路径。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要指定衝突檔案路徑。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要指定衝突檔案路徑。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要指定衝突檔案路徑。" } }
-      }
-    },
-    "No merge is currently in progress.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "No merge is currently in progress." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "当前没有正在进行的合并。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "目前沒有正在進行的合併。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "目前沒有正在進行的合併。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "目前沒有正在進行的合併。" } }
-      }
-    },
-    "Resolve all conflicts before continuing the merge.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Resolve all conflicts before continuing the merge." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "请先解决所有冲突，再继续合并。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } }
-      }
-    },
-    "Merge operation failed: %@": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Merge operation failed: %@" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "合并操作失败：%@" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "合併操作失敗：%@" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "合併操作失敗：%@" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "合併操作失敗：%@" } }
-      }
-    },
-    "Git unavailable: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git unavailable: %@"
+    "A valid branch name is required." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A valid branch name is required."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 不可用：%@"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的分支名称。"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 不可用：%@"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的分支名稱。"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 不可用：%@"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的分支名稱。"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 不可用：%@"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的分支名稱。"
+          }
+        }
+      }
+    },
+    "A valid tag name is required." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A valid tag name is required."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的标签名称。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的標籤名稱。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的標籤名稱。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要有效的標籤名稱。"
+          }
+        }
+      }
+    },
+    "An annotated tag message is required." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An annotated tag message is required."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附注标签需要填写说明。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附註標籤需要填寫說明。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附註標籤需要填寫說明。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附註標籤需要填寫說明。"
+          }
+        }
+      }
+    },
+    "At least one commit is required for cherry-pick." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least one commit is required for cherry-pick."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cherry-pick 至少需要一个提交。"
+          }
+        }
+      }
+    },
+    "Branch comparison failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Branch comparison failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分支比较失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分支比較失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分支比較失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分支比較失敗：%@"
+          }
+        }
+      }
+    },
+    "Branch publish failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Branch publish failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发布分支失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "發佈分支失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "發佈分支失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "發佈分支失敗：%@"
+          }
+        }
+      }
+    },
+    "Branch rename failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Branch rename failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名分支失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新命名分支失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新命名分支失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新命名分支失敗：%@"
+          }
+        }
+      }
+    },
+    "Cherry-pick operation failed: %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cherry-pick operation failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cherry-pick 操作失败：%@"
+          }
+        }
+      }
+    },
+    "Commit failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交失敗：%@"
+          }
+        }
+      }
+    },
+    "Git command not found. Please make sure git is installed." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git command not found. Please make sure git is installed."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到 git 命令，请确认系统已安装 git"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找不到 git 指令，請確認系統已安裝 git"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找不到 git 指令，請確認系統已安裝 git"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找不到 git 指令，請確認系統已安裝 git"
+          }
+        }
+      }
+    },
+    "Git unavailable: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git unavailable: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 不可用：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 不可用：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 不可用：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 不可用：%@"
+          }
+        }
+      }
+    },
+    "Hard reset failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard reset failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "硬重置失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "硬重置失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "硬重置失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "硬重置失敗：%@"
+          }
+        }
+      }
+    },
+    "Merge operation failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge operation failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合并操作失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併操作失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併操作失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併操作失敗：%@"
+          }
+        }
+      }
+    },
+    "Mixed reset failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixed reset failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合重置失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合重置失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合重置失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合重置失敗：%@"
+          }
+        }
+      }
+    },
+    "No cherry-pick is currently in progress." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cherry-pick is currently in progress."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前没有正在进行的 Cherry-pick。"
+          }
+        }
+      }
+    },
+    "No merge is currently in progress." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No merge is currently in progress."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前没有正在进行的合并。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前沒有正在進行的合併。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前沒有正在進行的合併。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前沒有正在進行的合併。"
+          }
+        }
+      }
+    },
+    "Push failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送失敗：%@"
+          }
+        }
+      }
+    },
+    "Remote branch deletion failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remote branch deletion failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除远程分支失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除遠端分支失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除遠端分支失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除遠端分支失敗：%@"
+          }
+        }
+      }
+    },
+    "Remote tag deletion failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remote tag deletion failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除远程标签失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除遠端標籤失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除遠端標籤失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除遠端標籤失敗：%@"
+          }
+        }
+      }
+    },
+    "Resolve all conflicts before continuing the cherry-pick." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resolve all conflicts before continuing the cherry-pick."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先解决所有冲突，再继续 Cherry-pick。"
+          }
+        }
+      }
+    },
+    "Resolve all conflicts before continuing the merge." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resolve all conflicts before continuing the merge."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先解决所有冲突，再继续合并。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先解決所有衝突，再繼續合併。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先解決所有衝突，再繼續合併。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先解決所有衝突，再繼續合併。"
+          }
+        }
+      }
+    },
+    "Revert failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revert failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反转提交失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反轉提交失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反轉提交失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反轉提交失敗：%@"
+          }
+        }
+      }
+    },
+    "Soft reset failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soft reset failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "软重置失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "軟重置失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "軟重置失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "軟重置失敗：%@"
+          }
+        }
+      }
+    },
+    "Squash failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squash failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩提交失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮提交失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮提交失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮提交失敗：%@"
+          }
+        }
+      }
+    },
+    "Tag creation failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag creation failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建标签失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立標籤失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立標籤失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立標籤失敗：%@"
+          }
+        }
+      }
+    },
+    "Tag deletion failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag deletion failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除标签失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除標籤失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除標籤失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除標籤失敗：%@"
+          }
+        }
+      }
+    },
+    "Tag push failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag push failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送标签失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送標籤失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送標籤失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送標籤失敗：%@"
+          }
+        }
+      }
+    },
+    "The current HEAD changed before the reset could start." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The current HEAD changed before the reset could start."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置开始前当前 HEAD 已发生变化。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置開始前目前 HEAD 已發生變化。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置開始前目前 HEAD 已發生變化。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置開始前目前 HEAD 已發生變化。"
+          }
+        }
+      }
+    },
+    "The current HEAD changed before the squash could start." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The current HEAD changed before the squash could start."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩开始前当前 HEAD 已发生变化。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮開始前目前 HEAD 已發生變化。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮開始前目前 HEAD 已發生變化。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮開始前目前 HEAD 已發生變化。"
+          }
+        }
+      }
+    },
+    "The remote HEAD branch cannot be deleted." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The remote HEAD branch cannot be deleted."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能删除远程 HEAD 分支。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能刪除遠端 HEAD 分支。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能刪除遠端 HEAD 分支。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能刪除遠端 HEAD 分支。"
+          }
+        }
+      }
+    },
+    "The selected commit is no longer the current HEAD." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected commit is no longer the current HEAD."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选中的提交已不是当前 HEAD。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選取的提交已不是目前 HEAD。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選取的提交已不是目前 HEAD。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選取的提交已不是目前 HEAD。"
+          }
+        }
+      }
+    },
+    "The working tree must be clean before resetting history." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The working tree must be clean before resetting history."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置历史前工作区必须干净。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置歷史前工作區必須乾淨。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置歷史前工作區必須乾淨。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置歷史前工作區必須乾淨。"
+          }
+        }
+      }
+    },
+    "The working tree must be clean before squashing commits." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The working tree must be clean before squashing commits."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩提交前工作区必须干净。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮提交前工作區必須乾淨。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮提交前工作區必須乾淨。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壓縮提交前工作區必須乾淨。"
+          }
+        }
+      }
+    },
+    "The working tree must be clean before undoing a commit." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The working tree must be clean before undoing a commit."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤销提交前工作区必须干净。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤銷提交前工作區必須乾淨。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤銷提交前工作區必須乾淨。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤銷提交前工作區必須乾淨。"
+          }
+        }
+      }
+    },
+    "There are no changes to commit in the current workspace." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no changes to commit in the current workspace."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前工作区没有可提交的改动。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前工作區沒有可提交的變更。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前工作區沒有可提交的變更。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前工作區沒有可提交的變更。"
+          }
+        }
+      }
+    },
+    "This directory is not a Git repository: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This directory is not a Git repository: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该目录不是 Git 仓库：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "該目錄不是 Git 儲存庫：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "該目錄不是 Git 儲存庫：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "該目錄不是 Git 儲存庫：%@"
+          }
+        }
+      }
+    },
+    "Two branches are required for comparison." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two branches are required for comparison."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "比较需要指定两个不同的分支。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "比較需要指定兩個不同的分支。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "比較需要指定兩個不同的分支。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "比較需要指定兩個不同的分支。"
+          }
+        }
+      }
+    },
+    "Undo failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤销提交失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤銷提交失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤銷提交失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤銷提交失敗：%@"
+          }
+        }
+      }
+    },
+    "Upstream update failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upstream update failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新上游失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新上游失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新上游失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新上游失敗：%@"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
