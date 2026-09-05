@@ -10,6 +10,10 @@
 	</array>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>SUFeedURL</key>
+	<string>https://api.kuaiyizhi.cn/gitok/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>VRFIJExvMCeneBRzxR6mu2zPN9ggOUr0LNlcKYOb27o=</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LumiAppGroupIdentifier</key>

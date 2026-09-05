@@ -45,6 +45,8 @@ grep -q 'CODE_SIGN_ENTITLEMENTS=""' "$RELEASE_WORKFLOW" || fail "unsigned archiv
 grep -q '.github/scripts/sign_app.sh' "$RELEASE_WORKFLOW" || fail "manual signing script missing"
 grep -q 'codesign_with_timestamp_retry' "${ROOT}/.github/scripts/sign_app.sh" || fail "codesign timestamp retry missing"
 grep -q 'CODESIGN_RETRIES' "${ROOT}/.github/scripts/sign_app.sh" || fail "codesign retry configuration missing"
+grep -q '<key>SUPublicEDKey</key>' "${ROOT}/GitOKApp/GitOK-Info.plist" || fail "legacy Sparkle public key missing"
+grep -q 'VRFIJExvMCeneBRzxR6mu2zPN9ggOUr0LNlcKYOb27o=' "${ROOT}/GitOKApp/GitOK-Info.plist" || fail "legacy Sparkle public key mismatch"
 grep -q 'hdiutil create' "$RELEASE_WORKFLOW" || fail "native DMG creation missing"
 grep -q 'xcrun notarytool submit' "$RELEASE_WORKFLOW" || fail "notarization command missing"
 grep -q 'sparkle:edSignature' "$RELEASE_WORKFLOW" || fail "appcast signature guard missing"
