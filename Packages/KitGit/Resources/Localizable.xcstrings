@@ -243,6 +243,33 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "硬重置失敗：%@" } }
       }
     },
+    "Squash failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Squash failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩提交失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮提交失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮提交失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮提交失敗：%@" } }
+      }
+    },
+    "The working tree must be clean before squashing commits.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before squashing commits." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩提交前工作区必须干净。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮提交前工作區必須乾淨。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮提交前工作區必須乾淨。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮提交前工作區必須乾淨。" } }
+      }
+    },
+    "The current HEAD changed before the squash could start.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The current HEAD changed before the squash could start." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩开始前当前 HEAD 已发生变化。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮開始前目前 HEAD 已發生變化。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮開始前目前 HEAD 已發生變化。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮開始前目前 HEAD 已發生變化。" } }
+      }
+    },
     "The working tree must be clean before resetting history.": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before resetting history." } },

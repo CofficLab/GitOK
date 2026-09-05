@@ -443,6 +443,51 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD、暫存區和已追蹤工作區檔案都會回退到此提交，且無法撤銷。" } }
       }
     },
+    "Confirm Squash Commits?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Squash Commits?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认压缩提交？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認壓縮提交？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認壓縮提交？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認壓縮提交？" } }
+      }
+    },
+    "Squash": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Squash" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮" } }
+      }
+    },
+    "Squash to Here": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Squash to Here" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩到此处" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮到此處" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮到此處" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮到此處" } }
+      }
+    },
+    "Squash commit message": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Squash commit message" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "压缩后的提交信息" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "壓縮後的提交訊息" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "壓縮後的提交訊息" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "壓縮後的提交訊息" } }
+      }
+    },
+    "This will combine %lld commits from HEAD to this commit into one.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This will combine %lld commits from HEAD to this commit into one." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "这会将从 HEAD 到此提交的 %lld 个提交合并为一个。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "這會將從 HEAD 到此提交的 %lld 個提交合併為一個。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "這會將從 HEAD 到此提交的 %lld 個提交合併為一個。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "這會將從 HEAD 到此提交的 %lld 個提交合併為一個。" } }
+      }
+    },
     "Confirm Revert": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Confirm Revert" } },

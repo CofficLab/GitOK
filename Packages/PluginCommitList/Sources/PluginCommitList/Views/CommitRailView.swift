@@ -52,11 +52,14 @@ struct CommitRailView: View {
     @State private var pendingSoftReset: GitCommit?
     @State private var pendingMixedReset: GitCommit?
     @State private var pendingHardReset: GitCommit?
+    @State private var pendingSquash: GitCommit?
+    @State private var squashMessage = ""
     @State private var undoingHash: String?
     @State private var revertingHash: String?
     @State private var softResettingHash: String?
     @State private var mixedResettingHash: String?
     @State private var hardResettingHash: String?
+    @State private var squashingHash: String?
     @State private var historyError: String?
 
     init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
@@ -190,6 +193,37 @@ struct CommitRailView: View {
                 "HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone.",
                 bundle: .module
             ))
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Squash Commits?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingSquash != nil },
+                set: { isPresented in
+                    if !isPresented { pendingSquash = nil }
+                }
+            )
+        ) {
+            TextField(
+                LumiPluginLocalization.string("Squash commit message", bundle: .module),
+                text: $squashMessage
+            )
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingSquash = nil
+            }
+            Button(LumiPluginLocalization.string("Squash", bundle: .module)) {
+                guard let commit = pendingSquash else { return }
+                pendingSquash = nil
+                performSquash(to: commit)
+            }
+            .disabled(squashMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        } message: {
+            if let commit = pendingSquash,
+               let index = commits.firstIndex(where: { $0.hash == commit.hash }) {
+                Text(String(format: LumiPluginLocalization.string(
+                    "This will combine %lld commits from HEAD to this commit into one.",
+                    bundle: .module
+                ), index + 1))
+            }
         }
         // 项目 / 选中 commit / 仓库数据变化 → 刷新列表或选中态高亮。
         .onReceive(projectObservation.$revision) { _ in
@@ -360,6 +394,7 @@ struct CommitRailView: View {
                         || softResettingHash != nil
                         || mixedResettingHash != nil
                         || hardResettingHash != nil
+                        || squashingHash != nil
                 )
 
                 Divider()
@@ -380,10 +415,32 @@ struct CommitRailView: View {
                     || softResettingHash != nil
                     || mixedResettingHash != nil
                     || hardResettingHash != nil
+                    || squashingHash != nil
                     || commit.parentHashes.count > 1
             )
 
-            Divider()
+            if canSquash(commit) {
+                Button {
+                    historyError = nil
+                    squashMessage = commit.message
+                    pendingSquash = commit
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Squash to Here", bundle: .module),
+                        systemImage: "arrow.triangle.merge"
+                    )
+                }
+                .disabled(
+                    undoingHash != nil
+                        || revertingHash != nil
+                        || softResettingHash != nil
+                        || mixedResettingHash != nil
+                        || hardResettingHash != nil
+                        || squashingHash != nil
+                )
+
+                Divider()
+            }
 
             Menu {
                 Button {
@@ -425,6 +482,7 @@ struct CommitRailView: View {
                     || softResettingHash != nil
                     || mixedResettingHash != nil
                     || hardResettingHash != nil
+                    || squashingHash != nil
             )
         }
     }
@@ -665,11 +723,55 @@ struct CommitRailView: View {
         }
     }
 
+    private func performSquash(to commit: GitCommit) {
+        guard let project = projects.currentProject,
+              let expectedHead = commits.first?.hash,
+              let parentHash = commit.parentHashes.first else { return }
+
+        let message = squashMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !message.isEmpty else { return }
+
+        squashingHash = commit.hash
+        historyError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitHistoryOperation.squash(
+                    to: commit.hash,
+                    parentHash: parentHash,
+                    expectedHead: expectedHead,
+                    message: message,
+                    in: url
+                )
+            }
+            await MainActor.run {
+                squashingHash = nil
+                switch result {
+                case .success:
+                    projects.clearCommitSelection()
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    historyError = error.localizedDescription
+                }
+            }
+        }
+    }
+
     private func canUndo(_ commit: GitCommit) -> Bool {
         commits.first?.hash == commit.hash
             && unpushedHashes.contains(commit.hash)
             && commit.tags.isEmpty
             && !commit.parentHashes.isEmpty
+    }
+
+    private func canSquash(_ commit: GitCommit) -> Bool {
+        guard let index = commits.firstIndex(where: { $0.hash == commit.hash }),
+              index >= 1,
+              !commit.parentHashes.isEmpty else { return false }
+
+        return commits.prefix(index + 1).allSatisfy {
+            unpushedHashes.contains($0.hash)
+        }
     }
 
     private func select(_ commit: GitCommit) {

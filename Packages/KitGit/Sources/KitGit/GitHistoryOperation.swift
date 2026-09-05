@@ -12,6 +12,7 @@ public enum GitHistoryOperation {
         case softResetFailed(String)
         case mixedResetFailed(String)
         case hardResetFailed(String)
+        case squashFailed(String)
 
         public var errorDescription: String? {
             switch self {
@@ -27,6 +28,8 @@ public enum GitHistoryOperation {
                 String(format: LumiPluginLocalization.string("Mixed reset failed: %@", bundle: .module), message)
             case .hardResetFailed(let message):
                 String(format: LumiPluginLocalization.string("Hard reset failed: %@", bundle: .module), message)
+            case .squashFailed(let message):
+                String(format: LumiPluginLocalization.string("Squash failed: %@", bundle: .module), message)
             }
         }
     }
@@ -191,6 +194,59 @@ public enum GitHistoryOperation {
         } catch {
             let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
             throw Error.hardResetFailed(message)
+        }
+    }
+
+    /// 将目标提交到当前 HEAD 之间的连续提交合并为一个新提交。
+    ///
+    /// 目标提交必须有父提交；调用方传入该父提交后，操作会先将 HEAD 软重置到
+    /// 父提交，再以新消息创建合并提交。工作区必须干净，且 HEAD 必须仍匹配调用方
+    /// 加载到的值。
+    @discardableResult
+    public static func squash(
+        to targetHash: String,
+        parentHash: String,
+        expectedHead: String,
+        message: String,
+        in repository: URL
+    ) throws -> String {
+        let trimmedTargetHash = targetHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedParentHash = parentHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedExpectedHead = expectedHead.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTargetHash.isEmpty,
+              !trimmedParentHash.isEmpty,
+              !trimmedExpectedHead.isEmpty,
+              !trimmedMessage.isEmpty else {
+            throw Error.invalidCommit
+        }
+
+        do {
+            guard try GitStatusLoader.loadStatus(in: repository).isClean else {
+                throw Error.squashFailed(
+                    LumiPluginLocalization.string("The working tree must be clean before squashing commits.", bundle: .module)
+                )
+            }
+
+            let head = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repository)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard head == trimmedExpectedHead else {
+                throw Error.squashFailed(
+                    LumiPluginLocalization.string("The current HEAD changed before the squash could start.", bundle: .module)
+                )
+            }
+
+            _ = try GitProcessRunner.run(
+                ["rev-parse", "--verify", "\(trimmedTargetHash)^{commit}"],
+                in: repository
+            )
+            _ = try GitProcessRunner.run(["reset", "--soft", trimmedParentHash], in: repository)
+            return try GitProcessRunner.run(["commit", "-m", trimmedMessage], in: repository)
+        } catch let error as Error {
+            throw error
+        } catch {
+            let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
+            throw Error.squashFailed(message)
         }
     }
 

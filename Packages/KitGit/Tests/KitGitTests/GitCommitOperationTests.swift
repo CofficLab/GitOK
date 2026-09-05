@@ -420,4 +420,51 @@ final class GitCommitOperationTests: XCTestCase {
         )
         XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
     }
+
+    func testSquashCombinesTargetThroughHeadWithNewMessage() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("one\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "one", in: repo)
+        let parentHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("two\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "two", in: repo)
+        let targetHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        try Data("three\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "three", in: repo)
+        let expectedHead = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        _ = try GitHistoryOperation.squash(
+            to: targetHash,
+            parentHash: parentHash,
+            expectedHead: expectedHead,
+            message: "two and three",
+            in: repo
+        )
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD^"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            parentHash
+        )
+        XCTAssertEqual(
+            try GitProcessRunner.run(["log", "-1", "--format=%s"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            "two and three"
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "three\n"
+        )
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
 }
