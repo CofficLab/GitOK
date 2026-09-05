@@ -4,6 +4,18 @@ import ImageIO
 import UniformTypeIdentifiers
 
 public enum IconExporter {
+    public enum XcodeFormat: String, CaseIterable, Sendable {
+        case legacy
+        case modern
+
+        fileprivate var folderName: String {
+            switch self {
+            case .legacy: "XcodeIcons-Legacy.appiconset"
+            case .modern: "XcodeIcons-Modern.appiconset"
+            }
+        }
+    }
+
     public struct Slot: Codable, Equatable, Sendable {
         public let filename: String
         public let idiom: String
@@ -65,6 +77,45 @@ public enum IconExporter {
         ]
         let data = try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
         try data.write(to: destinationURL.appendingPathComponent("Contents.json"), options: [.atomic])
+    }
+
+    /// Exports the two legacy Xcode icon set variants used by GitOK.
+    public static func exportXcodeIconSets(
+        from icon: IconData,
+        to destinationURL: URL,
+        formats: [XcodeFormat] = XcodeFormat.allCases,
+        fileManager: FileManager = .default
+    ) throws {
+        guard let sourceURL = icon.imageURL,
+              let image = NSImage(contentsOf: sourceURL),
+              let sourceImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            throw IconExportError.invalidSourceImage
+        }
+
+        for format in formats {
+            let folderURL = destinationURL.appendingPathComponent(format.folderName, isDirectory: true)
+            try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            var exportIcon = icon
+            if format == .legacy {
+                exportIcon.padding = 0.1
+            } else {
+                exportIcon.cornerRadius = 0
+                exportIcon.opacity = 1
+            }
+
+            let macSizes = [16, 32, 128, 256, 512]
+            for size in macSizes {
+                try writePNG(sourceImage, icon: exportIcon, pixelSize: size, to: folderURL.appendingPathComponent("icon-mac-\(size)x\(size).png"))
+                try writePNG(sourceImage, icon: exportIcon, pixelSize: size * 2, to: folderURL.appendingPathComponent("icon-mac-\(size)x\(size)@2x.png"))
+            }
+
+            var iPhoneIcon = exportIcon
+            if format == .legacy {
+                iPhoneIcon.padding = 0
+            }
+            try writePNG(sourceImage, icon: iPhoneIcon, pixelSize: 1024, to: folderURL.appendingPathComponent("icon-ios-1024x1024.png"))
+            try writeXcodeContentsJSON(to: folderURL, formats: format)
+        }
     }
 
     private static func writePNG(_ image: CGImage, icon: IconData, pixelSize: Int, to url: URL) throws {
@@ -143,6 +194,24 @@ public enum IconExporter {
             options: []
         )
         context.restoreGState()
+    }
+
+    private static func writeXcodeContentsJSON(to folderURL: URL, formats: XcodeFormat) throws {
+        let macSizes = [16, 32, 128, 256, 512]
+        var images: [[String: String]] = []
+        for size in macSizes {
+            images.append(["filename": "icon-mac-\(size)x\(size).png", "idiom": "mac", "scale": "1x", "size": "\(size)x\(size)"])
+            images.append(["filename": "icon-mac-\(size)x\(size)@2x.png", "idiom": "mac", "scale": "2x", "size": "\(size)x\(size)"])
+        }
+        images.append(["filename": "icon-ios-1024x1024.png", "idiom": "universal", "platform": "ios", "scale": "1x", "size": "1024x1024"])
+
+        let contents: [String: Any] = [
+            "images": images,
+            "info": ["author": "xcode", "version": 1],
+            "properties": ["pre-rendered": formats == .modern],
+        ]
+        let data = try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+        try data.write(to: folderURL.appendingPathComponent("Contents.json"), options: [.atomic])
     }
 }
 

@@ -57,7 +57,7 @@ public struct IconWorkspaceView: View {
                     Text("Icon Editor").font(.title2.bold())
                     Spacer()
                     Button("Import Image", action: chooseImage)
-                    Button("Export AppIcon", action: chooseExportDirectory)
+                    Button("Export Xcode Sets", action: chooseExportDirectory)
                     Button("Delete", role: .destructive, action: model.deleteSelectedIcon)
                     Button("Save", action: model.saveDraft)
                         .buttonStyle(.borderedProminent)
@@ -94,7 +94,7 @@ public struct IconWorkspaceView: View {
         panel.nameFieldStringValue = "AppIcon.appiconset"
         panel.canCreateDirectories = true
         if panel.runModal() == .OK, let url = panel.url {
-            model.exportSelectedIcon(to: url)
+            model.exportSelectedIconSets(to: url)
         }
     }
 }

@@ -133,6 +133,25 @@ public final class IconWorkspaceModel: ObservableObject {
         }
     }
 
+    public func exportSelectedIconSets(to destinationURL: URL) {
+        guard var icon = selectedIcon else {
+            message = "Import an image before exporting"
+            return
+        }
+        icon.title = title
+        icon.backgroundId = backgroundID
+        icon.opacity = opacity
+        icon.scale = scale
+        icon.padding = padding
+        icon.imageURL = imageURL
+        do {
+            try IconExporter.exportXcodeIconSets(from: icon, to: destinationURL)
+            message = "Legacy and modern Xcode icon sets exported"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
     private func loadDraft(from icon: IconData?) {
         guard let icon else {
             resetDraft()
