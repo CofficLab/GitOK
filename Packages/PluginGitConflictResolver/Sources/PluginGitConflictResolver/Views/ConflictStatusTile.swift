@@ -58,7 +58,7 @@ public struct ConflictStatusTile: View {
             return
         }
         Task.detached(priority: .utility) {
-            let merging = GitMergeOperation.isMerging(in: url)
+            let merging = GitMergeOperation.hasConflictOperation(in: url)
             let count = merging ? GitMergeOperation.conflictFiles(in: url).count : 0
             await MainActor.run {
                 isMerging = merging

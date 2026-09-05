@@ -43,6 +43,11 @@ public enum GitMergeOperation {
         return FileManager.default.fileExists(atPath: mergeHead.path)
     }
 
+    /// 是否存在需要解决冲突的 Git 操作（合并或 Cherry-pick）。
+    public static func hasConflictOperation(in repository: URL) -> Bool {
+        isMerging(in: repository) || GitCherryPickOperation.status(in: repository).isCherryPicking
+    }
+
     /// 列出冲突文件（`git status --porcelain` 中 index/worktree 为 U 的条目）。
     public static func conflictFiles(in repository: URL) -> [String] {
         guard let out = try? GitProcessRunner.run(
@@ -92,7 +97,7 @@ public enum GitMergeOperation {
         in repository: URL
     ) throws -> String {
         let path = try validatedPath(path)
-        guard isMerging(in: repository) else { throw Error.notMerging }
+        guard hasConflictOperation(in: repository) else { throw Error.notMerging }
         let stage: Int
         switch version {
         case .base: stage = 1
@@ -109,7 +114,7 @@ public enum GitMergeOperation {
     /// 读取指定冲突文件的 combined diff。
     public static func mergeFileDiff(path: String, in repository: URL) throws -> String {
         let path = try validatedPath(path)
-        guard isMerging(in: repository) else { throw Error.notMerging }
+        guard hasConflictOperation(in: repository) else { throw Error.notMerging }
         do {
             return try GitProcessRunner.run(["diff", "--cc", "--", path], in: repository)
         } catch {
@@ -124,7 +129,7 @@ public enum GitMergeOperation {
         in repository: URL
     ) throws {
         let path = try validatedPath(path)
-        guard isMerging(in: repository) else { throw Error.notMerging }
+        guard hasConflictOperation(in: repository) else { throw Error.notMerging }
         do {
             switch version {
             case .base:

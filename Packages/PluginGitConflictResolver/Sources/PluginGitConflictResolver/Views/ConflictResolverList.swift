@@ -11,6 +11,7 @@ public struct ConflictResolverList: View {
     @State private var isLoading = true
     @State private var conflictDiff: String?
     @State private var isMerging = false
+    @State private var isCherryPicking = false
     @State private var isActionRunning = false
     @State private var actionError: String?
     @State private var showAbortConfirmation = false
@@ -54,16 +55,27 @@ public struct ConflictResolverList: View {
         .padding(16)
         .onAppear(perform: load)
         .alert(
-            LumiPluginLocalization.string("Confirm Abort Merge?", bundle: .module),
+            LumiPluginLocalization.string(
+                isCherryPicking ? "Confirm Abort Cherry-pick?" : "Confirm Abort Merge?",
+                bundle: .module
+            ),
             isPresented: $showAbortConfirmation
         ) {
             Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
-            Button(LumiPluginLocalization.string("Abort Merge", bundle: .module), role: .destructive) {
+            Button(
+                LumiPluginLocalization.string(
+                    isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
+                    bundle: .module
+                ),
+                role: .destructive
+            ) {
                 abortMerge()
             }
         } message: {
             Text(LumiPluginLocalization.string(
-                "This discards the in-progress merge and restores the pre-merge state.",
+                isCherryPicking
+                    ? "This discards the in-progress cherry-pick and restores the pre-cherry-pick state."
+                    : "This discards the in-progress merge and restores the pre-merge state.",
                 bundle: .module
             ))
         }
@@ -102,7 +114,10 @@ public struct ConflictResolverList: View {
                 continueMerge()
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Continue Merge", bundle: .module),
+                    LumiPluginLocalization.string(
+                        isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
+                        bundle: .module
+                    ),
                     systemImage: "arrow.right.circle"
                 )
             }
@@ -113,7 +128,10 @@ public struct ConflictResolverList: View {
                 showAbortConfirmation = true
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Abort Merge", bundle: .module),
+                    LumiPluginLocalization.string(
+                        isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
+                        bundle: .module
+                    ),
                     systemImage: "xmark.circle"
                 )
             }
@@ -199,9 +217,11 @@ public struct ConflictResolverList: View {
         Task.detached(priority: .userInitiated) {
             let loaded = GitMergeOperation.conflictFiles(in: url)
             let merging = GitMergeOperation.isMerging(in: url)
+            let cherryPicking = GitCherryPickOperation.status(in: url).isCherryPicking
             await MainActor.run {
                 files = loaded
-                isMerging = merging
+                isMerging = merging || cherryPicking
+                isCherryPicking = cherryPicking
                 isLoading = false
             }
         }
@@ -232,16 +252,23 @@ public struct ConflictResolverList: View {
         guard let url = projects.currentProject?.url else { return }
         guard files.isEmpty else {
             actionError = LumiPluginLocalization.string(
-                "Resolve all conflicts before continuing the merge.",
+                isCherryPicking
+                    ? "Resolve all conflicts before continuing the cherry-pick."
+                    : "Resolve all conflicts before continuing the merge.",
                 bundle: .module
             )
             return
         }
         isActionRunning = true
         actionError = nil
+        let cherryPicking = isCherryPicking
         Task.detached(priority: .userInitiated) {
             do {
-                _ = try GitMergeOperation.continueMerge(in: url)
+                if cherryPicking {
+                    _ = try GitCherryPickOperation.continueCherryPick(in: url)
+                } else {
+                    _ = try GitMergeOperation.continueMerge(in: url)
+                }
                 await MainActor.run {
                     isActionRunning = false
                     projects.notifyDataChanged()
@@ -261,9 +288,14 @@ public struct ConflictResolverList: View {
         guard let url = projects.currentProject?.url else { return }
         isActionRunning = true
         actionError = nil
+        let cherryPicking = isCherryPicking
         Task.detached(priority: .userInitiated) {
             do {
-                _ = try GitMergeOperation.abortMerge(in: url)
+                if cherryPicking {
+                    _ = try GitCherryPickOperation.abortCherryPick(in: url)
+                } else {
+                    _ = try GitMergeOperation.abortMerge(in: url)
+                }
                 await MainActor.run {
                     isActionRunning = false
                     projects.notifyDataChanged()
