@@ -115,7 +115,7 @@ public struct IconWorkspaceView: View {
             } else {
                 ScrollView(.horizontal) {
                     HStack(spacing: 8) {
-                ForEach(model.filteredSourceAssets) { asset in
+                        ForEach(model.filteredSourceAssets) { asset in
                             Button {
                                 model.importSourceAsset(asset)
                             } label: {
@@ -129,6 +129,13 @@ public struct IconWorkspaceView: View {
                                 .frame(width: 76)
                             }
                             .buttonStyle(.plain)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(
+                                        model.selectedAssetID == asset.id ? Color.accentColor : .clear,
+                                        lineWidth: 2
+                                    )
+                            }
                         }
                     }
                 }

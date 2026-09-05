@@ -92,6 +92,14 @@ struct PluginIconTests {
         #expect(icon.padding == 0.12)
     }
 
+    @Test("icon source identifiers remain part of persisted data")
+    func preservesIconSourceIdentifier() throws {
+        let icon = IconData(iconId: "generated-assets:camera", path: "/tmp/icon.json")
+        let data = try JSONEncoder().encode(icon)
+        let decoded = try JSONDecoder().decode(IconData.self, from: data)
+        #expect(decoded.iconId == "generated-assets:camera")
+    }
+
     @Test("creates, reloads, imports and deletes project icon data")
     func repositoryRoundTrip() throws {
         let projectURL = FileManager.default.temporaryDirectory

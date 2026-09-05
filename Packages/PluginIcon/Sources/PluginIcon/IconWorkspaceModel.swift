@@ -11,6 +11,7 @@ public final class IconWorkspaceModel: ObservableObject {
     @Published public var scale = 1.0
     @Published public var padding = 0.12
     @Published public private(set) var imageURL: URL?
+    @Published public private(set) var selectedAssetID: String?
     @Published public private(set) var sourceAssets: [IconSourceAsset] = []
     @Published public var selectedSourceID = IconSourceID.projectImages
     @Published public var selectedSourceCategory: String?
@@ -100,6 +101,7 @@ public final class IconWorkspaceModel: ObservableObject {
                 case let .systemSymbol(symbol):
                     importedURL = try repository.importSystemSymbol(symbol, for: project.url)
                 }
+                selectedAssetID = asset.id
                 imageURL = importedURL
                 if selectedIcon == nil { createIcon() }
                 saveDraft()
@@ -133,8 +135,9 @@ public final class IconWorkspaceModel: ObservableObject {
         guard let project = projects.currentProject else { return }
         do {
             let importedURL = try repository.importImage(sourceURL, for: project.url)
-            imageURL = importedURL
             if selectedIcon == nil { createIcon() }
+            selectedAssetID = importedURL.path
+            imageURL = importedURL
             saveDraft()
             message = "Image imported"
         } catch {
@@ -150,6 +153,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.scale = scale
         icon.padding = padding
         icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
         do {
             try repository.save(icon)
             reload()
@@ -183,6 +187,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.scale = scale
         icon.padding = padding
         icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
         do {
             try IconExporter.exportAppIcon(from: icon, to: destinationURL)
             message = "AppIcon set exported"
@@ -202,6 +207,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.scale = scale
         icon.padding = padding
         icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
         do {
             try IconExporter.exportXcodeIconSets(from: icon, to: destinationURL)
             message = "Legacy and modern Xcode icon sets exported"
@@ -260,6 +266,7 @@ public final class IconWorkspaceModel: ObservableObject {
         scale = icon.scale ?? 1
         padding = icon.padding
         imageURL = icon.imageURL
+        selectedAssetID = icon.iconId
     }
 
     private func currentDraftIcon() -> IconData? {
@@ -270,6 +277,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.scale = scale
         icon.padding = padding
         icon.imageURL = imageURL
+        icon.iconId = selectedAssetID ?? icon.iconId
         return icon
     }
 
@@ -280,6 +288,7 @@ public final class IconWorkspaceModel: ObservableObject {
         scale = 1
         padding = 0.12
         imageURL = nil
+        selectedAssetID = nil
         sourceAssets = []
     }
 
