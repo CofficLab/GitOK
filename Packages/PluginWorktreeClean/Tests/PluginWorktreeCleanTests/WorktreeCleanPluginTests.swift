@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderContentView
 import ProviderProjects
+import ProviderWorkspaceScene
 import XCTest
 @testable import PluginWorktreeClean
 @testable import ProviderContentView
@@ -94,6 +95,10 @@ final class WorktreeCleanPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
 
         let plugin = WorktreeCleanPlugin()
         try plugin.onBoot(kernel: kernel)
@@ -107,6 +112,10 @@ final class WorktreeCleanPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
 
         let plugin = WorktreeCleanPlugin()
         try plugin.onBoot(kernel: kernel)
@@ -134,6 +143,19 @@ final class WorktreeCleanPluginTests: XCTestCase {
         XCTAssertFalse(viewModel.isClean)
     }
 
+    func testRefreshPolicyIgnoresIdenticalStatus() {
+        let status = GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main")
+
+        XCTAssertFalse(WorktreeCleanRefreshPolicy.didChange(previous: status, current: status))
+    }
+
+    func testRefreshPolicyDetectsChangedStatus() {
+        let previous = GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main")
+        let current = GitWorktreeStatus(isClean: false, changeCount: 1, branch: "main")
+
+        XCTAssertTrue(WorktreeCleanRefreshPolicy.didChange(previous: previous, current: current))
+    }
+
     /// 回归：选中 commit 后，后续 dataChanged（提交 / 推送 / 分支切换 / 外部编辑）
     /// 不应重新点亮「工作区干净」视图——即使工作区实际是干净的。
     func testDataChangedDoesNotResurrectCleanViewAfterCommitSelected() async throws {
@@ -159,6 +181,26 @@ final class WorktreeCleanPluginTests: XCTestCase {
         viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
         await waitUntilClean(viewModel, expecting: true)
         XCTAssertTrue(viewModel.isClean)
+    }
+
+    /// 回归：已有快照后收到无实际状态变化的 dataChanged，只做后台校验，
+    /// 不应让 ViewModel 重新进入 loading 状态或改变干净视图。
+    func testDataChangedKeepsExistingStateWhileRefreshingIdenticalStatus() async throws {
+        let dir = try makeGitRepository()
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        let viewModel = WorktreeCleanViewModel()
+        viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
+        await waitUntilClean(viewModel, expecting: true)
+
+        viewModel.handleDataChanged()
+        XCTAssertTrue(viewModel.isClean)
+        XCTAssertFalse(viewModel.isLoading)
+
+        // 等待后台校验完成，确保相同快照不会改变最终状态。
+        try? await Task.sleep(for: .milliseconds(150))
+        XCTAssertTrue(viewModel.isClean)
+        XCTAssertFalse(viewModel.isLoading)
     }
 
     // MARK: - Cleanliness detection (real git repo)
