@@ -3,6 +3,7 @@ import XCTest
 import KitGit
 import ProviderProjects
 import ProviderToast
+import ProviderWorkspaceScene
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginToast
@@ -24,6 +25,10 @@ final class KernelBootIntegrationTests: XCTestCase {
         // 宿主仍注册了默认 provider（保证 app 不崩、可渲染空壳）。
         XCTAssertNotNil(kernel.resolveProvider((any ProjectProviding).self))
         XCTAssertNotNil(kernel.resolveProvider((any ToastProviding).self))
+        XCTAssertEqual(
+            kernel.resolveProvider((any WorkspaceSceneProviding).self)?.currentScene,
+            .git
+        )
 
         // 但插件 onBoot 的替换没有发生。
         XCTAssertFalse(

@@ -80,6 +80,7 @@ let package = Package(
         .package(path: "../ProviderSidebar"),
         .package(path: "../ProviderStorage"),
         .package(path: "../ProviderStatusBar"),
+        .package(path: "../ProviderWorkspaceScene"),
         .package(path: "../ProviderTheme"),
         .package(path: "../ProviderToast"),
         .package(path: "../PluginRootView"),
@@ -103,6 +104,7 @@ let package = Package(
                 .product(name: "ProviderSidebar", package: "ProviderSidebar"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
                 .product(name: "ProviderTheme", package: "ProviderTheme"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
                 .product(name: "PluginRootView", package: "PluginRootView"),
@@ -188,6 +190,7 @@ let package = Package(
                 .product(name: "PluginToast", package: "PluginToast"),
                 .product(name: "PluginCommitToast", package: "PluginCommitToast"),
                 .product(name: "PluginCommitStatusBar", package: "PluginCommitStatusBar"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Tests/FactoryGitOKTests",
             swiftSettings: [

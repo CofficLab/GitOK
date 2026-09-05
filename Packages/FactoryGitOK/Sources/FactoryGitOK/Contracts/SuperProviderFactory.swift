@@ -1,4 +1,5 @@
 import KernelCore
+import ProviderWorkspaceScene
 import ProviderContentView
 import ProviderDocsView
 import ProviderRailView
@@ -24,6 +25,7 @@ import ProviderSidebar
 @MainActor
 public protocol ProviderFactory {
     func makeStorageProvider() -> any StorageProviding
+    func makeWorkspaceSceneProvider() -> any WorkspaceSceneProviding
     func makeThemeProvider() -> any ThemeProviding
     func makeContentViewProvider() -> any ContentViewProviding
     func makeDocsViewProvider() -> any DocsViewProviding

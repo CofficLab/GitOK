@@ -8,6 +8,7 @@ import ProviderStorage
 import ProviderTheme
 import ProviderToast
 import ProviderToolbar
+import ProviderWorkspaceScene
 
 #if os(macOS)
 import ProviderActivity
@@ -26,6 +27,10 @@ public struct DefaultProviderFactory: ProviderFactory {
 
     public func makeStorageProvider() -> any StorageProviding {
         DefaultStorageProvider()
+    }
+
+    public func makeWorkspaceSceneProvider() -> any WorkspaceSceneProviding {
+        DefaultWorkspaceSceneProvider()
     }
 
     public func makeThemeProvider() -> any ThemeProviding {
@@ -59,6 +64,11 @@ public struct DefaultProviderFactory: ProviderFactory {
     public func registerProviders(into kernel: KernelCoreContainer) throws {
         let storage = makeStorageProvider()
         try kernel.registerProvider((any StorageProviding).self, storage)
+
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            makeWorkspaceSceneProvider()
+        )
 
         // 插件启用状态仍由宿主统一持久化；GitOK 插件本身是 required，
         // 其他未来加入的插件则继续遵循 KernelCore 的普通策略。
