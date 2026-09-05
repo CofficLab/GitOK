@@ -68,7 +68,7 @@ public final class StatusBarPlugin: SuperPlugin, SuperLog {
         if let projects {
             items.append(StatusBarItem(
                 id: "\(Self.itemPrefix).project",
-                title: "Current Project",
+                title: StatusBarLocalization.string("Current Project", bundle: .module),
                 placement: .leading,
                 order: 10
             ) {
@@ -79,7 +79,7 @@ public final class StatusBarPlugin: SuperPlugin, SuperLog {
         if let theme {
             items.append(StatusBarItem(
                 id: "\(Self.itemPrefix).theme",
-                title: "Switch Theme",
+                title: StatusBarLocalization.string("Switch Theme", bundle: .module),
                 placement: .trailing,
                 order: 10
             ) {

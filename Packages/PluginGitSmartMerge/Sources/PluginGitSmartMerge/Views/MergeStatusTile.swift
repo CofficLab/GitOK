@@ -23,7 +23,7 @@ public struct MergeStatusTile: View {
                     .onTapGesture {
                         isPresented.toggle()
                     }
-                    .help("Merge branches")
+                    .help(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
                     .popover(isPresented: $isPresented) {
                         MergeForm(projects: projects)
                             .padding()
@@ -51,11 +51,11 @@ public struct MergeForm: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Merge branches")
+            Text(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
                 .font(.headline)
 
-            Picker("Source", selection: $sourceBranch) {
-                Text("Select source").tag(nil as GitBranchSummary?)
+            Picker(GitSmartMergeLocalization.string("Source", bundle: .module), selection: $sourceBranch) {
+                Text(GitSmartMergeLocalization.string("Select source", bundle: .module)).tag(nil as GitBranchSummary?)
                 ForEach(branches) { branch in
                     Text(branch.name).tag(branch as GitBranchSummary?)
                 }
@@ -64,13 +64,13 @@ public struct MergeForm: View {
             .labelsHidden()
             .frame(maxWidth: .infinity)
 
-            Text("into")
+            Text(GitSmartMergeLocalization.string("into", bundle: .module))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
                 .frame(maxWidth: .infinity)
 
-            Picker("Target", selection: $targetBranch) {
-                Text("Select target").tag(nil as GitBranchSummary?)
+            Picker(GitSmartMergeLocalization.string("Target", bundle: .module), selection: $targetBranch) {
+                Text(GitSmartMergeLocalization.string("Select target", bundle: .module)).tag(nil as GitBranchSummary?)
                 ForEach(branches) { branch in
                     Text(branch.name).tag(branch as GitBranchSummary?)
                 }
@@ -80,7 +80,7 @@ public struct MergeForm: View {
             .frame(maxWidth: .infinity)
 
             AppButton(
-                "Merge",
+                GitSmartMergeLocalization.string("Merge", bundle: .module),
                 systemImage: "arrow.trianglehead.merge",
                 style: .primary,
                 size: .small,
@@ -136,13 +136,13 @@ public struct MergeForm: View {
                 )
                 await MainActor.run {
                     isWorking = false
-                    statusMessage = "Merged \(sourceBranch.name) into \(targetBranch.name)"
+                    statusMessage = String(format: GitSmartMergeLocalization.string("Merged %@ into %@", bundle: .module), sourceBranch.name, targetBranch.name)
                 }
             } catch let error as GitMergeError {
                 await MainActor.run {
                     isWorking = false
                     if case let .conflict(_, files) = error {
-                        errorMessage = "Merge paused with \(files.count) conflict file(s)"
+                        errorMessage = String(format: GitSmartMergeLocalization.string("Merge paused with %ld conflict file(s)", bundle: .module), files.count)
                     } else {
                         errorMessage = error.localizedDescription
                     }

@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(path: "../ProviderActivity"),
         .package(path: "../ProviderStatusBar"),
     ],
@@ -25,10 +26,14 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderActivity", package: "ProviderActivity"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
             ],
-            path: "Sources/PluginActivityStatus"
+            path: "Sources/PluginActivityStatus",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginActivityStatusTests",

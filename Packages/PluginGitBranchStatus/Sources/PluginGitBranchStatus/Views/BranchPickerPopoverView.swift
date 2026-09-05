@@ -68,7 +68,7 @@ struct BranchPickerPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
-            TextField("Search", text: $searchText)
+            TextField(LumiPluginLocalization.string("Search", bundle: .module), text: $searchText)
                 .textFieldStyle(.roundedBorder)
 
             Button {

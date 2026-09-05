@@ -21,11 +21,11 @@ public struct UnpushedStatusTile: View {
                     Image(systemName: "arrow.up.circle")
                         .font(.system(size: 10))
                         .foregroundStyle(.orange)
-                    Text("\(count) unpushed")
+                    Text(String(format: GitUnpushedStatusLocalization.string("%ld unpushed", bundle: .module), count))
                         .font(.appCaption)
                         .lineLimit(1)
                 }
-                .help("\(count) unpushed commit(s)")
+                .help(String(format: GitUnpushedStatusLocalization.string("%ld unpushed commit(s)", bundle: .module), count))
             }
         }
         .onReceive(observation.$revision) { _ in load() }

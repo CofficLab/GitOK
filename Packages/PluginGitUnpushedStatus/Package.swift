@@ -17,6 +17,7 @@ let package = Package(
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
     ],
@@ -27,10 +28,14 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
             ],
-            path: "Sources/PluginGitUnpushedStatus"
+            path: "Sources/PluginGitUnpushedStatus",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginGitUnpushedStatusTests",

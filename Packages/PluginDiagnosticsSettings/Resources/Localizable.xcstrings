@@ -1,313 +1,381 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Copied to clipboard" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copied to clipboard"
+  "sourceLanguage": "en",
+  "strings": {
+    "Copied to clipboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied to clipboard"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已复制到剪贴板"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已复制到剪贴板"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已複製到剪貼簿"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已複製到剪貼簿"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已複製到剪貼簿"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已複製到剪貼簿"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已複製到剪貼簿"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已複製到剪貼簿"
           }
         }
       }
     },
-    "Copy app, git and system info to the clipboard" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copy app, git and system info to the clipboard"
+    "Copy app, git and system info to the clipboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy app, git and system info to the clipboard"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将应用、git 和系统信息复制到剪贴板"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将应用、git 和系统信息复制到剪贴板"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將應用程式、git 和系統資訊複製到剪貼簿"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將應用程式、git 和系統資訊複製到剪貼簿"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將應用程式、git 和系統資訊複製到剪貼簿"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將應用程式、git 和系統資訊複製到剪貼簿"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將應用程式、git 和系統資訊複製到剪貼簿"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將應用程式、git 和系統資訊複製到剪貼簿"
           }
         }
       }
     },
-    "Copy diagnostic information" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copy diagnostic information"
+    "Copy diagnostic information": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy diagnostic information"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "复制诊断信息"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制诊断信息"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "複製診斷資訊"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製診斷資訊"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "複製診斷資訊"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製診斷資訊"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "複製診斷資訊"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製診斷資訊"
           }
         }
       }
     },
-    "Diagnostic information" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diagnostic information"
+    "Diagnostic information": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostic information"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "诊断信息"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "诊断信息"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷資訊"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷資訊"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷資訊"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷資訊"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷資訊"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷資訊"
           }
         }
       }
     },
-    "Diagnostics" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diagnostics"
+    "Diagnostics": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostics"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "诊断"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "诊断"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷"
           }
         }
       }
     },
-    "Diagnostics Settings" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diagnostics Settings"
+    "Diagnostics Settings": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostics Settings"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "诊断设置"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "诊断设置"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷設定"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷設定"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷設定"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷設定"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診斷設定"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "診斷設定"
           }
         }
       }
     },
-    "Last launch" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last launch"
+    "Last launch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last launch"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上次启动"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次启动"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上次啟動"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次啟動"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上次啟動"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次啟動"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上次啟動"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次啟動"
           }
         }
       }
     },
-    "Open Application Support" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open Application Support"
+    "Open Application Support": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Application Support"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开 Application Support"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 Application Support"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開啟 Application Support"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟 Application Support"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開啟 Application Support"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟 Application Support"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開啟 Application Support"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟 Application Support"
           }
         }
       }
     },
-    "Reveal the GitOK data directory in Finder" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reveal the GitOK data directory in Finder"
+    "Reveal the GitOK data directory in Finder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reveal the GitOK data directory in Finder"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在访达中显示 GitOK 数据目录"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在访达中显示 GitOK 数据目录"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Finder 中顯示 GitOK 資料目錄"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Finder 中顯示 GitOK 資料目錄"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Finder 中顯示 GitOK 資料目錄"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Finder 中顯示 GitOK 資料目錄"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Finder 中顯示 GitOK 資料目錄"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Finder 中顯示 GitOK 資料目錄"
+          }
+        }
+      }
+    },
+    "Status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "状态"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "狀態"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "狀態"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "狀態"
+          }
+        }
+      }
+    },
+    "Normal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Normal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正常"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正常"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正常"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正常"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

@@ -88,11 +88,11 @@ public struct AutoPushConfigView: View {
 
             HStack {
                 Spacer()
-                AppButton("Cancel", style: .secondary, size: .small) {
+                AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
                     dismiss()
                 }
                 AppButton(
-                    "Save",
+                    LumiPluginLocalization.string("Save", bundle: .module),
                     systemImage: "square.and.arrow.down",
                     style: .primary,
                     size: .small

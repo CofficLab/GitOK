@@ -39,14 +39,14 @@ public struct StashListView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     if isLoading {
-                        ProgressView("Loading stash list…")
+                        ProgressView(GitStashLocalization.string("Loading stash list…", bundle: .module))
                             .frame(maxWidth: .infinity, minHeight: 120)
                     } else if stashes.isEmpty {
                         VStack(spacing: 6) {
                             Image(systemName: "archivebox")
                                 .font(.system(size: 22))
                                 .foregroundStyle(theme.textTertiary)
-                            Text("No stashes yet")
+                            Text(GitStashLocalization.string("No stashes yet", bundle: .module))
                                 .font(.system(size: 13, weight: .medium))
                         }
                         .frame(maxWidth: .infinity, minHeight: 120)
@@ -70,11 +70,11 @@ public struct StashListView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Stash")
+            Text(GitStashLocalization.string("Stash", bundle: .module))
                 .font(.headline)
             HStack(spacing: 8) {
-                AppInputField("Stash message (optional)", text: $stashMessage)
-                AppButton("Save", systemImage: "plus", style: .primary, size: .small) {
+                AppInputField(GitStashLocalization.string("Stash message (optional)", bundle: .module), text: $stashMessage)
+                AppButton(GitStashLocalization.string("Save", bundle: .module), systemImage: "plus", style: .primary, size: .small) {
                     saveStash()
                 }
                 .disabled(isPerformingAction)
@@ -115,7 +115,7 @@ public struct StashListView: View {
         guard let url = projectURL else { return }
         let text = stashMessage.trimmingCharacters(in: .whitespacesAndNewlines)
         guard GitStashOperation.hasChanges(in: url) else {
-            errorMessage = "No changes to stash"
+            errorMessage = GitStashLocalization.string("No changes to stash", bundle: .module)
             return
         }
         isPerformingAction = true
@@ -127,7 +127,7 @@ public struct StashListView: View {
                 await MainActor.run {
                     stashMessage = ""
                     isPerformingAction = false
-                    message = "Stash saved"
+                    message = GitStashLocalization.string("Stash saved", bundle: .module)
                     onStashesChanged()
                     load()
                 }
@@ -209,13 +209,13 @@ public struct StashRow: View {
             }
             Spacer()
             if !isBusy {
-                AppIconButton(systemImage: "arrow.down.to.line", label: "Apply", tint: theme.textSecondary) {
+                AppIconButton(systemImage: "arrow.down.to.line", label: GitStashLocalization.string("Apply", bundle: .module), tint: theme.textSecondary) {
                     onApply()
                 }
-                AppIconButton(systemImage: "arrow.up.to.line", label: "Pop", tint: theme.textSecondary) {
+                AppIconButton(systemImage: "arrow.up.to.line", label: GitStashLocalization.string("Pop", bundle: .module), tint: theme.textSecondary) {
                     onPop()
                 }
-                AppIconButton(systemImage: "trash", label: "Drop", tint: theme.warning) {
+                AppIconButton(systemImage: "trash", label: GitStashLocalization.string("Drop", bundle: .module), tint: theme.warning) {
                     onDrop()
                 }
             } else {

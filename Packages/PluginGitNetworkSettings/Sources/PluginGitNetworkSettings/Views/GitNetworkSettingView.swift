@@ -25,11 +25,11 @@ public struct GitNetworkSettingView: View {
                 }
             }
         }
-        .navigationTitle(Text("Network"))
+        .navigationTitle(Text(GitNetworkSettingsLocalization.string("Network", bundle: .module)))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 AppButton(
-                    "Save",
+                    GitNetworkSettingsLocalization.string("Save", bundle: .module),
                     systemImage: "square.and.arrow.down",
                     style: .secondary,
                     size: .small
@@ -45,19 +45,19 @@ public struct GitNetworkSettingView: View {
     }
 
     private var proxySection: some View {
-        AppSettingSection(title: "Proxy", titleAlignment: .leading) {
+        AppSettingSection(title: GitNetworkSettingsLocalization.string("Proxy", bundle: .module), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 14) {
                 labeledInput(
-                    title: "HTTP proxy",
+                    title: GitNetworkSettingsLocalization.string("HTTP proxy", bundle: .module),
                     placeholder: "http://127.0.0.1:1087",
                     text: $settings.httpProxy
                 )
                 labeledInput(
-                    title: "HTTPS proxy",
+                    title: GitNetworkSettingsLocalization.string("HTTPS proxy", bundle: .module),
                     placeholder: "http://127.0.0.1:1087",
                     text: $settings.httpsProxy
                 )
-                Text("Writes to Git global config `http.proxy` and `https.proxy`. If the proxy requires authentication, use the format `http://user:password@host:port`.")
+                Text(GitNetworkSettingsLocalization.string("Writes to Git global config `http.proxy` and `https.proxy`. If the proxy requires authentication, use the format `http://user:password@host:port`.", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -66,11 +66,11 @@ public struct GitNetworkSettingView: View {
     }
 
     private var certificateSection: some View {
-        AppSettingSection(title: "Certificate", titleAlignment: .leading) {
+        AppSettingSection(title: GitNetworkSettingsLocalization.string("Certificate", bundle: .module), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 14) {
                 AppSettingRow(
-                    title: "Enable Git SSL certificate verification",
-                    description: "Verifies the certificate of remote hosts over HTTPS",
+                    title: GitNetworkSettingsLocalization.string("Enable Git SSL certificate verification", bundle: .module),
+                    description: GitNetworkSettingsLocalization.string("Verifies the certificate of remote hosts over HTTPS", bundle: .module),
                     icon: "lock.shield"
                 ) {
                     Toggle("", isOn: $settings.sslVerify)
@@ -79,24 +79,24 @@ public struct GitNetworkSettingView: View {
                 }
 
                 HStack(spacing: 8) {
-                    AppInputField("CA file path", text: $settings.sslCAInfo)
+                    AppInputField(GitNetworkSettingsLocalization.string("CA file path", bundle: .module), text: $settings.sslCAInfo)
                         .disabled(settings.isLoading || settings.isSaving)
-                    AppButton("Choose", systemImage: "folder", style: .secondary, size: .small) {
+                    AppButton(GitNetworkSettingsLocalization.string("Choose", bundle: .module), systemImage: "folder", style: .secondary, size: .small) {
                         chooseCertificateFile()
                     }
                     .disabled(settings.isLoading || settings.isSaving)
-                    AppButton("Clear", systemImage: "xmark", style: .tonal, size: .small) {
+                    AppButton(GitNetworkSettingsLocalization.string("Clear", bundle: .module), systemImage: "xmark", style: .tonal, size: .small) {
                         settings.sslCAInfo = ""
                     }
                     .disabled(settings.isLoading || settings.isSaving || settings.sslCAInfo.isEmpty)
                 }
 
-                Text("The CA file is written to `http.sslCAInfo`. Disabling SSL verification is only suitable for temporary troubleshooting; enterprise networks should prioritize importing trusted CA certificates.")
+                Text(GitNetworkSettingsLocalization.string("The CA file is written to `http.sslCAInfo`. Disabling SSL verification is only suitable for temporary troubleshooting; enterprise networks should prioritize importing trusted CA certificates.", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                AppButton("Open Keychain Access", systemImage: "key", style: .secondary, size: .small) {
+                AppButton(GitNetworkSettingsLocalization.string("Open Keychain Access", bundle: .module), systemImage: "key", style: .secondary, size: .small) {
                     openKeychainAccess()
                 }
             }
@@ -174,7 +174,7 @@ final class GitNetworkSettingsStore: ObservableObject {
                 try GitNetworkConfig.saveGlobal(configuration)
                 await MainActor.run {
                     self.isSaving = false
-                    self.message = "Git network configuration saved"
+                    self.message = GitNetworkSettingsLocalization.string("Git network configuration saved", bundle: .module)
                 }
             } catch {
                 await MainActor.run {

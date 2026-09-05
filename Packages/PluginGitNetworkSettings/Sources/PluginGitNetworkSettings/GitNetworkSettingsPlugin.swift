@@ -36,7 +36,7 @@ public final class GitNetworkSettingsPlugin: SuperPlugin, SuperLog {
         settings.addEntries([
             SettingEntryItem(
                 id: "network",
-                title: "Network",
+                title: GitNetworkSettingsLocalization.string("Network", bundle: .module),
                 systemImage: "network",
                 order: 40
             ) {

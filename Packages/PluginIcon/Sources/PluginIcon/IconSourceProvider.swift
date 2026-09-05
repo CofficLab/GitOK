@@ -86,18 +86,18 @@ public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Se
         self.customFolderURL = customFolderURL
         self.fileManager = fileManager
         var sources = [
-            IconSourceDescriptor(id: IconSourceID.projectImages, title: "Project Images"),
-            IconSourceDescriptor(id: IconSourceID.remoteManifest, title: "GitOK Library"),
-            IconSourceDescriptor(id: IconSourceID.generatedAssets, title: "Generated Assets"),
+            IconSourceDescriptor(id: IconSourceID.projectImages, title: IconLocalization.string("Project Images", bundle: .module)),
+            IconSourceDescriptor(id: IconSourceID.remoteManifest, title: IconLocalization.string("GitOK Library", bundle: .module)),
+            IconSourceDescriptor(id: IconSourceID.generatedAssets, title: IconLocalization.string("Generated Assets", bundle: .module)),
         ]
         if resolvedBundledIconsURL != nil {
             sources.insert(
-                IconSourceDescriptor(id: IconSourceID.bundledIcons, title: "Built-in Icons"),
+                IconSourceDescriptor(id: IconSourceID.bundledIcons, title: IconLocalization.string("Built-in Icons", bundle: .module)),
                 at: 0
             )
         }
         if customFolderURL != nil {
-            sources.append(IconSourceDescriptor(id: IconSourceID.customFolder, title: "Custom Folder"))
+            sources.append(IconSourceDescriptor(id: IconSourceID.customFolder, title: IconLocalization.string("Custom Folder", bundle: .module)))
         }
         self.sources = sources
     }
@@ -105,7 +105,7 @@ public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Se
     public func setCustomFolderURL(_ url: URL?) {
         customFolderURL = url
         if url != nil, !sources.contains(where: { $0.id == IconSourceID.customFolder }) {
-            sources.append(IconSourceDescriptor(id: IconSourceID.customFolder, title: "Custom Folder"))
+            sources.append(IconSourceDescriptor(id: IconSourceID.customFolder, title: IconLocalization.string("Custom Folder", bundle: .module)))
         } else if url == nil {
             sources.removeAll { $0.id == IconSourceID.customFolder }
         }
@@ -284,7 +284,7 @@ public enum IconSourceError: Error, LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
-        case .networkFailure: "Unable to load the GitOK icon library."
+        case .networkFailure: IconLocalization.string("Unable to load the GitOK icon library.", bundle: .module)
         }
     }
 }

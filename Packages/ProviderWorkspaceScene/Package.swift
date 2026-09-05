@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "ProviderWorkspaceScene",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
         .iOS(.v17),
@@ -13,10 +14,19 @@ let package = Package(
             targets: ["ProviderWorkspaceScene"]
         ),
     ],
+    dependencies: [
+        .package(path: "../KitLocalization"),
+    ],
     targets: [
         .target(
             name: "ProviderWorkspaceScene",
-            path: "Sources/ProviderWorkspaceScene"
+            dependencies: [
+                .product(name: "KitLocalization", package: "KitLocalization"),
+            ],
+            path: "Sources/ProviderWorkspaceScene",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "ProviderWorkspaceSceneTests",

@@ -45,7 +45,7 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "File Info",
+                title: FileInfoLocalization.string("File Info", bundle: .module),
                 placement: .leading,
                 order: 19,
                 sceneScope: .git

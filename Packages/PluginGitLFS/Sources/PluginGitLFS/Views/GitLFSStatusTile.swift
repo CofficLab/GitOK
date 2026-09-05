@@ -32,8 +32,8 @@ public struct GitLFSStatusTile: View {
                         isPresented = true
                     }
                     .help(largeFiles.isEmpty
-                        ? "LFS status normal"
-                        : "Found \(largeFiles.count) large file(s) to track with Git LFS")
+                        ? GitLFSLocalization.string("LFS status normal", bundle: .module)
+                        : String(format: GitLFSLocalization.string("Found %ld large file(s) to track with Git LFS", bundle: .module), largeFiles.count))
                     .popover(isPresented: $isPresented) {
                         GitLFSContentView(
                             isLFSAvailable: isLFSAvailable,
@@ -144,7 +144,7 @@ private struct GitLFSContentView: View {
                 Image(systemName: "externaldrive")
                     .foregroundStyle(largeFiles.isEmpty ? theme.textSecondary : theme.warning)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Git LFS")
+                    Text(GitLFSLocalization.string("Git LFS", bundle: .module))
                         .font(.headline)
                     Text(statusText)
                         .font(.caption)
@@ -152,7 +152,7 @@ private struct GitLFSContentView: View {
                 }
                 Spacer()
                 if !isLFSAvailable {
-                    AppButton("Install", systemImage: "square.and.arrow.down", style: .secondary, size: .small) {
+                    AppButton(GitLFSLocalization.string("Install", bundle: .module), systemImage: "square.and.arrow.down", style: .secondary, size: .small) {
                         // 引导用户安装 git-lfs。
                     }
                 }
@@ -163,13 +163,13 @@ private struct GitLFSContentView: View {
                     Image(systemName: "checkmark.circle")
                         .font(.system(size: 18))
                         .foregroundStyle(theme.success)
-                    Text("No files larger than 50 MB found")
+                    Text(GitLFSLocalization.string("No files larger than 50 MB found", bundle: .module))
                         .font(.caption)
                         .foregroundStyle(theme.textSecondary)
                 }
                 .frame(maxWidth: .infinity, minHeight: 80)
             } else {
-                Text("Large file recommendations")
+                Text(GitLFSLocalization.string("Large file recommendations", bundle: .module))
                     .font(.subheadline.weight(.semibold))
                 ScrollView {
                     VStack(alignment: .leading, spacing: 4) {
@@ -189,11 +189,11 @@ private struct GitLFSContentView: View {
     private var statusText: String {
         if isLFSAvailable {
             if let lfsVersion {
-                return "Available, \(lfsVersion)"
+                return String(format: GitLFSLocalization.string("Available, %@", bundle: .module), lfsVersion)
             }
-            return "Available"
+            return GitLFSLocalization.string("Available", bundle: .module)
         }
-        return "git-lfs not detected"
+        return GitLFSLocalization.string("git-lfs not detected", bundle: .module)
     }
 
     @LumiTheme private var theme: LumiUITheme

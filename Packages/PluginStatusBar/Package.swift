@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "PluginStatusBar",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
@@ -15,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
@@ -26,12 +28,16 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
                 .product(name: "ProviderTheme", package: "ProviderTheme"),
             ],
-            path: "Sources/PluginStatusBar"
+            path: "Sources/PluginStatusBar",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginStatusBarTests",

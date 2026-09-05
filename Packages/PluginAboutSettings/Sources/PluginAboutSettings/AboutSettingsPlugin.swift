@@ -36,7 +36,7 @@ public final class AboutSettingsPlugin: SuperPlugin, SuperLog {
         settings.addEntries([
             SettingEntryItem(
                 id: "about",
-                title: "About",
+                title: AboutSettingsLocalization.string("About", bundle: .module),
                 systemImage: "info.circle",
                 order: 90
             ) {

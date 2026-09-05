@@ -52,7 +52,7 @@ public final class CommitStatusBarPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Selected Commit",
+                title: CommitStatusBarLocalization.string("Selected Commit", bundle: .module),
                 placement: .leading,
                 order: 20,
                 sceneScope: .git
@@ -85,7 +85,7 @@ struct CommitStatusBarItem: View {
 
     var body: some View {
         AppStatusBarTile(systemImage: "arrow.left.arrow.right") {
-            Text(projects.currentCommit?.shortHash ?? "No Commit")
+            Text(projects.currentCommit?.shortHash ?? CommitStatusBarLocalization.string("No Commit", bundle: .module))
                 .lineLimit(1)
         }
     }

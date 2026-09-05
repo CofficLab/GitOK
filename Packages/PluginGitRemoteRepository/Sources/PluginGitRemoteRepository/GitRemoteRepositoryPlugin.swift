@@ -45,7 +45,7 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Remote Repository",
+                title: GitRemoteRepositoryLocalization.string("Remote Repository", bundle: .module),
                 placement: .leading,
                 order: 23,
                 sceneScope: .git

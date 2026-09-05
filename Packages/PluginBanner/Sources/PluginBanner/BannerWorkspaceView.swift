@@ -13,7 +13,7 @@ public struct BannerWorkspaceView: View {
     public var body: some View {
         Group {
             if model.currentProject == nil {
-                ContentUnavailableView("No Project", systemImage: "folder", description: Text("Open a project to create banners."))
+                ContentUnavailableView(BannerLocalization.string("No Project", bundle: .module), systemImage: "folder", description: Text(BannerLocalization.string("Open a project to create banners.", bundle: .module)))
             } else {
                 HStack(spacing: 0) {
                     bannerList
@@ -29,16 +29,16 @@ public struct BannerWorkspaceView: View {
     private var bannerList: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Banners").font(.headline)
+                Text(BannerLocalization.string("Banners", bundle: .module)).font(.headline)
                 Spacer()
                 Button(action: model.createBanner) { Image(systemName: "plus") }
-                    .help("New Banner")
+                    .help(BannerLocalization.string("New Banner", bundle: .module))
             }
             .padding(.horizontal, 12)
             .padding(.top, 12)
 
             if model.banners.isEmpty {
-                ContentUnavailableView("No Banners", systemImage: "rectangle.on.rectangle", description: Text("Create a banner to get started."))
+                ContentUnavailableView(BannerLocalization.string("No Banners", bundle: .module), systemImage: "rectangle.on.rectangle", description: Text(BannerLocalization.string("Create a banner to get started.", bundle: .module)))
             } else {
                 List(model.banners, selection: Binding(
                     get: { model.selectedBannerID },
@@ -56,45 +56,45 @@ public struct BannerWorkspaceView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Banner Editor").font(.title2.bold())
+                    Text(BannerLocalization.string("Banner Editor", bundle: .module)).font(.title2.bold())
                     Spacer()
-                    Button("Import Image", action: chooseImage)
-                    Button("Export PNG", action: chooseStandardExportFolder)
-                    Button("Mac Store", action: chooseMacExportFolder)
-                    Button("iPhone Store", action: chooseIPhoneExportFolder)
-                    Button("Delete", role: .destructive, action: model.deleteSelectedBanner)
-                    Button("Save", action: model.saveDraft)
+                    Button(BannerLocalization.string("Import Image", bundle: .module), action: chooseImage)
+                    Button(BannerLocalization.string("Export PNG", bundle: .module), action: chooseStandardExportFolder)
+                    Button(BannerLocalization.string("Mac Store", bundle: .module), action: chooseMacExportFolder)
+                    Button(BannerLocalization.string("iPhone Store", bundle: .module), action: chooseIPhoneExportFolder)
+                    Button(BannerLocalization.string("Delete", bundle: .module), role: .destructive, action: model.deleteSelectedBanner)
+                    Button(BannerLocalization.string("Save", bundle: .module), action: model.saveDraft)
                         .buttonStyle(.borderedProminent)
                 }
 
-                Picker("Template", selection: $model.templateID) {
-                    Text("Classic").tag(BannerTemplateID.classic)
-                    Text("Minimal").tag(BannerTemplateID.minimal)
+                Picker(BannerLocalization.string("Template", bundle: .module), selection: $model.templateID) {
+                    Text(BannerLocalization.string("Classic", bundle: .module)).tag(BannerTemplateID.classic)
+                    Text(BannerLocalization.string("Minimal", bundle: .module)).tag(BannerTemplateID.minimal)
                 }
                 .pickerStyle(.segmented)
 
-                TextField("Title", text: $model.title)
+                TextField(BannerLocalization.string("Title", bundle: .module), text: $model.title)
                     .textFieldStyle(.roundedBorder)
                 if model.templateID == BannerTemplateID.classic {
-                    TextField("Subtitle", text: $model.subTitle)
+                    TextField(BannerLocalization.string("Subtitle", bundle: .module), text: $model.subTitle)
                         .textFieldStyle(.roundedBorder)
-                    TextField("Features, one per line", text: $model.featuresText, axis: .vertical)
+                    TextField(BannerLocalization.string("Features, one per line", bundle: .module), text: $model.featuresText, axis: .vertical)
                         .textFieldStyle(.roundedBorder)
                         .lineLimit(3...8)
                 }
-                Picker("Background", selection: $model.backgroundID) {
-                    Text("Blue").tag("1")
-                    Text("Purple").tag("2")
-                    Text("Orange").tag("3")
+                Picker(BannerLocalization.string("Background", bundle: .module), selection: $model.backgroundID) {
+                    Text(BannerLocalization.string("Blue", bundle: .module)).tag("1")
+                    Text(BannerLocalization.string("Purple", bundle: .module)).tag("2")
+                    Text(BannerLocalization.string("Orange", bundle: .module)).tag("3")
                 }
-                Picker("Device", selection: $model.selectedDeviceID) {
+                Picker(BannerLocalization.string("Device", bundle: .module), selection: $model.selectedDeviceID) {
                     ForEach(BannerExportDevice.allCases, id: \.rawValue) { device in
                         Text(device.rawValue).tag(device.rawValue)
                     }
                 }
                 .pickerStyle(.menu)
                 Slider(value: $model.opacity, in: 0.2...1) {
-                    Text("Opacity")
+                    Text(BannerLocalization.string("Opacity", bundle: .module))
                 }
                 BannerRenderView(configuration: model.renderConfiguration)
                 .frame(maxWidth: .infinity, minHeight: 240)

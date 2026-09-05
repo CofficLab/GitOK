@@ -53,7 +53,7 @@ public struct GitIgnoreViewer: View {
                 }
             }
             Spacer()
-            AppButton("Close", style: .secondary, size: .small) {
+            AppButton(GitIgnoreLocalization.string("Close", bundle: .module), style: .secondary, size: .small) {
                 dismiss()
             }
         }

@@ -13,7 +13,7 @@ public struct IconWorkspaceView: View {
     public var body: some View {
         Group {
             if model.currentProject == nil {
-                ContentUnavailableView("No Project", systemImage: "folder", description: Text("Open a project to create icons."))
+                ContentUnavailableView(IconLocalization.string("No Project", bundle: .module), systemImage: "folder", description: Text(IconLocalization.string("Open a project to create icons.", bundle: .module)))
             } else {
                 HStack(spacing: 0) {
                     iconList
@@ -29,7 +29,7 @@ public struct IconWorkspaceView: View {
     private var iconList: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Icons").font(.headline)
+                Text(IconLocalization.string("Icons", bundle: .module)).font(.headline)
                 Spacer()
                 Button(action: model.createIcon) { Image(systemName: "plus") }
             }
@@ -37,7 +37,7 @@ public struct IconWorkspaceView: View {
             .padding(.top, 12)
 
             if model.icons.isEmpty {
-                ContentUnavailableView("No Icons", systemImage: "app.dashed", description: Text("Create an icon to get started."))
+                ContentUnavailableView(IconLocalization.string("No Icons", bundle: .module), systemImage: "app.dashed", description: Text(IconLocalization.string("Create an icon to get started.", bundle: .module)))
             } else {
                 List(model.icons, selection: Binding(
                     get: { model.selectedIconID },
@@ -54,21 +54,21 @@ public struct IconWorkspaceView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Icon Editor").font(.title2.bold())
+                    Text(IconLocalization.string("Icon Editor", bundle: .module)).font(.title2.bold())
                     Spacer()
-                    Button("Import Image", action: chooseImage)
+                    Button(IconLocalization.string("Import Image", bundle: .module), action: chooseImage)
                     Button("PNG", action: choosePNGExportDirectory)
                     Button("ImageSet", action: chooseImageSetExportDirectory)
                     Button("Favicon", action: chooseFaviconExportDirectory)
-                    Button("Export Xcode Sets", action: chooseExportDirectory)
-                    Button("Delete", role: .destructive, action: model.deleteSelectedIcon)
-                    Button("Save", action: model.saveDraft)
+                    Button(IconLocalization.string("Export Xcode Sets", bundle: .module), action: chooseExportDirectory)
+                    Button(IconLocalization.string("Delete", bundle: .module), role: .destructive, action: model.deleteSelectedIcon)
+                    Button(IconLocalization.string("Save", bundle: .module), action: model.saveDraft)
                         .buttonStyle(.borderedProminent)
                 }
 
-                TextField("Title", text: $model.title)
+                TextField(IconLocalization.string("Title", bundle: .module), text: $model.title)
                     .textFieldStyle(.roundedBorder)
-                Picker("Asset Source", selection: Binding(
+                Picker(IconLocalization.string("Asset Source", bundle: .module), selection: Binding(
                     get: { model.selectedSourceID },
                     set: { model.selectSource($0) }
                 )) {
@@ -77,13 +77,13 @@ public struct IconWorkspaceView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                Button("Choose Custom Folder", action: chooseCustomSourceFolder)
+                Button(IconLocalization.string("Choose Custom Folder", bundle: .module), action: chooseCustomSourceFolder)
                 if !model.sourceCategories.isEmpty {
-                    Picker("Category", selection: Binding(
+                    Picker(IconLocalization.string("Category", bundle: .module), selection: Binding(
                         get: { model.selectedSourceCategory ?? "all" },
                         set: { model.selectedSourceCategory = $0 == "all" ? nil : $0 }
                     )) {
-                        Text("All").tag("all")
+                        Text(IconLocalization.string("All", bundle: .module)).tag("all")
                         ForEach(model.sourceCategories, id: \.self) { category in
                             Text(category).tag(category)
                         }
@@ -91,15 +91,15 @@ public struct IconWorkspaceView: View {
                     .pickerStyle(.menu)
                 }
                 sourceAssetPicker
-                Picker("Background", selection: $model.backgroundID) {
-                    Text("Blue").tag("1")
-                    Text("Purple").tag("2")
-                    Text("Orange").tag("3")
+                Picker(IconLocalization.string("Background", bundle: .module), selection: $model.backgroundID) {
+                    Text(IconLocalization.string("Blue", bundle: .module)).tag("1")
+                    Text(IconLocalization.string("Purple", bundle: .module)).tag("2")
+                    Text(IconLocalization.string("Orange", bundle: .module)).tag("3")
                 }
-                Slider(value: $model.scale, in: 0.5...1.5) { Text("Scale") }
-                Slider(value: $model.padding, in: 0...0.3) { Text("Padding") }
-                Slider(value: $model.cornerRadius, in: 0...512) { Text("Corner Radius") }
-                Slider(value: $model.opacity, in: 0.2...1) { Text("Opacity") }
+                Slider(value: $model.scale, in: 0.5...1.5) { Text(IconLocalization.string("Scale", bundle: .module)) }
+                Slider(value: $model.padding, in: 0...0.3) { Text(IconLocalization.string("Padding", bundle: .module)) }
+                Slider(value: $model.cornerRadius, in: 0...512) { Text(IconLocalization.string("Corner Radius", bundle: .module)) }
+                Slider(value: $model.opacity, in: 0.2...1) { Text(IconLocalization.string("Opacity", bundle: .module)) }
                 IconPreview(
                     imageURL: model.imageURL,
                     backgroundID: model.backgroundID,
@@ -117,7 +117,7 @@ public struct IconWorkspaceView: View {
     private var sourceAssetPicker: some View {
         Group {
             if model.sourceAssets.isEmpty {
-                Text("No source assets available")
+                Text(IconLocalization.string("No source assets available", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {

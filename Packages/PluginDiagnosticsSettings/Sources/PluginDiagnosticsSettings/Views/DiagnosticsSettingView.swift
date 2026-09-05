@@ -15,14 +15,14 @@ public struct DiagnosticsSettingView: View {
                 actionsSection
             }
         }
-        .navigationTitle(Text("Diagnostics"))
+        .navigationTitle(Text(LumiPluginLocalization.string("Diagnostics", bundle: .module)))
     }
 
     private var statusSection: some View {
-        AppSettingSection(title: "Status", titleAlignment: .leading) {
+        AppSettingSection(title: LumiPluginLocalization.string("Status", bundle: .module), titleAlignment: .leading) {
             AppSettingRow(
                 title: LumiPluginLocalization.string("Last launch", bundle: .module),
-                description: "Normal",
+                description: LumiPluginLocalization.string("Normal", bundle: .module),
                 icon: "checkmark.circle"
             ) {
                 EmptyView()

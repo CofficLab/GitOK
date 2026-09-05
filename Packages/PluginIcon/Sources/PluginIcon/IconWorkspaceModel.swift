@@ -106,7 +106,7 @@ public final class IconWorkspaceModel: ObservableObject {
                 imageURL = importedURL
                 if selectedIcon == nil { createIcon() }
                 saveDraft()
-                message = "Icon imported from \(asset.title)"
+                message = String(format: IconLocalization.string("Icon imported from %@", bundle: .module), asset.title)
             } catch {
                 message = error.localizedDescription
             }
@@ -126,7 +126,7 @@ public final class IconWorkspaceModel: ObservableObject {
             reload()
             selectedIconID = icon.id
             loadDraft(from: icon)
-            message = "Icon created"
+            message = IconLocalization.string("Icon created", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -140,7 +140,7 @@ public final class IconWorkspaceModel: ObservableObject {
             selectedAssetID = importedURL.path
             imageURL = importedURL
             saveDraft()
-            message = "Image imported"
+            message = IconLocalization.string("Image imported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -161,7 +161,7 @@ public final class IconWorkspaceModel: ObservableObject {
             reload()
             selectedIconID = icon.id
             loadDraft(from: icon)
-            message = "Icon saved"
+            message = IconLocalization.string("Icon saved", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -172,7 +172,7 @@ public final class IconWorkspaceModel: ObservableObject {
         do {
             try repository.delete(icon)
             reload()
-            message = "Icon deleted"
+            message = IconLocalization.string("Icon deleted", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -180,7 +180,7 @@ public final class IconWorkspaceModel: ObservableObject {
 
     public func exportSelectedIcon(to destinationURL: URL) {
         guard var icon = selectedIcon else {
-            message = "Import an image before exporting"
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
             return
         }
         icon.title = title
@@ -193,7 +193,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.iconId = selectedAssetID ?? icon.iconId
         do {
             try IconExporter.exportAppIcon(from: icon, to: destinationURL)
-            message = "AppIcon set exported"
+            message = IconLocalization.string("AppIcon set exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -201,7 +201,7 @@ public final class IconWorkspaceModel: ObservableObject {
 
     public func exportSelectedIconSets(to destinationURL: URL) {
         guard var icon = selectedIcon else {
-            message = "Import an image before exporting"
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
             return
         }
         icon.title = title
@@ -214,7 +214,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.iconId = selectedAssetID ?? icon.iconId
         do {
             try IconExporter.exportXcodeIconSets(from: icon, to: destinationURL)
-            message = "Legacy and modern Xcode icon sets exported"
+            message = IconLocalization.string("Legacy and modern Xcode icon sets exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -222,12 +222,12 @@ public final class IconWorkspaceModel: ObservableObject {
 
     public func exportPNGSet(to destinationURL: URL) {
         guard let icon = currentDraftIcon() else {
-            message = "Import an image before exporting"
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
             return
         }
         do {
             try IconExporter.exportPNGSet(from: icon, to: destinationURL)
-            message = "PNG set exported"
+            message = IconLocalization.string("PNG set exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -235,12 +235,12 @@ public final class IconWorkspaceModel: ObservableObject {
 
     public func exportImageSet(to destinationURL: URL) {
         guard let icon = currentDraftIcon() else {
-            message = "Import an image before exporting"
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
             return
         }
         do {
             try IconExporter.exportImageSet(from: icon, to: destinationURL)
-            message = "Image Set exported"
+            message = IconLocalization.string("Image Set exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -248,12 +248,12 @@ public final class IconWorkspaceModel: ObservableObject {
 
     public func exportFavicon(to destinationURL: URL) {
         guard let icon = currentDraftIcon() else {
-            message = "Import an image before exporting"
+            message = IconLocalization.string("Import an image before exporting", bundle: .module)
             return
         }
         do {
             try IconExporter.exportFavicon(from: icon, to: destinationURL)
-            message = "Favicon exported"
+            message = IconLocalization.string("Favicon exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }

@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitSuperLog"),
+        .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderToolbar"),
@@ -26,11 +27,15 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderToolbar", package: "ProviderToolbar"),
             ],
-            path: "Sources/PluginSidebarToggle"
+            path: "Sources/PluginSidebarToggle",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginSidebarToggleTests",

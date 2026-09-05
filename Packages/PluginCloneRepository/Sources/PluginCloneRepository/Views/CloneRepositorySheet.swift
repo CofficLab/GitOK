@@ -111,7 +111,7 @@ public struct CloneRepositorySheet: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(LumiPluginLocalization.string("Clone Repository", bundle: .module))
                     .font(.headline)
-                Text("Clone a remote repository and add it to your projects.")
+                Text(LumiPluginLocalization.string("Clone a remote repository and add it to your projects.", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
@@ -130,7 +130,7 @@ public struct CloneRepositorySheet: View {
 
     private var destinationSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Destination")
+            Text(LumiPluginLocalization.string("Destination", bundle: .module))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             HStack(spacing: 8) {
@@ -145,12 +145,12 @@ public struct CloneRepositorySheet: View {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .fill(theme.textSecondary.opacity(0.08))
                     )
-                AppButton("Choose...", systemImage: "folder", style: .secondary, size: .small) {
+                AppButton(LumiPluginLocalization.string("Choose...", bundle: .module), systemImage: "folder", style: .secondary, size: .small) {
                     chooseDestinationFolder()
                 }
             }
             HStack(spacing: 6) {
-                Text("Name")
+                Text(LumiPluginLocalization.string("Name", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
                     .frame(width: 34, alignment: .leading)
@@ -175,13 +175,13 @@ public struct CloneRepositorySheet: View {
                     .lineLimit(2)
             }
             Spacer()
-            AppButton("Cancel", style: .secondary, action: { dismiss() })
+            AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, action: { dismiss() })
                 .keyboardShortcut(.cancelAction)
             if isCloning {
                 ProgressView()
                     .controlSize(.small)
             } else {
-                AppButton("Clone", systemImage: "arrow.down.circle", style: .primary, action: {
+                AppButton(LumiPluginLocalization.string("Clone", bundle: .module), systemImage: "arrow.down.circle", style: .primary, action: {
                     Task { await clone() }
                 })
                 .disabled(!canClone)
@@ -198,7 +198,7 @@ public struct CloneRepositorySheet: View {
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
         panel.directoryURL = destinationFolder
-        panel.prompt = "Choose"
+        panel.prompt = LumiPluginLocalization.string("Choose", bundle: .module)
         if panel.runModal() == .OK, let url = panel.url {
             destinationFolder = url
         }

@@ -101,7 +101,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
             toolbar.addToolbarItems([
                 ToolbarItem(
                     id: "\(id).toolbar",
-                    title: "Project",
+                    title: LumiPluginLocalization.string("Project", bundle: .module),
                     placement: .center,
                     category: .project,
                     order: 5

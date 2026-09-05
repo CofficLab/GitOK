@@ -269,11 +269,11 @@ public struct AddRemoteRepositorySheet: View {
             AppInputField(LocalizedStringKey(LumiPluginLocalization.string("Repository URL", bundle: .module)), text: $url)
             HStack {
                 Spacer()
-                AppButton("Cancel", style: .secondary, size: .small) {
+                AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
                     dismiss()
                 }
                 AppButton(
-                    "Add",
+                    LumiPluginLocalization.string("Add", bundle: .module),
                     systemImage: "plus",
                     style: .primary,
                     size: .small

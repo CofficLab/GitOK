@@ -1,4 +1,5 @@
 import Foundation
+import KitLocalization
 
 /// 内置主题集合。
 ///
@@ -21,9 +22,9 @@ public enum BuiltinThemes {
     public static let lumi = LumiTheme(
         id: "lumi",
         sortOrder: 50,
-        displayName: "Lumi",
-        compactName: "Lumi",
-        description: "The default Lumi theme.",
+        displayName: ProviderThemeLocalization.string("Lumi", bundle: .module),
+        compactName: ProviderThemeLocalization.string("Lumi", bundle: .module),
+        description: ProviderThemeLocalization.string("The default Lumi theme.", bundle: .module),
         iconName: "circle.hexagonpath.fill",
         iconColor: ThemeHexPair(light: "059669", dark: "34D399"),
         appearanceKind: .system,
@@ -44,9 +45,9 @@ public enum BuiltinThemes {
     public static let system = LumiTheme(
         id: "lumi-system",
         sortOrder: 100,
-        displayName: "System",
-        compactName: "System",
-        description: "Follows the system light / dark appearance.",
+        displayName: ProviderThemeLocalization.string("System", bundle: .module),
+        compactName: ProviderThemeLocalization.string("System", bundle: .module),
+        description: ProviderThemeLocalization.string("Follows the system light / dark appearance.", bundle: .module),
         iconName: "circle.lefthalf.filled",
         iconColor: ThemeHexPair(light: "007AFF", dark: "0A84FF"),
         appearanceKind: .system,
@@ -67,9 +68,9 @@ public enum BuiltinThemes {
     public static let dark = LumiTheme(
         id: "lumi-dark",
         sortOrder: 200,
-        displayName: "Dark",
-        compactName: "Dark",
-        description: "A fixed dark appearance.",
+        displayName: ProviderThemeLocalization.string("Dark", bundle: .module),
+        compactName: ProviderThemeLocalization.string("Dark", bundle: .module),
+        description: ProviderThemeLocalization.string("A fixed dark appearance.", bundle: .module),
         iconName: "moon.fill",
         iconColor: ThemeHexPair(hex: "0A84FF"),
         appearanceKind: .dark,
@@ -90,9 +91,9 @@ public enum BuiltinThemes {
     public static let light = LumiTheme(
         id: "lumi-light",
         sortOrder: 300,
-        displayName: "Light",
-        compactName: "Light",
-        description: "A fixed light appearance.",
+        displayName: ProviderThemeLocalization.string("Light", bundle: .module),
+        compactName: ProviderThemeLocalization.string("Light", bundle: .module),
+        description: ProviderThemeLocalization.string("A fixed light appearance.", bundle: .module),
         iconName: "sun.max.fill",
         iconColor: ThemeHexPair(hex: "007AFF"),
         appearanceKind: .light,

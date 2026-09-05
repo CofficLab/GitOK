@@ -16,9 +16,9 @@ public enum GitOKWorkspaceScene: String, CaseIterable, Codable, Identifiable, Se
 
     public var title: String {
         switch self {
-        case .git: "Git"
-        case .banner: "Banner"
-        case .icon: "Icon"
+        case .git: WorkspaceSceneLocalization.string("Git", bundle: .module)
+        case .banner: WorkspaceSceneLocalization.string("Banner", bundle: .module)
+        case .icon: WorkspaceSceneLocalization.string("Icon", bundle: .module)
         }
     }
 
@@ -227,7 +227,7 @@ public struct WorkspaceScenePickerView: View {
     }
 
     public var body: some View {
-        Picker("Workspace", selection: Binding(
+        Picker(WorkspaceSceneLocalization.string("Workspace", bundle: .module), selection: Binding(
             get: { model.selectedScene },
             set: { model.select($0) }
         )) {
@@ -237,6 +237,6 @@ public struct WorkspaceScenePickerView: View {
             }
         }
         .pickerStyle(.menu)
-        .accessibilityLabel("Workspace")
+        .accessibilityLabel(WorkspaceSceneLocalization.string("Workspace", bundle: .module))
     }
 }

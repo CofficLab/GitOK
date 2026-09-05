@@ -22,7 +22,7 @@ public struct ActivityStatusTile: View {
                     .font(.appCaption)
                     .lineLimit(1)
             }
-            .help("Current activity")
+            .help(ActivityStatusLocalization.string("Current activity", bundle: .module))
         }
     }
 }

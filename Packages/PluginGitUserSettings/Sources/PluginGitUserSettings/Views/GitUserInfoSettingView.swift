@@ -61,7 +61,7 @@ public struct GitUserInfoSettingView: View {
                         icon: "person.crop.circle"
                     ) {
                         HStack(spacing: 8) {
-                            AppButton("Apply", systemImage: "checkmark.circle", style: .secondary, size: .small) {
+                            AppButton(LumiPluginLocalization.string("Apply", bundle: .module), systemImage: "checkmark.circle", style: .secondary, size: .small) {
                                 apply(preset)
                             }
                             AppIconButton(

@@ -47,7 +47,7 @@ public final class ActivityStatusPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Activity",
+                title: ActivityStatusLocalization.string("Activity", bundle: .module),
                 placement: .center,
                 order: 5
             ) {

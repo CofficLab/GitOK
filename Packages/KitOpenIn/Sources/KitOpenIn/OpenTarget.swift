@@ -55,7 +55,12 @@ public enum OpenTarget: String, CaseIterable, Identifiable, Sendable {
 
     /// 帮助文案。
     public var helpText: String {
-        self == .remote ? "Open Remote Repository" : "Open in \(displayName)"
+        switch self {
+        case .remote:
+            return String(format: KitOpenInLocalization.string("Open Remote Repository", bundle: .module))
+        default:
+            return String(format: KitOpenInLocalization.string("Open in %@", bundle: .module), displayName)
+        }
     }
 
     /// 工具栏 order（旧版顺序：Finder 400 → Remote 500）。

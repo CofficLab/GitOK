@@ -46,7 +46,7 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Submodule",
+                title: GitSubmoduleLocalization.string("Submodule", bundle: .module),
                 placement: .leading,
                 order: 26,
                 sceneScope: .git

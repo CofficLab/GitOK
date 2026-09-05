@@ -17,7 +17,7 @@ public struct CommitStyleSettingView: View {
                 AppSettingSection(title: LumiPluginLocalization.string("Global Default Style", bundle: .module), titleAlignment: .leading) {
                     AppSettingRow(
                         title: LumiPluginLocalization.string("Global Default Style", bundle: .module),
-                        description: "Default commit message display style for new projects",
+                        description: LumiPluginLocalization.string("Default commit message display style for new projects", bundle: .module),
                         icon: "arrow.up.arrow.down"
                     ) {
                         Picker("", selection: $globalCommitStyle) {

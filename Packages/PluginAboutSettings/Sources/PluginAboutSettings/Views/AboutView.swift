@@ -2,6 +2,10 @@ import AppKit
 import LumiUI
 import SwiftUI
 
+private func loc(_ key: String) -> String {
+    AboutSettingsLocalization.string(key, bundle: .module)
+}
+
 /// 关于应用视图（对齐旧版 AboutView）。
 public struct AboutView: View {
     @LumiTheme private var theme
@@ -23,10 +27,10 @@ public struct AboutView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     VStack(spacing: 4) {
-                        Text("Version \(appVersion)")
+                        Text(String(format: loc("Version %@"), appVersion))
                             .font(.body)
                             .foregroundStyle(theme.textSecondary)
-                        Text("Build \(appBuild)")
+                        Text(String(format: loc("Build %@"), appBuild))
                             .font(.caption)
                             .foregroundStyle(theme.textSecondary)
                     }
@@ -34,28 +38,28 @@ public struct AboutView: View {
                 .frame(maxWidth: .infinity)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("About")
+                    Text(loc("About"))
                         .font(.headline)
-                    Text("GitOK is a git client built on the Lumi plugin architecture.")
+                    Text(loc("GitOK is a git client built on the Lumi plugin architecture."))
                         .font(.body)
                         .foregroundStyle(theme.textSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                AppSettingSection(title: "App Info", titleAlignment: .leading) {
+                AppSettingSection(title: loc("App Info"), titleAlignment: .leading) {
                     VStack(spacing: 0) {
-                        infoRow(title: "App Name", value: appName, icon: "gearshape")
+                        infoRow(title: loc("App Name"), value: appName, icon: "gearshape")
                         Divider()
-                        infoRow(title: "Version", value: appVersion, icon: "speaker.wave.2")
+                        infoRow(title: loc("Version"), value: appVersion, icon: "speaker.wave.2")
                         Divider()
-                        infoRow(title: "Build", value: appBuild, icon: "list.bullet")
+                        infoRow(title: loc("Build"), value: appBuild, icon: "list.bullet")
                         Divider()
-                        infoRow(title: "Bundle ID", value: bundleIdentifier, icon: "info.circle")
+                        infoRow(title: loc("Bundle ID"), value: bundleIdentifier, icon: "info.circle")
                     }
                 }
             }
         }
-        .navigationTitle(Text("About"))
+        .navigationTitle(Text(loc("About")))
     }
 
     private var appName: String {

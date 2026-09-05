@@ -46,7 +46,7 @@ public final class GitLFSPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Git LFS",
+                title: GitLFSLocalization.string("Git LFS", bundle: .module),
                 placement: .leading,
                 order: 25,
                 sceneScope: .git

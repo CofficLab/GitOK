@@ -128,7 +128,7 @@ private struct ProjectSidebarView: View {
         HStack(spacing: 8) {
             Spacer()
             AppButton(
-                "Clone Repository",
+                LumiPluginLocalization.string("Clone Repository", bundle: .module),
                 systemImage: "arrow.triangle.branch",
                 style: .secondary,
                 size: .small
@@ -225,7 +225,7 @@ private struct EmptyProjectsPlaceholder: View {
                     .frame(maxWidth: 170)
             }
             AppButton(
-                "Add Project",
+                LumiPluginLocalization.string("Add Project", bundle: .module),
                 systemImage: "folder",
                 style: .primary,
                 size: .small

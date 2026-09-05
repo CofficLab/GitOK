@@ -51,7 +51,7 @@ public final class SidebarTogglePlugin: SuperPlugin, SuperLog {
         toolbar.addToolbarItems([
             ToolbarItem(
                 id: Self.toolbarItemID,
-                title: "Toggle Sidebar",
+                title: SidebarToggleLocalization.string("Toggle Sidebar", bundle: .module),
                 placement: .leading,
                 category: .global,
                 order: 10

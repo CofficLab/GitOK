@@ -68,7 +68,7 @@ public final class BannerWorkspaceModel: ObservableObject {
             reload()
             selectedBannerID = banner.id
             loadDraft(from: banner)
-            message = "Banner created"
+            message = BannerLocalization.string("Banner created", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -79,7 +79,7 @@ public final class BannerWorkspaceModel: ObservableObject {
         do {
             try repository.delete(banner)
             reload()
-            message = "Banner deleted"
+            message = BannerLocalization.string("Banner deleted", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -116,7 +116,7 @@ public final class BannerWorkspaceModel: ObservableObject {
             reload()
             selectedBannerID = banner.id
             loadDraft(from: banner)
-            message = "Banner saved"
+            message = BannerLocalization.string("Banner saved", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -131,7 +131,7 @@ public final class BannerWorkspaceModel: ObservableObject {
                 createBanner()
             }
             saveDraft()
-            message = "Banner image imported"
+            message = BannerLocalization.string("Banner image imported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -140,7 +140,7 @@ public final class BannerWorkspaceModel: ObservableObject {
     public func exportStandardPNG(to folderURL: URL) {
         do {
             try BannerExporter.exportStandardPNG(configuration: renderConfiguration, to: folderURL)
-            message = "Standard PNG banners exported"
+            message = BannerLocalization.string("Standard PNG banners exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -149,7 +149,7 @@ public final class BannerWorkspaceModel: ObservableObject {
     public func exportMacAppStoreScreenshots(to folderURL: URL) {
         do {
             try BannerExporter.exportMacAppStoreScreenshots(configuration: renderConfiguration, to: folderURL)
-            message = "Mac App Store screenshots exported"
+            message = BannerLocalization.string("Mac App Store screenshots exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }
@@ -158,7 +158,7 @@ public final class BannerWorkspaceModel: ObservableObject {
     public func exportIPhoneAppStoreScreenshots(to folderURL: URL) {
         do {
             try BannerExporter.exportIPhoneAppStoreScreenshots(configuration: renderConfiguration, to: folderURL)
-            message = "iPhone App Store screenshots exported"
+            message = BannerLocalization.string("iPhone App Store screenshots exported", bundle: .module)
         } catch {
             message = error.localizedDescription
         }

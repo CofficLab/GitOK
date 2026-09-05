@@ -45,7 +45,7 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Git Ignore",
+                title: GitIgnoreLocalization.string("Git Ignore", bundle: .module),
                 placement: .leading,
                 order: 20,
                 sceneScope: .git

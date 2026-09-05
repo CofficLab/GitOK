@@ -26,7 +26,9 @@ public struct SubmoduleStatusTile: View {
                     .onTapGesture {
                         isPresented = true
                     }
-                    .help(submodules.isEmpty ? "No submodules" : "\(submodules.count) submodule(s)")
+                    .help(submodules.isEmpty
+                        ? GitSubmoduleLocalization.string("No submodules", bundle: .module)
+                        : String(format: GitSubmoduleLocalization.string("%ld submodule(s)", bundle: .module), submodules.count))
                     .popover(isPresented: $isPresented) {
                         SubmoduleContentView(
                             submodules: submodules,
@@ -83,15 +85,15 @@ private struct SubmoduleContentView: View {
             HStack(spacing: 8) {
                 Image(systemName: "shippingbox")
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Submodules")
+                    Text(GitSubmoduleLocalization.string("Submodules", bundle: .module))
                         .font(.headline)
-                    Text("\(submodules.count) configured")
+                    Text(String(format: GitSubmoduleLocalization.string("%ld configured", bundle: .module), submodules.count))
                         .font(.caption)
                         .foregroundStyle(theme.textSecondary)
                 }
                 Spacer()
                 if !submodules.isEmpty {
-                    AppButton("Update", systemImage: "arrow.down", style: .secondary, size: .small) {
+                    AppButton(GitSubmoduleLocalization.string("Update", bundle: .module), systemImage: "arrow.down", style: .secondary, size: .small) {
                         onUpdate()
                     }
                 }
@@ -105,7 +107,7 @@ private struct SubmoduleContentView: View {
                     Image(systemName: "checkmark.circle")
                         .font(.system(size: 18))
                         .foregroundStyle(theme.success)
-                    Text("No submodules configured")
+                    Text(GitSubmoduleLocalization.string("No submodules configured", bundle: .module))
                         .font(.caption)
                         .foregroundStyle(theme.textSecondary)
                 }

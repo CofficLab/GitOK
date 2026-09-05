@@ -48,7 +48,7 @@ struct GitDiffPaneView: View {
         HStack(spacing: 6) {
             Image(systemName: "text.alignleft")
                 .font(.appCaptionEmphasized)
-            Text(filePath ?? "Diff")
+            Text(filePath ?? GitDiffLocalization.string("Diff", bundle: .module))
                 .font(.system(size: 11, weight: .medium, design: .monospaced))
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -72,8 +72,8 @@ struct GitDiffPaneView: View {
         if viewModel.selectedFile == nil {
             AppEmptyState(
                 icon: "doc.on.doc",
-                title: "Select a File",
-                description: "Choose a changed file to see its diff."
+                title: GitDiffLocalization.string("Select a File", bundle: .module),
+                description: GitDiffLocalization.string("Choose a changed file to see its diff.", bundle: .module)
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if isLoading && diffText == nil {
@@ -82,7 +82,7 @@ struct GitDiffPaneView: View {
         } else if let loadError {
             AppEmptyState(
                 icon: "exclamationmark.triangle",
-                title: "Unable to Load Diff",
+                title: GitDiffLocalization.string("Unable to Load Diff", bundle: .module),
                 description: loadError
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -93,8 +93,8 @@ struct GitDiffPaneView: View {
         } else {
             AppEmptyState(
                 icon: "text.alignleft",
-                title: "No Text Diff",
-                description: "This file has no parseable text diff."
+                title: GitDiffLocalization.string("No Text Diff", bundle: .module),
+                description: GitDiffLocalization.string("This file has no parseable text diff.", bundle: .module)
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

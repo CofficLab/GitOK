@@ -25,7 +25,9 @@ public struct GitIgnoreStatusIcon: View {
                             isSheetPresented.toggle()
                         }
                     }
-                    .help(hasGitIgnore ? "View .gitignore file" : "No .gitignore file found")
+                    .help(hasGitIgnore
+                        ? GitIgnoreLocalization.string("View .gitignore file", bundle: .module)
+                        : GitIgnoreLocalization.string("No .gitignore file found", bundle: .module))
                     .sheet(isPresented: $isSheetPresented) {
                         GitIgnoreViewer(projects: projects)
                             .frame(minWidth: 600, minHeight: 400)

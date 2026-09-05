@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "PluginBanner",
+    defaultLocalization: "en",
     platforms: [.macOS(.v14)],
     products: [
         .library(name: "PluginBanner", targets: ["PluginBanner"]),
@@ -10,6 +11,7 @@ let package = Package(
     dependencies: [
         .package(path: "../BannerCoreKit"),
         .package(path: "../KernelCore"),
+        .package(path: "../KitLocalization"),
         .package(path: "../ProjectRulesKit"),
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderProjects"),
@@ -20,11 +22,15 @@ let package = Package(
             dependencies: [
                 .product(name: "BannerCoreKit", package: "BannerCoreKit"),
                 .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
-            path: "Sources/PluginBanner"
+            path: "Sources/PluginBanner",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginBannerTests",

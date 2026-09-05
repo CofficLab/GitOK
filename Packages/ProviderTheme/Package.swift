@@ -15,11 +15,18 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../KitLocalization"),
     ],
     targets: [
         .target(
             name: "ProviderTheme",
-            path: "Sources/ProviderTheme"
+            dependencies: [
+                .product(name: "KitLocalization", package: "KitLocalization"),
+            ],
+            path: "Sources/ProviderTheme",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "ProviderThemeTests",

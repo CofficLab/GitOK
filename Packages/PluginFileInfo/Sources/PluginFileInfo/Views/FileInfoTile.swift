@@ -57,28 +57,28 @@ public struct FileInfoTile: View {
 
     private func popoverContent(file: String) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("File Actions")
+            Text(FileInfoLocalization.string("File Actions", bundle: .module))
                 .font(.headline)
                 .padding(.bottom, 4)
             Button {
                 revealInFinder(file: file)
                 isPopoverPresented = false
             } label: {
-                Label("Reveal in Finder", systemImage: "finder")
+                Label(FileInfoLocalization.string("Reveal in Finder", bundle: .module), systemImage: "finder")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             Button {
                 copyText(file)
                 isPopoverPresented = false
             } label: {
-                Label("Copy Path", systemImage: "doc.on.doc")
+                Label(FileInfoLocalization.string("Copy Path", bundle: .module), systemImage: "doc.on.doc")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             Button {
                 openWithDefaultApp(file: file)
                 isPopoverPresented = false
             } label: {
-                Label("Open with Default App", systemImage: "arrow.up.forward.app")
+                Label(FileInfoLocalization.string("Open with Default App", bundle: .module), systemImage: "arrow.up.forward.app")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }

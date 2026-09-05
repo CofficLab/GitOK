@@ -45,7 +45,7 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Merge",
+                title: GitSmartMergeLocalization.string("Merge", bundle: .module),
                 placement: .leading,
                 order: 24,
                 sceneScope: .git

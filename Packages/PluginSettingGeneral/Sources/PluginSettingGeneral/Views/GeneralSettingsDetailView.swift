@@ -84,7 +84,7 @@ struct GeneralSettingsDetailView: View {
 
     private var appSection: some View {
         AppSettingSection(
-            title: "GitOK",
+            title: LumiPluginLocalization.string("GitOK", bundle: .module),
             titleAlignment: .leading
         ) {
             VStack(spacing: 0) {

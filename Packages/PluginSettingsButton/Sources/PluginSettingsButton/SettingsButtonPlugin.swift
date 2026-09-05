@@ -46,7 +46,7 @@ public final class SettingsButtonPlugin: SuperPlugin, SuperLog {
         toolbar.addToolbarItems([
             ToolbarItem(
                 id: Self.toolbarItemID,
-                title: "Open Settings",
+                title: SettingsButtonLocalization.string("Open Settings", bundle: .module),
                 placement: .trailing,
                 category: .global,
                 order: 150

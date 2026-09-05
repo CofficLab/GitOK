@@ -45,7 +45,7 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Unpushed Commits",
+                title: GitUnpushedStatusLocalization.string("Unpushed Commits", bundle: .module),
                 placement: .leading,
                 order: 16,
                 sceneScope: .git

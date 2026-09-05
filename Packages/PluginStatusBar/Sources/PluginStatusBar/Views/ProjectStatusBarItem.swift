@@ -18,7 +18,7 @@ struct ProjectStatusBarItem: View {
 
     var body: some View {
         AppStatusBarTile(systemImage: "folder") {
-            Text(projects.currentProject?.title ?? "No Project")
+            Text(projects.currentProject?.title ?? StatusBarLocalization.string("No Project", bundle: .module))
                 .lineLimit(1)
         }
     }

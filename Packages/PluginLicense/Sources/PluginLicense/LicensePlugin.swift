@@ -45,7 +45,7 @@ public final class LicensePlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "License",
+                title: LicenseLocalization.string("License", bundle: .module),
                 placement: .leading,
                 order: 22
             ) {

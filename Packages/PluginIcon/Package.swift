@@ -3,12 +3,14 @@ import PackageDescription
 
 let package = Package(
     name: "PluginIcon",
+    defaultLocalization: "en",
     platforms: [.macOS(.v14)],
     products: [
         .library(name: "PluginIcon", targets: ["PluginIcon"]),
     ],
     dependencies: [
         .package(path: "../KernelCore"),
+        .package(path: "../KitLocalization"),
         .package(path: "../ProjectRulesKit"),
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderProjects"),
@@ -18,12 +20,14 @@ let package = Package(
             name: "PluginIcon",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
             path: "Sources/PluginIcon",
             resources: [
+                .process("../../Resources/Localizable.xcstrings"),
                 .process("../../Resources/Icons")
             ]
         ),

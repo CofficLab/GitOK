@@ -22,7 +22,7 @@ struct ThemeStatusBarItem: View {
            let current = theme.themes.first(where: { $0.id == id }) {
             return current.compactName
         }
-        return "Theme"
+        return StatusBarLocalization.string("Theme", bundle: .module)
     }
 
     var body: some View {
@@ -35,7 +35,7 @@ struct ThemeStatusBarItem: View {
         .popover(isPresented: $isPresented, arrowEdge: .bottom) {
             ThemePickerPopover(theme: theme)
         }
-        .help("Switch theme")
+        .help(StatusBarLocalization.string("Switch theme", bundle: .module))
     }
 }
 

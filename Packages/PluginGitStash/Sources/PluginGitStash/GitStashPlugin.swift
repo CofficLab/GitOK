@@ -45,7 +45,7 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: "Stash",
+                title: GitStashLocalization.string("Stash", bundle: .module),
                 placement: .leading,
                 order: 17,
                 sceneScope: .git

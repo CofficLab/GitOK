@@ -92,7 +92,7 @@ public struct DefaultProviderFactory: ProviderFactory {
         toolbar.addToolbarItems([
             ToolbarItem(
                 id: "workspace-scene-picker",
-                title: "Workspace",
+                title: LumiPluginLocalization.string("Workspace", bundle: .module),
                 placement: .leading,
                 order: 0
             ) {

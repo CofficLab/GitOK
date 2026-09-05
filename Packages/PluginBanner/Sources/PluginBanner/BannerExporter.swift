@@ -129,7 +129,7 @@ public enum BannerExportError: Error, LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
-        case let .renderFailed(device): "Unable to render banner for \(device.rawValue)."
+        case let .renderFailed(device): String(format: BannerLocalization.string("Unable to render banner for %@.", bundle: .module), device.rawValue)
         }
     }
 }

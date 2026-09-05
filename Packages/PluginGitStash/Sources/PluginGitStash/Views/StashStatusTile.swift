@@ -31,7 +31,7 @@ public struct StashStatusTile: View {
                 .onTapGesture {
                     isPresented.toggle()
                 }
-                .help("Manage Stash")
+                .help(GitStashLocalization.string("Manage Stash", bundle: .module))
                 .popover(isPresented: $isPresented, arrowEdge: .bottom) {
                     StashListView(projects: projects, onStashesChanged: { load() })
                         .frame(width: 460, height: 520)

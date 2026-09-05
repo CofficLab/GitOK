@@ -232,7 +232,7 @@ struct CommitRailView: View {
                 HStack(spacing: 8) {
                     ProgressView()
                         .controlSize(.small)
-                    Text("Pushing...")
+                    Text(LumiPluginLocalization.string("Pushing...", bundle: .module))
                         .font(.body)
                         .foregroundStyle(theme.textSecondary)
                 }
@@ -257,7 +257,7 @@ struct CommitRailView: View {
                     }
 
                     HStack(spacing: 12) {
-                        AppButton("Cancel", style: .secondary, size: .small) {
+                        AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
                             pushPopoverCommitHash = nil
                             pushError = nil
                         }

@@ -25,7 +25,7 @@ public struct RemoteRepositoryStatusButton: View {
                     .onTapGesture {
                         isPresented = true
                     }
-                    .help("Manage Remote Repositories")
+                    .help(GitRemoteRepositoryLocalization.string("Manage Remote Repositories", bundle: .module))
                     .sheet(isPresented: $isPresented) {
                         RemoteRepositoryView(projects: projects)
                             .frame(minWidth: 520, minHeight: 420)
@@ -53,13 +53,13 @@ public struct RemoteRepositoryView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Remote Repositories")
+                Text(GitRemoteRepositoryLocalization.string("Remote Repositories", bundle: .module))
                     .font(.headline)
                 Spacer()
-                AppButton("Add", systemImage: "plus", style: .secondary, size: .small) {
+                AppButton(GitRemoteRepositoryLocalization.string("Add", bundle: .module), systemImage: "plus", style: .secondary, size: .small) {
                     showAddRemote = true
                 }
-                AppButton("Close", style: .secondary, size: .small) {
+                AppButton(GitRemoteRepositoryLocalization.string("Close", bundle: .module), style: .secondary, size: .small) {
                     dismiss()
                 }
             }
@@ -79,7 +79,7 @@ public struct RemoteRepositoryView: View {
                             Image(systemName: "network")
                                 .font(.system(size: 22))
                                 .foregroundStyle(theme.textTertiary)
-                            Text("No remote repository configured")
+                            Text(GitRemoteRepositoryLocalization.string("No remote repository configured", bundle: .module))
                                 .font(.system(size: 13, weight: .medium))
                         }
                         .frame(maxWidth: .infinity, minHeight: 120)
@@ -115,14 +115,14 @@ public struct RemoteRepositoryView: View {
             }
             Spacer()
             if let webURL = GitRemoteOperation.webLink(for: remote.url) {
-                AppIconButton(systemImage: "safari", label: "Open in Browser", tint: theme.textSecondary) {
+                AppIconButton(systemImage: "safari", label: GitRemoteRepositoryLocalization.string("Open in Browser", bundle: .module), tint: theme.textSecondary) {
                     NSWorkspace.shared.open(webURL)
                 }
             }
-            AppIconButton(systemImage: "doc.on.doc", label: "Copy URL", tint: theme.textSecondary) {
+            AppIconButton(systemImage: "doc.on.doc", label: GitRemoteRepositoryLocalization.string("Copy URL", bundle: .module), tint: theme.textSecondary) {
                 copyText(remote.url)
             }
-            AppIconButton(systemImage: "trash", label: "Delete", tint: theme.warning) {
+            AppIconButton(systemImage: "trash", label: GitRemoteRepositoryLocalization.string("Delete", bundle: .module), tint: theme.warning) {
                 deleteRemote(remote)
             }
         }
@@ -204,16 +204,16 @@ private struct AddRemoteForm: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Add Remote Repository")
+            Text(GitRemoteRepositoryLocalization.string("Add Remote Repository", bundle: .module))
                 .font(.headline)
-            AppInputField("Remote name (e.g. origin)", text: $name)
-            AppInputField("Repository URL", text: $url)
+            AppInputField(GitRemoteRepositoryLocalization.string("Remote name (e.g. origin)", bundle: .module), text: $name)
+            AppInputField(GitRemoteRepositoryLocalization.string("Repository URL", bundle: .module), text: $url)
             HStack {
                 Spacer()
-                AppButton("Cancel", style: .secondary, size: .small) {
+                AppButton(GitRemoteRepositoryLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
                     dismiss()
                 }
-                AppButton("Add", systemImage: "plus", style: .primary, size: .small) {
+                AppButton(GitRemoteRepositoryLocalization.string("Add", bundle: .module), systemImage: "plus", style: .primary, size: .small) {
                     onAdd(
                         name.trimmingCharacters(in: .whitespacesAndNewlines),
                         url.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -54,11 +54,11 @@ public struct LicenseViewer: View {
             }
             Spacer()
             if !exists {
-                AppButton("Create", systemImage: "plus", style: .secondary, size: .small) {
+                AppButton(LicenseLocalization.string("Create", bundle: .module), systemImage: "plus", style: .secondary, size: .small) {
                     createLicense()
                 }
             }
-            AppButton("Close", style: .secondary, size: .small) {
+            AppButton(LicenseLocalization.string("Close", bundle: .module), style: .secondary, size: .small) {
                 dismiss()
             }
         }

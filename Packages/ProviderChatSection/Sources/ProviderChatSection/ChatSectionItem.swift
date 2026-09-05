@@ -29,7 +29,7 @@ public struct ChatContext: Identifiable, Equatable, Hashable, Sendable {
     /// in this context so users can enter a plugin-specific workflow from chat.
     public static let defaultChat = ChatContext(
         id: "com.coffic.lumi.chat.default",
-        title: "Chat",
+        title: ChatSectionLocalization.string("Chat", bundle: .module),
         systemImage: "bubble.left.and.bubble.right"
     )
 }
