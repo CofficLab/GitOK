@@ -19,7 +19,7 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-ignore"
     public let order = 38
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-ignore",
         name: "Git Ignore",

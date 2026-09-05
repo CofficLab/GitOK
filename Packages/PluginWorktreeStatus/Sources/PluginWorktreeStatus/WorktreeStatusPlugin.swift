@@ -27,7 +27,7 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
     public let id = "com.coffic.gitok.plugin.worktree-status"
     /// 依赖项目管理服务先启动；需排在 commit 列表区块之前。
     public let order = 15
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.worktree-status",
         name: "Worktree Status",

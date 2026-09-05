@@ -29,7 +29,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     public let id = "com.coffic.gitok.plugin.worktree-clean"
     /// 依赖项目 Provider 先启动（干净视图需要读取当前项目）。
     public let order = 22
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.worktree-clean",
         name: "Worktree Clean",

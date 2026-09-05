@@ -13,6 +13,6 @@ struct PluginWorktreeStatusTests {
         #expect(plugin.id == "com.coffic.gitok.plugin.worktree-status")
         #expect(plugin.metadata.category == .project)
         #expect(plugin.metadata.policy == .alwaysOn)
-        #expect(plugin.dependencies.contains("com.coffic.lumi.plugin.projects"))
+        #expect(plugin.dependencies.contains("com.coffic.gitok.plugin.projects"))
     }
 }

@@ -28,7 +28,7 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-user-settings"
     public let order = 40
-    public let dependencies = ["com.coffic.lumi.plugin.projects", "com.coffic.lumi.plugin.setting-view"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects", "com.coffic.lumi.plugin.setting-view"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-user-settings",
         name: "Git User Settings",

@@ -10,7 +10,7 @@ import SwiftUI
 public final class BannerPlugin: SuperPlugin {
     public let id = "com.coffic.gitok.plugin.banner"
     public let order = 30
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.banner",
         name: "Banner",

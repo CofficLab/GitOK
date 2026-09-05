@@ -8,7 +8,7 @@ import ProviderProjects
 ///
 /// 管理 GitOK 项目列表（侧边栏数据源），并把项目列表持久化到
 /// 插件数据目录下的 `projects.json`（目录遵循 Lumi 存储规律：
-/// `~/Library/Application Support/<bundleID>/db_<env>_v<major>/com.coffic.lumi.plugin.projects/`）。
+/// `~/Library/Application Support/<bundleID>/db_<env>_v<major>/com.coffic.gitok.plugin.projects/`）。
 ///
 /// 同时作为「当前 commit / 当前文件 / 当前 commit 下的变动的文件」这些
 /// 会话级选择状态的唯一权威来源：commit 列表写入选择，commit 详情 / diff /
@@ -22,7 +22,7 @@ import ProviderProjects
 /// 与 Lumi 其他 Provider（如 `ThemeProviding`）保持一致，不依赖 Combine。
 @MainActor
 public final class ProjectManager: ProjectProviding, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.projects", category: "Projects")
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.projects", category: "Projects")
     nonisolated public static let emoji = "📁"
     nonisolated static let verbose = false
 

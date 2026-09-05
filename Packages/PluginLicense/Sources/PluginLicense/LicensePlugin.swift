@@ -18,7 +18,7 @@ public final class LicensePlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.license"
     public let order = 45
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.license",
         name: "License",

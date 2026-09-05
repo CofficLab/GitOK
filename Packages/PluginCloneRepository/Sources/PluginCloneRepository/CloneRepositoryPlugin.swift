@@ -24,7 +24,7 @@ public final class CloneRepositoryPlugin: SuperPlugin, SuperLog {
     public let id = "com.coffic.gitok.plugin.clone-repository"
     /// 在侧边栏插件（PluginProjects, order 10）之前注册 provider，入口按钮才能解析到。
     public let order = 5
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.clone-repository",
         name: "Clone Repository",

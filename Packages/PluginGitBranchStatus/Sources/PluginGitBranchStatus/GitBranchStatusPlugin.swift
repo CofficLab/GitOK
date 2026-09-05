@@ -21,7 +21,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-branch-status"
     public let order = 32
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-branch-status",
         name: "Git Branch Status",
