@@ -74,15 +74,12 @@ struct PluginManagementView: View {
 
     // MARK: - Data Source
 
-    /// 列表数据源：展示全部已注册插件。
+    /// 列表数据源：仅显示用户可配置的插件。
     ///
-    /// Lumi 原版只展示「可配置」插件（`required` / `alwaysOn` 在管理列表中
-    /// 没有可操作控件，故被过滤）。但 GitOK 的插件几乎全部为宿主必需的
-    /// `alwaysOn` / `required` 策略，若沿用该过滤会导致列表为空、无法浏览
-    /// 插件体系。因此这里改为展示全部插件，不可配置的插件在详情面板中
-    /// 展示「始终启用」锁标签（见 `PluginEnableControl`），交互上不可切换。
+    /// `required` / `alwaysOn` 插件始终启用且没有可操作控件，
+    /// 不应出现在插件管理列表中；筛选由 Provider 统一提供。
     private var plugins: [any SuperPlugin] {
-        model.manager.allPlugins
+        model.manager.configurablePlugins
     }
 
     /// 列表上出现的分类（按 sortOrder 排序），用于筛选标签栏。
@@ -115,7 +112,6 @@ struct PluginManagementView: View {
     }
 
     /// 当前列表中处于有效启用状态的可配置插件数。
-    /// 基于 `plugins`（已过滤 required / alwaysOn / disabled），与列表项数口径一致。
     private var enabledCount: Int {
         plugins.reduce(0) { $0 + (model.manager.isEnabled(id: $1.id) ? 1 : 0) }
     }
