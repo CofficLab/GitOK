@@ -220,19 +220,32 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
     }
 
     private var panelSurface: some View {
-        trailingPane.content
-            .debugBlockBadge("右侧面板", alignment: .bottomTrailing)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(theme.surface)
-            .overlay(alignment: .leading) {
-                theme.divider
-                    .frame(width: 1)
-            }
-            .overlay(alignment: .topLeading) {
+        VStack(spacing: 0) {
+            // 顶部栏：返回按钮单独占一行，不覆盖下方正式视图。
+            HStack {
                 dismissButton
-                    .padding(8)
+                Spacer(minLength: 0)
             }
-            .shadow(color: .black.opacity(0.14), radius: 10, x: -3, y: 0)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+
+            // 顶部分隔线
+            Rectangle()
+                .fill(theme.divider)
+                .frame(height: 1)
+
+            // 正式视图内容
+            trailingPane.content
+                .debugBlockBadge("右侧面板", alignment: .bottomTrailing)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(theme.surface)
+        .overlay(alignment: .leading) {
+            theme.divider
+                .frame(width: 1)
+        }
+        .shadow(color: .black.opacity(0.14), radius: 10, x: -3, y: 0)
     }
 
     #if !os(macOS)
