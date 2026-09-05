@@ -87,7 +87,8 @@ final class CommitDetailObserver {
         viewModel.handleCommitFilesChanged(
             files: projects.currentCommitFiles,
             isLoading: projects.isLoadingCommitFiles,
-            loadError: projects.currentCommitFilesLoadError
+            loadError: projects.currentCommitFilesLoadError,
+            commitHash: projects.currentCommit?.hash
         )
     }
 

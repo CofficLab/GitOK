@@ -32,8 +32,9 @@ struct CommitDetailView: View {
                 projectURL: projectURL,
                 selectedFile: viewModel.selectedFile,
                 changes: viewModel.currentCommitFiles ?? [],
-                isLoadingChanges: viewModel.isLoadingCommitFiles && viewModel.currentCommitFiles == nil,
+                isLoadingChanges: viewModel.isLoadingCommitFiles,
                 loadError: viewModel.commitFilesLoadError,
+                animatedFilePaths: viewModel.animatedFilePaths,
                 onSelectFile: onSelectFile
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)

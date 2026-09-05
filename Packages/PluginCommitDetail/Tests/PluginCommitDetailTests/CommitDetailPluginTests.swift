@@ -228,4 +228,107 @@ final class CommitDetailPluginTests: XCTestCase {
         projects.notifyDataChanged()
         XCTAssertEqual(viewModel.worktreeRevision, 0)
     }
+
+    // MARK: - Refresh policy（对齐 CommitListRefreshPolicy）
+
+    func testRefreshPolicyOnlyMarksNewFilePaths() {
+        let existing = [
+            GitFileChange(path: "Sources/a.swift", status: .modified, addedLines: 2, deletedLines: 1),
+            GitFileChange(path: "Sources/b.swift", status: .added, addedLines: 3, deletedLines: 0),
+        ]
+        let refreshed = [
+            GitFileChange(path: "Sources/c.swift", status: .added, addedLines: 5, deletedLines: 0),
+            existing[0],
+            existing[1],
+        ]
+
+        XCTAssertEqual(
+            CommitFilesRefreshPolicy.insertedFilePaths(previous: existing, current: refreshed),
+            ["Sources/c.swift"]
+        )
+    }
+
+    // MARK: - ViewModel 刷新保留与动画标记
+
+    private func change(_ path: String, status: GitFileChange.Status = .modified) -> GitFileChange {
+        GitFileChange(path: path, status: status, addedLines: 1, deletedLines: 0)
+    }
+
+    /// 加载新 commit 期间（files == nil）：保留上一份列表，不整表闪烁。
+    func testViewModelKeepsPreviousFilesWhileLoading() {
+        let viewModel = CommitDetailViewModel()
+        let old = [change("Sources/a.swift")]
+
+        viewModel.handleCommitFilesChanged(files: old, isLoading: false, loadError: nil, commitHash: "aaa")
+        XCTAssertEqual(viewModel.currentCommitFiles, old)
+        XCTAssertEqual(viewModel.filesCommitHash, "aaa")
+
+        // 选中新 commit 后加载中：旧列表保留，仅标记 loading。
+        viewModel.handleCommitFilesChanged(files: nil, isLoading: true, loadError: nil, commitHash: "bbb")
+        XCTAssertEqual(viewModel.currentCommitFiles, old, "加载期间应保留上一份列表")
+        XCTAssertTrue(viewModel.isLoadingCommitFiles)
+        XCTAssertEqual(viewModel.filesCommitHash, "aaa", "展示中的文件仍归属旧 commit")
+    }
+
+    /// 同 commit 刷新：只标记新增行的动画路径，既有行不参与动画。
+    func testViewModelMarksInsertedPathsOnSameCommitRefresh() {
+        let viewModel = CommitDetailViewModel()
+        let existing = [change("Sources/a.swift"), change("Sources/b.swift")]
+
+        viewModel.handleCommitFilesChanged(files: existing, isLoading: false, loadError: nil, commitHash: "aaa")
+        let refreshed = [change("Sources/c.swift"), existing[0], existing[1]]
+        viewModel.handleCommitFilesChanged(files: refreshed, isLoading: false, loadError: nil, commitHash: "aaa")
+
+        XCTAssertEqual(viewModel.animatedFilePaths, ["Sources/c.swift"])
+        XCTAssertEqual(viewModel.currentCommitFiles, refreshed)
+    }
+
+    /// 跨 commit 切换：整表替换，全部新行标记动画。
+    func testViewModelMarksAllPathsOnCommitSwitch() {
+        let viewModel = CommitDetailViewModel()
+        viewModel.handleCommitFilesChanged(files: [change("Sources/a.swift")], isLoading: false, loadError: nil, commitHash: "aaa")
+
+        let switched = [change("Sources/x.swift"), change("Sources/y.swift")]
+        viewModel.handleCommitFilesChanged(files: switched, isLoading: false, loadError: nil, commitHash: "bbb")
+
+        XCTAssertEqual(viewModel.animatedFilePaths, ["Sources/x.swift", "Sources/y.swift"])
+        XCTAssertEqual(viewModel.currentCommitFiles, switched)
+        XCTAssertEqual(viewModel.filesCommitHash, "bbb")
+    }
+
+    /// 首次加载（此前无任何数据）：不播动画，直接呈现。
+    func testViewModelFirstLoadDoesNotAnimate() {
+        let viewModel = CommitDetailViewModel()
+        let files = [change("Sources/a.swift")]
+
+        viewModel.handleCommitFilesChanged(files: files, isLoading: false, loadError: nil, commitHash: "aaa")
+
+        XCTAssertEqual(viewModel.currentCommitFiles, files)
+        XCTAssertTrue(viewModel.animatedFilePaths.isEmpty)
+    }
+
+    /// 切换到无变动 / 加载失败的 commit：直接呈现空结果，不播行级动画。
+    func testViewModelSwitchToEmptyResultDoesNotAnimate() {
+        let viewModel = CommitDetailViewModel()
+        viewModel.handleCommitFilesChanged(files: [change("Sources/a.swift")], isLoading: false, loadError: nil, commitHash: "aaa")
+
+        viewModel.handleCommitFilesChanged(files: [], isLoading: false, loadError: "boom", commitHash: "bbb")
+
+        XCTAssertEqual(viewModel.currentCommitFiles, [])
+        XCTAssertTrue(viewModel.animatedFilePaths.isEmpty)
+        XCTAssertEqual(viewModel.commitFilesLoadError, "boom")
+    }
+
+    /// 退出 commit 详情（commit == nil）：清空上一 commit 的变动文件。
+    func testViewModelClearsFilesWhenSelectionCleared() {
+        let viewModel = CommitDetailViewModel()
+        viewModel.handleCommitFilesChanged(files: [change("Sources/a.swift")], isLoading: false, loadError: nil, commitHash: "aaa")
+
+        viewModel.handleSelectionChanged(commit: nil, projectURL: URL(fileURLWithPath: "/tmp/repo"), file: nil)
+
+        XCTAssertNil(viewModel.currentCommitFiles)
+        XCTAssertNil(viewModel.filesCommitHash)
+        XCTAssertTrue(viewModel.animatedFilePaths.isEmpty)
+        XCTAssertFalse(viewModel.isLoadingCommitFiles)
+    }
 }

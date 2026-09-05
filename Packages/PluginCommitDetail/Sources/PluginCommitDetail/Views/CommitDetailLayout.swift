@@ -23,6 +23,8 @@ struct CommitDetailLayout: View {
     let isLoadingChanges: Bool
     /// 变动文件加载失败的错误描述。
     let loadError: String?
+    /// 本次刷新新增的文件路径（仅用于触发顶部进入动画，对齐 commitlist）。
+    let animatedFilePaths: Set<String>
     /// 用户点击文件行时回调（由宿主写入 Provider）。
     let onSelectFile: (String?) -> Void
     @LumiTheme private var theme
@@ -72,9 +74,10 @@ struct CommitDetailLayout: View {
     @ViewBuilder
     private var fileListContent: some View {
         if isLoadingChanges && changes.isEmpty {
+            // 首次加载（尚无任何历史数据）：全屏转圈。
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let loadError {
+        } else if changes.isEmpty, let loadError {
             AppEmptyState(
                 icon: "exclamationmark.triangle",
                 title: loc("Unable to Load Changes"),
@@ -85,21 +88,51 @@ struct CommitDetailLayout: View {
             AppEmptyState(icon: "doc", title: loc("No Changes"), description: loc("This commit has no file changes."))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 0) {
-                    ForEach(changes) { change in
-                        FileChangeRow(
-                            change: change,
-                            isSelected: selectedFile == change.path
-                        ) {
-                            onSelectFile(change.path)
+            VStack(spacing: 0) {
+                if let loadError {
+                    // 刷新失败但保留旧列表：顶部横幅提示，不清空内容。
+                    Text(loadError)
+                        .font(.appCaption)
+                        .foregroundStyle(theme.error)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(theme.error.opacity(0.08))
+                }
+                // 与 CommitRailView 一致：加载新数据期间保留旧列表，
+                // 顶部细进度条提示，新行从顶部滑入（行级进入动画）。
+                ZStack(alignment: .top) {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVStack(spacing: 0) {
+                            ForEach(changes) { change in
+                                FileChangeRow(
+                                    change: change,
+                                    isSelected: selectedFile == change.path
+                                ) {
+                                    onSelectFile(change.path)
+                                }
+                                .transition(
+                                    animatedFilePaths.contains(change.path)
+                                        ? .asymmetric(
+                                            insertion: .move(edge: .top).combined(with: .opacity),
+                                            removal: .opacity
+                                        )
+                                        : .identity
+                                )
+                                if change.id != changes.last?.id {
+                                    AppDivider()
+                                }
+                            }
                         }
-                        if change.id != changes.last?.id {
-                            AppDivider()
-                        }
+                        .padding(.vertical, 2)
+                    }
+                    if isLoadingChanges {
+                        ProgressView()
+                            .progressViewStyle(.linear)
+                            .frame(height: 2)
+                            .padding(.horizontal, 2)
                     }
                 }
-                .padding(.vertical, 2)
             }
         }
     }
