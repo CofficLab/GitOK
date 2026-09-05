@@ -26,7 +26,7 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
         description: "Merge branches from the status bar",
         category: .project,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-smart-merge.id"
