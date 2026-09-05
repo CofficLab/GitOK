@@ -92,11 +92,9 @@ public struct IconWorkspaceView: View {
                     .pickerStyle(.menu)
                 }
                 sourceAssetPicker
-                Picker(IconLocalization.string("Background", bundle: .module), selection: $model.backgroundID) {
-                    ForEach(MagicBackgroundGroup.all, id: \.rawValue) { gradient in
-                        Text(gradient.displayName).tag(gradient.rawValue)
-                    }
-                }
+                Text(IconLocalization.string("Background", bundle: .module))
+                    .font(.headline)
+                MagicBackgroundPicker(selection: $model.backgroundID)
                 Slider(value: $model.scale, in: 0.5...1.5) { Text(IconLocalization.string("Scale", bundle: .module)) }
                 Slider(value: $model.padding, in: 0...0.3) { Text(IconLocalization.string("Padding", bundle: .module)) }
                 Slider(value: $model.cornerRadius, in: 0...512) { Text(IconLocalization.string("Corner Radius", bundle: .module)) }

@@ -83,11 +83,9 @@ public struct BannerWorkspaceView: View {
                         .textFieldStyle(.roundedBorder)
                         .lineLimit(3...8)
                 }
-                Picker(BannerLocalization.string("Background", bundle: .module), selection: $model.backgroundID) {
-                    ForEach(MagicBackgroundGroup.all, id: \.rawValue) { gradient in
-                        Text(gradient.displayName).tag(gradient.rawValue)
-                    }
-                }
+                Text(BannerLocalization.string("Background", bundle: .module))
+                    .font(.headline)
+                MagicBackgroundPicker(selection: $model.backgroundID)
                 Picker(BannerLocalization.string("Device", bundle: .module), selection: $model.selectedDeviceID) {
                     ForEach(BannerExportDevice.allCases, id: \.rawValue) { device in
                         Text(device.rawValue).tag(device.rawValue)
