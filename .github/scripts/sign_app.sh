@@ -48,11 +48,9 @@ while IFS= read -r -d '' item; do
 done < <(
     find "$APP_PATH" -depth -print0 \
         | while IFS= read -r -d '' path; do
-            case "$path" in
-                *.framework|*.app|*.xpc|*.bundle|*.appex|*.systemextension|*.dylib|*.so|*/Autoupdate)
-                    [[ "$path" != "$APP_PATH" && ! "$path" == */Contents/Resources/*.bundle ]] && printf '%s\0' "$path"
-                    ;;
-            esac
+            if [[ "$path" != "$APP_PATH" && ( "$path" == *.framework || "$path" == *.app || "$path" == *.xpc || "$path" == *.bundle || "$path" == *.appex || "$path" == *.systemextension || "$path" == *.dylib || "$path" == *.so || "$path" == */Autoupdate ) && "$path" != */Contents/Resources/*.bundle ]]; then
+                printf '%s\0' "$path"
+            fi
         done
 )
 
