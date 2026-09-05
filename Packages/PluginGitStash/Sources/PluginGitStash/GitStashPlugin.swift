@@ -51,7 +51,8 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitStashSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitStashSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitStashSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
