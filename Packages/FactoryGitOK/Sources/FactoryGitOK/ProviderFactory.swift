@@ -71,13 +71,13 @@ public struct DefaultProviderFactory: ProviderFactory {
         // 插件启用状态仍由宿主统一持久化；GitOK 插件本身是 required，
         // 其他未来加入的插件则继续遵循 KernelCore 的普通策略。
         kernel.stateStore = PluginEnabledStateStore(
-            pluginDirectory: storage.pluginDataDirectory(for: "PluginManager")
+            pluginDirectory: storage.pluginDataDirectory(for: "com.coffic.gitok.plugin.plugin-manager")
         )
 
         let theme = makeThemeProvider()
         if let defaultTheme = theme as? DefaultThemeProviding {
             defaultTheme.setStorageDirectory(
-                storage.pluginDataDirectory(for: "ThemeManager")
+                storage.pluginDataDirectory(for: "com.coffic.gitok.plugin.theme-pack")
             )
         }
         try kernel.registerProvider((any ThemeProviding).self, theme)

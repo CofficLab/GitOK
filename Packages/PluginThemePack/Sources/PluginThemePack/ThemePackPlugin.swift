@@ -18,12 +18,12 @@ import SwiftUI
 /// （内置 3 个 + 本插件 19 个），订阅主题事件感知切换。
 @MainActor
 public final class ThemePackPlugin: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.theme-pack", category: "ThemePack")
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.theme-pack", category: "ThemePack")
 
-    public let id = "com.coffic.lumi.plugin.theme-pack"
+    public let id = "com.coffic.gitok.plugin.theme-pack"
     public let order = 100
     public let metadata = PluginMetadata(
-        id: "com.coffic.lumi.plugin.theme-pack",
+        id: "com.coffic.gitok.plugin.theme-pack",
         name: "Theme Pack",
         description: "Registers 19 legacy themes and provides an appearance switcher in settings.",
         category: .design,

@@ -20,10 +20,6 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-conflict-resolver"
     public let order = 36
-    public let dependencies = [
-        "com.coffic.lumi.plugin.projects",
-        "com.coffic.gitok.plugin.git-repository-watch",
-    ]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-conflict-resolver",
         name: "Conflict Resolver",

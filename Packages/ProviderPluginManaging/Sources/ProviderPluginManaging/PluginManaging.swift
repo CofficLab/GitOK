@@ -53,11 +53,9 @@ public protocol PluginManaging: PluginControlling {
     func isRegistered(id: String) -> Bool
 
     /// 卸载单个插件：执行 `onShutdown` 并撤回其登记的贡献与 Provider。
-    ///
-    /// 仍被其他插件依赖时抛出 `KernelCoreError.invalidLifecycleOperation`。
     func unloadPlugin(id: String) throws
 
-    /// 重新加载单个插件：先卸载，再按内核依赖图重新启动（重放 `onBoot` / `onReady`）。
+    /// 重新加载单个插件：先卸载，再按内核启动顺序重新启动（重放 `onBoot` / `onReady`）。
     ///
     /// 用于热更新插件实现或从异常状态恢复；插件不存在时抛出
     /// `PluginManagingError.pluginNotFound`。

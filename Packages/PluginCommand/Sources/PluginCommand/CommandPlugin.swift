@@ -14,14 +14,14 @@ import os
 /// 负责管理所有插件的命令注册和查询。
 @MainActor
 public final class CommandPlugin: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.command", category: "Command")
-    public let id = "com.coffic.lumi.plugin.command"
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.command", category: "Command")
+    public let id = "com.coffic.gitok.plugin.command"
     /// Command contributions start at order 1 and above. Install the definitive
     /// provider first so early plugins do not register into the factory fallback
     /// and then lose their groups when this plugin replaces it.
     public let order = 0
     public let metadata = PluginMetadata(
-        id: "com.coffic.lumi.plugin.command",
+        id: "com.coffic.gitok.plugin.command",
         name: "Command Super",
         description: "",
         category: .core,

@@ -9,7 +9,7 @@ import ProviderStorage
 /// 允许用户快速打开各类应用目录。
 @MainActor
 enum DebugCommands {
-    static let commandGroupID = "com.coffic.lumi.plugin.command.debug"
+    static let commandGroupID = "com.coffic.gitok.plugin.command.debug"
 
     static func localizedMenuName(locale: Locale = .current) -> String {
         LumiPluginLocalization.string("Debug", bundle: .module, locale: locale)

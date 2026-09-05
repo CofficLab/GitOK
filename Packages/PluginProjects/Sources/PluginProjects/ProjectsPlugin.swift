@@ -20,19 +20,20 @@ import ProviderToolbar
 ///    默认的 `SidebarProviding`，并往设置窗口注入「项目」入口。
 ///
 /// 存储目录遵循 Lumi 规律：通过 `StorageProviding.pluginDataDirectory(for:)`
-/// 取得 `<Application Support>/<bundleID>/db_<env>_v<major>/Projects/`，
+/// 以插件 id（`com.coffic.gitok.plugin.projects`）取得
+/// `<Application Support>/<bundleID>/db_<env>_v<major>/com.coffic.gitok.plugin.projects/`，
 /// 项目列表写入该目录下的 `projects.json`。
 @MainActor
 public final class ProjectsPlugin: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.projects", category: "Projects")
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.projects", category: "Projects")
     nonisolated public static let emoji = "📁"
     nonisolated static let verbose = false
 
-    public let id = "com.coffic.lumi.plugin.projects"
+    public let id = "com.coffic.gitok.plugin.projects"
     /// 先于依赖 ProjectProviding 的其他插件启动（基础服务）。
     public let order = 0
     public let metadata = PluginMetadata(
-        id: "com.coffic.lumi.plugin.projects",
+        id: "com.coffic.gitok.plugin.projects",
         name: "Projects",
         description: "GitOK project management (list / open / persist) and project sidebar",
         category: .project,
@@ -60,9 +61,9 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        // 1) 项目数据目录遵循 Lumi 规律：<root>/Projects/
+        // 1) 项目数据目录遵循 Lumi 规律：<root>/<插件 id>/
         if let storage = kernel.resolveProvider((any StorageProviding).self) {
-            let directory = storage.pluginDataDirectory(for: "Projects")
+            let directory = storage.pluginDataDirectory(for: id)
             let storeURL = directory.appendingPathComponent("projects.json", isDirectory: false)
 
             // 用真实目录替换占位目录并重新加载磁盘上的项目列表。

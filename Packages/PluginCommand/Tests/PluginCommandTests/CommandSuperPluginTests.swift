@@ -20,7 +20,7 @@ struct CommandSuperPluginTests {
         let groups = try #require(
             kernel.resolveProvider((any CommandProviding).self)?.allCommandGroups
         )
-        #expect(groups.map(\.id) == ["com.coffic.lumi.plugin.command.debug"])
+        #expect(groups.map(\.id) == ["com.coffic.gitok.plugin.command.debug"])
         #expect(groups.first?.name == DebugCommands.localizedMenuName())
         #expect(groups.first?.items.count == 4)
         #expect(groups.first?.placement == .topLevelMenu)

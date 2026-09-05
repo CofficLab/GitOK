@@ -20,7 +20,6 @@ public final class GitLFSPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-lfs"
     public let order = 49
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-lfs",
         name: "Git LFS",

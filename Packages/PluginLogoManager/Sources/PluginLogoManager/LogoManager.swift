@@ -12,7 +12,7 @@ import SwiftUI
 /// - 内置结构化日志，便于诊断注册 / 注销 / 高亮状态切换。
 @MainActor
 public final class LogoManager: LogoProviding, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.logo-manager", category: "Plugin")
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.logo-manager", category: "Plugin")
     public nonisolated static let emoji = "🖼️"
     nonisolated static let verbose = false
 

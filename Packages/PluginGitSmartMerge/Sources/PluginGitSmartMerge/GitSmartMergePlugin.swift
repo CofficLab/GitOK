@@ -19,7 +19,6 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-smart-merge"
     public let order = 48
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-smart-merge",
         name: "Smart Merge",

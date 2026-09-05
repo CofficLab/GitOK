@@ -229,14 +229,6 @@ public extension KernelCoreContainer {
         else {
             throw KernelCoreError.pluginRequired(id: id)
         }
-        if let dependent = plugins.values.first(where: {
-            isPluginEnabled(id: $0.id) && $0.dependencies.contains(id)
-        }) {
-            throw KernelCoreError.invalidLifecycleOperation(
-                operation: "disable plugin '\(id)' required by '\(dependent.id)'",
-                state: lifecycleState
-            )
-        }
 
         activePluginID = id
         defer {
@@ -261,12 +253,6 @@ public extension KernelCoreContainer {
             throw KernelCoreError.pluginNotFound(id: id)
         }
         guard !isPluginEnabled(id: id) else { return }
-        for dependencyID in plugin.dependencies where !isPluginEnabled(id: dependencyID) {
-            throw KernelCoreError.pluginDependencyDisabled(
-                pluginID: id,
-                dependencyID: dependencyID
-            )
-        }
 
         activePluginID = id
         defer {
@@ -312,12 +298,6 @@ public extension KernelCoreContainer {
         }
         guard let plugin = plugins[id] else {
             throw KernelCoreError.pluginNotFound(id: id)
-        }
-        if let dependent = plugins.values.first(where: { $0.dependencies.contains(id) }) {
-            throw KernelCoreError.invalidLifecycleOperation(
-                operation: "unload plugin '\(id)' required by '\(dependent.id)'",
-                state: lifecycleState
-            )
         }
 
         activePluginID = id

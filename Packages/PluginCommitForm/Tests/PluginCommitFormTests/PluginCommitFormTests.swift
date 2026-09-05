@@ -65,7 +65,6 @@ struct PluginCommitFormTests {
         #expect(plugin.id == "com.coffic.gitok.plugin.commit-form")
         #expect(plugin.metadata.category == .project)
         #expect(plugin.metadata.policy == .required)
-        #expect(plugin.dependencies.contains("com.coffic.lumi.plugin.projects"))
     }
 
     @Test("onBoot 贡献表单内容块，onShutdown 移除")

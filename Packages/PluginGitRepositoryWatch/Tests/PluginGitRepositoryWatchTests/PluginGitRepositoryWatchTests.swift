@@ -14,7 +14,6 @@ final class PluginGitRepositoryWatchTests: XCTestCase {
         let plugin = GitRepositoryWatchPlugin()
         XCTAssertEqual(plugin.id, "com.coffic.gitok.plugin.git-repository-watch")
         XCTAssertEqual(plugin.order, 5)
-        XCTAssertTrue(plugin.dependencies.contains("com.coffic.lumi.plugin.projects"))
         XCTAssertEqual(plugin.metadata.category, .project)
     }
 

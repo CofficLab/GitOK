@@ -1,491 +1,767 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "Conflict Resolver": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conflict Resolver"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%lld conflicted file(s)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld conflicted file(s)"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "冲突解决"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个冲突文件"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突解決"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個衝突檔案"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突解決"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個衝突檔案"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突解決"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個衝突檔案"
           }
         }
       }
     },
-    "Checking conflicts…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Checking conflicts…"
+    "Abort Cherry-pick" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abort Cherry-pick"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在检查冲突…"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在檢查衝突…"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在檢查衝突…"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在檢查衝突…"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "终止 Cherry-pick"
           }
         }
       }
     },
-    "No merge conflicts": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No merge conflicts"
+    "Abort Merge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abort Merge"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "没有合并冲突"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "终止合并"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "沒有合併衝突"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終止合併"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "沒有合併衝突"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終止合併"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "沒有合併衝突"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終止合併"
           }
         }
       }
     },
-    "Conflict Resolution": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conflict Resolution"
+    "Checking conflicts…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking conflicts…"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "冲突处理"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查冲突…"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突處理"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在檢查衝突…"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突處理"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在檢查衝突…"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突處理"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在檢查衝突…"
           }
         }
       }
     },
-    "No conflicted files": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No conflicted files"
+    "Confirm Abort Cherry-pick?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm Abort Cherry-pick?"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "没有冲突文件"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "沒有衝突檔案"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "沒有衝突檔案"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "沒有衝突檔案"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认终止 Cherry-pick？"
           }
         }
       }
     },
-    "%lld conflicted file(s)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld conflicted file(s)"
+    "Confirm Abort Merge?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm Abort Merge?"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 个冲突文件"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认终止合并？"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 個衝突檔案"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認終止合併？"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 個衝突檔案"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認終止合併？"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 個衝突檔案"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認終止合併？"
           }
         }
       }
     },
-    "Copy Path": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copy Path"
+    "Conflict Resolution" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflict Resolution"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制路径"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冲突处理"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "複製路徑"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突處理"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "複製路徑"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突處理"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "複製路徑"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突處理"
           }
         }
       }
     },
-    "Reveal in Finder": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reveal in Finder"
+    "Conflict Resolver" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflict Resolver"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在访达中显示"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冲突解决"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 Finder 中顯示"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突解決"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 Finder 中顯示"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突解決"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 Finder 中顯示"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突解決"
           }
         }
       }
     },
-    "Conflicts %lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conflicts %lld"
+    "Conflicts %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflicts %lld"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "冲突 %lld"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冲突 %lld"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突 %lld"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突 %lld"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突 %lld"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突 %lld"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "衝突 %lld"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突 %lld"
           }
         }
       }
     },
-    "Merge OK": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Merge OK"
+    "Continue Cherry-pick" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Cherry-pick"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合并正常"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合併正常"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合併正常"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合併正常"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续 Cherry-pick"
           }
         }
       }
     },
-    "There are %lld conflicted files. Click to resolve them.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "There are %lld conflicted files. Click to resolve them."
+    "Continue Merge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Merge"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "有 %lld 个冲突文件，点击解决。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续合并"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "有 %lld 個衝突檔案，點擊解決。"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繼續合併"
           }
         },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "有 %lld 個衝突檔案，點擊解決。"
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繼續合併"
           }
         },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "有 %lld 個衝突檔案，點擊解決。"
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繼續合併"
           }
         }
       }
     },
-    "Abort Merge": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Abort Merge" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "终止合并" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "終止合併" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "終止合併" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "終止合併" } }
+    "Copy Path" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Path"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制路径"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複製路徑"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複製路徑"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複製路徑"
+          }
+        }
       }
     },
-    "Confirm Abort Merge?": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Confirm Abort Merge?" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认终止合并？" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認終止合併？" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認終止合併？" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認終止合併？" } }
+    "Merge OK" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge OK"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合并正常"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併正常"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併正常"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合併正常"
+          }
+        }
       }
     },
-    "Continue Merge": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Continue Merge" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "继续合并" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "繼續合併" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "繼續合併" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "繼續合併" } }
+    "No conflicted files" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No conflicted files"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有冲突文件"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有衝突檔案"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有衝突檔案"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有衝突檔案"
+          }
+        }
       }
     },
-    "Abort Cherry-pick": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Abort Cherry-pick" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "终止 Cherry-pick" } }
+    "No merge conflicts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No merge conflicts"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有合并冲突"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有合併衝突"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有合併衝突"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有合併衝突"
+          }
+        }
       }
     },
-    "Confirm Abort Cherry-pick?": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Confirm Abort Cherry-pick?" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认终止 Cherry-pick？" } }
+    "Resolve all conflicts before continuing the cherry-pick." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resolve all conflicts before continuing the cherry-pick."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先解决所有冲突，再继续 Cherry-pick。"
+          }
+        }
       }
     },
-    "Continue Cherry-pick": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Continue Cherry-pick" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "继续 Cherry-pick" } }
+    "Resolve all conflicts before continuing the merge." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resolve all conflicts before continuing the merge."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先解决所有冲突，再继续合并。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先解決所有衝突，再繼續合併。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先解決所有衝突，再繼續合併。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先解決所有衝突，再繼續合併。"
+          }
+        }
       }
     },
-    "Resolve all conflicts before continuing the merge.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Resolve all conflicts before continuing the merge." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "请先解决所有冲突，再继续合并。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "請先解決所有衝突，再繼續合併。" } }
+    "Reveal in Finder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reveal in Finder"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在访达中显示"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Finder 中顯示"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Finder 中顯示"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Finder 中顯示"
+          }
+        }
       }
     },
-    "This discards the in-progress merge and restores the pre-merge state.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "This discards the in-progress merge and restores the pre-merge state." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "这会放弃正在进行的合并并恢复合并前状态。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } }
+    "There are %lld conflicted files. Click to resolve them." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are %lld conflicted files. Click to resolve them."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 个冲突文件，点击解决。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 個衝突檔案，點擊解決。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 個衝突檔案，點擊解決。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 個衝突檔案，點擊解決。"
+          }
+        }
       }
     },
-    "This discards the in-progress cherry-pick and restores the pre-cherry-pick state.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "This discards the in-progress cherry-pick and restores the pre-cherry-pick state." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "这会放弃正在进行的 Cherry-pick 并恢复操作前状态。" } }
+    "This discards the in-progress cherry-pick and restores the pre-cherry-pick state." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This discards the in-progress cherry-pick and restores the pre-cherry-pick state."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会放弃正在进行的 Cherry-pick 并恢复操作前状态。"
+          }
+        }
       }
     },
-    "Resolve all conflicts before continuing the cherry-pick.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Resolve all conflicts before continuing the cherry-pick." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "请先解决所有冲突，再继续 Cherry-pick。" } }
+    "This discards the in-progress merge and restores the pre-merge state." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This discards the in-progress merge and restores the pre-merge state."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会放弃正在进行的合并并恢复合并前状态。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會放棄正在進行的合併並恢復合併前狀態。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會放棄正在進行的合併並恢復合併前狀態。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會放棄正在進行的合併並恢復合併前狀態。"
+          }
+        }
       }
     },
-    "Use Base": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Use Base" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "使用基准" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "使用基準" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "使用基準" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "使用基準" } }
+    "Use Base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Base"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用基准"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用基準"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用基準"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用基準"
+          }
+        }
       }
     },
-    "Use Ours": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Use Ours" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "使用我们的版本" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "使用我們的版本" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "使用我們的版本" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "使用我們的版本" } }
+    "Use Ours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Ours"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用我们的版本"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用我們的版本"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用我們的版本"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用我們的版本"
+          }
+        }
       }
     },
-    "Use Theirs": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Use Theirs" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "使用对方版本" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "使用對方版本" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "使用對方版本" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "使用對方版本" } }
+    "Use Theirs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Theirs"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用对方版本"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用對方版本"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用對方版本"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用對方版本"
+          }
+        }
       }
     },
-    "View Conflict Diff": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "View Conflict Diff" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "查看冲突差异" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "查看衝突差異" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "查看衝突差異" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "查看衝突差異" } }
+    "View Conflict Diff" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Conflict Diff"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看冲突差异"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看衝突差異"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看衝突差異"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看衝突差異"
+          }
+        }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

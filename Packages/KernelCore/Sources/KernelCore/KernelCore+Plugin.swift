@@ -60,9 +60,8 @@ extension KernelCoreContainer {
 
     /// 原子启动一批插件。
     ///
-    /// 启动前校验重复 id、缺失依赖和依赖环；随后按依赖及 `order` 稳定执行
-    /// 全部 Boot，再执行全部 Ready。失败时逆序 Shutdown，并撤销本批插件注册
-    /// 的 Provider，避免留下半启动内核。
+    /// 启动前校验重复 id；随后按 `order` 稳定执行全部 Boot，再执行全部 Ready。
+    /// 失败时逆序 Shutdown，并撤销本批插件注册的 Provider，避免留下半启动内核。
     public func start(plugins incomingPlugins: [any SuperPlugin]) throws {
         guard lifecycleState == .stopped || lifecycleState == .running else {
             throw KernelCoreError.invalidLifecycleOperation(
@@ -168,19 +167,13 @@ extension KernelCoreContainer {
         if let firstError { throw firstError }
     }
 
-    /// 卸载单个插件。仍被其他插件依赖时拒绝卸载。
+    /// 卸载单个插件。
     public func unloadPlugin(id: String) throws {
         guard lifecycleState == .running else {
             throw KernelCoreError.invalidLifecycleOperation(operation: "unload plugin", state: lifecycleState)
         }
         guard let plugin = plugins[id] else {
             throw KernelCoreError.pluginNotFound(id: id)
-        }
-        if let dependent = plugins.values.first(where: { $0.dependencies.contains(id) }) {
-            throw KernelCoreError.invalidLifecycleOperation(
-                operation: "unload plugin '\(id)' required by '\(dependent.id)'",
-                state: lifecycleState
-            )
         }
 
         activePluginID = id
@@ -237,47 +230,20 @@ extension KernelCoreContainer {
     }
 
     func sortedForStartup(_ incoming: [any SuperPlugin]) throws -> [any SuperPlugin] {
-        var byID: [String: any SuperPlugin] = [:]
+        var seen: Set<String> = []
         var originalIndex: [String: Int] = [:]
         for (index, plugin) in incoming.enumerated() {
-            guard plugins[plugin.id] == nil, byID[plugin.id] == nil else {
+            guard plugins[plugin.id] == nil, !seen.contains(plugin.id) else {
                 throw KernelCoreError.pluginAlreadyRegistered(id: plugin.id)
             }
-            byID[plugin.id] = plugin
+            seen.insert(plugin.id)
             originalIndex[plugin.id] = index
         }
 
-        for plugin in incoming {
-            for dependency in plugin.dependencies where plugins[dependency] == nil && byID[dependency] == nil {
-                throw KernelCoreError.pluginDependencyMissing(
-                    pluginID: plugin.id,
-                    dependencyID: dependency
-                )
-            }
+        return incoming.sorted { lhs, rhs in
+            if lhs.order != rhs.order { return lhs.order < rhs.order }
+            return originalIndex[lhs.id, default: 0] < originalIndex[rhs.id, default: 0]
         }
-
-        var remaining = Set(byID.keys)
-        var resolved = Set(plugins.keys)
-        var result: [any SuperPlugin] = []
-
-        while !remaining.isEmpty {
-            let ready = remaining.compactMap { byID[$0] }.filter { plugin in
-                plugin.dependencies.allSatisfy { resolved.contains($0) }
-            }.sorted { lhs, rhs in
-                if lhs.order != rhs.order { return lhs.order < rhs.order }
-                return originalIndex[lhs.id, default: 0] < originalIndex[rhs.id, default: 0]
-            }
-
-            guard !ready.isEmpty else {
-                throw KernelCoreError.pluginDependencyCycle(ids: remaining.sorted())
-            }
-            for plugin in ready {
-                remaining.remove(plugin.id)
-                resolved.insert(plugin.id)
-                result.append(plugin)
-            }
-        }
-        return result
     }
 
     private func rollbackStartup(bootedIDs: [String], attemptedIDs: [String]) {

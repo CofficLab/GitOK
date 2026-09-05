@@ -12,10 +12,10 @@ import os
 /// 路径格式：<Application Support>/<bundleID>/db_<debug|production>_v<majorVersion>
 @MainActor
 public final class StorageSuperPlugin: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.storage", category: "Storage")
-    public let id = "com.coffic.lumi.plugin.storage"
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.storage", category: "Storage")
+    public let id = "com.coffic.gitok.plugin.storage"
     public let metadata = PluginMetadata(
-        id: "com.coffic.lumi.plugin.storage",
+        id: "com.coffic.gitok.plugin.storage",
         name: "Storage Super",
         description: "",
         category: .system,

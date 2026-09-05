@@ -3,9 +3,22 @@ import XCTest
 @testable import KitGit
 
 final class GitDiffLoaderTests: XCTestCase {
+    /// 当前仓库根（GitOK 自身）：由测试文件位置推导，避免硬编码他人机器路径。
+    private var selfRepoURL: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent() // GitDiffLoaderTests.swift
+            .deletingLastPathComponent() // KitGitTests
+            .deletingLastPathComponent() // Tests
+            .deletingLastPathComponent() // KitGit
+            .deletingLastPathComponent() // Packages
+    }
+
     /// 在当前仓库根（GitOK 自身）上做只读冒烟测试。
     func testLoadChangesOnSelf() throws {
-        let repo = URL(fileURLWithPath: "/Users/colorfy/Code/CofficLab/GitOK")
+        let repo = selfRepoURL
+        guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {
+            throw XCTSkip("not inside a GitOK git checkout: \(repo.path)")
+        }
         let commits = try GitCommitLoader.loadCommits(in: repo, limit: 5)
         guard let head = commits.first else {
             throw XCTSkip("no commits in self repo")
@@ -16,7 +29,10 @@ final class GitDiffLoaderTests: XCTestCase {
     }
 
     func testLoadDiffOnSelf() throws {
-        let repo = URL(fileURLWithPath: "/Users/colorfy/Code/CofficLab/GitOK")
+        let repo = selfRepoURL
+        guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {
+            throw XCTSkip("not inside a GitOK git checkout: \(repo.path)")
+        }
         let commits = try GitCommitLoader.loadCommits(in: repo, limit: 5)
         guard let head = commits.first else {
             throw XCTSkip("no commits in self repo")

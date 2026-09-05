@@ -17,7 +17,6 @@ public final class DiagnosticsSettingsPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.diagnostics-settings"
     public let order = 47
-    public let dependencies = ["com.coffic.lumi.plugin.setting-view"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.diagnostics-settings",
         name: "Diagnostics",

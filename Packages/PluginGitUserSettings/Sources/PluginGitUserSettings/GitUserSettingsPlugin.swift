@@ -28,7 +28,6 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-user-settings"
     public let order = 40
-    public let dependencies = ["com.coffic.lumi.plugin.projects", "com.coffic.lumi.plugin.setting-view"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-user-settings",
         name: "Git User Settings",
@@ -62,10 +61,10 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
         } else {
             let directory: URL
             if let storage = kernel.resolveProvider((any StorageProviding).self) {
-                directory = storage.pluginDataDirectory(for: "GitUserSettings")
+                directory = storage.pluginDataDirectory(for: id)
             } else {
                 directory = FileManager.default.homeDirectoryForCurrentUser
-                    .appendingPathComponent("Library/Application Support/GitOK/GitUserSettings")
+                    .appendingPathComponent("Library/Application Support/GitOK/com.coffic.gitok.plugin.git-user-settings")
             }
             let defaultProvider = DefaultGitUserPresetProvider(directory: directory)
             try kernel.registerProvider((any GitUserPresetProviding).self, defaultProvider)

@@ -8,7 +8,7 @@ import Foundation
 ///
 /// 生命周期：
 /// - `onBoot(kernel:)`：插件启动阶段，注册自己的能力（默认空实现）。
-/// - `onReady(kernel:)`：全部插件完成 Boot 后执行，可安全解析依赖插件贡献。
+/// - `onReady(kernel:)`：全部插件完成 Boot 后执行。
 /// - `onShutdown(kernel:)`：插件卸载或内核停止时逆序执行，撤回外部贡献。
 @MainActor
 public protocol SuperPlugin: AnyObject {
@@ -17,9 +17,6 @@ public protocol SuperPlugin: AnyObject {
 
     /// 插件加载顺序（数值越小越先 `onBoot`）。默认 `200`。
     var order: Int { get }
-
-    /// 必须先于当前插件启动的插件 id。默认无依赖。
-    var dependencies: [String] { get }
 
     /// 用于插件管理、诊断和权限展示的稳定元数据。
     var metadata: PluginMetadata { get }
@@ -54,8 +51,6 @@ public protocol SuperPlugin: AnyObject {
 
 public extension SuperPlugin {
     var order: Int { 200 }
-
-    var dependencies: [String] { [] }
 
     func onRegister(kernel: KernelCoreContainer) throws {}
 

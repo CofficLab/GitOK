@@ -29,7 +29,6 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
     public let id = "com.coffic.gitok.plugin.git-diff"
     /// 在 commit-detail 之后启动（文件选择由 commit-detail 的文件列表写入 Provider）。
     public let order = 30
-    public let dependencies = ["com.coffic.gitok.plugin.commit-detail"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-diff",
         name: "Git Diff",
