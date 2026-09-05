@@ -360,6 +360,69 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤失敗：%@" } }
       }
     },
+    "A valid branch name is required.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A valid branch name is required." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要有效的分支名称。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要有效的分支名稱。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要有效的分支名稱。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要有效的分支名稱。" } }
+      }
+    },
+    "A remote name is required.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A remote name is required." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要指定远程仓库名称。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要指定遠端儲存庫名稱。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要指定遠端儲存庫名稱。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要指定遠端儲存庫名稱。" } }
+      }
+    },
+    "The remote HEAD branch cannot be deleted.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The remote HEAD branch cannot be deleted." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "不能删除远程 HEAD 分支。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "不能刪除遠端 HEAD 分支。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "不能刪除遠端 HEAD 分支。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "不能刪除遠端 HEAD 分支。" } }
+      }
+    },
+    "Branch rename failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Branch rename failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重命名分支失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重新命名分支失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "重新命名分支失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "重新命名分支失敗：%@" } }
+      }
+    },
+    "Upstream update failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Upstream update failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "更新上游失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "更新上游失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "更新上游失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "更新上游失敗：%@" } }
+      }
+    },
+    "Branch publish failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Branch publish failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "发布分支失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "發佈分支失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "發佈分支失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "發佈分支失敗：%@" } }
+      }
+    },
+    "Remote branch deletion failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Remote branch deletion failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除远程分支失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除遠端分支失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除遠端分支失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端分支失敗：%@" } }
+      }
+    },
     "Git unavailable: %@": {
       "localizations": {
         "en": {

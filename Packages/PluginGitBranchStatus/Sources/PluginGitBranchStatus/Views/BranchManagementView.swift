@@ -16,6 +16,11 @@ public struct BranchManagementView: View {
     @State private var searchText = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var branchToRename: GitBranchSummary?
+    @State private var renameBranchName = ""
+    @State private var branchToSetUpstream: GitBranchSummary?
+    @State private var selectedUpstreamBranch = ""
+    @State private var pendingRemoteBranchDeletion: String?
 
     public init(projects: any ProjectProviding) {
         self.projects = projects
@@ -45,6 +50,37 @@ public struct BranchManagementView: View {
         .onReceive(observation.$lastEvent) { event in
             if case .dataChanged = event {
                 loadBranches()
+            }
+        }
+        .sheet(item: $branchToRename) { branch in
+            renameSheet(branch)
+        }
+        .sheet(item: $branchToSetUpstream) { branch in
+            upstreamSheet(branch)
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Delete Remote Branch?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingRemoteBranchDeletion != nil },
+                set: { isPresented in
+                    if !isPresented { pendingRemoteBranchDeletion = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingRemoteBranchDeletion = nil
+            }
+            Button(LumiPluginLocalization.string("Delete Remote Branch", bundle: .module), role: .destructive) {
+                guard let branch = pendingRemoteBranchDeletion else { return }
+                pendingRemoteBranchDeletion = nil
+                deleteRemoteBranch(branch)
+            }
+        } message: {
+            if let branch = pendingRemoteBranchDeletion {
+                Text(String(format: LumiPluginLocalization.string(
+                    "Delete remote branch \"%@\"?",
+                    bundle: .module
+                ), branch))
             }
         }
     }
@@ -98,7 +134,11 @@ public struct BranchManagementView: View {
                         BranchRowView(
                             branch: branch,
                             onSwitch: { switchBranch(branch) },
-                            onDelete: { deleteBranch(branch) }
+                            onDelete: { deleteBranch(branch) },
+                            onRename: { beginRename(branch) },
+                            onPublish: { publishBranch(branch) },
+                            onSetUpstream: { beginSetUpstream(branch) },
+                            onUnsetUpstream: { unsetUpstream(branch) }
                         )
                     }
                 }
@@ -117,6 +157,14 @@ public struct BranchManagementView: View {
                     Text(branch.name)
                         .font(.system(size: 13))
                         .foregroundStyle(theme.textSecondary)
+                    Spacer()
+                    AppIconButton(
+                        systemImage: "trash",
+                        label: LumiPluginLocalization.string("Delete Remote Branch", bundle: .module),
+                        tint: theme.warning
+                    ) {
+                        pendingRemoteBranchDeletion = branch.name
+                    }
                 }
                 .padding(.vertical, 4)
             }
@@ -216,6 +264,188 @@ public struct BranchManagementView: View {
             }
         }
     }
+
+    private func beginRename(_ branch: GitBranchSummary) {
+        renameBranchName = branch.name
+        branchToRename = branch
+    }
+
+    private func renameBranch(_ branch: GitBranchSummary) {
+        guard let url = projectURL else { return }
+        let newName = renameBranchName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !newName.isEmpty else { return }
+        let oldName = branch.name
+        isLoading = true
+        errorMessage = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitBranchOperation.renameBranch(from: oldName, to: newName, in: url)
+                await MainActor.run {
+                    branchToRename = nil
+                    isLoading = false
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    private func beginSetUpstream(_ branch: GitBranchSummary) {
+        selectedUpstreamBranch = remoteBranches.first?.name ?? ""
+        branchToSetUpstream = branch
+    }
+
+    private func setUpstream(_ branch: GitBranchSummary) {
+        guard let url = projectURL else { return }
+        let upstream = selectedUpstreamBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !upstream.isEmpty else { return }
+        let local = branch.name
+        isLoading = true
+        errorMessage = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitBranchOperation.setUpstream(
+                    localBranch: local,
+                    upstreamBranch: upstream,
+                    in: url
+                )
+                await MainActor.run {
+                    branchToSetUpstream = nil
+                    isLoading = false
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    private func unsetUpstream(_ branch: GitBranchSummary) {
+        guard let url = projectURL else { return }
+        let local = branch.name
+        isLoading = true
+        errorMessage = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitBranchOperation.unsetUpstream(localBranch: local, in: url)
+                await MainActor.run {
+                    isLoading = false
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    private func publishBranch(_ branch: GitBranchSummary) {
+        guard let url = projectURL else { return }
+        let local = branch.name
+        isLoading = true
+        errorMessage = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitBranchOperation.publishBranch(localBranch: local, in: url)
+                await MainActor.run {
+                    isLoading = false
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    private func deleteRemoteBranch(_ branchName: String) {
+        guard let url = projectURL else { return }
+        isLoading = true
+        errorMessage = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitBranchOperation.deleteRemoteBranch(named: branchName, in: url)
+                await MainActor.run {
+                    isLoading = false
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    private func renameSheet(_ branch: GitBranchSummary) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(LumiPluginLocalization.string("Rename Branch", bundle: .module))
+                .font(.headline)
+            TextField(
+                LumiPluginLocalization.string("New branch name", bundle: .module),
+                text: $renameBranchName
+            )
+            .textFieldStyle(.roundedBorder)
+            HStack {
+                Spacer()
+                Button(LumiPluginLocalization.string("Cancel", bundle: .module)) {
+                    branchToRename = nil
+                }
+                Button(LumiPluginLocalization.string("Rename", bundle: .module)) {
+                    renameBranch(branch)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(renameBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
+            }
+        }
+        .padding(20)
+        .frame(width: 340)
+    }
+
+    private func upstreamSheet(_ branch: GitBranchSummary) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(LumiPluginLocalization.string("Set Upstream", bundle: .module))
+                .font(.headline)
+            if remoteBranches.isEmpty {
+                Text(LumiPluginLocalization.string("No remote branches available.", bundle: .module))
+                    .foregroundStyle(theme.textSecondary)
+            } else {
+                Picker(
+                    LumiPluginLocalization.string("Upstream branch", bundle: .module),
+                    selection: $selectedUpstreamBranch
+                ) {
+                    ForEach(remoteBranches) { remote in
+                        Text(remote.name).tag(remote.name)
+                    }
+                }
+            }
+            HStack {
+                Spacer()
+                Button(LumiPluginLocalization.string("Cancel", bundle: .module)) {
+                    branchToSetUpstream = nil
+                }
+                Button(LumiPluginLocalization.string("Set Upstream", bundle: .module)) {
+                    setUpstream(branch)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(selectedUpstreamBranch.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
+            }
+        }
+        .padding(20)
+        .frame(width: 340)
+    }
 }
 
 /// 分支行：切换 / 删除。
@@ -223,12 +453,29 @@ public struct BranchRowView: View {
     let branch: GitBranchSummary
     let onSwitch: () -> Void
     let onDelete: () -> Void
+    let onRename: () -> Void
+    let onPublish: () -> Void
+    let onSetUpstream: () -> Void
+    let onUnsetUpstream: () -> Void
     @LumiTheme private var theme
+    @State private var showDeleteAlert = false
 
-    public init(branch: GitBranchSummary, onSwitch: @escaping () -> Void, onDelete: @escaping () -> Void) {
+    public init(
+        branch: GitBranchSummary,
+        onSwitch: @escaping () -> Void,
+        onDelete: @escaping () -> Void,
+        onRename: @escaping () -> Void,
+        onPublish: @escaping () -> Void,
+        onSetUpstream: @escaping () -> Void,
+        onUnsetUpstream: @escaping () -> Void
+    ) {
         self.branch = branch
         self.onSwitch = onSwitch
         self.onDelete = onDelete
+        self.onRename = onRename
+        self.onPublish = onPublish
+        self.onSetUpstream = onSetUpstream
+        self.onUnsetUpstream = onUnsetUpstream
     }
 
     public var body: some View {
@@ -261,11 +508,40 @@ public struct BranchRowView: View {
                     onDelete()
                 }
             }
+            Menu {
+                Button(LumiPluginLocalization.string("Rename Branch", bundle: .module), systemImage: "pencil", action: onRename)
+                Button(LumiPluginLocalization.string("Set Upstream", bundle: .module), systemImage: "link", action: onSetUpstream)
+                Button(LumiPluginLocalization.string("Publish Branch", bundle: .module), systemImage: "icloud.and.arrow.up", action: onPublish)
+                Button(LumiPluginLocalization.string("Unset Upstream", bundle: .module), systemImage: "link.badge.minus", action: onUnsetUpstream)
+                if !branch.isCurrent {
+                    Divider()
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Label(LumiPluginLocalization.string("Delete Local Branch", bundle: .module), systemImage: "trash")
+                    }
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .menuStyle(.borderlessButton)
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
         .background(branch.isCurrent ? theme.surface : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 6))
+        .alert(
+            LumiPluginLocalization.string("Confirm Delete Branch", bundle: .module),
+            isPresented: $showDeleteAlert
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
+            Button(LumiPluginLocalization.string("Delete", bundle: .module), role: .destructive, action: onDelete)
+        } message: {
+            Text(String(format: LumiPluginLocalization.string(
+                "Delete local branch \"%@\"? Git will prevent deleting unmerged branches.",
+                bundle: .module
+            ), branch.name))
+        }
     }
 }
 

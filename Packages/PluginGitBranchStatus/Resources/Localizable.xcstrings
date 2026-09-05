@@ -452,6 +452,114 @@
         }
       }
     },
+    "Confirm Delete Branch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Confirm Delete Branch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "确认删除分支" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "確認刪除分支" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "確認刪除分支" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "確認刪除分支" } }
+      }
+    },
+    "Confirm Delete Remote Branch?" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Confirm Delete Remote Branch?" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "确认删除远程分支？" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "確認刪除遠端分支？" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "確認刪除遠端分支？" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "確認刪除遠端分支？" } }
+      }
+    },
+    "Delete Remote Branch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete Remote Branch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除远程分支" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "刪除遠端分支" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "刪除遠端分支" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "刪除遠端分支" } }
+      }
+    },
+    "Delete remote branch \"%@\"?" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete remote branch \"%@\"?" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "要删除远程分支“%@”吗？" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "要刪除遠端分支「%@」嗎？" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "要刪除遠端分支「%@」嗎？" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "要刪除遠端分支「%@」嗎？" } }
+      }
+    },
+    "Delete local branch \"%@\"? Git will prevent deleting unmerged branches." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete local branch \"%@\"? Git will prevent deleting unmerged branches." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "要删除本地分支“%@”吗？Git 会阻止删除未合并的分支。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "要刪除本地分支「%@」嗎？Git 會阻止刪除未合併的分支。" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "要刪除本地分支「%@」嗎？Git 會阻止刪除未合併的分支。" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "要刪除本地分支「%@」嗎？Git 會阻止刪除未合併的分支。" } }
+      }
+    },
+    "No remote branches available." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No remote branches available." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有可用的远程分支。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "沒有可用的遠端分支。" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "沒有可用的遠端分支。" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "沒有可用的遠端分支。" } }
+      }
+    },
+    "Publish Branch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Publish Branch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "发布分支" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "發佈分支" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "發佈分支" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "發佈分支" } }
+      }
+    },
+    "Rename" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重命名" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新命名" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "重新命名" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "重新命名" } }
+      }
+    },
+    "Rename Branch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename Branch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重命名分支" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新命名分支" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "重新命名分支" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "重新命名分支" } }
+      }
+    },
+    "Set Upstream" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Set Upstream" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "设置上游" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "設定上游" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "設定上游" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "設定上游" } }
+      }
+    },
+    "Unset Upstream" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unset Upstream" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消上游" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "取消上游" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "取消上游" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "取消上游" } }
+      }
+    },
+    "Upstream branch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Upstream branch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "上游分支" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "上游分支" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "上游分支" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "上游分支" } }
+      }
+    },
     "Switch Branch" : {
       "localizations" : {
         "en" : {
