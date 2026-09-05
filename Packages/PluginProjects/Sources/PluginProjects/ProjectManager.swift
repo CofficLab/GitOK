@@ -8,7 +8,7 @@ import ProviderProjects
 ///
 /// 管理 GitOK 项目列表（侧边栏数据源），并把项目列表持久化到
 /// 插件数据目录下的 `projects.json`（目录遵循 Lumi 存储规律：
-/// `~/Library/Application Support/<bundleID>/db_<env>_v<major>/Projects/`）。
+/// `~/Library/Application Support/<bundleID>/db_<env>_v<major>/com.coffic.lumi.plugin.projects/`）。
 ///
 /// 同时作为「当前 commit / 当前文件 / 当前 commit 下的变动的文件」这些
 /// 会话级选择状态的唯一权威来源：commit 列表写入选择，commit 详情 / diff /
