@@ -58,7 +58,8 @@ public final class CommitStatusBarPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = CommitStatusBarSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = CommitStatusBarSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = CommitStatusBarSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
