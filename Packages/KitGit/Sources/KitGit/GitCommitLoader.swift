@@ -13,10 +13,17 @@ import Foundation
 /// 视图侧通过 `Task.detached` 使用，避免阻塞主线程。
 public enum GitCommitLoader {
 
-    /// 读取仓库最新 `limit` 条提交（按提交时间倒序）。
+    /// 读取仓库中从 `offset` 开始的 `limit` 条提交（按提交时间倒序）。
+    ///
+    /// `offset` 与 `limit` 组成稳定的 Git 日志分页游标，调用方可以把后续
+    /// 页面追加到已有结果，而不需要一次性把整个仓库历史读入内存。
     /// - Throws: `GitCommitLoaderError`（非 git 仓库 / 命令失败 / 输出不可解析）。
-    public static func loadCommits(in repository: URL, limit: Int = 50) throws -> [GitCommit] {
-        let command = try buildCommand(in: repository, limit: limit)
+    public static func loadCommits(
+        in repository: URL,
+        limit: Int = 50,
+        offset: Int = 0
+    ) throws -> [GitCommit] {
+        let command = try buildCommand(in: repository, limit: limit, offset: offset)
         let output = try runGit(command, in: repository)
         // 显式按提交日期倒序：不依赖 git log 的默认输出顺序
         // （不同 git 配置 / 沙盒环境下默认顺序可能不一致）。
@@ -25,7 +32,7 @@ public enum GitCommitLoader {
 
     // MARK: - Command
 
-    private static func buildCommand(in repository: URL, limit: Int) throws -> [String] {
+    private static func buildCommand(in repository: URL, limit: Int, offset: Int) throws -> [String] {
         guard repository.hasDirectoryPath || FileManager.default.fileExists(atPath: repository.path) else {
             throw GitCommitLoaderError.notARepository(repository)
         }
@@ -35,12 +42,16 @@ public enum GitCommitLoader {
         guard FileManager.default.fileExists(atPath: gitDir.path) || isBare else {
             throw GitCommitLoaderError.notARepository(repository)
         }
-        return [
+        var command = [
             "/usr/bin/git", "-C", repository.path,
             "log",
             "--format=\(format)",
             "-n", "\(limit)",
         ]
+        if offset > 0 {
+            command += ["--skip", "\(offset)"]
+        }
+        return command
     }
 
     /// 获取未推送到远程的提交哈希集合。

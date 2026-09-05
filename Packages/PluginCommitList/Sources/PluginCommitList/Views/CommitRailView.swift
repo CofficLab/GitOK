@@ -4,6 +4,8 @@ import ProviderGitRepositoryWatch
 import ProviderProjects
 import SwiftUI
 
+private let commitPageSize = 50
+
 /// Commit 列表 Rail 视图：显示当前打开项目的提交历史。
 ///
 /// 作为 Rail 注入根布局（位于侧边栏右侧、内容区左侧）。订阅
@@ -36,6 +38,9 @@ struct CommitRailView: View {
     @State private var isLoading = false
     @State private var loadedProjectURL: URL?
     @State private var loadError: String?
+    @State private var hasMoreCommits = true
+    /// 下一页相对于 Git 日志的稳定偏移量，不直接依赖去重后的 UI 数量。
+    @State private var nextCommitOffset = 0
     /// 加载序号：只接受最后一次刷新结果，避免旧任务覆盖新项目或新快照。
     @State private var loadToken = 0
     /// 本次刷新新增的 commit，只用于触发顶部进入动画。
@@ -436,6 +441,9 @@ struct CommitRailView: View {
                         LazyVStack(spacing: 0) {
                             ForEach(commits) { commit in
                                 commitRow(commit)
+                                    .onAppear {
+                                        loadMoreIfNeeded(after: commit)
+                                    }
                                 if commit.id != commits.last?.id {
                                     AppDivider()
                                 }
@@ -1146,6 +1154,44 @@ struct CommitRailView: View {
 
     // MARK: - Loading
 
+    /// 当最后一条提交进入可见区域时，加载下一页历史并追加到当前列表。
+    private func loadMoreIfNeeded(after commit: GitCommit) {
+        guard commit.id == commits.last?.id,
+              hasMoreCommits,
+              !isLoading,
+              let url = loadedProjectURL else { return }
+
+        isLoading = true
+        let token = loadToken
+        let offset = nextCommitOffset
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitCommitLoader.loadCommits(
+                    in: url,
+                    limit: commitPageSize,
+                    offset: offset
+                )
+            }
+            await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else { return }
+                isLoading = false
+                switch result {
+                case .success(let loaded):
+                    nextCommitOffset += loaded.count
+                    hasMoreCommits = loaded.count == commitPageSize
+                    guard !loaded.isEmpty else { return }
+
+                    let existingHashes = Set(commits.map(\.hash))
+                    let newCommits = loaded.filter { !existingHashes.contains($0.hash) }
+                    commits.append(contentsOf: newCommits)
+                case .failure(let error):
+                    loadError = (error as? GitCommitLoaderError)?.localizedDescription
+                        ?? error.localizedDescription
+                }
+            }
+        }
+    }
+
     /// 项目变化时重新加载 commit 列表。切换项目时 Provider 内部已联动清空
     /// 选中状态（`ProjectManager` 保证选择属于当前项目）。
     ///
@@ -1160,6 +1206,8 @@ struct CommitRailView: View {
                 unpushedHashes = []
                 isLoading = false
                 loadError = nil
+                hasMoreCommits = true
+                nextCommitOffset = 0
                 animatedCommitHashes = []
             }
             return
@@ -1176,11 +1224,19 @@ struct CommitRailView: View {
             unpushedHashes = []
             animatedCommitHashes = []
         }
+        hasMoreCommits = true
+        nextCommitOffset = 0
         loadError = nil
 
         let url = project.url
         Task.detached(priority: .userInitiated) {
-            let commitsResult = Result { try GitCommitLoader.loadCommits(in: url) }
+            let commitsResult = Result {
+                try GitCommitLoader.loadCommits(
+                    in: url,
+                    limit: commitPageSize,
+                    offset: 0
+                )
+            }
             // 获取未推送的 commit 哈希（无 upstream 时返回空集合）
             let unpushedResult = Result { try GitCommitLoader.unpushedCommitHashes(in: url) }
             await MainActor.run {
@@ -1188,6 +1244,8 @@ struct CommitRailView: View {
                 isLoading = false
                 switch commitsResult {
                 case .success(let loaded):
+                    nextCommitOffset = loaded.count
+                    hasMoreCommits = loaded.count == commitPageSize
                     let insertedHashes = CommitListRefreshPolicy.insertedCommitHashes(
                         previous: commits,
                         current: loaded
