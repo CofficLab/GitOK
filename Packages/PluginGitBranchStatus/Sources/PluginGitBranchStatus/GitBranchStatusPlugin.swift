@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderStatusBar
 import ProviderToolbar
@@ -35,6 +36,8 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: GitBranchStatusSceneObserver?
+    private var branchViewModel: GitBranchStatusViewModel?
+    private var branchObserver: GitBranchStatusObserver?
 
     public init() {}
 
@@ -52,6 +55,11 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
         self.sceneViewModel = sceneViewModel
         let sceneCapability = GitBranchStatusSceneCapabilityAdapter(scene: scene)
         self.sceneObserver = GitBranchStatusSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
+        let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
+        let branchCapability = GitBranchStatusCapabilityAdapter(projects: projects, gitWatch: gitWatch)
+        let branchViewModel = GitBranchStatusViewModel()
+        self.branchViewModel = branchViewModel
+        self.branchObserver = GitBranchStatusObserver(capability: branchCapability, viewModel: branchViewModel)
 
         // 工具栏右上角：分支选择器（显示当前分支 + 切换分支）。
         if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {
@@ -64,7 +72,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                     order: 40
                 ) {
                     WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                        BranchPickerView(projects: projects)
+                        BranchPickerView(projects: projects, viewModel: branchViewModel)
                     }
                 },
             ])
@@ -85,7 +93,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                 order: 15
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    BranchStatusTile(projects: projects)
+                    BranchStatusTile(projects: projects, viewModel: branchViewModel)
                 }
             },
         ])
@@ -95,6 +103,9 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        branchObserver?.cancel()
+        branchObserver = nil
+        branchViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
         kernel.resolveProvider((any ToolbarProviding).self)?

@@ -11,11 +11,11 @@ import SwiftUI
 /// - 无项目 / 加载失败时显示空状态。
 struct BranchPickerPopoverView: View {
     let projects: any ProjectProviding
+    let viewModel: GitBranchStatusViewModel
     /// 切换 / 新建成功后由本视图置为 false，关闭工具栏按钮的弹层。
     let isPresented: Binding<Bool>
     @StateObject private var observation: ProjectObservationModel
     @State private var branches: [GitBranchSummary] = []
-    @State private var currentBranch: String?
     @State private var searchText = ""
     @State private var isCreatingNew = false
     @State private var newBranchName = ""
@@ -23,8 +23,13 @@ struct BranchPickerPopoverView: View {
     @State private var errorMessage: String?
     @FocusState private var isNewBranchFieldFocused: Bool
 
-    init(projects: any ProjectProviding, isPresented: Binding<Bool>) {
+    init(
+        projects: any ProjectProviding,
+        viewModel: GitBranchStatusViewModel,
+        isPresented: Binding<Bool>
+    ) {
         self.projects = projects
+        self.viewModel = viewModel
         self.isPresented = isPresented
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
@@ -172,7 +177,7 @@ struct BranchPickerPopoverView: View {
     }
 
     private func row(for branch: GitBranchSummary) -> some View {
-        let isCurrent = branch.name == currentBranch
+        let isCurrent = branch.name == viewModel.currentBranch
         return Button {
             switchBranch(branch)
         } label: {
@@ -204,7 +209,6 @@ struct BranchPickerPopoverView: View {
     private func load() {
         guard let url = projects.currentProject?.url else {
             branches = []
-            currentBranch = nil
             isLoading = false
             return
         }
@@ -213,16 +217,13 @@ struct BranchPickerPopoverView: View {
         Task.detached(priority: .utility) {
             do {
                 let loaded = try GitBranchOperation.listBranches(in: url)
-                let current = GitRefReader.currentBranch(in: url)
                 await MainActor.run {
                     branches = loaded
-                    currentBranch = current
                     isLoading = false
                 }
             } catch {
                 await MainActor.run {
                     branches = []
-                    currentBranch = nil
                     isLoading = false
                 }
             }
@@ -231,7 +232,7 @@ struct BranchPickerPopoverView: View {
 
     @MainActor
     private func switchBranch(_ branch: GitBranchSummary) {
-        guard let url = projects.currentProject?.url, branch.name != currentBranch else { return }
+        guard let url = projects.currentProject?.url, branch.name != viewModel.currentBranch else { return }
         errorMessage = nil
         isLoading = true
         Task.detached(priority: .userInitiated) {

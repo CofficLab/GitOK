@@ -12,15 +12,13 @@ import SwiftUI
 /// - 无项目 / 非 git 仓库时显示 "No Branch" 并禁用点击。
 public struct BranchPickerView: View {
     let projects: any ProjectProviding
-    @StateObject private var observation: ProjectObservationModel
-    @State private var currentBranch: String?
-    @State private var isLoading = false
+    @ObservedObject private var viewModel: GitBranchStatusViewModel
     @State private var isPopoverPresented = false
     @State private var isHovering = false
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, viewModel: GitBranchStatusViewModel) {
         self.projects = projects
-        _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+        _viewModel = ObservedObject(wrappedValue: viewModel)
     }
 
     public var body: some View {
@@ -31,11 +29,11 @@ public struct BranchPickerView: View {
                 Image(systemName: "arrow.triangle.branch")
                     .font(.system(size: 12, weight: .semibold))
 
-                if isLoading {
+                if viewModel.isLoading {
                     ProgressView()
                         .controlSize(.small)
                 } else {
-                    Text(currentBranch ?? LumiPluginLocalization.string("No Branch", bundle: .module))
+                    Text(viewModel.currentBranch ?? LumiPluginLocalization.string("No Branch", bundle: .module))
                         .font(.system(size: 13, weight: .medium))
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -54,18 +52,15 @@ public struct BranchPickerView: View {
             )
         }
         .buttonStyle(.plain)
-        .disabled(projects.currentProject == nil)
+        .disabled(viewModel.currentProjectURL == nil)
         .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
-            BranchPickerPopoverView(projects: projects, isPresented: $isPopoverPresented)
+            BranchPickerPopoverView(
+                projects: projects,
+                viewModel: viewModel,
+                isPresented: $isPopoverPresented
+            )
         }
         .onHover { isHovering = $0 }
-        .onAppear { load() }
-        .onReceive(observation.$revision) { _ in load() }
-        .onReceive(observation.$lastEvent) { event in
-            if case .dataChanged = event {
-                load()
-            }
-        }
         .help(LumiPluginLocalization.string("Switch Branch", bundle: .module))
     }
 
@@ -74,20 +69,4 @@ public struct BranchPickerView: View {
         isHovering || isPopoverPresented
     }
 
-    @MainActor
-    private func load() {
-        guard let url = projects.currentProject?.url else {
-            currentBranch = nil
-            isLoading = false
-            return
-        }
-        isLoading = true
-        Task.detached(priority: .utility) {
-            let current = GitRefReader.currentBranch(in: url)
-            await MainActor.run {
-                currentBranch = current
-                isLoading = false
-            }
-        }
-    }
 }

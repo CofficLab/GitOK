@@ -6,22 +6,21 @@ import SwiftUI
 /// 当前分支状态 tile：点击弹出分支管理面板（对齐旧版 BranchStatusTile）。
 public struct BranchStatusTile: View {
     let projects: any ProjectProviding
-    @StateObject private var observation: ProjectObservationModel
-    @State private var branch: String?
+    @ObservedObject private var viewModel: GitBranchStatusViewModel
     @State private var isPresented = false
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, viewModel: GitBranchStatusViewModel) {
         self.projects = projects
-        _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+        _viewModel = ObservedObject(wrappedValue: viewModel)
     }
 
     public var body: some View {
         Group {
-            if projects.currentProject != nil {
+            if viewModel.currentProjectURL != nil {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.triangle.branch")
                         .font(.system(size: 10))
-                    Text(branch ?? LumiPluginLocalization.string("No Branch", bundle: .module))
+                    Text(viewModel.currentBranch ?? LumiPluginLocalization.string("No Branch", bundle: .module))
                         .font(.appCaption)
                         .lineLimit(1)
                 }
@@ -34,28 +33,6 @@ public struct BranchStatusTile: View {
                     BranchManagementView(projects: projects)
                         .frame(width: 560, height: 520)
                 }
-            }
-        }
-        .onReceive(observation.$revision) { _ in load() }
-        .onReceive(observation.$lastEvent) { event in
-            if case .dataChanged = event {
-                load()
-            }
-        }
-        .onAppear { load() }
-    }
-
-    @MainActor
-    private func load() {
-        guard let project = projects.currentProject else {
-            branch = nil
-            return
-        }
-        let url = project.url
-        Task.detached(priority: .utility) {
-            let loaded = GitRefReader.currentBranch(in: url)
-            await MainActor.run {
-                branch = loaded
             }
         }
     }
