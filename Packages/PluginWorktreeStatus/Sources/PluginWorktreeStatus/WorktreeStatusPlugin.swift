@@ -5,6 +5,7 @@ import os
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderRailView
+import ProviderToast
 import ProviderWorkspaceScene
 import SwiftUI
 
@@ -53,6 +54,7 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         // GitRepositoryWatching 可选：插件可能未注册（例如测试环境），此时仅依赖
         // ProjectProviding.dataChanged 刷新；真实运行时由 PluginGitRepositoryWatch 提供。
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
+        let toast = kernel.resolveProvider((any ToastProviding).self)
 
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
@@ -62,7 +64,7 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         let section = RailSectionItem(id: "\(id).section", order: 15) {
             WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                WorkingTreeStatusView(projects: projects, gitWatch: gitWatch)
+                WorkingTreeStatusView(projects: projects, gitWatch: gitWatch, toast: toast)
             }
         }
         self.sceneViewModel = sceneViewModel

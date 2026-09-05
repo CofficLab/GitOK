@@ -41,6 +41,16 @@
         }
       }
     },
+    "Fetch failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取失败"
+          }
+        }
+      }
+    },
     "Fetching" : {
       "localizations" : {
         "zh-Hans" : {
@@ -71,6 +81,16 @@
         }
       }
     },
+    "Pull failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拉取失败"
+          }
+        }
+      }
+    },
     "Pulling" : {
       "localizations" : {
         "zh-Hans" : {
@@ -87,6 +107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送到远程"
+          }
+        }
+      }
+    },
+    "Push failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送失败"
           }
         }
       }
