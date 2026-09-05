@@ -41,6 +41,26 @@
         }
       }
     },
+    "Close" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "Copy error" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制错误"
+          }
+        }
+      }
+    },
     "Fetch failed" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -52,17 +72,8 @@
         }
       }
     },
-    "Merge failed" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并失败"
-          }
-        }
-      }
-    },
     "Fetch from remote" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -73,11 +84,32 @@
       }
     },
     "Fetching" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在获取"
+          }
+        }
+      }
+    },
+    "Git error details" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 错误详情"
+          }
+        }
+      }
+    },
+    "Merge failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合并失败"
           }
         }
       }
@@ -104,6 +136,7 @@
       }
     },
     "Pull from remote" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -114,31 +147,12 @@
       }
     },
     "Pulling" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在拉取"
-          }
-        }
-      }
-    },
-    "Synchronizing" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在同步"
-          }
-        }
-      }
-    },
-    "Synchronize with remote" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "与远程同步"
           }
         }
       }
@@ -155,11 +169,22 @@
       }
     },
     "Push to remote" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送到远程"
+          }
+        }
+      }
+    },
+    "Pushing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在推送"
           }
         }
       }
@@ -174,42 +199,22 @@
         }
       }
     },
-    "Git error details" : {
+    "Synchronize with remote" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Git 错误详情"
+            "value" : "与远程同步"
           }
         }
       }
     },
-    "Copy error" : {
+    "Synchronizing" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "复制错误"
-          }
-        }
-      }
-    },
-    "Close" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "关闭"
-          }
-        }
-      }
-    },
-    "Pushing" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在推送"
+            "value" : "正在同步"
           }
         }
       }
