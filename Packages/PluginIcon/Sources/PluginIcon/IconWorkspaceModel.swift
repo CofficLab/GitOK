@@ -19,34 +19,29 @@ public final class IconWorkspaceModel: ObservableObject {
     @Published public var selectedSourceCategory: String?
     @Published public private(set) var message: String?
 
-    private let projects: any ProjectProviding
+    private let capability: any IconProjectCapability
     private let repository: IconRepository
     private let sourceProvider: any IconSourceProviding
-    private var projectObserver: (any ProjectProvidingObserverHandle)?
 
     public init(
-        projects: any ProjectProviding,
+        capability: any IconProjectCapability,
         repository: IconRepository = IconRepository(),
         sourceProvider: any IconSourceProviding = DefaultIconSourceProvider()
     ) {
-        self.projects = projects
+        self.capability = capability
         self.repository = repository
         self.sourceProvider = sourceProvider
-        projectObserver = projects.addObserver { [weak self] event in
-            guard case .selectionChanged = event else { return }
-            self?.reload()
-        }
         reload()
     }
 
-    public var currentProject: Project? { projects.currentProject }
+    public var currentProject: Project? { capability.currentProject }
     public var selectedIcon: IconData? {
         guard let selectedIconID else { return nil }
         return icons.first { $0.id == selectedIconID }
     }
 
     public func reload() {
-        guard let project = projects.currentProject else {
+        guard let project = capability.currentProject else {
             icons = []
             selectedIconID = nil
             resetDraft()
@@ -75,7 +70,7 @@ public final class IconWorkspaceModel: ObservableObject {
         guard sourceProvider.sources.contains(where: { $0.id == sourceID }) else { return }
         selectedSourceID = sourceID
         selectedSourceCategory = nil
-        if let project = projects.currentProject {
+        if let project = capability.currentProject {
             loadSourceAssets(in: project.url)
         }
     }
@@ -84,13 +79,13 @@ public final class IconWorkspaceModel: ObservableObject {
         sourceProvider.setCustomFolderURL(url)
         selectedSourceID = IconSourceID.customFolder
         selectedSourceCategory = nil
-        if let project = projects.currentProject {
+        if let project = capability.currentProject {
             loadSourceAssets(in: project.url)
         }
     }
 
     public func importSourceAsset(_ asset: IconSourceAsset) {
-        guard let project = projects.currentProject else { return }
+        guard let project = capability.currentProject else { return }
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
@@ -121,7 +116,7 @@ public final class IconWorkspaceModel: ObservableObject {
     }
 
     public func createIcon() {
-        guard let project = projects.currentProject else { return }
+        guard let project = capability.currentProject else { return }
         do {
             let icon = try repository.createIcon(in: project.url)
             reload()
@@ -134,7 +129,7 @@ public final class IconWorkspaceModel: ObservableObject {
     }
 
     public func importImage(from sourceURL: URL) {
-        guard let project = projects.currentProject else { return }
+        guard let project = capability.currentProject else { return }
         do {
             let importedURL = try repository.importImage(sourceURL, for: project.url)
             if selectedIcon == nil { createIcon() }

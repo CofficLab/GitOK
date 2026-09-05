@@ -5,10 +5,10 @@ import SwiftUI
 
 @MainActor
 public struct IconWorkspaceView: View {
-    @StateObject private var model: IconWorkspaceModel
+    @ObservedObject private var model: IconWorkspaceModel
 
-    public init(projects: any ProjectProviding, repository: IconRepository = IconRepository()) {
-        _model = StateObject(wrappedValue: IconWorkspaceModel(projects: projects, repository: repository))
+    public init(model: IconWorkspaceModel) {
+        self.model = model
     }
 
     public var body: some View {

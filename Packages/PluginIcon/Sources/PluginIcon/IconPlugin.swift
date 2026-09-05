@@ -22,6 +22,8 @@ public final class IconPlugin: SuperPlugin {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: IconSceneObserver?
+    private var workspaceViewModel: IconWorkspaceModel?
+    private var projectObserver: IconProjectObserver?
 
     public init() {}
 
@@ -37,12 +39,17 @@ public final class IconPlugin: SuperPlugin {
 
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .icon)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = IconSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = IconSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = IconSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
+        let projectCapability = IconProjectCapabilityAdapter(projects: projects)
+        let workspaceViewModel = IconWorkspaceModel(capability: projectCapability)
+        self.workspaceViewModel = workspaceViewModel
+        self.projectObserver = IconProjectObserver(capability: projectCapability, viewModel: workspaceViewModel)
 
         contentView.addContentView(
             AnyView(
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    IconWorkspaceView(projects: projects)
+                    IconWorkspaceView(model: workspaceViewModel)
                 }
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
@@ -56,6 +63,9 @@ public final class IconPlugin: SuperPlugin {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        projectObserver?.cancel()
+        projectObserver = nil
+        workspaceViewModel = nil
         kernel.resolveProvider((any ContentViewProviding).self)?
             .removeContentView(id: "\(id).content")
     }
