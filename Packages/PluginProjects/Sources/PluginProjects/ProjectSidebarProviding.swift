@@ -1,3 +1,4 @@
+import AppKit
 import Combine
 import Foundation
 import LumiUI
@@ -150,11 +151,40 @@ private struct ProjectSidebarView: View {
         .id(project.id)
         .contextMenu {
             Button {
+                copyProjectPath(project)
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Copy Project Path", bundle: .module),
+                    systemImage: "doc.on.doc"
+                )
+            }
+
+            Button {
+                openProjectInFinder(project)
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Open in Finder", bundle: .module),
+                    systemImage: "folder"
+                )
+            }
+
+            Divider()
+
+            Button {
                 projects.removeProject(id: project.id)
             } label: {
                 Label(LumiPluginLocalization.string("Remove Project", bundle: .module), systemImage: "trash")
             }
         }
+    }
+
+    private func copyProjectPath(_ project: Project) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(project.url.path, forType: .string)
+    }
+
+    private func openProjectInFinder(_ project: Project) {
+        NSWorkspace.shared.activateFileViewerSelecting([project.url])
     }
 
     private func addExistingProject() {
