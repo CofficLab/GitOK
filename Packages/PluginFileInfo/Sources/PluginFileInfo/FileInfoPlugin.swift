@@ -51,7 +51,8 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = FileInfoSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = FileInfoSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = FileInfoSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
