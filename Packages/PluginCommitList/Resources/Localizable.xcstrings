@@ -308,6 +308,51 @@
         }
       }
     },
+    "Confirm Undo Commit?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Undo Commit?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认撤销提交？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認撤銷提交？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認撤銷提交？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認撤銷提交？" } }
+      }
+    },
+    "Undo": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undo" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷" } }
+      }
+    },
+    "Undo Commit": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undo Commit" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销提交" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷提交" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷提交" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷提交" } }
+      }
+    },
+    "After undoing, this commit's changes will remain in the working tree.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "After undoing, this commit's changes will remain in the working tree." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销后，此提交的文件改动会保留在工作区。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷後，此提交的檔案變更會保留在工作區。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷後，此提交的檔案變更會保留在工作區。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷後，此提交的檔案變更會保留在工作區。" } }
+      }
+    },
+    "Undoing the initial commit is not supported.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undoing the initial commit is not supported." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "不支持撤销初始提交。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "不支援撤銷初始提交。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "不支援撤銷初始提交。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "不支援撤銷初始提交。" } }
+      }
+    },
     "Confirm Revert": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Confirm Revert" } },

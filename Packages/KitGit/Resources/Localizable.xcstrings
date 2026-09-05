@@ -189,6 +189,33 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "反轉提交失敗：%@" } }
       }
     },
+    "Undo failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undo failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销提交失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷提交失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷提交失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷提交失敗：%@" } }
+      }
+    },
+    "The working tree must be clean before undoing a commit.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The working tree must be clean before undoing a commit." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "撤销提交前工作区必须干净。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "撤銷提交前工作區必須乾淨。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "撤銷提交前工作區必須乾淨。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "撤銷提交前工作區必須乾淨。" } }
+      }
+    },
+    "The selected commit is no longer the current HEAD.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The selected commit is no longer the current HEAD." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "选中的提交已不是当前 HEAD。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "選取的提交已不是目前 HEAD。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "選取的提交已不是目前 HEAD。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "選取的提交已不是目前 HEAD。" } }
+      }
+    },
     "Git unavailable: %@": {
       "localizations": {
         "en": {

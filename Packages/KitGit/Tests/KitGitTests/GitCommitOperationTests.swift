@@ -196,4 +196,65 @@ final class GitCommitOperationTests: XCTestCase {
             }
         }
     }
+
+    func testUndoCommitMovesHeadToParentAndKeepsCommittedChangesInWorktree() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+
+        let commitHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let parentHash = try GitProcessRunner.run(["rev-parse", "HEAD^"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        _ = try GitHistoryOperation.undoCommit(commitHash, parentHash: parentHash, in: repo)
+
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            parentHash
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "changed\n"
+        )
+        XCTAssertFalse(try GitStatusLoader.loadStatus(in: repo).isClean)
+    }
+
+    func testUndoCommitRejectsDirtyWorktree() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+
+        try Data("uncommitted\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        let commitHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let parentHash = try GitProcessRunner.run(["rev-parse", "HEAD^"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        XCTAssertThrowsError(
+            try GitHistoryOperation.undoCommit(commitHash, parentHash: parentHash, in: repo)
+        ) { error in
+            guard case GitHistoryOperation.Error.undoFailed = error else {
+                return XCTFail("expected undoFailed, got \(error)")
+            }
+        }
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            commitHash
+        )
+    }
 }

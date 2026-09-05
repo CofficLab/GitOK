@@ -47,9 +47,11 @@ struct CommitRailView: View {
     @State private var pushError: String?
 
     // Revert 状态
+    @State private var pendingUndo: GitCommit?
     @State private var pendingRevert: GitCommit?
+    @State private var undoingHash: String?
     @State private var revertingHash: String?
-    @State private var revertError: String?
+    @State private var historyError: String?
 
     init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
         self.projects = projects
@@ -90,6 +92,29 @@ struct CommitRailView: View {
                     commit.message
                 ))
             }
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Undo Commit?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingUndo != nil },
+                set: { isPresented in
+                    if !isPresented { pendingUndo = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingUndo = nil
+            }
+            Button(LumiPluginLocalization.string("Undo", bundle: .module), role: .destructive) {
+                guard let commit = pendingUndo else { return }
+                pendingUndo = nil
+                performUndo(commit)
+            }
+        } message: {
+            Text(LumiPluginLocalization.string(
+                "After undoing, this commit's changes will remain in the working tree.",
+                bundle: .module
+            ))
         }
         // 项目 / 选中 commit / 仓库数据变化 → 刷新列表或选中态高亮。
         .onReceive(projectObservation.$revision) { _ in
@@ -152,8 +177,8 @@ struct CommitRailView: View {
                         .padding(.vertical, 5)
                         .background(theme.error.opacity(0.08))
                 }
-                if let revertError {
-                    Text(revertError)
+                if let historyError {
+                    Text(historyError)
                         .font(.appCaption)
                         .foregroundStyle(theme.error)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -244,8 +269,23 @@ struct CommitRailView: View {
             pushPopoverContent(for: commit)
         }
         .contextMenu {
+            if canUndo(commit) {
+                Button(role: .destructive) {
+                    historyError = nil
+                    pendingUndo = commit
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Undo Commit", bundle: .module),
+                        systemImage: "arrow.uturn.backward"
+                    )
+                }
+                .disabled(undoingHash != nil || revertingHash != nil)
+
+                Divider()
+            }
+
             Button(role: .destructive) {
-                revertError = nil
+                historyError = nil
                 pendingRevert = commit
             } label: {
                 Label(
@@ -253,7 +293,7 @@ struct CommitRailView: View {
                     systemImage: "arrow.counterclockwise"
                 )
             }
-            .disabled(revertingHash != nil || commit.parentHashes.count > 1)
+            .disabled(undoingHash != nil || revertingHash != nil || commit.parentHashes.count > 1)
         }
     }
 
@@ -361,7 +401,7 @@ struct CommitRailView: View {
         guard let project = projects.currentProject else { return }
 
         revertingHash = commit.hash
-        revertError = nil
+        historyError = nil
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
@@ -373,10 +413,47 @@ struct CommitRailView: View {
                 case .success:
                     projects.notifyDataChanged()
                 case .failure(let error):
-                    revertError = error.localizedDescription
+                    historyError = error.localizedDescription
                 }
             }
         }
+    }
+
+    private func performUndo(_ commit: GitCommit) {
+        guard let project = projects.currentProject,
+              let parentHash = commit.parentHashes.first else {
+            historyError = LumiPluginLocalization.string(
+                "Undoing the initial commit is not supported.",
+                bundle: .module
+            )
+            return
+        }
+
+        undoingHash = commit.hash
+        historyError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitHistoryOperation.undoCommit(commit.hash, parentHash: parentHash, in: url)
+            }
+            await MainActor.run {
+                undoingHash = nil
+                switch result {
+                case .success:
+                    projects.clearCommitSelection()
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    historyError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func canUndo(_ commit: GitCommit) -> Bool {
+        commits.first?.hash == commit.hash
+            && unpushedHashes.contains(commit.hash)
+            && commit.tags.isEmpty
+            && !commit.parentHashes.isEmpty
     }
 
     private func select(_ commit: GitCommit) {
