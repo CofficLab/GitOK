@@ -1,3 +1,4 @@
+import AppKit
 import ProviderProjects
 import SwiftUI
 
@@ -57,6 +58,9 @@ public struct BannerWorkspaceView: View {
                 HStack {
                     Text("Banner Editor").font(.title2.bold())
                     Spacer()
+                    Button("Export PNG", action: chooseStandardExportFolder)
+                    Button("Mac Store", action: chooseMacExportFolder)
+                    Button("iPhone Store", action: chooseIPhoneExportFolder)
                     Button("Delete", role: .destructive, action: model.deleteSelectedBanner)
                     Button("Save", action: model.saveDraft)
                         .buttonStyle(.borderedProminent)
@@ -85,52 +89,31 @@ public struct BannerWorkspaceView: View {
                 Slider(value: $model.opacity, in: 0.2...1) {
                     Text("Opacity")
                 }
-                BannerPreview(
-                    templateID: model.templateID,
-                    title: model.title,
-                    subTitle: model.subTitle,
-                    features: model.featuresText.split(separator: "\n").map(String.init),
-                    backgroundID: model.backgroundID,
-                    opacity: model.opacity
-                )
+                BannerRenderView(configuration: model.renderConfiguration)
                 .frame(maxWidth: .infinity, minHeight: 240)
             }
             .padding(24)
         }
     }
-}
 
-private struct BannerPreview: View {
-    let templateID: String
-    let title: String
-    let subTitle: String
-    let features: [String]
-    let backgroundID: String
-    let opacity: Double
-
-    var body: some View {
-        ZStack {
-            background
-            if templateID == BannerTemplateID.classic {
-                VStack(spacing: 8) {
-                    Text(title).font(.largeTitle.bold())
-                    Text(subTitle).font(.title3)
-                    ForEach(features, id: \.self) { Text("• \($0)").font(.callout) }
-                }
-            } else {
-                Text(title).font(.system(size: 42, weight: .bold))
-            }
-        }
-        .foregroundStyle(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .opacity(opacity)
+    private func chooseStandardExportFolder() {
+        chooseExportFolder(named: "Banner-Standard-PNG") { model.exportStandardPNG(to: $0) }
     }
 
-    private var background: some View {
-        switch backgroundID {
-        case "2": LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "3": LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)
-        default: LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
+    private func chooseMacExportFolder() {
+        chooseExportFolder(named: "Banner-AppStore-Screenshots") { model.exportMacAppStoreScreenshots(to: $0) }
+    }
+
+    private func chooseIPhoneExportFolder() {
+        chooseExportFolder(named: "Banner-iPhone-AppStore-Screenshots") { model.exportIPhoneAppStoreScreenshots(to: $0) }
+    }
+
+    private func chooseExportFolder(named name: String, completion: (URL) -> Void) {
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = name
+        panel.canCreateDirectories = true
+        if panel.runModal() == .OK, let url = panel.url {
+            completion(url)
         }
     }
 }

@@ -4,6 +4,31 @@ import Testing
 
 @Suite("PluginBanner")
 struct PluginBannerTests {
+    @MainActor
+    @Test("exports standard banners using the shared render view")
+    func exportsStandardBanners() throws {
+        let folderURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PluginBannerExport-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: folderURL) }
+
+        let configuration = BannerRenderConfiguration(
+            templateID: BannerTemplateID.classic,
+            title: "Demo",
+            subTitle: "Ship it",
+            features: ["Fast", "Native"],
+            backgroundID: "2"
+        )
+        try BannerExporter.exportStandardPNG(configuration: configuration, to: folderURL)
+
+        let files = try FileManager.default.contentsOfDirectory(
+            at: folderURL,
+            includingPropertiesForKeys: nil
+        )
+        #expect(files.count == BannerExporter.standardDevices.count)
+        #expect(files.contains { $0.lastPathComponent.contains("iPhoneBig") })
+        #expect((try? Data(contentsOf: files[0]))?.count ?? 0 > 100)
+    }
+
     @Test("template data keeps the legacy classic and minimal IDs")
     func templateDataRoundTrips() throws {
         var banner = BannerFile(path: "/tmp/banner.json", projectURL: URL(fileURLWithPath: "/tmp/project"))

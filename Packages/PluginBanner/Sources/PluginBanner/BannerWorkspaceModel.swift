@@ -116,6 +116,44 @@ public final class BannerWorkspaceModel: ObservableObject {
         }
     }
 
+    public func exportStandardPNG(to folderURL: URL) {
+        do {
+            try BannerExporter.exportStandardPNG(configuration: renderConfiguration, to: folderURL)
+            message = "Standard PNG banners exported"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportMacAppStoreScreenshots(to folderURL: URL) {
+        do {
+            try BannerExporter.exportMacAppStoreScreenshots(configuration: renderConfiguration, to: folderURL)
+            message = "Mac App Store screenshots exported"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportIPhoneAppStoreScreenshots(to folderURL: URL) {
+        do {
+            try BannerExporter.exportIPhoneAppStoreScreenshots(configuration: renderConfiguration, to: folderURL)
+            message = "iPhone App Store screenshots exported"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public var renderConfiguration: BannerRenderConfiguration {
+        BannerRenderConfiguration(
+            templateID: templateID,
+            title: title,
+            subTitle: subTitle,
+            features: featuresText.split(separator: "\n").map(String.init).filter { !$0.isEmpty },
+            backgroundID: backgroundID,
+            opacity: opacity
+        )
+    }
+
     private func loadDraft(from banner: BannerFile?) {
         guard let banner else {
             resetDraft()
