@@ -19,6 +19,11 @@ private func loc(_ key: String) -> String {
 /// 外部仓库数据变化（提交 / 推送 / 分支切换）由 `CommitDetailObserver` 翻译成
 /// ViewModel 的 `worktreeRevision`，这里只订阅 ViewModel，不直接监听通知。
 struct WorktreeChangesView: View {
+    private enum BatchAction: Sendable {
+        case stage
+        case unstage
+    }
+
     @ObservedObject var viewModel: CommitDetailViewModel
     let onSelectFile: (String?) -> Void
     let onDataChanged: () -> Void
@@ -30,6 +35,10 @@ struct WorktreeChangesView: View {
     @State private var actionError: String?
     @State private var stagingPath: String?
     @State private var unstagingPath: String?
+    @State private var discardingPaths: Set<String> = []
+    @State private var selectedPaths: Set<String> = []
+    @State private var batchAction: BatchAction?
+    @State private var discardCandidates: [GitStatusEntry] = []
     @State private var loadedProjectURL: URL?
 
     var body: some View {
@@ -80,6 +89,9 @@ struct WorktreeChangesView: View {
                         }
                         .padding(.vertical, 4)
                     }
+                    if !selectedPaths.isEmpty {
+                        batchActionBar
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background {
@@ -90,6 +102,27 @@ struct WorktreeChangesView: View {
         .onAppear { reloadIfNeeded() }
         .onReceive(viewModel.$worktreeRevision) { _ in
             reloadIfNeeded(force: true)
+        }
+        .alert(
+            loc("Confirm Discard"),
+            isPresented: Binding(
+                get: { !discardCandidates.isEmpty },
+                set: { isPresented in
+                    if !isPresented { discardCandidates.removeAll() }
+                }
+            )
+        ) {
+            Button(loc("Cancel"), role: .cancel) {
+                discardCandidates.removeAll()
+            }
+            Button(loc("Discard"), role: .destructive) {
+                guard !discardCandidates.isEmpty else { return }
+                let entries = discardCandidates
+                discardCandidates.removeAll()
+                discard(entries)
+            }
+        } message: {
+            Text(discardMessage)
         }
     }
 
@@ -119,6 +152,17 @@ struct WorktreeChangesView: View {
         let isSelected = viewModel.selectedFile == entry.path
         return AppListRow(isSelected: isSelected, action: { onSelectFile(entry.path) }) {
             HStack(spacing: 8) {
+                Button {
+                    toggleBatchSelection(for: entry)
+                } label: {
+                    Image(systemName: selectedPaths.contains(entry.path) ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(selectedPaths.contains(entry.path) ? theme.primary : theme.textTertiary)
+                }
+                .buttonStyle(.plain)
+                .disabled(isActionInProgress)
+                .help(selectedPaths.contains(entry.path) ? loc("Clear Selection") : loc("Select File"))
+
                 Image(systemName: statusIcon(entry))
                     .font(.system(size: 11))
                     .foregroundStyle(statusColor(entry))
@@ -153,7 +197,7 @@ struct WorktreeChangesView: View {
                         ) {
                             unstage(entry)
                         }
-                        .disabled(stagingPath != nil || unstagingPath != nil)
+                        .disabled(isActionInProgress)
                     }
                 } else if entry.isUntracked || entry.isWorktreeModified {
                     if stagingPath == entry.path {
@@ -168,8 +212,23 @@ struct WorktreeChangesView: View {
                         ) {
                             stage(entry)
                         }
-                        .disabled(stagingPath != nil || unstagingPath != nil)
+                        .disabled(isActionInProgress)
                     }
+                }
+
+                if discardingPaths.contains(entry.path) {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    AppIconButton(
+                        systemImage: "trash",
+                        label: loc("Discard"),
+                        tint: theme.warning,
+                        size: .compact
+                    ) {
+                        requestDiscard(entry)
+                    }
+                    .disabled(isActionInProgress)
                 }
             }
         }
@@ -204,6 +263,117 @@ struct WorktreeChangesView: View {
     }
 
     // MARK: - Actions
+
+    private var isActionInProgress: Bool {
+        stagingPath != nil || unstagingPath != nil || !discardingPaths.isEmpty || batchAction != nil
+    }
+
+    private var discardMessage: String {
+        guard !discardCandidates.isEmpty else { return "" }
+        if discardCandidates.count == 1, let entry = discardCandidates.first {
+            return String(format: loc("Discard changes for %@? This cannot be undone."), entry.path)
+        }
+        return String(format: loc("Discard changes for %lld selected files? This cannot be undone."), discardCandidates.count)
+    }
+
+    private var selectedEntries: [GitStatusEntry] {
+        entries.filter { selectedPaths.contains($0.path) }
+    }
+
+    private var stageableSelectedPaths: [String] {
+        selectedEntries
+            .filter { !$0.isStaged && ($0.isUntracked || $0.isWorktreeModified) }
+            .map(\.path)
+    }
+
+    private var unstageableSelectedPaths: [String] {
+        selectedEntries
+            .filter(\.isStaged)
+            .map(\.path)
+    }
+
+    private var batchActionBar: some View {
+        HStack(spacing: 8) {
+            Text("\(loc("Selected")) \(selectedPaths.count)")
+                .font(.appCaption)
+                .foregroundStyle(theme.textSecondary)
+                .monospacedDigit()
+
+            AppButton(
+                loc("Stage"),
+                systemImage: "plus.rectangle.on.folder",
+                style: .secondary,
+                size: .small
+            ) {
+                performBatch(.stage)
+            }
+            .disabled(stageableSelectedPaths.isEmpty || isActionInProgress)
+
+            AppButton(
+                loc("Unstage"),
+                systemImage: "minus.rectangle.on.folder",
+                style: .secondary,
+                size: .small
+            ) {
+                performBatch(.unstage)
+            }
+            .disabled(unstageableSelectedPaths.isEmpty || isActionInProgress)
+
+            AppButton(
+                loc("Discard"),
+                systemImage: "trash",
+                style: .destructive,
+                size: .small
+            ) {
+                requestDiscard(selectedEntries)
+            }
+            .disabled(selectedEntries.isEmpty || isActionInProgress)
+
+            Spacer()
+
+            AppButton(
+                loc("Select All Current"),
+                systemImage: "checklist",
+                style: .secondary,
+                size: .small
+            ) {
+                selectedPaths = Set(entries.map(\.path))
+            }
+            .disabled(entries.isEmpty || selectedPaths.count == entries.count || isActionInProgress)
+
+            AppButton(
+                loc("Clear Selection"),
+                systemImage: "xmark.circle",
+                style: .ghost,
+                size: .small
+            ) {
+                selectedPaths.removeAll()
+            }
+            .disabled(isActionInProgress)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(theme.primary.opacity(0.08))
+        .borderTop()
+    }
+
+    private func toggleBatchSelection(for entry: GitStatusEntry) {
+        if selectedPaths.contains(entry.path) {
+            selectedPaths.remove(entry.path)
+        } else {
+            selectedPaths.insert(entry.path)
+        }
+    }
+
+    private func requestDiscard(_ entry: GitStatusEntry) {
+        requestDiscard([entry])
+    }
+
+    private func requestDiscard(_ entries: [GitStatusEntry]) {
+        guard !isActionInProgress else { return }
+        guard !entries.isEmpty else { return }
+        discardCandidates = entries
+    }
 
     private func stage(_ entry: GitStatusEntry) {
         guard let projectURL = viewModel.selectedProjectURL else { return }
@@ -247,6 +417,65 @@ struct WorktreeChangesView: View {
         }
     }
 
+    private func discard(_ entries: [GitStatusEntry]) {
+        guard let projectURL = viewModel.selectedProjectURL else { return }
+        let paths = entries.map(\.path)
+
+        discardingPaths = Set(paths)
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitCommitOperation.discardFiles(paths, in: projectURL)
+            }
+            await MainActor.run {
+                discardingPaths.removeAll()
+                switch result {
+                case .success:
+                    selectedPaths.subtract(paths)
+                    onDataChanged()
+                case .failure(let error):
+                    actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performBatch(_ action: BatchAction) {
+        guard let projectURL = viewModel.selectedProjectURL else { return }
+
+        let paths: [String]
+        switch action {
+        case .stage:
+            paths = stageableSelectedPaths
+        case .unstage:
+            paths = unstageableSelectedPaths
+        }
+        guard !paths.isEmpty else { return }
+
+        batchAction = action
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                switch action {
+                case .stage:
+                    try GitCommitOperation.stageFiles(paths, in: projectURL)
+                case .unstage:
+                    try GitCommitOperation.unstageFiles(paths, in: projectURL)
+                }
+            }
+            await MainActor.run {
+                batchAction = nil
+                switch result {
+                case .success:
+                    selectedPaths.removeAll()
+                    onDataChanged()
+                case .failure(let error):
+                    actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                }
+            }
+        }
+    }
+
     // MARK: - Loading
 
     private func reloadIfNeeded(force: Bool = false) {
@@ -257,6 +486,10 @@ struct WorktreeChangesView: View {
             actionError = nil
             stagingPath = nil
             unstagingPath = nil
+            discardingPaths.removeAll()
+            selectedPaths.removeAll()
+            batchAction = nil
+            discardCandidates.removeAll()
             return
         }
         if loadedProjectURL == projectURL && !force { return }
@@ -264,6 +497,9 @@ struct WorktreeChangesView: View {
         loadedProjectURL = projectURL
         isLoading = true
         entries = []
+        selectedPaths.removeAll()
+        batchAction = nil
+        discardCandidates.removeAll()
         loadError = nil
 
         let url = projectURL
