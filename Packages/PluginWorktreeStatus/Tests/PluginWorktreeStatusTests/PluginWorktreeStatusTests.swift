@@ -14,4 +14,18 @@ struct PluginWorktreeStatusTests {
         #expect(plugin.metadata.category == .project)
         #expect(plugin.metadata.policy == .required)
     }
+
+    @Test("同步失败在用户确认前保持可见")
+    func syncFailureRequiresDismissal() {
+        let center = WorktreeSyncFailureCenter()
+
+        center.present(operation: "拉取失败", message: "hint: divergent branches")
+
+        #expect(center.failure?.operation == "拉取失败")
+        #expect(center.failure?.message == "hint: divergent branches")
+
+        center.dismiss()
+
+        #expect(center.failure == nil)
+    }
 }

@@ -5,7 +5,7 @@ import os
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderRailView
-import ProviderToast
+import ProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
 
@@ -39,6 +39,7 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: WorktreeStatusSceneObserver?
+    private let syncFailureCenter = WorktreeSyncFailureCenter()
 
     public init() {}
 
@@ -54,7 +55,17 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         // GitRepositoryWatching 可选：插件可能未注册（例如测试环境），此时仅依赖
         // ProjectProviding.dataChanged 刷新；真实运行时由 PluginGitRepositoryWatch 提供。
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
-        let toast = kernel.resolveProvider((any ToastProviding).self)
+        let syncFailureCenter = self.syncFailureCenter
+
+        if let rootView = kernel.resolveProvider((any RootViewProviding).self) {
+            rootView.addOverlays([
+                RootOverlayItem(id: "\(id).sync-failure", order: 20000) { content in
+                    WorktreeSyncFailureOverlay(content: content, center: syncFailureCenter)
+                },
+            ])
+        } else {
+            Self.logger.error("\(self.t)RootViewProviding not registered; sync failure panel unavailable")
+        }
 
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
@@ -64,7 +75,11 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         let section = RailSectionItem(id: "\(id).section", order: 15) {
             WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                WorkingTreeStatusView(projects: projects, gitWatch: gitWatch, toast: toast)
+                WorkingTreeStatusView(
+                    projects: projects,
+                    gitWatch: gitWatch,
+                    syncFailureCenter: syncFailureCenter
+                )
             }
         }
         self.sceneViewModel = sceneViewModel
@@ -87,6 +102,9 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        syncFailureCenter.dismiss()
+        kernel.resolveProvider((any RootViewProviding).self)?
+            .removeOverlays(ids: ["\(id).sync-failure"])
         kernel.resolveProvider((any RailViewProviding).self)?
             .removeSections(ids: ["\(id).section"])
     }

@@ -22,7 +22,7 @@ let package = Package(
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRailView"),
         .package(path: "../ProviderGitRepositoryWatch"),
-        .package(path: "../ProviderToast"),
+        .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
     ],
     targets: [
@@ -37,7 +37,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
-                .product(name: "ProviderToast", package: "ProviderToast"),
+                .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Sources/PluginWorktreeStatus",

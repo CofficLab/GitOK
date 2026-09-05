@@ -2,7 +2,6 @@ import KitGit
 import LumiUI
 import ProviderGitRepositoryWatch
 import ProviderProjects
-import ProviderToast
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -24,7 +23,7 @@ private func loc(_ key: String) -> String {
 struct WorkingTreeStatusView: View {
     let projects: any ProjectProviding
     let gitWatch: (any GitRepositoryWatching)?
-    let toast: (any ToastProviding)?
+    let syncFailureCenter: WorktreeSyncFailureCenter?
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
     @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
@@ -49,11 +48,11 @@ struct WorkingTreeStatusView: View {
     init(
         projects: any ProjectProviding,
         gitWatch: (any GitRepositoryWatching)? = nil,
-        toast: (any ToastProviding)? = nil
+        syncFailureCenter: WorktreeSyncFailureCenter? = nil
     ) {
         self.projects = projects
         self.gitWatch = gitWatch
-        self.toast = toast
+        self.syncFailureCenter = syncFailureCenter
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
@@ -304,14 +303,12 @@ struct WorkingTreeStatusView: View {
         }
     }
 
-    /// 同步失败不能静默结束：Toast 通过 RootView Overlay 显示标题和 Git 原始错误。
+    /// 同步失败进入持久化的根视图错误面板，避免 Toast 自动消失或截断关键信息。
     @MainActor
     private func presentSyncFailure(operation: String, error: Error) {
-        toast?.show(
-            loc("\(operation) failed"),
-            detail: error.localizedDescription,
-            style: .error,
-            duration: 8
+        syncFailureCenter?.present(
+            operation: loc("\(operation) failed"),
+            message: error.localizedDescription
         )
         reloadIfNeeded(force: true)
     }

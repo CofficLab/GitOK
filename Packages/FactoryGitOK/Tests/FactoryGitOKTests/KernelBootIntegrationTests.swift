@@ -2,6 +2,7 @@ import XCTest
 @testable import FactoryGitOK
 import KitGit
 import ProviderProjects
+import ProviderRootView
 import ProviderToast
 import ProviderToolbar
 import ProviderWorkspaceScene
@@ -40,6 +41,13 @@ final class KernelBootIntegrationTests: XCTestCase {
         XCTAssertTrue(
             kernel.resolveProvider((any ToastProviding).self) is ToastCenter,
             "toast should be active so core errors can be rendered by the root overlay"
+        )
+
+        XCTAssertTrue(
+            kernel.resolveProvider((any RootViewProviding).self)?.overlays.contains {
+                $0.id == "com.coffic.gitok.plugin.worktree-status.sync-failure"
+            } == true,
+            "worktree sync failures should be mounted as a root overlay"
         )
     }
 }
