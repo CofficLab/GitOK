@@ -14,7 +14,6 @@ struct PluginGitUserSettingsTests {
         #expect(plugin.id == "com.coffic.gitok.plugin.git-user-settings")
         #expect(plugin.metadata.category == .project)
         #expect(plugin.metadata.policy == .disabled)
-        #expect(plugin.dependencies.contains("com.coffic.gitok.plugin.setting-view"))
     }
 
     @Test("预设存储支持添加 / 删除 / 默认选择")

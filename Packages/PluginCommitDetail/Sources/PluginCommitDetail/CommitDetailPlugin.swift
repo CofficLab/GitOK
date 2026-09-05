@@ -35,7 +35,6 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
     public let id = "com.coffic.gitok.plugin.commit-detail"
     /// 依赖项目与 commit 列表先启动（选中状态由列表写入）。
     public let order = 21
-    public let dependencies = ["com.coffic.gitok.plugin.projects", "com.coffic.gitok.plugin.commit-list"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-detail",
         name: "Commit Detail",

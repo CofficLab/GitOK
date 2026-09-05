@@ -32,7 +32,6 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
     public let id = "com.coffic.gitok.plugin.commit-list"
     /// 依赖项目管理服务先启动。
     public let order = 20
-    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-list",
         name: "Commit List",

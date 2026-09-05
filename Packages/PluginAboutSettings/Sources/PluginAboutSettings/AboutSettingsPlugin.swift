@@ -16,7 +16,6 @@ public final class AboutSettingsPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.about-settings"
     public let order = 44
-    public let dependencies = ["com.coffic.gitok.plugin.setting-view"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.about-settings",
         name: "About",

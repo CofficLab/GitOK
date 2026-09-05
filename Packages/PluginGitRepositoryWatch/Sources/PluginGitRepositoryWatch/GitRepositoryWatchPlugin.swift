@@ -32,7 +32,6 @@ public final class GitRepositoryWatchPlugin: SuperPlugin, SuperLog {
     public let id = "com.coffic.gitok.plugin.git-repository-watch"
     /// 在 Projects 插件（order=0）之后启动，其他消费方之前。
     public let order = 5
-    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-repository-watch",
         name: "Git Repository Watch",

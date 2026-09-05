@@ -23,11 +23,6 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-auto-push"
     public let order = 39
-    public let dependencies = [
-        "com.coffic.gitok.plugin.projects",
-        "com.coffic.gitok.plugin.commit-form",
-        "com.coffic.gitok.plugin.storage",
-    ]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-auto-push",
         name: "Auto Push",

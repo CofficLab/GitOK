@@ -16,7 +16,6 @@ struct KernelCoreAsyncRuntimeTests {
     private final class RuntimeAsyncPlugin: AsyncSuperPlugin {
         let id: String
         let order: Int
-        let dependencies: [String]
         let metadata: PluginMetadata
         let events: EventLog
         var onEnableError: Error?
@@ -24,13 +23,11 @@ struct KernelCoreAsyncRuntimeTests {
         init(
             id: String,
             order: Int = 200,
-            dependencies: [String] = [],
             policy: PluginEnablePolicy = .enabledByDefault,
             events: EventLog
         ) {
             self.id = id
             self.order = order
-            self.dependencies = dependencies
             self.metadata = PluginMetadata(id: id, policy: policy)
             self.events = events
         }
@@ -61,14 +58,12 @@ struct KernelCoreAsyncRuntimeTests {
     private final class RuntimeSyncPlugin: SuperPlugin {
         let id: String
         let order: Int
-        let dependencies: [String]
         let metadata: PluginMetadata
         let events: EventLog
 
-        init(id: String, order: Int = 200, dependencies: [String] = [], policy: PluginEnablePolicy = .disabledByDefault, events: EventLog) {
+        init(id: String, order: Int = 200, policy: PluginEnablePolicy = .disabledByDefault, events: EventLog) {
             self.id = id
             self.order = order
-            self.dependencies = dependencies
             self.metadata = PluginMetadata(id: id, policy: policy)
             self.events = events
         }
@@ -190,34 +185,7 @@ struct KernelCoreAsyncRuntimeTests {
         }
     }
 
-    @Test("disablePlugin 拒绝仍被启用的依赖方需要的插件")
-    func disableRejectsWhenDependentNeedsIt() async throws {
-        let log = EventLog()
-        let base = RuntimeAsyncPlugin(id: "base", policy: .enabledByDefault, events: log)
-        let feature = RuntimeAsyncPlugin(id: "feature", dependencies: ["base"], events: log)
-        let kernel = KernelCoreContainer()
-        try await kernel.startAsync(plugins: [feature, base])
-
-        await #expect(throws: KernelCoreError.self) {
-            try await kernel.disablePlugin(id: "base")
-        }
-        #expect(kernel.isPluginEnabled(id: "base"))
-    }
-
     // MARK: - enablePlugin 路径
-
-    @Test("enablePlugin 拒绝依赖被禁用的插件")
-    func enableRejectsDisabledDependency() async throws {
-        let log = EventLog()
-        let dep = RuntimeAsyncPlugin(id: "dep", policy: .disabledByDefault, events: log)
-        let feature = RuntimeAsyncPlugin(id: "feature", dependencies: ["dep"], policy: .disabledByDefault, events: log)
-        let kernel = KernelCoreContainer()
-        try await kernel.startAsync(plugins: [feature, dep])
-
-        await #expect(throws: KernelCoreError.self) {
-            try await kernel.enablePlugin(id: "feature")
-        }
-    }
 
     @Test("enablePlugin 对从未 Boot 的同步插件执行完整初始化")
     func enableNeverBootedSyncPlugin() async throws {
@@ -265,20 +233,6 @@ struct KernelCoreAsyncRuntimeTests {
     }
 
     // MARK: - unloadPluginAsync 路径
-
-    @Test("unloadPluginAsync 拒绝卸载仍有依赖方的插件")
-    func unloadAsyncRejectsDependents() async throws {
-        let log = EventLog()
-        let base = RuntimeAsyncPlugin(id: "base", events: log)
-        let feature = RuntimeAsyncPlugin(id: "feature", dependencies: ["base"], events: log)
-        let kernel = KernelCoreContainer()
-        try await kernel.startAsync(plugins: [feature, base])
-
-        await #expect(throws: KernelCoreError.self) {
-            try await kernel.unloadPluginAsync(id: "base")
-        }
-        #expect(kernel.isPluginRegistered(id: "base"))
-    }
 
     @Test("unloadPluginAsync 对从未 Boot 的插件跳过 Shutdown 直接注销")
     func unloadAsyncNeverBootedPlugin() async throws {

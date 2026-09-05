@@ -24,7 +24,6 @@ struct KernelCoreMiscCoverageTests {
     private final class LoggingPlugin: SuperPlugin {
         let id: String
         let order: Int
-        let dependencies: [String]
         let metadata: PluginMetadata
         let events: EventLog
         var registerProvider = false
@@ -34,13 +33,11 @@ struct KernelCoreMiscCoverageTests {
         init(
             id: String,
             order: Int = 200,
-            dependencies: [String] = [],
             policy: PluginEnablePolicy = .enabledByDefault,
             events: EventLog
         ) {
             self.id = id
             self.order = order
-            self.dependencies = dependencies
             self.metadata = PluginMetadata(id: id, policy: policy)
             self.events = events
         }
@@ -72,14 +69,6 @@ struct KernelCoreMiscCoverageTests {
     @Test("全部错误用例的 errorDescription 描述完整")
     func allErrorDescriptions() {
         #expect(
-            KernelCoreError.pluginDependencyMissing(pluginID: "p", dependencyID: "d").errorDescription
-                == "Plugin 'p' requires missing plugin 'd'"
-        )
-        #expect(
-            KernelCoreError.pluginDependencyCycle(ids: ["a", "b"]).errorDescription
-                == "Plugin dependency cycle detected: a -> b"
-        )
-        #expect(
             KernelCoreError.invalidLifecycleOperation(operation: "stop", state: .starting).errorDescription
                 == "Cannot stop while kernel is starting"
         )
@@ -90,10 +79,6 @@ struct KernelCoreMiscCoverageTests {
         #expect(
             KernelCoreError.pluginRequired(id: "p").errorDescription
                 == "Plugin 'p' is required and cannot be disabled"
-        )
-        #expect(
-            KernelCoreError.pluginDependencyDisabled(pluginID: "p", dependencyID: "d").errorDescription
-                == "Plugin 'p' requires enabled plugin 'd'"
         )
         #expect(
             KernelCoreError.contributionOwnerUnavailable.errorDescription

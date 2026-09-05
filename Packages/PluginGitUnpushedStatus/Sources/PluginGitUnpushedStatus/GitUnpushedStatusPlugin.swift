@@ -19,7 +19,6 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-unpushed-status"
     public let order = 33
-    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-unpushed-status",
         name: "Unpushed Status",

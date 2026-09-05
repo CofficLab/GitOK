@@ -18,10 +18,6 @@ public final class GitRepositorySettingsPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-repository-settings"
     public let order = 42
-    public let dependencies = [
-        "com.coffic.gitok.plugin.setting-view",
-        "com.coffic.gitok.plugin.projects",
-    ]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-repository-settings",
         name: "Repository Settings",

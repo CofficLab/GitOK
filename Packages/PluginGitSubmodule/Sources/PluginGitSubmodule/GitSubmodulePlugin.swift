@@ -20,7 +20,6 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-submodule"
     public let order = 50
-    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-submodule",
         name: "Submodule",

@@ -19,7 +19,6 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-remote-repository"
     public let order = 46
-    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-remote-repository",
         name: "Remote Repository",

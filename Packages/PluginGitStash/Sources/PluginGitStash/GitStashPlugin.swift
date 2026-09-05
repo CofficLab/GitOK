@@ -19,7 +19,6 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-stash"
     public let order = 34
-    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-stash",
         name: "Stash",

@@ -10,9 +10,8 @@ import SwiftUI
 /// （启用状态写入原插件数据目录，见 `PluginEnabledStateStore`），并随内核
 /// `PluginManaging` 的精准事件自动刷新所属设置页。
 ///
-/// 内核的启停会校验策略与依赖：不可配置的插件（required / alwaysOn，
-/// 对应旧版 alwaysOn）不渲染开关，只展示对应的策略标签；被其他启用插件依赖
-/// 的插件在禁用失败时状态保持不变。
+/// 内核的启停会校验策略：不可配置的插件（required / alwaysOn，
+/// 对应旧版 alwaysOn）不渲染开关，只展示对应的策略标签。
 struct PluginEnableControl: View {
     @LumiTheme private var theme
 

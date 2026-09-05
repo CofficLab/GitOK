@@ -28,9 +28,8 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
     nonisolated static let verbose = false
 
     public let id = "com.coffic.gitok.plugin.commit-form"
-    /// 依赖项目管理服务先启动。
+    /// order 较小，保证项目管理服务（projects，order=0）先启动。
     public let order = 22
-    public let dependencies = ["com.coffic.gitok.plugin.projects"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-form",
         name: "Commit Form",

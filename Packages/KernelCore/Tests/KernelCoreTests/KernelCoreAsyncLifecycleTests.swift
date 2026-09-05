@@ -13,7 +13,6 @@ struct KernelCoreAsyncLifecycleTests {
     private final class AsyncPlugin: AsyncSuperPlugin {
         let id: String
         let order: Int
-        let dependencies: [String]
         let metadata: PluginMetadata
         let events: EventLog
         var failReady = false
@@ -21,12 +20,10 @@ struct KernelCoreAsyncLifecycleTests {
         init(
             id: String,
             order: Int = 200,
-            dependencies: [String] = [],
             events: EventLog
         ) {
             self.id = id
             self.order = order
-            self.dependencies = dependencies
             self.metadata = PluginMetadata(id: id)
             self.events = events
         }
@@ -48,11 +45,11 @@ struct KernelCoreAsyncLifecycleTests {
         }
     }
 
-    @Test("异步生命周期保持依赖顺序并可完整停止")
+    @Test("异步生命周期保持 order 顺序并可完整停止")
     func asyncStartAndStop() async throws {
         let log = EventLog()
-        let base = AsyncPlugin(id: "base", order: 300, events: log)
-        let feature = AsyncPlugin(id: "feature", order: 1, dependencies: ["base"], events: log)
+        let base = AsyncPlugin(id: "base", order: 1, events: log)
+        let feature = AsyncPlugin(id: "feature", order: 300, events: log)
         let kernel = KernelCoreContainer()
 
         try await kernel.startAsync(plugins: [feature, base])

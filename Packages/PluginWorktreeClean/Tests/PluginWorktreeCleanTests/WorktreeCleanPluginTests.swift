@@ -85,7 +85,6 @@ final class WorktreeCleanPluginTests: XCTestCase {
         XCTAssertEqual(plugin.metadata.category, .project)
         // 内容贡献插件必须为 .required（内核会过滤 .disabled，不启动则不注册内容块）。
         XCTAssertEqual(plugin.metadata.policy, .required)
-        XCTAssertTrue(plugin.dependencies.contains("com.coffic.gitok.plugin.projects"))
     }
 
     // MARK: - Content registration
