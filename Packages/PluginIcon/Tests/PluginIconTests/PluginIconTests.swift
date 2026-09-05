@@ -47,6 +47,22 @@ struct PluginIconTests {
         #expect(assets.first?.category == "Abstract")
     }
 
+    @Test("source assets retain categories for filtering")
+    func retainsSourceCategories() async throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PluginIconCategories-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        for category in ["Abstract", "Business"] {
+            let directory = root.appendingPathComponent(category, isDirectory: true)
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            try Data([0, 1]).write(to: directory.appendingPathComponent("asset-\(category).svg"))
+        }
+
+        let provider = DefaultIconSourceProvider(bundledIconsURL: root)
+        let assets = try await provider.assets(for: IconSourceID.bundledIcons, in: root)
+        #expect(Set(assets.compactMap(\.category)) == ["Abstract", "Business"])
+    }
+
     @Test("legacy icon JSON accepts integer icon IDs")
     func acceptsIntegerIconID() throws {
         let data = Data(#"{"title":"Demo","iconId":7,"backgroundId":"3"}"#.utf8)

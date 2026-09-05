@@ -13,6 +13,7 @@ public final class IconWorkspaceModel: ObservableObject {
     @Published public private(set) var imageURL: URL?
     @Published public private(set) var sourceAssets: [IconSourceAsset] = []
     @Published public var selectedSourceID = IconSourceID.projectImages
+    @Published public var selectedSourceCategory: String?
     @Published public private(set) var message: String?
 
     private let projects: any ProjectProviding
@@ -59,10 +60,18 @@ public final class IconWorkspaceModel: ObservableObject {
     }
 
     public var sourceDescriptors: [IconSourceDescriptor] { sourceProvider.sources }
+    public var sourceCategories: [String] {
+        Array(Set(sourceAssets.compactMap(\.category))).sorted()
+    }
+    public var filteredSourceAssets: [IconSourceAsset] {
+        guard let selectedSourceCategory else { return sourceAssets }
+        return sourceAssets.filter { $0.category == selectedSourceCategory }
+    }
 
     public func selectSource(_ sourceID: String) {
         guard sourceProvider.sources.contains(where: { $0.id == sourceID }) else { return }
         selectedSourceID = sourceID
+        selectedSourceCategory = nil
         if let project = projects.currentProject {
             loadSourceAssets(in: project.url)
         }
@@ -221,8 +230,13 @@ public final class IconWorkspaceModel: ObservableObject {
             guard let self else { return }
             do {
                 sourceAssets = try await sourceProvider.assets(for: sourceID, in: projectURL)
+                if let selectedSourceCategory,
+                   !sourceAssets.contains(where: { $0.category == selectedSourceCategory }) {
+                    self.selectedSourceCategory = nil
+                }
             } catch {
-                sourceAssets = []
+        sourceAssets = []
+        selectedSourceCategory = nil
                 message = error.localizedDescription
             }
         }

@@ -74,6 +74,18 @@ public struct IconWorkspaceView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                if !model.sourceCategories.isEmpty {
+                    Picker("Category", selection: Binding(
+                        get: { model.selectedSourceCategory ?? "all" },
+                        set: { model.selectedSourceCategory = $0 == "all" ? nil : $0 }
+                    )) {
+                        Text("All").tag("all")
+                        ForEach(model.sourceCategories, id: \.self) { category in
+                            Text(category).tag(category)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
                 sourceAssetPicker
                 Picker("Background", selection: $model.backgroundID) {
                     Text("Blue").tag("1")
@@ -99,7 +111,7 @@ public struct IconWorkspaceView: View {
             } else {
                 ScrollView(.horizontal) {
                     HStack(spacing: 8) {
-                        ForEach(model.sourceAssets) { asset in
+                ForEach(model.filteredSourceAssets) { asset in
                             Button {
                                 model.importSourceAsset(asset)
                             } label: {
