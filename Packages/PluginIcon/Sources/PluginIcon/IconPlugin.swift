@@ -28,7 +28,11 @@ public final class IconPlugin: SuperPlugin {
         }
 
         contentView.addContentView(
-            AnyView(IconWorkspaceView(projects: projects)),
+            AnyView(
+                IconWorkspaceView(projects: projects)
+                    // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
+                    .debugPluginBadge(metadata.name)
+            ),
             id: "\(id).content",
             order: 10,
             sceneScope: .icon
