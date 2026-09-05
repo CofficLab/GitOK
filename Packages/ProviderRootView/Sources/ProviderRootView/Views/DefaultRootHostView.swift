@@ -6,6 +6,7 @@ import SwiftUI
 struct DefaultRootHostView: View {
     @ObservedObject var provider: DefaultRootViewProvider
     @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
 
     var body: some View {
         VStack(spacing: 0) {
@@ -20,11 +21,18 @@ struct DefaultRootHostView: View {
                 if let sidebarView = provider.sidebarView, !provider.isSidebarViewHidden {
                     sidebarView
                         .debugBlockBadge("侧边栏", alignment: .bottomLeading)
+                        .transition(sidebarTransition)
                 }
 
                 WorkbenchSplitView(provider: provider)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // 侧边栏显隐跟随工具栏按钮切换：沿左边缘滑入/滑出并伴随淡入/淡出，
+            // 主内容区同步平滑扩展/收缩；遵循减少动效偏好时退化为瞬时切换。
+            .animation(
+                LumiMotion.enabled(LumiMotion.disclosure, preference: motionPreference),
+                value: provider.isSidebarViewHidden
+            )
 
             // 窗口底部状态栏（工具栏的对称位置）。
             if let statusBarView = provider.statusBarView {
@@ -44,5 +52,10 @@ struct DefaultRootHostView: View {
         #if os(macOS)
             .ignoresSafeArea()
         #endif
+    }
+
+    /// 侧边栏显隐过渡：沿左边缘滑入/滑出并叠加透明度变化。
+    private var sidebarTransition: AnyTransition {
+        .move(edge: .leading).combined(with: .opacity)
     }
 }
