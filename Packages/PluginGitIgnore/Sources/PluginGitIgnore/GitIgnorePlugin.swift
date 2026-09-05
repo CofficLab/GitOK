@@ -51,7 +51,8 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitIgnoreSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitIgnoreSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitIgnoreSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
