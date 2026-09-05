@@ -389,6 +389,33 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在暫存區。" } }
       }
     },
+    "Confirm Mixed Reset?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Mixed Reset?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认混合重置？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認混合重置？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認混合重置？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認混合重置？" } }
+      }
+    },
+    "Mixed Reset": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mixed Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "混合重置" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "混合重置" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "混合重置" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "混合重置" } }
+      }
+    },
+    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "HEAD 将移动到此提交，后续提交的改动会保留在工作区但不会暂存。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在工作區但不會暫存。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在工作區但不會暫存。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "HEAD 將移動到此提交，後續提交的變更會保留在工作區但不會暫存。" } }
+      }
+    },
     "Confirm Revert": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Confirm Revert" } },

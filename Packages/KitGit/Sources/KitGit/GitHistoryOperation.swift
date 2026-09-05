@@ -10,6 +10,7 @@ public enum GitHistoryOperation {
         case revertFailed(String)
         case undoFailed(String)
         case softResetFailed(String)
+        case mixedResetFailed(String)
 
         public var errorDescription: String? {
             switch self {
@@ -21,6 +22,8 @@ public enum GitHistoryOperation {
                 String(format: LumiPluginLocalization.string("Undo failed: %@", bundle: .module), message)
             case .softResetFailed(let message):
                 String(format: LumiPluginLocalization.string("Soft reset failed: %@", bundle: .module), message)
+            case .mixedResetFailed(let message):
+                String(format: LumiPluginLocalization.string("Mixed reset failed: %@", bundle: .module), message)
             }
         }
     }
@@ -108,6 +111,46 @@ public enum GitHistoryOperation {
         } catch {
             let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
             throw Error.softResetFailed(message)
+        }
+    }
+
+    /// 将 HEAD 混合重置到指定提交，并把后续提交的文件改动保留在工作区但取消暂存。
+    @discardableResult
+    public static func mixedReset(
+        to targetHash: String,
+        expectedHead: String,
+        in repository: URL
+    ) throws -> String {
+        let trimmedTargetHash = targetHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedExpectedHead = expectedHead.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTargetHash.isEmpty, !trimmedExpectedHead.isEmpty else {
+            throw Error.invalidCommit
+        }
+
+        do {
+            guard try GitStatusLoader.loadStatus(in: repository).isClean else {
+                throw Error.mixedResetFailed(
+                    LumiPluginLocalization.string("The working tree must be clean before resetting history.", bundle: .module)
+                )
+            }
+
+            let head = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repository)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard head == trimmedExpectedHead else {
+                throw Error.mixedResetFailed(
+                    LumiPluginLocalization.string("The current HEAD changed before the reset could start.", bundle: .module)
+                )
+            }
+
+            return try GitProcessRunner.run(
+                ["reset", "--mixed", trimmedTargetHash],
+                in: repository
+            )
+        } catch let error as Error {
+            throw error
+        } catch {
+            let message = (error as? GitProcessRunner.Error)?.errorDescription ?? error.localizedDescription
+            throw Error.mixedResetFailed(message)
         }
     }
 

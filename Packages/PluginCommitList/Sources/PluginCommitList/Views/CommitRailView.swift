@@ -50,9 +50,11 @@ struct CommitRailView: View {
     @State private var pendingUndo: GitCommit?
     @State private var pendingRevert: GitCommit?
     @State private var pendingSoftReset: GitCommit?
+    @State private var pendingMixedReset: GitCommit?
     @State private var undoingHash: String?
     @State private var revertingHash: String?
     @State private var softResettingHash: String?
+    @State private var mixedResettingHash: String?
     @State private var historyError: String?
 
     init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
@@ -138,6 +140,29 @@ struct CommitRailView: View {
         } message: {
             Text(LumiPluginLocalization.string(
                 "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area.",
+                bundle: .module
+            ))
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Mixed Reset?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingMixedReset != nil },
+                set: { isPresented in
+                    if !isPresented { pendingMixedReset = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingMixedReset = nil
+            }
+            Button(LumiPluginLocalization.string("Mixed Reset", bundle: .module)) {
+                guard let commit = pendingMixedReset else { return }
+                pendingMixedReset = nil
+                performMixedReset(to: commit)
+            }
+        } message: {
+            Text(LumiPluginLocalization.string(
+                "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged.",
                 bundle: .module
             ))
         }
@@ -304,7 +329,12 @@ struct CommitRailView: View {
                         systemImage: "arrow.uturn.backward"
                     )
                 }
-                .disabled(undoingHash != nil || revertingHash != nil)
+                .disabled(
+                    undoingHash != nil
+                        || revertingHash != nil
+                        || softResettingHash != nil
+                        || mixedResettingHash != nil
+                )
 
                 Divider()
             }
@@ -318,7 +348,13 @@ struct CommitRailView: View {
                     systemImage: "arrow.counterclockwise"
                 )
             }
-            .disabled(undoingHash != nil || revertingHash != nil || commit.parentHashes.count > 1)
+            .disabled(
+                undoingHash != nil
+                    || revertingHash != nil
+                    || softResettingHash != nil
+                    || mixedResettingHash != nil
+                    || commit.parentHashes.count > 1
+            )
 
             Divider()
 
@@ -332,13 +368,27 @@ struct CommitRailView: View {
                         systemImage: "text.badge.checkmark"
                     )
                 }
+                Button {
+                    historyError = nil
+                    pendingMixedReset = commit
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Mixed Reset", bundle: .module),
+                        systemImage: "list.bullet.rectangle"
+                    )
+                }
             } label: {
                 Label(
                     LumiPluginLocalization.string("Reset to Here", bundle: .module),
                     systemImage: "arrow.down.to.line"
                 )
             }
-            .disabled(undoingHash != nil || revertingHash != nil || softResettingHash != nil)
+            .disabled(
+                undoingHash != nil
+                    || revertingHash != nil
+                    || softResettingHash != nil
+                    || mixedResettingHash != nil
+            )
         }
     }
 
@@ -511,6 +561,34 @@ struct CommitRailView: View {
             }
             await MainActor.run {
                 softResettingHash = nil
+                switch result {
+                case .success:
+                    projects.clearCommitSelection()
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    historyError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performMixedReset(to commit: GitCommit) {
+        guard let project = projects.currentProject,
+              let expectedHead = commits.first?.hash else { return }
+
+        mixedResettingHash = commit.hash
+        historyError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitHistoryOperation.mixedReset(
+                    to: commit.hash,
+                    expectedHead: expectedHead,
+                    in: url
+                )
+            }
+            await MainActor.run {
+                mixedResettingHash = nil
                 switch result {
                 case .success:
                     projects.clearCommitSelection()
