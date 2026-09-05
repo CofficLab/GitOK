@@ -18,7 +18,7 @@ let package = Package(
         .package(path: "../KitGit"),
         .package(path: "../KitLocalization"),
         .package(path: "../KitSuperLog"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderCommitForm"),
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderGitRepositoryWatch"),
