@@ -8,11 +8,14 @@ import Foundation
 ///
 /// 对齐旧版 `GitDirectorySnapshot`：
 /// - `head`：当前 HEAD 指向的 commit hash（解析符号引用到实际 hash）；
+/// - `headRef`：当前 HEAD 的符号引用（例如 `refs/heads/dev`），用于识别
+///   指向同一 commit 的分支之间的切换；
 /// - `index`：`.git/index` 的内容指纹（暂存区）；
 /// - `stash`：`refs/stash` + `logs/refs/stash` 的联合指纹；
 /// - `refs`：`refs/heads` / `refs/remotes` / `refs/tags` / `packed-refs` 的联合指纹。
 struct GitDirectorySnapshot: Equatable, Sendable {
     let head: String?
+    let headRef: String?
     let index: String?
     let stash: String?
     let refs: String?
@@ -91,10 +94,27 @@ enum GitDirectoryResolver {
         return readPackedRef(gitDirectory: gitDirectory, refPath: refPath)
     }
 
+    /// 读取当前 HEAD 的符号引用；detached HEAD 时返回 nil。
+    static func readHeadRef(gitDirectory: URL) -> String? {
+        let headURL = gitDirectory.appendingPathComponent("HEAD")
+        guard let headContent = try? String(contentsOf: headURL, encoding: .utf8)
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+            headContent.hasPrefix("ref:")
+        else {
+            return nil
+        }
+
+        let refPath = headContent
+            .replacingOccurrences(of: "ref:", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return refPath.isEmpty ? nil : refPath
+    }
+
     /// 读取当前 `.git` 目录的四维指纹快照。
     static func readSnapshot(gitDirectory: URL) -> GitDirectorySnapshot {
         GitDirectorySnapshot(
             head: readHeadHash(gitDirectory: gitDirectory),
+            headRef: readHeadRef(gitDirectory: gitDirectory),
             index: fileContentFingerprint(gitDirectory.appendingPathComponent("index")),
             stash: stashFingerprint(gitDirectory: gitDirectory),
             refs: refsFingerprint(gitDirectory: gitDirectory)

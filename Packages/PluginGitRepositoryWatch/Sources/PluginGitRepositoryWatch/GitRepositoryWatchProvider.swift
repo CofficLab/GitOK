@@ -151,6 +151,7 @@ public final class GitRepositoryWatchProvider: GitRepositoryWatching {
         let previousSnapshot = lastSnapshot
 
         let headChanged = currentSnapshot.head != previousSnapshot?.head
+            || currentSnapshot.headRef != previousSnapshot?.headRef
         let indexChanged = currentSnapshot.index != previousSnapshot?.index
         let stashChanged = currentSnapshot.stash != previousSnapshot?.stash
         let refsChanged = currentSnapshot.refs != previousSnapshot?.refs
