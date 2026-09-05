@@ -2,6 +2,12 @@ import KitGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
 
+private struct GitConflictResolverSnapshot: Sendable {
+    let conflictedFiles: [String]
+    let isOperationInProgress: Bool
+    let isCherryPicking: Bool
+}
+
 /// 将项目与仓库变化映射为冲突解决 ViewModel 的刷新。
 @MainActor
 final class GitConflictResolverObserver {
@@ -54,19 +60,22 @@ final class GitConflictResolverObserver {
         }
 
         viewModel?.beginLoading(projectURL: url)
-        Task.detached(priority: .utility) { [weak self] in
-            let files = GitMergeOperation.conflictFiles(in: url)
-            let merging = GitMergeOperation.isMerging(in: url)
-            let cherryPicking = GitCherryPickOperation.status(in: url).isCherryPicking
-            await MainActor.run {
-                guard let self, self.reloadGeneration == generation else { return }
-                self.viewModel?.update(
-                    projectURL: url,
-                    conflictedFiles: files,
-                    isOperationInProgress: merging || cherryPicking,
-                    isCherryPicking: cherryPicking
-                )
-            }
+        let snapshotTask = Task.detached(priority: .utility) {
+            GitConflictResolverSnapshot(
+                conflictedFiles: GitMergeOperation.conflictFiles(in: url),
+                isOperationInProgress: GitMergeOperation.isMerging(in: url),
+                isCherryPicking: GitCherryPickOperation.status(in: url).isCherryPicking
+            )
+        }
+        Task { @MainActor [weak self] in
+            let snapshot = await snapshotTask.value
+            guard let self, self.reloadGeneration == generation else { return }
+            self.viewModel?.update(
+                projectURL: url,
+                conflictedFiles: snapshot.conflictedFiles,
+                isOperationInProgress: snapshot.isOperationInProgress || snapshot.isCherryPicking,
+                isCherryPicking: snapshot.isCherryPicking
+            )
         }
     }
 }
