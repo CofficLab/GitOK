@@ -8,7 +8,7 @@ public enum BannerExportDevice: String, CaseIterable, Sendable {
     case MacBook
     case iPhoneBig
     case iPhoneSmall
-    case iPadMini
+    case iPad_mini
 
     public var width: Int {
         switch self {
@@ -16,7 +16,7 @@ public enum BannerExportDevice: String, CaseIterable, Sendable {
         case .MacBook: 2880
         case .iPhoneBig: 1290
         case .iPhoneSmall: 1242
-        case .iPadMini: 1488
+        case .iPad_mini: 1488
         }
     }
 
@@ -26,7 +26,7 @@ public enum BannerExportDevice: String, CaseIterable, Sendable {
         case .MacBook: 1800
         case .iPhoneBig: 2796
         case .iPhoneSmall: 2208
-        case .iPadMini: 2266
+        case .iPad_mini: 2266
         }
     }
 
@@ -34,7 +34,7 @@ public enum BannerExportDevice: String, CaseIterable, Sendable {
         switch self {
         case .iMac, .MacBook: "banner"
         case .iPhoneBig, .iPhoneSmall: "iphone-appstore-screenshot"
-        case .iPadMini: "banner"
+        case .iPad_mini: "banner"
         }
     }
 }
@@ -74,7 +74,9 @@ public enum BannerExporter {
     ) throws {
         try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
         for device in devices {
-            let view = BannerRenderView(configuration: configuration)
+            var deviceConfiguration = configuration
+            deviceConfiguration.deviceID = device.rawValue
+            let view = BannerRenderView(configuration: deviceConfiguration)
                 .frame(width: CGFloat(device.width), height: CGFloat(device.height))
             let renderer = ImageRenderer(content: view)
             renderer.scale = 1
@@ -97,6 +99,7 @@ public struct BannerRenderConfiguration: Equatable, Sendable {
     public var subTitle: String
     public var features: [String]
     public var imageURL: URL?
+    public var deviceID: String?
     public var backgroundID: String
     public var opacity: Double
 
@@ -106,6 +109,7 @@ public struct BannerRenderConfiguration: Equatable, Sendable {
         subTitle: String = "",
         features: [String] = [],
         imageURL: URL? = nil,
+        deviceID: String? = nil,
         backgroundID: String = "1",
         opacity: Double = 1
     ) {
@@ -114,6 +118,7 @@ public struct BannerRenderConfiguration: Equatable, Sendable {
         self.subTitle = subTitle
         self.features = features
         self.imageURL = imageURL
+        self.deviceID = deviceID
         self.backgroundID = backgroundID
         self.opacity = opacity
     }

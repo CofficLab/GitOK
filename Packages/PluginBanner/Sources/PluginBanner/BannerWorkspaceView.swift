@@ -87,6 +87,12 @@ public struct BannerWorkspaceView: View {
                     Text("Purple").tag("2")
                     Text("Orange").tag("3")
                 }
+                Picker("Device", selection: $model.selectedDeviceID) {
+                    ForEach(BannerExportDevice.allCases, id: \.rawValue) { device in
+                        Text(device.rawValue).tag(device.rawValue)
+                    }
+                }
+                .pickerStyle(.menu)
                 Slider(value: $model.opacity, in: 0.2...1) {
                     Text("Opacity")
                 }

@@ -32,10 +32,15 @@ struct PluginBannerTests {
     @Test("template data keeps the legacy classic and minimal IDs")
     func templateDataRoundTrips() throws {
         var banner = BannerFile(path: "/tmp/banner.json", projectURL: URL(fileURLWithPath: "/tmp/project"))
-        banner.classicData = ClassicBannerData(title: "Demo", subTitle: "Ship it")
+        banner.classicData = ClassicBannerData(
+            title: "Demo",
+            subTitle: "Ship it",
+            selectedDevice: BannerExportDevice.MacBook.rawValue
+        )
         banner.minimalData = MinimalBannerData(title: "Minimal")
 
         #expect(banner.classicData?.title == "Demo")
+        #expect(banner.classicData?.selectedDevice == BannerExportDevice.MacBook.rawValue)
         #expect(banner.minimalData?.title == "Minimal")
         #expect(banner.templateData.keys.sorted() == [BannerTemplateID.classic, BannerTemplateID.minimal])
     }

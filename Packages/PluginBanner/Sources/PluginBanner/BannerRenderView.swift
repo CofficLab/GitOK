@@ -12,19 +12,18 @@ public struct BannerRenderView: View {
     public var body: some View {
         ZStack {
             background
-            if configuration.templateID == BannerTemplateID.classic {
-                VStack(spacing: 8) {
-                    Text(configuration.title).font(.largeTitle.bold())
-                    Text(configuration.subTitle).font(.title3)
-                    ForEach(configuration.features, id: \.self) { feature in
-                        Text("• \(feature)").font(.callout)
-                    }
+            if isMacDevice {
+                HStack(spacing: 24) {
+                    textContent
+                        .frame(maxWidth: .infinity)
                     imageView
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             } else {
                 VStack(spacing: 16) {
-                    Text(configuration.title).font(.system(size: 42, weight: .bold))
+                    textContent
                     imageView
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
         }
@@ -41,6 +40,26 @@ public struct BannerRenderView: View {
         }
     }
 
+    private var isMacDevice: Bool {
+        configuration.deviceID == BannerExportDevice.iMac.rawValue
+            || configuration.deviceID == BannerExportDevice.MacBook.rawValue
+    }
+
+    @ViewBuilder
+    private var textContent: some View {
+        if configuration.templateID == BannerTemplateID.classic {
+            VStack(spacing: 8) {
+                Text(configuration.title).font(.largeTitle.bold())
+                Text(configuration.subTitle).font(.title3)
+                ForEach(configuration.features, id: \.self) { feature in
+                    Text("• \(feature)").font(.callout)
+                }
+            }
+        } else {
+            Text(configuration.title).font(.system(size: 42, weight: .bold))
+        }
+    }
+
     @ViewBuilder
     private var imageView: some View {
         if let imageURL = configuration.imageURL,
@@ -48,7 +67,6 @@ public struct BannerRenderView: View {
             Image(nsImage: image)
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 420, maxHeight: 420)
         }
     }
 }
