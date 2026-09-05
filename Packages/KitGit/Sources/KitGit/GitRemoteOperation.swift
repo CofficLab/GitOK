@@ -29,7 +29,10 @@ public enum GitRemoteOperation {
             let name = parts[0]
             let rest = parts[1].split(separator: " ").map(String.init)
             let url = rest.first ?? ""
-            let kind = rest.count > 1 ? rest[1] : "fetch"
+            // git remote -v 的输出为 "(fetch)" / "(push)"，归一化去括号。
+            let kind = rest.count > 1
+                ? rest[1].trimmingCharacters(in: CharacterSet(charactersIn: "()"))
+                : "fetch"
             if let index = result.firstIndex(where: { $0.name == name }) {
                 var existing = result[index]
                 if kind == "push" {
