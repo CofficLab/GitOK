@@ -558,6 +558,123 @@
         }
       }
     },
+    "Create Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Create Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立標籤" } }
+      }
+    },
+    "Create Annotated Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Create Annotated Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建附注标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立附註標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立附註標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立附註標籤" } }
+      }
+    },
+    "Tag name": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tag name" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "标签名称" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "標籤名稱" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "標籤名稱" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "標籤名稱" } }
+      }
+    },
+    "Tag message": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tag message" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "标签说明" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "標籤說明" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "標籤說明" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "標籤說明" } }
+      }
+    },
+    "Create": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Create" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立" } }
+      }
+    },
+    "Manage Tags": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Manage Tags" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "管理标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "管理標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "管理標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "管理標籤" } }
+      }
+    },
+    "Push Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Push Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "推送标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "推送標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "推送標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "推送標籤" } }
+      }
+    },
+    "Delete Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除標籤" } }
+      }
+    },
+    "Delete Remote Tag": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete Remote Tag" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除远程标签" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤" } }
+      }
+    },
+    "Confirm Delete Tag?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Delete Tag?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认删除标签？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認刪除標籤？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認刪除標籤？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認刪除標籤？" } }
+      }
+    },
+    "Confirm Delete Remote Tag?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Delete Remote Tag?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认删除远程标签？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認刪除遠端標籤？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認刪除遠端標籤？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認刪除遠端標籤？" } }
+      }
+    },
+    "Delete tag \"%@\"? This cannot be undone.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete tag \"%@\"? This cannot be undone." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "要删除标签“%@”吗？此操作无法撤销。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "要刪除標籤「%@」嗎？此操作無法復原。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "要刪除標籤「%@」嗎？此操作無法復原。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "要刪除標籤「%@」嗎？此操作無法復原。" } }
+      }
+    },
+    "Delete remote tag \"%@\"?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete remote tag \"%@\"?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "要删除远程标签“%@”吗？" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "要刪除遠端標籤「%@」嗎？" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "要刪除遠端標籤「%@」嗎？" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "要刪除遠端標籤「%@」嗎？" } }
+      }
+    },
     "Cancel": {
       "localizations": {
         "en": {

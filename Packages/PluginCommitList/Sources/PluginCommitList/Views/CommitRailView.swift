@@ -62,6 +62,21 @@ struct CommitRailView: View {
     @State private var squashingHash: String?
     @State private var historyError: String?
 
+    // Tag 操作状态
+    @State private var pendingCreateTag: GitCommit?
+    @State private var pendingCreateAnnotatedTag: GitCommit?
+    @State private var tagName = ""
+    @State private var annotatedTagName = ""
+    @State private var annotatedTagMessage = ""
+    @State private var pendingDeleteTag: String?
+    @State private var pendingDeleteRemoteTag: String?
+    @State private var creatingTagHash: String?
+    @State private var creatingAnnotatedTagHash: String?
+    @State private var deletingTagName: String?
+    @State private var pushingTagName: String?
+    @State private var deletingRemoteTagName: String?
+    @State private var tagError: String?
+
     init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
         self.projects = projects
         self.gitWatch = gitWatch
@@ -225,6 +240,117 @@ struct CommitRailView: View {
                 ), index + 1))
             }
         }
+        .alert(
+            LumiPluginLocalization.string("Create Tag", bundle: .module),
+            isPresented: Binding(
+                get: { pendingCreateTag != nil },
+                set: { isPresented in
+                    if !isPresented { pendingCreateTag = nil }
+                }
+            )
+        ) {
+            TextField(
+                LumiPluginLocalization.string("Tag name", bundle: .module),
+                text: $tagName
+            )
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingCreateTag = nil
+            }
+            Button(LumiPluginLocalization.string("Create", bundle: .module)) {
+                guard let commit = pendingCreateTag else { return }
+                pendingCreateTag = nil
+                performCreateTag(at: commit)
+            }
+            .disabled(tagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        } message: {
+            if let commit = pendingCreateTag {
+                Text(commit.message)
+            }
+        }
+        .alert(
+            LumiPluginLocalization.string("Create Annotated Tag", bundle: .module),
+            isPresented: Binding(
+                get: { pendingCreateAnnotatedTag != nil },
+                set: { isPresented in
+                    if !isPresented { pendingCreateAnnotatedTag = nil }
+                }
+            )
+        ) {
+            TextField(
+                LumiPluginLocalization.string("Tag name", bundle: .module),
+                text: $annotatedTagName
+            )
+            TextField(
+                LumiPluginLocalization.string("Tag message", bundle: .module),
+                text: $annotatedTagMessage
+            )
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingCreateAnnotatedTag = nil
+            }
+            Button(LumiPluginLocalization.string("Create", bundle: .module)) {
+                guard let commit = pendingCreateAnnotatedTag else { return }
+                pendingCreateAnnotatedTag = nil
+                performCreateAnnotatedTag(at: commit)
+            }
+            .disabled(
+                annotatedTagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    || annotatedTagMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            )
+        } message: {
+            if let commit = pendingCreateAnnotatedTag {
+                Text(commit.message)
+            }
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Delete Tag?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingDeleteTag != nil },
+                set: { isPresented in
+                    if !isPresented { pendingDeleteTag = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingDeleteTag = nil
+            }
+            Button(LumiPluginLocalization.string("Delete Tag", bundle: .module), role: .destructive) {
+                guard let tag = pendingDeleteTag else { return }
+                pendingDeleteTag = nil
+                performDeleteTag(named: tag)
+            }
+        } message: {
+            if let tag = pendingDeleteTag {
+                Text(String(format: LumiPluginLocalization.string(
+                    "Delete tag \"%@\"? This cannot be undone.",
+                    bundle: .module
+                ), tag))
+            }
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Delete Remote Tag?", bundle: .module),
+            isPresented: Binding(
+                get: { pendingDeleteRemoteTag != nil },
+                set: { isPresented in
+                    if !isPresented { pendingDeleteRemoteTag = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingDeleteRemoteTag = nil
+            }
+            Button(LumiPluginLocalization.string("Delete Remote Tag", bundle: .module), role: .destructive) {
+                guard let tag = pendingDeleteRemoteTag else { return }
+                pendingDeleteRemoteTag = nil
+                performDeleteRemoteTag(named: tag)
+            }
+        } message: {
+            if let tag = pendingDeleteRemoteTag {
+                Text(String(format: LumiPluginLocalization.string(
+                    "Delete remote tag \"%@\"?",
+                    bundle: .module
+                ), tag))
+            }
+        }
         // 项目 / 选中 commit / 仓库数据变化 → 刷新列表或选中态高亮。
         .onReceive(projectObservation.$revision) { _ in
             reloadIfNeeded()
@@ -288,6 +414,15 @@ struct CommitRailView: View {
                 }
                 if let historyError {
                     Text(historyError)
+                        .font(.appCaption)
+                        .foregroundStyle(theme.error)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .background(theme.error.opacity(0.08))
+                }
+                if let tagError {
+                    Text(tagError)
                         .font(.appCaption)
                         .foregroundStyle(theme.error)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -378,6 +513,78 @@ struct CommitRailView: View {
             pushPopoverContent(for: commit)
         }
         .contextMenu {
+            Button {
+                tagError = nil
+                tagName = ""
+                pendingCreateTag = commit
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Create Tag", bundle: .module),
+                    systemImage: "tag"
+                )
+            }
+            .disabled(isOperationRunning)
+
+            Button {
+                tagError = nil
+                annotatedTagName = ""
+                annotatedTagMessage = commit.message
+                pendingCreateAnnotatedTag = commit
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Create Annotated Tag", bundle: .module),
+                    systemImage: "tag.fill"
+                )
+            }
+            .disabled(isOperationRunning)
+
+            if !commit.tags.isEmpty {
+                Menu {
+                    ForEach(commit.tags, id: \.self) { tag in
+                        Menu {
+                            Button {
+                                performPushTag(named: tag)
+                            } label: {
+                                Label(
+                                    LumiPluginLocalization.string("Push Tag", bundle: .module),
+                                    systemImage: "arrow.up.circle"
+                                )
+                            }
+
+                            Button {
+                                pendingDeleteRemoteTag = tag
+                            } label: {
+                                Label(
+                                    LumiPluginLocalization.string("Delete Remote Tag", bundle: .module),
+                                    systemImage: "icloud.slash"
+                                )
+                            }
+
+                            Divider()
+
+                            Button(role: .destructive) {
+                                pendingDeleteTag = tag
+                            } label: {
+                                Label(
+                                    LumiPluginLocalization.string("Delete Tag", bundle: .module),
+                                    systemImage: "tag.slash"
+                                )
+                            }
+                        } label: {
+                            Label(tag, systemImage: "tag")
+                        }
+                        .disabled(isOperationRunning)
+                    }
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Manage Tags", bundle: .module),
+                        systemImage: "tag.fill"
+                    )
+                }
+            }
+
+            Divider()
+
             if canUndo(commit) {
                 Button(role: .destructive) {
                     historyError = nil
@@ -395,6 +602,7 @@ struct CommitRailView: View {
                         || mixedResettingHash != nil
                         || hardResettingHash != nil
                         || squashingHash != nil
+                        || isTagOperationRunning
                 )
 
                 Divider()
@@ -416,6 +624,7 @@ struct CommitRailView: View {
                     || mixedResettingHash != nil
                     || hardResettingHash != nil
                     || squashingHash != nil
+                    || isTagOperationRunning
                     || commit.parentHashes.count > 1
             )
 
@@ -437,6 +646,7 @@ struct CommitRailView: View {
                         || mixedResettingHash != nil
                         || hardResettingHash != nil
                         || squashingHash != nil
+                        || isTagOperationRunning
                 )
 
                 Divider()
@@ -483,6 +693,7 @@ struct CommitRailView: View {
                     || mixedResettingHash != nil
                     || hardResettingHash != nil
                     || squashingHash != nil
+                    || isTagOperationRunning
             )
         }
     }
@@ -755,6 +966,141 @@ struct CommitRailView: View {
                 }
             }
         }
+    }
+
+    private func performCreateTag(at commit: GitCommit) {
+        guard let project = projects.currentProject else { return }
+        let name = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+
+        creatingTagHash = commit.hash
+        tagError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitTagOperation.createLightweight(named: name, at: commit.hash, in: url)
+            }
+            await MainActor.run {
+                creatingTagHash = nil
+                switch result {
+                case .success:
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    tagError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performCreateAnnotatedTag(at commit: GitCommit) {
+        guard let project = projects.currentProject else { return }
+        let name = annotatedTagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let message = annotatedTagMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, !message.isEmpty else { return }
+
+        creatingAnnotatedTagHash = commit.hash
+        tagError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitTagOperation.createAnnotated(
+                    named: name,
+                    at: commit.hash,
+                    message: message,
+                    in: url
+                )
+            }
+            await MainActor.run {
+                creatingAnnotatedTagHash = nil
+                switch result {
+                case .success:
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    tagError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performDeleteTag(named name: String) {
+        guard let project = projects.currentProject else { return }
+        deletingTagName = name
+        tagError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitTagOperation.deleteLocal(named: name, in: url)
+            }
+            await MainActor.run {
+                deletingTagName = nil
+                switch result {
+                case .success:
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    tagError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performPushTag(named name: String) {
+        guard let project = projects.currentProject else { return }
+        pushingTagName = name
+        tagError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitTagOperation.push(named: name, in: url)
+            }
+            await MainActor.run {
+                pushingTagName = nil
+                switch result {
+                case .success:
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    tagError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performDeleteRemoteTag(named name: String) {
+        guard let project = projects.currentProject else { return }
+        deletingRemoteTagName = name
+        tagError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitTagOperation.deleteRemote(named: name, in: url)
+            }
+            await MainActor.run {
+                deletingRemoteTagName = nil
+                switch result {
+                case .success:
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    tagError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private var isTagOperationRunning: Bool {
+        creatingTagHash != nil
+            || creatingAnnotatedTagHash != nil
+            || deletingTagName != nil
+            || pushingTagName != nil
+            || deletingRemoteTagName != nil
+    }
+
+    private var isOperationRunning: Bool {
+        undoingHash != nil
+            || revertingHash != nil
+            || softResettingHash != nil
+            || mixedResettingHash != nil
+            || hardResettingHash != nil
+            || squashingHash != nil
+            || isTagOperationRunning
     }
 
     private func canUndo(_ commit: GitCommit) -> Bool {

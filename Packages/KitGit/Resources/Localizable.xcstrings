@@ -288,6 +288,78 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "重置開始前目前 HEAD 已發生變化。" } }
       }
     },
+    "A valid tag name is required.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A valid tag name is required." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "需要有效的标签名称。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "需要有效的標籤名稱。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "需要有效的標籤名稱。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "需要有效的標籤名稱。" } }
+      }
+    },
+    "A commit is required for the tag.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A commit is required for the tag." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建标签需要指定提交。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立標籤需要指定提交。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立標籤需要指定提交。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立標籤需要指定提交。" } }
+      }
+    },
+    "An annotated tag message is required.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "An annotated tag message is required." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "附注标签需要填写说明。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "附註標籤需要填寫說明。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "附註標籤需要填寫說明。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "附註標籤需要填寫說明。" } }
+      }
+    },
+    "A remote name is required for the tag.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A remote name is required for the tag." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "操作远程标签需要指定远程仓库。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "操作遠端標籤需要指定遠端儲存庫。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "操作遠端標籤需要指定遠端儲存庫。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "操作遠端標籤需要指定遠端儲存庫。" } }
+      }
+    },
+    "Tag creation failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tag creation failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "创建标签失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "建立標籤失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "建立標籤失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "建立標籤失敗：%@" } }
+      }
+    },
+    "Tag deletion failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tag deletion failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除标签失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除標籤失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除標籤失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除標籤失敗：%@" } }
+      }
+    },
+    "Tag push failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tag push failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "推送标签失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "推送標籤失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "推送標籤失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "推送標籤失敗：%@" } }
+      }
+    },
+    "Remote tag deletion failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Remote tag deletion failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "删除远程标签失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端標籤失敗：%@" } }
+      }
+    },
     "Git unavailable: %@": {
       "localizations": {
         "en": {
