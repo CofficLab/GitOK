@@ -63,4 +63,12 @@ struct ProviderWorkspaceSceneTests {
 
         #expect(provider.currentScene == .git)
     }
+
+    @Test("场景范围匹配全局和指定场景")
+    func sceneScopeMatches() {
+        #expect(WorkspaceSceneScope.global.matches(.git))
+        #expect(WorkspaceSceneScope.scene(.banner).matches(.banner))
+        #expect(!WorkspaceSceneScope.scene(.banner).matches(.git))
+        #expect(WorkspaceSceneScope.scenes([.git, .icon]).matches(.icon))
+    }
 }

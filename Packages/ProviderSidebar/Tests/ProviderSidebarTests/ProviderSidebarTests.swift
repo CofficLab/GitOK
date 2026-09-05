@@ -1,4 +1,5 @@
 import XCTest
+import ProviderWorkspaceScene
 @testable import ProviderSidebar
 
 @MainActor
@@ -39,5 +40,20 @@ final class ProviderSidebarTests: XCTestCase {
         provider.registerItems([SidebarItem(id: "a", title: "A", systemImage: "folder")])
         let view = provider.makeSidebarView()
         XCTAssertNotNil(view)
+    }
+
+    func testItemsAreFilteredByWorkspaceScene() {
+        let scene = DefaultWorkspaceSceneProvider()
+        let provider = DefaultSidebarProvider()
+        provider.bindWorkspaceSceneProvider(scene)
+        provider.registerItems([
+            SidebarItem(id: "git", title: "Git", systemImage: "folder", sceneScope: .scene(.git)),
+            SidebarItem(id: "banner", title: "Banner", systemImage: "photo", sceneScope: .scene(.banner)),
+        ])
+
+        XCTAssertEqual(provider.visibleItems.map(\.id), ["git"])
+        scene.selectScene(.banner)
+        XCTAssertEqual(provider.visibleItems.map(\.id), ["banner"])
+        XCTAssertEqual(provider.activeItemID, "banner")
     }
 }

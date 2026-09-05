@@ -1,5 +1,6 @@
 import Combine
 import SwiftUI
+import ProviderWorkspaceScene
 
 /// 底部状态栏视图提供能力协议
 ///
@@ -27,6 +28,10 @@ public protocol StatusBarProviding: AnyObject, ObservableObject
 }
 
 public extension StatusBarProviding {
+    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {}
+
+    var visibleStatusBarItems: [StatusBarItem] { statusBarItems }
+
     /// 追加状态栏项（保留已有项）：供多个插件各自贡献时使用，互不覆盖。
     ///
     /// 默认实现合入已有项并按 `order` 排序（同 id 去重，保留先注册者）。

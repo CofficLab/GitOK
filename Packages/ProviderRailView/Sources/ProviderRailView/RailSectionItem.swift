@@ -1,4 +1,5 @@
 import SwiftUI
+import ProviderWorkspaceScene
 
 /// Rail（侧边栏）的纵向区块视图（由外部注入）。
 ///
@@ -14,14 +15,18 @@ public struct RailSectionItem: Identifiable {
     public let order: Int
     /// 区块视图。
     public let makeView: @MainActor () -> AnyView
+    /// 区块可见的工作场景范围。
+    public let sceneScope: WorkspaceSceneScope
 
     public init<Content: View>(
         id: String,
         order: Int = 200,
+        sceneScope: WorkspaceSceneScope = .global,
         @ViewBuilder content: @escaping @MainActor () -> Content
     ) {
         self.id = id
         self.order = order
+        self.sceneScope = sceneScope
         self.makeView = { AnyView(content()) }
     }
 }

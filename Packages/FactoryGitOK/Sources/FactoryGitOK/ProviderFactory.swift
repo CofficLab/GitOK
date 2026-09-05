@@ -65,10 +65,8 @@ public struct DefaultProviderFactory: ProviderFactory {
         let storage = makeStorageProvider()
         try kernel.registerProvider((any StorageProviding).self, storage)
 
-        try kernel.registerProvider(
-            (any WorkspaceSceneProviding).self,
-            makeWorkspaceSceneProvider()
-        )
+        let workspaceScene = makeWorkspaceSceneProvider()
+        try kernel.registerProvider((any WorkspaceSceneProviding).self, workspaceScene)
 
         // 插件启用状态仍由宿主统一持久化；GitOK 插件本身是 required，
         // 其他未来加入的插件则继续遵循 KernelCore 的普通策略。
@@ -84,17 +82,30 @@ public struct DefaultProviderFactory: ProviderFactory {
         }
         try kernel.registerProvider((any ThemeProviding).self, theme)
 
-        try kernel.registerProvider((any ContentViewProviding).self, makeContentViewProvider())
+        let contentView = makeContentViewProvider()
+        contentView.bindWorkspaceSceneProvider(workspaceScene)
+        try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any DocsViewProviding).self, makeDocsViewProvider())
-        try kernel.registerProvider((any ToolbarProviding).self, makeToolbarProvider())
-        try kernel.registerProvider((any StatusBarProviding).self, makeStatusBarProvider())
+
+        let toolbar = makeToolbarProvider()
+        toolbar.bindWorkspaceSceneProvider(workspaceScene)
+        try kernel.registerProvider((any ToolbarProviding).self, toolbar)
+
+        let statusBar = makeStatusBarProvider()
+        statusBar.bindWorkspaceSceneProvider(workspaceScene)
+        try kernel.registerProvider((any StatusBarProviding).self, statusBar)
         try kernel.registerProvider((any RootViewProviding).self, makeRootViewProvider())
         try kernel.registerProvider((any SettingViewProviding).self, makeSettingViewProvider())
 
         #if os(macOS)
         try kernel.registerProvider((any LogoProviding).self, makeLogoProvider())
-        try kernel.registerProvider((any SidebarProviding).self, makeSidebarProvider())
-        try kernel.registerProvider((any RailViewProviding).self, makeRailViewProvider())
+        let sidebar = makeSidebarProvider()
+        sidebar.bindWorkspaceSceneProvider(workspaceScene)
+        try kernel.registerProvider((any SidebarProviding).self, sidebar)
+
+        let rail = makeRailViewProvider()
+        rail.bindWorkspaceSceneProvider(workspaceScene)
+        try kernel.registerProvider((any RailViewProviding).self, rail)
         try kernel.registerProvider((any CommandProviding).self, makeCommandProvider())
         try kernel.registerProvider((any ActivityProviding).self, makeActivityProvider())
         try kernel.registerProvider(

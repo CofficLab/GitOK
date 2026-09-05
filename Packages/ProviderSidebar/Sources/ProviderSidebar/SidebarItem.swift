@@ -1,4 +1,5 @@
 import SwiftUI
+import ProviderWorkspaceScene
 
 // MARK: - Sidebar Item
 
@@ -20,6 +21,8 @@ public struct SidebarItem: Identifiable {
     public let title: String
     public let systemImage: String
     public var order: Int
+    /// 侧边栏项可见的工作场景范围。
+    public let sceneScope: WorkspaceSceneScope
     /// 该入口所属插件的 id（可选）。
     ///
     /// 为 nil 时表示该入口不受插件生命周期管理（如内置欢迎入口）。
@@ -35,6 +38,7 @@ public struct SidebarItem: Identifiable {
         title: String,
         systemImage: String,
         order: Int = 200,
+        sceneScope: WorkspaceSceneScope = .global,
         ownerPluginID: String? = nil,
         onActivationChanged: @escaping @MainActor (ActivationState) -> Void = { _ in }
     ) {
@@ -42,6 +46,7 @@ public struct SidebarItem: Identifiable {
         self.title = title
         self.systemImage = systemImage
         self.order = order
+        self.sceneScope = sceneScope
         self.ownerPluginID = ownerPluginID
         self.onActivationChanged = onActivationChanged
     }

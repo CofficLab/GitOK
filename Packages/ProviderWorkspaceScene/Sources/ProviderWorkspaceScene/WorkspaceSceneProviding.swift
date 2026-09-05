@@ -14,6 +14,27 @@ public enum GitOKWorkspaceScene: String, CaseIterable, Codable, Identifiable, Se
     public var id: String { rawValue }
 }
 
+/// UI contribution 可见的工作场景范围。
+public enum WorkspaceSceneScope: Equatable, Sendable {
+    /// 所有工作场景都可见。
+    case global
+    /// 仅在指定工作场景可见。
+    case scenes(Set<GitOKWorkspaceScene>)
+
+    public static func scene(_ scene: GitOKWorkspaceScene) -> Self {
+        .scenes([scene])
+    }
+
+    public func matches(_ scene: GitOKWorkspaceScene) -> Bool {
+        switch self {
+        case .global:
+            true
+        case let .scenes(scenes):
+            scenes.contains(scene)
+        }
+    }
+}
+
 // MARK: - Events
 
 /// 工作场景变化事件。

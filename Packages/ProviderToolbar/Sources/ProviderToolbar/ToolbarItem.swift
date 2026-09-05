@@ -1,4 +1,5 @@
 import SwiftUI
+import ProviderWorkspaceScene
 
 // MARK: - Toolbar Placement
 
@@ -49,6 +50,8 @@ public struct ToolbarItem: Identifiable {
     /// 默认使用 `.global`，确保未迁移的旧插件行为保持不变。
     public let category: ToolbarItemCategory
     public var order: Int
+    /// 工具栏项可见的工作场景范围。
+    public let sceneScope: WorkspaceSceneScope
     public let makeView: @MainActor () -> AnyView
 
     public init<Content: View>(
@@ -57,6 +60,7 @@ public struct ToolbarItem: Identifiable {
         placement: ToolbarPlacement = .trailing,
         category: ToolbarItemCategory = .global,
         order: Int = 200,
+        sceneScope: WorkspaceSceneScope = .global,
         @ViewBuilder content: @escaping @MainActor () -> Content
     ) {
         self.id = id
@@ -64,6 +68,7 @@ public struct ToolbarItem: Identifiable {
         self.placement = placement
         self.category = category
         self.order = order
+        self.sceneScope = sceneScope
         self.makeView = { AnyView(content()) }
     }
 }

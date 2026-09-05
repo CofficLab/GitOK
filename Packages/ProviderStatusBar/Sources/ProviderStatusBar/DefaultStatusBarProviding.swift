@@ -1,5 +1,6 @@
 import Combine
 import LumiUI
+import ProviderWorkspaceScene
 import SwiftUI
 
 /// `StatusBarProviding` 的默认实现：持有注入的 `StatusBarItem`，
@@ -13,7 +14,14 @@ import SwiftUI
 public final class DefaultStatusBarProviding: StatusBarProviding, ObservableObject {
     @Published public private(set) var statusBarItems: [StatusBarItem] = []
 
-    public init() {}
+    private var sceneObserver: (any WorkspaceSceneObserverHandle)?
+    private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
+
+    public init(sceneProvider: (any WorkspaceSceneProviding)? = nil) {
+        if let sceneProvider {
+            bindWorkspaceSceneProvider(sceneProvider)
+        }
+    }
 
     public func registerStatusBarItems(_ items: [StatusBarItem]) {
         statusBarItems = items
@@ -21,6 +29,19 @@ public final class DefaultStatusBarProviding: StatusBarProviding, ObservableObje
 
     public func makeStatusBarView() -> AnyView {
         AnyView(StatusBarView(provider: self))
+    }
+
+    public func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {
+        sceneObserver?.cancel()
+        workspaceSceneProvider = provider
+        sceneObserver = provider.addObserver { [weak self] _ in
+            self?.objectWillChange.send()
+        }
+    }
+
+    public var visibleStatusBarItems: [StatusBarItem] {
+        guard let scene = workspaceSceneProvider?.currentScene else { return statusBarItems }
+        return statusBarItems.filter { $0.sceneScope.matches(scene) }
     }
 }
 
@@ -33,7 +54,7 @@ private struct StatusBarView: View {
     private let height: CGFloat = 28
 
     var body: some View {
-        let items = provider.statusBarItems
+        let items = provider.visibleStatusBarItems
         let leading = items.filter { $0.placement == .leading }
         let center = items.filter { $0.placement == .center }
         let trailing = items.filter { $0.placement == .trailing }

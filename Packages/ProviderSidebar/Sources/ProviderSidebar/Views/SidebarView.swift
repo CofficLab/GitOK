@@ -10,12 +10,12 @@ struct SidebarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if provider.items.isEmpty {
+            if provider.visibleItems.isEmpty {
                 EmptyView()
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 2) {
-                        ForEach(provider.items) { item in
+                        ForEach(provider.visibleItems) { item in
                             AppSettingsSidebarItem(
                                 title: item.title,
                                 systemImage: item.systemImage,

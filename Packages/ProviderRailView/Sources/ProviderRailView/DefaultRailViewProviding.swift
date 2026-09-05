@@ -1,5 +1,6 @@
 import Combine
 import LumiUI
+import ProviderWorkspaceScene
 import SwiftUI
 
 /// `RailViewProviding` 的默认实现：持有注入的 `RailTabItem`，
@@ -16,6 +17,10 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
     @Published public private(set) var sections: [RailSectionItem] = []
     @Published public private(set) var railWidth: RailViewWidth
 
+    private var sceneObserver: (any WorkspaceSceneObserverHandle)?
+    private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
+    private var allSections: [RailSectionItem] = []
+
     private let defaultWidthStore: (any RailViewWidthStoring)?
     private var activeWidthStore: (any RailViewWidthStoring)?
     private var activeWidthOwnerID: String?
@@ -31,13 +36,17 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
     public init(
         visibleCategories: Set<RailViewCategory> = Set(RailViewCategory.allCases),
         visibleTabID: String? = nil,
-        widthStore: (any RailViewWidthStoring)? = nil
+        widthStore: (any RailViewWidthStoring)? = nil,
+        sceneProvider: (any WorkspaceSceneProviding)? = nil
     ) {
         self.visibleCategories = visibleCategories
         self.visibleTabID = visibleTabID
         self.railWidth = .standard
         self.defaultWidthStore = widthStore
         self.activeWidthStore = nil
+        if let sceneProvider {
+            bindWorkspaceSceneProvider(sceneProvider)
+        }
     }
 
     public func registerTabs(_ tabs: [RailTabItem]) {
@@ -49,11 +58,12 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
     // MARK: - Sections
 
     public func registerSections(_ newSections: [RailSectionItem]) {
-        sections = newSections.sorted { $0.order < $1.order }
+        allSections = newSections.sorted { $0.order < $1.order }
+        refreshVisibleSections()
     }
 
     public func addSections(_ newSections: [RailSectionItem]) {
-        var merged = sections
+        var merged = allSections
         for section in newSections where !merged.contains(where: { $0.id == section.id }) {
             merged.append(section)
         }
@@ -61,7 +71,7 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
     }
 
     public func removeSections(ids: Set<String>) {
-        registerSections(sections.filter { !ids.contains($0.id) })
+        registerSections(allSections.filter { !ids.contains($0.id) })
     }
 
     public func activateTab(id: String?) {
@@ -129,11 +139,36 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
         AnyView(RailView(provider: self))
     }
 
+    public func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {
+        sceneObserver?.cancel()
+        workspaceSceneProvider = provider
+        sceneObserver = provider.addObserver { [weak self] _ in
+            self?.refreshSceneVisibility()
+        }
+        refreshSceneVisibility()
+    }
+
     fileprivate var visibleTabs: [RailTabItem] {
         tabs.filter { tab in
-            visibleCategories.contains(tab.category)
+            isVisibleInCurrentScene(tab.sceneScope)
+                && visibleCategories.contains(tab.category)
                 && (visibleTabID == nil || tab.id == visibleTabID)
         }
+    }
+
+    private func refreshSceneVisibility() {
+        refreshVisibleSections()
+        reconcileActiveTab()
+        updateVisibleTabState()
+    }
+
+    private func refreshVisibleSections() {
+        sections = allSections.filter { isVisibleInCurrentScene($0.sceneScope) }
+    }
+
+    private func isVisibleInCurrentScene(_ scope: WorkspaceSceneScope) -> Bool {
+        guard let scene = workspaceSceneProvider?.currentScene else { return true }
+        return scope.matches(scene)
     }
 
     private func updateVisibleTabState() {

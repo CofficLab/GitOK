@@ -1,4 +1,5 @@
 import SwiftUI
+import ProviderWorkspaceScene
 
 /// `SidebarProviding` 的默认实现：持有注入的 `SidebarItem`，
 /// 渲染为左侧列表式侧边栏（宽度与样式复用 LumiUI 的设置侧边栏组件）。
@@ -9,6 +10,9 @@ import SwiftUI
 public final class DefaultSidebarProvider: SidebarProviding, ObservableObject {
     @Published public private(set) var items: [SidebarItem] = []
     @Published public private(set) var activeItemID: String?
+
+    private var sceneObserver: (any WorkspaceSceneObserverHandle)?
+    private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
 
     public init() {}
 
@@ -22,15 +26,30 @@ public final class DefaultSidebarProvider: SidebarProviding, ObservableObject {
             nextActiveID = self.items.first?.id
         }
         setActiveItemID(nextActiveID, previousItems: previousItems)
+        reconcileVisibleItem()
     }
 
     public func activateItem(id: String?) {
-        guard id == nil || items.contains(where: { $0.id == id }) else { return }
+        guard id == nil || visibleItems.contains(where: { $0.id == id }) else { return }
         setActiveItemID(id)
     }
 
     public func makeSidebarView() -> AnyView {
         AnyView(SidebarView(provider: self))
+    }
+
+    public func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {
+        sceneObserver?.cancel()
+        workspaceSceneProvider = provider
+        sceneObserver = provider.addObserver { [weak self] _ in
+            self?.reconcileVisibleItem()
+        }
+        reconcileVisibleItem()
+    }
+
+    var visibleItems: [SidebarItem] {
+        guard let scene = workspaceSceneProvider?.currentScene else { return items }
+        return items.filter { $0.sceneScope.matches(scene) }
     }
 
     private func setActiveItemID(_ id: String?, previousItems: [SidebarItem]? = nil) {
@@ -46,6 +65,15 @@ public final class DefaultSidebarProvider: SidebarProviding, ObservableObject {
         if let id,
            let nextItem = items.first(where: { $0.id == id }), id != previousID {
             nextItem.onActivationChanged(.activated)
+        }
+    }
+
+    private func reconcileVisibleItem() {
+        let visible = visibleItems
+        guard let activeItemID,
+              visible.contains(where: { $0.id == activeItemID }) else {
+            setActiveItemID(visible.first?.id)
+            return
         }
     }
 }

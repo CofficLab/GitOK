@@ -1,4 +1,5 @@
 import SwiftUI
+import ProviderWorkspaceScene
 
 /// `ContentViewProviding` 的默认实现：持有多个内容块。
 ///
@@ -10,22 +11,40 @@ public final class DefaultContentViewProviding: ContentViewProviding, Observable
     fileprivate struct Entry: Identifiable {
         let id: String
         let order: Int
+        let sceneScope: WorkspaceSceneScope
         let view: AnyView
     }
 
     @Published fileprivate var entries: [Entry] = []
+    @Published private var sceneRevision = 0
+
+    private var sceneObserver: (any WorkspaceSceneObserverHandle)?
+    private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
 
     /// 已注册内容块的 id 列表（按 order 升序）。仅供模块内测试断言使用。
     internal var registeredIDs: [String] { entries.map(\.id) }
 
-    public init() {}
+    public init(sceneProvider: (any WorkspaceSceneProviding)? = nil) {
+        if let sceneProvider {
+            bindWorkspaceSceneProvider(sceneProvider)
+        }
+    }
 
-    public func addContentView(_ view: AnyView, id: String, order: Int) {
+    public func addContentView(
+        _ view: AnyView,
+        id: String,
+        order: Int,
+        sceneScope: WorkspaceSceneScope
+    ) {
         var updated = entries.filter { $0.id != id }
-        updated.append(Entry(id: id, order: order, view: view))
+        updated.append(Entry(id: id, order: order, sceneScope: sceneScope, view: view))
         // 保持 order 升序，确保 VStack 自上而下稳定（同一 id 重复注册取新值）。
         updated.sort { $0.order < $1.order }
         entries = updated
+    }
+
+    public func addContentView(_ view: AnyView, id: String, order: Int) {
+        addContentView(view, id: id, order: order, sceneScope: .global)
     }
 
     public func removeContentView(id: String) {
@@ -41,6 +60,25 @@ public final class DefaultContentViewProviding: ContentViewProviding, Observable
     public func makeContentView() -> AnyView {
         AnyView(ContentHostView(provider: self))
     }
+
+    public func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {
+        sceneObserver?.cancel()
+        workspaceSceneProvider = provider
+        sceneObserver = provider.addObserver { [weak self] _ in
+            self?.sceneRevision += 1
+        }
+        sceneRevision += 1
+    }
+
+    fileprivate var visibleEntries: [Entry] {
+        _ = sceneRevision
+        guard let scene = workspaceSceneProvider?.currentScene else { return entries }
+        return entries.filter { $0.sceneScope.matches(scene) }
+    }
+
+    internal var visibleIDs: [String] {
+        visibleEntries.map(\.id)
+    }
 }
 
 /// 稳定挂在 RootView 中并观察 Provider；后续 `addContentView` / `removeContentView`
@@ -50,11 +88,11 @@ private struct ContentHostView: View {
 
     var body: some View {
         Group {
-            if provider.entries.isEmpty {
+            if provider.visibleEntries.isEmpty {
                 ContentPlaceholderView()
             } else {
                 VStack(spacing: 0) {
-                    ForEach(provider.entries) { entry in
+                    ForEach(provider.visibleEntries) { entry in
                         entry.view
                     }
                 }
