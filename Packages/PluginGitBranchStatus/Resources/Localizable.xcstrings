@@ -668,6 +668,15 @@
         "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "選擇基準和目標分支以比較提交和檔案。" } }
       }
     },
+    "Merge Head into Base" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Merge Head into Base" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "将目标合并到基准" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "將目標合併到基準" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "將目標合併到基準" } },
+        "zh-TW" : { "stringUnit" : { "state" : "translated", "value" : "將目標合併到基準" } }
+      }
+    },
     "Switch Branch" : {
       "localizations" : {
         "en" : {

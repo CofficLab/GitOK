@@ -25,6 +25,7 @@ public struct BranchManagementView: View {
     @State private var compareHeadBranch: GitBranchSummary?
     @State private var branchCompare: GitBranchCompare?
     @State private var isComparing = false
+    @State private var isMergingBranches = false
     @State private var compareError: String?
 
     public init(projects: any ProjectProviding) {
@@ -288,6 +289,24 @@ public struct BranchManagementView: View {
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
+
+            HStack(spacing: 8) {
+                Button {
+                    mergeComparedBranches()
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Merge Head into Base", bundle: .module),
+                        systemImage: "arrow.triangle.merge"
+                    )
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(compare.ahead == 0 || isMergingBranches || isComparing)
+
+                if isMergingBranches {
+                    ProgressView()
+                        .controlSize(.small)
+                }
+            }
         }
         .padding(10)
         .background(theme.surface.opacity(0.6))
@@ -546,6 +565,43 @@ public struct BranchManagementView: View {
                     branchCompare = nil
                     compareError = error.localizedDescription
                     isComparing = false
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func mergeComparedBranches() {
+        guard let url = projectURL,
+              let base = compareBaseBranch,
+              let head = compareHeadBranch,
+              base.id != head.id,
+              let comparison = branchCompare,
+              comparison.ahead > 0 else { return }
+
+        let targetBranch = base.name
+        let sourceBranch = head.name
+        isMergingBranches = true
+        compareError = nil
+        errorMessage = nil
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                _ = try GitMergeOperation.mergeBranches(
+                    repository: url,
+                    sourceBranch: sourceBranch,
+                    targetBranch: targetBranch
+                )
+                await MainActor.run {
+                    isMergingBranches = false
+                    projects.notifyDataChanged()
+                    loadBranches()
+                }
+            } catch {
+                await MainActor.run {
+                    isMergingBranches = false
+                    compareError = error.localizedDescription
+                    projects.notifyDataChanged()
                 }
             }
         }
