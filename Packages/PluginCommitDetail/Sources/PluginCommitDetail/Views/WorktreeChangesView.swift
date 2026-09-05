@@ -1,6 +1,5 @@
 import KitGit
 import LumiUI
-import ProviderProjects
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -11,7 +10,7 @@ private func loc(_ key: String) -> String {
 ///
 /// 当 `CommitDetailViewModel.selectedCommit` 为 nil（用户点击了工作区状态条）
 /// 且当前项目有未提交变更时展示。加载 `git status --porcelain` 文件列表，
-/// 选中文件时通过 `projects.selectFile` 写入 Provider，右侧 git diff 插件据此展示 diff。
+/// 选中文件时通过插件注入的 intent 写入 Provider，右侧 git diff 插件据此展示 diff。
 ///
 /// 工作区干净（无未提交变更）时不渲染任何内容、不占布局——「干净状态视图」
 /// （仓库信息 + Git 用户配置）已独立到 `PluginWorktreeClean` 插件，作为主内容区
@@ -20,13 +19,16 @@ private func loc(_ key: String) -> String {
 /// 外部仓库数据变化（提交 / 推送 / 分支切换）由 `CommitDetailObserver` 翻译成
 /// ViewModel 的 `worktreeRevision`，这里只订阅 ViewModel，不直接监听通知。
 struct WorktreeChangesView: View {
-    let projects: any ProjectProviding
     @ObservedObject var viewModel: CommitDetailViewModel
+    let onSelectFile: (String?) -> Void
+    let onDataChanged: () -> Void
     @LumiTheme private var theme
 
     @State private var entries: [GitStatusEntry] = []
     @State private var isLoading = false
     @State private var loadError: String?
+    @State private var actionError: String?
+    @State private var stagingPath: String?
     @State private var loadedProjectURL: URL?
 
     var body: some View {
@@ -54,6 +56,15 @@ struct WorktreeChangesView: View {
             } else {
                 VStack(spacing: 0) {
                     header
+                    if let actionError {
+                        Text(actionError)
+                            .font(.appCaption)
+                            .foregroundStyle(theme.error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(theme.error.opacity(0.08))
+                    }
                     // 与其他列表（CommitRailView / CommitDetailLayout）一致：
                     // ScrollView + LazyVStack + AppListRow（自带选中 / hover 背景与描边），
                     // 行间用 AppDivider 分隔。
@@ -105,7 +116,7 @@ struct WorktreeChangesView: View {
 
     private func fileRow(_ entry: GitStatusEntry) -> some View {
         let isSelected = viewModel.selectedFile == entry.path
-        return AppListRow(isSelected: isSelected, action: { projects.selectFile(entry.path) }) {
+        return AppListRow(isSelected: isSelected, action: { onSelectFile(entry.path) }) {
             HStack(spacing: 8) {
                 Image(systemName: statusIcon(entry))
                     .font(.system(size: 11))
@@ -127,6 +138,23 @@ struct WorktreeChangesView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 Spacer(minLength: 8)
+
+                if entry.isUntracked || entry.isWorktreeModified {
+                    if stagingPath == entry.path {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        AppIconButton(
+                            systemImage: "plus.rectangle.on.folder",
+                            label: loc("Stage"),
+                            tint: theme.primary,
+                            size: .compact
+                        ) {
+                            stage(entry)
+                        }
+                        .disabled(stagingPath != nil)
+                    }
+                }
             }
         }
     }
@@ -159,23 +187,48 @@ struct WorktreeChangesView: View {
         return loc("Not Staged")
     }
 
+    // MARK: - Actions
+
+    private func stage(_ entry: GitStatusEntry) {
+        guard let projectURL = viewModel.selectedProjectURL else { return }
+
+        stagingPath = entry.path
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitCommitOperation.stageFiles([entry.path], in: projectURL)
+            }
+            await MainActor.run {
+                stagingPath = nil
+                switch result {
+                case .success:
+                    onDataChanged()
+                case .failure(let error):
+                    actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                }
+            }
+        }
+    }
+
     // MARK: - Loading
 
     private func reloadIfNeeded(force: Bool = false) {
-        guard let project = projects.currentProject else {
+        guard let projectURL = viewModel.selectedProjectURL else {
             loadedProjectURL = nil
             entries = []
             isLoading = false
+            actionError = nil
+            stagingPath = nil
             return
         }
-        if loadedProjectURL == project.url && !force { return }
+        if loadedProjectURL == projectURL && !force { return }
 
-        loadedProjectURL = project.url
+        loadedProjectURL = projectURL
         isLoading = true
         entries = []
         loadError = nil
 
-        let url = project.url
+        let url = projectURL
         Task.detached(priority: .userInitiated) {
             let result = Result { try GitStatusLoader.loadEntries(in: url) }
             await MainActor.run {

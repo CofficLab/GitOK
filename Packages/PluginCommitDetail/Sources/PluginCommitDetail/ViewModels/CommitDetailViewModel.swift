@@ -11,7 +11,7 @@ final class CommitDetailViewModel: ObservableObject {
     /// 当前选中的 commit；未选中时为 nil。
     @Published private(set) var selectedCommit: GitCommit?
 
-    /// 选中 commit 所属的项目路径。
+    /// 当前项目路径（有选中 commit 时即为该 commit 所属项目路径）。
     @Published private(set) var selectedProjectURL: URL?
 
     /// 当前选中的 commit 内选中的文件路径；未选中文件时为 nil。
@@ -31,7 +31,7 @@ final class CommitDetailViewModel: ObservableObject {
     /// 工作区变动列表据此强制重载；commit 详情内容不可变，无需重载。
     @Published private(set) var worktreeRevision = 0
 
-    /// 外部选中状态变化（commit 或文件）→ 同步最新值。
+    /// 外部项目 / 选中状态变化 → 同步最新值。
     func handleSelectionChanged(commit: GitCommit?, projectURL: URL?, file: String?) {
         selectedCommit = commit
         selectedProjectURL = projectURL

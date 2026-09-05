@@ -35,6 +35,15 @@ public enum GitCommitOperation {
         _ = try GitProcessRunner.run(["add", "-A"], in: repository)
     }
 
+    /// 暂存指定文件（`git add -- <paths>`）。
+    ///
+    /// 空路径列表按旧版 `GitRepositoryCLI.addFiles(_:)` 的语义视为 no-op。
+    /// 路径作为独立进程参数传递，避免文件名中的空格或 `-` 被错误解析。
+    public static func stageFiles(_ filePaths: [String], in repository: URL) throws {
+        guard !filePaths.isEmpty else { return }
+        _ = try GitProcessRunner.run(["add", "--"] + filePaths, in: repository)
+    }
+
     /// 创建提交。
     ///
     /// 消息按空行分段为多个 `-m`（git 会用空行连接各段），支持

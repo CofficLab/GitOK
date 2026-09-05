@@ -124,29 +124,34 @@ final class CommitDetailPluginTests: XCTestCase {
         CommitDetailObserver(
             projects: projects,
             gitWatch: nil,
-            onSelectionChanged: { [weak viewModel, weak projects] in
-                guard let projects else { return }
-                viewModel?.handleSelectionChanged(
-                    commit: projects.currentCommit,
-                    projectURL: projects.currentProject?.url,
-                    file: projects.currentFile
-                )
-            },
-            onCommitFilesChanged: { [weak viewModel, weak projects] in
-                guard let projects else { return }
-                viewModel?.handleCommitFilesChanged(
-                    files: projects.currentCommitFiles,
-                    isLoading: projects.isLoadingCommitFiles,
-                    loadError: projects.currentCommitFilesLoadError
-                )
-            },
-            onProjectDataChanged: { [weak viewModel] in
-                viewModel?.handleProjectDataChanged()
-            },
-            onWorkingTreeChanged: { [weak viewModel] in
-                viewModel?.handleProjectDataChanged()
-            }
+            viewModel: viewModel
         )
+    }
+
+    func testObserverSynchronizesInitialProvidingSnapshot() {
+        let projects = MockProjects()
+        let url = URL(fileURLWithPath: "/tmp/repo")
+        let selected = commit("initial")
+        let change = GitFileChange(
+            path: "Sources/App.swift",
+            status: .modified,
+            addedLines: 2,
+            deletedLines: 1
+        )
+        projects.currentProject = Project(url: url, lastOpenedAt: Date())
+        projects.currentCommit = selected
+        projects.currentFile = change.path
+        projects.currentCommitFiles = [change]
+        projects.isLoadingCommitFiles = false
+
+        let viewModel = CommitDetailViewModel()
+        let observer = makeObserver(projects: projects, viewModel: viewModel)
+        defer { observer.cancel() }
+
+        XCTAssertEqual(viewModel.selectedCommit?.hash, selected.hash)
+        XCTAssertEqual(viewModel.selectedProjectURL, url)
+        XCTAssertEqual(viewModel.selectedFile, change.path)
+        XCTAssertEqual(viewModel.currentCommitFiles, [change])
     }
 
     func testObserverTranslatesCommitSelectionToViewModel() {
@@ -199,8 +204,11 @@ final class CommitDetailPluginTests: XCTestCase {
         XCTAssertEqual(viewModel.worktreeRevision, 0)
         // 场景 B：未选中任何 commit，直接切换项目。
         XCTAssertNil(viewModel.selectedCommit)
+        let url = URL(fileURLWithPath: "/tmp/selected-project")
+        projects.currentProject = Project(url: url, lastOpenedAt: Date())
         projects.notifySelectionChanged()
         XCTAssertEqual(viewModel.worktreeRevision, 1)
+        XCTAssertEqual(viewModel.selectedProjectURL, url)
 
         // 关闭项目同样触发重载。
         projects.notifySelectionChanged()

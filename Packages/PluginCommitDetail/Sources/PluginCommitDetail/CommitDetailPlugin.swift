@@ -67,53 +67,31 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
 
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
-        // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照，
-        // 避免注册时机导致 UI 永久使用默认值。
+        // 插件入口是插件级外部监听的唯一持有者）。Observer 负责订阅外部
+        // providing、读取快照并直接更新 ViewModel。
         let viewModel = CommitDetailViewModel()
         self.viewModel = viewModel
         observer = CommitDetailObserver(
             projects: projects,
             gitWatch: gitWatch,
-            onSelectionChanged: { [weak viewModel, weak projects] in
-                guard let projects else { return }
-                viewModel?.handleSelectionChanged(
-                    commit: projects.currentCommit,
-                    projectURL: projects.currentProject?.url,
-                    file: projects.currentFile
-                )
-            },
-            onCommitFilesChanged: { [weak viewModel, weak projects] in
-                guard let projects else { return }
-                viewModel?.handleCommitFilesChanged(
-                    files: projects.currentCommitFiles,
-                    isLoading: projects.isLoadingCommitFiles,
-                    loadError: projects.currentCommitFilesLoadError
-                )
-            },
-            onProjectDataChanged: { [weak viewModel] in
-                viewModel?.handleProjectDataChanged()
-            },
-            onWorkingTreeChanged: { [weak viewModel] in
-                // 工作区文件变化 → 触发工作区变动列表重载。
-                // 复用 worktreeRevision 递增机制（与 dataChanged 相同）。
-                viewModel?.handleProjectDataChanged()
-            }
+            viewModel: viewModel
         )
-        viewModel.handleSelectionChanged(
-            commit: projects.currentCommit,
-            projectURL: projects.currentProject?.url,
-            file: projects.currentFile
-        )
-        viewModel.handleCommitFilesChanged(
-            files: projects.currentCommitFiles,
-            isLoading: projects.isLoadingCommitFiles,
-            loadError: projects.currentCommitFilesLoadError
-        )
+
+        let selectFile: (String?) -> Void = { [weak projects] path in
+            projects?.selectFile(path)
+        }
+        let notifyDataChanged: () -> Void = { [weak projects] in
+            projects?.notifyDataChanged()
+        }
 
         // 作为主内容区的一块贡献（order 大于 Commit Form，VStack 中位于表单下方）。
         contentView.addContentView(
             AnyView(
-                CommitDetailView(projects: projects, viewModel: viewModel)
+                CommitDetailView(
+                    viewModel: viewModel,
+                    onSelectFile: selectFile,
+                    onDataChanged: notifyDataChanged
+                )
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
             ),

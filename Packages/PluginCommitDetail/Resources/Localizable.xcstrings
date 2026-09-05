@@ -40,6 +40,16 @@
         }
       }
     },
+    "Stage" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂存"
+          }
+        }
+      }
+    },
     "Not Staged" : {
       "localizations" : {
         "zh-Hans" : {

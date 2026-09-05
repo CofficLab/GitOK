@@ -47,6 +47,28 @@ final class GitCommitOperationTests: XCTestCase {
         XCTAssertTrue(output.contains("Co-authored-by: Jane <jane@t.com>"))
     }
 
+    func testStageFilesStagesOnlyRequestedFilesAndEmptyInputIsNoOp() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+
+        try GitCommitOperation.stageFiles([], in: repo)
+        var entries = try GitStatusLoader.loadEntries(in: repo)
+        XCTAssertEqual(entries.count, 2)
+        XCTAssertTrue(entries.allSatisfy(\.isUntracked))
+
+        try GitCommitOperation.stageFiles(["a.txt"], in: repo)
+        entries = try GitStatusLoader.loadEntries(in: repo)
+
+        let staged = try XCTUnwrap(entries.first(where: { $0.path == "a.txt" }))
+        XCTAssertEqual(staged.stagedStatus, "A")
+        XCTAssertEqual(staged.worktreeStatus, " ")
+
+        let untouched = try XCTUnwrap(entries.first(where: { $0.path == "b.txt" }))
+        XCTAssertTrue(untouched.isUntracked)
+    }
+
     func testCommitWithNothingToCommitThrows() throws {
         let repo = try makeRepo()
         defer { try? FileManager.default.removeItem(at: repo) }
