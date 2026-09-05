@@ -85,8 +85,7 @@ ContentView queries PluginService for toolbar / list / detail / statusbar
 ## 贡献 ID 纪律
 
 所有贡献项 `id` 必须是插件前缀的稳定标识（如 `metadata.id` 或 `"plugin-id.slot"`），
-禁止裸 UI 文案或临时字符串，保证排序与调试可追溯。`Scripts/check-plugin-package-boundaries.sh`
-与 `FactoryGitOK` 的守护测试负责校验。
+禁止裸 UI 文案或临时字符串，保证排序与调试可追溯；由 `FactoryGitOK` 的守护测试负责校验。
 
 ## 贡献点
 

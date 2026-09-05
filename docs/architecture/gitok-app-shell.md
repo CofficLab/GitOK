@@ -104,13 +104,3 @@ The host engine (KernelFactory, RootContainer compatibility graph, RootView,
 layout views, `PluginService`, app services, commands) lives in
 `Packages/FactoryCore`; shell-owned chrome is injected through
 `GitOKFactoryChrome` instead of hard dependencies.
-
-## Boundary check
-
-Run from repository root:
-
-```bash
-bash Scripts/check-plugin-package-boundaries.sh
-```
-
-CI runs the same script in `.github/workflows/boundaries.yaml`.
