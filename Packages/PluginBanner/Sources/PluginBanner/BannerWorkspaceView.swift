@@ -5,10 +5,10 @@ import SwiftUI
 
 @MainActor
 public struct BannerWorkspaceView: View {
-    @StateObject private var model: BannerWorkspaceModel
+    @ObservedObject private var model: BannerWorkspaceModel
 
-    public init(projects: any ProjectProviding, repository: BannerRepository = BannerRepository()) {
-        _model = StateObject(wrappedValue: BannerWorkspaceModel(projects: projects, repository: repository))
+    public init(model: BannerWorkspaceModel) {
+        self.model = model
     }
 
     public var body: some View {

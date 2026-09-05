@@ -16,31 +16,26 @@ public final class BannerWorkspaceModel: ObservableObject {
     @Published public var opacity = 1.0
     @Published public private(set) var message: String?
 
-    private let projects: any ProjectProviding
+    private let capability: any BannerProjectCapability
     private let repository: BannerRepository
-    private var projectObserver: (any ProjectProvidingObserverHandle)?
 
     public init(
-        projects: any ProjectProviding,
+        capability: any BannerProjectCapability,
         repository: BannerRepository = BannerRepository()
     ) {
-        self.projects = projects
+        self.capability = capability
         self.repository = repository
-        projectObserver = projects.addObserver { [weak self] event in
-            guard case .selectionChanged = event else { return }
-            self?.reload()
-        }
         reload()
     }
 
-    public var currentProject: Project? { projects.currentProject }
+    public var currentProject: Project? { capability.currentProject }
     public var selectedBanner: BannerFile? {
         guard let selectedBannerID else { return nil }
         return banners.first { $0.id == selectedBannerID }
     }
 
     public func reload() {
-        guard let project = projects.currentProject else {
+        guard let project = capability.currentProject else {
             banners = []
             selectedBannerID = nil
             resetDraft()
@@ -63,7 +58,7 @@ public final class BannerWorkspaceModel: ObservableObject {
     }
 
     public func createBanner() {
-        guard let project = projects.currentProject else { return }
+        guard let project = capability.currentProject else { return }
         do {
             let banner = try repository.createBanner(in: project.url)
             reload()
@@ -96,7 +91,7 @@ public final class BannerWorkspaceModel: ObservableObject {
                     .split(separator: "\n")
                     .map(String.init)
                     .filter { !$0.isEmpty },
-                imageId: imageURL.map { repository.imageID(for: $0, projectURL: projects.currentProject?.url) },
+                imageId: imageURL.map { repository.imageID(for: $0, projectURL: capability.currentProject?.url) },
                 selectedDevice: selectedDeviceID,
                 backgroundId: backgroundID,
                 opacity: opacity
@@ -104,7 +99,7 @@ public final class BannerWorkspaceModel: ObservableObject {
         } else {
             banner.minimalData = MinimalBannerData(
                 title: title,
-                imageId: imageURL.map { repository.imageID(for: $0, projectURL: projects.currentProject?.url) },
+                imageId: imageURL.map { repository.imageID(for: $0, projectURL: capability.currentProject?.url) },
                 selectedDevice: selectedDeviceID,
                 backgroundId: backgroundID,
                 opacity: opacity
@@ -124,7 +119,7 @@ public final class BannerWorkspaceModel: ObservableObject {
     }
 
     public func importImage(from sourceURL: URL) {
-        guard let project = projects.currentProject else { return }
+        guard let project = capability.currentProject else { return }
         do {
             let imageID = try repository.importImage(from: sourceURL, for: project.url)
             imageURL = repository.imageURL(for: imageID, in: project.url)
@@ -190,7 +185,7 @@ public final class BannerWorkspaceModel: ObservableObject {
             title = data.title
             subTitle = data.subTitle
             featuresText = data.features.joined(separator: "\n")
-            imageURL = data.imageId.map { repository.imageURL(for: $0, in: projects.currentProject?.url ?? URL(fileURLWithPath: "/")) }
+            imageURL = data.imageId.map { repository.imageURL(for: $0, in: capability.currentProject?.url ?? URL(fileURLWithPath: "/")) }
             selectedDeviceID = data.selectedDevice ?? BannerExportDevice.iPhoneBig.rawValue
             backgroundID = MagicBackgroundGroup.gradientName(for: data.backgroundId).rawValue
             opacity = data.opacity
@@ -198,7 +193,7 @@ public final class BannerWorkspaceModel: ObservableObject {
             title = data.title
             subTitle = ""
             featuresText = ""
-            imageURL = data.imageId.map { repository.imageURL(for: $0, in: projects.currentProject?.url ?? URL(fileURLWithPath: "/")) }
+            imageURL = data.imageId.map { repository.imageURL(for: $0, in: capability.currentProject?.url ?? URL(fileURLWithPath: "/")) }
             selectedDeviceID = data.selectedDevice ?? BannerExportDevice.iPhoneBig.rawValue
             backgroundID = MagicBackgroundGroup.gradientName(for: data.backgroundId).rawValue
             opacity = data.opacity

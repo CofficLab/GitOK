@@ -22,6 +22,8 @@ public final class BannerPlugin: SuperPlugin {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: BannerSceneObserver?
+    private var workspaceViewModel: BannerWorkspaceModel?
+    private var projectObserver: BannerProjectObserver?
 
     public init() {}
 
@@ -37,12 +39,17 @@ public final class BannerPlugin: SuperPlugin {
 
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .banner)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = BannerSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = BannerSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = BannerSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
+        let projectCapability = BannerProjectCapabilityAdapter(projects: projects)
+        let workspaceViewModel = BannerWorkspaceModel(capability: projectCapability)
+        self.workspaceViewModel = workspaceViewModel
+        self.projectObserver = BannerProjectObserver(capability: projectCapability, viewModel: workspaceViewModel)
 
         contentView.addContentView(
             AnyView(
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    BannerWorkspaceView(projects: projects)
+                    BannerWorkspaceView(model: workspaceViewModel)
                 }
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
@@ -56,6 +63,9 @@ public final class BannerPlugin: SuperPlugin {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        projectObserver?.cancel()
+        projectObserver = nil
+        workspaceViewModel = nil
         kernel.resolveProvider((any ContentViewProviding).self)?
             .removeContentView(id: "\(id).content")
     }
