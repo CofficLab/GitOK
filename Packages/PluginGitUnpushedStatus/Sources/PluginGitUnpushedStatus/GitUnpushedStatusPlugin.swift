@@ -51,7 +51,8 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitUnpushedStatusSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitUnpushedStatusSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitUnpushedStatusSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
