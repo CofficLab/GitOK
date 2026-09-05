@@ -402,6 +402,24 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "繼續合併" } }
       }
     },
+    "Abort Cherry-pick": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Abort Cherry-pick" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "终止 Cherry-pick" } }
+      }
+    },
+    "Confirm Abort Cherry-pick?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Abort Cherry-pick?" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认终止 Cherry-pick？" } }
+      }
+    },
+    "Continue Cherry-pick": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Continue Cherry-pick" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "继续 Cherry-pick" } }
+      }
+    },
     "Resolve all conflicts before continuing the merge.": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Resolve all conflicts before continuing the merge." } },
@@ -418,6 +436,18 @@
         "zh-Hant": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } },
         "zh-HK": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } },
         "zh-TW": { "stringUnit": { "state": "translated", "value": "這會放棄正在進行的合併並恢復合併前狀態。" } }
+      }
+    },
+    "This discards the in-progress cherry-pick and restores the pre-cherry-pick state.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This discards the in-progress cherry-pick and restores the pre-cherry-pick state." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "这会放弃正在进行的 Cherry-pick 并恢复操作前状态。" } }
+      }
+    },
+    "Resolve all conflicts before continuing the cherry-pick.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Resolve all conflicts before continuing the cherry-pick." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "请先解决所有冲突，再继续 Cherry-pick。" } }
       }
     },
     "Use Base": {
