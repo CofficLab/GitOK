@@ -20,7 +20,8 @@ public protocol AutoPushProviding: AnyObject {
 // MARK: - Default Implementation
 
 /// `AutoPushProviding` 默认实现：开关持久化到
-/// `StorageProviding.pluginDataDirectory(for: "AutoPush")` 下的 JSON 文件。
+/// `StorageProviding.pluginDataDirectory(for: "com.coffic.gitok.plugin.git-auto-push")`
+/// 下的 JSON 文件。
 @MainActor
 public final class DefaultAutoPushProvider: AutoPushProviding {
     private let storage: any StorageProviding
@@ -29,7 +30,7 @@ public final class DefaultAutoPushProvider: AutoPushProviding {
 
     public init(storage: any StorageProviding) {
         self.storage = storage
-        let directory = storage.pluginDataDirectory(for: "AutoPush")
+        let directory = storage.pluginDataDirectory(for: "com.coffic.gitok.plugin.git-auto-push")
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         self.fileURL = directory.appendingPathComponent("settings.json")
         if let data = try? Data(contentsOf: fileURL),

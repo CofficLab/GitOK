@@ -9,12 +9,12 @@ import os
 /// 插件管理插件（完美复刻 Lumi）。
 @MainActor
 public final class PluginPluginManager: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.plugin-manager", category: "PluginManager")
-    public let id = "com.coffic.lumi.plugin.plugin-manager"
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.plugin-manager", category: "PluginManager")
+    public let id = "com.coffic.gitok.plugin.plugin-manager"
     public let order = 90
 
     public let metadata = PluginMetadata(
-        id: "com.coffic.lumi.plugin.plugin-manager",
+        id: "com.coffic.gitok.plugin.plugin-manager",
         name: "Plugin Management",
         description: "Manage all registered plugins.",
         version: "1.0.0",

@@ -16,14 +16,14 @@ import KitSuperLog
 ///   确保后续插件 `resolveProvider((any LogoProviding).self)` 拿到的是本插件的实现。
 @MainActor
 public final class PluginLogoManager: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.logo-manager", category: "Plugin")
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.logo-manager", category: "Plugin")
     public nonisolated static let emoji = "🖼️"
     nonisolated static let verbose = false
 
-    public let id = "com.coffic.lumi.plugin.logo-manager"
+    public let id = "com.coffic.gitok.plugin.logo-manager"
     public let order = 4
     public let metadata = PluginMetadata(
-        id: "com.coffic.lumi.plugin.logo-manager",
+        id: "com.coffic.gitok.plugin.logo-manager",
         name: "Plugin Logo Manager",
         description: "",
         category: .design,

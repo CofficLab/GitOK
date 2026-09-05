@@ -12,7 +12,7 @@ import SwiftUI
 /// - 内置结构化日志，便于诊断注册 / 注销 / 选中切换。
 @MainActor
 public final class SettingViewManager: SettingViewProviding, ObservableObject, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.setting-view", category: "Plugin")
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.setting-view", category: "Plugin")
     public nonisolated static let emoji = "⚙️"
     nonisolated static let verbose = false
 

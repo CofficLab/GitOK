@@ -17,7 +17,7 @@ public final class GitCommitStyleSettingsPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-commit-style-settings"
     public let order = 43
-    public let dependencies = ["com.coffic.lumi.plugin.setting-view"]
+    public let dependencies = ["com.coffic.gitok.plugin.setting-view"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-commit-style-settings",
         name: "Commit Style",

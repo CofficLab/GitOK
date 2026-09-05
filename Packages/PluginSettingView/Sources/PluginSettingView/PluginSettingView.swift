@@ -15,14 +15,14 @@ import ProviderSettingView
 ///   确保后续插件 `resolveProvider((any SettingViewProviding).self)` 拿到的是本插件的实现。
 @MainActor
 public final class PluginSettingView: SuperPlugin, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.plugin.setting-view", category: "Plugin")
+    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.setting-view", category: "Plugin")
     public nonisolated static let emoji = "⚙️"
     nonisolated static let verbose = false
 
-    public let id = "com.coffic.lumi.plugin.setting-view"
+    public let id = "com.coffic.gitok.plugin.setting-view"
     public let order = 3
     public let metadata = PluginMetadata(
-        id: "com.coffic.lumi.plugin.setting-view",
+        id: "com.coffic.gitok.plugin.setting-view",
         name: "Plugin Setting View",
         description: "",
         category: .general,

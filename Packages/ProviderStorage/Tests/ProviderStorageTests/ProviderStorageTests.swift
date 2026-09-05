@@ -88,9 +88,9 @@ struct ProviderStorageTests {
     private func makeStore() -> PluginEnabledStateStore {
         let tempRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent("PluginEnabledStateStoreTests-\(UUID().uuidString)", isDirectory: true)
-        // 与旧版一致：数据目录名固定为 "PluginManager"，保证文件落在原目录。
+        // 数据目录名 = 插件 id（com.coffic.gitok.plugin.plugin-manager）。
         let dir = DefaultStorageProvider(dataRootDirectory: tempRoot)
-            .pluginDataDirectory(for: "PluginManager")
+            .pluginDataDirectory(for: "com.coffic.gitok.plugin.plugin-manager")
         return PluginEnabledStateStore(pluginDirectory: dir)
     }
 
@@ -105,11 +105,11 @@ struct ProviderStorageTests {
         let tempRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent("PluginEnabledStateStoreReload-\(UUID().uuidString)", isDirectory: true)
         let dir = DefaultStorageProvider(dataRootDirectory: tempRoot)
-            .pluginDataDirectory(for: "PluginManager")
+            .pluginDataDirectory(for: "com.coffic.gitok.plugin.plugin-manager")
         let store = PluginEnabledStateStore(pluginDirectory: dir)
         store.setEnabled(false, pluginID: "com.example.plugin")
 
-        // 文件应写入 <root>/PluginManager/plugin-enabled-overrides.plist（原目录 + 原名）。
+        // 文件应写入 <root>/com.coffic.gitok.plugin.plugin-manager/plugin-enabled-overrides.plist。
         let fileURL = dir.appendingPathComponent("plugin-enabled-overrides.plist", isDirectory: false)
         #expect(FileManager.default.fileExists(atPath: fileURL.path))
 
@@ -133,7 +133,7 @@ struct ProviderStorageTests {
         let tempRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent("KernelPluginStateTests-\(UUID().uuidString)", isDirectory: true)
         let storage = DefaultStorageProvider(dataRootDirectory: tempRoot)
-        let pluginDirectory = storage.pluginDataDirectory(for: "PluginManager")
+        let pluginDirectory = storage.pluginDataDirectory(for: "com.coffic.gitok.plugin.plugin-manager")
         let pluginID = "com.example.persisted-plugin"
 
         let kernel = KernelCoreContainer()
@@ -167,7 +167,7 @@ struct ProviderStorageTests {
             .appendingPathComponent("KernelPluginPolicyTests-\(UUID().uuidString)", isDirectory: true)
         let storage = DefaultStorageProvider(dataRootDirectory: tempRoot)
         let store = PluginEnabledStateStore(
-            pluginDirectory: storage.pluginDataDirectory(for: "PluginManager")
+            pluginDirectory: storage.pluginDataDirectory(for: "com.coffic.gitok.plugin.plugin-manager")
         )
         store.setEnabled(false, pluginID: "com.example.required-plugin")
 

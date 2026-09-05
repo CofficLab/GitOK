@@ -16,7 +16,7 @@ public final class GitNetworkSettingsPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-network-settings"
     public let order = 41
-    public let dependencies = ["com.coffic.lumi.plugin.setting-view"]
+    public let dependencies = ["com.coffic.gitok.plugin.setting-view"]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-network-settings",
         name: "Git Network Settings",
