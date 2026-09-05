@@ -77,6 +77,15 @@ public final class IconWorkspaceModel: ObservableObject {
         }
     }
 
+    public func chooseCustomSourceFolder(_ url: URL) {
+        sourceProvider.setCustomFolderURL(url)
+        selectedSourceID = IconSourceID.customFolder
+        selectedSourceCategory = nil
+        if let project = projects.currentProject {
+            loadSourceAssets(in: project.url)
+        }
+    }
+
     public func importSourceAsset(_ asset: IconSourceAsset) {
         guard let project = projects.currentProject else { return }
         Task { @MainActor [weak self] in

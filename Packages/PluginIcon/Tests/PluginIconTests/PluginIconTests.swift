@@ -63,6 +63,24 @@ struct PluginIconTests {
         #expect(Set(assets.compactMap(\.category)) == ["Abstract", "Business"])
     }
 
+    @Test("custom folder source scans nested categories and root files")
+    func scansCustomFolderSource() async throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PluginIconCustom-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let category = root.appendingPathComponent("Logos", isDirectory: true)
+        try FileManager.default.createDirectory(at: category, withIntermediateDirectories: true)
+        try Data([0, 1]).write(to: category.appendingPathComponent("nested.png"))
+        try Data([0, 1]).write(to: root.appendingPathComponent("root.jpg"))
+
+        let provider = DefaultIconSourceProvider()
+        provider.setCustomFolderURL(root)
+        let assets = try await provider.assets(for: IconSourceID.customFolder, in: root)
+        #expect(assets.count == 2)
+        #expect(assets.contains { $0.category == "Logos" })
+        #expect(assets.contains { $0.category == nil })
+    }
+
     @Test("legacy icon JSON accepts integer icon IDs")
     func acceptsIntegerIconID() throws {
         let data = Data(#"{"title":"Demo","iconId":7,"backgroundId":"3"}"#.utf8)

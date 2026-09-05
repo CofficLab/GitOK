@@ -6,6 +6,7 @@ public enum IconSourceID {
     public static let remoteManifest = "remote-manifest"
     public static let generatedAssets = "generated-assets"
     public static let bundledIcons = "bundled-icons"
+    public static let customFolder = "custom-folder"
 }
 
 public enum IconSourceAssetPayload: Hashable, Sendable {
@@ -54,23 +55,31 @@ public struct IconSourceAsset: Identifiable, Hashable, Sendable {
 public protocol IconSourceProviding: Sendable {
     var sources: [IconSourceDescriptor] { get }
     func assets(for sourceID: String, in projectURL: URL) async throws -> [IconSourceAsset]
+    func setCustomFolderURL(_ url: URL?)
+}
+
+public extension IconSourceProviding {
+    func setCustomFolderURL(_ url: URL?) {}
 }
 
 /// Reads project images locally and the legacy GitOK icon manifest remotely.
 public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Sendable {
-    public let sources: [IconSourceDescriptor]
+    public private(set) var sources: [IconSourceDescriptor]
 
     private let manifestURL: URL
     private let bundledIconsURL: URL?
     private let fileManager: FileManager
+    private var customFolderURL: URL?
 
     public init(
         manifestURL: URL = URL(string: "https://gitok.coffic.cn/icon-manifest.json")!,
         bundledIconsURL: URL? = nil,
+        customFolderURL: URL? = nil,
         fileManager: FileManager = .default
     ) {
         self.manifestURL = manifestURL
         self.bundledIconsURL = bundledIconsURL
+        self.customFolderURL = customFolderURL
         self.fileManager = fileManager
         var sources = [
             IconSourceDescriptor(id: IconSourceID.projectImages, title: "Project Images"),
@@ -83,7 +92,19 @@ public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Se
                 at: 0
             )
         }
+        if customFolderURL != nil {
+            sources.append(IconSourceDescriptor(id: IconSourceID.customFolder, title: "Custom Folder"))
+        }
         self.sources = sources
+    }
+
+    public func setCustomFolderURL(_ url: URL?) {
+        customFolderURL = url
+        if url != nil, !sources.contains(where: { $0.id == IconSourceID.customFolder }) {
+            sources.append(IconSourceDescriptor(id: IconSourceID.customFolder, title: "Custom Folder"))
+        } else if url == nil {
+            sources.removeAll { $0.id == IconSourceID.customFolder }
+        }
     }
 
     public func assets(for sourceID: String, in projectURL: URL) async throws -> [IconSourceAsset] {
@@ -96,6 +117,8 @@ public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Se
             return generatedAssets()
         case IconSourceID.bundledIcons:
             return bundledAssets()
+        case IconSourceID.customFolder:
+            return customAssets()
         default:
             return []
         }
@@ -143,6 +166,52 @@ public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Se
             }
         }
         .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+
+    private func customAssets() -> [IconSourceAsset] {
+        guard let customFolderURL,
+              let entries = try? fileManager.contentsOfDirectory(atPath: customFolderURL.path) else {
+            return []
+        }
+        return entries.reduce(into: [IconSourceAsset]()) { result, entry in
+            let entryURL = customFolderURL.appendingPathComponent(entry)
+            var isDirectory: ObjCBool = false
+            guard fileManager.fileExists(atPath: entryURL.path, isDirectory: &isDirectory) else { return }
+            if isDirectory.boolValue {
+                guard let files = try? fileManager.contentsOfDirectory(atPath: entryURL.path) else { return }
+                result += imageAssets(
+                    in: entryURL,
+                    entries: files,
+                    category: entry,
+                    sourceID: IconSourceID.customFolder
+                )
+            } else {
+                result += imageAssets(
+                    in: customFolderURL,
+                    entries: [entry],
+                    category: nil,
+                    sourceID: IconSourceID.customFolder
+                )
+            }
+        }
+        .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+
+    private func imageAssets(
+        in directory: URL,
+        entries: [String],
+        category: String?,
+        sourceID: String
+    ) -> [IconSourceAsset] {
+        IconFileRules.imageFileURLs(in: directory, entries: entries).map { url in
+            IconSourceAsset(
+                id: url.path,
+                title: url.deletingPathExtension().lastPathComponent,
+                url: url,
+                sourceID: sourceID,
+                category: category
+            )
+        }
     }
 
     private func projectAssets(in projectURL: URL) -> [IconSourceAsset] {

@@ -74,6 +74,7 @@ public struct IconWorkspaceView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                Button("Choose Custom Folder", action: chooseCustomSourceFolder)
                 if !model.sourceCategories.isEmpty {
                     Picker("Category", selection: Binding(
                         get: { model.selectedSourceCategory ?? "all" },
@@ -139,6 +140,16 @@ public struct IconWorkspaceView: View {
         panel.allowsMultipleSelection = false
         if panel.runModal() == .OK, let url = panel.url {
             model.importImage(from: url)
+        }
+    }
+
+    private func chooseCustomSourceFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        if panel.runModal() == .OK, let url = panel.url {
+            model.chooseCustomSourceFolder(url)
         }
     }
 
