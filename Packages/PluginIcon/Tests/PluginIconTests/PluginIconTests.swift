@@ -100,6 +100,15 @@ struct PluginIconTests {
         #expect(decoded.iconId == "generated-assets:camera")
     }
 
+    @Test("persists corner radius in icon data")
+    func persistsCornerRadius() throws {
+        let icon = IconData(path: "/tmp/icon.json", cornerRadius: 128)
+        let data = try JSONEncoder().encode(icon)
+        let decoded = try JSONDecoder().decode(IconData.self, from: data)
+
+        #expect(decoded.cornerRadius == 128)
+    }
+
     @Test("creates, reloads, imports and deletes project icon data")
     func repositoryRoundTrip() throws {
         let projectURL = FileManager.default.temporaryDirectory

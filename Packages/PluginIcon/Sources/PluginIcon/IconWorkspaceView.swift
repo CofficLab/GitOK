@@ -98,8 +98,16 @@ public struct IconWorkspaceView: View {
                 }
                 Slider(value: $model.scale, in: 0.5...1.5) { Text("Scale") }
                 Slider(value: $model.padding, in: 0...0.3) { Text("Padding") }
+                Slider(value: $model.cornerRadius, in: 0...512) { Text("Corner Radius") }
                 Slider(value: $model.opacity, in: 0.2...1) { Text("Opacity") }
-                IconPreview(imageURL: model.imageURL, backgroundID: model.backgroundID, scale: model.scale, padding: model.padding, opacity: model.opacity)
+                IconPreview(
+                    imageURL: model.imageURL,
+                    backgroundID: model.backgroundID,
+                    scale: model.scale,
+                    padding: model.padding,
+                    cornerRadius: model.cornerRadius,
+                    opacity: model.opacity
+                )
                     .frame(maxWidth: .infinity, minHeight: 300)
             }
             .padding(24)
@@ -225,6 +233,7 @@ private struct IconPreview: View {
     let backgroundID: String
     let scale: Double
     let padding: Double
+    let cornerRadius: Double
     let opacity: Double
 
     var body: some View {
@@ -242,7 +251,7 @@ private struct IconPreview: View {
             }
         }
         .frame(width: 280, height: 280)
-        .clipShape(RoundedRectangle(cornerRadius: 48))
+        .clipShape(RoundedRectangle(cornerRadius: min(max(cornerRadius / 1024 * 280, 0), 140)))
         .opacity(opacity)
     }
 

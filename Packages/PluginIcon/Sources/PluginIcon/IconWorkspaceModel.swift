@@ -10,6 +10,7 @@ public final class IconWorkspaceModel: ObservableObject {
     @Published public var opacity = 1.0
     @Published public var scale = 1.0
     @Published public var padding = 0.12
+    @Published public var cornerRadius = 0.0
     @Published public private(set) var imageURL: URL?
     @Published public private(set) var selectedAssetID: String?
     @Published public private(set) var sourceAssets: [IconSourceAsset] = []
@@ -152,6 +153,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.opacity = opacity
         icon.scale = scale
         icon.padding = padding
+        icon.cornerRadius = cornerRadius
         icon.imageURL = imageURL
         icon.iconId = selectedAssetID ?? icon.iconId
         do {
@@ -186,6 +188,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.opacity = opacity
         icon.scale = scale
         icon.padding = padding
+        icon.cornerRadius = cornerRadius
         icon.imageURL = imageURL
         icon.iconId = selectedAssetID ?? icon.iconId
         do {
@@ -206,6 +209,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.opacity = opacity
         icon.scale = scale
         icon.padding = padding
+        icon.cornerRadius = cornerRadius
         icon.imageURL = imageURL
         icon.iconId = selectedAssetID ?? icon.iconId
         do {
@@ -265,6 +269,7 @@ public final class IconWorkspaceModel: ObservableObject {
         opacity = icon.opacity
         scale = icon.scale ?? 1
         padding = icon.padding
+        cornerRadius = icon.cornerRadius
         imageURL = icon.imageURL
         selectedAssetID = icon.iconId
     }
@@ -276,6 +281,7 @@ public final class IconWorkspaceModel: ObservableObject {
         icon.opacity = opacity
         icon.scale = scale
         icon.padding = padding
+        icon.cornerRadius = cornerRadius
         icon.imageURL = imageURL
         icon.iconId = selectedAssetID ?? icon.iconId
         return icon
@@ -287,6 +293,7 @@ public final class IconWorkspaceModel: ObservableObject {
         opacity = 1
         scale = 1
         padding = 0.12
+        cornerRadius = 0
         imageURL = nil
         selectedAssetID = nil
         sourceAssets = []
