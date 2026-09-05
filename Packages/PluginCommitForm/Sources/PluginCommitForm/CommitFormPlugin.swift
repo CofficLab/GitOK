@@ -63,7 +63,8 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
 
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = CommitFormSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = CommitFormSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = CommitFormSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         formHandle = form.addObserver { [weak projects] event in
             guard case .committed = event else { return }
