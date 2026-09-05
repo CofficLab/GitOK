@@ -12,6 +12,6 @@ struct PluginWorktreeStatusTests {
         let plugin = WorktreeStatusPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.worktree-status")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .required)
     }
 }

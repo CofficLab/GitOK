@@ -28,7 +28,7 @@ public final class ToastSuperPlugin: SuperPlugin, SuperLog {
         description: "Transient toast notifications overlay",
         category: .core,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
 
     /// Toast 状态机，由根覆盖层订阅渲染。

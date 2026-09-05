@@ -13,13 +13,13 @@ import PluginToast
 ///
 /// 大部分插件在注册文件中声明 `disabled`（彻底停用，不可配置），因此启动后
 /// 这些插件 onBoot 不会运行，Provider 保持宿主 `DefaultProviderFactory` 注册的
-/// 默认实现；启用插件的替换逻辑在插件被逐个恢复为可配置策略后再验证。
+/// 默认实现；核心 Toast 插件需要始终启动，才能提供全局 RootView Overlay。
 ///
 /// 已恢复的插件（policy 非 `.disabled`，例如 `GitBranchStatusPlugin` 的
 /// `.alwaysOn`）不在此基线断言范围内，各自有独立的插件级测试。
 @MainActor
 final class KernelBootIntegrationTests: XCTestCase {
-    /// 默认 disabled：插件 onBoot 未运行，provider 保持宿主默认实现。
+    /// 默认 disabled 插件不启动；核心 Toast 插件会替换宿主 no-op provider。
     func testBootDefaultsToDisabledPlugins() throws {
         let kernel = try KernelFactory.makeKernel()
 
@@ -36,10 +36,10 @@ final class KernelBootIntegrationTests: XCTestCase {
             } == true
         )
 
-        // 但插件 onBoot 的替换没有发生。
-        XCTAssertFalse(
+        // Toast 是核心能力，必须由插件启动并挂载 RootView Overlay。
+        XCTAssertTrue(
             kernel.resolveProvider((any ToastProviding).self) is ToastCenter,
-            "toast should be disabled; provider should stay the host no-op"
+            "toast should be active so core errors can be rendered by the root overlay"
         )
     }
 }
