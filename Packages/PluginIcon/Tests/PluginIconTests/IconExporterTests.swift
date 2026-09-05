@@ -67,6 +67,29 @@ struct IconExporterTests {
         }
     }
 
+    @Test("exports PNG, ImageSet and Favicon formats")
+    func exportsAdditionalFormats() throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PluginIconFormats-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let sourceURL = root.appendingPathComponent("source.png")
+        try makeSourceImage(at: sourceURL)
+        let icon = IconData(imageURL: sourceURL, path: "")
+
+        let pngFolder = root.appendingPathComponent("png", isDirectory: true)
+        let imageSetFolder = root.appendingPathComponent("imageset", isDirectory: true)
+        let faviconFolder = root.appendingPathComponent("favicon", isDirectory: true)
+        try IconExporter.exportPNGSet(from: icon, to: pngFolder)
+        try IconExporter.exportImageSet(from: icon, to: imageSetFolder)
+        try IconExporter.exportFavicon(from: icon, to: faviconFolder)
+
+        #expect(try FileManager.default.contentsOfDirectory(at: pngFolder, includingPropertiesForKeys: nil).count == 8)
+        #expect(FileManager.default.fileExists(atPath: imageSetFolder.appendingPathComponent("Contents.json").path))
+        #expect(FileManager.default.fileExists(atPath: faviconFolder.appendingPathComponent("favicon.ico").path))
+        #expect(FileManager.default.fileExists(atPath: faviconFolder.appendingPathComponent("favicon.html").path))
+    }
+
     private func makeSourceImage(at url: URL) throws {
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         guard let context = CGContext(

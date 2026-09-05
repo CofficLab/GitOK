@@ -40,6 +40,8 @@ public enum IconExporter {
         Slot(filename: "icon-1024.png", idiom: "universal", size: "1024x1024", scale: "1x", pixelSize: 1024),
     ]
 
+    public static let pngSetSizes = [16, 32, 48, 64, 128, 256, 512, 1024]
+
     public static func exportAppIcon(
         from sourceURL: URL,
         to destinationURL: URL,
@@ -118,6 +120,75 @@ public enum IconExporter {
         }
     }
 
+    public static func exportPNGSet(from icon: IconData, to folderURL: URL) throws {
+        let sourceImage = try loadSourceImage(for: icon)
+        try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        for size in pngSetSizes {
+            try writePNG(
+                sourceImage,
+                icon: icon,
+                pixelSize: size,
+                to: folderURL.appendingPathComponent("icon-\(size)x\(size).png")
+            )
+        }
+    }
+
+    public static func exportImageSet(
+        from icon: IconData,
+        to folderURL: URL,
+        basePointSize: Int = 256
+    ) throws {
+        let sourceImage = try loadSourceImage(for: icon)
+        try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        let scales = [("1x", 1), ("2x", 2), ("3x", 3)]
+        for (label, multiplier) in scales {
+            try writePNG(
+                sourceImage,
+                icon: icon,
+                pixelSize: basePointSize * multiplier,
+                to: folderURL.appendingPathComponent("icon-\(label).png")
+            )
+        }
+        let contents: [String: Any] = [
+            "images": scales.map { ["filename": "icon-\($0.0).png", "idiom": "universal", "scale": $0.0] },
+            "info": ["author": "xcode", "version": 1],
+        ]
+        let data = try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+        try data.write(to: folderURL.appendingPathComponent("Contents.json"), options: [.atomic])
+    }
+
+    public static func exportFavicon(from icon: IconData, to folderURL: URL) throws {
+        let sourceImage = try loadSourceImage(for: icon)
+        try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        for size in [16, 32, 48] {
+            try writePNG(
+                sourceImage,
+                icon: icon,
+                pixelSize: size,
+                to: folderURL.appendingPathComponent("favicon-\(size)x\(size).png")
+            )
+        }
+
+        let icoPNGURL = folderURL.appendingPathComponent("favicon-32x32.png")
+        let pngData = try Data(contentsOf: icoPNGURL)
+        var icoData = Data([0, 0, 1, 0, 1, 0, 32, 32, 0, 0, 1, 0, 32, 0])
+        icoData.append(contentsOf: withUnsafeBytes(of: UInt32(pngData.count).littleEndian) { Array($0) })
+        icoData.append(contentsOf: withUnsafeBytes(of: UInt32(22).littleEndian) { Array($0) })
+        icoData.append(pngData)
+        try icoData.write(to: folderURL.appendingPathComponent("favicon.ico"), options: [.atomic])
+
+        let html = """
+        <!DOCTYPE html>
+        <html><head><meta charset="utf-8"><title>Favicon</title></head><body>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+        </body></html>
+        """
+        try html.write(to: folderURL.appendingPathComponent("favicon.html"), atomically: true, encoding: .utf8)
+    }
+
     private static func writePNG(_ image: CGImage, icon: IconData, pixelSize: Int, to url: URL) throws {
         guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
               let context = CGContext(
@@ -170,6 +241,15 @@ public enum IconExporter {
         guard CGImageDestinationFinalize(destination) else {
             throw IconExportError.writeFailed
         }
+    }
+
+    private static func loadSourceImage(for icon: IconData) throws -> CGImage {
+        guard let sourceURL = icon.imageURL,
+              let image = NSImage(contentsOf: sourceURL),
+              let sourceImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            throw IconExportError.invalidSourceImage
+        }
+        return sourceImage
     }
 
     private static func drawBackground(for id: String, opacity: Double, in context: CGContext, size: Int) {

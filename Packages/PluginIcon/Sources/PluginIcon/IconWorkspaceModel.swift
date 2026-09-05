@@ -210,6 +210,45 @@ public final class IconWorkspaceModel: ObservableObject {
         }
     }
 
+    public func exportPNGSet(to destinationURL: URL) {
+        guard let icon = currentDraftIcon() else {
+            message = "Import an image before exporting"
+            return
+        }
+        do {
+            try IconExporter.exportPNGSet(from: icon, to: destinationURL)
+            message = "PNG set exported"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportImageSet(to destinationURL: URL) {
+        guard let icon = currentDraftIcon() else {
+            message = "Import an image before exporting"
+            return
+        }
+        do {
+            try IconExporter.exportImageSet(from: icon, to: destinationURL)
+            message = "Image Set exported"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func exportFavicon(to destinationURL: URL) {
+        guard let icon = currentDraftIcon() else {
+            message = "Import an image before exporting"
+            return
+        }
+        do {
+            try IconExporter.exportFavicon(from: icon, to: destinationURL)
+            message = "Favicon exported"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
     private func loadDraft(from icon: IconData?) {
         guard let icon else {
             resetDraft()
@@ -221,6 +260,17 @@ public final class IconWorkspaceModel: ObservableObject {
         scale = icon.scale ?? 1
         padding = icon.padding
         imageURL = icon.imageURL
+    }
+
+    private func currentDraftIcon() -> IconData? {
+        guard var icon = selectedIcon else { return nil }
+        icon.title = title
+        icon.backgroundId = backgroundID
+        icon.opacity = opacity
+        icon.scale = scale
+        icon.padding = padding
+        icon.imageURL = imageURL
+        return icon
     }
 
     private func resetDraft() {

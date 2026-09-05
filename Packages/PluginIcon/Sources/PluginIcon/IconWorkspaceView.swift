@@ -57,6 +57,9 @@ public struct IconWorkspaceView: View {
                     Text("Icon Editor").font(.title2.bold())
                     Spacer()
                     Button("Import Image", action: chooseImage)
+                    Button("PNG", action: choosePNGExportDirectory)
+                    Button("ImageSet", action: chooseImageSetExportDirectory)
+                    Button("Favicon", action: chooseFaviconExportDirectory)
                     Button("Export Xcode Sets", action: chooseExportDirectory)
                     Button("Delete", role: .destructive, action: model.deleteSelectedIcon)
                     Button("Save", action: model.saveDraft)
@@ -154,11 +157,27 @@ public struct IconWorkspaceView: View {
     }
 
     private func chooseExportDirectory() {
+        chooseExportDirectory(named: "AppIconSets") { model.exportSelectedIconSets(to: $0) }
+    }
+
+    private func choosePNGExportDirectory() {
+        chooseExportDirectory(named: "PNG") { model.exportPNGSet(to: $0) }
+    }
+
+    private func chooseImageSetExportDirectory() {
+        chooseExportDirectory(named: "Icon.imageset") { model.exportImageSet(to: $0) }
+    }
+
+    private func chooseFaviconExportDirectory() {
+        chooseExportDirectory(named: "Favicon") { model.exportFavicon(to: $0) }
+    }
+
+    private func chooseExportDirectory(named name: String, completion: (URL) -> Void) {
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = "AppIcon.appiconset"
+        panel.nameFieldStringValue = name
         panel.canCreateDirectories = true
         if panel.runModal() == .OK, let url = panel.url {
-            model.exportSelectedIconSets(to: url)
+            completion(url)
         }
     }
 }
