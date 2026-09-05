@@ -191,6 +191,7 @@ let package = Package(
                 .product(name: "PluginCommitToast", package: "PluginCommitToast"),
                 .product(name: "PluginCommitStatusBar", package: "PluginCommitStatusBar"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderToolbar", package: "ProviderToolbar"),
             ],
             path: "Tests/FactoryGitOKTests",
             swiftSettings: [

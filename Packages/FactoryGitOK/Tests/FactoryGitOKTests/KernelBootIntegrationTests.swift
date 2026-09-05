@@ -3,6 +3,7 @@ import XCTest
 import KitGit
 import ProviderProjects
 import ProviderToast
+import ProviderToolbar
 import ProviderWorkspaceScene
 import PluginCommitStatusBar
 import PluginCommitToast
@@ -28,6 +29,11 @@ final class KernelBootIntegrationTests: XCTestCase {
         XCTAssertEqual(
             kernel.resolveProvider((any WorkspaceSceneProviding).self)?.currentScene,
             .git
+        )
+        XCTAssertTrue(
+            kernel.resolveProvider((any ToolbarProviding).self)?.toolbarItems.contains {
+                $0.id == "workspace-scene-picker"
+            } == true
         )
 
         // 但插件 onBoot 的替换没有发生。

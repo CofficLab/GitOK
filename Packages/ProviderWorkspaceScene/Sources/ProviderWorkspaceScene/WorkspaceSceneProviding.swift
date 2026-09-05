@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 // MARK: - Workspace Scene
 
@@ -12,6 +13,22 @@ public enum GitOKWorkspaceScene: String, CaseIterable, Codable, Identifiable, Se
     case icon
 
     public var id: String { rawValue }
+
+    public var title: String {
+        switch self {
+        case .git: "Git"
+        case .banner: "Banner"
+        case .icon: "Icon"
+        }
+    }
+
+    public var systemImage: String {
+        switch self {
+        case .git: "arrow.triangle.branch"
+        case .banner: "rectangle.inset.filled"
+        case .icon: "app.dashed"
+        }
+    }
 }
 
 /// UI contribution 可见的工作场景范围。
@@ -167,5 +184,55 @@ private final class WeakWorkspaceSceneObserver {
 
     init(_ handle: WorkspaceSceneObserverHandleImpl) {
         self.handle = handle
+    }
+}
+
+// MARK: - Scene Picker
+
+/// 工作场景选择器的观察模型。
+@MainActor
+public final class WorkspaceScenePickerModel: ObservableObject {
+    @Published public private(set) var selectedScene: GitOKWorkspaceScene
+    public let availableScenes: [GitOKWorkspaceScene]
+
+    private let provider: any WorkspaceSceneProviding
+    private var observer: (any WorkspaceSceneObserverHandle)?
+
+    public init(provider: any WorkspaceSceneProviding) {
+        self.provider = provider
+        self.selectedScene = provider.currentScene
+        self.availableScenes = provider.availableScenes
+        self.observer = provider.addObserver { [weak self] event in
+            guard case let .sceneChanged(_, scene) = event else { return }
+            self?.selectedScene = scene
+        }
+    }
+
+    public func select(_ scene: GitOKWorkspaceScene) {
+        provider.selectScene(scene)
+    }
+}
+
+/// 主窗口工具栏使用的工作场景选择器。
+@MainActor
+public struct WorkspaceScenePickerView: View {
+    @StateObject private var model: WorkspaceScenePickerModel
+
+    public init(provider: any WorkspaceSceneProviding) {
+        _model = StateObject(wrappedValue: WorkspaceScenePickerModel(provider: provider))
+    }
+
+    public var body: some View {
+        Picker("Workspace", selection: Binding(
+            get: { model.selectedScene },
+            set: { model.select($0) }
+        )) {
+            ForEach(model.availableScenes) { scene in
+                Label(scene.title, systemImage: scene.systemImage)
+                    .tag(scene)
+            }
+        }
+        .pickerStyle(.menu)
+        .accessibilityLabel("Workspace")
     }
 }

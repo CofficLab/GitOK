@@ -89,6 +89,16 @@ public struct DefaultProviderFactory: ProviderFactory {
 
         let toolbar = makeToolbarProvider()
         toolbar.bindWorkspaceSceneProvider(workspaceScene)
+        toolbar.addToolbarItems([
+            ToolbarItem(
+                id: "workspace-scene-picker",
+                title: "Workspace",
+                placement: .leading,
+                order: 0
+            ) {
+                WorkspaceScenePickerView(provider: workspaceScene)
+            },
+        ])
         try kernel.registerProvider((any ToolbarProviding).self, toolbar)
 
         let statusBar = makeStatusBarProvider()

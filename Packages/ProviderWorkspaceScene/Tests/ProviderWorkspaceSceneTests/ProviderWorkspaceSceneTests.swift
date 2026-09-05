@@ -71,4 +71,16 @@ struct ProviderWorkspaceSceneTests {
         #expect(!WorkspaceSceneScope.scene(.banner).matches(.git))
         #expect(WorkspaceSceneScope.scenes([.git, .icon]).matches(.icon))
     }
+
+    @Test("场景选择器模型跟随 Provider 并可切换场景")
+    func pickerModelTracksProvider() {
+        let provider = DefaultWorkspaceSceneProvider()
+        let model = WorkspaceScenePickerModel(provider: provider)
+
+        model.select(.icon)
+
+        #expect(provider.currentScene == .icon)
+        #expect(model.selectedScene == .icon)
+        #expect(model.availableScenes == [.git, .banner, .icon])
+    }
 }
