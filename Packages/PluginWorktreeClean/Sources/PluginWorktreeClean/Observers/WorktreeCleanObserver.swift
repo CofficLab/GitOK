@@ -19,16 +19,14 @@ final class WorktreeCleanObserver {
     private var gitWatchHandle: (any GitRepositoryWatchingObserverHandle)?
 
     init(
-        projects: any ProjectProviding,
+        capability: any WorktreeCleanProjectCapability,
         gitWatch: (any GitRepositoryWatching)?,
         onProjectChanged: @escaping () -> Void,
         onDataChanged: @escaping () -> Void
     ) {
-        projectsHandle = projects.addObserver { event in
+        projectsHandle = capability.addObserver { event in
             switch event {
-            case .selectionChanged:
-                onProjectChanged()
-            case .commitSelectionChanged:
+            case .selectionChanged, .commitSelectionChanged:
                 onProjectChanged()
             case .dataChanged:
                 onDataChanged()
@@ -37,7 +35,6 @@ final class WorktreeCleanObserver {
             }
         }
 
-        // 监听 GitRepositoryWatching 事件，感知工作区文件变化。
         gitWatchHandle = gitWatch?.addObserver { event in
             switch event {
             case .workingTreeChanged:
@@ -46,6 +43,21 @@ final class WorktreeCleanObserver {
                 break
             }
         }
+    }
+
+    @available(*, deprecated, message: "Inject WorktreeCleanProjectCapability from WorktreeCleanPlugin")
+    convenience init(
+        projects: any ProjectProviding,
+        gitWatch: (any GitRepositoryWatching)?,
+        onProjectChanged: @escaping () -> Void,
+        onDataChanged: @escaping () -> Void
+    ) {
+        self.init(
+            capability: WorktreeCleanProjectCapabilityAdapter(projects: projects),
+            gitWatch: gitWatch,
+            onProjectChanged: onProjectChanged,
+            onDataChanged: onDataChanged
+        )
     }
 
     /// 取消全部订阅；插件卸载后不再有任何回调。

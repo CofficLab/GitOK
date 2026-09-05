@@ -69,16 +69,16 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
 
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
         // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照。
+        let capability = WorktreeCleanProjectCapabilityAdapter(projects: projects)
         let viewModel = WorktreeCleanViewModel()
         self.viewModel = viewModel
         observer = WorktreeCleanObserver(
-            projects: projects,
+            capability: capability,
             gitWatch: gitWatch,
-            onProjectChanged: { [weak viewModel, weak projects] in
-                guard let projects else { return }
+            onProjectChanged: { [weak viewModel, capability] in
                 viewModel?.handleProjectChanged(
-                    project: projects.currentProject,
-                    hasSelectedCommit: projects.currentCommit != nil
+                    project: capability.currentProject,
+                    hasSelectedCommit: capability.hasSelectedCommit
                 )
             },
             onDataChanged: { [weak viewModel] in
@@ -86,13 +86,14 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             }
         )
         viewModel.handleProjectChanged(
-            project: projects.currentProject,
-            hasSelectedCommit: projects.currentCommit != nil
+            project: capability.currentProject,
+            hasSelectedCommit: capability.hasSelectedCommit
         )
 
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = WorktreeCleanSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = WorktreeCleanSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = WorktreeCleanSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         // 作为主内容区的一块贡献（与 CommitDetail 同层；二者互斥，不会同时占位）。
         contentView.addContentView(

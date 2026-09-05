@@ -4,12 +4,14 @@ import ProviderWorkspaceScene
 @MainActor
 final class WorktreeCleanSceneObserver {
     private weak var viewModel: WorkspaceSceneVisibilityViewModel?
+    private let capability: any WorktreeCleanSceneCapability
     private var handle: (any WorkspaceSceneObserverHandle)?
 
-    init(scene: any WorkspaceSceneProviding, viewModel: WorkspaceSceneVisibilityViewModel) {
+    init(capability: any WorktreeCleanSceneCapability, viewModel: WorkspaceSceneVisibilityViewModel) {
+        self.capability = capability
         self.viewModel = viewModel
-        viewModel.handleSceneChange(scene.currentScene)
-        handle = scene.addObserver { [weak self] event in
+        viewModel.handleSceneChange(capability.currentScene)
+        handle = capability.addObserver { [weak self] event in
             guard case let .sceneChanged(_, scene) = event else { return }
             self?.viewModel?.handleSceneChange(scene)
         }
