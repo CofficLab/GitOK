@@ -59,7 +59,8 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitAutoPushSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitAutoPushSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitAutoPushSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
         guard let storage = kernel.resolveProvider((any StorageProviding).self) else {
             Self.logger.error("\(self.t)StorageProviding not registered; skip auto push item")
             return
