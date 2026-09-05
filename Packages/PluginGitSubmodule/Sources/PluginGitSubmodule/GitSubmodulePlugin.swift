@@ -52,7 +52,8 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitSubmoduleSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitSubmoduleSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitSubmoduleSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
