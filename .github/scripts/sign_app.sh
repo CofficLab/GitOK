@@ -5,6 +5,8 @@ set -euo pipefail
 APP_PATH="${1:-}"
 IDENTITY="${2:-}"
 ENTITLEMENTS="${3:-}"
+CODESIGN_RETRIES="${CODESIGN_RETRIES:-5}"
+CODESIGN_RETRY_DELAY="${CODESIGN_RETRY_DELAY:-5}"
 
 if [[ -z "$APP_PATH" || -z "$IDENTITY" ]]; then
     echo "Usage: sign_app.sh <App Path> <Identity> [Entitlements Path]" >&2
@@ -21,6 +23,33 @@ echo "🆔 Identity: $IDENTITY"
 
 xattr -cr "$APP_PATH"
 
+timestamp_options=(--timestamp)
+if [[ -n "${CODESIGN_TIMESTAMP_URL:-}" ]]; then
+    timestamp_options+=("--timestamp=${CODESIGN_TIMESTAMP_URL}")
+fi
+
+codesign_with_timestamp_retry() {
+    local attempt=1
+    local output
+
+    while true; do
+        if output="$(codesign "$@" 2>&1)"; then
+            printf '%s\n' "$output"
+            return 0
+        fi
+
+        printf '%s\n' "$output" >&2
+        if ! grep -qi 'timestamp' <<< "$output" || (( attempt >= CODESIGN_RETRIES )); then
+            return 1
+        fi
+
+        local delay=$((CODESIGN_RETRY_DELAY * attempt))
+        echo "⏳ Timestamp service failed; retrying codesign in ${delay}s (${attempt}/${CODESIGN_RETRIES})..." >&2
+        sleep "$delay"
+        ((attempt++))
+    done
+}
+
 sign_nested_item() {
     local item="$1"
     local entitlements_file
@@ -28,7 +57,7 @@ sign_nested_item() {
 
     local options=(
         --force
-        --timestamp
+        "${timestamp_options[@]}"
         --sign "$IDENTITY"
         --options runtime
         --preserve-metadata=identifier,entitlements,flags
@@ -38,7 +67,7 @@ sign_nested_item() {
         options+=(--entitlements "$entitlements_file")
     fi
 
-    codesign "${options[@]}" "$item"
+    codesign_with_timestamp_retry "${options[@]}" "$item"
     rm -f "$entitlements_file"
 }
 
@@ -59,17 +88,18 @@ if [[ -d "$HELPERS_DIR" ]]; then
     echo "🔍 Signing helper executables..."
     while IFS= read -r -d '' helper; do
         [[ -x "$helper" ]] || continue
-        codesign --force --timestamp --sign "$IDENTITY" --options runtime "$helper"
+        codesign_with_timestamp_retry \
+            --force "${timestamp_options[@]}" --sign "$IDENTITY" --options runtime "$helper"
     done < <(find "$HELPERS_DIR" -type f ! -type l -print0)
 fi
 
 echo "✍️  Signing main app..."
-main_options=(--force --timestamp --sign "$IDENTITY" --options runtime)
+main_options=(--force "${timestamp_options[@]}" --sign "$IDENTITY" --options runtime)
 if [[ -n "$ENTITLEMENTS" ]]; then
     [[ -f "$ENTITLEMENTS" ]] || { echo "Entitlements not found: $ENTITLEMENTS" >&2; exit 1; }
     main_options+=(--entitlements "$ENTITLEMENTS")
 fi
-codesign "${main_options[@]}" "$APP_PATH"
+codesign_with_timestamp_retry "${main_options[@]}" "$APP_PATH"
 
 echo "✅ Verifying signature..."
 codesign --verify --deep --strict --verbose=2 "$APP_PATH"

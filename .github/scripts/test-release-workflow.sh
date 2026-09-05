@@ -43,6 +43,8 @@ rg -q 'BUILD_PROVISION_PROFILE_BASE64|APP_STORE_CONNECT_KEY_ISSER_ID' "$RELEASE_
 grep -q 'xcodebuild archive' "$RELEASE_WORKFLOW" || fail "archive command missing"
 grep -q 'CODE_SIGN_ENTITLEMENTS=""' "$RELEASE_WORKFLOW" || fail "unsigned archive entitlements override missing"
 grep -q '.github/scripts/sign_app.sh' "$RELEASE_WORKFLOW" || fail "manual signing script missing"
+grep -q 'codesign_with_timestamp_retry' "${ROOT}/.github/scripts/sign_app.sh" || fail "codesign timestamp retry missing"
+grep -q 'CODESIGN_RETRIES' "${ROOT}/.github/scripts/sign_app.sh" || fail "codesign retry configuration missing"
 grep -q 'hdiutil create' "$RELEASE_WORKFLOW" || fail "native DMG creation missing"
 grep -q 'xcrun notarytool submit' "$RELEASE_WORKFLOW" || fail "notarization command missing"
 grep -q 'sparkle:edSignature' "$RELEASE_WORKFLOW" || fail "appcast signature guard missing"
