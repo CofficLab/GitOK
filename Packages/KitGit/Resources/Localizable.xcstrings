@@ -423,6 +423,24 @@
         "zh-TW": { "stringUnit": { "state": "translated", "value": "刪除遠端分支失敗：%@" } }
       }
     },
+    "Two branches are required for comparison.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Two branches are required for comparison." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "比较需要指定两个不同的分支。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "比較需要指定兩個不同的分支。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "比較需要指定兩個不同的分支。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "比較需要指定兩個不同的分支。" } }
+      }
+    },
+    "Branch comparison failed: %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Branch comparison failed: %@" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "分支比较失败：%@" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "分支比較失敗：%@" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "分支比較失敗：%@" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "分支比較失敗：%@" } }
+      }
+    },
     "Git unavailable: %@": {
       "localizations": {
         "en": {

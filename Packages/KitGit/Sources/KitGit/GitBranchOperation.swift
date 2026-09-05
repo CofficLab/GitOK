@@ -191,6 +191,15 @@ public enum GitBranchOperation {
         }
     }
 
+    /// 比较两个分支的 ahead/behind、提交和文件差异。
+    public static func compareBranches(
+        base: String,
+        head: String,
+        in repository: URL
+    ) throws -> GitBranchCompare {
+        try GitBranchCompareOperation.compare(base: base, head: head, in: repository)
+    }
+
     private static func validatedBranchName(_ name: String, in repository: URL) throws -> String {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw Error.invalidBranchName }

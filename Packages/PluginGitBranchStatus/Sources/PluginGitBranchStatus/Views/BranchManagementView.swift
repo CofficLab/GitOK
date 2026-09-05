@@ -21,6 +21,11 @@ public struct BranchManagementView: View {
     @State private var branchToSetUpstream: GitBranchSummary?
     @State private var selectedUpstreamBranch = ""
     @State private var pendingRemoteBranchDeletion: String?
+    @State private var compareBaseBranch: GitBranchSummary?
+    @State private var compareHeadBranch: GitBranchSummary?
+    @State private var branchCompare: GitBranchCompare?
+    @State private var isComparing = false
+    @State private var compareError: String?
 
     public init(projects: any ProjectProviding) {
         self.projects = projects
@@ -34,6 +39,10 @@ public struct BranchManagementView: View {
                 Divider()
                 AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search branches", bundle: .module)))
                 branchListSection
+                if branches.count >= 2 {
+                    Divider()
+                    compareSection
+                }
                 if !remoteBranches.isEmpty {
                     Divider()
                     remoteBranchesSection
@@ -43,8 +52,8 @@ public struct BranchManagementView: View {
                         .font(.caption)
                         .foregroundStyle(theme.warning)
                 }
-            }
-            .padding(20)
+                }
+                .padding(20)
         }
         .onAppear(perform: loadBranches)
         .onReceive(observation.$lastEvent) { event in
@@ -171,6 +180,120 @@ public struct BranchManagementView: View {
         }
     }
 
+    private var compareSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(LumiPluginLocalization.string("Branch Compare", bundle: .module))
+                .font(.headline)
+
+            Picker(
+                LumiPluginLocalization.string("Base", bundle: .module),
+                selection: $compareBaseBranch
+            ) {
+                ForEach(branches) { branch in
+                    Text(branch.name).tag(branch as GitBranchSummary?)
+                }
+            }
+
+            Picker(
+                LumiPluginLocalization.string("Head", bundle: .module),
+                selection: $compareHeadBranch
+            ) {
+                ForEach(branches) { branch in
+                    Text(branch.name).tag(branch as GitBranchSummary?)
+                }
+            }
+
+            Button {
+                loadCompare()
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Compare", bundle: .module),
+                    systemImage: "arrow.left.arrow.right"
+                )
+            }
+            .buttonStyle(.bordered)
+            .disabled(
+                compareBaseBranch == nil
+                    || compareHeadBranch == nil
+                    || compareBaseBranch?.id == compareHeadBranch?.id
+                    || isComparing
+            )
+
+            if isComparing {
+                ProgressView(LumiPluginLocalization.string("Comparing branches...", bundle: .module))
+            } else if let compareError {
+                Text(compareError)
+                    .font(.caption)
+                    .foregroundStyle(theme.warning)
+            } else if let branchCompare {
+                compareResultView(branchCompare)
+            } else {
+                Text(LumiPluginLocalization.string(
+                    "Select base and head branches to compare commits and files.",
+                    bundle: .module
+                ))
+                .font(.caption)
+                .foregroundStyle(theme.textSecondary)
+            }
+        }
+    }
+
+    private func compareResultView(_ compare: GitBranchCompare) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 12) {
+                Text(String(format: LumiPluginLocalization.string("Ahead %d", bundle: .module), compare.ahead))
+                    .font(.caption)
+                    .foregroundStyle(theme.success)
+                Text(String(format: LumiPluginLocalization.string("Behind %d", bundle: .module), compare.behind))
+                    .font(.caption)
+                    .foregroundStyle(theme.warning)
+                Text(String(format: LumiPluginLocalization.string("%d files", bundle: .module), compare.files.count))
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+            }
+
+            if !compare.commits.isEmpty {
+                Text(LumiPluginLocalization.string("Commits", bundle: .module))
+                    .font(.caption.weight(.semibold))
+                ForEach(compare.commits.prefix(5)) { commit in
+                    HStack(spacing: 6) {
+                        Text(String(commit.hash.prefix(7)))
+                            .font(.caption.monospaced())
+                            .foregroundStyle(theme.textTertiary)
+                        Text(commit.subject)
+                            .font(.caption)
+                            .lineLimit(1)
+                    }
+                }
+            }
+
+            if !compare.files.isEmpty {
+                Text(LumiPluginLocalization.string("Files", bundle: .module))
+                    .font(.caption.weight(.semibold))
+                ForEach(compare.files.prefix(6)) { file in
+                    HStack(spacing: 6) {
+                        Text(file.status)
+                            .font(.caption.monospaced())
+                            .foregroundStyle(theme.textTertiary)
+                            .frame(width: 24, alignment: .leading)
+                        Text(file.oldPath.map { "\($0) → \(file.path)" } ?? file.path)
+                            .font(.caption)
+                            .lineLimit(1)
+                    }
+                }
+            }
+
+            if compare.commits.isEmpty && compare.files.isEmpty {
+                Text(LumiPluginLocalization.string("No differences", bundle: .module))
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+            }
+        }
+        .padding(10)
+        .background(theme.surface.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+    }
+
     // MARK: - Actions
 
     @MainActor
@@ -190,6 +313,14 @@ public struct BranchManagementView: View {
                 await MainActor.run {
                     branches = local
                     remoteBranches = remote
+                    let previousBase = compareBaseBranch?.name
+                    let previousHead = compareHeadBranch?.name
+                    compareBaseBranch = local.first(where: { $0.name == previousBase }) ?? local.first
+                    compareHeadBranch = local.first(where: { $0.name == previousHead })
+                        ?? local.first(where: { $0.id != compareBaseBranch?.id })
+                        ?? local.dropFirst().first
+                    branchCompare = nil
+                    compareError = nil
                     isLoading = false
                 }
             } catch {
@@ -384,6 +515,37 @@ public struct BranchManagementView: View {
                 await MainActor.run {
                     errorMessage = error.localizedDescription
                     isLoading = false
+                }
+            }
+        }
+    }
+
+    private func loadCompare() {
+        guard let url = projectURL,
+              let base = compareBaseBranch,
+              let head = compareHeadBranch,
+              base.id != head.id else { return }
+
+        let baseName = base.name
+        let headName = head.name
+        isComparing = true
+        compareError = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                let result = try GitBranchOperation.compareBranches(
+                    base: baseName,
+                    head: headName,
+                    in: url
+                )
+                await MainActor.run {
+                    branchCompare = result
+                    isComparing = false
+                }
+            } catch {
+                await MainActor.run {
+                    branchCompare = nil
+                    compareError = error.localizedDescription
+                    isComparing = false
                 }
             }
         }
