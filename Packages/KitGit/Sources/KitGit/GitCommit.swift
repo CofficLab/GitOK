@@ -10,6 +10,8 @@ public struct GitCommit: Identifiable, Equatable, Sendable {
     public let message: String
     /// 作者名。
     public let author: String
+    /// 作者邮箱（用于作者身份和头像解析）。
+    public let authorEmail: String
     /// 作者提交时间。
     public let date: Date
     /// 父提交完整哈希（按 git log `%P` 顺序）。
@@ -24,6 +26,7 @@ public struct GitCommit: Identifiable, Equatable, Sendable {
         shortHash: String,
         message: String,
         author: String,
+        authorEmail: String = "",
         date: Date,
         parentHashes: [String] = [],
         tags: [String] = []
@@ -32,6 +35,7 @@ public struct GitCommit: Identifiable, Equatable, Sendable {
         self.shortHash = shortHash
         self.message = message
         self.author = author
+        self.authorEmail = authorEmail
         self.date = date
         self.parentHashes = parentHashes
         self.tags = tags

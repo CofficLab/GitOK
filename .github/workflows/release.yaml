@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 env:
   SCHEME: GitOK
@@ -26,6 +27,22 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: 获取 Bump 产出的 commit
+        uses: actions/download-artifact@v4
+        with:
+          name: release-metadata
+          path: .release-metadata
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Checkout 发布 commit
+        run: |
+          set -euo pipefail
+          release_sha="$(cat .release-metadata/release-commit.txt)"
+          git rev-parse --verify "${release_sha}^{commit}" >/dev/null
+          git checkout --detach "$release_sha"
+          echo "发布 commit: $(git rev-parse HEAD)"
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1

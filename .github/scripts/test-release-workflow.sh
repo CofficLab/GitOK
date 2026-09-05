@@ -21,7 +21,18 @@ SPARKLE_BIN="$(
 "${SPARKLE_BIN}/generate_appcast" --help >/dev/null
 pass "Sparkle tools install"
 
-echo "=== 2. tag + changelog logic ==="
+echo "=== 2. version configuration ==="
+cp "${ROOT}/GitOKApp/GitOK.xcconfig" "${WORK}/GitOK.xcconfig"
+expected_version=$(bash "${ROOT}/.github/scripts/get-version.sh")
+expected_build=$(bash "${ROOT}/.github/scripts/get-version.sh" --build)
+version=$(GITOK_VERSION_FILE="${WORK}/GitOK.xcconfig" bash "${ROOT}/.github/scripts/get-version.sh")
+build=$(GITOK_VERSION_FILE="${WORK}/GitOK.xcconfig" bash "${ROOT}/.github/scripts/get-version.sh" --build)
+[ "${version}" = "${expected_version}" ] || fail "unexpected marketing version: ${version}"
+[ "${build}" = "${expected_build}" ] || fail "unexpected build version: ${build}"
+GITOK_VERSION_FILE="${WORK}/GitOK.xcconfig" bash "${ROOT}/.github/scripts/bump-version.sh" --dry-run >/dev/null
+pass "xcconfig version read and bump"
+
+echo "=== 3. tag + changelog logic ==="
 cd "${ROOT}"
 tag=$(git describe --tags --abbrev=0)
 if [[ $tag == p* ]]; then
@@ -42,7 +53,7 @@ if [ -n "$previous_tag" ]; then
 fi
 pass "tag=${tag} previous=${previous_tag:-none}"
 
-echo "=== 3. perl appcast post-process ==="
+echo "=== 4. perl appcast post-process ==="
 cat > "${WORK}/appcast-arm64.xml" <<'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
@@ -72,7 +83,7 @@ grep -q 'fullReleaseNotesLink' appcast-arm64.xml || fail "release notes link mis
 command -v xmllint >/dev/null && xmllint --noout appcast-arm64.xml
 pass "perl post-process"
 
-echo "=== 4. generate_appcast with real DMG (optional) ==="
+echo "=== 5. generate_appcast with real DMG (optional) ==="
 SAMPLE_DMG=""
 if [ -f "${ROOT}/temp/GitOK-arm64"*.dmg ]; then
   SAMPLE_DMG=$(ls "${ROOT}"/temp/GitOK-arm64*.dmg | head -n 1)

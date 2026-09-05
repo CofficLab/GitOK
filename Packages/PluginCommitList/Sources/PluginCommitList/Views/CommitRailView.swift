@@ -479,7 +479,7 @@ struct CommitRailView: View {
                     }
                 }
                 HStack(spacing: 6) {
-                    authorBadge(commit.author)
+                    CommitAuthorAvatarView(author: commit.author, email: commit.authorEmail)
                     Text(commit.author)
                         .font(DesignTokens.Typography.caption2)
                         .foregroundStyle(theme.textSecondary)
@@ -1127,21 +1127,6 @@ struct CommitRailView: View {
     /// 该行是否处于选中态（以 Provider 为单一权威来源）。
     private func isSelected(_ commit: GitCommit) -> Bool {
         projects.currentCommit?.hash == commit.hash
-    }
-
-    /// 作者头像徽标（LumiUI AppAvatar，基于名字稳定取色，hover 有动效）。
-    private func authorBadge(_ author: String) -> some View {
-        let initial = author.trimmingCharacters(in: .whitespaces).first.map(String.init) ?? "?"
-        let hue = Double(abs(author.hashValue % 360)) / 360.0
-        let color = Color(hue: hue, saturation: 0.5, brightness: 0.72)
-        return ZStack {
-            AppAvatar(
-                systemImage: "\(initial.uppercased())",
-                tint: color,
-                backgroundTint: color.opacity(0.15),
-                size: 18
-            )
-        }
     }
 
     // MARK: - Time Formatting

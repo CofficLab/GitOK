@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderContentView
 import ProviderProjects
+import ProviderWorkspaceScene
 import XCTest
 @testable import PluginCommitDetail
 @testable import ProviderContentView
@@ -87,6 +88,10 @@ final class CommitDetailPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
 
         let plugin = CommitDetailPlugin()
         try plugin.onBoot(kernel: kernel)
@@ -104,6 +109,10 @@ final class CommitDetailPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
 
         let plugin = CommitDetailPlugin()
         try plugin.onBoot(kernel: kernel)
@@ -330,5 +339,20 @@ final class CommitDetailPluginTests: XCTestCase {
         XCTAssertNil(viewModel.filesCommitHash)
         XCTAssertTrue(viewModel.animatedFilePaths.isEmpty)
         XCTAssertFalse(viewModel.isLoadingCommitFiles)
+    }
+
+    // MARK: - 工作区刷新保留与去重
+
+    func testWorktreeRefreshPolicyIgnoresIdenticalEntries() {
+        let entries = [GitStatusEntry(path: "Sources/App.swift", stagedStatus: " ", worktreeStatus: "M")]
+
+        XCTAssertFalse(WorktreeEntriesRefreshPolicy.changed(previous: entries, current: entries))
+    }
+
+    func testWorktreeRefreshPolicyDetectsStatusChanges() {
+        let previous = [GitStatusEntry(path: "Sources/App.swift", stagedStatus: " ", worktreeStatus: "M")]
+        let current = [GitStatusEntry(path: "Sources/App.swift", stagedStatus: "M", worktreeStatus: " ")]
+
+        XCTAssertTrue(WorktreeEntriesRefreshPolicy.changed(previous: previous, current: current))
     }
 }

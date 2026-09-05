@@ -15,6 +15,7 @@ final class GitCommitLoaderTests: XCTestCase {
         XCTAssertEqual(commits[0].shortHash, "aaaaaaa")
         XCTAssertEqual(commits[0].message, "fix: initial commit")
         XCTAssertEqual(commits[0].author, "Alice")
+        XCTAssertEqual(commits[0].authorEmail, "")
 
         // ISO 8601 时间（含时区）解析。
         let calendar = Calendar(identifier: .gregorian)
@@ -42,6 +43,14 @@ final class GitCommitLoaderTests: XCTestCase {
 
         XCTAssertEqual(commits[1].parentHashes, [String(repeating: "a", count: 40)])
         XCTAssertEqual(commits[1].tags, ["release"])
+    }
+
+    func testParseAuthorEmail() {
+        let output = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\u{1f}aaaaaaa\u{1f}fix: avatar\u{1f}Alice\u{1f}alice@example.com\u{1f}2026-09-01T10:00:00+08:00\u{1f}\u{1f}"
+        let commits = GitCommitLoader.parse(output)
+
+        XCTAssertEqual(commits.count, 1)
+        XCTAssertEqual(commits[0].authorEmail, "alice@example.com")
     }
 
     func testParseEmptyOutput() {
@@ -82,6 +91,7 @@ final class GitCommitLoaderTests: XCTestCase {
         XCTAssertEqual(commits[0].message, "second commit", "最新提交应在最前")
         XCTAssertEqual(commits[1].message, "first commit")
         XCTAssertEqual(commits[0].author, "Test User")
+        XCTAssertEqual(commits[0].authorEmail, "test@example.com")
         XCTAssertEqual(commits[0].hash.count, 40)
         XCTAssertFalse(commits[0].shortHash.isEmpty)
     }

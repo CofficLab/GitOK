@@ -4,7 +4,7 @@
 // GitOK 作为 Lumi 架构下的平级 App，共享同一套 App-Shared 配置。
 //
 
-#include "../LumiApp/Config/App-Shared.xcconfig"
+#include "Config/App-Shared.xcconfig"
 
 // 仅支持 macOS。
 SUPPORTED_PLATFORMS = macosx

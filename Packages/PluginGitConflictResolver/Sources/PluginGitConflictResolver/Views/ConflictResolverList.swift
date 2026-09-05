@@ -7,17 +7,18 @@ import SwiftUI
 /// 冲突文件列表：展示合并中的冲突文件，可复制路径或定位到 Finder。
 public struct ConflictResolverList: View {
     let projects: any ProjectProviding
-    @State private var files: [String] = []
-    @State private var isLoading = true
+    @ObservedObject private var viewModel: GitConflictResolverViewModel
     @State private var conflictDiff: String?
-    @State private var isMerging = false
-    @State private var isCherryPicking = false
     @State private var isActionRunning = false
     @State private var actionError: String?
     @State private var showAbortConfirmation = false
 
-    public init(projects: any ProjectProviding) {
+    public init(
+        projects: any ProjectProviding,
+        viewModel: GitConflictResolverViewModel
+    ) {
         self.projects = projects
+        _viewModel = ObservedObject(wrappedValue: viewModel)
     }
 
     public var body: some View {
@@ -32,10 +33,10 @@ public struct ConflictResolverList: View {
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
-                    if isLoading {
+                    if viewModel.isLoading {
                         ProgressView(LumiPluginLocalization.string("Checking conflicts…", bundle: .module))
                             .frame(maxWidth: .infinity, minHeight: 120)
-                    } else if files.isEmpty {
+                    } else if viewModel.conflictedFiles.isEmpty {
                         VStack(spacing: 6) {
                             Image(systemName: "checkmark.circle")
                                 .font(.system(size: 22))
@@ -45,7 +46,7 @@ public struct ConflictResolverList: View {
                         }
                         .frame(maxWidth: .infinity, minHeight: 120)
                     } else {
-                        ForEach(files, id: \.self) { file in
+                        ForEach(viewModel.conflictedFiles, id: \.self) { file in
                             conflictRow(file)
                         }
                     }
@@ -53,10 +54,9 @@ public struct ConflictResolverList: View {
             }
         }
         .padding(16)
-        .onAppear(perform: load)
         .alert(
             LumiPluginLocalization.string(
-                isCherryPicking ? "Confirm Abort Cherry-pick?" : "Confirm Abort Merge?",
+                viewModel.isCherryPicking ? "Confirm Abort Cherry-pick?" : "Confirm Abort Merge?",
                 bundle: .module
             ),
             isPresented: $showAbortConfirmation
@@ -64,7 +64,7 @@ public struct ConflictResolverList: View {
             Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
             Button(
                 LumiPluginLocalization.string(
-                    isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
+                    viewModel.isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
                     bundle: .module
                 ),
                 role: .destructive
@@ -73,7 +73,7 @@ public struct ConflictResolverList: View {
             }
         } message: {
             Text(LumiPluginLocalization.string(
-                isCherryPicking
+                viewModel.isCherryPicking
                     ? "This discards the in-progress cherry-pick and restores the pre-cherry-pick state."
                     : "This discards the in-progress merge and restores the pre-merge state.",
                 bundle: .module
@@ -102,7 +102,7 @@ public struct ConflictResolverList: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(LumiPluginLocalization.string("Conflict Resolution", bundle: .module))
                 .font(.headline)
-            Text(files.isEmpty ? LumiPluginLocalization.string("No conflicted files", bundle: .module) : String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), files.count))
+            Text(viewModel.conflictedFiles.isEmpty ? LumiPluginLocalization.string("No conflicted files", bundle: .module) : String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), viewModel.conflictedFiles.count))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
         }
@@ -115,28 +115,28 @@ public struct ConflictResolverList: View {
             } label: {
                 Label(
                     LumiPluginLocalization.string(
-                        isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
+                        viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
                         bundle: .module
                     ),
                     systemImage: "arrow.right.circle"
                 )
             }
             .buttonStyle(.borderedProminent)
-            .disabled(!isMerging || !files.isEmpty || isActionRunning)
+            .disabled(!viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning)
 
             Button(role: .destructive) {
                 showAbortConfirmation = true
             } label: {
                 Label(
                     LumiPluginLocalization.string(
-                        isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
+                        viewModel.isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
                         bundle: .module
                     ),
                     systemImage: "xmark.circle"
                 )
             }
             .buttonStyle(.bordered)
-            .disabled(!isMerging || isActionRunning)
+            .disabled(!viewModel.isOperationInProgress || isActionRunning)
 
             if isActionRunning {
                 ProgressView()
@@ -206,27 +206,6 @@ public struct ConflictResolverList: View {
         .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 
-    @MainActor
-    private func load() {
-        guard let url = projects.currentProject?.url else {
-            files = []
-            isLoading = false
-            return
-        }
-        isLoading = true
-        Task.detached(priority: .userInitiated) {
-            let loaded = GitMergeOperation.conflictFiles(in: url)
-            let merging = GitMergeOperation.isMerging(in: url)
-            let cherryPicking = GitCherryPickOperation.status(in: url).isCherryPicking
-            await MainActor.run {
-                files = loaded
-                isMerging = merging || cherryPicking
-                isCherryPicking = cherryPicking
-                isLoading = false
-            }
-        }
-    }
-
     private func checkout(_ file: String, version: GitMergeFileVersion) {
         guard let url = projects.currentProject?.url else { return }
         isActionRunning = true
@@ -237,7 +216,6 @@ public struct ConflictResolverList: View {
                 await MainActor.run {
                     isActionRunning = false
                     projects.notifyDataChanged()
-                    load()
                 }
             } catch {
                 await MainActor.run {
@@ -250,9 +228,9 @@ public struct ConflictResolverList: View {
 
     private func continueMerge() {
         guard let url = projects.currentProject?.url else { return }
-        guard files.isEmpty else {
+        guard viewModel.conflictedFiles.isEmpty else {
             actionError = LumiPluginLocalization.string(
-                isCherryPicking
+                viewModel.isCherryPicking
                     ? "Resolve all conflicts before continuing the cherry-pick."
                     : "Resolve all conflicts before continuing the merge.",
                 bundle: .module
@@ -261,7 +239,7 @@ public struct ConflictResolverList: View {
         }
         isActionRunning = true
         actionError = nil
-        let cherryPicking = isCherryPicking
+        let cherryPicking = viewModel.isCherryPicking
         Task.detached(priority: .userInitiated) {
             do {
                 if cherryPicking {
@@ -272,13 +250,11 @@ public struct ConflictResolverList: View {
                 await MainActor.run {
                     isActionRunning = false
                     projects.notifyDataChanged()
-                    load()
                 }
             } catch {
                 await MainActor.run {
                     isActionRunning = false
                     actionError = error.localizedDescription
-                    load()
                 }
             }
         }
@@ -288,7 +264,7 @@ public struct ConflictResolverList: View {
         guard let url = projects.currentProject?.url else { return }
         isActionRunning = true
         actionError = nil
-        let cherryPicking = isCherryPicking
+        let cherryPicking = viewModel.isCherryPicking
         Task.detached(priority: .userInitiated) {
             do {
                 if cherryPicking {
@@ -299,7 +275,6 @@ public struct ConflictResolverList: View {
                 await MainActor.run {
                     isActionRunning = false
                     projects.notifyDataChanged()
-                    load()
                 }
             } catch {
                 await MainActor.run {

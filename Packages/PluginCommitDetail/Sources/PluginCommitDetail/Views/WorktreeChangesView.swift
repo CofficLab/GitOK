@@ -40,10 +40,12 @@ struct WorktreeChangesView: View {
     @State private var batchAction: BatchAction?
     @State private var discardCandidates: [GitStatusEntry] = []
     @State private var loadedProjectURL: URL?
+    @State private var hasLoadedSnapshot = false
+    @State private var loadToken = 0
 
     var body: some View {
         Group {
-            if isLoading && entries.isEmpty {
+            if isLoading && entries.isEmpty && !hasLoadedSnapshot {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background {
@@ -480,7 +482,9 @@ struct WorktreeChangesView: View {
 
     private func reloadIfNeeded(force: Bool = false) {
         guard let projectURL = viewModel.selectedProjectURL else {
+            loadToken &+= 1
             loadedProjectURL = nil
+            hasLoadedSnapshot = false
             entries = []
             isLoading = false
             actionError = nil
@@ -492,28 +496,47 @@ struct WorktreeChangesView: View {
             discardCandidates.removeAll()
             return
         }
-        if loadedProjectURL == projectURL && !force { return }
+        let isProjectSwitch = loadedProjectURL != projectURL
+        if !isProjectSwitch && !force { return }
 
+        loadToken &+= 1
+        let token = loadToken
         loadedProjectURL = projectURL
         isLoading = true
-        entries = []
-        selectedPaths.removeAll()
-        batchAction = nil
-        discardCandidates.removeAll()
-        loadError = nil
+        if isProjectSwitch {
+            hasLoadedSnapshot = false
+            entries = []
+            selectedPaths.removeAll()
+            batchAction = nil
+            discardCandidates.removeAll()
+            loadError = nil
+        }
 
         let url = projectURL
         Task.detached(priority: .userInitiated) {
             let result = Result { try GitStatusLoader.loadEntries(in: url) }
             await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else { return }
                 isLoading = false
                 switch result {
                 case .success(let loaded):
-                    entries = loaded
+                    hasLoadedSnapshot = true
+                    if WorktreeEntriesRefreshPolicy.changed(previous: entries, current: loaded) {
+                        entries = loaded
+                        selectedPaths.formIntersection(Set(loaded.map(\.path)))
+                    }
+                    loadError = nil
                 case .failure(let error):
                     loadError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
             }
         }
+    }
+}
+
+/// 工作区刷新时只在状态条目真正变化后更新列表，避免后台检查造成 UI 闪烁。
+enum WorktreeEntriesRefreshPolicy {
+    static func changed(previous: [GitStatusEntry], current: [GitStatusEntry]) -> Bool {
+        previous != current
     }
 }

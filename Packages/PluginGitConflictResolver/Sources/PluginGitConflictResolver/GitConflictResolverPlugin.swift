@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
@@ -19,7 +20,10 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
 
     public let id = "com.coffic.gitok.plugin.git-conflict-resolver"
     public let order = 36
-    public let dependencies = ["com.coffic.lumi.plugin.projects"]
+    public let dependencies = [
+        "com.coffic.lumi.plugin.projects",
+        "com.coffic.gitok.plugin.git-repository-watch",
+    ]
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-conflict-resolver",
         name: "Conflict Resolver",
@@ -33,6 +37,8 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: GitConflictResolverSceneObserver?
+    private var conflictViewModel: GitConflictResolverViewModel?
+    private var conflictObserver: GitConflictResolverObserver?
 
     public init() {}
 
@@ -53,6 +59,14 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         self.sceneViewModel = sceneViewModel
         let sceneCapability = GitConflictResolverSceneCapabilityAdapter(scene: scene)
         self.sceneObserver = GitConflictResolverSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
+        let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
+        let conflictCapability = GitConflictResolverCapabilityAdapter(projects: projects, gitWatch: gitWatch)
+        let conflictViewModel = GitConflictResolverViewModel()
+        self.conflictViewModel = conflictViewModel
+        self.conflictObserver = GitConflictResolverObserver(
+            capability: conflictCapability,
+            viewModel: conflictViewModel
+        )
 
         statusBar.addStatusBarItems([
             StatusBarItem(
@@ -62,7 +76,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
                 order: 18
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    ConflictStatusTile(projects: projects)
+                    ConflictStatusTile(projects: projects, viewModel: conflictViewModel)
                 }
             },
         ])
@@ -72,6 +86,9 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        conflictObserver?.cancel()
+        conflictObserver = nil
+        conflictViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
     }
