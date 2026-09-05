@@ -78,7 +78,11 @@ public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Se
         fileManager: FileManager = .default
     ) {
         self.manifestURL = manifestURL
-        self.bundledIconsURL = bundledIconsURL
+        let resolvedBundledIconsURL = bundledIconsURL ?? Bundle.module.url(
+            forResource: "Icons",
+            withExtension: nil
+        )
+        self.bundledIconsURL = resolvedBundledIconsURL
         self.customFolderURL = customFolderURL
         self.fileManager = fileManager
         var sources = [
@@ -86,7 +90,7 @@ public final class DefaultIconSourceProvider: IconSourceProviding, @unchecked Se
             IconSourceDescriptor(id: IconSourceID.remoteManifest, title: "GitOK Library"),
             IconSourceDescriptor(id: IconSourceID.generatedAssets, title: "Generated Assets"),
         ]
-        if bundledIconsURL != nil {
+        if resolvedBundledIconsURL != nil {
             sources.insert(
                 IconSourceDescriptor(id: IconSourceID.bundledIcons, title: "Built-in Icons"),
                 at: 0

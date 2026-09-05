@@ -22,7 +22,10 @@ let package = Package(
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
-            path: "Sources/PluginIcon"
+            path: "Sources/PluginIcon",
+            resources: [
+                .process("../../Resources/Icons")
+            ]
         ),
         .testTarget(
             name: "PluginIconTests",

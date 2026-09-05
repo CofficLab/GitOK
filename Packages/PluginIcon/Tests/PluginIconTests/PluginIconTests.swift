@@ -47,6 +47,20 @@ struct PluginIconTests {
         #expect(assets.first?.category == "Abstract")
     }
 
+    @Test("default source exposes the restored bundled icon library")
+    func exposesDefaultBundledSource() async throws {
+        let provider = DefaultIconSourceProvider()
+        let assets = try await provider.assets(
+            for: IconSourceID.bundledIcons,
+            in: FileManager.default.temporaryDirectory
+        )
+
+        #expect(provider.sources.first?.id == IconSourceID.bundledIcons)
+        #expect(assets.count == 317)
+        #expect(assets.contains { $0.category == "Abstract" })
+        #expect(assets.allSatisfy { $0.url?.pathExtension == "svg" })
+    }
+
     @Test("source assets retain categories for filtering")
     func retainsSourceCategories() async throws {
         let root = FileManager.default.temporaryDirectory
