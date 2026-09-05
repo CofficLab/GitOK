@@ -308,6 +308,42 @@
         }
       }
     },
+    "Confirm Revert": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Revert" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认反转提交" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "確認反轉提交" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "確認反轉提交" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "確認反轉提交" } }
+      }
+    },
+    "Revert": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Revert" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "反转" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "反轉" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "反轉" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "反轉" } }
+      }
+    },
+    "Revert This Commit": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Revert This Commit" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "反转此提交" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "反轉此提交" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "反轉此提交" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "反轉此提交" } }
+      }
+    },
+    "Revert commit \"%@\"? This creates a new commit.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Revert commit \"%@\"? This creates a new commit." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "要反转提交“%@”吗？这会创建一个新提交。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "要反轉提交「%@」嗎？這會建立一個新提交。" } },
+        "zh-HK": { "stringUnit": { "state": "translated", "value": "要反轉提交「%@」嗎？這會建立一個新提交。" } },
+        "zh-TW": { "stringUnit": { "state": "translated", "value": "要反轉提交「%@」嗎？這會建立一個新提交。" } }
+      }
+    },
     "Unable to Load Commits": {
       "localizations": {
         "en": {

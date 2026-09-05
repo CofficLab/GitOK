@@ -160,4 +160,40 @@ final class GitCommitOperationTests: XCTestCase {
             }
         }
     }
+
+    func testRevertCommitCreatesAnInverseCommit() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "change", in: repo)
+
+        let changedHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        _ = try GitHistoryOperation.revertCommit(changedHash, in: repo)
+
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "initial\n"
+        )
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+        let message = try GitProcessRunner.run(["log", "-1", "--format=%s"], in: repo)
+        XCTAssertEqual(message.trimmingCharacters(in: .whitespacesAndNewlines), "Revert \"change\"")
+    }
+
+    func testRevertCommitRejectsAnEmptyHash() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        XCTAssertThrowsError(try GitHistoryOperation.revertCommit("  ", in: repo)) { error in
+            guard case GitHistoryOperation.Error.invalidCommit = error else {
+                return XCTFail("expected invalidCommit, got \(error)")
+            }
+        }
+    }
 }

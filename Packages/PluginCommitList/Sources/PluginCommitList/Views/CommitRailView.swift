@@ -46,6 +46,11 @@ struct CommitRailView: View {
     @State private var isPushing = false
     @State private var pushError: String?
 
+    // Revert 状态
+    @State private var pendingRevert: GitCommit?
+    @State private var revertingHash: String?
+    @State private var revertError: String?
+
     init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
         self.projects = projects
         self.gitWatch = gitWatch
@@ -60,6 +65,31 @@ struct CommitRailView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
             theme.surface
+        }
+        .alert(
+            LumiPluginLocalization.string("Confirm Revert", bundle: .module),
+            isPresented: Binding(
+                get: { pendingRevert != nil },
+                set: { isPresented in
+                    if !isPresented { pendingRevert = nil }
+                }
+            )
+        ) {
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+                pendingRevert = nil
+            }
+            Button(LumiPluginLocalization.string("Revert", bundle: .module), role: .destructive) {
+                guard let commit = pendingRevert else { return }
+                pendingRevert = nil
+                performRevert(commit)
+            }
+        } message: {
+            if let commit = pendingRevert {
+                Text(String(
+                    format: LumiPluginLocalization.string("Revert commit \"%@\"? This creates a new commit.", bundle: .module),
+                    commit.message
+                ))
+            }
         }
         // 项目 / 选中 commit / 仓库数据变化 → 刷新列表或选中态高亮。
         .onReceive(projectObservation.$revision) { _ in
@@ -115,6 +145,15 @@ struct CommitRailView: View {
             VStack(spacing: 0) {
                 if let loadError {
                     Text(loadError)
+                        .font(.appCaption)
+                        .foregroundStyle(theme.error)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .background(theme.error.opacity(0.08))
+                }
+                if let revertError {
+                    Text(revertError)
                         .font(.appCaption)
                         .foregroundStyle(theme.error)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -203,6 +242,18 @@ struct CommitRailView: View {
             )
         ) {
             pushPopoverContent(for: commit)
+        }
+        .contextMenu {
+            Button(role: .destructive) {
+                revertError = nil
+                pendingRevert = commit
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Revert This Commit", bundle: .module),
+                    systemImage: "arrow.counterclockwise"
+                )
+            }
+            .disabled(revertingHash != nil || commit.parentHashes.count > 1)
         }
     }
 
@@ -301,6 +352,28 @@ struct CommitRailView: View {
                 await MainActor.run {
                     isPushing = false
                     pushError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func performRevert(_ commit: GitCommit) {
+        guard let project = projects.currentProject else { return }
+
+        revertingHash = commit.hash
+        revertError = nil
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitHistoryOperation.revertCommit(commit.hash, in: url)
+            }
+            await MainActor.run {
+                revertingHash = nil
+                switch result {
+                case .success:
+                    projects.notifyDataChanged()
+                case .failure(let error):
+                    revertError = error.localizedDescription
                 }
             }
         }
