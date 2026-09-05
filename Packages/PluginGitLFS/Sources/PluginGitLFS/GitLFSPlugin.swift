@@ -52,7 +52,8 @@ public final class GitLFSPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitLFSSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitLFSSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitLFSSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
