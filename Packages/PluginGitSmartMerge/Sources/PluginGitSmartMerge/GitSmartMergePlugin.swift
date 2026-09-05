@@ -51,7 +51,8 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitSmartMergeSceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitSmartMergeSceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitSmartMergeSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
