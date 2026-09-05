@@ -63,6 +63,25 @@ struct PluginBannerTests {
         #expect(loaded[0].path.hasSuffix(".gitok/banners/banner_1715079200.json"))
     }
 
+    @Test("imports banner images into project-owned storage")
+    func importsBannerImage() throws {
+        let projectURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PluginBannerImage-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: projectURL) }
+
+        let sourceURL = projectURL.deletingLastPathComponent().appendingPathComponent("source-\(UUID().uuidString).png")
+        defer { try? FileManager.default.removeItem(at: sourceURL) }
+        try Data([0, 1, 2, 3]).write(to: sourceURL)
+
+        let repository = BannerRepository()
+        let imageID = try repository.importImage(from: sourceURL, for: projectURL)
+        let storedURL = repository.imageURL(for: imageID, in: projectURL)
+
+        #expect(imageID.hasPrefix(".gitok/banners/images/"))
+        #expect(FileManager.default.fileExists(atPath: storedURL.path))
+        #expect(repository.imageURL(for: "/\(imageID)", in: projectURL).path == storedURL.path)
+    }
+
     @Test("skips malformed JSON and deletes a banner")
     func skipsMalformedJSONAndDeletesBanner() throws {
         let projectURL = FileManager.default.temporaryDirectory

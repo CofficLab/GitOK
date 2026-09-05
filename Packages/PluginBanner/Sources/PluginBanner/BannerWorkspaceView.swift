@@ -58,6 +58,7 @@ public struct BannerWorkspaceView: View {
                 HStack {
                     Text("Banner Editor").font(.title2.bold())
                     Spacer()
+                    Button("Import Image", action: chooseImage)
                     Button("Export PNG", action: chooseStandardExportFolder)
                     Button("Mac Store", action: chooseMacExportFolder)
                     Button("iPhone Store", action: chooseIPhoneExportFolder)
@@ -98,6 +99,15 @@ public struct BannerWorkspaceView: View {
 
     private func chooseStandardExportFolder() {
         chooseExportFolder(named: "Banner-Standard-PNG") { model.exportStandardPNG(to: $0) }
+    }
+
+    private func chooseImage() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.png, .jpeg, .tiff, .webP]
+        panel.allowsMultipleSelection = false
+        if panel.runModal() == .OK, let url = panel.url {
+            model.importImage(from: url)
+        }
     }
 
     private func chooseMacExportFolder() {

@@ -96,6 +96,7 @@ public struct BannerRenderConfiguration: Equatable, Sendable {
     public var title: String
     public var subTitle: String
     public var features: [String]
+    public var imageURL: URL?
     public var backgroundID: String
     public var opacity: Double
 
@@ -104,6 +105,7 @@ public struct BannerRenderConfiguration: Equatable, Sendable {
         title: String,
         subTitle: String = "",
         features: [String] = [],
+        imageURL: URL? = nil,
         backgroundID: String = "1",
         opacity: Double = 1
     ) {
@@ -111,6 +113,7 @@ public struct BannerRenderConfiguration: Equatable, Sendable {
         self.title = title
         self.subTitle = subTitle
         self.features = features
+        self.imageURL = imageURL
         self.backgroundID = backgroundID
         self.opacity = opacity
     }

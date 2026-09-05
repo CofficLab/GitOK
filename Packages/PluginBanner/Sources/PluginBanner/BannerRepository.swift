@@ -86,6 +86,46 @@ public final class BannerRepository: @unchecked Sendable {
         try fileManager.removeItem(at: URL(fileURLWithPath: banner.path))
     }
 
+    /// Copies a user-selected image into the banner-owned project storage.
+    @discardableResult
+    public func importImage(from sourceURL: URL, for projectURL: URL) throws -> String {
+        let imagesDirectory = Self.bannerDirectoryURL(for: projectURL)
+            .appendingPathComponent("images", isDirectory: true)
+        try fileManager.createDirectory(
+            at: imagesDirectory,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+
+        let ext = sourceURL.pathExtension.isEmpty ? "png" : sourceURL.pathExtension.lowercased()
+        let fileName = "\(UUID().uuidString).\(ext)"
+        let destinationURL = imagesDirectory.appendingPathComponent(fileName)
+        try fileManager.copyItem(at: sourceURL, to: destinationURL)
+        return ".gitok/banners/images/\(fileName)"
+    }
+
+    public func imageURL(for imageID: String, in projectURL: URL) -> URL {
+        if imageID.hasPrefix("file://") {
+            return URL(string: imageID) ?? projectURL
+        }
+        if imageID.hasPrefix("/") {
+            let absoluteURL = URL(fileURLWithPath: imageID)
+            if fileManager.fileExists(atPath: absoluteURL.path) {
+                return absoluteURL
+            }
+            return projectURL.appendingPathComponent(String(imageID.dropFirst()))
+        }
+        return projectURL.appendingPathComponent(imageID)
+    }
+
+    public func imageID(for imageURL: URL, projectURL: URL?) -> String {
+        guard let projectURL else { return imageURL.path }
+        let projectPath = projectURL.standardizedFileURL.path
+        let imagePath = imageURL.standardizedFileURL.path
+        guard imagePath.hasPrefix(projectPath + "/") else { return imagePath }
+        return String(imagePath.dropFirst(projectPath.count + 1))
+    }
+
     public static func bannerDirectoryURL(for projectURL: URL) -> URL {
         BannerStorageRules.bannerDirectoryURL(
             projectPath: projectURL.path,

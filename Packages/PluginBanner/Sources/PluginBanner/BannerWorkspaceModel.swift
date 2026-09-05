@@ -9,6 +9,7 @@ public final class BannerWorkspaceModel: ObservableObject {
     @Published public var title = "Banner Title"
     @Published public var subTitle = "Banner SubTitle"
     @Published public var featuresText = ""
+    @Published public private(set) var imageURL: URL?
     @Published public var backgroundID = "1"
     @Published public var opacity = 1.0
     @Published public private(set) var message: String?
@@ -93,12 +94,14 @@ public final class BannerWorkspaceModel: ObservableObject {
                     .split(separator: "\n")
                     .map(String.init)
                     .filter { !$0.isEmpty },
+                imageId: imageURL.map { repository.imageID(for: $0, projectURL: projects.currentProject?.url) },
                 backgroundId: backgroundID,
                 opacity: opacity
             )
         } else {
             banner.minimalData = MinimalBannerData(
                 title: title,
+                imageId: imageURL.map { repository.imageID(for: $0, projectURL: projects.currentProject?.url) },
                 backgroundId: backgroundID,
                 opacity: opacity
             )
@@ -111,6 +114,21 @@ public final class BannerWorkspaceModel: ObservableObject {
             selectedBannerID = banner.id
             loadDraft(from: banner)
             message = "Banner saved"
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    public func importImage(from sourceURL: URL) {
+        guard let project = projects.currentProject else { return }
+        do {
+            let imageID = try repository.importImage(from: sourceURL, for: project.url)
+            imageURL = repository.imageURL(for: imageID, in: project.url)
+            if selectedBanner == nil {
+                createBanner()
+            }
+            saveDraft()
+            message = "Banner image imported"
         } catch {
             message = error.localizedDescription
         }
@@ -149,6 +167,7 @@ public final class BannerWorkspaceModel: ObservableObject {
             title: title,
             subTitle: subTitle,
             features: featuresText.split(separator: "\n").map(String.init).filter { !$0.isEmpty },
+            imageURL: imageURL,
             backgroundID: backgroundID,
             opacity: opacity
         )
@@ -166,12 +185,14 @@ public final class BannerWorkspaceModel: ObservableObject {
             title = data.title
             subTitle = data.subTitle
             featuresText = data.features.joined(separator: "\n")
+            imageURL = data.imageId.map { repository.imageURL(for: $0, in: projects.currentProject?.url ?? URL(fileURLWithPath: "/")) }
             backgroundID = data.backgroundId
             opacity = data.opacity
         } else if let data = banner.minimalData {
             title = data.title
             subTitle = ""
             featuresText = ""
+            imageURL = data.imageId.map { repository.imageURL(for: $0, in: projects.currentProject?.url ?? URL(fileURLWithPath: "/")) }
             backgroundID = data.backgroundId
             opacity = data.opacity
         } else {
@@ -184,6 +205,7 @@ public final class BannerWorkspaceModel: ObservableObject {
         title = "Banner Title"
         subTitle = "Banner SubTitle"
         featuresText = ""
+        imageURL = nil
         backgroundID = "1"
         opacity = 1
     }

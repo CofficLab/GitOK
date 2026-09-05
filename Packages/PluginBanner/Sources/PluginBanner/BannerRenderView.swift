@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// Shared preview/rendering view so the editor and exports cannot drift apart.
@@ -18,9 +19,13 @@ public struct BannerRenderView: View {
                     ForEach(configuration.features, id: \.self) { feature in
                         Text("• \(feature)").font(.callout)
                     }
+                    imageView
                 }
             } else {
-                Text(configuration.title).font(.system(size: 42, weight: .bold))
+                VStack(spacing: 16) {
+                    Text(configuration.title).font(.system(size: 42, weight: .bold))
+                    imageView
+                }
             }
         }
         .foregroundStyle(.white)
@@ -33,6 +38,17 @@ public struct BannerRenderView: View {
         case "2": LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing)
         case "3": LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)
         default: LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+    }
+
+    @ViewBuilder
+    private var imageView: some View {
+        if let imageURL = configuration.imageURL,
+           let image = NSImage(contentsOf: imageURL) {
+            Image(nsImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 420, maxHeight: 420)
         }
     }
 }

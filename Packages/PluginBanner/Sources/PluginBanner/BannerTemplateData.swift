@@ -12,6 +12,7 @@ public struct ClassicBannerData: Codable, Equatable, Sendable {
     public var title: String
     public var subTitle: String
     public var features: [String]
+    public var imageId: String?
     public var backgroundId: String
     public var opacity: Double
 
@@ -19,12 +20,14 @@ public struct ClassicBannerData: Codable, Equatable, Sendable {
         title: String = "Banner Title",
         subTitle: String = "Banner SubTitle",
         features: [String] = [],
+        imageId: String? = nil,
         backgroundId: String = "1",
         opacity: Double = 1
     ) {
         self.title = title
         self.subTitle = subTitle
         self.features = features
+        self.imageId = imageId
         self.backgroundId = backgroundId
         self.opacity = opacity
     }
@@ -33,15 +36,18 @@ public struct ClassicBannerData: Codable, Equatable, Sendable {
 /// Persisted data for the minimal banner template.
 public struct MinimalBannerData: Codable, Equatable, Sendable {
     public var title: String
+    public var imageId: String?
     public var backgroundId: String
     public var opacity: Double
 
     public init(
         title: String = "App Title",
+        imageId: String? = nil,
         backgroundId: String = "1",
         opacity: Double = 1
     ) {
         self.title = title
+        self.imageId = imageId
         self.backgroundId = backgroundId
         self.opacity = opacity
     }
