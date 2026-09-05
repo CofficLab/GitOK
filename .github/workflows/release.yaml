@@ -13,14 +13,23 @@ permissions:
 
 env:
   SCHEME: GitOK
-  CREATE_DMG_VERSION: "8.1.0"
+  DESTINATION: generic/platform=macOS
+  ENTITLEMENTS_PATH: GitOKApp/App.entitlements
+  DERIVED_DATA_PATH: ./DerivedData
+  RELEASE_ARCHS: arm64 x86_64
   SPARKLE_VERSION: "2.8.1"
   R2_API_URL: https://data.coffic.cn
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+  BUILD_CERTIFICATE_P12_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_P12_PASSWORD }}
+  APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
+  APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+  APP_STORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}
 
 jobs:
   build_with_signing:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,21 +56,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "latest-stable"
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: 安装依赖
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -fsSL \
-            --header "authorization: Bearer ${GITHUB_TOKEN}" \
-            --header "user-agent: GitOK-Release-Workflow" \
-            https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
+          xcode-version: "26.3"
 
       - name: 获取最新 tag
         run: |
@@ -81,77 +76,177 @@ jobs:
 
       - name: Setup macOS signing
         id: signing
-        env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          BUILD_CERTIFICATE_P12_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_P12_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64_GITOK_MACOS }}
-          APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
         run: |
+          chmod +x .github/scripts/setup-macos-signing.sh
           source ./.github/scripts/setup-macos-signing.sh
           echo "signing_identity=$SIGNING_IDENTITY" >> "$GITHUB_OUTPUT"
+          echo "team_id=$TEAM_ID" >> "$GITHUB_OUTPUT"
           echo "api_key_path=$API_KEY_PATH" >> "$GITHUB_OUTPUT"
 
-      - name: Build and codesign
+      - name: Resolve SPM Dependencies
         run: |
           set -euo pipefail
-          for arch in arm64 x86_64; do
-            app="./temp/${arch}/Build/Products/Release/${{ env.SCHEME }}.app"
-            servon xcode build --scheme ${{ env.SCHEME }} --arch "$arch" --clean=false -v
-            servon xcode codesign --path "$app" \
-              --identity "${{ steps.signing.outputs.signing_identity }}"
+          rm -rf "${{ env.DERIVED_DATA_PATH }}/SourcePackages"
+          mkdir -p "${{ env.DERIVED_DATA_PATH }}/SourcePackages"
+          xcodebuild -project "${{ env.SCHEME }}.xcodeproj" \
+            -scheme "${{ env.SCHEME }}" \
+            -derivedDataPath "${{ env.DERIVED_DATA_PATH }}" \
+            -resolvePackageDependencies \
+            -skipPackagePluginValidation
+
+      - name: Build App (Archive)
+        run: |
+          set -euo pipefail
+          mkdir -p ./temp
+          for arch in ${{ env.RELEASE_ARCHS }}; do
+            archive_path="./temp/${{ env.SCHEME }}-${arch}.xcarchive"
+            archive_log="./temp/archive-${arch}.log"
+            rm -rf "$archive_path"
+
+            set +e
+            xcodebuild archive \
+              -project "${{ env.SCHEME }}.xcodeproj" \
+              -scheme "${{ env.SCHEME }}" \
+              -destination "${{ env.DESTINATION }}" \
+              -derivedDataPath "${{ env.DERIVED_DATA_PATH }}" \
+              -archivePath "$archive_path" \
+              -configuration Release \
+              -skipPackagePluginValidation \
+              -skipPackageSignatureValidation \
+              CODE_SIGN_STYLE=Manual \
+              CODE_SIGN_IDENTITY="-" \
+              DEVELOPMENT_TEAM="${{ steps.signing.outputs.team_id }}" \
+              CODE_SIGN_ENTITLEMENTS="" \
+              CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
+              PROVISIONING_PROFILE_SPECIFIER="" \
+              CODE_SIGNING_REQUIRED=NO \
+              AD_HOC_CODE_SIGNING_ALLOWED=YES \
+              ARCHS="$arch" \
+              ONLY_ACTIVE_ARCH=NO > "$archive_log" 2>&1
+            archive_exit=$?
+            set -e
+
+            if [ "$archive_exit" -ne 0 ]; then
+              echo "❌ Archive failed for $arch (exit $archive_exit)"
+              tail -200 "$archive_log" || true
+              echo "--- error lines ---"
+              grep -E "(error:|FAILED|BUILD FAILED|No profiles|Cannot find)" "$archive_log" | head -60 || true
+              exit 1
+            fi
+
+            echo "✅ Archive succeeded for $arch"
+          done
+
+      - name: Codesign App
+        run: |
+          set -euo pipefail
+          identity="${{ steps.signing.outputs.signing_identity }}"
+          chmod +x .github/scripts/sign_app.sh
+
+          for arch in ${{ env.RELEASE_ARCHS }}; do
+            archive_app="./temp/${{ env.SCHEME }}-${arch}.xcarchive/Products/Applications/${{ env.SCHEME }}.app"
+            app_path="./temp/${{ env.SCHEME }}-${arch}.app"
+
+            if [ ! -d "$archive_app" ]; then
+              echo "❌ Archived app not found: $archive_app"
+              exit 1
+            fi
+
+            rm -rf "$app_path"
+            ditto "$archive_app" "$app_path"
+            binary_path="$app_path/Contents/MacOS/${{ env.SCHEME }}"
+            if ! lipo -archs "$binary_path" | tr ' ' '\n' | grep -qx "$arch"; then
+              echo "❌ $binary_path does not contain expected architecture: $arch"
+              lipo -archs "$binary_path" || true
+              exit 1
+            fi
+
+            .github/scripts/sign_app.sh "$app_path" "$identity" "${{ env.ENTITLEMENTS_PATH }}"
           done
 
       - name: Create DMG
-        env:
-          DMG_SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
         run: |
           set -euo pipefail
-          for arch in arm64 x86_64; do
-            app="./temp/${arch}/Build/Products/Release/${{ env.SCHEME }}.app"
-            out="./temp/dmg_${arch}"
-            version_dmg=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist" | tr . _)
-            dmg_name="${{ env.SCHEME }}-${arch}-${version_dmg}.dmg"
+          for arch in ${{ env.RELEASE_ARCHS }}; do
+            staging_dir="./temp/dmg_staging_${arch}"
+            volume_name="${{ env.SCHEME }}-${arch}"
+            app_path="./temp/${{ env.SCHEME }}-${arch}.app"
+            version_dmg=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist" | tr . _)
+            dmg_name="./temp/${{ env.SCHEME }}_${version_dmg}_${arch}.dmg"
 
-            rm -rf "$out"
-            mkdir -p "$out"
-
-            set +e
-            npx "create-dmg@${CREATE_DMG_VERSION}" --overwrite \
-              --identity "$DMG_SIGNING_IDENTITY" "$app" "$out"
-            create_dmg_status=$?
-            set -e
-
-            generated_dmg="$(find "$out" -maxdepth 1 -name '*.dmg' -type f | head -n 1)"
-            if [ -z "$generated_dmg" ]; then
-              echo "❌ create-dmg did not produce a DMG for ${arch} (exit ${create_dmg_status})" >&2
+            if [ ! -d "$app_path" ]; then
+              echo "❌ Signed app not found: $app_path"
               exit 1
             fi
-            if [ "$create_dmg_status" -ne 0 ] && [ "$create_dmg_status" -ne 2 ]; then
-              echo "❌ create-dmg failed for ${arch} (exit ${create_dmg_status})" >&2
-              exit "$create_dmg_status"
-            fi
 
-            mv "$generated_dmg" "./temp/${dmg_name}"
-            rm -rf "$out"
+            rm -rf "$staging_dir"
+            mkdir -p "$staging_dir"
+            ditto "$app_path" "$staging_dir/${{ env.SCHEME }}.app"
+            ln -sfn /Applications "$staging_dir/Applications"
+            mdutil -i off "$staging_dir" 2>/dev/null || true
+            mdutil -i off ./temp 2>/dev/null || true
+            sync
+            sleep 1
+
+            create_dmg() {
+              hdiutil detach "/Volumes/${volume_name}" -force 2>/dev/null || true
+              rm -f "$dmg_name"
+              hdiutil create -volname "$volume_name" -srcfolder "$staging_dir" -ov -format UDZO "$dmg_name"
+            }
+
+            attempt=0
+            until create_dmg; do
+              attempt=$((attempt + 1))
+              if [ "$attempt" -ge 6 ]; then
+                echo "❌ hdiutil create failed after 6 attempts for $arch"
+                exit 1
+              fi
+              echo "⚠️ hdiutil failed for $arch (attempt $attempt/6), retrying..."
+              sleep $((attempt * 3))
+            done
+
+            rm -rf "$staging_dir"
+            echo "✅ Created: $dmg_name"
           done
           ls -alh ./temp/*.dmg
 
       - name: Notarize DMG
-        continue-on-error: true
         run: |
           set -euo pipefail
           shopt -s nullglob
           for file in ./temp/*.dmg; do
             echo "🔐 Notarizing $file"
+            result_file="notary_result_$(basename "$file" .dmg).txt"
+            set +e
             xcrun notarytool submit "$file" \
-              --key ${{ steps.signing.outputs.api_key_path }} \
-              --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
-              --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
+              --key "${{ steps.signing.outputs.api_key_path }}" \
+              --key-id="${APP_STORE_CONNECT_KEY_ID}" \
+              --issuer "${APP_STORE_CONNECT_KEY_ISSUER_ID}" \
               --wait \
-              --timeout 10m
+              --timeout 10m > "$result_file" 2>&1
+            notarize_exit=$?
+            set -e
+            cat "$result_file"
+
+            if [ "$notarize_exit" -ne 0 ] || grep -q "status: Invalid" "$result_file"; then
+              echo "❌ Notarization failed for $file"
+              submission_id=$(grep "id:" "$result_file" | sed -n '1p' | awk '{print $2}' | tr -d ' ')
+              if [ -n "$submission_id" ]; then
+                xcrun notarytool log "$submission_id" \
+                  --key "${{ steps.signing.outputs.api_key_path }}" \
+                  --key-id="${APP_STORE_CONNECT_KEY_ID}" \
+                  --issuer "${APP_STORE_CONNECT_KEY_ISSUER_ID}" || true
+              fi
+              exit 1
+            fi
+
             stapler staple "$file"
+          done
+
+      - name: Validate Notarization
+        run: |
+          set -euo pipefail
+          for file in ./temp/*.dmg; do
             stapler validate "$file"
           done
 

@@ -32,7 +32,22 @@ build=$(GITOK_VERSION_FILE="${WORK}/GitOK.xcconfig" bash "${ROOT}/.github/script
 GITOK_VERSION_FILE="${WORK}/GitOK.xcconfig" bash "${ROOT}/.github/scripts/bump-version.sh" --dry-run >/dev/null
 pass "xcconfig version read and bump"
 
-echo "=== 3. tag + changelog logic ==="
+echo "=== 3. archive and signing workflow ==="
+RELEASE_WORKFLOW="${ROOT}/.github/workflows/release.yaml"
+SIGNING_SCRIPT="${ROOT}/.github/scripts/setup-macos-signing.sh"
+if rg -n '\bservon\b' "$RELEASE_WORKFLOW"; then
+  fail "release workflow must not use servon"
+fi
+rg -q 'BUILD_PROVISION_PROFILE_BASE64|APP_STORE_CONNECT_KEY_ISSER_ID' "$RELEASE_WORKFLOW" "$SIGNING_SCRIPT" && \
+  fail "stale provisioning-profile or issuer secret remains"
+grep -q 'xcodebuild archive' "$RELEASE_WORKFLOW" || fail "archive command missing"
+grep -q 'CODE_SIGN_ENTITLEMENTS=""' "$RELEASE_WORKFLOW" || fail "unsigned archive entitlements override missing"
+grep -q '.github/scripts/sign_app.sh' "$RELEASE_WORKFLOW" || fail "manual signing script missing"
+grep -q 'hdiutil create' "$RELEASE_WORKFLOW" || fail "native DMG creation missing"
+grep -q 'xcrun notarytool submit' "$RELEASE_WORKFLOW" || fail "notarization command missing"
+pass "archive without provisioning profile and manual signing"
+
+echo "=== 4. tag + changelog logic ==="
 cd "${ROOT}"
 tag=$(git describe --tags --abbrev=0)
 if [[ $tag == p* ]]; then
@@ -53,7 +68,7 @@ if [ -n "$previous_tag" ]; then
 fi
 pass "tag=${tag} previous=${previous_tag:-none}"
 
-echo "=== 4. perl appcast post-process ==="
+echo "=== 5. perl appcast post-process ==="
 cat > "${WORK}/appcast-arm64.xml" <<'EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
@@ -83,10 +98,10 @@ grep -q 'fullReleaseNotesLink' appcast-arm64.xml || fail "release notes link mis
 command -v xmllint >/dev/null && xmllint --noout appcast-arm64.xml
 pass "perl post-process"
 
-echo "=== 5. generate_appcast with real DMG (optional) ==="
+echo "=== 6. generate_appcast with real DMG (optional) ==="
 SAMPLE_DMG=""
-if [ -f "${ROOT}/temp/GitOK-arm64"*.dmg ]; then
-  SAMPLE_DMG=$(ls "${ROOT}"/temp/GitOK-arm64*.dmg | head -n 1)
+if compgen -G "${ROOT}/temp/GitOK-arm64*.dmg" >/dev/null 2>&1; then
+  SAMPLE_DMG=$(find "${ROOT}/temp" -maxdepth 1 -type f -name 'GitOK-arm64*.dmg' -print -quit)
 elif command -v gh >/dev/null; then
   mkdir -p "${WORK}/dmg"
   if gh release download v3.0.13 --repo CofficLab/GitOK --pattern '*arm64*' --dir "${WORK}/dmg" 2>/dev/null; then
