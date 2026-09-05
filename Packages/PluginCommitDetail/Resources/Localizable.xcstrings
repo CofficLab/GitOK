@@ -50,6 +50,16 @@
         }
       }
     },
+    "Unstage" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消暂存"
+          }
+        }
+      }
+    },
     "Not Staged" : {
       "localizations" : {
         "zh-Hans" : {

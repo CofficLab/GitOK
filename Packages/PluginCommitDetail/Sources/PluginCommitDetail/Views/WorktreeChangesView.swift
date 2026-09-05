@@ -29,6 +29,7 @@ struct WorktreeChangesView: View {
     @State private var loadError: String?
     @State private var actionError: String?
     @State private var stagingPath: String?
+    @State private var unstagingPath: String?
     @State private var loadedProjectURL: URL?
 
     var body: some View {
@@ -139,7 +140,22 @@ struct WorktreeChangesView: View {
 
                 Spacer(minLength: 8)
 
-                if entry.isUntracked || entry.isWorktreeModified {
+                if entry.isStaged {
+                    if unstagingPath == entry.path {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        AppIconButton(
+                            systemImage: "minus.rectangle.on.folder",
+                            label: loc("Unstage"),
+                            tint: theme.primary,
+                            size: .compact
+                        ) {
+                            unstage(entry)
+                        }
+                        .disabled(stagingPath != nil || unstagingPath != nil)
+                    }
+                } else if entry.isUntracked || entry.isWorktreeModified {
                     if stagingPath == entry.path {
                         ProgressView()
                             .controlSize(.small)
@@ -152,7 +168,7 @@ struct WorktreeChangesView: View {
                         ) {
                             stage(entry)
                         }
-                        .disabled(stagingPath != nil)
+                        .disabled(stagingPath != nil || unstagingPath != nil)
                     }
                 }
             }
@@ -210,6 +226,27 @@ struct WorktreeChangesView: View {
         }
     }
 
+    private func unstage(_ entry: GitStatusEntry) {
+        guard let projectURL = viewModel.selectedProjectURL else { return }
+
+        unstagingPath = entry.path
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try GitCommitOperation.unstageFiles([entry.path], in: projectURL)
+            }
+            await MainActor.run {
+                unstagingPath = nil
+                switch result {
+                case .success:
+                    onDataChanged()
+                case .failure(let error):
+                    actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                }
+            }
+        }
+    }
+
     // MARK: - Loading
 
     private func reloadIfNeeded(force: Bool = false) {
@@ -219,6 +256,7 @@ struct WorktreeChangesView: View {
             isLoading = false
             actionError = nil
             stagingPath = nil
+            unstagingPath = nil
             return
         }
         if loadedProjectURL == projectURL && !force { return }

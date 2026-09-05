@@ -69,6 +69,30 @@ final class GitCommitOperationTests: XCTestCase {
         XCTAssertTrue(untouched.isUntracked)
     }
 
+    func testUnstageFilesUnstagesOnlyRequestedFilesAndKeepsWorktreeChanges() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("initial a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("initial b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try Data("changed a\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try Data("changed b\n".utf8).write(to: repo.appendingPathComponent("b.txt"))
+        try GitCommitOperation.stageFiles(["a.txt", "b.txt"], in: repo)
+        try GitCommitOperation.unstageFiles([], in: repo)
+        try GitCommitOperation.unstageFiles(["a.txt"], in: repo)
+
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        let unstaged = try XCTUnwrap(entries.first(where: { $0.path == "a.txt" }))
+        XCTAssertEqual(unstaged.stagedStatus, " ")
+        XCTAssertEqual(unstaged.worktreeStatus, "M")
+
+        let stillStaged = try XCTUnwrap(entries.first(where: { $0.path == "b.txt" }))
+        XCTAssertEqual(stillStaged.stagedStatus, "M")
+        XCTAssertEqual(stillStaged.worktreeStatus, " ")
+    }
+
     func testCommitWithNothingToCommitThrows() throws {
         let repo = try makeRepo()
         defer { try? FileManager.default.removeItem(at: repo) }
