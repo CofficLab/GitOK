@@ -2,7 +2,6 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderLogo
 import ProviderSettingView
 
 /// 设置视图管理器插件（KernelCore 生态）。
@@ -37,16 +36,7 @@ public final class PluginSettingView: SuperPlugin, SuperLog {
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        // 侧边栏 Logo 是插件内部行为：从内核解析 LogoProviding，自行构建 Header。
-        // 注意：这里不能固定持有解析到的实例。LogoProviding 会先后被
-        // PluginLogoManager(order=4) 替换、再由 LogoCofficPlugin(order=100) 注册，
-        // 若在 order=3 时固定拿到 DefaultLogoProviding，将永远读不到 Coffic Logo。
-        // 因此改为惰性闭包：在真正渲染设置视图时（启动完成）再动态解析，拿到
-        // 已装配好 Logo 贡献的最新实现。
-        weak var weakKernel = kernel
-        let manager = SettingViewManager(logoProvider: { [weak weakKernel] in
-            weakKernel?.resolveProvider((any LogoProviding).self)
-        })
+        let manager = SettingViewManager()
         self.manager = manager
 
         // 0. 复制先前已注册实现中已有的数据，避免数据丢失。

@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import ProviderLogo
 import ProviderSettingView
 import LumiUI
 
@@ -8,13 +7,8 @@ struct SettingView<Provider: SettingViewProviding & ObservableObject>: View {
     @ObservedObject var provider: Provider
     @LumiTheme private var theme
 
-    /// 从共享内核解析的 Logo 服务；`nil` 时侧边栏 Header 仅显示回退图标。
-    private let logo: (any LogoProviding)?
-    private let appInfo = AppBundleInfo()
-
-    init(provider: Provider, logo: (any LogoProviding)?) {
+    init(provider: Provider) {
         self.provider = provider
-        self.logo = logo
     }
 
     var body: some View {
@@ -42,7 +36,7 @@ struct SettingView<Provider: SettingViewProviding & ObservableObject>: View {
     private var sidebar: some View {
         AppSettingsSidebarContainer(width: 220) {
             VStack(alignment: .leading, spacing: 10) {
-                HeaderView(logo: logo)
+                HeaderView()
 
                 AppSettingsDivider()
 
