@@ -17,11 +17,11 @@ final class GitDiffObserver {
     private var projectsHandle: (any ProjectProvidingObserverHandle)?
 
     init(
-        projects: any ProjectProviding,
+        capability: any GitDiffProjectCapability,
         onSelectionChanged: @escaping () -> Void,
         onProjectDataChanged: @escaping () -> Void
     ) {
-        projectsHandle = projects.addObserver { event in
+        projectsHandle = capability.addObserver { event in
             switch event {
             case .commitSelectionChanged, .currentFileChanged:
                 onSelectionChanged()
@@ -31,6 +31,19 @@ final class GitDiffObserver {
                 break
             }
         }
+    }
+
+    @available(*, deprecated, message: "Inject GitDiffProjectCapability from GitDiffPlugin")
+    convenience init(
+        projects: any ProjectProviding,
+        onSelectionChanged: @escaping () -> Void,
+        onProjectDataChanged: @escaping () -> Void
+    ) {
+        self.init(
+            capability: GitDiffProjectCapabilityAdapter(projects: projects),
+            onSelectionChanged: onSelectionChanged,
+            onProjectDataChanged: onProjectDataChanged
+        )
     }
 
     /// 取消全部订阅；插件卸载后不再有任何回调。

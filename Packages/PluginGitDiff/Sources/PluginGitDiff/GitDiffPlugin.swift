@@ -59,6 +59,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
         // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照，
         // 避免注册时机导致 UI 永久使用默认值。
+        let capability = GitDiffProjectCapabilityAdapter(projects: projects)
         let viewModel = GitDiffViewModel()
         self.viewModel = viewModel
 
@@ -69,7 +70,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             maxWidth: .infinity,
             // 初始可见性与当前是否有选中文件一致；无选中文件时右侧面板隐藏，
             // 避免空占位（下方 observer 会在文件选择变化时同步显隐）。
-            isVisible: projects.currentFile != nil,
+            isVisible: capability.currentFile != nil,
             content: AnyView(
                 GitDiffPaneView(viewModel: viewModel)
                     // Debug 构建下左下角叠加插件名 badge，便于识别视图来源。
@@ -82,17 +83,16 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
         // 清除文件选择（切换 commit / 清空 commit 选择）时隐藏面板，
         // 不再由面板自身渲染空占位。
         let syncPaneVisibility = { [weak pane] in
-            pane?.isVisible = projects.currentFile != nil
+            pane?.isVisible = capability.currentFile != nil
         }
 
         observer = GitDiffObserver(
-            projects: projects,
-            onSelectionChanged: { [weak viewModel, weak projects] in
-                guard let projects else { return }
+            capability: capability,
+            onSelectionChanged: { [weak viewModel, capability] in
                 viewModel?.handleSelectionChanged(
-                    commit: projects.currentCommit,
-                    projectURL: projects.currentProject?.url,
-                    file: projects.currentFile
+                    commit: capability.currentCommit,
+                    projectURL: capability.currentProjectURL,
+                    file: capability.currentFile
                 )
                 syncPaneVisibility()
             },
@@ -101,9 +101,9 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             }
         )
         viewModel.handleSelectionChanged(
-            commit: projects.currentCommit,
-            projectURL: projects.currentProject?.url,
-            file: projects.currentFile
+            commit: capability.currentCommit,
+            projectURL: capability.currentProjectURL,
+            file: capability.currentFile
         )
         syncPaneVisibility()
     }
