@@ -68,50 +68,50 @@ private struct ProjectSidebarView: View {
     }
 
     var body: some View {
-        AppSettingsSidebarContainer(width: 220) {
-            VStack(spacing: 0) {
-                // 搜索框 + 添加项目按钮
-                HStack(spacing: 4) {
-                    AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search", bundle: .module)))
-                    AppIconButton(systemImage: "plus", size: .compact) {
-                        addExistingProject()
-                    }
-                    .help(LumiPluginLocalization.string("Add Project", bundle: .module))
+        VStack(spacing: 0) {
+            // 搜索框 + 添加项目按钮
+            HStack(spacing: 4) {
+                AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search", bundle: .module)))
+                AppIconButton(systemImage: "plus", size: .compact) {
+                    addExistingProject()
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
-                Group {
-                    if filteredProjects.isEmpty {
-                        if projects.projects.isEmpty {
-                            EmptyProjectsPlaceholder(projects: projects)
-                        } else {
-                            AppEmptyState(
-                                icon: "magnifyingglass",
-                                title: LumiPluginLocalization.string("No Results", bundle: .module),
-                                description: String(format: LumiPluginLocalization.string("No projects match \"%@\".", bundle: .module), searchText)
-                            )
-                        }
+                .help(LumiPluginLocalization.string("Add Project", bundle: .module))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            Group {
+                if filteredProjects.isEmpty {
+                    if projects.projects.isEmpty {
+                        EmptyProjectsPlaceholder(projects: projects)
                     } else {
-                        ScrollView(.vertical, showsIndicators: false) {
-                            LazyVStack(spacing: 2) {
-                                ForEach(filteredProjects) { project in
-                                    projectRow(project)
-                                }
-                            }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 8)
-                        }
+                        AppEmptyState(
+                            icon: "magnifyingglass",
+                            title: LumiPluginLocalization.string("No Results", bundle: .module),
+                            description: String(format: LumiPluginLocalization.string("No projects match \"%@\".", bundle: .module), searchText)
+                        )
                     }
-                }
-                .frame(maxHeight: .infinity)
-
-                // 底部操作栏：克隆仓库入口（由 PluginCloneRepository 提供）。
-                if let cloneProvider {
-                    AppDivider()
-                    sidebarFooter(cloneProvider)
+                } else {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVStack(spacing: 2) {
+                            ForEach(filteredProjects) { project in
+                                projectRow(project)
+                            }
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 8)
+                    }
                 }
             }
+            .frame(maxHeight: .infinity)
+
+            // 底部操作栏：克隆仓库入口（由 PluginCloneRepository 提供）。
+            if let cloneProvider {
+                AppDivider()
+                sidebarFooter(cloneProvider)
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.background.opacity(0.6))
         .frame(maxHeight: .infinity)
         .onReceive(observation.$revision) { _ in
             // 项目状态变化时重算 body，读取最新项目列表。

@@ -17,14 +17,39 @@ struct DefaultRootHostView: View {
                 AppDivider()
             }
 
-            HStack(spacing: 0) {
+            Group {
+                #if os(macOS)
                 if let sidebarView = provider.sidebarView, !provider.isSidebarViewHidden {
-                    sidebarView
-                        .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
-                        .transition(sidebarTransition)
+                    HSplitView {
+                        sidebarView
+                            .frame(
+                                minWidth: provider.sidebarWidth.minWidth,
+                                idealWidth: provider.sidebarWidth.idealWidth,
+                                maxWidth: provider.sidebarWidth.maxWidth
+                            )
+                            .appSplitDivider(
+                                .trailing,
+                                initialPosition: provider.sidebarWidth.idealWidth,
+                                onResize: provider.saveSidebarWidth
+                            )
+                            .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
+                            .transition(sidebarTransition)
+                        WorkbenchSplitView(provider: provider)
+                    }
+                } else {
+                    WorkbenchSplitView(provider: provider)
                 }
+                #else
+                HStack(spacing: 0) {
+                    if let sidebarView = provider.sidebarView, !provider.isSidebarViewHidden {
+                        sidebarView
+                            .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
+                            .transition(sidebarTransition)
+                    }
 
-                WorkbenchSplitView(provider: provider)
+                    WorkbenchSplitView(provider: provider)
+                }
+                #endif
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             // 侧边栏显隐跟随工具栏按钮切换：沿左边缘滑入/滑出并伴随淡入/淡出，

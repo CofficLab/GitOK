@@ -9,30 +9,29 @@ struct SidebarView: View {
     @ObservedObject var provider: DefaultSidebarProvider
 
     var body: some View {
-        AppSettingsSidebarContainer(width: 220) {
-            VStack(spacing: 0) {
-                if provider.items.isEmpty {
-                    EmptyView()
-                } else {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 2) {
-                            ForEach(provider.items) { item in
-                                AppSettingsSidebarItem(
-                                    title: item.title,
-                                    systemImage: item.systemImage,
-                                    isSelected: provider.activeItemID == item.id
-                                ) {
-                                    provider.activateItem(id: item.id)
-                                }
-                                .id(item.id)
+        VStack(spacing: 0) {
+            if provider.items.isEmpty {
+                EmptyView()
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 2) {
+                        ForEach(provider.items) { item in
+                            AppSettingsSidebarItem(
+                                title: item.title,
+                                systemImage: item.systemImage,
+                                isSelected: provider.activeItemID == item.id
+                            ) {
+                                provider.activateItem(id: item.id)
                             }
+                            .id(item.id)
                         }
-                        .padding(.vertical, 8)
                     }
+                    .padding(.vertical, 8)
                 }
             }
-            .frame(maxHeight: .infinity)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.background.opacity(0.6))
         .frame(maxHeight: .infinity)
     }
 }

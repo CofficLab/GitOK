@@ -31,6 +31,7 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     @Published var trailingPane: RootTrailingPane?
     @Published public private(set) var isRailViewVisible = true
     @Published public private(set) var railWidth: RailViewWidth = .standard
+    @Published public private(set) var sidebarWidth: SidebarWidth
     @Published public private(set) var contentFooterHeight: ContentFooterHeight = .standard
     @Published public private(set) var overlays: [RootOverlayItem] = []
     @Published public private(set) var isContentViewHidden: Bool = false
@@ -40,10 +41,16 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     private var railVisibilitySubscription: AnyCancellable?
     private var railWidthSubscription: AnyCancellable?
     private var railWidthResizeHandler: (@MainActor (CGFloat) -> Void)?
+    private let sidebarWidthStore: (any SidebarWidthStoring)?
     private var activeContentFooterHeightStore: (any ContentFooterHeightStoring)?
     private var activeContentFooterHeightOwnerID: String?
     private var lastRailViewVisibility = true
-    public init() {
+    public init(sidebarWidthStore: (any SidebarWidthStoring)? = UserDefaultsSidebarWidthStore()) {
+        self.sidebarWidthStore = sidebarWidthStore
+        let restoredWidth = sidebarWidthStore?.loadWidth() ?? SidebarWidth.standard.idealWidth
+        self.sidebarWidth = SidebarWidth.standard.withIdealWidth(
+            SidebarWidth.standard.clamped(restoredWidth)
+        )
         if Self.verbose {
             Self.logger.info("\(self.t)DefaultRootViewProviding initialized")
         }
@@ -134,6 +141,15 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
 
     func saveRailViewWidth(_ width: CGFloat) {
         railWidthResizeHandler?(width)
+    }
+
+    func saveSidebarWidth(_ width: CGFloat) {
+        let resolvedWidth = sidebarWidth.clamped(width)
+        sidebarWidthStore?.saveWidth(resolvedWidth)
+        let updatedWidth = sidebarWidth.withIdealWidth(resolvedWidth)
+        if sidebarWidth != updatedWidth {
+            sidebarWidth = updatedWidth
+        }
     }
 
     public var contentFooterHeightPublisher: AnyPublisher<ContentFooterHeight, Never> {

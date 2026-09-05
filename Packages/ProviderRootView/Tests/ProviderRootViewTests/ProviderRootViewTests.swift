@@ -111,6 +111,24 @@ struct ProviderRootViewTests {
         #expect(resizedWidth == 420)
     }
 
+    @Test("Sidebar 宽度支持拖拽结果保存与恢复")
+    func sidebarWidthSavesAndRestores() {
+        let defaults = UserDefaults(suiteName: "ProviderRootViewTests-\(UUID().uuidString)")!
+        let store = UserDefaultsSidebarWidthStore(defaults: defaults, key: "sidebar-width")
+        let provider = DefaultRootViewProvider(sidebarWidthStore: store)
+
+        #expect(provider.sidebarWidth == .standard)
+
+        provider.saveSidebarWidth(360)
+        #expect(provider.sidebarWidth.idealWidth == 360)
+
+        let reloadedProvider = DefaultRootViewProvider(sidebarWidthStore: store)
+        #expect(reloadedProvider.sidebarWidth.idealWidth == 360)
+
+        provider.saveSidebarWidth(120)
+        #expect(provider.sidebarWidth.idealWidth == 180)
+    }
+
     @Test("Content Footer 高度 profile 支持恢复约束并保存拖拽结果")
     func contentFooterHeightProfileRestoresAndSaves() {
         let provider = DefaultRootViewProvider()
