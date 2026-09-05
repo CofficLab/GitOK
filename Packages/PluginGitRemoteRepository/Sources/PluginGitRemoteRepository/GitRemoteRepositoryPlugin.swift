@@ -51,7 +51,8 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
         }
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
-        self.sceneObserver = GitRemoteRepositorySceneObserver(scene: scene, viewModel: sceneViewModel)
+        let sceneCapability = GitRemoteRepositorySceneCapabilityAdapter(scene: scene)
+        self.sceneObserver = GitRemoteRepositorySceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
