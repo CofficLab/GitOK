@@ -61,7 +61,8 @@ struct ProviderThemeTests {
         try provider.selectTheme(id: "lumi-dark")
 
         #expect(provider.selectedThemeId == "lumi-dark")
-        #expect(provider.selectedTheme?.displayName == "Dark")
+        // displayName 走本地化（随系统语言变化），按内置主题的本地化值断言。
+        #expect(provider.selectedTheme?.displayName == BuiltinThemes.dark.displayName)
         #expect(provider.followsSystemAppearance == false)
     }
 
