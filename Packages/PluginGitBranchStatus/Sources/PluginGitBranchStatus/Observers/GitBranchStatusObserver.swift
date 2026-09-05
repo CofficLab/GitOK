@@ -54,12 +54,13 @@ final class GitBranchStatusObserver {
         }
 
         viewModel?.beginLoading(projectURL: url)
-        Task.detached(priority: .utility) { [weak self] in
-            let branch = GitRefReader.currentBranch(in: url)
-            await MainActor.run {
-                guard let self, self.reloadGeneration == generation else { return }
-                self.viewModel?.update(projectURL: url, branch: branch)
-            }
+        let branchTask = Task.detached(priority: .utility) {
+            GitRefReader.currentBranch(in: url)
+        }
+        Task { @MainActor [weak self] in
+            let branch = await branchTask.value
+            guard let self, self.reloadGeneration == generation else { return }
+            self.viewModel?.update(projectURL: url, branch: branch)
         }
     }
 }
