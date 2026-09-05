@@ -134,6 +134,33 @@ final class WorktreeCleanPluginTests: XCTestCase {
         XCTAssertFalse(viewModel.isClean)
     }
 
+    /// 回归：选中 commit 后，后续 dataChanged（提交 / 推送 / 分支切换 / 外部编辑）
+    /// 不应重新点亮「工作区干净」视图——即使工作区实际是干净的。
+    func testDataChangedDoesNotResurrectCleanViewAfterCommitSelected() async throws {
+        let dir = try makeGitRepository()
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        let viewModel = WorktreeCleanViewModel()
+        viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
+        await waitUntilClean(viewModel, expecting: true)
+        XCTAssertTrue(viewModel.isClean)
+
+        // 选中 commit → 干净视图隐藏。
+        viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: true)
+        XCTAssertFalse(viewModel.isClean)
+        XCTAssertFalse(viewModel.isLoading)
+
+        // dataChanged 事件不应重新点亮干净视图，也不应进入加载态。
+        viewModel.handleDataChanged()
+        XCTAssertFalse(viewModel.isClean)
+        XCTAssertFalse(viewModel.isLoading)
+
+        // 取消 commit 选择后，干净视图应能恢复正常。
+        viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
+        await waitUntilClean(viewModel, expecting: true)
+        XCTAssertTrue(viewModel.isClean)
+    }
+
     // MARK: - Cleanliness detection (real git repo)
 
     /// 在临时目录初始化一个空 git 仓库并返回其 URL（无需网络）。
