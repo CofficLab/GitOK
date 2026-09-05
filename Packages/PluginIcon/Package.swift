@@ -15,6 +15,7 @@ let package = Package(
         .package(path: "../ProjectRulesKit"),
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderProjects"),
+        .package(path: "../ProviderWorkspaceScene"),
     ],
     targets: [
         .target(
@@ -26,6 +27,7 @@ let package = Package(
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Sources/PluginIcon",
             resources: [

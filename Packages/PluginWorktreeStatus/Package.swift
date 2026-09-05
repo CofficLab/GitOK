@@ -22,6 +22,7 @@ let package = Package(
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRailView"),
         .package(path: "../ProviderGitRepositoryWatch"),
+        .package(path: "../ProviderWorkspaceScene"),
     ],
     targets: [
         .target(
@@ -35,6 +36,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Sources/PluginWorktreeStatus",
             resources: [

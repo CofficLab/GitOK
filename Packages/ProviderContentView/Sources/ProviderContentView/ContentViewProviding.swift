@@ -1,6 +1,5 @@
 import Combine
 import SwiftUI
-import ProviderWorkspaceScene
 
 /// 主内容视图提供能力协议
 ///
@@ -32,19 +31,4 @@ public protocol ContentViewProviding: AnyObject, ObservableObject
     /// 返回当前全部内容块按 `order` 升序组成的 VStack；未注册任何内容块时返回占位视图。
     func makeContentView() -> AnyView
 
-    /// 接入工作场景 Provider；旧的自定义实现可以使用默认 no-op。
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding)
-}
-
-public extension ContentViewProviding {
-    func addContentView(
-        _ view: AnyView,
-        id: String,
-        order: Int,
-        sceneScope: WorkspaceSceneScope
-    ) {
-        addContentView(view, id: id, order: order)
-    }
-
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {}
 }

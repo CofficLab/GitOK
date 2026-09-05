@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderProjects
 import ProviderStatusBar
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Git Ignore SuperPlugin
@@ -30,6 +31,9 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
 
     static let itemID = "com.coffic.gitok.plugin.git-ignore.id"
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: GitIgnoreSceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -41,21 +45,32 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip gitignore item")
             return
         }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = GitIgnoreSceneObserver(scene: scene, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
                 title: GitIgnoreLocalization.string("Git Ignore", bundle: .module),
                 placement: .leading,
-                order: 20,
-                sceneScope: .git
+                order: 20
             ) {
-                GitIgnoreStatusIcon(projects: projects)
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    GitIgnoreStatusIcon(projects: projects)
+                }
             },
         ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
     }

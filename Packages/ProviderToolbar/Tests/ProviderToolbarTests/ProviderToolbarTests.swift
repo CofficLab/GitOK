@@ -1,5 +1,4 @@
 import Combine
-import ProviderWorkspaceScene
 import SwiftUI
 import Testing
 @testable import ProviderToolbar
@@ -102,22 +101,6 @@ struct ProviderToolbarTests {
         let item = ProviderToolbar.ToolbarItem(id: "legacy", title: "Legacy") { Text("Legacy") }
 
         #expect(item.category == .global)
-        #expect(item.sceneScope == .global)
-    }
-
-    @Test("工具栏项按工作场景过滤")
-    func filtersToolbarItemsByWorkspaceScene() {
-        let scene = DefaultWorkspaceSceneProvider()
-        let provider = DefaultToolbarProviding()
-        provider.bindWorkspaceSceneProvider(scene)
-        provider.registerToolbarItems([
-            ProviderToolbar.ToolbarItem(id: "git", title: "Git", sceneScope: .scene(.git)) { Text("Git") },
-            ProviderToolbar.ToolbarItem(id: "icon", title: "Icon", sceneScope: .scene(.icon)) { Text("Icon") },
-        ])
-
-        #expect(provider.visibleToolbarItems.map(\.id) == ["git"])
-        scene.selectScene(.icon)
-        #expect(provider.visibleToolbarItems.map(\.id) == ["icon"])
     }
 
     @Test("DefaultToolbarProviding 按可见分类过滤工具栏项")

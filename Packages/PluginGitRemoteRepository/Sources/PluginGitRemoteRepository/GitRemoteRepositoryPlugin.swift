@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderProjects
 import ProviderStatusBar
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Git Remote Repository SuperPlugin
@@ -30,6 +31,9 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
 
     static let itemID = "com.coffic.gitok.plugin.git-remote-repository.id"
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: GitRemoteRepositorySceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -41,21 +45,32 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip remote item")
             return
         }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = GitRemoteRepositorySceneObserver(scene: scene, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
                 title: GitRemoteRepositoryLocalization.string("Remote Repository", bundle: .module),
                 placement: .leading,
-                order: 23,
-                sceneScope: .git
+                order: 23
             ) {
-                RemoteRepositoryStatusButton(projects: projects)
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    RemoteRepositoryStatusButton(projects: projects)
+                }
             },
         ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
     }

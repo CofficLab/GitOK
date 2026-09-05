@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderProjects
 import ProviderStatusBar
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Git Stash SuperPlugin
@@ -30,6 +31,9 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
 
     static let itemID = "com.coffic.gitok.plugin.git-stash.id"
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: GitStashSceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -41,21 +45,32 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip stash item")
             return
         }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = GitStashSceneObserver(scene: scene, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
                 title: GitStashLocalization.string("Stash", bundle: .module),
                 placement: .leading,
-                order: 17,
-                sceneScope: .git
+                order: 17
             ) {
-                StashStatusTile(projects: projects)
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    StashStatusTile(projects: projects)
+                }
             },
         ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
     }

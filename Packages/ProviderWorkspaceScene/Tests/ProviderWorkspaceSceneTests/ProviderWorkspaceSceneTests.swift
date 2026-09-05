@@ -64,12 +64,19 @@ struct ProviderWorkspaceSceneTests {
         #expect(provider.currentScene == .git)
     }
 
-    @Test("场景范围匹配全局和指定场景")
-    func sceneScopeMatches() {
-        #expect(WorkspaceSceneScope.global.matches(.git))
-        #expect(WorkspaceSceneScope.scene(.banner).matches(.banner))
-        #expect(!WorkspaceSceneScope.scene(.banner).matches(.git))
-        #expect(WorkspaceSceneScope.scenes([.git, .icon]).matches(.icon))
+    @Test("插件场景 ViewModel 跟随场景 Provider 的变化")
+    func pluginSceneViewModelTracksChanges() {
+        let provider = DefaultWorkspaceSceneProvider()
+        let viewModel = WorkspaceSceneVisibilityViewModel(targetScene: .banner)
+        let handle = provider.addObserver { event in
+            guard case let .sceneChanged(_, scene) = event else { return }
+            viewModel.handleSceneChange(scene)
+        }
+        defer { handle.cancel() }
+
+        #expect(!viewModel.isActive)
+        provider.selectScene(.banner)
+        #expect(viewModel.isActive)
     }
 
     @Test("场景选择器模型跟随 Provider 并可切换场景")

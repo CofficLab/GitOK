@@ -5,6 +5,7 @@ import os
 import ProviderContentView
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Commit Detail SuperPlugin
@@ -48,6 +49,8 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
     private var viewModel: CommitDetailViewModel?
     /// 插件级外部 Observer：装配阶段创建并持有，卸载时取消。
     private var observer: CommitDetailObserver?
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: CommitDetailSceneObserver?
 
     public init() {}
 
@@ -58,6 +61,11 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip content injection")
+            return
+        }
+
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
         }
 
@@ -77,6 +85,10 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
             viewModel: viewModel
         )
 
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = CommitDetailSceneObserver(scene: scene, viewModel: sceneViewModel)
+
         let selectFile: (String?) -> Void = { [weak projects] path in
             projects?.selectFile(path)
         }
@@ -87,21 +99,25 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         // 作为主内容区的一块贡献（order 大于 Commit Form，VStack 中位于表单下方）。
         contentView.addContentView(
             AnyView(
-                CommitDetailView(
-                    viewModel: viewModel,
-                    onSelectFile: selectFile,
-                    onDataChanged: notifyDataChanged
-                )
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    CommitDetailView(
+                        viewModel: viewModel,
+                        onSelectFile: selectFile,
+                        onDataChanged: notifyDataChanged
+                    )
+                }
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
             ),
             id: "\(id).content",
-            order: 20,
-            sceneScope: .git
+            order: 20
         )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         observer?.cancel()
         observer = nil
         viewModel = nil

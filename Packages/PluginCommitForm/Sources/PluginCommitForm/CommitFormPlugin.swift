@@ -6,6 +6,7 @@ import ProviderCommitForm
 import ProviderContentView
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Commit Form SuperPlugin
@@ -40,6 +41,8 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
     )
 
     private var formHandle: (any CommitFormObserverHandle)?
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: CommitFormSceneObserver?
 
     public init() {}
 
@@ -52,6 +55,15 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)CommitFormProviding not registered; skip commit form event wiring")
             return
         }
+
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = CommitFormSceneObserver(scene: scene, viewModel: sceneViewModel)
 
         formHandle = form.addObserver { [weak projects] event in
             guard case .committed = event else { return }
@@ -67,13 +79,14 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
             let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
             contentView.addContentView(
                 AnyView(
-                    CommitFormView(projects: projects, form: form, gitWatch: gitWatch)
+                    WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                        CommitFormView(projects: projects, form: form, gitWatch: gitWatch)
+                    }
                         // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                         .debugPluginBadge(metadata.name)
                 ),
                 id: "\(id).content",
-                order: 10,
-                sceneScope: .git
+                order: 10
             )
         } else {
             Self.logger.error("\(self.t)ContentViewProviding not registered; skip content contribution")
@@ -81,6 +94,9 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         formHandle?.cancel()
         formHandle = nil
         kernel.resolveProvider((any ContentViewProviding).self)?

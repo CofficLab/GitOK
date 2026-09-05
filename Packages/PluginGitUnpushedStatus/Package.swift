@@ -20,6 +20,7 @@ let package = Package(
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
+        .package(path: "../ProviderWorkspaceScene"),
     ],
     targets: [
         .target(
@@ -31,6 +32,7 @@ let package = Package(
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Sources/PluginGitUnpushedStatus",
             resources: [

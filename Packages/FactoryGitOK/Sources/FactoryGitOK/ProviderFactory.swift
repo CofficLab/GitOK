@@ -83,12 +83,10 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any ThemeProviding).self, theme)
 
         let contentView = makeContentViewProvider()
-        contentView.bindWorkspaceSceneProvider(workspaceScene)
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any DocsViewProviding).self, makeDocsViewProvider())
 
         let toolbar = makeToolbarProvider()
-        toolbar.bindWorkspaceSceneProvider(workspaceScene)
         toolbar.addToolbarItems([
             ToolbarItem(
                 id: "workspace-scene-picker",
@@ -102,7 +100,6 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any ToolbarProviding).self, toolbar)
 
         let statusBar = makeStatusBarProvider()
-        statusBar.bindWorkspaceSceneProvider(workspaceScene)
         try kernel.registerProvider((any StatusBarProviding).self, statusBar)
         try kernel.registerProvider((any RootViewProviding).self, makeRootViewProvider())
         try kernel.registerProvider((any SettingViewProviding).self, makeSettingViewProvider())
@@ -110,11 +107,9 @@ public struct DefaultProviderFactory: ProviderFactory {
         #if os(macOS)
         try kernel.registerProvider((any LogoProviding).self, makeLogoProvider())
         let sidebar = makeSidebarProvider()
-        sidebar.bindWorkspaceSceneProvider(workspaceScene)
         try kernel.registerProvider((any SidebarProviding).self, sidebar)
 
         let rail = makeRailViewProvider()
-        rail.bindWorkspaceSceneProvider(workspaceScene)
         try kernel.registerProvider((any RailViewProviding).self, rail)
         try kernel.registerProvider((any CommandProviding).self, makeCommandProvider())
         try kernel.registerProvider((any ActivityProviding).self, makeActivityProvider())

@@ -5,6 +5,7 @@ import os
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderRailView
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Worktree Status SuperPlugin
@@ -36,6 +37,9 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         policy: .required
     )
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: WorktreeStatusSceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -51,14 +55,36 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         // ProjectProviding.dataChanged 刷新；真实运行时由 PluginGitRepositoryWatch 提供。
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
 
-        rail.addSections([
-            RailSectionItem(id: "\(id).section", order: 15, sceneScope: .git) {
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        let section = RailSectionItem(id: "\(id).section", order: 15) {
+            WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
                 WorkingTreeStatusView(projects: projects, gitWatch: gitWatch)
-            },
-        ])
+            }
+        }
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = WorktreeStatusSceneObserver(
+            scene: scene,
+            viewModel: sceneViewModel,
+            onVisibilityChanged: { [weak rail] isVisible in
+                guard let rail else { return }
+                if isVisible {
+                    rail.addSections([section])
+                } else {
+                    rail.removeSections(ids: [section.id])
+                }
+            }
+        )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any RailViewProviding).self)?
             .removeSections(ids: ["\(id).section"])
     }

@@ -17,7 +17,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../KitLocalization"),
-        .package(path: "../ProviderWorkspaceScene"),
     ],
     targets: [
         .target(
@@ -25,7 +24,6 @@ let package = Package(
             dependencies: [
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
-                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Sources/ProviderContentView",
             resources: [.process("../../Resources/Localizable.xcstrings")]
@@ -34,7 +32,6 @@ let package = Package(
             name: "ProviderContentViewTests",
             dependencies: [
                 "ProviderContentView",
-                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ]
         )
     ]

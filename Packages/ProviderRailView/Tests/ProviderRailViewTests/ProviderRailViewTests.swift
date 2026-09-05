@@ -1,6 +1,5 @@
 import Foundation
 import Combine
-import ProviderWorkspaceScene
 import SwiftUI
 import Testing
 @testable import ProviderRailView
@@ -21,28 +20,6 @@ struct ProviderRailViewTests {
         #expect(item.title == "Files")
         #expect(item.systemImage == "folder")
         #expect(item.order == 200)
-        #expect(item.sceneScope == .global)
-    }
-
-    @Test("Rail 按工作场景过滤区块和标签")
-    func filtersContributionsByWorkspaceScene() {
-        let scene = DefaultWorkspaceSceneProvider()
-        let provider = DefaultRailViewProviding(sceneProvider: scene)
-        provider.registerSections([
-            RailSectionItem(id: "git", sceneScope: .scene(.git)) { Text("Git") },
-            RailSectionItem(id: "banner", sceneScope: .scene(.banner)) { Text("Banner") },
-        ])
-        provider.registerTabs([
-            RailTabItem(id: "git-tab", category: .general, title: "Git", systemImage: "g", sceneScope: .scene(.git)) { Text("Git") },
-            RailTabItem(id: "icon-tab", category: .design, title: "Icon", systemImage: "i", sceneScope: .scene(.icon)) { Text("Icon") },
-        ])
-
-        #expect(provider.sections.map(\.id) == ["git"])
-        #expect(provider.hasVisibleTabs)
-        scene.selectScene(.icon)
-        #expect(provider.sections.isEmpty)
-        #expect(provider.hasVisibleTabs)
-        #expect(provider.activeTabID == "icon-tab")
     }
 
     @Test("DefaultRailViewProviding 注入 tabs 后排序并自动激活首个标签")

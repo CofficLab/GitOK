@@ -1,5 +1,4 @@
 import SwiftUI
-import ProviderWorkspaceScene
 
 /// Rail 标签的预定义业务分类。
 public enum RailViewCategory: String, CaseIterable, Hashable, Sendable {
@@ -25,8 +24,6 @@ public struct RailTabItem: Identifiable {
     public let title: String
     public let systemImage: String
     public var order: Int
-    /// 标签可见的工作场景范围。
-    public let sceneScope: WorkspaceSceneScope
     /// tab 内容视图。
     public let makeView: @MainActor () -> AnyView
 
@@ -36,7 +33,6 @@ public struct RailTabItem: Identifiable {
         title: String,
         systemImage: String,
         order: Int = 200,
-        sceneScope: WorkspaceSceneScope = .global,
         @ViewBuilder content: @escaping @MainActor () -> Content
     ) {
         self.id = id
@@ -44,7 +40,6 @@ public struct RailTabItem: Identifiable {
         self.title = title
         self.systemImage = systemImage
         self.order = order
-        self.sceneScope = sceneScope
         self.makeView = { AnyView(content()) }
     }
 }

@@ -8,6 +8,7 @@ import ProviderCommitForm
 import ProviderProjects
 import ProviderStatusBar
 import ProviderStorage
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Git Auto Push SuperPlugin
@@ -38,6 +39,9 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
 
     static let itemID = "com.coffic.gitok.plugin.git-auto-push.id"
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: GitAutoPushSceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -49,6 +53,13 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip auto push item")
             return
         }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = GitAutoPushSceneObserver(scene: scene, viewModel: sceneViewModel)
         guard let storage = kernel.resolveProvider((any StorageProviding).self) else {
             Self.logger.error("\(self.t)StorageProviding not registered; skip auto push item")
             return
@@ -74,18 +85,22 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: LumiPluginLocalization.string("Auto Push", bundle: .module),
                 placement: .leading,
-                order: 21,
-                sceneScope: .git
+                order: 21
             ) {
-                AutoPushStatusIcon(
-                    projects: projects,
-                    autoPush: autoPushProvider
-                )
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    AutoPushStatusIcon(
+                        projects: projects,
+                        autoPush: autoPushProvider
+                    )
+                }
             },
         ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
     }

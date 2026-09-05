@@ -1,6 +1,5 @@
 import Combine
 import LumiUI
-import ProviderWorkspaceScene
 import SwiftUI
 
 /// `StatusBarProviding` 的默认实现：持有注入的 `StatusBarItem`，
@@ -14,14 +13,7 @@ import SwiftUI
 public final class DefaultStatusBarProviding: StatusBarProviding, ObservableObject {
     @Published public private(set) var statusBarItems: [StatusBarItem] = []
 
-    private var sceneObserver: (any WorkspaceSceneObserverHandle)?
-    private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
-
     public init() {}
-
-    public init(sceneProvider: any WorkspaceSceneProviding) {
-        bindWorkspaceSceneProvider(sceneProvider)
-    }
 
     public func registerStatusBarItems(_ items: [StatusBarItem]) {
         statusBarItems = items
@@ -31,17 +23,8 @@ public final class DefaultStatusBarProviding: StatusBarProviding, ObservableObje
         AnyView(StatusBarView(provider: self))
     }
 
-    public func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {
-        sceneObserver?.cancel()
-        workspaceSceneProvider = provider
-        sceneObserver = provider.addObserver { [weak self] _ in
-            self?.objectWillChange.send()
-        }
-    }
-
     public var visibleStatusBarItems: [StatusBarItem] {
-        guard let scene = workspaceSceneProvider?.currentScene else { return statusBarItems }
-        return statusBarItems.filter { $0.sceneScope.matches(scene) }
+        statusBarItems
     }
 }
 

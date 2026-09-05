@@ -1,5 +1,4 @@
 import Combine
-import ProviderWorkspaceScene
 import SwiftUI
 import Testing
 @testable import ProviderContentView
@@ -119,15 +118,12 @@ struct ProviderContentViewTests {
         #expect(type(of: provider.makeContentView()) == AnyView.self)
     }
 
-    @Test("内容块按工作场景过滤")
-    func filtersEntriesByWorkspaceScene() {
-        let scene = DefaultWorkspaceSceneProvider()
-        let provider = DefaultContentViewProviding(sceneProvider: scene)
-        provider.addContentView(AnyView(Text("git")), id: "git", order: 10, sceneScope: .scene(.git))
-        provider.addContentView(AnyView(Text("banner")), id: "banner", order: 20, sceneScope: .scene(.banner))
+    @Test("Provider 保留所有插件内容，场景可见性由插件管理")
+    func keepsAllPluginEntries() {
+        let provider = DefaultContentViewProviding()
+        provider.addContentView(AnyView(Text("git")), id: "git", order: 10)
+        provider.addContentView(AnyView(Text("banner")), id: "banner", order: 20)
 
-        #expect(provider.visibleIDs == ["git"])
-        scene.selectScene(.banner)
-        #expect(provider.visibleIDs == ["banner"])
+        #expect(provider.visibleIDs == ["git", "banner"])
     }
 }

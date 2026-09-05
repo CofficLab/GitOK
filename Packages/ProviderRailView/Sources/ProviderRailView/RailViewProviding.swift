@@ -1,7 +1,6 @@
 import Combine
 import Foundation
 import SwiftUI
-import ProviderWorkspaceScene
 
 // MARK: - Rail Width
 
@@ -206,13 +205,9 @@ public protocol RailViewProviding: AnyObject, ObservableObject
     /// 返回 Rail 视图（基于已注入的 tabs 渲染）。
     func makeRailView() -> AnyView
 
-    /// 接入工作场景 Provider；旧的自定义实现可以使用默认 no-op。
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding)
 }
 
 public extension RailViewProviding {
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {}
-
     var visibleCategories: Set<RailViewCategory> { Set(RailViewCategory.allCases) }
 
     var visibleTabID: String? { nil }

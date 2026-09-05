@@ -1,6 +1,5 @@
 import Combine
 import SwiftUI
-import ProviderWorkspaceScene
 
 /// 侧边栏视图提供能力协议
 ///
@@ -39,13 +38,9 @@ public protocol SidebarProviding: AnyObject, ObservableObject
     /// 返回侧边栏视图（基于已注入的 items 渲染）。
     func makeSidebarView() -> AnyView
 
-    /// 接入工作场景 Provider；旧的自定义实现可以使用默认 no-op。
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding)
 }
 
 public extension SidebarProviding {
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {}
-
     var activeItemID: String? { nil }
 
     /// 追加语义的默认实现：合入已有项并按 `order` 排序（同 id 去重，保留先注册者）。

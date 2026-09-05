@@ -1,4 +1,3 @@
-import ProviderWorkspaceScene
 import SwiftUI
 import Testing
 @testable import ProviderStatusBar
@@ -6,18 +5,15 @@ import Testing
 @Suite("ProviderStatusBar")
 @MainActor
 struct ProviderStatusBarTests {
-    @Test("状态栏项按工作场景过滤")
-    func filtersStatusBarItemsByWorkspaceScene() {
-        let scene = DefaultWorkspaceSceneProvider()
-        let provider = DefaultStatusBarProviding()
-        provider.bindWorkspaceSceneProvider(scene)
+    @Test("状态栏保留所有插件项，场景可见性由插件管理")
+    func keepsAllStatusBarItems() {
+        let implementation = DefaultStatusBarProviding()
+        let provider: any StatusBarProviding = implementation
         provider.registerStatusBarItems([
-            StatusBarItem(id: "git", title: "Git", sceneScope: .scene(.git)) { Text("Git") },
-            StatusBarItem(id: "banner", title: "Banner", sceneScope: .scene(.banner)) { Text("Banner") },
+            StatusBarItem(id: "git", title: "Git") { Text("Git") },
+            StatusBarItem(id: "banner", title: "Banner") { Text("Banner") },
         ])
 
-        #expect(provider.visibleStatusBarItems.map(\.id) == ["git"])
-        scene.selectScene(.banner)
-        #expect(provider.visibleStatusBarItems.map(\.id) == ["banner"])
+        #expect(implementation.visibleStatusBarItems.map(\.id) == ["git", "banner"])
     }
 }

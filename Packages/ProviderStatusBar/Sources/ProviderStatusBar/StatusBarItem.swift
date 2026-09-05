@@ -1,5 +1,4 @@
 import SwiftUI
-import ProviderWorkspaceScene
 
 // MARK: - Status Bar Placement
 
@@ -25,8 +24,6 @@ public struct StatusBarItem: Identifiable {
     public let title: String
     public let placement: StatusBarPlacement
     public var order: Int
-    /// 状态栏项可见的工作场景范围。
-    public let sceneScope: WorkspaceSceneScope
     public let makeView: @MainActor () -> AnyView
 
     public init<Content: View>(
@@ -34,14 +31,12 @@ public struct StatusBarItem: Identifiable {
         title: String,
         placement: StatusBarPlacement = .trailing,
         order: Int = 200,
-        sceneScope: WorkspaceSceneScope = .global,
         @ViewBuilder content: @escaping @MainActor () -> Content
     ) {
         self.id = id
         self.title = title
         self.placement = placement
         self.order = order
-        self.sceneScope = sceneScope
         self.makeView = { AnyView(content()) }
     }
 }

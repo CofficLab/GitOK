@@ -31,31 +31,6 @@ public enum GitOKWorkspaceScene: String, CaseIterable, Codable, Identifiable, Se
     }
 }
 
-/// UI contribution 可见的工作场景范围。
-public enum WorkspaceSceneScope: Equatable, Sendable {
-    /// 所有工作场景都可见。
-    case global
-    /// 仅在指定工作场景可见。
-    case scenes(Set<GitOKWorkspaceScene>)
-
-    public static func scene(_ scene: GitOKWorkspaceScene) -> Self {
-        .scenes([scene])
-    }
-
-    public static var git: Self { .scene(.git) }
-    public static var banner: Self { .scene(.banner) }
-    public static var icon: Self { .scene(.icon) }
-
-    public func matches(_ scene: GitOKWorkspaceScene) -> Bool {
-        switch self {
-        case .global:
-            true
-        case let .scenes(scenes):
-            scenes.contains(scene)
-        }
-    }
-}
-
 // MARK: - Events
 
 /// 工作场景变化事件。
@@ -75,8 +50,8 @@ public protocol WorkspaceSceneObserverHandle: AnyObject {
 
 /// 工作场景 Provider。
 ///
-/// Provider 只管理当前场景和场景变化通知。后续各类 UI contribution 会以
-/// 场景范围注册到对应 Provider，由公共渲染层负责过滤非当前场景的内容。
+/// Provider 只管理当前场景和场景变化通知。各插件通过自己的 Observer
+/// 把场景状态同步到自己的 ViewModel，再决定自己的 UI 是否渲染。
 @MainActor
 public protocol WorkspaceSceneProviding: AnyObject {
     /// 当前场景。
@@ -214,6 +189,55 @@ public final class WorkspaceScenePickerModel: ObservableObject {
 
     public func select(_ scene: GitOKWorkspaceScene) {
         provider.selectScene(scene)
+    }
+}
+
+// MARK: - Plugin Scene State
+
+/// 插件自己的场景状态容器。
+///
+/// 场景 Provider 只负责发布变更；插件入口通过自己的 Observer 把事件写入
+/// 这个 ViewModel，插件视图只观察 `isActive`，不直接读取场景 Provider。
+@MainActor
+public final class WorkspaceSceneVisibilityViewModel: ObservableObject {
+    public let targetScene: GitOKWorkspaceScene
+    @Published public private(set) var currentScene: GitOKWorkspaceScene
+
+    public init(
+        targetScene: GitOKWorkspaceScene,
+        currentScene: GitOKWorkspaceScene = .git
+    ) {
+        self.targetScene = targetScene
+        self.currentScene = currentScene
+    }
+
+    public var isActive: Bool { currentScene == targetScene }
+
+    public func handleSceneChange(_ scene: GitOKWorkspaceScene) {
+        currentScene = scene
+    }
+}
+
+/// 根据插件自己的场景 ViewModel 渲染内容；不持有也不查询场景 Provider。
+@MainActor
+public struct WorkspaceSceneVisibilityView<Content: View>: View {
+    @ObservedObject private var viewModel: WorkspaceSceneVisibilityViewModel
+    private let content: () -> Content
+
+    public init(
+        viewModel: WorkspaceSceneVisibilityViewModel,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.viewModel = viewModel
+        self.content = content
+    }
+
+    public var body: some View {
+        if viewModel.isActive {
+            content()
+        } else {
+            EmptyView()
+        }
     }
 }
 

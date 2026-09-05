@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderProjects
 import ProviderStatusBar
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Git Unpushed Status SuperPlugin
@@ -30,6 +31,9 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
 
     static let itemID = "com.coffic.gitok.plugin.git-unpushed-status.id"
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: GitUnpushedStatusSceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -41,21 +45,32 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip unpushed status item")
             return
         }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = GitUnpushedStatusSceneObserver(scene: scene, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
                 title: GitUnpushedStatusLocalization.string("Unpushed Commits", bundle: .module),
                 placement: .leading,
-                order: 16,
-                sceneScope: .git
+                order: 16
             ) {
-                UnpushedStatusTile(projects: projects)
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    UnpushedStatusTile(projects: projects)
+                }
             },
         ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
     }

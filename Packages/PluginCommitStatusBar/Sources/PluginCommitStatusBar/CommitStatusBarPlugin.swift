@@ -6,6 +6,7 @@ import LumiUI
 import os
 import ProviderProjects
 import ProviderStatusBar
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Commit Status Bar SuperPlugin
@@ -37,6 +38,9 @@ public final class CommitStatusBarPlugin: SuperPlugin, SuperLog {
 
     static let itemID = "com.coffic.gitok.plugin.commit-status-bar.id"
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: CommitStatusBarSceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -48,21 +52,32 @@ public final class CommitStatusBarPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip status bar item")
             return
         }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = CommitStatusBarSceneObserver(scene: scene, viewModel: sceneViewModel)
 
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
                 title: CommitStatusBarLocalization.string("Selected Commit", bundle: .module),
                 placement: .leading,
-                order: 20,
-                sceneScope: .git
+                order: 20
             ) {
-                CommitStatusBarItem(projects: projects)
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    CommitStatusBarItem(projects: projects)
+                }
             },
         ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
     }

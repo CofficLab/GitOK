@@ -5,6 +5,7 @@ import os
 import ProviderContentView
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Worktree Clean SuperPlugin
@@ -42,6 +43,8 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     private var viewModel: WorktreeCleanViewModel?
     /// 插件级外部 Observer：装配阶段创建并持有，卸载时取消。
     private var observer: WorktreeCleanObserver?
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: WorktreeCleanSceneObserver?
 
     public init() {}
 
@@ -52,6 +55,11 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip content injection")
+            return
+        }
+
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
         }
 
@@ -82,20 +90,28 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             hasSelectedCommit: projects.currentCommit != nil
         )
 
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = WorktreeCleanSceneObserver(scene: scene, viewModel: sceneViewModel)
+
         // 作为主内容区的一块贡献（与 CommitDetail 同层；二者互斥，不会同时占位）。
         contentView.addContentView(
             AnyView(
-                WorktreeCleanView(viewModel: viewModel)
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    WorktreeCleanView(viewModel: viewModel)
+                }
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
             ),
             id: "\(id).content",
-            order: 20,
-            sceneScope: .git
+            order: 20
         )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         observer?.cancel()
         observer = nil
         viewModel = nil

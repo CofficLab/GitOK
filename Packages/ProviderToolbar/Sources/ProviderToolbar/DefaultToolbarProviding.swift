@@ -1,6 +1,5 @@
 import Combine
 import LumiUI
-import ProviderWorkspaceScene
 import SwiftUI
 
 #if os(macOS)
@@ -24,8 +23,6 @@ public final class DefaultToolbarProviding: ToolbarProviding, ObservableObject {
 
     private var baseVisibleCategories: Set<ToolbarItemCategory>
     private var hiddenCategoriesBySource: [String: Set<ToolbarItemCategory>] = [:]
-    private var sceneObserver: (any WorkspaceSceneObserverHandle)?
-    private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
 
     public init(visibleCategories: Set<ToolbarItemCategory> = Set(ToolbarItemCategory.allCases)) {
         self.visibleCategories = visibleCategories
@@ -64,25 +61,8 @@ public final class DefaultToolbarProviding: ToolbarProviding, ObservableObject {
         AnyView(ToolbarView(provider: self))
     }
 
-    public func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {
-        sceneObserver?.cancel()
-        workspaceSceneProvider = provider
-        sceneObserver = provider.addObserver { [weak self] _ in
-            self?.objectWillChange.send()
-        }
-    }
-
-    fileprivate var visibleSceneItems: [ToolbarItem] {
-        guard let scene = workspaceSceneProvider?.currentScene else { return toolbarItems }
-        return toolbarItems.filter { $0.sceneScope.matches(scene) }
-    }
-
-    fileprivate var sceneVisibleToolbarItems: [ToolbarItem] {
-        visibleSceneItems.filter { visibleCategories.contains($0.category) }
-    }
-
     public var visibleToolbarItems: [ToolbarItem] {
-        sceneVisibleToolbarItems
+        toolbarItems.filter { visibleCategories.contains($0.category) }
     }
 }
 
@@ -97,7 +77,7 @@ private struct ToolbarView: View {
     private let trafficLightReserveWidth: CGFloat = 76
 
     var body: some View {
-        let items = provider.sceneVisibleToolbarItems
+        let items = provider.visibleToolbarItems
         let leading = items.filter { $0.placement == .leading }
         let center = items.filter { $0.placement == .center }
         let trailing = items.filter { $0.placement == .trailing }

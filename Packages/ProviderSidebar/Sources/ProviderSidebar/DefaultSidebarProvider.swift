@@ -1,5 +1,4 @@
 import SwiftUI
-import ProviderWorkspaceScene
 
 /// `SidebarProviding` 的默认实现：持有注入的 `SidebarItem`，
 /// 渲染为左侧列表式侧边栏（宽度与样式复用 LumiUI 的设置侧边栏组件）。
@@ -10,9 +9,6 @@ import ProviderWorkspaceScene
 public final class DefaultSidebarProvider: SidebarProviding, ObservableObject {
     @Published public private(set) var items: [SidebarItem] = []
     @Published public private(set) var activeItemID: String?
-
-    private var sceneObserver: (any WorkspaceSceneObserverHandle)?
-    private var workspaceSceneProvider: (any WorkspaceSceneProviding)?
 
     public init() {}
 
@@ -38,18 +34,8 @@ public final class DefaultSidebarProvider: SidebarProviding, ObservableObject {
         AnyView(SidebarView(provider: self))
     }
 
-    public func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {
-        sceneObserver?.cancel()
-        workspaceSceneProvider = provider
-        sceneObserver = provider.addObserver { [weak self] _ in
-            self?.reconcileVisibleItem()
-        }
-        reconcileVisibleItem()
-    }
-
     var visibleItems: [SidebarItem] {
-        guard let scene = workspaceSceneProvider?.currentScene else { return items }
-        return items.filter { $0.sceneScope.matches(scene) }
+        items
     }
 
     private func setActiveItemID(_ id: String?, previousItems: [SidebarItem]? = nil) {

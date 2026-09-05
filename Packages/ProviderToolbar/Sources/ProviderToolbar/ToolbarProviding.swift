@@ -1,6 +1,5 @@
 import Combine
 import SwiftUI
-import ProviderWorkspaceScene
 
 /// 工具栏视图提供能力协议
 ///
@@ -54,13 +53,9 @@ public protocol ToolbarProviding: AnyObject, ObservableObject
     /// 返回工具栏视图（基于已注入的 items 渲染）。
     func makeToolbarView() -> AnyView
 
-    /// 接入工作场景 Provider；旧的自定义实现可以使用默认 no-op。
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding)
 }
 
 public extension ToolbarProviding {
-    func bindWorkspaceSceneProvider(_ provider: any WorkspaceSceneProviding) {}
-
     var visibleCategories: Set<ToolbarItemCategory> {
         Set(ToolbarItemCategory.allCases)
     }

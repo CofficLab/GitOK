@@ -5,6 +5,7 @@ import os
 import ProviderProjects
 import ProviderStatusBar
 import ProviderToolbar
+import ProviderWorkspaceScene
 import SwiftUI
 
 // MARK: - Git Branch Status SuperPlugin
@@ -32,6 +33,9 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
     static let itemID = "com.coffic.gitok.plugin.git-branch-status.id"
     static let toolbarItemID = "com.coffic.gitok.plugin.git-branch-status.toolbar"
 
+    private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
+    private var sceneObserver: GitBranchStatusSceneObserver?
+
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -39,6 +43,14 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip branch status plugin")
             return
         }
+        guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
+            Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
+            return
+        }
+
+        let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
+        self.sceneViewModel = sceneViewModel
+        self.sceneObserver = GitBranchStatusSceneObserver(scene: scene, viewModel: sceneViewModel)
 
         // 工具栏右上角：分支选择器（显示当前分支 + 切换分支）。
         if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {
@@ -48,10 +60,11 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                     title: LumiPluginLocalization.string("Current Branch", bundle: .module),
                     placement: .trailing,
                     category: .project,
-                    order: 40,
-                    sceneScope: .git
+                    order: 40
                 ) {
-                    BranchPickerView(projects: projects)
+                    WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                        BranchPickerView(projects: projects)
+                    }
                 },
             ])
         } else {
@@ -68,15 +81,19 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                 id: Self.itemID,
                 title: LumiPluginLocalization.string("Current Branch", bundle: .module),
                 placement: .leading,
-                order: 15,
-                sceneScope: .git
+                order: 15
             ) {
-                BranchStatusTile(projects: projects)
+                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
+                    BranchStatusTile(projects: projects)
+                }
             },
         ])
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        sceneObserver?.cancel()
+        sceneObserver = nil
+        sceneViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])
         kernel.resolveProvider((any ToolbarProviding).self)?
