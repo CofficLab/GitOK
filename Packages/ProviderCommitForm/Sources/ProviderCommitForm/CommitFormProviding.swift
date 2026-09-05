@@ -159,8 +159,14 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
             try GitCommitOperation.addAll(in: repository)
             try GitCommitOperation.commit(message: plan.message, in: repository)
             if plan.pushesAfterCommit {
-                activityReporter?(LumiPluginLocalization.string("Pushing...", bundle: .module))
-                try GitCommitOperation.push(in: repository)
+                activityReporter?(LumiPluginLocalization.string("Synchronizing...", bundle: .module))
+                let trackingStatus = GitRefReader.remoteTrackingStatus(in: repository)
+                if trackingStatus.hasUpstream {
+                    try GitRemoteOperation.synchronize(in: repository)
+                } else {
+                    // 新分支尚未配置 upstream，仍使用普通 push 触发发布分支流程。
+                    try GitCommitOperation.push(in: repository)
+                }
             }
             activityReporter?(nil)
 

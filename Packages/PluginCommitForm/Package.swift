@@ -23,6 +23,7 @@ let package = Package(
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
+        .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
     ],
     targets: [
@@ -38,6 +39,7 @@ let package = Package(
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Sources/PluginCommitForm",
@@ -50,6 +52,7 @@ let package = Package(
             dependencies: [
                 "PluginCommitForm",
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Tests/PluginCommitFormTests"
         ),

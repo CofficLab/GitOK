@@ -10,6 +10,16 @@ private func loc(_ key: String) -> String {
     CommitFormLocalization.string(key, bundle: .module)
 }
 
+private extension GitRemoteOperation.SyncStep {
+    var localizationKey: String {
+        switch self {
+        case .fetch: "Fetch failed"
+        case .merge: "Merge failed"
+        case .push: "Push failed"
+        }
+    }
+}
+
 /// 提交表单视图（对齐旧版 CommitFormLayout）。
 ///
 /// 显示在详情区顶部：第一行「提交风格 + 提交类别 + 消息输入」，
@@ -20,6 +30,7 @@ private func loc(_ key: String) -> String {
 public struct CommitFormView: View {
     let projects: any ProjectProviding
     let form: any CommitFormProviding
+    let errorCenter: CommitFormErrorCenter?
     /// 仓库监听（可选）：订阅 `.git` 目录变化（HEAD / index / stash / refs /
     /// 工作区文件），外部修改（终端 commit / checkout / stash 等）也能触发
     /// 工作区干净状态重算，避免工作区已干净但表单仍显示的漏刷新。
@@ -47,11 +58,13 @@ public struct CommitFormView: View {
     public init(
         projects: any ProjectProviding,
         form: any CommitFormProviding,
-        gitWatch: (any GitRepositoryWatching)? = nil
+        gitWatch: (any GitRepositoryWatching)? = nil,
+        errorCenter: CommitFormErrorCenter? = nil
     ) {
         self.projects = projects
         self.form = form
         self.gitWatch = gitWatch
+        self.errorCenter = errorCenter
         _formObservation = StateObject(wrappedValue: CommitFormObservationModel(form: form))
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
@@ -97,7 +110,7 @@ public struct CommitFormView: View {
             VStack(alignment: .leading, spacing: 6) {
                 firstRow
                 secondRow
-                if let error = form.lastErrorMessage, !error.isEmpty {
+                if errorCenter == nil, let error = form.lastErrorMessage, !error.isEmpty {
                     AppErrorBanner(message: LocalizedStringKey(error))
                 }
             }
@@ -257,9 +270,30 @@ public struct CommitFormView: View {
             do {
                 try await form.submit(commitOnly: commitOnly, in: project.url)
             } catch {
-                // 错误已写入 form.lastErrorMessage，由视图展示。
+                presentSubmitError(error, repository: project.url)
             }
         }
+    }
+
+    @MainActor
+    private func presentSubmitError(_ error: Error, repository: URL) {
+        if let syncError = error as? GitRemoteOperation.SyncError {
+            // Merge 冲突由现有冲突解决器自动打开，避免错误面板盖住冲突操作界面。
+            if case .merge = syncError.step,
+               GitMergeOperation.hasConflictOperation(in: repository) {
+                return
+            }
+            errorCenter?.present(
+                operation: loc(syncError.step.localizationKey),
+                message: syncError.message
+            )
+            return
+        }
+
+        errorCenter?.present(
+            operation: loc("Commit failed"),
+            message: error.localizedDescription
+        )
     }
 
     private func toggle(_ author: CoAuthor) {

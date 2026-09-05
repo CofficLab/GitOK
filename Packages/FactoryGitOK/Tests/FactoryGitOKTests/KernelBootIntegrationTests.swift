@@ -49,5 +49,11 @@ final class KernelBootIntegrationTests: XCTestCase {
             } == true,
             "worktree sync failures should be mounted as a root overlay"
         )
+        XCTAssertTrue(
+            kernel.resolveProvider((any RootViewProviding).self)?.overlays.contains {
+                $0.id == "com.coffic.gitok.plugin.commit-form.error"
+            } == true,
+            "commit form failures should be mounted as a root overlay"
+        )
     }
 }

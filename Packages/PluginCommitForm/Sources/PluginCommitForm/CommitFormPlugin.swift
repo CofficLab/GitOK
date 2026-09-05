@@ -6,6 +6,7 @@ import ProviderCommitForm
 import ProviderContentView
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
 
@@ -42,6 +43,7 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
     private var formHandle: (any CommitFormObserverHandle)?
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: CommitFormSceneObserver?
+    private let errorCenter = CommitFormErrorCenter()
 
     public init() {}
 
@@ -58,6 +60,17 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
+        }
+
+        let errorCenter = self.errorCenter
+        if let rootView = kernel.resolveProvider((any RootViewProviding).self) {
+            rootView.addOverlays([
+                RootOverlayItem(id: "\(id).error", order: 21000) { content in
+                    CommitFormErrorOverlay(content: content, center: errorCenter)
+                },
+            ])
+        } else {
+            Self.logger.error("\(self.t)RootViewProviding not registered; commit errors will use inline fallback")
         }
 
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
@@ -80,7 +93,12 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
             contentView.addContentView(
                 AnyView(
                     WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                        CommitFormView(projects: projects, form: form, gitWatch: gitWatch)
+                        CommitFormView(
+                            projects: projects,
+                            form: form,
+                            gitWatch: gitWatch,
+                            errorCenter: errorCenter
+                        )
                     }
                         // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                         .debugPluginBadge(metadata.name)
@@ -99,6 +117,9 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
         sceneViewModel = nil
         formHandle?.cancel()
         formHandle = nil
+        errorCenter.dismiss()
+        kernel.resolveProvider((any RootViewProviding).self)?
+            .removeOverlays(ids: ["\(id).error"])
         kernel.resolveProvider((any ContentViewProviding).self)?
             .removeContentView(id: "\(id).content")
     }

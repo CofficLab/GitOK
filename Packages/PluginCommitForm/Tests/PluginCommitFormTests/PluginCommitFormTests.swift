@@ -5,6 +5,7 @@ import ProviderCommitForm
 import ProviderContentView
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderWorkspaceScene
 import Testing
 @testable import PluginCommitForm
 @testable import ProviderContentView
@@ -56,6 +57,10 @@ struct PluginCommitFormTests {
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
         try kernel.registerProvider((any CommitFormProviding).self, DefaultCommitFormProvider())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
         return (kernel, contentView)
     }
 
