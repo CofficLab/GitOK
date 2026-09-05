@@ -20,7 +20,7 @@ public final class PluginPluginManager: SuperPlugin, SuperLog {
         version: "1.0.0",
         category: .system,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
 
     private var generatedAboutPluginIDs: [String] = []
