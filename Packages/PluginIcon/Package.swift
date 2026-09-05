@@ -8,13 +8,19 @@ let package = Package(
         .library(name: "PluginIcon", targets: ["PluginIcon"]),
     ],
     dependencies: [
+        .package(path: "../KernelCore"),
         .package(path: "../ProjectRulesKit"),
+        .package(path: "../ProviderContentView"),
+        .package(path: "../ProviderProjects"),
     ],
     targets: [
         .target(
             name: "PluginIcon",
             dependencies: [
+                .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),
+                .product(name: "ProviderContentView", package: "ProviderContentView"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
             path: "Sources/PluginIcon"
         ),
