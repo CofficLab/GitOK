@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderContentView
 import ProviderProjects
+import ProviderWorkspaceScene
 import XCTest
 @testable import PluginCommitDetail
 @testable import ProviderContentView
@@ -87,6 +88,10 @@ final class CommitDetailPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
 
         let plugin = CommitDetailPlugin()
         try plugin.onBoot(kernel: kernel)
@@ -104,6 +109,10 @@ final class CommitDetailPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
 
         let plugin = CommitDetailPlugin()
         try plugin.onBoot(kernel: kernel)
