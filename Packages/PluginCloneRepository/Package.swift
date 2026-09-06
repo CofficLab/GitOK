@@ -24,6 +24,7 @@ let package = Package(
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderToast"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -39,6 +40,7 @@ let package = Package(
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginCloneRepository",
             resources: [
