@@ -1,5 +1,7 @@
 # Contributor Covenant Code of Conduct
 
+📖 [English](CODE_OF_CONDUCT.md) | [中文版](CODE_OF_CONDUCT-zh.md)
+
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our
@@ -60,7 +62,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
-.
+nooks@qq.com.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
