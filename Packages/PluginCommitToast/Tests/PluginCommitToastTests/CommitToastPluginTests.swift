@@ -11,9 +11,13 @@ final class CommitToastPluginTests: XCTestCase {
     /// 测试用 toast 记录器。
     private final class RecordingToastProvider: ToastProviding {
         var received: [LumiToast] = []
+
         func show(_ toast: LumiToast) {
             received.append(toast)
         }
+
+        func presentError(title: String, message: String) {}
+        func dismissError() {}
     }
 
     /// 最小 ProjectProviding mock：维护 commit 选择状态，可主动广播

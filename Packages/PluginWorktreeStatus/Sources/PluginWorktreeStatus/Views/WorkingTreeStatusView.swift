@@ -3,6 +3,7 @@ import LumiUI
 import ProviderGitRepositoryWatch
 import ProviderGit
 import ProviderProjects
+import ProviderToast
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -35,7 +36,7 @@ struct WorkingTreeStatusView: View {
     let projects: any ProjectProviding
     let git: any GitProviding
     let gitWatch: (any GitRepositoryWatching)?
-    let syncFailureCenter: WorktreeSyncFailureCenter?
+    let toast: (any ToastProviding)?
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
     @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
@@ -60,12 +61,12 @@ struct WorkingTreeStatusView: View {
         projects: any ProjectProviding,
         git: any GitProviding,
         gitWatch: (any GitRepositoryWatching)? = nil,
-        syncFailureCenter: WorktreeSyncFailureCenter? = nil
+        toast: (any ToastProviding)? = nil
     ) {
         self.projects = projects
         self.git = git
         self.gitWatch = gitWatch
-        self.syncFailureCenter = syncFailureCenter
+        self.toast = toast
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
@@ -274,7 +275,8 @@ struct WorkingTreeStatusView: View {
         }
     }
 
-    /// 同步失败进入持久化的根视图错误面板，避免 Toast 自动消失或截断关键信息。
+    /// 同步失败进入公共 Toast 提供者的持久化错误面板，避免普通 Toast
+    /// 自动消失或截断关键信息。
     @MainActor
     private func presentSyncFailure(error: Error, repository: URL) {
         let operation: String
@@ -298,7 +300,7 @@ struct WorkingTreeStatusView: View {
 
     @MainActor
     private func presentSyncFailure(operation: String, message: String) {
-        syncFailureCenter?.present(operation: operation, message: message)
+        toast?.presentError(title: operation, message: message)
         reloadIfNeeded(force: true)
     }
 

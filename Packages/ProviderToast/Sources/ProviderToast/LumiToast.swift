@@ -31,6 +31,22 @@ public struct LumiToast: Sendable, Equatable {
     }
 }
 
+/// 一条需要用户明确关闭的错误通知。
+///
+/// 与 `LumiToast` 的瞬时提示不同，错误通知不会自动消失，适合承载
+/// divergent branches、认证失败等需要完整阅读或复制的底层错误信息。
+public struct LumiErrorNotice: Identifiable, Sendable, Equatable {
+    public let id: UUID
+    public let title: String
+    public let message: String
+
+    public init(id: UUID = UUID(), title: String, message: String) {
+        self.id = id
+        self.title = title
+        self.message = message
+    }
+}
+
 /// Toast 的展示风格。
 public enum LumiToastStyle: String, Sendable {
     case info
