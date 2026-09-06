@@ -7,7 +7,7 @@ import KitOpenIn
 /// 始终启用（`.alwaysOn`），用户不可禁用。
 @MainActor
 public final class OpenAntigravityPlugin: OpenInPluginBase {
-    public override var pluginPolicy: PluginEnablePolicy { .alwaysOn }
+    public override var pluginPolicy: PluginEnablePolicy { .disabledByDefault }
 
     public init() {
         super.init(target: .antigravity)
