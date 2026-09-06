@@ -16,6 +16,8 @@ let package = Package(
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
     ],
     targets: [
         .target(
@@ -28,6 +30,8 @@ let package = Package(
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "LumiUI", package: "LumiUI"),
             ],
             path: "Sources/PluginIcon",
             resources: [
