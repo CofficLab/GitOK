@@ -8,6 +8,7 @@ import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Submodule SuperPlugin
 
@@ -36,6 +37,16 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
     private var sceneObserver: GitSubmoduleSceneObserver?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitSubmoduleAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
