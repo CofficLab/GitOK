@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
@@ -45,6 +46,10 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip submodule item")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip submodule item")
+            return
+        }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
@@ -62,7 +67,7 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
                 order: 26
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    SubmoduleStatusTile(projects: projects)
+                    SubmoduleStatusTile(projects: projects, git: git)
                 }
             },
         ])

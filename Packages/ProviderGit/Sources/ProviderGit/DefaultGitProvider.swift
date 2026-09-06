@@ -165,6 +165,110 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try selectedBackend().compareBranches(base: base, head: head, in: repository)
     }
 
+    public func undoCommit(_ commitHash: String, parentHash: String, in repository: URL) throws -> String {
+        try selectedBackend().undoCommit(commitHash, parentHash: parentHash, in: repository)
+    }
+
+    public func revertCommit(_ commitHash: String, in repository: URL) throws -> String {
+        try selectedBackend().revertCommit(commitHash, in: repository)
+    }
+
+    public func softReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try selectedBackend().softReset(to: targetHash, expectedHead: expectedHead, in: repository)
+    }
+
+    public func mixedReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try selectedBackend().mixedReset(to: targetHash, expectedHead: expectedHead, in: repository)
+    }
+
+    public func hardReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try selectedBackend().hardReset(to: targetHash, expectedHead: expectedHead, in: repository)
+    }
+
+    public func squash(to targetHash: String, parentHash: String, expectedHead: String, message: String, in repository: URL) throws -> String {
+        try selectedBackend().squash(to: targetHash, parentHash: parentHash, expectedHead: expectedHead, message: message, in: repository)
+    }
+
+    public func createLightweightTag(named name: String, at commitHash: String, in repository: URL) throws -> String {
+        try selectedBackend().createLightweightTag(named: name, at: commitHash, in: repository)
+    }
+
+    public func createAnnotatedTag(named name: String, at commitHash: String, message: String, in repository: URL) throws -> String {
+        try selectedBackend().createAnnotatedTag(named: name, at: commitHash, message: message, in: repository)
+    }
+
+    public func deleteLocalTag(named name: String, in repository: URL) throws -> String {
+        try selectedBackend().deleteLocalTag(named: name, in: repository)
+    }
+
+    public func pushTag(named name: String, remote: String, in repository: URL) throws -> String {
+        try selectedBackend().pushTag(named: name, remote: remote, in: repository)
+    }
+
+    public func deleteRemoteTag(named name: String, remote: String, in repository: URL) throws -> String {
+        try selectedBackend().deleteRemoteTag(named: name, remote: remote, in: repository)
+    }
+
+    public func listStashes(in repository: URL) -> [GitStashEntry] {
+        selectedBackendOrNil()?.listStashes(in: repository) ?? []
+    }
+
+    public func hasChangesToStash(in repository: URL) -> Bool {
+        selectedBackendOrNil()?.hasChangesToStash(in: repository) ?? false
+    }
+
+    public func saveStash(message: String?, in repository: URL) throws {
+        try selectedBackend().saveStash(message: message, in: repository)
+    }
+
+    public func applyStash(_ entry: GitStashEntry, in repository: URL) throws {
+        try selectedBackend().applyStash(entry, in: repository)
+    }
+
+    public func popStash(_ entry: GitStashEntry, in repository: URL) throws {
+        try selectedBackend().popStash(entry, in: repository)
+    }
+
+    public func dropStash(_ entry: GitStashEntry, in repository: URL) throws {
+        try selectedBackend().dropStash(entry, in: repository)
+    }
+
+    public func cherryPickStatus(in repository: URL) -> GitCherryPickStatus {
+        selectedBackendOrNil()?.cherryPickStatus(in: repository) ?? .inactive
+    }
+
+    public func cherryPick(commits: [String], onto branch: String?, in repository: URL) throws -> String {
+        try selectedBackend().cherryPick(commits: commits, onto: branch, in: repository)
+    }
+
+    public func continueCherryPick(in repository: URL) throws -> String {
+        try selectedBackend().continueCherryPick(in: repository)
+    }
+
+    public func abortCherryPick(in repository: URL) throws -> String {
+        try selectedBackend().abortCherryPick(in: repository)
+    }
+
+    public func listSubmodules(in repository: URL) -> [GitSubmoduleSummary] {
+        selectedBackendOrNil()?.listSubmodules(in: repository) ?? []
+    }
+
+    public func updateSubmodules(in repository: URL) throws {
+        try selectedBackend().updateSubmodules(in: repository)
+    }
+
+    public func validateCloneDestination(_ destination: URL) throws {
+        try selectedBackend().validateCloneDestination(destination)
+    }
+
+    public func defaultRepositoryName(from remoteURL: String) -> String? {
+        selectedBackendOrNil()?.defaultRepositoryName(from: remoteURL)
+    }
+
+    public func clone(remoteURL: String, destination: URL) throws -> URL {
+        try selectedBackend().clone(remoteURL: remoteURL, destination: destination)
+    }
+
     public func hasStagedChanges(in repository: URL) throws -> Bool {
         try selectedBackend().hasStagedChanges(in: repository)
     }

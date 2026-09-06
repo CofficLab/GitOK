@@ -821,7 +821,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.revertCommit(commit.hash, in: url)
+                try git.revertCommit(commit.hash, in: url)
             }
             await MainActor.run {
                 revertingHash = nil
@@ -850,7 +850,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.undoCommit(commit.hash, parentHash: parentHash, in: url)
+                try git.undoCommit(commit.hash, parentHash: parentHash, in: url)
             }
             await MainActor.run {
                 undoingHash = nil
@@ -874,7 +874,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.softReset(
+                try git.softReset(
                     to: commit.hash,
                     expectedHead: expectedHead,
                     in: url
@@ -902,7 +902,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.mixedReset(
+                try git.mixedReset(
                     to: commit.hash,
                     expectedHead: expectedHead,
                     in: url
@@ -930,7 +930,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.hardReset(
+                try git.hardReset(
                     to: commit.hash,
                     expectedHead: expectedHead,
                     in: url
@@ -962,7 +962,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.squash(
+                try git.squash(
                     to: commit.hash,
                     parentHash: parentHash,
                     expectedHead: expectedHead,
@@ -993,7 +993,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.createLightweight(named: name, at: commit.hash, in: url)
+                try git.createLightweightTag(named: name, at: commit.hash, in: url)
             }
             await MainActor.run {
                 creatingTagHash = nil
@@ -1018,7 +1018,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.createAnnotated(
+                try git.createAnnotatedTag(
                     named: name,
                     at: commit.hash,
                     message: message,
@@ -1044,7 +1044,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.deleteLocal(named: name, in: url)
+                try git.deleteLocalTag(named: name, in: url)
             }
             await MainActor.run {
                 deletingTagName = nil
@@ -1065,7 +1065,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.push(named: name, in: url)
+                try git.pushTag(named: name, remote: "origin", in: url)
             }
             await MainActor.run {
                 pushingTagName = nil
@@ -1086,7 +1086,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.deleteRemote(named: name, in: url)
+                try git.deleteRemoteTag(named: name, remote: "origin", in: url)
             }
             await MainActor.run {
                 deletingRemoteTagName = nil

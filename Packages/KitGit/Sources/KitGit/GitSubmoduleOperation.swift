@@ -65,5 +65,11 @@ public struct GitSubmoduleSummary: Identifiable, Sendable {
     public let commit: String
     public let url: String
 
+    public init(path: String, commit: String, url: String) {
+        self.path = path
+        self.commit = commit
+        self.url = url
+    }
+
     public var id: String { path }
 }

@@ -263,7 +263,7 @@ public struct ConflictResolverList: View {
         Task.detached(priority: .userInitiated) {
             do {
                 if cherryPicking {
-                    _ = try GitCherryPickOperation.continueCherryPick(in: url)
+                    _ = try git.continueCherryPick(in: url)
                 } else {
                     _ = try git.continueMerge(in: url)
                 }
@@ -288,7 +288,7 @@ public struct ConflictResolverList: View {
         Task.detached(priority: .userInitiated) {
             do {
                 if cherryPicking {
-                    _ = try GitCherryPickOperation.abortCherryPick(in: url)
+                    _ = try git.abortCherryPick(in: url)
                 } else {
                     _ = try git.abortMerge(in: url)
                 }

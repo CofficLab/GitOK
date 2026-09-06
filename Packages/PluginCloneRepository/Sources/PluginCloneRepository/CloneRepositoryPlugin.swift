@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderActivity
 import ProviderCloneRepository
 import ProviderProjects
@@ -40,13 +41,18 @@ public final class CloneRepositoryPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip clone repository provider")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip clone repository provider")
+            return
+        }
         let activity = kernel.resolveProvider((any ActivityProviding).self)
         let toast = kernel.resolveProvider((any ToastProviding).self)
 
         let provider = CloneRepositorySheetProvider(
             projects: projects,
             activity: activity,
-            toast: toast
+            toast: toast,
+            git: git
         )
         try kernel.registerProvider((any CloneRepositoryProviding).self, provider)
     }
@@ -62,20 +68,23 @@ public final class CloneRepositorySheetProvider: CloneRepositoryProviding {
     private let projects: any ProjectProviding
     private let activity: (any ActivityProviding)?
     private let toast: (any ToastProviding)?
+    private let git: any GitProviding
 
     public init(
         projects: any ProjectProviding,
         activity: (any ActivityProviding)?,
-        toast: (any ToastProviding)?
+        toast: (any ToastProviding)?,
+        git: any GitProviding
     ) {
         self.projects = projects
         self.activity = activity
         self.toast = toast
+        self.git = git
     }
 
     public func makeCloneSheetView() -> AnyView {
         AnyView(
-            CloneRepositorySheet(projects: projects, activity: activity, toast: toast)
+            CloneRepositorySheet(projects: projects, activity: activity, toast: toast, git: git)
         )
     }
 }

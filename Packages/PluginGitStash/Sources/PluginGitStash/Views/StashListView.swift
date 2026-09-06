@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
@@ -7,6 +8,7 @@ import SwiftUI
 /// （对齐旧版 StashListView 核心能力）。
 public struct StashListView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     let onStashesChanged: () -> Void
 
     @State private var stashes: [GitStashEntry] = []
@@ -16,8 +18,9 @@ public struct StashListView: View {
     @State private var message: String?
     @State private var errorMessage: String?
 
-    public init(projects: any ProjectProviding, onStashesChanged: @escaping () -> Void) {
+    public init(projects: any ProjectProviding, git: any GitProviding, onStashesChanged: @escaping () -> Void) {
         self.projects = projects
+        self.git = git
         self.onStashesChanged = onStashesChanged
     }
 
@@ -102,7 +105,7 @@ public struct StashListView: View {
         isLoading = true
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
-            let loaded = GitStashOperation.list(in: url)
+            let loaded = git.listStashes(in: url)
             await MainActor.run {
                 stashes = loaded
                 isLoading = false
@@ -114,7 +117,7 @@ public struct StashListView: View {
     private func saveStash() {
         guard let url = projectURL else { return }
         let text = stashMessage.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard GitStashOperation.hasChanges(in: url) else {
+        guard git.hasChangesToStash(in: url) else {
             errorMessage = GitStashLocalization.string("No changes to stash", bundle: .module)
             return
         }
@@ -123,7 +126,7 @@ public struct StashListView: View {
         message = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitStashOperation.save(message: text.isEmpty ? nil : text, in: url)
+                try git.saveStash(message: text.isEmpty ? nil : text, in: url)
                 await MainActor.run {
                     stashMessage = ""
                     isPerformingAction = false
@@ -150,11 +153,11 @@ public struct StashListView: View {
             do {
                 switch action {
                 case .apply(let entry):
-                    try GitStashOperation.apply(entry, in: url)
+                    try git.applyStash(entry, in: url)
                 case .pop(let entry):
-                    try GitStashOperation.pop(entry, in: url)
+                    try git.popStash(entry, in: url)
                 case .drop(let entry):
-                    try GitStashOperation.drop(entry, in: url)
+                    try git.dropStash(entry, in: url)
                 }
                 await MainActor.run {
                     isPerformingAction = false

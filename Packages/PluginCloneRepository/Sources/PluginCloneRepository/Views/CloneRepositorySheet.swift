@@ -1,6 +1,7 @@
 import AppKit
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderActivity
 import ProviderProjects
 import ProviderToast
@@ -14,6 +15,7 @@ public struct CloneRepositorySheet: View {
     let projects: any ProjectProviding
     let activity: (any ActivityProviding)?
     let toast: (any ToastProviding)?
+    let git: any GitProviding
     @LumiTheme private var theme
 
     @Environment(\.dismiss) private var dismiss
@@ -28,11 +30,13 @@ public struct CloneRepositorySheet: View {
     public init(
         projects: any ProjectProviding,
         activity: (any ActivityProviding)?,
-        toast: (any ToastProviding)?
+        toast: (any ToastProviding)?,
+        git: any GitProviding
     ) {
         self.projects = projects
         self.activity = activity
         self.toast = toast
+        self.git = git
     }
 
     // MARK: - Derived State
@@ -61,7 +65,7 @@ public struct CloneRepositorySheet: View {
             return LumiPluginLocalization.string("Invalid destination path.", bundle: .module)
         }
         do {
-            try GitCloneOperation.validateDestination(destination)
+            try git.validateCloneDestination(destination)
         } catch {
             return error.localizedDescription
         }
@@ -92,11 +96,11 @@ public struct CloneRepositorySheet: View {
         .frame(width: 540)
         .onChange(of: remoteURL) { _, newValue in
             guard !didManuallyEditName else { return }
-            repositoryName = GitCloneOperation.defaultRepositoryName(from: newValue) ?? ""
+            repositoryName = git.defaultRepositoryName(from: newValue) ?? ""
         }
         .onChange(of: repositoryName) { _, newValue in
             let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            let autoName = GitCloneOperation.defaultRepositoryName(from: remoteURL)
+            let autoName = git.defaultRepositoryName(from: remoteURL)
             didManuallyEditName = (autoName != trimmed)
         }
     }
@@ -215,7 +219,7 @@ public struct CloneRepositorySheet: View {
 
         do {
             try await Task.detached(priority: .userInitiated) {
-                _ = try GitCloneOperation.clone(remoteURL: remote, destination: destination)
+                _ = try git.clone(remoteURL: remote, destination: destination)
             }.value
             await MainActor.run {
                 isCloning = false

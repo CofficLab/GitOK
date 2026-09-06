@@ -89,6 +89,38 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func deleteRemoteBranch(named branchName: String, remote: String, in repository: URL) throws
     func compareBranches(base: String, head: String, in repository: URL) throws -> GitBranchCompare
 
+    func undoCommit(_ commitHash: String, parentHash: String, in repository: URL) throws -> String
+    func revertCommit(_ commitHash: String, in repository: URL) throws -> String
+    func softReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String
+    func mixedReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String
+    func hardReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String
+    func squash(to targetHash: String, parentHash: String, expectedHead: String, message: String, in repository: URL) throws -> String
+
+    func createLightweightTag(named name: String, at commitHash: String, in repository: URL) throws -> String
+    func createAnnotatedTag(named name: String, at commitHash: String, message: String, in repository: URL) throws -> String
+    func deleteLocalTag(named name: String, in repository: URL) throws -> String
+    func pushTag(named name: String, remote: String, in repository: URL) throws -> String
+    func deleteRemoteTag(named name: String, remote: String, in repository: URL) throws -> String
+
+    func listStashes(in repository: URL) -> [GitStashEntry]
+    func hasChangesToStash(in repository: URL) -> Bool
+    func saveStash(message: String?, in repository: URL) throws
+    func applyStash(_ entry: GitStashEntry, in repository: URL) throws
+    func popStash(_ entry: GitStashEntry, in repository: URL) throws
+    func dropStash(_ entry: GitStashEntry, in repository: URL) throws
+
+    func cherryPickStatus(in repository: URL) -> GitCherryPickStatus
+    func cherryPick(commits: [String], onto branch: String?, in repository: URL) throws -> String
+    func continueCherryPick(in repository: URL) throws -> String
+    func abortCherryPick(in repository: URL) throws -> String
+
+    func listSubmodules(in repository: URL) -> [GitSubmoduleSummary]
+    func updateSubmodules(in repository: URL) throws
+
+    func validateCloneDestination(_ destination: URL) throws
+    func defaultRepositoryName(from remoteURL: String) -> String?
+    func clone(remoteURL: String, destination: URL) throws -> URL
+
     func hasStagedChanges(in repository: URL) throws -> Bool
     func addAll(in repository: URL) throws
     func stageFiles(_ filePaths: [String], in repository: URL) throws

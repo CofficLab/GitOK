@@ -98,6 +98,110 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitBranchOperation.compareBranches(base: base, head: head, in: repository)
     }
 
+    func undoCommit(_ commitHash: String, parentHash: String, in repository: URL) throws -> String {
+        try GitHistoryOperation.undoCommit(commitHash, parentHash: parentHash, in: repository)
+    }
+
+    func revertCommit(_ commitHash: String, in repository: URL) throws -> String {
+        try GitHistoryOperation.revertCommit(commitHash, in: repository)
+    }
+
+    func softReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try GitHistoryOperation.softReset(to: targetHash, expectedHead: expectedHead, in: repository)
+    }
+
+    func mixedReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try GitHistoryOperation.mixedReset(to: targetHash, expectedHead: expectedHead, in: repository)
+    }
+
+    func hardReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try GitHistoryOperation.hardReset(to: targetHash, expectedHead: expectedHead, in: repository)
+    }
+
+    func squash(to targetHash: String, parentHash: String, expectedHead: String, message: String, in repository: URL) throws -> String {
+        try GitHistoryOperation.squash(to: targetHash, parentHash: parentHash, expectedHead: expectedHead, message: message, in: repository)
+    }
+
+    func createLightweightTag(named name: String, at commitHash: String, in repository: URL) throws -> String {
+        try GitTagOperation.createLightweight(named: name, at: commitHash, in: repository)
+    }
+
+    func createAnnotatedTag(named name: String, at commitHash: String, message: String, in repository: URL) throws -> String {
+        try GitTagOperation.createAnnotated(named: name, at: commitHash, message: message, in: repository)
+    }
+
+    func deleteLocalTag(named name: String, in repository: URL) throws -> String {
+        try GitTagOperation.deleteLocal(named: name, in: repository)
+    }
+
+    func pushTag(named name: String, remote: String, in repository: URL) throws -> String {
+        try GitTagOperation.push(named: name, remote: remote, in: repository)
+    }
+
+    func deleteRemoteTag(named name: String, remote: String, in repository: URL) throws -> String {
+        try GitTagOperation.deleteRemote(named: name, remote: remote, in: repository)
+    }
+
+    func listStashes(in repository: URL) -> [GitStashEntry] {
+        GitStashOperation.list(in: repository)
+    }
+
+    func hasChangesToStash(in repository: URL) -> Bool {
+        GitStashOperation.hasChanges(in: repository)
+    }
+
+    func saveStash(message: String?, in repository: URL) throws {
+        try GitStashOperation.save(message: message, in: repository)
+    }
+
+    func applyStash(_ entry: GitStashEntry, in repository: URL) throws {
+        try GitStashOperation.apply(entry, in: repository)
+    }
+
+    func popStash(_ entry: GitStashEntry, in repository: URL) throws {
+        try GitStashOperation.pop(entry, in: repository)
+    }
+
+    func dropStash(_ entry: GitStashEntry, in repository: URL) throws {
+        try GitStashOperation.drop(entry, in: repository)
+    }
+
+    func cherryPickStatus(in repository: URL) -> GitCherryPickStatus {
+        GitCherryPickOperation.status(in: repository)
+    }
+
+    func cherryPick(commits: [String], onto branch: String?, in repository: URL) throws -> String {
+        try GitCherryPickOperation.cherryPick(commits: commits, onto: branch, in: repository)
+    }
+
+    func continueCherryPick(in repository: URL) throws -> String {
+        try GitCherryPickOperation.continueCherryPick(in: repository)
+    }
+
+    func abortCherryPick(in repository: URL) throws -> String {
+        try GitCherryPickOperation.abortCherryPick(in: repository)
+    }
+
+    func listSubmodules(in repository: URL) -> [GitSubmoduleSummary] {
+        GitSubmoduleOperation.list(in: repository)
+    }
+
+    func updateSubmodules(in repository: URL) throws {
+        GitSubmoduleOperation.updateAll(in: repository)
+    }
+
+    func validateCloneDestination(_ destination: URL) throws {
+        try GitCloneOperation.validateDestination(destination)
+    }
+
+    func defaultRepositoryName(from remoteURL: String) -> String? {
+        GitCloneOperation.defaultRepositoryName(from: remoteURL)
+    }
+
+    func clone(remoteURL: String, destination: URL) throws -> URL {
+        try GitCloneOperation.clone(remoteURL: remoteURL, destination: destination)
+    }
+
     func hasStagedChanges(in repository: URL) throws -> Bool {
         try GitCommitOperation.hasStagedChanges(in: repository)
     }

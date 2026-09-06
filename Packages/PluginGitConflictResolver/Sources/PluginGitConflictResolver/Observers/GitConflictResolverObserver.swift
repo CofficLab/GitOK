@@ -69,7 +69,7 @@ final class GitConflictResolverObserver {
             GitConflictResolverSnapshot(
                 conflictedFiles: git.conflictFiles(in: url),
                 isOperationInProgress: git.isMerging(in: url),
-                isCherryPicking: GitCherryPickOperation.status(in: url).isCherryPicking
+                isCherryPicking: git.cherryPickStatus(in: url).isCherryPicking
             )
         }
         Task { @MainActor [weak self] in

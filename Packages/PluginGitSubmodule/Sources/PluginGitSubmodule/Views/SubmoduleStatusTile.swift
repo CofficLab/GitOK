@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
@@ -7,13 +8,15 @@ import SwiftUI
 /// （对齐旧版 SubmoduleStatusTile 的核心能力）。
 public struct SubmoduleStatusTile: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
     @State private var isPresented = false
     @State private var submodules: [GitSubmoduleSummary] = []
     @State private var isLoading = true
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -53,7 +56,7 @@ public struct SubmoduleStatusTile: View {
         }
         isLoading = true
         Task.detached(priority: .utility) {
-            let loaded = GitSubmoduleOperation.list(in: projectURL)
+            let loaded = git.listSubmodules(in: projectURL)
             await MainActor.run {
                 submodules = loaded
                 isLoading = false
@@ -65,11 +68,15 @@ public struct SubmoduleStatusTile: View {
     private func updateAll() {
         guard let projectURL = projects.currentProject?.url else { return }
         Task.detached(priority: .userInitiated) {
-            GitSubmoduleOperation.updateAll(in: projectURL)
-            let loaded = GitSubmoduleOperation.list(in: projectURL)
-            await MainActor.run {
-                submodules = loaded
-                isLoading = false
+            do {
+                try git.updateSubmodules(in: projectURL)
+                let loaded = git.listSubmodules(in: projectURL)
+                await MainActor.run {
+                    submodules = loaded
+                    isLoading = false
+                }
+            } catch {
+                await MainActor.run { isLoading = false }
             }
         }
     }

@@ -1,17 +1,20 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
 /// Stash 状态 tile：显示 stash 数，点击弹出管理面板（对齐旧版 StashStatusTile）。
 public struct StashStatusTile: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
     @State private var stashCount = 0
     @State private var isPresented = false
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -33,7 +36,7 @@ public struct StashStatusTile: View {
                 }
                 .help(GitStashLocalization.string("Manage Stash", bundle: .module))
                 .popover(isPresented: $isPresented, arrowEdge: .bottom) {
-                    StashListView(projects: projects, onStashesChanged: { load() })
+                    StashListView(projects: projects, git: git, onStashesChanged: { load() })
                         .frame(width: 460, height: 520)
                 }
             }
@@ -54,7 +57,7 @@ public struct StashStatusTile: View {
             return
         }
         Task.detached(priority: .utility) {
-            let count = GitStashOperation.list(in: url).count
+            let count = git.listStashes(in: url).count
             await MainActor.run {
                 stashCount = count
             }

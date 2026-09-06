@@ -167,6 +167,160 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         )
     }
 
+    func undoCommit(_ commitHash: String, parentHash: String, in repository: URL) throws -> String {
+        try validateExpectedHead(commitHash, in: repository)
+        try LibGit2.reset(to: parentHash, mode: "mixed", at: repository.path, verbose: false)
+        return "Undo completed."
+    }
+
+    func revertCommit(_ commitHash: String, in repository: URL) throws -> String {
+        try LibGit2.revertCommit(commitHash, at: repository.path, verbose: false)
+        return "Revert completed."
+    }
+
+    func softReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try validateExpectedHead(expectedHead, in: repository)
+        try LibGit2.reset(to: targetHash, mode: "soft", at: repository.path, verbose: false)
+        return "Soft reset completed."
+    }
+
+    func mixedReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try validateExpectedHead(expectedHead, in: repository)
+        try LibGit2.reset(to: targetHash, mode: "mixed", at: repository.path, verbose: false)
+        return "Mixed reset completed."
+    }
+
+    func hardReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String {
+        try validateExpectedHead(expectedHead, in: repository)
+        try LibGit2.reset(to: targetHash, mode: "hard", at: repository.path, verbose: false)
+        return "Hard reset completed."
+    }
+
+    func squash(to targetHash: String, parentHash: String, expectedHead: String, message: String, in repository: URL) throws -> String {
+        try validateExpectedHead(expectedHead, in: repository)
+        try LibGit2.reset(to: parentHash, mode: "soft", at: repository.path, verbose: false)
+        return try LibGit2.createCommit(message: message, at: repository.path, verbose: false)
+    }
+
+    func createLightweightTag(named name: String, at commitHash: String, in repository: URL) throws -> String {
+        try LibGit2.createTag(named: name, at: commitHash, in: repository.path, verbose: false)
+        return "Tag created."
+    }
+
+    func createAnnotatedTag(named name: String, at commitHash: String, message: String, in repository: URL) throws -> String {
+        try LibGit2.createTag(named: name, message: message, at: commitHash, in: repository.path, verbose: false)
+        return "Tag created."
+    }
+
+    func deleteLocalTag(named name: String, in repository: URL) throws -> String {
+        try LibGit2.deleteTag(named: name, at: repository.path, verbose: false)
+        return "Tag deleted."
+    }
+
+    func pushTag(named name: String, remote: String, in repository: URL) throws -> String {
+        try LibGit2.pushTag(named: name, remote: remote, at: repository.path, verbose: false)
+        return "Tag pushed."
+    }
+
+    func deleteRemoteTag(named name: String, remote: String, in repository: URL) throws -> String {
+        try LibGit2.deleteRemoteTag(named: name, remote: remote, at: repository.path, verbose: false)
+        return "Remote tag deleted."
+    }
+
+    func listStashes(in repository: URL) -> [KitGit.GitStashEntry] {
+        (try? LibGit2.getStashList(at: repository.path).map {
+            KitGit.GitStashEntry(index: $0.index, message: $0.message)
+        }) ?? []
+    }
+
+    func hasChangesToStash(in repository: URL) -> Bool {
+        !((try? loadEntries(in: repository)) ?? []).isEmpty
+    }
+
+    func saveStash(message: String?, in repository: URL) throws {
+        _ = try LibGit2.stash(message: message, at: repository.path, verbose: false)
+    }
+
+    func applyStash(_ entry: KitGit.GitStashEntry, in repository: URL) throws {
+        try LibGit2.stashApply(index: entry.index, at: repository.path, verbose: false)
+    }
+
+    func popStash(_ entry: KitGit.GitStashEntry, in repository: URL) throws {
+        try LibGit2.stashPop(index: entry.index, at: repository.path, verbose: false)
+    }
+
+    func dropStash(_ entry: KitGit.GitStashEntry, in repository: URL) throws {
+        try LibGit2.stashDrop(index: entry.index, at: repository.path, verbose: false)
+    }
+
+    func cherryPickStatus(in repository: URL) -> GitCherryPickStatus {
+        let head = repository.appendingPathComponent(".git/CHERRY_PICK_HEAD")
+        guard FileManager.default.fileExists(atPath: head.path) else { return .inactive }
+        let hash = try? String(contentsOf: head, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)
+        return GitCherryPickStatus(isCherryPicking: true, commitHash: hash?.isEmpty == true ? nil : hash)
+    }
+
+    func cherryPick(commits: [String], onto branch: String?, in repository: URL) throws -> String {
+        if let branch, !branch.isEmpty { try LibGit2.checkout(branch: branch, at: repository.path) }
+        try LibGit2.cherryPick(commits: commits, at: repository.path, verbose: false)
+        return "Cherry-pick completed."
+    }
+
+    func continueCherryPick(in repository: URL) throws -> String {
+        try LibGit2.continueCherryPick(at: repository.path, verbose: false)
+        return "Cherry-pick continued."
+    }
+
+    func abortCherryPick(in repository: URL) throws -> String {
+        try LibGit2.abortCherryPick(at: repository.path, verbose: false)
+        return "Cherry-pick aborted."
+    }
+
+    func listSubmodules(in repository: URL) -> [GitSubmoduleSummary] {
+        (try? LibGit2.submodules(at: repository.path).map {
+            GitSubmoduleSummary(path: $0.path, commit: $0.commitHash, url: $0.description ?? "")
+        }) ?? []
+    }
+
+    func updateSubmodules(in repository: URL) throws {
+        try LibGit2.updateSubmodules(at: repository.path, initialize: true, recursive: true, verbose: false)
+    }
+
+    func validateCloneDestination(_ destination: URL) throws {
+        var isDirectory: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: destination.path, isDirectory: &isDirectory)
+        if exists {
+            guard isDirectory.boolValue else { throw GitProviderError.backendOperationUnsupported("Destination is not a directory.") }
+            guard !FileManager.default.fileExists(atPath: destination.appendingPathComponent(".git").path) else {
+                throw GitProviderError.backendOperationUnsupported("Destination is already a git repository.")
+            }
+            guard (try? FileManager.default.contentsOfDirectory(atPath: destination.path))?.isEmpty == true else {
+                throw GitProviderError.backendOperationUnsupported("Destination directory is not empty.")
+            }
+        }
+    }
+
+    func defaultRepositoryName(from remoteURL: String) -> String? {
+        let trimmed = remoteURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let pathPart: String
+        if let schemeRange = trimmed.range(of: "://") {
+            pathPart = String(trimmed[schemeRange.upperBound...]).split(separator: "/").dropFirst().joined(separator: "/")
+        } else if let colon = trimmed.firstIndex(of: ":") {
+            pathPart = String(trimmed[trimmed.index(after: colon)...])
+        } else {
+            pathPart = trimmed
+        }
+        let name = pathPart.split(separator: "/").last.map(String.init)?.replacingOccurrences(of: ".git", with: "")
+        return name?.isEmpty == false ? name : nil
+    }
+
+    func clone(remoteURL: String, destination: URL) throws -> URL {
+        try validateCloneDestination(destination)
+        try LibGit2.clone(url: remoteURL, to: destination.path)
+        return destination
+    }
+
     func hasStagedChanges(in repository: URL) throws -> Bool {
         try !LibGit2.getDiffFileList(at: repository.path, staged: true).isEmpty
     }
@@ -334,5 +488,12 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
             if line.hasPrefix("-") { deleted += 1 }
         }
         return (added, deleted)
+    }
+
+    private func validateExpectedHead(_ expectedHead: String, in repository: URL) throws {
+        let actual = try LibGit2.getCurrentBranchInfo(at: repository.path)?.latestCommitHash
+        guard actual == expectedHead else {
+            throw GitProviderError.backendOperationUnsupported("The current HEAD changed before the operation could start.")
+        }
     }
 }
