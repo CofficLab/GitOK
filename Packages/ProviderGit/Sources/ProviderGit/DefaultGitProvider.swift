@@ -145,6 +145,22 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try selectedBackend().renameBranch(from: currentName, to: newName, in: repository)
     }
 
+    public func setUpstream(localBranch: String, upstreamBranch: String, in repository: URL) throws {
+        try selectedBackend().setUpstream(localBranch: localBranch, upstreamBranch: upstreamBranch, in: repository)
+    }
+
+    public func unsetUpstream(localBranch: String, in repository: URL) throws {
+        try selectedBackend().unsetUpstream(localBranch: localBranch, in: repository)
+    }
+
+    public func publishBranch(localBranch: String, remote: String, remoteBranch: String?, in repository: URL) throws {
+        try selectedBackend().publishBranch(localBranch: localBranch, remote: remote, remoteBranch: remoteBranch, in: repository)
+    }
+
+    public func deleteRemoteBranch(named branchName: String, remote: String, in repository: URL) throws {
+        try selectedBackend().deleteRemoteBranch(named: branchName, remote: remote, in: repository)
+    }
+
     public func compareBranches(base: String, head: String, in repository: URL) throws -> GitBranchCompare {
         try selectedBackend().compareBranches(base: base, head: head, in: repository)
     }

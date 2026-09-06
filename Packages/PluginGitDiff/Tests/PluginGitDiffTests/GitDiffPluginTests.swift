@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitGit
 import ProviderProjects
+import ProviderGit
 import ProviderRootView
 import XCTest
 @testable import PluginGitDiff
@@ -94,6 +95,7 @@ final class GitDiffPluginTests: XCTestCase {
         let rootView = DefaultRootViewProvider()
         try kernel.registerProvider((any RootViewProviding).self, rootView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
 
         let plugin = GitDiffPlugin()
         try plugin.onBoot(kernel: kernel)
@@ -107,6 +109,7 @@ final class GitDiffPluginTests: XCTestCase {
         let rootView = DefaultRootViewProvider()
         try kernel.registerProvider((any RootViewProviding).self, rootView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
 
         let plugin = GitDiffPlugin()
         try plugin.onBoot(kernel: kernel)
@@ -126,6 +129,7 @@ final class GitDiffPluginTests: XCTestCase {
         let projects = MockProjects()
         try kernel.registerProvider((any RootViewProviding).self, rootView)
         try kernel.registerProvider((any ProjectProviding).self, projects)
+        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
 
         let plugin = GitDiffPlugin()
         // 初始无选中文件 → 面板应隐藏，不再渲染空占位。

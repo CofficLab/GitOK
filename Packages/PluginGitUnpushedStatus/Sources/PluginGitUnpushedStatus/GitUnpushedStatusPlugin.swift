@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderProjects
+import ProviderGit
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
@@ -44,6 +45,10 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip unpushed status item")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip unpushed status item")
+            return
+        }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
@@ -61,7 +66,7 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
                 order: 16
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    UnpushedStatusTile(projects: projects)
+                    UnpushedStatusTile(projects: projects, git: git)
                 }
             },
         ])

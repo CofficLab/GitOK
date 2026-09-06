@@ -83,6 +83,10 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func checkoutBranch(named name: String, in repository: URL) throws
     func deleteBranch(named name: String, in repository: URL) throws
     func renameBranch(from currentName: String, to newName: String, in repository: URL) throws
+    func setUpstream(localBranch: String, upstreamBranch: String, in repository: URL) throws
+    func unsetUpstream(localBranch: String, in repository: URL) throws
+    func publishBranch(localBranch: String, remote: String, remoteBranch: String?, in repository: URL) throws
+    func deleteRemoteBranch(named branchName: String, remote: String, in repository: URL) throws
     func compareBranches(base: String, head: String, in repository: URL) throws -> GitBranchCompare
 
     func hasStagedChanges(in repository: URL) throws -> Bool

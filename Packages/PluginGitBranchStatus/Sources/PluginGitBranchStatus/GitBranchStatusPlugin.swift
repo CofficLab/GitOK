@@ -80,7 +80,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                     order: 40
                 ) {
                     WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                        BranchPickerView(projects: projects, viewModel: branchViewModel)
+                        BranchPickerView(projects: projects, git: git, viewModel: branchViewModel)
                     }
                 },
             ])
@@ -101,7 +101,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                 order: 15
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    BranchStatusTile(projects: projects, viewModel: branchViewModel)
+                    BranchStatusTile(projects: projects, git: git, viewModel: branchViewModel)
                 }
             },
         ])

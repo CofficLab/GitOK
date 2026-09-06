@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderCommitForm
+import ProviderGit
 import ProviderContentView
 import ProviderGitRepositoryWatch
 import ProviderProjects
@@ -56,6 +57,10 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)CommitFormProviding not registered; skip commit form event wiring")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip commit form wiring")
+            return
+        }
 
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
@@ -96,6 +101,7 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
                         CommitFormView(
                             projects: projects,
                             form: form,
+                            git: git,
                             gitWatch: gitWatch,
                             errorCenter: errorCenter
                         )

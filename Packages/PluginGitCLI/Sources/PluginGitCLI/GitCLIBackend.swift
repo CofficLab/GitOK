@@ -78,6 +78,22 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitBranchOperation.renameBranch(from: currentName, to: newName, in: repository)
     }
 
+    func setUpstream(localBranch: String, upstreamBranch: String, in repository: URL) throws {
+        try GitBranchOperation.setUpstream(localBranch: localBranch, upstreamBranch: upstreamBranch, in: repository)
+    }
+
+    func unsetUpstream(localBranch: String, in repository: URL) throws {
+        try GitBranchOperation.unsetUpstream(localBranch: localBranch, in: repository)
+    }
+
+    func publishBranch(localBranch: String, remote: String, remoteBranch: String?, in repository: URL) throws {
+        try GitBranchOperation.publishBranch(localBranch: localBranch, remote: remote, remoteBranch: remoteBranch, in: repository)
+    }
+
+    func deleteRemoteBranch(named branchName: String, remote: String, in repository: URL) throws {
+        try GitBranchOperation.deleteRemoteBranch(named: branchName, remote: remote, in: repository)
+    }
+
     func compareBranches(base: String, head: String, in repository: URL) throws -> GitBranchCompare {
         try GitBranchOperation.compareBranches(base: base, head: head, in: repository)
     }

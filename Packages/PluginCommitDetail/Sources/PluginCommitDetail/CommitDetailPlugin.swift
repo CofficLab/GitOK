@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderContentView
+import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderWorkspaceScene
@@ -62,6 +63,10 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip content injection")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip content injection")
+            return
+        }
 
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
@@ -103,6 +108,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
                     CommitDetailView(
                         viewModel: viewModel,
+                        git: git,
                         onSelectFile: selectFile,
                         onDataChanged: notifyDataChanged
                     )

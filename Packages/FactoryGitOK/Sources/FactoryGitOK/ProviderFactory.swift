@@ -121,7 +121,10 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any ActivityProviding).self, makeActivityProvider())
         try kernel.registerProvider(
             (any CommitFormProviding).self,
-            makeCommitFormProvider(activity: kernel.resolveProvider((any ActivityProviding).self))
+            makeCommitFormProvider(
+                activity: kernel.resolveProvider((any ActivityProviding).self),
+                git: git
+            )
         )
         try kernel.registerProvider((any ToastProviding).self, makeToastProvider())
         let pluginManaging = makePluginManagingProvider()
@@ -156,8 +159,11 @@ extension DefaultProviderFactory {
     }
 
     /// 提交表单 Provider：把提交 / 推送阶段上报到 Activity 提供者（状态栏活动指示）。
-    public func makeCommitFormProvider(activity: (any ActivityProviding)?) -> any CommitFormProviding {
-        let form = DefaultCommitFormProvider()
+    public func makeCommitFormProvider(
+        activity: (any ActivityProviding)?,
+        git: (any GitProviding)? = nil
+    ) -> any CommitFormProviding {
+        let form = DefaultCommitFormProvider(git: git)
         if let activity {
             form.activityReporter = { [weak activity] message in
                 if let message {

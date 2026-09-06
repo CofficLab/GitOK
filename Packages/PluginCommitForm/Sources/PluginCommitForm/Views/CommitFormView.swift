@@ -1,6 +1,7 @@
 import KitGit
 import LumiUI
 import ProviderCommitForm
+import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import SwiftUI
@@ -30,6 +31,7 @@ private extension GitRemoteOperation.SyncStep {
 public struct CommitFormView: View {
     let projects: any ProjectProviding
     let form: any CommitFormProviding
+    let git: any GitProviding
     let errorCenter: CommitFormErrorCenter?
     /// 仓库监听（可选）：订阅 `.git` 目录变化（HEAD / index / stash / refs /
     /// 工作区文件），外部修改（终端 commit / checkout / stash 等）也能触发
@@ -58,11 +60,13 @@ public struct CommitFormView: View {
     public init(
         projects: any ProjectProviding,
         form: any CommitFormProviding,
+        git: any GitProviding,
         gitWatch: (any GitRepositoryWatching)? = nil,
         errorCenter: CommitFormErrorCenter? = nil
     ) {
         self.projects = projects
         self.form = form
+        self.git = git
         self.gitWatch = gitWatch
         self.errorCenter = errorCenter
         _formObservation = StateObject(wrappedValue: CommitFormObservationModel(form: form))
@@ -280,7 +284,7 @@ public struct CommitFormView: View {
         if let syncError = error as? GitRemoteOperation.SyncError {
             // Merge 冲突由现有冲突解决器自动打开，避免错误面板盖住冲突操作界面。
             if case .merge = syncError.step,
-               GitMergeOperation.hasConflictOperation(in: repository) {
+               git.hasConflictOperation(in: repository) {
                 return
             }
             errorCenter?.present(
@@ -361,7 +365,7 @@ public struct CommitFormView: View {
         let token = worktreeStatusLoadToken
         let url = project.url
         Task.detached(priority: .utility) {
-            let status = try? GitStatusLoader.loadStatus(in: url)
+            let status = try? git.loadStatus(in: url)
             await MainActor.run {
                 guard token == self.worktreeStatusLoadToken else { return }
                 self.isClean = status?.isClean ?? true

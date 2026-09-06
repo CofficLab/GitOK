@@ -1,16 +1,18 @@
-import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
 /// 未推送状态 tile：显示当前分支相对上游未推送的提交数。
 public struct UnpushedStatusTile: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
     @State private var unpushedCount: Int?
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -45,7 +47,7 @@ public struct UnpushedStatusTile: View {
         }
         let url = project.url
         Task.detached(priority: .utility) {
-            let count = GitRefReader.unpushedCount(in: url)
+            let count = git.unpushedCount(in: url)
             await MainActor.run {
                 unpushedCount = count
             }

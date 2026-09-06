@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderCommitForm
 import ProviderContentView
+import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderWorkspaceScene
@@ -57,6 +58,7 @@ struct PluginCommitFormTests {
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
         try kernel.registerProvider((any CommitFormProviding).self, DefaultCommitFormProvider())
+        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
         try kernel.registerProvider(
             (any WorkspaceSceneProviding).self,
             DefaultWorkspaceSceneProvider()

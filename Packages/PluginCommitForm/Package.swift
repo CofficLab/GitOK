@@ -20,6 +20,7 @@ let package = Package(
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderCommitForm"),
+        .package(path: "../ProviderGit"),
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
@@ -36,6 +37,7 @@ let package = Package(
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
@@ -51,6 +53,7 @@ let package = Package(
             name: "PluginCommitFormTests",
             dependencies: [
                 "PluginCommitForm",
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],

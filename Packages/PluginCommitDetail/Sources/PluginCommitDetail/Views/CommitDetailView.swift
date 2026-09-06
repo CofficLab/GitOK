@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import SwiftUI
 
 /// Commit 详情主内容视图。
@@ -21,6 +22,7 @@ import SwiftUI
 /// 不占布局，干净状态视图由 `PluginWorktreeClean` 插件作为另一块内容展示。
 struct CommitDetailView: View {
     @ObservedObject var viewModel: CommitDetailViewModel
+    let git: any GitProviding
     let onSelectFile: (String?) -> Void
     let onDataChanged: () -> Void
 
@@ -43,6 +45,7 @@ struct CommitDetailView: View {
             // 尺寸由 WorktreeChangesView 自决：干净 → EmptyView 不占布局。
             WorktreeChangesView(
                 viewModel: viewModel,
+                git: git,
                 onSelectFile: onSelectFile,
                 onDataChanged: onDataChanged
             )

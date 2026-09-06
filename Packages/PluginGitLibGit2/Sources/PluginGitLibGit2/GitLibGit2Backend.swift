@@ -128,6 +128,29 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try LibGit2.renameBranch(named: currentName, to: newName, at: repository.path)
     }
 
+    func setUpstream(localBranch: String, upstreamBranch: String, in repository: URL) throws {
+        try LibGit2.setUpstream(localBranch: localBranch, upstreamBranch: upstreamBranch, at: repository.path)
+    }
+
+    func unsetUpstream(localBranch: String, in repository: URL) throws {
+        try LibGit2.unsetUpstream(localBranch: localBranch, at: repository.path)
+    }
+
+    func publishBranch(localBranch: String, remote: String, remoteBranch: String?, in repository: URL) throws {
+        try LibGit2.publishBranch(
+            localBranch: localBranch,
+            remote: remote,
+            remoteBranch: remoteBranch,
+            at: repository.path,
+            setUpstream: true,
+            verbose: false
+        )
+    }
+
+    func deleteRemoteBranch(named branchName: String, remote: String, in repository: URL) throws {
+        try LibGit2.deleteRemoteBranch(named: branchName, remote: remote, at: repository.path, verbose: false)
+    }
+
     func compareBranches(base: String, head: String, in repository: URL) throws -> KitGit.GitBranchCompare {
         let result = try LibGit2.compareBranches(base: base, head: head, at: repository.path)
         return KitGit.GitBranchCompare(

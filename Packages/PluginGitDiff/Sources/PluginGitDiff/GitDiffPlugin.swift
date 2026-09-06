@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderProjects
+import ProviderGit
 import ProviderRootView
 import SwiftUI
 
@@ -54,6 +55,10 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip trailing pane injection")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip trailing pane injection")
+            return
+        }
 
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
         // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照，
@@ -71,7 +76,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             // 避免空占位（下方 observer 会在文件选择变化时同步显隐）。
             isVisible: capability.currentFile != nil,
             content: AnyView(
-                GitDiffPaneView(viewModel: viewModel)
+                GitDiffPaneView(viewModel: viewModel, git: git)
                     // Debug 构建下左下角叠加插件名 badge，便于识别视图来源。
                     .debugPluginBadge(metadata.name)
             )

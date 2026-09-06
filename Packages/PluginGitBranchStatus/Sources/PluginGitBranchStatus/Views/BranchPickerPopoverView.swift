@@ -1,5 +1,6 @@
 import KitGit
 import ProviderProjects
+import ProviderGit
 import SwiftUI
 
 /// 工具栏分支选择弹层：搜索 + 新建分支 + 本地 / 远程分支列表。
@@ -11,6 +12,7 @@ import SwiftUI
 /// - 无项目 / 加载失败时显示空状态。
 struct BranchPickerPopoverView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     let viewModel: GitBranchStatusViewModel
     /// 切换 / 新建成功后由本视图置为 false，关闭工具栏按钮的弹层。
     let isPresented: Binding<Bool>
@@ -25,10 +27,12 @@ struct BranchPickerPopoverView: View {
 
     init(
         projects: any ProjectProviding,
+        git: any GitProviding,
         viewModel: GitBranchStatusViewModel,
         isPresented: Binding<Bool>
     ) {
         self.projects = projects
+        self.git = git
         self.viewModel = viewModel
         self.isPresented = isPresented
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
@@ -216,7 +220,7 @@ struct BranchPickerPopoverView: View {
         errorMessage = nil
         Task.detached(priority: .utility) {
             do {
-                let loaded = try GitBranchOperation.listBranches(in: url)
+                let loaded = try git.listBranches(in: url)
                 await MainActor.run {
                     branches = loaded
                     isLoading = false
@@ -237,7 +241,7 @@ struct BranchPickerPopoverView: View {
         isLoading = true
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.checkoutBranch(named: branch.name, in: url)
+                try git.checkoutBranch(named: branch.name, in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()
@@ -261,8 +265,8 @@ struct BranchPickerPopoverView: View {
         isLoading = true
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.createBranch(named: name, in: url)
-                try GitBranchOperation.checkoutBranch(named: name, in: url)
+                try git.createBranch(named: name, in: url)
+                try git.checkoutBranch(named: name, in: url)
                 await MainActor.run {
                     isLoading = false
                     isCreatingNew = false
