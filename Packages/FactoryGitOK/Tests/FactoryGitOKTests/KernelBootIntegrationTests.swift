@@ -77,4 +77,21 @@ final class KernelBootIntegrationTests: XCTestCase {
         XCTAssertEqual(git.selectedBackendID, "com.coffic.gitok.git-backend.cli")
         XCTAssertEqual(git.availableBackends.count, 1)
     }
+
+    func testGitBackendsAreMutuallyExclusive() async throws {
+        let kernel = try KernelFactory.makeKernel()
+        let git = try XCTUnwrap(kernel.resolveProvider((any GitProviding).self))
+        let cliID = "com.coffic.gitok.plugin.git-cli"
+        let libGit2ID = "com.coffic.gitok.plugin.git-libgit2"
+
+        try await kernel.enablePlugin(id: libGit2ID)
+        XCTAssertFalse(kernel.isPluginEnabled(id: cliID))
+        XCTAssertTrue(kernel.isPluginEnabled(id: libGit2ID))
+        XCTAssertEqual(git.selectedBackendID, "com.coffic.gitok.git-backend.libgit2")
+
+        try await kernel.enablePlugin(id: cliID)
+        XCTAssertTrue(kernel.isPluginEnabled(id: cliID))
+        XCTAssertFalse(kernel.isPluginEnabled(id: libGit2ID))
+        XCTAssertEqual(git.selectedBackendID, "com.coffic.gitok.git-backend.cli")
+    }
 }

@@ -1,5 +1,6 @@
 import KernelCore
 import ProviderDocsView
+import ProviderGit
 import ProviderPluginManaging
 import ProviderSettingView
 import SwiftUI
@@ -49,6 +50,7 @@ public final class PluginPluginManager: SuperPlugin, SuperLog {
 
         // 捕获 docs/provider 引用，供插件管理详情面板展示各插件的 about 视图。
         let docsProvider = kernel.resolveProvider((any DocsViewProviding).self)
+        let gitProvider = kernel.resolveProvider((any GitProviding).self)
         if docsProvider == nil {
             Self.logger.error("\(Self.t) DocsViewProviding not found")
         }
@@ -58,8 +60,8 @@ public final class PluginPluginManager: SuperPlugin, SuperLog {
             title: LumiPluginLocalization.string("Plugin Management", bundle: .module),
             systemImage: "puzzlepiece.extension",
             order: 3
-        ) { [manager, docsProvider] in
-            PluginManagementView(manager: manager, docsProvider: docsProvider)
+        ) { [manager, docsProvider, gitProvider] in
+            PluginManagementView(manager: manager, docsProvider: docsProvider, gitProvider: gitProvider)
         }
 
         settings.addEntries([entry])

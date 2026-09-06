@@ -1,6 +1,7 @@
 import KernelCore
 import LumiUI
 import ProviderDocsView
+import ProviderGit
 import ProviderPluginManaging
 import SwiftUI
 
@@ -23,14 +24,20 @@ struct PluginManagementView: View {
     /// 文档视图提供器：详情面板按插件 id 匹配 about 条目并展示。
     /// 为 nil 时（宿主未提供 DocsViewProviding）详情面板回退到元信息展示。
     let docsProvider: (any DocsViewProviding)?
+    let gitProvider: (any GitProviding)?
 
     @State private var selectedPluginID: String?
     @State private var searchText = ""
     @State private var selectedCategory: PluginCategory?
 
-    init(manager: any PluginManaging, docsProvider: (any DocsViewProviding)? = nil) {
+    init(
+        manager: any PluginManaging,
+        docsProvider: (any DocsViewProviding)? = nil,
+        gitProvider: (any GitProviding)? = nil
+    ) {
         _model = StateObject(wrappedValue: PluginManagementViewModel(manager: manager))
         self.docsProvider = docsProvider
+        self.gitProvider = gitProvider
     }
 
     var body: some View {
@@ -120,6 +127,11 @@ struct PluginManagementView: View {
 
     private var pluginListPane: some View {
         VStack(spacing: 0) {
+            if let gitProvider {
+                GitBackendSelectorView(manager: model.manager, git: gitProvider)
+                AppDivider()
+            }
+
             VStack(spacing: 10) {
                 AppSearchBar(
                     text: $searchText,
