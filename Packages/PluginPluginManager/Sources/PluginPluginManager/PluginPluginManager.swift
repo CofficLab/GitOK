@@ -34,6 +34,9 @@ public final class PluginPluginManager: SuperPlugin, SuperLog {
         kernel.resolveProvider((any DocsViewProviding).self)?.addManual(
             DocsEntry(id: id, name: metadata.name) { PluginManagerManualView() }
         )
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { PluginManagerAboutView() }
+        )
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
