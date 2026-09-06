@@ -9,6 +9,7 @@ import ProviderRailView
 import ProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Worktree Status SuperPlugin
 
@@ -43,6 +44,16 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
     private let syncFailureCenter = WorktreeSyncFailureCenter()
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { WorktreeStatusAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let rail = kernel.resolveProvider((any RailViewProviding).self) else {
