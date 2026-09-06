@@ -12,11 +12,11 @@ private func loc(_ key: String) -> String {
 /// 由 `PluginWorktreeClean` 独立提供（从 CommitDetail 插件迁移）。
 struct CleanStateInfoView: View {
     let project: Project
+    @ObservedObject var viewModel: WorktreeCleanViewModel
+    let openUserSettings: (() -> Void)?
 
     @State private var remotes: [GitRemoteSummary] = []
     @State private var branchName: String?
-    @State private var userName: String = ""
-    @State private var userEmail: String = ""
     @State private var isLoadingInfo = true
 
     var body: some View {
@@ -54,6 +54,16 @@ struct CleanStateInfoView: View {
                     userEmailRow
                 }
             }
+
+            GitUserPresetSectionView(
+                presets: viewModel.userPresets,
+                currentUserName: viewModel.currentUserName,
+                currentUserEmail: viewModel.currentUserEmail,
+                isLoadingUserConfiguration: viewModel.isLoadingUserConfiguration,
+                isApplying: viewModel.isApplyingUserPreset,
+                onApply: viewModel.applyUserPreset,
+                onManage: openUserSettings
+            )
         }
         .onAppear(perform: loadInfo)
     }
@@ -121,10 +131,10 @@ struct CleanStateInfoView: View {
     private var userNameRow: some View {
         AppSettingRow(
             title: loc("User Name"),
-            description: userName.isEmpty ? loc("user.name not configured") : userName,
+            description: viewModel.currentUserName.isEmpty ? loc("user.name not configured") : viewModel.currentUserName,
             icon: "person"
         ) {
-            if isLoadingInfo {
+            if viewModel.isLoadingUserConfiguration {
                 ProgressView().controlSize(.small)
             }
         }
@@ -135,10 +145,10 @@ struct CleanStateInfoView: View {
     private var userEmailRow: some View {
         AppSettingRow(
             title: loc("Email"),
-            description: userEmail.isEmpty ? loc("user.email not configured") : userEmail,
+            description: viewModel.currentUserEmail.isEmpty ? loc("user.email not configured") : viewModel.currentUserEmail,
             icon: "envelope"
         ) {
-            if isLoadingInfo {
+            if viewModel.isLoadingUserConfiguration {
                 ProgressView().controlSize(.small)
             }
         }
@@ -156,14 +166,9 @@ struct CleanStateInfoView: View {
             // 加载当前分支
             let loadedBranchName = GitRefReader.currentBranch(in: project.url)
 
-            // 加载用户配置
-            let config = GitConfigReader.user(in: project.url)
-
             await MainActor.run {
                 remotes = loadedRemotes
                 branchName = loadedBranchName
-                userName = config.name ?? ""
-                userEmail = config.email ?? ""
                 isLoadingInfo = false
             }
         }

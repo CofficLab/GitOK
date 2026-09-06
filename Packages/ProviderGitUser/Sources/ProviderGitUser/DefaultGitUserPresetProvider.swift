@@ -3,20 +3,13 @@ import Foundation
 /// `GitUserPresetProviding` 的默认实现。
 ///
 /// 基于 JSON 文件的轻量持久化：全部预设保存在指定目录下的 `presets.json`。
-/// 目录不存在时自动创建。线程安全由 `@MainActor` 保证（与 Lumi 其他 provider 一致）。
-///
-/// 预设管理规则：
-/// - 首个被添加的预设自动成为默认（`isDefault == true`）；
-/// - 新增 / 更新 / 删除后立即落盘（原子写入）；
-/// - 删除默认预设后，剩余第一条自动接任默认；
-/// - `findDefault()` 未显式标记默认时退回第一条。
+/// 目录不存在时自动创建。线程安全由 `@MainActor` 保证。
 @MainActor
 public final class DefaultGitUserPresetProvider: GitUserPresetProviding {
-    /// 预设数据文件 URL。
     private let fileURL: URL
+    private var observers: [(id: UUID, callback: (GitUserPresetProvidingEvent) -> Void)] = []
 
-    /// - Parameter directory: 预设数据所在目录（一般传
-    ///   `StorageProviding.pluginDataDirectory(for:)` 的结果）；不存在会自动创建。
+    /// - Parameter directory: 预设数据所在目录；不存在会自动创建。
     public init(directory: URL) {
         try? FileManager.default.createDirectory(
             at: directory,
@@ -35,7 +28,16 @@ public final class DefaultGitUserPresetProvider: GitUserPresetProviding {
         self.fileURL = fileURL
     }
 
-    // MARK: - GitUserPresetProviding
+    @discardableResult
+    public func addObserver(
+        _ callback: @escaping (GitUserPresetProvidingEvent) -> Void
+    ) -> any GitUserPresetProvidingObserverHandle {
+        let id = UUID()
+        observers.append((id: id, callback: callback))
+        return ObserverHandle { [weak self] in
+            self?.observers.removeAll { $0.id == id }
+        }
+    }
 
     public func loadPresets() -> [GitUserPreset] {
         guard let data = try? Data(contentsOf: fileURL),
@@ -69,7 +71,6 @@ public final class DefaultGitUserPresetProvider: GitUserPresetProviding {
         var presets = loadPresets()
         let removed = presets.first { $0.id == id }
         presets.removeAll { $0.id == id }
-        // 删除的是默认预设 → 剩余第一条自动接任默认。
         if removed?.isDefault == true, var first = presets.first, !first.isDefault {
             first.isDefault = true
             presets[0] = first
@@ -103,7 +104,26 @@ public final class DefaultGitUserPresetProvider: GitUserPresetProviding {
     }
 
     public func save(_ presets: [GitUserPreset]) {
-        guard let data = try? JSONEncoder().encode(presets) else { return }
-        try? data.write(to: fileURL, options: .atomic)
+        guard let data = try? JSONEncoder().encode(presets),
+              (try? data.write(to: fileURL, options: .atomic)) != nil else { return }
+        let currentObservers = observers
+        for observer in currentObservers {
+            observer.callback(.presetsChanged)
+        }
+    }
+
+    private final class ObserverHandle: GitUserPresetProvidingObserverHandle {
+        private let onCancel: () -> Void
+        private var isCancelled = false
+
+        init(onCancel: @escaping () -> Void) {
+            self.onCancel = onCancel
+        }
+
+        func cancel() {
+            guard !isCancelled else { return }
+            isCancelled = true
+            onCancel()
+        }
     }
 }

@@ -1,13 +1,13 @@
 import KitGit
 import LumiUI
-import ProviderGit
+import ProviderGitUser
 import ProviderProjects
 import ProviderToast
 import SwiftUI
 
 /// Git 用户信息设置视图（对齐旧版 `GitUserInfoSettingView`）。
 ///
-/// 预设的存储与增删改由 `GitUserPresetProviding`（ProviderGit）管理，
+/// 预设的存储与增删改由 `GitUserPresetProviding`（ProviderGitUser）管理，
 /// 本视图只负责「展示预设 + 应用到当前项目 git 配置」：
 /// - 「Existing Presets」：展示已保存的预设，点击可写入当前项目 git 配置；
 /// - 「Add New Preset」：输入用户名 / 邮箱保存为预设（同时写入当前项目）。
@@ -162,6 +162,7 @@ public struct GitUserInfoSettingView: View {
                 try GitConfigReader.setValue("user.name", name, in: url)
                 try GitConfigReader.setValue("user.email", email, in: url)
                 await MainActor.run {
+                    projects.notifyDataChanged()
                     toast?.show(successTitle, detail: String(format: LumiPluginLocalization.string("%@ <%@>", bundle: .module), name, email), style: .success)
                 }
             } catch {

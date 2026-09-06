@@ -16,7 +16,16 @@ private func loc(_ key: String) -> String {
 /// 两个插件的内容块互斥，避免在内容区 VStack 中叠加。
 struct WorktreeCleanView: View {
     @ObservedObject var viewModel: WorktreeCleanViewModel
+    let openUserSettings: (() -> Void)?
     @LumiTheme private var theme
+
+    init(
+        viewModel: WorktreeCleanViewModel,
+        openUserSettings: (() -> Void)? = nil
+    ) {
+        self.viewModel = viewModel
+        self.openUserSettings = openUserSettings
+    }
 
     var body: some View {
         Group {
@@ -50,7 +59,11 @@ struct WorktreeCleanView: View {
                 }
                 .padding(.vertical, 20)
 
-                CleanStateInfoView(project: project)
+                CleanStateInfoView(
+                    project: project,
+                    viewModel: viewModel,
+                    openUserSettings: openUserSettings
+                )
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)

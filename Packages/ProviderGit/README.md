@@ -1,7 +1,6 @@
 # ProviderGit
 
-Git 能力协议包：定义业务插件消费的 `GitProviding`、后端注册协议、稳定路由器，
-以及 Git 用户预设能力。
+Git 能力协议包：定义业务插件消费的 `GitProviding`、后端注册协议和稳定路由器。
 
 ## 本 Package 的位置
 
@@ -19,13 +18,7 @@ Git 能力协议包：定义业务插件消费的 `GitProviding`、后端注册�
     ├── Sources
     │   └── ProviderGit
     │       ├── DefaultGitProvider.swift
-    │       ├── GitProviding.swift
-    │       ├── DefaultGitUserPresetProvider.swift
-    │       ├── GitUserPreset.swift
-    │       └── GitUserPresetProviding.swift
-    └── Tests
-        └── ProviderGitTests
-            └── ProviderGitTests.swift
+    │       └── GitProviding.swift
 ```
 
 ## 构建与测试

@@ -2,7 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderGit
+import ProviderGitUser
 import ProviderProjects
 import ProviderSettingView
 import ProviderStorage
@@ -14,7 +14,7 @@ import ProviderToast
 ///
 /// 作为「用户预设管理」的具体实现方（对齐「一个 provider 负责预设管理、
 /// 一个插件具体实现」的架构）：
-/// - 预设的管理统一交给内核解析出的 `GitUserPresetProviding`（由 ProviderGit 定义）；
+/// - 预设的管理统一交给内核解析出的 `GitUserPresetProviding`（由 ProviderGitUser 定义）；
 /// - 若宿主尚未注册该 provider，本插件用 `DefaultGitUserPresetProvider` 兜底注册
 ///   （数据落在 `StorageProviding.pluginDataDirectory(for:)` 指向的目录），
 ///   保证设置页开箱即用；
@@ -27,14 +27,15 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
     nonisolated static let verbose = false
 
     public let id = "com.coffic.gitok.plugin.git-user-settings"
-    public let order = 40
+    /// 预设 Provider 必须先于 WorktreeClean（order 22）装配。
+    public let order = 20
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-user-settings",
         name: "Git User Settings",
         description: "Manage Git user presets and apply them to the current project",
         category: .project,
         stage: .stable,
-        policy: .disabled
+        policy: .required
     )
 
     /// 由本插件注册进内核的默认 provider（宿主未注册时）；用于 onShutdown 时反注册。
@@ -54,7 +55,7 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
 
         let toast = kernel.resolveProvider((any ToastProviding).self)
 
-        // 预设管理统一交给 ProviderGit；宿主未注册时用默认实现兜底并注册。
+        // 预设管理统一交给 ProviderGitUser；宿主未注册时用默认实现兜底并注册。
         let provider: any GitUserPresetProviding
         if let resolved = kernel.resolveProvider((any GitUserPresetProviding).self) {
             provider = resolved

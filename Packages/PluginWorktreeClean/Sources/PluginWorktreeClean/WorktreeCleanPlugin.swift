@@ -3,8 +3,10 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderContentView
+import ProviderGitUser
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderSettingView
 import ProviderWorkspaceScene
 import SwiftUI
 
@@ -65,15 +67,31 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         // GitRepositoryWatching 可选依赖：感知外部工作区文件变化
         // （如其他编辑器把文件改干净 / 改脏后，干净视图据此刷新）。
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
+        let userPresets = kernel.resolveProvider((any GitUserPresetProviding).self)
+
+        let ensureUserPreset: ((String, String) -> Void)?
+        if let userPresets {
+            ensureUserPreset = { name, email in
+                let alreadyExists = userPresets.loadPresets().contains {
+                    $0.name == name && $0.email == email
+                }
+                if !alreadyExists {
+                    _ = userPresets.addPreset(name: name, email: email)
+                }
+            }
+        } else {
+            ensureUserPreset = nil
+        }
 
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
         // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照。
         let capability = WorktreeCleanProjectCapabilityAdapter(projects: projects)
-        let viewModel = WorktreeCleanViewModel()
+        let viewModel = WorktreeCleanViewModel(ensureUserPreset: ensureUserPreset)
         self.viewModel = viewModel
         observer = WorktreeCleanObserver(
             capability: capability,
             gitWatch: gitWatch,
+            userPresets: userPresets,
             onProjectChanged: { [weak viewModel, capability] in
                 viewModel?.handleProjectChanged(
                     project: capability.currentProject,
@@ -82,6 +100,9 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             },
             onDataChanged: { [weak viewModel] in
                 viewModel?.handleDataChanged()
+            },
+            onUserPresetsChanged: { [weak viewModel] presets in
+                viewModel?.handleUserPresetsChanged(presets)
             }
         )
         viewModel.handleProjectChanged(
@@ -94,11 +115,24 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         let sceneCapability = WorktreeCleanSceneCapabilityAdapter(scene: scene)
         self.sceneObserver = WorktreeCleanSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
+        let openUserSettings: (() -> Void)?
+        if kernel.resolveProvider((any SettingViewProviding).self) != nil {
+            openUserSettings = {
+                NotificationCenter.default.post(
+                    name: SettingViewNavigation.openSettingsNotification,
+                    object: nil,
+                    userInfo: [SettingViewNavigation.entryIDUserInfoKey: "userInfo"]
+                )
+            }
+        } else {
+            openUserSettings = nil
+        }
+
         // 作为主内容区的一块贡献（与 CommitDetail 同层；二者互斥，不会同时占位）。
         contentView.addContentView(
             AnyView(
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    WorktreeCleanView(viewModel: viewModel)
+                    WorktreeCleanView(viewModel: viewModel, openUserSettings: openUserSettings)
                 }
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)

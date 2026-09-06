@@ -1,28 +1,36 @@
 import Foundation
 
+// MARK: - Events
+
+/// Git 用户预设数据变化事件。
+@MainActor
+public enum GitUserPresetProvidingEvent {
+    /// 预设新增、更新、删除或整体覆盖保存后触发。
+    case presetsChanged
+}
+
+// MARK: - Observer Handle
+
+@MainActor
+public protocol GitUserPresetProvidingObserverHandle: AnyObject {
+    func cancel()
+}
+
 // MARK: - Contract
 
 /// Git 用户预设管理提供能力协议。
 ///
-/// 定义「内核 → Git 用户预设」这一段的最小契约：负责多条用户预设
-/// （用户名 + 邮箱）的读取、增删改、默认标记与持久化。宿主与插件通过内核
-/// 解析 `GitUserPresetProviding` 来读写预设，而不关心具体存储方式
-/// （JSON 文件 / SwiftData / 其他）。
-///
-/// 预设管理规则（与旧版 `GitUserConfigRepo` 对齐）：
-/// - 允许保存多条预设；
-/// - 至多一条 `isDefault == true`，供「未指定时使用默认」场景；
-/// - 首个被添加的预设自动成为默认；
-/// - 删除默认预设后，剩余第一条自动接任默认。
-///
-/// 典型消费方：
-/// - `PluginGitUserSettings` 的设置页：列出预设、增删、设为默认、应用到当前项目；
-/// - 提交表单：快速切换提交者身份（复用同一份预设数据源）。
-///
-/// 典型实现：`DefaultGitUserPresetProvider`（JSON 文件持久化，数据落在
-/// `StorageProviding.pluginDataDirectory(for:)` 指向的目录）。
+/// 负责多条用户预设（用户名 + 邮箱）的读取、增删改、默认标记与持久化。
+/// 该 Provider 不依赖 Git 操作实现，因此设置、工作区和提交相关插件可以
+/// 共享同一份用户身份数据，而不需要依赖完整的 `ProviderGit`。
 @MainActor
 public protocol GitUserPresetProviding: AnyObject {
+    /// 监听预设数据变化。回调执行时 `loadPresets()` 已可读到最新数据。
+    @discardableResult
+    func addObserver(
+        _ callback: @escaping (GitUserPresetProvidingEvent) -> Void
+    ) -> any GitUserPresetProvidingObserverHandle
+
     /// 读取全部预设（按创建时间升序）。
     func loadPresets() -> [GitUserPreset]
 

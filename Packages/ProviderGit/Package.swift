@@ -23,13 +23,5 @@ let package = Package(
             ],
             path: "Sources/ProviderGit"
         ),
-        .testTarget(
-            name: "ProviderGitTests",
-            dependencies: [
-                "ProviderGit",
-                .product(name: "KitGit", package: "KitGit"),
-            ],
-            path: "Tests/ProviderGitTests"
-        ),
     ]
 )

@@ -1,4 +1,5 @@
 import Foundation
+import ProviderGitUser
 import ProviderGitRepositoryWatch
 import ProviderProjects
 
@@ -17,12 +18,15 @@ import ProviderProjects
 final class WorktreeCleanObserver {
     private var projectsHandle: (any ProjectProvidingObserverHandle)?
     private var gitWatchHandle: (any GitRepositoryWatchingObserverHandle)?
+    private var userPresetsHandle: (any GitUserPresetProvidingObserverHandle)?
 
     init(
         capability: any WorktreeCleanProjectCapability,
         gitWatch: (any GitRepositoryWatching)?,
+        userPresets: (any GitUserPresetProviding)?,
         onProjectChanged: @escaping () -> Void,
-        onDataChanged: @escaping () -> Void
+        onDataChanged: @escaping () -> Void,
+        onUserPresetsChanged: @escaping ([GitUserPreset]) -> Void
     ) {
         projectsHandle = capability.addObserver { event in
             switch event {
@@ -43,6 +47,18 @@ final class WorktreeCleanObserver {
                 break
             }
         }
+
+        if let userPresets {
+            onUserPresetsChanged(userPresets.loadPresets())
+            userPresetsHandle = userPresets.addObserver { event in
+                switch event {
+                case .presetsChanged:
+                    onUserPresetsChanged(userPresets.loadPresets())
+                }
+            }
+        } else {
+            onUserPresetsChanged([])
+        }
     }
 
     @available(*, deprecated, message: "Inject WorktreeCleanProjectCapability from WorktreeCleanPlugin")
@@ -55,8 +71,10 @@ final class WorktreeCleanObserver {
         self.init(
             capability: WorktreeCleanProjectCapabilityAdapter(projects: projects),
             gitWatch: gitWatch,
+            userPresets: nil,
             onProjectChanged: onProjectChanged,
-            onDataChanged: onDataChanged
+            onDataChanged: onDataChanged,
+            onUserPresetsChanged: { _ in }
         )
     }
 
@@ -66,5 +84,7 @@ final class WorktreeCleanObserver {
         projectsHandle = nil
         gitWatchHandle?.cancel()
         gitWatchHandle = nil
+        userPresetsHandle?.cancel()
+        userPresetsHandle = nil
     }
 }

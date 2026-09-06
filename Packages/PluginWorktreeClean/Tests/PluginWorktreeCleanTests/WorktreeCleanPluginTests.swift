@@ -1,6 +1,7 @@
 import Foundation
 import KernelCore
 import KitGit
+import ProviderGitUser
 import ProviderContentView
 import ProviderProjects
 import ProviderWorkspaceScene
@@ -132,6 +133,15 @@ final class WorktreeCleanPluginTests: XCTestCase {
         viewModel.handleProjectChanged(project: nil, hasSelectedCommit: false)
         XCTAssertNil(viewModel.project)
         XCTAssertFalse(viewModel.isClean)
+    }
+
+    func testViewModelReceivesGitUserPresets() {
+        let viewModel = WorktreeCleanViewModel()
+        let preset = GitUserPreset(name: "Alice", email: "alice@example.com")
+
+        viewModel.handleUserPresetsChanged([preset])
+
+        XCTAssertEqual(viewModel.userPresets, [preset])
     }
 
     func testViewModelHidesWhenCommitSelected() {

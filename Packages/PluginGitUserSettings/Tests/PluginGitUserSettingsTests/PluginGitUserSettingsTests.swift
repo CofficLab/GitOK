@@ -1,6 +1,6 @@
 import Foundation
 import KernelCore
-import ProviderGit
+import ProviderGitUser
 import Testing
 @testable import PluginGitUserSettings
 
@@ -13,7 +13,7 @@ struct PluginGitUserSettingsTests {
         let plugin = GitUserSettingsPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-user-settings")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .disabled)
+        #expect(plugin.metadata.policy == .required)
     }
 
     @Test("预设存储支持添加 / 删除 / 默认选择")
