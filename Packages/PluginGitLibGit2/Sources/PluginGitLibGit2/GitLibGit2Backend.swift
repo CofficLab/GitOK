@@ -79,6 +79,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try? LibGit2.getCurrentBranchInfo(at: repository.path)?.name
     }
 
+    func latestTag(in repository: URL) -> String? {
+        guard let description = try? LibGit2.describe(path: repository.path) else { return nil }
+        return Self.tagName(from: description)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         try? LibGit2.getUnPushedCommits(at: repository.path, verbose: false).count
     }
@@ -89,6 +94,19 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
 
     func unpulledCount(in repository: URL) -> Int? {
         try? LibGit2.getUnPulledCount(at: repository.path)
+    }
+
+    private static func tagName(from description: String) -> String? {
+        let value = description.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.isEmpty else { return nil }
+
+        let parts = value.split(separator: "-")
+        guard parts.count >= 3,
+              parts[parts.count - 2].allSatisfy(\.isNumber),
+              parts[parts.count - 1].hasPrefix("g") else {
+            return value
+        }
+        return parts.dropLast(2).joined(separator: "-")
     }
 
     func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus {

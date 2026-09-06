@@ -99,6 +99,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String
 
     func currentBranch(in repository: URL) -> String?
+    func latestTag(in repository: URL) -> String?
     func unpushedCount(in repository: URL) -> Int?
     func hasRemotes(in repository: URL) -> Bool
     func unpulledCount(in repository: URL) -> Int?

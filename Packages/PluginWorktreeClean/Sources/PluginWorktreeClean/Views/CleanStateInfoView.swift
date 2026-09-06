@@ -19,6 +19,7 @@ struct CleanStateInfoView: View {
 
     @State private var remotes: [GitRemoteSummary] = []
     @State private var branchName: String?
+    @State private var latestTag: String?
     @State private var isLoadingInfo = true
 
     var body: some View {
@@ -32,6 +33,9 @@ struct CleanStateInfoView: View {
                         Divider().padding(.vertical, 8)
                         currentBranchRow(branchName: branchName)
                     }
+
+                    Divider().padding(.vertical, 8)
+                    latestTagRow
 
                     if !remotes.isEmpty {
                         Divider().padding(.vertical, 8)
@@ -95,6 +99,20 @@ struct CleanStateInfoView: View {
             icon: "arrow.triangle.branch"
         ) {
             EmptyView()
+        }
+    }
+
+    // MARK: - Latest Tag Row
+
+    private var latestTagRow: some View {
+        AppSettingRow(
+            title: loc("Latest Tag"),
+            description: latestTag ?? (isLoadingInfo ? "" : loc("No Tags")),
+            icon: "tag"
+        ) {
+            if isLoadingInfo {
+                ProgressView().controlSize(.small)
+            }
         }
     }
 
@@ -168,9 +186,13 @@ struct CleanStateInfoView: View {
             // 加载当前分支
             let loadedBranchName = git.currentBranch(in: project.url)
 
+            // 加载当前 HEAD 可追溯到的最近 tag
+            let loadedLatestTag = git.latestTag(in: project.url)
+
             await MainActor.run {
                 remotes = loadedRemotes
                 branchName = loadedBranchName
+                latestTag = loadedLatestTag
                 isLoadingInfo = false
             }
         }
