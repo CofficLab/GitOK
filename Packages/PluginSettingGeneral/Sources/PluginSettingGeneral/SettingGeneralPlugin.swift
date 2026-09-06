@@ -37,6 +37,16 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
         self.versionProvider = versionProvider
     }
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { SettingGeneralAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         kernel.resolveProvider((any CommandProviding).self)?.registerCommandGroup(
             CommandMenuGroup(
