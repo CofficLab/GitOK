@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderSettingView
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Diagnostics Settings SuperPlugin
 
@@ -27,6 +28,16 @@ public final class DiagnosticsSettingsPlugin: SuperPlugin, SuperLog {
     )
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { DiagnosticsSettingsAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let settings = kernel.resolveProvider((any SettingViewProviding).self) else {
