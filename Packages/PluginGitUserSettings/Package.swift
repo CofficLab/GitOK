@@ -24,6 +24,7 @@ let package = Package(
         .package(path: "../ProviderSettingView"),
         .package(path: "../ProviderStorage"),
         .package(path: "../ProviderToast"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -39,6 +40,7 @@ let package = Package(
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginGitUserSettings",
             resources: [

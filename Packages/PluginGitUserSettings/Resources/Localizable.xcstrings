@@ -1,104 +1,36 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "User Info": {
+    "%@ <%@>": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "User Info"
+            "value": "%@ <%@>"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "用户信息"
+            "value": "%@ <%@>"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用者資訊"
+            "value": "%@ <%@>"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用者資訊"
+            "value": "%@ <%@>"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用者資訊"
-          }
-        }
-      }
-    },
-    "Existing Presets": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Existing Presets"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已有预设"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "既有預設"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "既有預設"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "既有預設"
-          }
-        }
-      }
-    },
-    "Delete this preset": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete this preset"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "删除此预设"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "刪除此預設"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "刪除此預設"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "刪除此預設"
+            "value": "%@ <%@>"
           }
         }
       }
@@ -137,70 +69,308 @@
         }
       }
     },
-    "Username": {
+    "Applied User Info": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Username"
+            "value": "Applied User Info"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "用户名"
+            "value": "已应用用户信息"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用者名稱"
+            "value": "已套用使用者資訊"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用者名稱"
+            "value": "已套用使用者資訊"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "使用者名稱"
+            "value": "已套用使用者資訊"
           }
         }
       }
     },
-    "Enter username": {
+    "Apply": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enter username"
+            "value": "Apply"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "输入用户名"
+            "value": "应用"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "輸入使用者名稱"
+            "value": "套用"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "輸入使用者名稱"
+            "value": "套用"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "輸入使用者名稱"
+            "value": "套用"
+          }
+        }
+      }
+    },
+    "Author Identity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Author Identity"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "作者身份"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "作者身份"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "作者身份"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "作者身份"
+          }
+        }
+      }
+    },
+    "Commit Signing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commit Signing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交签名"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交簽名"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交簽名"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交簽名"
+          }
+        }
+      }
+    },
+    "Commit with identity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commit with identity"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以身份提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以身份提交"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以身份提交"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以身份提交"
+          }
+        }
+      }
+    },
+    "Configure the name and email used on every commit.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configure the name and email used on every commit."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置每次提交使用的姓名与邮箱。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置每次提交使用的姓名與郵箱。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置每次提交使用的姓名與郵箱。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置每次提交使用的姓名與郵箱。"
+          }
+        }
+      }
+    },
+    "Core Capabilities": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core Capabilities"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        }
+      }
+    },
+    "Delete this preset": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this preset"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除此预设"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除此預設"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除此預設"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除此預設"
+          }
+        }
+      }
+    },
+    "Edit settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑设置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯設置"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯設置"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯設置"
           }
         }
       }
@@ -222,19 +392,19 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "電子郵件"
+            "value": "郵箱"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "電子郵件"
+            "value": "郵箱"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "電子郵件"
+            "value": "郵箱"
           }
         }
       }
@@ -273,70 +443,206 @@
         }
       }
     },
-    "Saved User Preset": {
+    "Enter username": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Saved User Preset"
+            "value": "Enter username"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已保存用户预设"
+            "value": "输入用户名"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "已儲存使用者預設"
+            "value": "輸入使用者名稱"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "已儲存使用者預設"
+            "value": "輸入使用者名稱"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "已儲存使用者預設"
+            "value": "輸入使用者名稱"
           }
         }
       }
     },
-    "Applied User Info": {
+    "Existing Presets": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Applied User Info"
+            "value": "Existing Presets"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已应用用户信息"
+            "value": "已有预设"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "已套用使用者資訊"
+            "value": "既有預設"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "已套用使用者資訊"
+            "value": "既有預設"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "已套用使用者資訊"
+            "value": "既有預設"
+          }
+        }
+      }
+    },
+    "Git config is updated safely.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git config is updated safely."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 配置被安全更新。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 配置被安全更新。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 配置被安全更新。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 配置被安全更新。"
+          }
+        }
+      }
+    },
+    "How It Works": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How It Works"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "姓名"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "姓名"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "姓名"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "姓名"
+          }
+        }
+      }
+    },
+    "New commits carry the configured author.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New commits carry the configured author."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新提交携带配置的作者。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新提交攜帶配置的作者。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新提交攜帶配置的作者。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新提交攜帶配置的作者。"
           }
         }
       }
@@ -409,36 +715,104 @@
         }
       }
     },
-    "%@ <%@>": {
+    "Optionally sign commits with your GPG or SSH key.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ <%@>"
+            "value": "Optionally sign commits with your GPG or SSH key."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ <%@>"
+            "value": "可选地使用 GPG 或 SSH 密钥为提交签名。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ <%@>"
+            "value": "可選地使用 GPG 或 SSH 密鑰爲提交簽名。"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ <%@>"
+            "value": "可選地使用 GPG 或 SSH 密鑰為提交簽名。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ <%@>"
+            "value": "可選地使用 GPG 或 SSH 密鑰為提交簽名。"
+          }
+        }
+      }
+    },
+    "Per-repository identities override the global default.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per-repository identities override the global default."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库级身份可覆盖全局默认。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫級身份可覆蓋全局默認。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫級身份可覆蓋全局默認。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫級身份可覆蓋全局默認。"
+          }
+        }
+      }
+    },
+    "Repo Overrides": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repo Overrides"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库覆盖"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫覆蓋"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫覆蓋"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫覆蓋"
           }
         }
       }
@@ -477,36 +851,308 @@
         }
       }
     },
-    "Apply": {
+    "Saved User Preset": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apply"
+            "value": "Saved User Preset"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "应用"
+            "value": "已保存用户预设"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "套用"
+            "value": "已儲存使用者預設"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "套用"
+            "value": "已儲存使用者預設"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "套用"
+            "value": "已儲存使用者預設"
+          }
+        }
+      }
+    },
+    "Signing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "签名"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "簽名"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "簽名"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "簽名"
+          }
+        }
+      }
+    },
+    "Update name, email, or signing key.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update name, email, or signing key."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新姓名、邮箱或签名密钥。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新姓名、郵箱或簽名密鑰。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新姓名、郵箱或簽名密鑰。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新姓名、郵箱或簽名密鑰。"
+          }
+        }
+      }
+    },
+    "User Info": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User Info"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用户信息"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者資訊"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者資訊"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者資訊"
+          }
+        }
+      }
+    },
+    "Username": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用户名"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者名稱"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者名稱"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者名稱"
+          }
+        }
+      }
+    },
+    "Write config": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write config"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写入配置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寫入配置"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寫入配置"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寫入配置"
+          }
+        }
+      }
+    },
+    "Your Git identity, set once, used everywhere.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Git identity, set once, used everywhere."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 Git 身份，一次设置，处处使用。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 Git 身份，一次設置，處處使用。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 Git 身份，一次設置，處處使用。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 Git 身份，一次設置，處處使用。"
+          }
+        }
+      }
+    },
+    "fields": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fields"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字段数"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字段數"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字段數"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字段數"
+          }
+        }
+      }
+    },
+    "identity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "identity"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "身份"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "身份"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "身份"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "身份"
           }
         }
       }

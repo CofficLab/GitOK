@@ -7,6 +7,7 @@ import ProviderProjects
 import ProviderSettingView
 import ProviderStorage
 import ProviderToast
+import ProviderDocsView
 
 // MARK: - Git User Settings SuperPlugin
 
@@ -42,6 +43,16 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
     private var registeredDefaultProvider: DefaultGitUserPresetProvider?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitUserSettingsAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let settings = kernel.resolveProvider((any SettingViewProviding).self) else {
