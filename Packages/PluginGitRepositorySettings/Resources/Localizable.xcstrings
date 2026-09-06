@@ -1,240 +1,36 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "Repository Settings": {
+    "Add": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Repository Settings"
+            "value": "Add"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "仓库设置"
+            "value": "添加"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫設定"
+            "value": "新增"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫設定"
+            "value": "新增"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫設定"
-          }
-        }
-      }
-    },
-    "Current Project": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Current Project"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当前项目"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前專案"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前專案"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前專案"
-          }
-        }
-      }
-    },
-    "Project Name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Project Name"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "项目名称"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "專案名稱"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "專案名稱"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "專案名稱"
-          }
-        }
-      }
-    },
-    "Local Path": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local Path"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本地路径"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本機路徑"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本機路徑"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本機路徑"
-          }
-        }
-      }
-    },
-    "Remote Repository": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remote Repository"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "远程仓库"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "遠端儲存庫"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "遠端儲存庫"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "遠端儲存庫"
-          }
-        }
-      }
-    },
-    "No Remote Repository Configured": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Remote Repository Configured"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未配置远程仓库"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定遠端儲存庫"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定遠端儲存庫"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定遠端儲存庫"
-          }
-        }
-      }
-    },
-    "Add a remote repository to enable push and pull operations": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add a remote repository to enable push and pull operations"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加远程仓库以启用推送和拉取操作"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新增遠端儲存庫以啟用推送和拉取操作"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新增遠端儲存庫以啟用推送和拉取操作"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新增遠端儲存庫以啟用推送和拉取操作"
+            "value": "新增"
           }
         }
       }
@@ -307,104 +103,274 @@
         }
       }
     },
-    "Please Select a Project First": {
+    "Add a remote repository to enable push and pull operations": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Please Select a Project First"
+            "value": "Add a remote repository to enable push and pull operations"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请先选择一个项目"
+            "value": "添加远程仓库以启用推送和拉取操作"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "請先選擇一個專案"
+            "value": "新增遠端儲存庫以啟用推送和拉取操作"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "請先選擇一個專案"
+            "value": "新增遠端儲存庫以啟用推送和拉取操作"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "請先選擇一個專案"
+            "value": "新增遠端儲存庫以啟用推送和拉取操作"
           }
         }
       }
     },
-    "Remote name (e.g. origin)": {
+    "Cancel": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remote name (e.g. origin)"
+            "value": "Cancel"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "远程名称（如 origin）"
+            "value": "取消"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端名稱（如 origin）"
+            "value": "取消"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端名稱（如 origin）"
+            "value": "取消"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端名稱（如 origin）"
+            "value": "取消"
           }
         }
       }
     },
-    "Repository URL": {
+    "Changes take effect without restarting GitOK.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Repository URL"
+            "value": "Changes take effect without restarting GitOK."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "仓库 URL"
+            "value": "改动无需重启 GitOK 即生效。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫 URL"
+            "value": "改動無需重啓 GitOK 即生效。"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫 URL"
+            "value": "改動無需重啓 GitOK 即生效。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫 URL"
+            "value": "改動無需重啟 GitOK 即生效。"
+          }
+        }
+      }
+    },
+    "Core Capabilities": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core Capabilities"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        }
+      }
+    },
+    "Current Project": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current Project"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前项目"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案"
+          }
+        }
+      }
+    },
+    "Customize behavior for the currently open repository.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Customize behavior for the currently open repository."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为当前打开的仓库定制行为。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "爲當前打開的倉庫定製行爲。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "為當前打開的倉庫定製行為。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "為當前打開的倉庫定製行為。"
+          }
+        }
+      }
+    },
+    "Edit values": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit values"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑值"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯值"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯值"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯值"
+          }
+        }
+      }
+    },
+    "Edits apply to the repository's local config file.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edits apply to the repository's local config file."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改作用于仓库的本地配置文件。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改作用於倉庫的本地配置文件。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改作用於倉庫的本地配置文件。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改作用於倉庫的本地配置文件。"
           }
         }
       }
@@ -477,70 +443,784 @@
         }
       }
     },
-    "Cancel": {
+    "Fine-tune how GitOK treats each repository.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cancel"
+            "value": "Fine-tune how GitOK treats each repository."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "取消"
+            "value": "精细调整 GitOK 对待每个仓库的方式。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "取消"
+            "value": "精細調整 GitOK 對待每個倉庫的方式。"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "取消"
+            "value": "精細調整 GitOK 對待每個倉庫的方式。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "取消"
+            "value": "精細調整 GitOK 對待每個倉庫的方式。"
           }
         }
       }
     },
-    "Add": {
+    "How It Works": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Add"
+            "value": "How It Works"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "添加"
+            "value": "工作原理"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "新增"
+            "value": "工作原理"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "新增"
+            "value": "工作原理"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "新增"
+            "value": "工作原理"
+          }
+        }
+      }
+    },
+    "Instant Apply": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instant Apply"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即时生效"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即時生效"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即時生效"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即時生效"
+          }
+        }
+      }
+    },
+    "Local Git Config": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local Git Config"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地 Git 配置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地 Git 配置"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地 Git 配置"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地 Git 配置"
+          }
+        }
+      }
+    },
+    "Local Path": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local Path"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地路径"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本機路徑"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本機路徑"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本機路徑"
+          }
+        }
+      }
+    },
+    "Local config": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local config"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地配置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地配置"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地配置"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地配置"
+          }
+        }
+      }
+    },
+    "No Remote Repository Configured": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Remote Repository Configured"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未配置远程仓库"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定遠端儲存庫"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定遠端儲存庫"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定遠端儲存庫"
+          }
+        }
+      }
+    },
+    "Open settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开设置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開設置"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開設置"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開設置"
+          }
+        }
+      }
+    },
+    "Per-Repo Options": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per-Repo Options"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库级选项"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫級選項"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫級選項"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫級選項"
+          }
+        }
+      }
+    },
+    "Per-project": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per-project"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按项目"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按項目"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按項目"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按項目"
+          }
+        }
+      }
+    },
+    "Persist": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Persist"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久保存"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久保存"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久保存"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久保存"
+          }
+        }
+      }
+    },
+    "Persistent": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Persistent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久生效"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久生效"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久生效"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持久生效"
+          }
+        }
+      }
+    },
+    "Please Select a Project First": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please Select a Project First"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先选择一个项目"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先選擇一個專案"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先選擇一個專案"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先選擇一個專案"
+          }
+        }
+      }
+    },
+    "Project Name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project Name"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目名称"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案名稱"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案名稱"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案名稱"
+          }
+        }
+      }
+    },
+    "Remote Repository": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote Repository"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程仓库"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫"
+          }
+        }
+      }
+    },
+    "Remote name (e.g. origin)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote name (e.g. origin)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程名称（如 origin）"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端名稱（如 origin）"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端名稱（如 origin）"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端名稱（如 origin）"
+          }
+        }
+      }
+    },
+    "Repository Settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository Settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库设置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫設定"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫設定"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫設定"
+          }
+        }
+      }
+    },
+    "Repository URL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository URL"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库 URL"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫 URL"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫 URL"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫 URL"
+          }
+        }
+      }
+    },
+    "Repository settings are scoped to the active project.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository settings are scoped to the active project."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库设置作用于当前项目。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫設置作用於當前項目。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫設置作用於當前項目。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倉庫設置作用於當前項目。"
+          }
+        }
+      }
+    },
+    "Tune repository-specific options.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tune repository-specific options."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调整仓库专属选项。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調整倉庫專屬選項。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調整倉庫專屬選項。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調整倉庫專屬選項。"
+          }
+        }
+      }
+    },
+    "Values are written to the local Git config.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Values are written to the local Git config."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "值写入本地 Git 配置。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "值寫入本地 Git 配置。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "值寫入本地 Git 配置。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "值寫入本地 Git 配置。"
+          }
+        }
+      }
+    },
+    "config scope": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "config scope"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置作用域"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置作用域"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置作用域"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配置作用域"
+          }
+        }
+      }
+    },
+    "repo at a time": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "repo at a time"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次一个仓库"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次一個倉庫"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次一個倉庫"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次一個倉庫"
           }
         }
       }
