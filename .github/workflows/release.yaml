@@ -387,6 +387,7 @@ jobs:
                 echo "✅ $appcast uploaded"
               else
                 echo "❌ Failed to upload $appcast"
+                exit 1
               fi
             done
           fi

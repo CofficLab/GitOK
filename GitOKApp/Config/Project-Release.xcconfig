@@ -17,3 +17,6 @@ ENABLE_NS_ASSERTIONS = NO
 
 // Swift 编译模式
 SWIFT_COMPILATION_MODE = wholemodule
+
+// Sparkle 更新：正式构建启用更新检查与安装。
+GITOK_ALLOWS_APP_UPDATES = YES

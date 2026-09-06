@@ -1,4 +1,5 @@
 import FactoryGitOK
+import KitGitOKUpdate
 import KernelCore
 import ProviderSettingView
 import SwiftUI
@@ -17,6 +18,7 @@ struct GitOKApp: App {
                 ?? AnyView(Text("Failed to assemble main view"))
             settingsView = (try? FactoryGitOK.makeSettingsView(kernel: assembledKernel))
                 ?? AnyView(Text("Failed to assemble settings view"))
+            AppUpdateBootstrap.start()
         } else {
             let fallbackKernel = KernelCoreContainer()
             kernel = fallbackKernel
@@ -43,7 +45,9 @@ struct GitOKApp: App {
         .windowToolbarStyle(.unified(showsTitle: false))
         .defaultSize(width: 1100, height: 760)
         .commands {
-            AppCommands(kernel: kernel)
+            AppCommands(kernel: kernel) {
+                UpdateService.shared.checkForUpdates()
+            }
         }
 
         // 与 Lumi 使用相同的普通 Window Scene，避免 macOS Settings 容器

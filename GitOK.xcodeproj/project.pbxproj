@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = GK2AFB0000000000000000001 /* FactoryGitOK */; };
+		GK2BFB000000000000000B002 /* KitGitOKUpdate in Frameworks */ = {isa = PBXBuildFile; productRef = GK2AFB0000000000000000002 /* KitGitOKUpdate */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				GK2BFB000000000000000B001 /* FactoryGitOK in Frameworks */,
+				GK2BFB000000000000000B002 /* KitGitOKUpdate in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +92,7 @@
 			name = GitOK;
 			packageProductDependencies = (
 				GK2AFB0000000000000000001 /* FactoryGitOK */,
+				GK2AFB0000000000000000002 /* KitGitOKUpdate */,
 			);
 			productName = GitOK;
 			productReference = GK0000000000000000000002 /* GitOK.app */;
@@ -126,6 +129,7 @@
 				LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */,
 				LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */,
 				GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */,
+				GK2APL0000000000000000002 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F54F8C752F1A3B6500AABB2A;
@@ -214,6 +218,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/FactoryGitOK;
 		};
+		GK2APL0000000000000000002 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/KitGitOKUpdate;
+		};
 		LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/KitSuperLog;
@@ -229,6 +237,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */;
 			productName = FactoryGitOK;
+		};
+		GK2AFB0000000000000000002 /* KitGitOKUpdate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = GK2APL0000000000000000002 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */;
+			productName = KitGitOKUpdate;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

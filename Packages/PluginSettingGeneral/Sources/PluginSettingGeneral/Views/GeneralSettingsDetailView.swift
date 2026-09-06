@@ -6,9 +6,8 @@ import SwiftUI
 
 /// 通用设置详情视图 —— 设置窗口「通用」标签页。
 ///
-/// 从 Lumi 复刻并删减：移除新手引导 / 网站 / 更新三个分组
-/// （GitOK 无 onboarding、独立官网与 Sparkle 更新链路），
-/// 保留说明书（依赖 `DocsViewProviding`，无手册时自动隐藏）与应用信息。
+/// 从 Lumi 复刻并删减：移除新手引导 / 网站分组，保留更新入口、
+/// 说明书（依赖 `DocsViewProviding`，无手册时自动隐藏）与应用信息。
 struct GeneralSettingsDetailView: View {
     let docsProvider: (any DocsViewProviding)?
     let gitBackends: [GitBackendDescriptor]
@@ -33,6 +32,7 @@ struct GeneralSettingsDetailView: View {
                 if !gitBackends.isEmpty {
                     GitBackendSectionView(backends: gitBackends)
                 }
+                updatesSection
                 if !manuals.isEmpty {
                     manualsSection
                 }
@@ -43,6 +43,36 @@ struct GeneralSettingsDetailView: View {
         .sheet(isPresented: $isPresentingManuals) {
             if !manuals.isEmpty {
                 ManualsBrowserView(manuals: manuals)
+            }
+        }
+    }
+
+    // MARK: - 更新
+
+    private var updatesSection: some View {
+        AppSettingSection(
+            title: LumiPluginLocalization.string("Updates", bundle: .module),
+            titleAlignment: .leading
+        ) {
+            AppSettingRow(
+                title: LumiPluginLocalization.string("Check for Updates", bundle: .module),
+                description: LumiPluginLocalization.string(
+                    "Check for a newer GitOK release and install it with Sparkle.",
+                    bundle: .module
+                ),
+                icon: "arrow.triangle.2.circlepath"
+            ) {
+                AppButton(
+                    LumiPluginLocalization.string("Check", bundle: .module),
+                    systemImage: "arrow.clockwise",
+                    style: .secondary,
+                    size: .small
+                ) {
+                    NotificationCenter.default.post(
+                        name: Notification.Name("checkForUpdates"),
+                        object: nil
+                    )
+                }
             }
         }
     }
