@@ -5,6 +5,7 @@ import ProviderCommand
 import ProviderStorage
 import KitSuperLog
 import os
+import ProviderDocsView
 
 // MARK: - Command SuperPlugin
 
@@ -34,6 +35,16 @@ public final class CommandPlugin: SuperPlugin, SuperLog {
     public let commandService = CommandManager()
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { CommandAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         kernel.unregisterProvider((any CommandProviding).self)
