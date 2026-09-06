@@ -1,16 +1,19 @@
 import KitGit
 import LumiUI
 import ProviderProjects
+import ProviderGit
 import SwiftUI
 
 /// 当前分支状态 tile：点击弹出分支管理面板（对齐旧版 BranchStatusTile）。
 public struct BranchStatusTile: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @ObservedObject private var viewModel: GitBranchStatusViewModel
     @State private var isPresented = false
 
-    public init(projects: any ProjectProviding, viewModel: GitBranchStatusViewModel) {
+    public init(projects: any ProjectProviding, git: any GitProviding, viewModel: GitBranchStatusViewModel) {
         self.projects = projects
+        self.git = git
         _viewModel = ObservedObject(wrappedValue: viewModel)
     }
 
@@ -30,7 +33,7 @@ public struct BranchStatusTile: View {
                 }
                 .help(LumiPluginLocalization.string("Manage Branches", bundle: .module))
                 .popover(isPresented: $isPresented, arrowEdge: .bottom) {
-                    BranchManagementView(projects: projects)
+                    BranchManagementView(projects: projects, git: git)
                         .frame(width: 560, height: 520)
                 }
             }

@@ -3,8 +3,10 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderProjects
+import ProviderGit
 import ProviderRootView
 import SwiftUI
+import ProviderDocsView
 
 /// Git Diff 插件
 ///
@@ -45,6 +47,16 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitDiffAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
             Self.logger.error("\(self.t)RootViewProviding not registered; skip trailing pane injection")
@@ -52,6 +64,10 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip trailing pane injection")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip trailing pane injection")
             return
         }
 
@@ -71,7 +87,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             // 避免空占位（下方 observer 会在文件选择变化时同步显隐）。
             isVisible: capability.currentFile != nil,
             content: AnyView(
-                GitDiffPaneView(viewModel: viewModel)
+                GitDiffPaneView(viewModel: viewModel, git: git)
                     // Debug 构建下左下角叠加插件名 badge，便于识别视图来源。
                     .debugPluginBadge(metadata.name)
             )

@@ -2,10 +2,12 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Smart Merge SuperPlugin
 
@@ -35,6 +37,16 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitSmartMergeAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
             Self.logger.error("\(self.t)StatusBarProviding not registered; skip merge item")
@@ -42,6 +54,10 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip merge item")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip merge item")
             return
         }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
@@ -61,7 +77,7 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
                 order: 24
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    MergeStatusTile(projects: projects)
+                    MergeStatusTile(projects: projects, git: git)
                 }
             },
         ])

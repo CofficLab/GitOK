@@ -21,6 +21,7 @@ let package = Package(
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
         .package(path: "../ProviderTheme"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -33,6 +34,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
                 .product(name: "ProviderTheme", package: "ProviderTheme"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginStatusBar",
             resources: [

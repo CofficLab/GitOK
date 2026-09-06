@@ -17,8 +17,10 @@ let package = Package(
         .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderProjects"),
+        .package(path: "../ProviderGit"),
         .package(path: "../ProviderRootView"),
         .package(url: "https://github.com/nookery/MagicDiffView", branch: "main"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -30,8 +32,10 @@ let package = Package(
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "MagicDiffView", package: "MagicDiffView"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginGitDiff",
             resources: [
@@ -40,7 +44,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitDiffTests",
-            dependencies: ["PluginGitDiff"],
+            dependencies: [
+                "PluginGitDiff",
+                .product(name: "ProviderGit", package: "ProviderGit"),
+            ],
             path: "Tests/PluginGitDiffTests"
         ),
     ]

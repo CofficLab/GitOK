@@ -1,6 +1,7 @@
 import Foundation
 import KernelCore
 import os
+import ProviderDocsView
 import ProviderLogo
 import KitSuperLog
 
@@ -36,6 +37,16 @@ public final class PluginLogoManager: SuperPlugin, SuperLog {
     private var manager: LogoManager?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { LogoManagerAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         let manager = LogoManager()

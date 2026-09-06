@@ -1,15 +1,13 @@
 import Foundation
 import Testing
-@testable import ProviderGit
+@testable import ProviderGitUser
 
-@Suite("ProviderGit")
+@Suite("ProviderGitUser")
 @MainActor
-struct ProviderGitTests {
-
-    /// 生成一个独立临时目录，测试结束后自动清理。
+struct ProviderGitUserTests {
     private func makeTemporaryDirectory() throws -> URL {
         let dir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("ProviderGitTests-\(UUID().uuidString)")
+            .appendingPathComponent("ProviderGitUserTests-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }
@@ -98,7 +96,6 @@ struct ProviderGitTests {
         provider.clearAllDefaults()
         let presets = provider.loadPresets()
         #expect(presets.allSatisfy { !$0.isDefault })
-        // findDefault 退回第一条（不再以 isDefault 为准）。
         #expect(provider.findDefault()?.name == "Alice")
     }
 
@@ -133,5 +130,27 @@ struct ProviderGitTests {
         #expect(presets.count == 2)
         #expect(presets.first?.name == "Alice")
         #expect(presets.first?.isDefault == true)
+    }
+
+    @Test("预设变化会通知观察者，取消后不再通知")
+    func presetObservers() throws {
+        let dir = try makeTemporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        let provider = DefaultGitUserPresetProvider(directory: dir)
+        var eventCount = 0
+        let handle = provider.addObserver { event in
+            switch event {
+            case .presetsChanged:
+                eventCount += 1
+            }
+        }
+
+        provider.addPreset(name: "Alice", email: "alice@example.com")
+        #expect(eventCount == 1)
+
+        handle.cancel()
+        provider.addPreset(name: "Bob", email: "bob@example.com")
+        #expect(eventCount == 1)
     }
 }

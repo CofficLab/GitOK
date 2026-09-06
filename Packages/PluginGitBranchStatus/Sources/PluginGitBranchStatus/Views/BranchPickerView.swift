@@ -1,6 +1,7 @@
 import KitGit
 import LumiUI
 import ProviderProjects
+import ProviderGit
 import SwiftUI
 
 /// 工具栏分支选择器：显示当前分支名，点击弹出分支选择弹层。
@@ -12,12 +13,14 @@ import SwiftUI
 /// - 无项目 / 非 git 仓库时显示 "No Branch" 并禁用点击。
 public struct BranchPickerView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @ObservedObject private var viewModel: GitBranchStatusViewModel
     @State private var isPopoverPresented = false
     @State private var isHovering = false
 
-    public init(projects: any ProjectProviding, viewModel: GitBranchStatusViewModel) {
+    public init(projects: any ProjectProviding, git: any GitProviding, viewModel: GitBranchStatusViewModel) {
         self.projects = projects
+        self.git = git
         _viewModel = ObservedObject(wrappedValue: viewModel)
     }
 
@@ -56,6 +59,7 @@ public struct BranchPickerView: View {
         .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
             BranchPickerPopoverView(
                 projects: projects,
+                git: git,
                 viewModel: viewModel,
                 isPresented: $isPopoverPresented
             )

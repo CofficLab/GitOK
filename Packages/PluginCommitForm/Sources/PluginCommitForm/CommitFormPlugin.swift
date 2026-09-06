@@ -3,12 +3,14 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderCommitForm
+import ProviderGit
 import ProviderContentView
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Commit Form SuperPlugin
 
@@ -47,6 +49,16 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { CommitFormAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip commit form event wiring")
@@ -54,6 +66,10 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
         }
         guard let form = kernel.resolveProvider((any CommitFormProviding).self) else {
             Self.logger.error("\(self.t)CommitFormProviding not registered; skip commit form event wiring")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip commit form wiring")
             return
         }
 
@@ -96,6 +112,7 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
                         CommitFormView(
                             projects: projects,
                             form: form,
+                            git: git,
                             gitWatch: gitWatch,
                             errorCenter: errorCenter
                         )

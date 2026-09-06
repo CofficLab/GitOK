@@ -1,5 +1,6 @@
 import Foundation
 import KitGit
+import ProviderGit
 
 // MARK: - Events
 
@@ -95,6 +96,7 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
     ///
     /// 通过闭包解耦（不依赖具体 Activity 包）；调用方在 Factory 装配时注入。
     public var activityReporter: (@MainActor (String?) -> Void)?
+    private let git: (any GitProviding)?
 
     private var observers: [WeakCommitFormObserver] = []
 
@@ -102,12 +104,14 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
         subject: String = "",
         category: CommitCategory = .Chore,
         style: CommitStyle = .emoji,
-        coAuthors: [CoAuthor] = []
+        coAuthors: [CoAuthor] = [],
+        git: (any GitProviding)? = nil
     ) {
         self.subject = subject
         self.category = category
         self.style = style
         self.coAuthors = coAuthors
+        self.git = git
     }
 
     public func setSubject(_ newSubject: String) {
@@ -156,16 +160,19 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
             )
 
             activityReporter?(LumiPluginLocalization.string("Committing...", bundle: .module))
-            try GitCommitOperation.addAll(in: repository)
-            try GitCommitOperation.commit(message: plan.message, in: repository)
+            guard let git else {
+                throw GitProviderError.noBackendAvailable
+            }
+            try git.addAll(in: repository)
+            _ = try git.commit(message: plan.message, in: repository)
             if plan.pushesAfterCommit {
                 activityReporter?(LumiPluginLocalization.string("Synchronizing...", bundle: .module))
-                let trackingStatus = GitRefReader.remoteTrackingStatus(in: repository)
+                let trackingStatus = git.remoteTrackingStatus(in: repository)
                 if trackingStatus.hasUpstream {
-                    try GitRemoteOperation.synchronize(in: repository)
+                    _ = try git.synchronize(in: repository)
                 } else {
                     // 新分支尚未配置 upstream，仍使用普通 push 触发发布分支流程。
-                    try GitCommitOperation.push(in: repository)
+                    _ = try git.push(in: repository)
                 }
             }
             activityReporter?(nil)

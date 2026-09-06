@@ -28,7 +28,10 @@ struct PluginManagementView: View {
     @State private var searchText = ""
     @State private var selectedCategory: PluginCategory?
 
-    init(manager: any PluginManaging, docsProvider: (any DocsViewProviding)? = nil) {
+    init(
+        manager: any PluginManaging,
+        docsProvider: (any DocsViewProviding)? = nil
+    ) {
         _model = StateObject(wrappedValue: PluginManagementViewModel(manager: manager))
         self.docsProvider = docsProvider
     }

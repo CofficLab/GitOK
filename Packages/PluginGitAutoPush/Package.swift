@@ -21,10 +21,12 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderAutoPush"),
         .package(path: "../ProviderCommitForm"),
+        .package(path: "../ProviderGit"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
         .package(path: "../ProviderStorage"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -37,10 +39,12 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderAutoPush", package: "ProviderAutoPush"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginGitAutoPush",
             resources: [

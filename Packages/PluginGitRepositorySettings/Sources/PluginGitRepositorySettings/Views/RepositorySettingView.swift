@@ -1,6 +1,7 @@
 import AppKit
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
@@ -8,6 +9,7 @@ import SwiftUI
 /// （对齐旧版 RepositorySettingView）。
 public struct RepositorySettingView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
 
     @State private var remotes: [GitRemoteSummary] = []
@@ -15,8 +17,9 @@ public struct RepositorySettingView: View {
     @State private var showAddRemoteSheet = false
     @State private var errorMessage: String?
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -97,7 +100,7 @@ public struct RepositorySettingView: View {
             icon: "cloud"
         ) {
             HStack(spacing: 4) {
-                if let httpsURL = GitRemoteOperation.webLink(for: remote.url) {
+                if let httpsURL = git.webLink(for: remote.url) {
                     AppIconButton(systemImage: "safari", size: .regular) {
                         NSWorkspace.shared.open(httpsURL)
                     }
@@ -186,7 +189,7 @@ public struct RepositorySettingView: View {
         isLoading = true
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
-            let loaded = GitRemoteOperation.listRemotes(in: url)
+            let loaded = git.listRemotes(in: url)
             await MainActor.run {
                 remotes = loaded
                 isLoading = false
@@ -204,8 +207,8 @@ public struct RepositorySettingView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitRemoteOperation.addRemote(name: name, url: url, in: projectURL)
-                let loaded = GitRemoteOperation.listRemotes(in: projectURL)
+                try git.addRemote(name: name, url: url, in: projectURL)
+                let loaded = git.listRemotes(in: projectURL)
                 await MainActor.run {
                     remotes = loaded
                     isLoading = false
@@ -226,8 +229,8 @@ public struct RepositorySettingView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitRemoteOperation.removeRemote(name: remote.name, in: projectURL)
-                let loaded = GitRemoteOperation.listRemotes(in: projectURL)
+                try git.removeRemote(name: remote.name, in: projectURL)
+                let loaded = git.listRemotes(in: projectURL)
                 await MainActor.run {
                     remotes = loaded
                     isLoading = false

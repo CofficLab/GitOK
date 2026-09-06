@@ -1,5 +1,6 @@
 import Foundation
 import KernelCore
+import ProviderDocsView
 import ProviderProjects
 import ProviderToolbar
 import SwiftUI
@@ -49,6 +50,18 @@ open class OpenInPluginBase: SuperPlugin {
             stage: .stable,
             policy: pluginPolicy
         )
+    }
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        // 每个 Open* 插件贡献自己的品牌化 about 页（共享 OpenInAboutView）。
+        let target = self.target
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { OpenInAboutView(target: target) }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {

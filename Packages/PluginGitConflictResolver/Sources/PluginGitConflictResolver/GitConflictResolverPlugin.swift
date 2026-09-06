@@ -3,11 +3,13 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 import ProviderRootView
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Conflict Resolver SuperPlugin
 
@@ -40,6 +42,16 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitConflictResolverAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
             Self.logger.error("\(self.t)StatusBarProviding not registered; skip conflict item")
@@ -47,6 +59,10 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip conflict item")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip conflict item")
             return
         }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
@@ -67,6 +83,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         self.conflictViewModel = conflictViewModel
         self.conflictObserver = GitConflictResolverObserver(
             capability: conflictCapability,
+            git: git,
             viewModel: conflictViewModel
         )
 
@@ -75,6 +92,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
                 ConflictResolverOverlayHost(
                     content: content,
                     projects: projects,
+                    git: git,
                     viewModel: conflictViewModel
                 )
             },

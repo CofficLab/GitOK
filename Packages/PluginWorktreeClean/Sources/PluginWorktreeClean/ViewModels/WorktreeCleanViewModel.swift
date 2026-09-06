@@ -1,5 +1,7 @@
 import Foundation
 import KitGit
+import ProviderGit
+import ProviderGitUser
 import ProviderProjects
 
 /// 工作区干净视图的自有状态模型。
@@ -9,6 +11,20 @@ import ProviderProjects
 /// 视图只绑定本模型，不再直接读取 Provider 或监听系统通知。
 @MainActor
 final class WorktreeCleanViewModel: ObservableObject {
+    private let git: (any GitProviding)?
+    private let fallbackStatusLoader: (@Sendable (URL) throws -> GitWorktreeStatus)?
+    private let ensureUserPreset: ((String, String) -> Void)?
+
+    init(
+        git: (any GitProviding)? = nil,
+        ensureUserPreset: ((String, String) -> Void)? = nil,
+        fallbackStatusLoader: (@Sendable (URL) throws -> GitWorktreeStatus)? = nil
+    ) {
+        self.git = git
+        self.ensureUserPreset = ensureUserPreset
+        self.fallbackStatusLoader = fallbackStatusLoader
+    }
+
     /// 当前项目；未打开项目时为 nil。
     @Published private(set) var project: Project?
 
@@ -26,6 +42,15 @@ final class WorktreeCleanViewModel: ObservableObject {
     /// 干净而重新亮起干净视图，盖住 commit 详情。
     private var hasSelectedCommit = false
 
+    /// Git 用户预设列表，由 `GitUserPresetProviding` 通过插件级 Observer 驱动。
+    @Published private(set) var userPresets: [GitUserPreset] = []
+
+    /// 当前项目仓库配置中的 Git 用户身份。
+    @Published private(set) var currentUserName = ""
+    @Published private(set) var currentUserEmail = ""
+    @Published private(set) var isLoadingUserConfiguration = false
+    @Published private(set) var isApplyingUserPreset = false
+
     /// 已检查过工作区状态的项目 URL（用于避免对同一项目重复加载）。
     private var checkedProjectURL: URL?
 
@@ -38,6 +63,7 @@ final class WorktreeCleanViewModel: ObservableObject {
 
     /// 加载序号：只接受最后一次检查结果，避免旧任务覆盖新快照。
     private var loadToken = 0
+    private var userConfigurationToken = 0
 
     /// 外部项目 / 选中状态变化（打开 / 切换 / 关闭项目、选中 / 取消 commit）。
     ///
@@ -53,6 +79,7 @@ final class WorktreeCleanViewModel: ObservableObject {
         if projectChanged {
             checkedProjectURL = nil
             lastStatus = nil
+            loadUserConfiguration(for: project)
             if isClean {
                 isClean = false
             }
@@ -67,9 +94,16 @@ final class WorktreeCleanViewModel: ObservableObject {
             }
             checkedProjectURL = nil
             lastStatus = nil
+            userConfigurationToken &+= 1
+            currentUserName = ""
+            currentUserEmail = ""
+            isLoadingUserConfiguration = false
             return
         }
         let selectionChanged = previousHasSelectedCommit != hasSelectedCommit
+        if !projectChanged, selectionChanged, !hasSelectedCommit {
+            loadUserConfiguration(for: project)
+        }
         reload(force: projectChanged || selectionChanged)
     }
 
@@ -78,9 +112,72 @@ final class WorktreeCleanViewModel: ObservableObject {
     /// 提交、外部把工作区改干净后，干净状态需要据此重新判定。
     func handleDataChanged() {
         reload(force: true)
+        loadUserConfiguration(for: project, clearBeforeLoad: false)
+    }
+
+    /// 外部预设 Provider 发生变化后，由插件级 Observer 推送最新快照。
+    func handleUserPresetsChanged(_ presets: [GitUserPreset]) {
+        userPresets = presets
+    }
+
+    /// 将选中的预设应用到当前项目仓库，并同步当前身份展示。
+    func applyUserPreset(_ preset: GitUserPreset) {
+        guard let project, !hasSelectedCommit else { return }
+        let url = project.url
+        isApplyingUserPreset = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitConfigReader.setValue("user.name", preset.name, in: url)
+                try GitConfigReader.setValue("user.email", preset.email, in: url)
+                await MainActor.run {
+                    self.isApplyingUserPreset = false
+                    guard self.project?.url == url else { return }
+                    self.currentUserName = preset.name
+                    self.currentUserEmail = preset.email
+                }
+            } catch {
+                await MainActor.run {
+                    self.isApplyingUserPreset = false
+                }
+            }
+        }
     }
 
     // MARK: - Private
+
+    private func loadUserConfiguration(for project: Project?, clearBeforeLoad: Bool = true) {
+        userConfigurationToken &+= 1
+        let token = userConfigurationToken
+
+        guard let project else {
+            currentUserName = ""
+            currentUserEmail = ""
+            isLoadingUserConfiguration = false
+            return
+        }
+
+        if clearBeforeLoad {
+            currentUserName = ""
+            currentUserEmail = ""
+        }
+        isLoadingUserConfiguration = true
+        let url = project.url
+
+        Task.detached(priority: .utility) {
+            let config = GitConfigReader.user(in: url)
+            await MainActor.run {
+                guard token == self.userConfigurationToken,
+                      self.project?.url == url else { return }
+                self.currentUserName = config.name ?? ""
+                self.currentUserEmail = config.email ?? ""
+                self.isLoadingUserConfiguration = false
+                if !self.currentUserName.isEmpty, !self.currentUserEmail.isEmpty {
+                    self.ensureUserPreset?(self.currentUserName, self.currentUserEmail)
+                }
+            }
+        }
+    }
 
     /// 重新检查当前项目工作区是否干净。
     ///
@@ -112,8 +209,18 @@ final class WorktreeCleanViewModel: ObservableObject {
         }
 
         let url = project.url
+        let git = self.git
+        let fallbackStatusLoader = self.fallbackStatusLoader
         Task.detached(priority: .utility) {
-            let result = Result { try GitStatusLoader.loadStatus(in: url) }
+            let result = Result {
+                if let git {
+                    return try git.loadStatus(in: url)
+                }
+                if let fallbackStatusLoader {
+                    return try fallbackStatusLoader(url)
+                }
+                throw GitProviderError.noBackendAvailable
+            }
             await MainActor.run {
                 // 仅当仍指向同一项目、且仍未选中 commit 时应用结果，
                 // 且只接受最后一次检查结果，避免切换项目或连续事件造成旧状态覆盖。

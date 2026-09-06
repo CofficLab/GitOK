@@ -5,11 +5,13 @@ import KitSuperLog
 import os
 import ProviderAutoPush
 import ProviderCommitForm
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderStorage
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Auto Push SuperPlugin
 
@@ -39,6 +41,16 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitAutoPushAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
             Self.logger.error("\(self.t)StatusBarProviding not registered; skip auto push item")
@@ -46,6 +58,10 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip auto push item")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip auto push item")
             return
         }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
@@ -72,7 +88,7 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
                       let autoPushProvider,
                       let project = projects.currentProject,
                       autoPushProvider.isEnabled(for: project.url) else { return }
-                Self.autoPush(projectURL: project.url)
+                Self.autoPush(projectURL: project.url, git: git)
             }
         }
 
@@ -101,11 +117,11 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
             .removeStatusBarItems(ids: [Self.itemID])
     }
 
-    private nonisolated static func autoPush(projectURL: URL) {
+    private nonisolated static func autoPush(projectURL: URL, git: any GitProviding) {
         Task.detached(priority: .userInitiated) {
             do {
-                guard GitRefReader.currentBranch(in: projectURL) != nil else { return }
-                try GitCommitOperation.push(in: projectURL)
+                guard git.currentBranch(in: projectURL) != nil else { return }
+                _ = try git.push(in: projectURL)
             } catch {
                 Self.logger.error("Auto push failed: \(error.localizedDescription, privacy: .public)")
             }

@@ -8,7 +8,7 @@
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitGit`、`KitLocalization`、`KitSuperLog`、`ProviderContentView`、`ProviderGitRepositoryWatch`、`ProviderProjects`；https://github.com/CofficLab/LumiUI.git |
+| **上游依赖** | `KernelCore`、`KitGit`、`KitLocalization`、`KitSuperLog`、`ProviderContentView`、`ProviderGitUser`、`ProviderGitRepositoryWatch`、`ProviderProjects`、`ProviderSettingView`；https://github.com/CofficLab/LumiUI.git |
 | **平台** | macOS 14+ |
 
 ## 目录结构
@@ -27,6 +27,7 @@
     │       │   └── WorktreeCleanViewModel.swift
     │       ├── Views
     │       │   ├── CleanStateInfoView.swift
+    │       │   ├── GitUserPresetSectionView.swift
     │       │   ├── DebugPluginBadge.swift
     │       │   └── WorktreeCleanView.swift
     │       └── WorktreeCleanPlugin.swift

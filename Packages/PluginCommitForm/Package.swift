@@ -20,11 +20,13 @@ let package = Package(
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderCommitForm"),
+        .package(path: "../ProviderGit"),
         .package(path: "../ProviderContentView"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -36,11 +38,13 @@ let package = Package(
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginCommitForm",
             resources: [
@@ -51,6 +55,7 @@ let package = Package(
             name: "PluginCommitFormTests",
             dependencies: [
                 "PluginCommitForm",
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],

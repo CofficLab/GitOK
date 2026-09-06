@@ -3,11 +3,13 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Branch Status SuperPlugin
 
@@ -40,9 +42,23 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitBranchStatusAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip branch status plugin")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip branch status plugin")
             return
         }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
@@ -58,7 +74,11 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
         let branchCapability = GitBranchStatusCapabilityAdapter(projects: projects, gitWatch: gitWatch)
         let branchViewModel = GitBranchStatusViewModel()
         self.branchViewModel = branchViewModel
-        self.branchObserver = GitBranchStatusObserver(capability: branchCapability, viewModel: branchViewModel)
+        self.branchObserver = GitBranchStatusObserver(
+            capability: branchCapability,
+            git: git,
+            viewModel: branchViewModel
+        )
 
         // 工具栏右上角：分支选择器（显示当前分支 + 切换分支）。
         if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {
@@ -71,7 +91,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                     order: 40
                 ) {
                     WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                        BranchPickerView(projects: projects, viewModel: branchViewModel)
+                        BranchPickerView(projects: projects, git: git, viewModel: branchViewModel)
                     }
                 },
             ])
@@ -92,7 +112,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                 order: 15
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    BranchStatusTile(projects: projects, viewModel: branchViewModel)
+                    BranchStatusTile(projects: projects, git: git, viewModel: branchViewModel)
                 }
             },
         ])

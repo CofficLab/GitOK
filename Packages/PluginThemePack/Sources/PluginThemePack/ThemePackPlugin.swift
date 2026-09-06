@@ -5,6 +5,7 @@ import ProviderCommand
 import ProviderSettingView
 import ProviderTheme
 import SwiftUI
+import ProviderDocsView
 
 /// 旧版主题插件集合的复刻包（单一插件批量注册 19 个主题 + 外观设置入口）。
 ///
@@ -34,6 +35,16 @@ public final class ThemePackPlugin: SuperPlugin, SuperLog {
     )
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { ThemePackAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let theme = kernel.resolveProvider((any ThemeProviding).self) else {

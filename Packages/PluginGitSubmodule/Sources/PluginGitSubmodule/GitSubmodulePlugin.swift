@@ -3,10 +3,12 @@ import KernelCore
 import KitGit
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Submodule SuperPlugin
 
@@ -36,6 +38,16 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitSubmoduleAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
             Self.logger.error("\(self.t)StatusBarProviding not registered; skip submodule item")
@@ -43,6 +55,10 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip submodule item")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip submodule item")
             return
         }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
@@ -62,7 +78,7 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
                 order: 26
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    SubmoduleStatusTile(projects: projects)
+                    SubmoduleStatusTile(projects: projects, git: git)
                 }
             },
         ])

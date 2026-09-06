@@ -8,6 +8,7 @@ import ProviderProjects
 import ProviderRailView
 import ProviderRootView
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - RootViewPlugin
 
@@ -57,6 +58,16 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
 
     public init() {
         self.provider = GitOKRootViewProvider()
+    }
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { RootViewAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {

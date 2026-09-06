@@ -1,6 +1,8 @@
 import Foundation
 import KernelCore
 import KitGit
+import ProviderGitUser
+import ProviderGit
 import ProviderContentView
 import ProviderProjects
 import ProviderWorkspaceScene
@@ -94,6 +96,7 @@ final class WorktreeCleanPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
         try kernel.registerProvider(
             (any WorkspaceSceneProviding).self,
             DefaultWorkspaceSceneProvider()
@@ -111,6 +114,7 @@ final class WorktreeCleanPluginTests: XCTestCase {
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
         try kernel.registerProvider(
             (any WorkspaceSceneProviding).self,
             DefaultWorkspaceSceneProvider()
@@ -128,14 +132,23 @@ final class WorktreeCleanPluginTests: XCTestCase {
     // MARK: - ViewModel state
 
     func testViewModelHidesWithoutProject() {
-        let viewModel = WorktreeCleanViewModel()
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
         viewModel.handleProjectChanged(project: nil, hasSelectedCommit: false)
         XCTAssertNil(viewModel.project)
         XCTAssertFalse(viewModel.isClean)
     }
 
+    func testViewModelReceivesGitUserPresets() {
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
+        let preset = GitUserPreset(name: "Alice", email: "alice@example.com")
+
+        viewModel.handleUserPresetsChanged([preset])
+
+        XCTAssertEqual(viewModel.userPresets, [preset])
+    }
+
     func testViewModelHidesWhenCommitSelected() {
-        let viewModel = WorktreeCleanViewModel()
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
         let project = Project(url: URL(fileURLWithPath: "/tmp/repo"))
         viewModel.handleProjectChanged(project: project, hasSelectedCommit: true)
         XCTAssertEqual(viewModel.project?.url, project.url)
@@ -161,7 +174,7 @@ final class WorktreeCleanPluginTests: XCTestCase {
         let dir = try makeGitRepository()
         defer { try? FileManager.default.removeItem(at: dir) }
 
-        let viewModel = WorktreeCleanViewModel()
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
         viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
         await waitUntilClean(viewModel, expecting: true)
         XCTAssertTrue(viewModel.isClean)
@@ -188,7 +201,7 @@ final class WorktreeCleanPluginTests: XCTestCase {
         let dir = try makeGitRepository()
         defer { try? FileManager.default.removeItem(at: dir) }
 
-        let viewModel = WorktreeCleanViewModel()
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
         viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
         await waitUntilClean(viewModel, expecting: true)
 
@@ -218,11 +231,15 @@ final class WorktreeCleanPluginTests: XCTestCase {
         return dir
     }
 
+    private static let loadStatus: @Sendable (URL) throws -> GitWorktreeStatus = {
+        try GitStatusLoader.loadStatus(in: $0)
+    }
+
     func testViewModelDetectsCleanRepository() async throws {
         let dir = try makeGitRepository()
         defer { try? FileManager.default.removeItem(at: dir) }
 
-        let viewModel = WorktreeCleanViewModel()
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
         viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
 
         // GitStatusLoader 在后台任务执行，等待状态收敛。
@@ -237,7 +254,7 @@ final class WorktreeCleanPluginTests: XCTestCase {
         // 制造一个未跟踪文件 → 工作区变脏。
         try "hello".write(to: dir.appendingPathComponent("dirty.txt"), atomically: true, encoding: .utf8)
 
-        let viewModel = WorktreeCleanViewModel()
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
         viewModel.handleProjectChanged(project: Project(url: dir), hasSelectedCommit: false)
 
         await waitUntilClean(viewModel, expecting: false)

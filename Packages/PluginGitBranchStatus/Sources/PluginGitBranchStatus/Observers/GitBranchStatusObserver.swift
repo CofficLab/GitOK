@@ -1,4 +1,4 @@
-import KitGit
+import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
 
@@ -6,6 +6,7 @@ import ProviderProjects
 @MainActor
 final class GitBranchStatusObserver {
     private let capability: any GitBranchStatusCapability
+    private let git: any GitProviding
     private weak var viewModel: GitBranchStatusViewModel?
     private var projectHandle: (any ProjectProvidingObserverHandle)?
     private var repositoryHandle: (any GitRepositoryWatchingObserverHandle)?
@@ -13,9 +14,11 @@ final class GitBranchStatusObserver {
 
     init(
         capability: any GitBranchStatusCapability,
+        git: any GitProviding,
         viewModel: GitBranchStatusViewModel
     ) {
         self.capability = capability
+        self.git = git
         self.viewModel = viewModel
         projectHandle = capability.addProjectObserver { [weak self] event in
             switch event {
@@ -54,8 +57,9 @@ final class GitBranchStatusObserver {
         }
 
         viewModel?.beginLoading(projectURL: url)
+        let git = self.git
         let branchTask = Task.detached(priority: .utility) {
-            GitRefReader.currentBranch(in: url)
+            git.currentBranch(in: url)
         }
         Task { @MainActor [weak self] in
             let branch = await branchTask.value

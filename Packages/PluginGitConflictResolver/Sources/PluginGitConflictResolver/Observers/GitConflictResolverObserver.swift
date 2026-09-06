@@ -1,5 +1,6 @@
 import KitGit
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 
 private struct GitConflictResolverSnapshot: Sendable {
@@ -12,6 +13,7 @@ private struct GitConflictResolverSnapshot: Sendable {
 @MainActor
 final class GitConflictResolverObserver {
     private let capability: any GitConflictResolverCapability
+    private let git: any GitProviding
     private weak var viewModel: GitConflictResolverViewModel?
     private var projectHandle: (any ProjectProvidingObserverHandle)?
     private var repositoryHandle: (any GitRepositoryWatchingObserverHandle)?
@@ -19,9 +21,11 @@ final class GitConflictResolverObserver {
 
     init(
         capability: any GitConflictResolverCapability,
+        git: any GitProviding,
         viewModel: GitConflictResolverViewModel
     ) {
         self.capability = capability
+        self.git = git
         self.viewModel = viewModel
         projectHandle = capability.addProjectObserver { [weak self] event in
             switch event {
@@ -60,11 +64,12 @@ final class GitConflictResolverObserver {
         }
 
         viewModel?.beginLoading(projectURL: url)
+        let git = self.git
         let snapshotTask = Task.detached(priority: .utility) {
             GitConflictResolverSnapshot(
-                conflictedFiles: GitMergeOperation.conflictFiles(in: url),
-                isOperationInProgress: GitMergeOperation.isMerging(in: url),
-                isCherryPicking: GitCherryPickOperation.status(in: url).isCherryPicking
+                conflictedFiles: git.conflictFiles(in: url),
+                isOperationInProgress: git.isMerging(in: url),
+                isCherryPicking: git.cherryPickStatus(in: url).isCherryPicking
             )
         }
         Task { @MainActor [weak self] in

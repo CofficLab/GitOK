@@ -33,6 +33,13 @@ public final class DefaultPluginControlling: PluginControlling {
         }
         do {
             try await kernel.enablePlugin(id: id)
+            if let target = kernel.resolvePlugin(id: id),
+               let group = target.metadata.exclusiveGroup {
+                for plugin in kernel.allPlugins where
+                    plugin.id != id && plugin.metadata.exclusiveGroup == group && kernel.isPluginEnabled(id: plugin.id) {
+                    try await kernel.disablePlugin(id: plugin.id)
+                }
+            }
             lastErrorDescription = nil
             return true
         } catch {

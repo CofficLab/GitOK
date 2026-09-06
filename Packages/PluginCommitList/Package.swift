@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
+        .package(path: "../ProviderGit"),
         .package(path: "../KitSuperLog"),
         .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
@@ -24,6 +25,7 @@ let package = Package(
         .package(path: "../ProviderRailView"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -31,6 +33,7 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
@@ -39,6 +42,7 @@ let package = Package(
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginCommitList",
             resources: [
@@ -47,7 +51,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginCommitListTests",
-            dependencies: ["PluginCommitList"],
+            dependencies: [
+                "PluginCommitList",
+                .product(name: "ProviderGit", package: "ProviderGit"),
+            ],
             path: "Tests/PluginCommitListTests"
         ),
     ]

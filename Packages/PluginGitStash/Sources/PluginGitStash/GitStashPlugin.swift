@@ -2,10 +2,12 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Stash SuperPlugin
 
@@ -35,6 +37,16 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitStashAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
             Self.logger.error("\(self.t)StatusBarProviding not registered; skip stash item")
@@ -42,6 +54,10 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip stash item")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip stash item")
             return
         }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
@@ -61,7 +77,7 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
                 order: 17
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    StashStatusTile(projects: projects)
+                    StashStatusTile(projects: projects, git: git)
                 }
             },
         ])

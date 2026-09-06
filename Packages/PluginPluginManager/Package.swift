@@ -21,6 +21,7 @@ let package = Package(
         .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderPluginManaging"),
         .package(path: "../ProviderSettingView"),
+        .package(path: "../ProviderGit"),
     ],
     targets: [
         .target(
@@ -33,6 +34,7 @@ let package = Package(
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "ProviderPluginManaging", package: "ProviderPluginManaging"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
             ],
             path: "Sources/PluginPluginManager",
             resources: [

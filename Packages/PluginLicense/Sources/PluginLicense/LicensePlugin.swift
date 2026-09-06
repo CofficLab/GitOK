@@ -5,6 +5,7 @@ import os
 import ProviderProjects
 import ProviderStatusBar
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - License SuperPlugin
 
@@ -30,6 +31,16 @@ public final class LicensePlugin: SuperPlugin, SuperLog {
     static let itemID = "com.coffic.gitok.plugin.license.id"
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { LicenseAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {

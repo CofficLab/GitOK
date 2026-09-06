@@ -1,6 +1,7 @@
 import AppKit
 import LumiUI
 import ProviderDocsView
+import ProviderGit
 import SwiftUI
 
 /// 通用设置详情视图 —— 设置窗口「通用」标签页。
@@ -10,6 +11,7 @@ import SwiftUI
 /// 保留说明书（依赖 `DocsViewProviding`，无手册时自动隐藏）与应用信息。
 struct GeneralSettingsDetailView: View {
     let docsProvider: (any DocsViewProviding)?
+    let gitBackends: [GitBackendDescriptor]
 
     /// 是否展示说明书浏览器。
     @State private var isPresentingManuals = false
@@ -28,6 +30,9 @@ struct GeneralSettingsDetailView: View {
 #if DEBUG
                 debugHeader
 #endif
+                if !gitBackends.isEmpty {
+                    GitBackendSectionView(backends: gitBackends)
+                }
                 if !manuals.isEmpty {
                     manualsSection
                 }

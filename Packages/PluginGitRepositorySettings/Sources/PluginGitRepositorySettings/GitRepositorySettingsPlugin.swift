@@ -2,9 +2,11 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderProjects
 import ProviderSettingView
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Repository Settings SuperPlugin
 
@@ -29,6 +31,16 @@ public final class GitRepositorySettingsPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitRepositorySettingsAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let settings = kernel.resolveProvider((any SettingViewProviding).self) else {
             Self.logger.error("\(self.t)SettingViewProviding not registered; skip repository settings entry")
@@ -38,6 +50,10 @@ public final class GitRepositorySettingsPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip repository settings entry")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip repository settings entry")
+            return
+        }
 
         settings.addEntries([
             SettingEntryItem(
@@ -45,8 +61,8 @@ public final class GitRepositorySettingsPlugin: SuperPlugin, SuperLog {
                 title: LumiPluginLocalization.string("Repository Settings", bundle: .module),
                 systemImage: "folder.badge.gearshape",
                 order: 10
-            ) { [projects] in
-                RepositorySettingView(projects: projects)
+            ) { [projects, git] in
+                RepositorySettingView(projects: projects, git: git)
             },
         ])
     }

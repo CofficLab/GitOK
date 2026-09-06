@@ -3,10 +3,12 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderContentView
+import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Commit Detail SuperPlugin
 
@@ -53,6 +55,16 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { CommitDetailAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let contentView = kernel.resolveProvider((any ContentViewProviding).self) else {
             Self.logger.error("\(self.t)ContentViewProviding not registered; skip content injection")
@@ -60,6 +72,10 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip content injection")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip content injection")
             return
         }
 
@@ -103,6 +119,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
                     CommitDetailView(
                         viewModel: viewModel,
+                        git: git,
                         onSelectFile: selectFile,
                         onDataChanged: notifyDataChanged
                     )

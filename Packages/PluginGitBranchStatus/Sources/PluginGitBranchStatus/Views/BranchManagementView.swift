@@ -1,12 +1,14 @@
 import KitGit
 import LumiUI
 import ProviderProjects
+import ProviderGit
 import SwiftUI
 
 /// 分支管理面板：新建、搜索、切换/删除本地分支、列出远程分支
 /// （对齐旧版 BranchManagementView 的核心能力）。
 public struct BranchManagementView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
     @LumiTheme private var theme
 
@@ -28,8 +30,9 @@ public struct BranchManagementView: View {
     @State private var isMergingBranches = false
     @State private var compareError: String?
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -326,7 +329,7 @@ public struct BranchManagementView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                let all = try GitBranchOperation.listBranches(in: url)
+                let all = try git.listBranches(in: url)
                 let local = all.filter { !$0.isRemote }
                 let remote = all.filter { $0.isRemote }
                 await MainActor.run {
@@ -359,8 +362,8 @@ public struct BranchManagementView: View {
         isLoading = true
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.createBranch(named: name, in: url)
-                try GitBranchOperation.checkoutBranch(named: name, in: url)
+                try git.createBranch(named: name, in: url)
+                try git.checkoutBranch(named: name, in: url)
                 await MainActor.run {
                     newBranchName = ""
                     isLoading = false
@@ -381,7 +384,7 @@ public struct BranchManagementView: View {
         isLoading = true
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.checkoutBranch(named: branch.name, in: url)
+                try git.checkoutBranch(named: branch.name, in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()
@@ -401,7 +404,7 @@ public struct BranchManagementView: View {
         isLoading = true
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.deleteBranch(named: branch.name, in: url)
+                try git.deleteBranch(named: branch.name, in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()
@@ -429,7 +432,7 @@ public struct BranchManagementView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.renameBranch(from: oldName, to: newName, in: url)
+                try git.renameBranch(from: oldName, to: newName, in: url)
                 await MainActor.run {
                     branchToRename = nil
                     isLoading = false
@@ -458,7 +461,7 @@ public struct BranchManagementView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.setUpstream(
+                try git.setUpstream(
                     localBranch: local,
                     upstreamBranch: upstream,
                     in: url
@@ -484,7 +487,7 @@ public struct BranchManagementView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.unsetUpstream(localBranch: local, in: url)
+                try git.unsetUpstream(localBranch: local, in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()
@@ -505,7 +508,7 @@ public struct BranchManagementView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.publishBranch(localBranch: local, in: url)
+                try git.publishBranch(localBranch: local, remote: "origin", remoteBranch: nil, in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()
@@ -525,7 +528,7 @@ public struct BranchManagementView: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitBranchOperation.deleteRemoteBranch(named: branchName, in: url)
+                try git.deleteRemoteBranch(named: branchName, remote: "origin", in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()
@@ -551,7 +554,7 @@ public struct BranchManagementView: View {
         compareError = nil
         Task.detached(priority: .userInitiated) {
             do {
-                let result = try GitBranchOperation.compareBranches(
+                let result = try git.compareBranches(
                     base: baseName,
                     head: headName,
                     in: url
@@ -587,7 +590,7 @@ public struct BranchManagementView: View {
 
         Task.detached(priority: .userInitiated) {
             do {
-                _ = try GitMergeOperation.mergeBranches(
+                _ = try git.mergeBranches(
                     repository: url,
                     sourceBranch: sourceBranch,
                     targetBranch: targetBranch

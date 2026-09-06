@@ -1,6 +1,6 @@
 # ProviderGit
 
-Git 用户预设能力协议包：定义 `GitUserPresetProviding`、`GitUserPreset` 与默认预设提供者。
+Git 能力协议包：定义业务插件消费的 `GitProviding`、后端注册协议和稳定路由器。
 
 ## 本 Package 的位置
 
@@ -8,7 +8,7 @@ Git 用户预设能力协议包：定义 `GitUserPresetProviding`、`GitUserPres
 |------|-----|
 | **类型** | 能力协议包（Provider 层） |
 | **宿主** | 由宿主内核 / `FactoryGitOK` 装配 |
-| **上游依赖** | 无（独立包） |
+| **上游依赖** | `KitGit`（复用当前公共 Git 值类型；实现由后端插件提供） |
 | **平台** | macOS 14+ |
 
 ## 目录结构
@@ -17,12 +17,8 @@ Git 用户预设能力协议包：定义 `GitUserPresetProviding`、`GitUserPres
 └── ProviderGit
     ├── Sources
     │   └── ProviderGit
-    │       ├── DefaultGitUserPresetProvider.swift
-    │       ├── GitUserPreset.swift
-    │       └── GitUserPresetProviding.swift
-    └── Tests
-        └── ProviderGitTests
-            └── ProviderGitTests.swift
+    │       ├── DefaultGitProvider.swift
+    │       └── GitProviding.swift
 ```
 
 ## 构建与测试

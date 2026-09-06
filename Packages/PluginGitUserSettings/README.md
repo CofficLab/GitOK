@@ -1,6 +1,6 @@
 # PluginGitUserSettings
 
-Git 用户设置插件：`GitUserInfoSettingView` 配置 user.name / user.email 等用户信息（对接 ProviderGit 的 GitUserPreset）。
+Git 用户设置插件：`GitUserInfoSettingView` 配置 user.name / user.email 等用户信息（对接 ProviderGitUser 的 GitUserPreset）。
 
 ## 本 Package 的位置
 
@@ -8,7 +8,7 @@ Git 用户设置插件：`GitUserInfoSettingView` 配置 user.name / user.email 
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitGit`、`KitSuperLog`、`ProviderGit`、`ProviderProjects`、`ProviderSettingView`、`ProviderStorage`、`ProviderToast`；https://github.com/CofficLab/LumiUI.git |
+| **上游依赖** | `KernelCore`、`KitGit`、`KitSuperLog`、`ProviderGitUser`、`ProviderProjects`、`ProviderSettingView`、`ProviderStorage`、`ProviderToast`；https://github.com/CofficLab/LumiUI.git |
 | **平台** | macOS 14+ |
 
 ## 目录结构

@@ -1,5 +1,6 @@
 import Foundation
 import KernelCore
+import ProviderDocsView
 import ProviderStorage
 import KitSuperLog
 import os
@@ -40,6 +41,16 @@ public final class StorageSuperPlugin: SuperPlugin, SuperLog {
     }
 
     // MARK: - Lifecycle
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { StorageAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         let service = StorageService(dataRootDirectory: dataRootDirectory)

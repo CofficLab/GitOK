@@ -289,6 +289,17 @@ public extension KernelCoreContainer {
         }
         pluginEnabledStates[id] = true
         persistEnabledState(true, pluginID: id)
+
+        // 互斥插件的约束属于内核生命周期，而不是某个设置页的实现细节。
+        // 这样直接调用 KernelCore enablePlugin 的宿主也不会同时运行两套 Git 后端。
+        if let group = plugin.metadata.exclusiveGroup {
+            for other in plugins.values where
+                other.id != id
+                && other.metadata.exclusiveGroup == group
+                && isPluginEnabled(id: other.id) {
+                try await disablePlugin(id: other.id)
+            }
+        }
     }
 
     /// 异步卸载一个插件，兼容同步与异步 Shutdown 实现。

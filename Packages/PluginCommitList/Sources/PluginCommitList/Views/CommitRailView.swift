@@ -1,6 +1,7 @@
 import KitGit
 import LumiUI
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
@@ -28,6 +29,7 @@ private let commitPageSize = 50
 /// 设计语言一致。
 struct CommitRailView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     let gitWatch: (any GitRepositoryWatching)?
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
@@ -82,8 +84,13 @@ struct CommitRailView: View {
     @State private var deletingRemoteTagName: String?
     @State private var tagError: String?
 
-    init(projects: any ProjectProviding, gitWatch: (any GitRepositoryWatching)? = nil) {
+    init(
+        projects: any ProjectProviding,
+        git: any GitProviding,
+        gitWatch: (any GitRepositoryWatching)? = nil
+    ) {
         self.projects = projects
+        self.git = git
         self.gitWatch = gitWatch
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
@@ -789,7 +796,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             do {
-                try GitRemoteOperation.push(in: url)
+                _ = try git.push(in: url)
                 await MainActor.run {
                     isPushing = false
                     pushPopoverCommitHash = nil
@@ -814,7 +821,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.revertCommit(commit.hash, in: url)
+                try git.revertCommit(commit.hash, in: url)
             }
             await MainActor.run {
                 revertingHash = nil
@@ -843,7 +850,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.undoCommit(commit.hash, parentHash: parentHash, in: url)
+                try git.undoCommit(commit.hash, parentHash: parentHash, in: url)
             }
             await MainActor.run {
                 undoingHash = nil
@@ -867,7 +874,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.softReset(
+                try git.softReset(
                     to: commit.hash,
                     expectedHead: expectedHead,
                     in: url
@@ -895,7 +902,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.mixedReset(
+                try git.mixedReset(
                     to: commit.hash,
                     expectedHead: expectedHead,
                     in: url
@@ -923,7 +930,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.hardReset(
+                try git.hardReset(
                     to: commit.hash,
                     expectedHead: expectedHead,
                     in: url
@@ -955,7 +962,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitHistoryOperation.squash(
+                try git.squash(
                     to: commit.hash,
                     parentHash: parentHash,
                     expectedHead: expectedHead,
@@ -986,7 +993,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.createLightweight(named: name, at: commit.hash, in: url)
+                try git.createLightweightTag(named: name, at: commit.hash, in: url)
             }
             await MainActor.run {
                 creatingTagHash = nil
@@ -1011,7 +1018,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.createAnnotated(
+                try git.createAnnotatedTag(
                     named: name,
                     at: commit.hash,
                     message: message,
@@ -1037,7 +1044,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.deleteLocal(named: name, in: url)
+                try git.deleteLocalTag(named: name, in: url)
             }
             await MainActor.run {
                 deletingTagName = nil
@@ -1058,7 +1065,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.push(named: name, in: url)
+                try git.pushTag(named: name, remote: "origin", in: url)
             }
             await MainActor.run {
                 pushingTagName = nil
@@ -1079,7 +1086,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitTagOperation.deleteRemote(named: name, in: url)
+                try git.deleteRemoteTag(named: name, remote: "origin", in: url)
             }
             await MainActor.run {
                 deletingRemoteTagName = nil
@@ -1166,7 +1173,7 @@ struct CommitRailView: View {
         let offset = nextCommitOffset
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitCommitLoader.loadCommits(
+                try git.loadCommits(
                     in: url,
                     limit: commitPageSize,
                     offset: offset
@@ -1185,8 +1192,7 @@ struct CommitRailView: View {
                     let newCommits = loaded.filter { !existingHashes.contains($0.hash) }
                     commits.append(contentsOf: newCommits)
                 case .failure(let error):
-                    loadError = (error as? GitCommitLoaderError)?.localizedDescription
-                        ?? error.localizedDescription
+                    loadError = error.localizedDescription
                 }
             }
         }
@@ -1231,14 +1237,14 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             let commitsResult = Result {
-                try GitCommitLoader.loadCommits(
+                try git.loadCommits(
                     in: url,
                     limit: commitPageSize,
                     offset: 0
                 )
             }
             // 获取未推送的 commit 哈希（无 upstream 时返回空集合）
-            let unpushedResult = Result { try GitCommitLoader.unpushedCommitHashes(in: url) }
+            let unpushedResult = Result { try git.unpushedCommitHashes(in: url) }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
                 isLoading = false
@@ -1266,8 +1272,7 @@ struct CommitRailView: View {
                         commits = loaded
                     }
                 case .failure(let error):
-                    loadError = (error as? GitCommitLoaderError)?.localizedDescription
-                        ?? error.localizedDescription
+                    loadError = error.localizedDescription
                 }
                 if case .success(let hashes) = unpushedResult {
                     unpushedHashes = hashes

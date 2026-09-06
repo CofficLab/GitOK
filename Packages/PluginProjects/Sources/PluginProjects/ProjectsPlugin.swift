@@ -3,11 +3,13 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderCloneRepository
+import ProviderGit
 import ProviderProjects
 import ProviderSettingView
 import ProviderSidebar
 import ProviderStorage
 import ProviderToolbar
+import ProviderDocsView
 
 // MARK: - Projects SuperPlugin
 
@@ -60,7 +62,22 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
         }
     }
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { ProjectsAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
+        if let git = kernel.resolveProvider((any GitProviding).self) {
+            projectService.setGitProvider(git)
+        } else {
+            Self.logger.error("\(self.t)GitProviding not registered; commit file loading will be unavailable")
+        }
         // 1) 项目数据目录遵循 Lumi 规律：<root>/<插件 id>/
         if let storage = kernel.resolveProvider((any StorageProviding).self) {
             let directory = storage.pluginDataDirectory(for: id)

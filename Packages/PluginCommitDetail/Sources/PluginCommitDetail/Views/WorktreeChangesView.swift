@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -25,6 +26,7 @@ struct WorktreeChangesView: View {
     }
 
     @ObservedObject var viewModel: CommitDetailViewModel
+    let git: any GitProviding
     let onSelectFile: (String?) -> Void
     let onDataChanged: () -> Void
     @LumiTheme private var theme
@@ -384,7 +386,7 @@ struct WorktreeChangesView: View {
         actionError = nil
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitCommitOperation.stageFiles([entry.path], in: projectURL)
+                try git.stageFiles([entry.path], in: projectURL)
             }
             await MainActor.run {
                 stagingPath = nil
@@ -405,7 +407,7 @@ struct WorktreeChangesView: View {
         actionError = nil
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitCommitOperation.unstageFiles([entry.path], in: projectURL)
+                try git.unstageFiles([entry.path], in: projectURL)
             }
             await MainActor.run {
                 unstagingPath = nil
@@ -427,7 +429,7 @@ struct WorktreeChangesView: View {
         actionError = nil
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try GitCommitOperation.discardFiles(paths, in: projectURL)
+                try git.discardFiles(paths, in: projectURL)
             }
             await MainActor.run {
                 discardingPaths.removeAll()
@@ -460,9 +462,9 @@ struct WorktreeChangesView: View {
             let result = Result {
                 switch action {
                 case .stage:
-                    try GitCommitOperation.stageFiles(paths, in: projectURL)
+                    try git.stageFiles(paths, in: projectURL)
                 case .unstage:
-                    try GitCommitOperation.unstageFiles(paths, in: projectURL)
+                    try git.unstageFiles(paths, in: projectURL)
                 }
             }
             await MainActor.run {
@@ -514,7 +516,7 @@ struct WorktreeChangesView: View {
 
         let url = projectURL
         Task.detached(priority: .userInitiated) {
-            let result = Result { try GitStatusLoader.loadEntries(in: url) }
+            let result = Result { try git.loadEntries(in: url) }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
                 isLoading = false

@@ -1,6 +1,7 @@
 import KernelCore
 import ProviderContentView
 import ProviderDocsView
+import ProviderGit
 import ProviderRootView
 import ProviderSettingView
 import ProviderStatusBar
@@ -68,6 +69,11 @@ public struct DefaultProviderFactory: ProviderFactory {
         let workspaceScene = makeWorkspaceSceneProvider()
         try kernel.registerProvider((any WorkspaceSceneProviding).self, workspaceScene)
 
+        // Git Provider 是稳定的业务入口；具体 CLI / LibGit2 实现由后端插件注册。
+        let git = DefaultGitProvider()
+        try kernel.registerProvider((any GitProviding).self, git)
+        try kernel.registerProvider((any GitBackendRegistryProviding).self, git)
+
         // 插件启用状态仍由宿主统一持久化；GitOK 插件本身是 required，
         // 其他未来加入的插件则继续遵循 KernelCore 的普通策略。
         kernel.stateStore = PluginEnabledStateStore(
@@ -115,7 +121,10 @@ public struct DefaultProviderFactory: ProviderFactory {
         try kernel.registerProvider((any ActivityProviding).self, makeActivityProvider())
         try kernel.registerProvider(
             (any CommitFormProviding).self,
-            makeCommitFormProvider(activity: kernel.resolveProvider((any ActivityProviding).self))
+            makeCommitFormProvider(
+                activity: kernel.resolveProvider((any ActivityProviding).self),
+                git: git
+            )
         )
         try kernel.registerProvider((any ToastProviding).self, makeToastProvider())
         let pluginManaging = makePluginManagingProvider()
@@ -150,8 +159,11 @@ extension DefaultProviderFactory {
     }
 
     /// 提交表单 Provider：把提交 / 推送阶段上报到 Activity 提供者（状态栏活动指示）。
-    public func makeCommitFormProvider(activity: (any ActivityProviding)?) -> any CommitFormProviding {
-        let form = DefaultCommitFormProvider()
+    public func makeCommitFormProvider(
+        activity: (any ActivityProviding)?,
+        git: (any GitProviding)? = nil
+    ) -> any CommitFormProviding {
+        let form = DefaultCommitFormProvider(git: git)
         if let activity {
             form.activityReporter = { [weak activity] message in
                 if let message {

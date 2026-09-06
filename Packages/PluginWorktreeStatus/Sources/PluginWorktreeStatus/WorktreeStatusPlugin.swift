@@ -3,11 +3,13 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 import ProviderRailView
 import ProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Worktree Status SuperPlugin
 
@@ -43,6 +45,16 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { WorktreeStatusAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let rail = kernel.resolveProvider((any RailViewProviding).self) else {
             Self.logger.error("\(self.t)RailViewProviding not registered; skip rail section injection")
@@ -50,6 +62,10 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip rail section injection")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip rail section injection")
             return
         }
         // GitRepositoryWatching 可选：插件可能未注册（例如测试环境），此时仅依赖
@@ -75,11 +91,12 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         let section = RailSectionItem(id: "\(id).section", order: 15) {
             WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                WorkingTreeStatusView(
-                    projects: projects,
-                    gitWatch: gitWatch,
-                    syncFailureCenter: syncFailureCenter
-                )
+                    WorkingTreeStatusView(
+                        projects: projects,
+                        git: git,
+                        gitWatch: gitWatch,
+                        syncFailureCenter: syncFailureCenter
+                    )
             }
         }
         self.sceneViewModel = sceneViewModel

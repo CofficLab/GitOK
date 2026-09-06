@@ -1,6 +1,6 @@
-import KitGit
 import LumiUI
 import MagicDiffView
+import ProviderGit
 import SwiftUI
 
 /// Git Diff 右侧面板视图。
@@ -21,6 +21,7 @@ import SwiftUI
 /// （commit / 文件 / 仓库数据变化由 `GitDiffObserver` 负责翻译进 ViewModel）。
 struct GitDiffPaneView: View {
     @ObservedObject var viewModel: GitDiffViewModel
+    let git: any GitProviding
     @LumiTheme private var theme
 
     @State private var diffText: String?
@@ -130,9 +131,9 @@ struct GitDiffPaneView: View {
         Task.detached(priority: .userInitiated) {
             let result: Result<String, Error>
             if let commit {
-                result = Result { try GitDiffLoader.loadDiff(commit: commit.hash, filePath: path, in: url) }
+                result = Result { try git.loadDiff(commit: commit.hash, filePath: path, in: url) }
             } else {
-                result = Result { try GitDiffLoader.loadWorktreeDiff(filePath: path, in: url) }
+                result = Result { try git.loadWorktreeDiff(filePath: path, in: url) }
             }
             await MainActor.run {
                 isLoading = false

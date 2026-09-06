@@ -2,10 +2,12 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Remote Repository SuperPlugin
 
@@ -35,6 +37,16 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
 
     public init() {}
 
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitRemoteRepositoryAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
+
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
             Self.logger.error("\(self.t)StatusBarProviding not registered; skip remote item")
@@ -42,6 +54,10 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip remote item")
+            return
+        }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip remote item")
             return
         }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
@@ -61,7 +77,7 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
                 order: 23
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    RemoteRepositoryStatusButton(projects: projects)
+                    RemoteRepositoryStatusButton(projects: projects, git: git)
                 }
             },
         ])

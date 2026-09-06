@@ -73,6 +73,8 @@ public struct PluginMetadata: Equatable, Codable, Sendable {
     public let stage: PluginStage
     public let policy: PluginEnablePolicy
     public let permissions: [PluginPermission]
+    /// 同一互斥组内最多启用一个插件，例如 Git 后端实现。
+    public let exclusiveGroup: String?
 
     public init(
         id: String,
@@ -82,7 +84,8 @@ public struct PluginMetadata: Equatable, Codable, Sendable {
         category: PluginCategory = .general,
         stage: PluginStage = .stable,
         policy: PluginEnablePolicy = .alwaysOn,
-        permissions: [PluginPermission] = []
+        permissions: [PluginPermission] = [],
+        exclusiveGroup: String? = nil
     ) {
         self.id = id
         self.name = name ?? id
@@ -92,5 +95,6 @@ public struct PluginMetadata: Equatable, Codable, Sendable {
         self.stage = stage
         self.policy = policy
         self.permissions = permissions
+        self.exclusiveGroup = exclusiveGroup
     }
 }
