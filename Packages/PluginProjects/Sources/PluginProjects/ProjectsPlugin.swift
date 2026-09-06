@@ -9,6 +9,7 @@ import ProviderSettingView
 import ProviderSidebar
 import ProviderStorage
 import ProviderToolbar
+import ProviderDocsView
 
 // MARK: - Projects SuperPlugin
 
@@ -59,6 +60,16 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
                 .appendingPathComponent("projects.json")
             self.projectService = ProjectManager(storeURL: placeholder)
         }
+    }
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { ProjectsAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
