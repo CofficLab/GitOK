@@ -20,6 +20,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderCommitForm"),
         .package(path: "../ProviderSettingView"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -31,6 +32,7 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginGitCommitStyleSettings",
             resources: [
