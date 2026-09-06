@@ -8,11 +8,7 @@ import ProviderGit
 /// 让业务插件不再需要知道这些静态操作类型。后续 LibGit2 插件实现同一
 /// `GitBackendProviding`，即可在路由器层切换实现。
 final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
-    let descriptor = GitBackendDescriptor(
-        id: "com.coffic.gitok.git-backend.cli",
-        name: "Git CLI",
-        version: "1.0.0"
-    )
+    let descriptor = GitBackendCatalog.cli
 
     func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset)

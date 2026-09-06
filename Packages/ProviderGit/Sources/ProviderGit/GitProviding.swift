@@ -4,14 +4,36 @@ import KitGit
 /// Git 后端的展示信息。
 public struct GitBackendDescriptor: Equatable, Identifiable, Sendable {
     public let id: String
+    public let pluginID: String
     public let name: String
     public let version: String
 
-    public init(id: String, name: String, version: String = "1.0.0") {
+    public init(id: String, pluginID: String, name: String, version: String = "1.0.0") {
         self.id = id
+        self.pluginID = pluginID
         self.name = name
         self.version = version
     }
+}
+
+/// GitOK 内置后端目录。插件管理页用它展示尚未启用的后端，
+/// 实际可用性仍以 `GitProviding.availableBackends` 为准。
+public enum GitBackendCatalog {
+    public static let cli = GitBackendDescriptor(
+        id: "com.coffic.gitok.git-backend.cli",
+        pluginID: "com.coffic.gitok.plugin.git-cli",
+        name: "Git CLI",
+        version: "1.0.0"
+    )
+
+    public static let libGit2 = GitBackendDescriptor(
+        id: "com.coffic.gitok.git-backend.libgit2",
+        pluginID: "com.coffic.gitok.plugin.git-libgit2",
+        name: "LibGit2",
+        version: "7005a738"
+    )
+
+    public static let all: [GitBackendDescriptor] = [cli, libGit2]
 }
 
 /// Git Provider 的错误。
@@ -19,6 +41,7 @@ public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
     case noBackendAvailable
     case backendAlreadyRegistered(String)
     case backendNotFound(String)
+    case backendOperationUnsupported(String)
 
     public var errorDescription: String? {
         switch self {
@@ -28,6 +51,8 @@ public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
             "Git backend is already registered: \(id)"
         case .backendNotFound(let id):
             "Git backend is not available: \(id)"
+        case .backendOperationUnsupported(let message):
+            message
         }
     }
 }
