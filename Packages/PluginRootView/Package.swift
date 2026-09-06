@@ -14,6 +14,7 @@ let package = Package(
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -26,6 +27,7 @@ let package = Package(
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginRootView",
             resources: [.process("../../Resources/Localizable.xcstrings")]
