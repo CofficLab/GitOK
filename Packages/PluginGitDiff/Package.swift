@@ -20,6 +20,7 @@ let package = Package(
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderRootView"),
         .package(url: "https://github.com/nookery/MagicDiffView", branch: "main"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -34,6 +35,7 @@ let package = Package(
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "MagicDiffView", package: "MagicDiffView"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginGitDiff",
             resources: [

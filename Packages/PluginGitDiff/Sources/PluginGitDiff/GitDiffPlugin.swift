@@ -6,6 +6,7 @@ import ProviderProjects
 import ProviderGit
 import ProviderRootView
 import SwiftUI
+import ProviderDocsView
 
 /// Git Diff 插件
 ///
@@ -45,6 +46,16 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
     private var observer: GitDiffObserver?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitDiffAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
