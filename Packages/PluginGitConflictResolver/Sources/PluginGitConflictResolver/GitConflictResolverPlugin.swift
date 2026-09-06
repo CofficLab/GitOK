@@ -9,6 +9,7 @@ import ProviderRootView
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Conflict Resolver SuperPlugin
 
@@ -40,6 +41,16 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
     private var conflictObserver: GitConflictResolverObserver?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitConflictResolverAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {

@@ -25,6 +25,7 @@ let package = Package(
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderStatusBar"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -41,6 +42,7 @@ let package = Package(
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginGitConflictResolver",
             resources: [
