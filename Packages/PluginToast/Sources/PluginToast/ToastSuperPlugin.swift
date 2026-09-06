@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import KernelCore
+import ProviderDocsView
 import ProviderRootView
 import ProviderToast
 import KitSuperLog
@@ -38,6 +39,16 @@ public final class ToastSuperPlugin: SuperPlugin, SuperLog {
     static let overlayID = "toast"
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { ToastAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         // 替换宿主的默认 no-op 实现为真实状态机。
