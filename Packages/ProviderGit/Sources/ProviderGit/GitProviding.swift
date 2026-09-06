@@ -39,7 +39,7 @@ public enum GitBackendCatalog {
     public static let libGit2 = GitBackendDescriptor(
         id: "com.coffic.gitok.git-backend.libgit2",
         pluginID: "com.coffic.gitok.plugin.git-libgit2",
-        name: "LibGit2",
+        name: "LibGit2Swift",
         version: "7005a738",
         priority: 50
     )
