@@ -11,6 +11,7 @@ import PluginCommitList
 import PluginCloneRepository
 import PluginRootView
 import PluginGitDiff
+import PluginGitCLI
 import PluginGitBranchStatus
 import PluginGitUnpushedStatus
 import PluginGitUserSettings
@@ -71,6 +72,7 @@ public struct DefaultPluginFactory: PluginFactory {
     public func makePlugins() -> [any SuperPlugin] {
         [
             // 基础服务必须先于业务插件启动。
+            GitCLIPlugin(),
             try! StorageSuperPlugin(),
             RootViewPlugin(),
             CommandPlugin(),

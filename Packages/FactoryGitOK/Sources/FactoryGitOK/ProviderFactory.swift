@@ -1,6 +1,7 @@
 import KernelCore
 import ProviderContentView
 import ProviderDocsView
+import ProviderGit
 import ProviderRootView
 import ProviderSettingView
 import ProviderStatusBar
@@ -67,6 +68,11 @@ public struct DefaultProviderFactory: ProviderFactory {
 
         let workspaceScene = makeWorkspaceSceneProvider()
         try kernel.registerProvider((any WorkspaceSceneProviding).self, workspaceScene)
+
+        // Git Provider 是稳定的业务入口；具体 CLI / LibGit2 实现由后端插件注册。
+        let git = DefaultGitProvider()
+        try kernel.registerProvider((any GitProviding).self, git)
+        try kernel.registerProvider((any GitBackendRegistryProviding).self, git)
 
         // 插件启用状态仍由宿主统一持久化；GitOK 插件本身是 required，
         // 其他未来加入的插件则继续遵循 KernelCore 的普通策略。

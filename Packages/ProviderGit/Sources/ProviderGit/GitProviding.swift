@@ -1,0 +1,110 @@
+import Foundation
+import KitGit
+
+/// Git 后端的展示信息。
+public struct GitBackendDescriptor: Equatable, Identifiable, Sendable {
+    public let id: String
+    public let name: String
+    public let version: String
+
+    public init(id: String, name: String, version: String = "1.0.0") {
+        self.id = id
+        self.name = name
+        self.version = version
+    }
+}
+
+/// Git Provider 的错误。
+public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
+    case noBackendAvailable
+    case backendAlreadyRegistered(String)
+    case backendNotFound(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .noBackendAvailable:
+            "No Git backend is enabled."
+        case .backendAlreadyRegistered(let id):
+            "Git backend is already registered: \(id)"
+        case .backendNotFound(let id):
+            "Git backend is not available: \(id)"
+        }
+    }
+}
+
+/// Git 操作能力边界。
+///
+/// 业务插件只依赖这个协议，不再直接依赖 CLI 或 LibGit2。当前先覆盖
+/// 现有 GitOK 中最常用的读取、提交、分支、远程和合并能力；后续能力继续
+/// 以同一协议扩展，模型仍复用 KitGit 的公共值类型。
+public protocol GitOperationProviding: AnyObject {
+    func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit]
+    func unpushedCommitHashes(in repository: URL) throws -> Set<String>
+
+    func loadStatus(in repository: URL) throws -> GitWorktreeStatus
+    func loadEntries(in repository: URL) throws -> [GitStatusEntry]
+    func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
+    func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String
+    func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String
+
+    func currentBranch(in repository: URL) -> String?
+    func unpushedCount(in repository: URL) -> Int?
+    func hasRemotes(in repository: URL) -> Bool
+    func unpulledCount(in repository: URL) -> Int?
+    func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus
+
+    func listBranches(in repository: URL) throws -> [GitBranchSummary]
+    func createBranch(named name: String, in repository: URL) throws
+    func checkoutBranch(named name: String, in repository: URL) throws
+    func deleteBranch(named name: String, in repository: URL) throws
+    func renameBranch(from currentName: String, to newName: String, in repository: URL) throws
+    func compareBranches(base: String, head: String, in repository: URL) throws -> GitBranchCompare
+
+    func hasStagedChanges(in repository: URL) throws -> Bool
+    func addAll(in repository: URL) throws
+    func stageFiles(_ filePaths: [String], in repository: URL) throws
+    func unstageFiles(_ filePaths: [String], in repository: URL) throws
+    func discardFileChanges(_ filePath: String, in repository: URL) throws
+    func discardFiles(_ filePaths: [String], in repository: URL) throws
+    func commit(message: String, in repository: URL) throws -> String
+    func push(in repository: URL) throws -> String
+
+    func listRemotes(in repository: URL) -> [GitRemoteSummary]
+    func addRemote(name: String, url: String, in repository: URL) throws
+    func removeRemote(name: String, in repository: URL) throws
+    func fetch(in repository: URL) throws
+    func pull(in repository: URL) throws
+    func pull(in repository: URL, strategy: GitRemoteOperation.PullStrategy) throws
+    func synchronize(in repository: URL) throws -> GitRefReader.RemoteTrackingStatus
+    func webLink(for url: String) -> URL?
+
+    func isMerging(in repository: URL) -> Bool
+    func hasConflictOperation(in repository: URL) -> Bool
+    func conflictFiles(in repository: URL) -> [String]
+    func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String
+    func mergeFileContent(path: String, version: GitMergeFileVersion, in repository: URL) throws -> String
+    func mergeFileDiff(path: String, in repository: URL) throws -> String
+    func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion, in repository: URL) throws
+    func continueMerge(in repository: URL) throws -> String
+    func abortMerge(in repository: URL) throws -> String
+    func finalizeMergeIfNeeded(in repository: URL) throws -> String?
+}
+
+/// 一个可被插件装配的 Git 实现。
+public protocol GitBackendProviding: GitOperationProviding {
+    var descriptor: GitBackendDescriptor { get }
+}
+
+/// 后端注册与选择能力。宿主只注册一个稳定的 GitProviding 路由器，
+/// 各后端插件通过此接口加入或撤出，不会互相抢占同一个 Provider 类型。
+public protocol GitBackendRegistryProviding: AnyObject {
+    var availableBackends: [GitBackendDescriptor] { get }
+    var selectedBackendID: String? { get }
+
+    func registerBackend(_ backend: any GitBackendProviding) throws
+    func unregisterBackend(id: String)
+    func selectBackend(id: String) throws
+}
+
+/// 业务插件消费的稳定 Git Provider。
+public protocol GitProviding: GitOperationProviding, GitBackendRegistryProviding {}

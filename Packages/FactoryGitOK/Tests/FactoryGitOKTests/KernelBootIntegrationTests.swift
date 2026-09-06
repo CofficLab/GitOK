@@ -2,6 +2,7 @@ import XCTest
 @testable import FactoryGitOK
 import KitGit
 import ProviderProjects
+import ProviderGit
 import ProviderRootView
 import ProviderToast
 import ProviderToolbar
@@ -31,6 +32,9 @@ final class KernelBootIntegrationTests: XCTestCase {
             kernel.resolveProvider((any WorkspaceSceneProviding).self)?.currentScene,
             .git
         )
+        let git = try XCTUnwrap(kernel.resolveProvider((any GitProviding).self))
+        XCTAssertEqual(git.selectedBackendID, "com.coffic.gitok.git-backend.cli")
+        XCTAssertEqual(git.availableBackends.map(\.id), ["com.coffic.gitok.git-backend.cli"])
         XCTAssertTrue(
             kernel.resolveProvider((any ToolbarProviding).self)?.toolbarItems.contains {
                 $0.id == "workspace-scene-picker"
@@ -55,5 +59,22 @@ final class KernelBootIntegrationTests: XCTestCase {
             } == true,
             "commit form failures should be mounted as a root overlay"
         )
+    }
+
+    func testGitCLIBackendFollowsPluginLifecycle() async throws {
+        let kernel = try KernelFactory.makeKernel()
+        let git = try XCTUnwrap(kernel.resolveProvider((any GitProviding).self))
+        let pluginID = "com.coffic.gitok.plugin.git-cli"
+
+        if !kernel.isPluginEnabled(id: pluginID) {
+            try await kernel.enablePlugin(id: pluginID)
+        }
+        try await kernel.disablePlugin(id: pluginID)
+        XCTAssertNil(git.selectedBackendID)
+        XCTAssertTrue(git.availableBackends.isEmpty)
+
+        try await kernel.enablePlugin(id: pluginID)
+        XCTAssertEqual(git.selectedBackendID, "com.coffic.gitok.git-backend.cli")
+        XCTAssertEqual(git.availableBackends.count, 1)
     }
 }
