@@ -10,6 +10,7 @@ import ProviderProjects
 import ProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Commit Form SuperPlugin
 
@@ -47,6 +48,16 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
     private let errorCenter = CommitFormErrorCenter()
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { CommitFormAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {

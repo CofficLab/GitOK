@@ -26,6 +26,7 @@ let package = Package(
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -43,6 +44,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginCommitForm",
             resources: [
