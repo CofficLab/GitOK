@@ -3,11 +3,11 @@ import Testing
 
 @Suite("PluginGitCLI")
 struct PluginGitCLITests {
-    @Test("CLI 插件提供稳定的插件标识")
+    @Test("CLI 插件作为内置必需后端提供稳定的插件标识")
     @MainActor
     func metadata() {
         let plugin = GitCLIPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-cli")
-        #expect(plugin.metadata.policy.enabledByDefault)
+        #expect(plugin.metadata.policy == .required)
     }
 }

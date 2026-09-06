@@ -7,30 +7,41 @@ public struct GitBackendDescriptor: Equatable, Identifiable, Sendable {
     public let pluginID: String
     public let name: String
     public let version: String
+    public let priority: Int
 
-    public init(id: String, pluginID: String, name: String, version: String = "1.0.0") {
+    public init(
+        id: String,
+        pluginID: String,
+        name: String,
+        version: String = "1.0.0",
+        priority: Int = 0
+    ) {
         self.id = id
         self.pluginID = pluginID
         self.name = name
         self.version = version
+        self.priority = priority
     }
 }
 
-/// GitOK 内置后端目录。插件管理页用它展示尚未启用的后端，
-/// 实际可用性仍以 `GitProviding.availableBackends` 为准。
+/// GitOK 内置后端目录。
+///
+/// 目录只用于稳定标识和默认优先级，不代表用户可选择后端。
 public enum GitBackendCatalog {
     public static let cli = GitBackendDescriptor(
         id: "com.coffic.gitok.git-backend.cli",
         pluginID: "com.coffic.gitok.plugin.git-cli",
         name: "Git CLI",
-        version: "1.0.0"
+        version: "1.0.0",
+        priority: 100
     )
 
     public static let libGit2 = GitBackendDescriptor(
         id: "com.coffic.gitok.git-backend.libgit2",
         pluginID: "com.coffic.gitok.plugin.git-libgit2",
         name: "LibGit2",
-        version: "7005a738"
+        version: "7005a738",
+        priority: 50
     )
 
     public static let all: [GitBackendDescriptor] = [cli, libGit2]
@@ -40,19 +51,34 @@ public enum GitBackendCatalog {
 public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
     case noBackendAvailable
     case backendAlreadyRegistered(String)
-    case backendNotFound(String)
     case backendOperationUnsupported(String)
+    case allBackendsFailed(operation: String, failures: [GitBackendFailure])
+
+    public struct GitBackendFailure: Equatable, Sendable {
+        public let backendID: String
+        public let backendName: String
+        public let message: String
+
+        public init(backendID: String, backendName: String, message: String) {
+            self.backendID = backendID
+            self.backendName = backendName
+            self.message = message
+        }
+    }
 
     public var errorDescription: String? {
         switch self {
         case .noBackendAvailable:
-            "No Git backend is enabled."
+            return "No Git backend is available."
         case .backendAlreadyRegistered(let id):
-            "Git backend is already registered: \(id)"
-        case .backendNotFound(let id):
-            "Git backend is not available: \(id)"
+            return "Git backend is already registered: \(id)"
         case .backendOperationUnsupported(let message):
-            message
+            return message
+        case .allBackendsFailed(let operation, let failures):
+            let details = failures
+                .map { "\($0.backendName): \($0.message)" }
+                .joined(separator: "\n")
+            return "Git operation failed (\(operation)).\n\(details)"
         }
     }
 }
@@ -154,17 +180,21 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 /// 一个可被插件装配的 Git 实现。
 public protocol GitBackendProviding: GitOperationProviding {
     var descriptor: GitBackendDescriptor { get }
+    /// 后端初始化完成但当前环境不可用时，路由器会跳过该后端。
+    var isAvailable: Bool { get }
+}
+
+public extension GitBackendProviding {
+    var isAvailable: Bool { true }
 }
 
 /// 后端注册与选择能力。宿主只注册一个稳定的 GitProviding 路由器，
 /// 各后端插件通过此接口加入或撤出，不会互相抢占同一个 Provider 类型。
 public protocol GitBackendRegistryProviding: AnyObject {
     var availableBackends: [GitBackendDescriptor] { get }
-    var selectedBackendID: String? { get }
 
     func registerBackend(_ backend: any GitBackendProviding) throws
     func unregisterBackend(id: String)
-    func selectBackend(id: String) throws
 }
 
 /// 业务插件消费的稳定 Git Provider。

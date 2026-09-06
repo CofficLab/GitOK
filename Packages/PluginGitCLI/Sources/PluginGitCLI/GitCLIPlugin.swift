@@ -15,8 +15,7 @@ public final class GitCLIPlugin: SuperPlugin {
         description: "Provides Git operations through the system git command.",
         category: .core,
         stage: .stable,
-        policy: .enabledByDefault,
-        exclusiveGroup: "git-backend"
+        policy: .required
     )
 
     private let backend = GitCLIBackend()
@@ -44,7 +43,6 @@ public final class GitCLIPlugin: SuperPlugin {
             throw GitProviderError.noBackendAvailable
         }
         try registry.registerBackend(backend)
-        try registry.selectBackend(id: backend.descriptor.id)
     }
 
     private func unregister(from kernel: KernelCoreContainer) {

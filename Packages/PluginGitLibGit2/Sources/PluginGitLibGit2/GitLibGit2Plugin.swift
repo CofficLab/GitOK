@@ -13,8 +13,7 @@ public final class GitLibGit2Plugin: SuperPlugin {
         description: "Provides Git operations through LibGit2Swift.",
         category: .core,
         stage: .stable,
-        policy: .disabledByDefault,
-        exclusiveGroup: "git-backend"
+        policy: .required
     )
 
     private let backend = GitLibGit2Backend()
@@ -56,7 +55,6 @@ public final class GitLibGit2Plugin: SuperPlugin {
             throw GitProviderError.noBackendAvailable
         }
         try registry.registerBackend(backend)
-        try registry.selectBackend(id: backend.descriptor.id)
     }
 
     private func unregister(from kernel: KernelCoreContainer) {

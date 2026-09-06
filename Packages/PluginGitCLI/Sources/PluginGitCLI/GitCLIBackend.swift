@@ -10,6 +10,10 @@ import ProviderGit
 final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
     let descriptor = GitBackendCatalog.cli
 
+    var isAvailable: Bool {
+        FileManager.default.isExecutableFile(atPath: "/usr/bin/git")
+    }
+
     func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset)
     }
