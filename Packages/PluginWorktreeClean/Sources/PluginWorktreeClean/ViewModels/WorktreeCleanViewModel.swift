@@ -1,5 +1,6 @@
 import Foundation
 import KitGit
+import ProviderGit
 import ProviderGitUser
 import ProviderProjects
 
@@ -10,10 +11,18 @@ import ProviderProjects
 /// 视图只绑定本模型，不再直接读取 Provider 或监听系统通知。
 @MainActor
 final class WorktreeCleanViewModel: ObservableObject {
+    private let git: (any GitProviding)?
+    private let fallbackStatusLoader: (@Sendable (URL) throws -> GitWorktreeStatus)?
     private let ensureUserPreset: ((String, String) -> Void)?
 
-    init(ensureUserPreset: ((String, String) -> Void)? = nil) {
+    init(
+        git: (any GitProviding)? = nil,
+        ensureUserPreset: ((String, String) -> Void)? = nil,
+        fallbackStatusLoader: (@Sendable (URL) throws -> GitWorktreeStatus)? = nil
+    ) {
+        self.git = git
         self.ensureUserPreset = ensureUserPreset
+        self.fallbackStatusLoader = fallbackStatusLoader
     }
 
     /// 当前项目；未打开项目时为 nil。
@@ -200,8 +209,18 @@ final class WorktreeCleanViewModel: ObservableObject {
         }
 
         let url = project.url
+        let git = self.git
+        let fallbackStatusLoader = self.fallbackStatusLoader
         Task.detached(priority: .utility) {
-            let result = Result { try GitStatusLoader.loadStatus(in: url) }
+            let result = Result {
+                if let git {
+                    return try git.loadStatus(in: url)
+                }
+                if let fallbackStatusLoader {
+                    return try fallbackStatusLoader(url)
+                }
+                throw GitProviderError.noBackendAvailable
+            }
             await MainActor.run {
                 // 仅当仍指向同一项目、且仍未选中 commit 时应用结果，
                 // 且只接受最后一次检查结果，避免切换项目或连续事件造成旧状态覆盖。

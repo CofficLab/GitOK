@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
@@ -16,14 +17,17 @@ private func loc(_ key: String) -> String {
 /// 两个插件的内容块互斥，避免在内容区 VStack 中叠加。
 struct WorktreeCleanView: View {
     @ObservedObject var viewModel: WorktreeCleanViewModel
+    let git: any GitProviding
     let openUserSettings: (() -> Void)?
     @LumiTheme private var theme
 
     init(
         viewModel: WorktreeCleanViewModel,
+        git: any GitProviding,
         openUserSettings: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
+        self.git = git
         self.openUserSettings = openUserSettings
     }
 
@@ -62,6 +66,7 @@ struct WorktreeCleanView: View {
                 CleanStateInfoView(
                     project: project,
                     viewModel: viewModel,
+                    git: git,
                     openUserSettings: openUserSettings
                 )
             }

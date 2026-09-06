@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderContentView
+import ProviderGit
 import ProviderGitUser
 import ProviderGitRepositoryWatch
 import ProviderProjects
@@ -58,6 +59,10 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip content injection")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip clean-state content")
+            return
+        }
 
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
@@ -86,7 +91,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         // 装配阶段创建自有 ViewModel 与外部 Observer（Lumi 插件规范：
         // 插件入口是插件级外部监听的唯一持有者）。随后显式同步一次初始快照。
         let capability = WorktreeCleanProjectCapabilityAdapter(projects: projects)
-        let viewModel = WorktreeCleanViewModel(ensureUserPreset: ensureUserPreset)
+        let viewModel = WorktreeCleanViewModel(git: git, ensureUserPreset: ensureUserPreset)
         self.viewModel = viewModel
         observer = WorktreeCleanObserver(
             capability: capability,
@@ -132,7 +137,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         contentView.addContentView(
             AnyView(
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    WorktreeCleanView(viewModel: viewModel, openUserSettings: openUserSettings)
+                    WorktreeCleanView(viewModel: viewModel, git: git, openUserSettings: openUserSettings)
                 }
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
