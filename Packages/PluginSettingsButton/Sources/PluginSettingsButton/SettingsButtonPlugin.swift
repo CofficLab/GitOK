@@ -5,6 +5,7 @@ import os
 import ProviderSettingView
 import ProviderToolbar
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Settings Button SuperPlugin
 
@@ -37,6 +38,16 @@ public final class SettingsButtonPlugin: SuperPlugin, SuperLog {
     public static let toolbarItemID = "com.coffic.gitok.plugin.settings-button.openSettings"
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { SettingsButtonAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let toolbar = kernel.resolveProvider((any ToolbarProviding).self) else {
