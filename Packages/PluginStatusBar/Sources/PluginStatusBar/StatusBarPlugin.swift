@@ -6,6 +6,7 @@ import ProviderProjects
 import ProviderStatusBar
 import ProviderTheme
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Status Bar SuperPlugin
 
@@ -37,6 +38,16 @@ public final class StatusBarPlugin: SuperPlugin, SuperLog {
     public static let itemPrefix = "com.coffic.gitok.plugin.status-bar"
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { StatusBarAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
