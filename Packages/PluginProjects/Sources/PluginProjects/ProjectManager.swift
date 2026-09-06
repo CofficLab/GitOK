@@ -1,6 +1,7 @@
 import Foundation
 import KitGit
 import KitSuperLog
+import ProviderGit
 import os
 import ProviderProjects
 
@@ -44,6 +45,9 @@ public final class ProjectManager: ProjectProviding, SuperLog {
     /// 项目列表 JSON 文件的 URL。
     public private(set) var storeURL: URL
 
+    /// Git 操作通过稳定 Provider 注入；项目管理本身不再直接选择 CLI/LibGit2。
+    private var gitProvider: (any GitProviding)?
+
     /// 观察者集合（弱引用，自动清理失联者）。
     private var observers: [WeakObserver] = []
 
@@ -53,6 +57,10 @@ public final class ProjectManager: ProjectProviding, SuperLog {
             Self.logger.info("\(self.t)ProjectManager initialized, store: \(storeURL.path, privacy: .public)")
         }
         loadFromDisk()
+    }
+
+    public func setGitProvider(_ git: any GitProviding) {
+        gitProvider = git
     }
 
     // MARK: - ProjectProviding
@@ -228,8 +236,15 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         let hash = commit.hash
         commitFilesLoadToken &+= 1
         let token = commitFilesLoadToken
+        guard let git = gitProvider else {
+            isLoadingCommitFiles = false
+            currentCommitFiles = []
+            currentCommitFilesLoadError = GitProviderError.noBackendAvailable.localizedDescription
+            notify(.commitSelectionChanged)
+            return
+        }
         Task.detached(priority: .userInitiated) {
-            let result = Result { try GitDiffLoader.loadChanges(commit: hash, in: url) }
+            let result = Result { try git.loadChanges(commit: hash, in: url) }
             await MainActor.run {
                 guard token == self.commitFilesLoadToken else { return }
                 self.isLoadingCommitFiles = false

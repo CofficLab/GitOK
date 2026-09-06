@@ -2,11 +2,13 @@ import AppKit
 import KitGit
 import LumiUI
 import ProviderProjects
+import ProviderGit
 import SwiftUI
 
 /// 冲突文件列表：展示合并中的冲突文件，可复制路径或定位到 Finder。
 public struct ConflictResolverList: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @ObservedObject private var viewModel: GitConflictResolverViewModel
     private let onDismiss: (() -> Void)?
     @State private var conflictDiff: String?
@@ -16,10 +18,12 @@ public struct ConflictResolverList: View {
 
     public init(
         projects: any ProjectProviding,
+        git: any GitProviding,
         viewModel: GitConflictResolverViewModel,
         onDismiss: (() -> Void)? = nil
     ) {
         self.projects = projects
+        self.git = git
         _viewModel = ObservedObject(wrappedValue: viewModel)
         self.onDismiss = onDismiss
     }
@@ -228,7 +232,7 @@ public struct ConflictResolverList: View {
         actionError = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitMergeOperation.checkoutMergeFileVersion(path: file, version: version, in: url)
+                try git.checkoutMergeFileVersion(path: file, version: version, in: url)
                 await MainActor.run {
                     isActionRunning = false
                     projects.notifyDataChanged()
@@ -261,7 +265,7 @@ public struct ConflictResolverList: View {
                 if cherryPicking {
                     _ = try GitCherryPickOperation.continueCherryPick(in: url)
                 } else {
-                    _ = try GitMergeOperation.continueMerge(in: url)
+                    _ = try git.continueMerge(in: url)
                 }
                 await MainActor.run {
                     isActionRunning = false
@@ -286,7 +290,7 @@ public struct ConflictResolverList: View {
                 if cherryPicking {
                     _ = try GitCherryPickOperation.abortCherryPick(in: url)
                 } else {
-                    _ = try GitMergeOperation.abortMerge(in: url)
+                    _ = try git.abortMerge(in: url)
                 }
                 await MainActor.run {
                     isActionRunning = false
@@ -307,7 +311,7 @@ public struct ConflictResolverList: View {
         actionError = nil
         Task.detached(priority: .userInitiated) {
             do {
-                let diff = try GitMergeOperation.mergeFileDiff(path: file, in: url)
+                let diff = try git.mergeFileDiff(path: file, in: url)
                 await MainActor.run {
                     isActionRunning = false
                     conflictDiff = diff

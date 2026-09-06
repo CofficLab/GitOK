@@ -1,16 +1,19 @@
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
 /// 合并状态图标：点击弹出分支合并表单（对齐旧版 MergeStatusTile）。
 public struct MergeStatusTile: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
     @State private var isPresented = false
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -25,7 +28,7 @@ public struct MergeStatusTile: View {
                     }
                     .help(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
                     .popover(isPresented: $isPresented) {
-                        MergeForm(projects: projects)
+                        MergeForm(projects: projects, git: git)
                             .padding()
                             .frame(width: 280)
                     }
@@ -38,6 +41,7 @@ public struct MergeStatusTile: View {
 /// 分支合并表单：选择源/目标分支并执行合并。
 public struct MergeForm: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @State private var branches: [GitBranchSummary] = []
     @State private var sourceBranch: GitBranchSummary?
     @State private var targetBranch: GitBranchSummary?
@@ -45,8 +49,9 @@ public struct MergeForm: View {
     @State private var statusMessage: String?
     @State private var errorMessage: String?
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
     }
 
     public var body: some View {
@@ -110,7 +115,7 @@ public struct MergeForm: View {
     private func loadBranches() {
         guard let projectURL = projects.currentProject?.url else { return }
         Task.detached(priority: .userInitiated) {
-            let loaded = ((try? GitBranchOperation.listBranches(in: projectURL)) ?? [])
+            let loaded = ((try? git.listBranches(in: projectURL)) ?? [])
                 .filter { !$0.isRemote }
             await MainActor.run {
                 branches = loaded
@@ -129,7 +134,7 @@ public struct MergeForm: View {
         errorMessage = nil
         Task.detached(priority: .userInitiated) {
             do {
-                try GitMergeOperation.mergeBranches(
+                _ = try git.mergeBranches(
                     repository: projectURL,
                     sourceBranch: sourceBranch.name,
                     targetBranch: targetBranch.name

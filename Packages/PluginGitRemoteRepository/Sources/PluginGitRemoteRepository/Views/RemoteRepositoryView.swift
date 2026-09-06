@@ -1,6 +1,7 @@
 import AppKit
 import KitGit
 import LumiUI
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
@@ -8,11 +9,13 @@ import SwiftUI
 /// （对齐旧版 RemoteRepositoryStatusButton）。
 public struct RemoteRepositoryStatusButton: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
     @State private var isPresented = false
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -27,7 +30,7 @@ public struct RemoteRepositoryStatusButton: View {
                     }
                     .help(GitRemoteRepositoryLocalization.string("Manage Remote Repositories", bundle: .module))
                     .sheet(isPresented: $isPresented) {
-                        RemoteRepositoryView(projects: projects)
+                        RemoteRepositoryView(projects: projects, git: git)
                             .frame(minWidth: 520, minHeight: 420)
                     }
             }
@@ -39,6 +42,7 @@ public struct RemoteRepositoryStatusButton: View {
 /// 远程仓库管理面板：列出远程 + 添加/删除。
 public struct RemoteRepositoryView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     @Environment(\.dismiss) private var dismiss
 
     @State private var remotes: [GitRemoteSummary] = []
@@ -46,8 +50,9 @@ public struct RemoteRepositoryView: View {
     @State private var showAddRemote = false
     @State private var errorMessage: String?
 
-    public init(projects: any ProjectProviding) {
+    public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
+        self.git = git
     }
 
     public var body: some View {
@@ -114,7 +119,7 @@ public struct RemoteRepositoryView: View {
                     .truncationMode(.middle)
             }
             Spacer()
-            if let webURL = GitRemoteOperation.webLink(for: remote.url) {
+            if let webURL = git.webLink(for: remote.url) {
                 AppIconButton(systemImage: "safari", label: GitRemoteRepositoryLocalization.string("Open in Browser", bundle: .module), tint: theme.textSecondary) {
                     NSWorkspace.shared.open(webURL)
                 }
@@ -141,7 +146,7 @@ public struct RemoteRepositoryView: View {
         }
         isLoading = true
         Task.detached(priority: .userInitiated) {
-            let loaded = GitRemoteOperation.listRemotes(in: url)
+            let loaded = git.listRemotes(in: url)
             await MainActor.run {
                 remotes = loaded
                 isLoading = false
@@ -154,8 +159,8 @@ public struct RemoteRepositoryView: View {
         guard let projectURL = projects.currentProject?.url else { return }
         Task.detached(priority: .userInitiated) {
             do {
-                try GitRemoteOperation.addRemote(name: name, url: url, in: projectURL)
-                let loaded = GitRemoteOperation.listRemotes(in: projectURL)
+                try git.addRemote(name: name, url: url, in: projectURL)
+                let loaded = git.listRemotes(in: projectURL)
                 await MainActor.run {
                     remotes = loaded
                     errorMessage = nil
@@ -173,8 +178,8 @@ public struct RemoteRepositoryView: View {
         guard let projectURL = projects.currentProject?.url else { return }
         Task.detached(priority: .userInitiated) {
             do {
-                try GitRemoteOperation.removeRemote(name: remote.name, in: projectURL)
-                let loaded = GitRemoteOperation.listRemotes(in: projectURL)
+                try git.removeRemote(name: remote.name, in: projectURL)
+                let loaded = git.listRemotes(in: projectURL)
                 await MainActor.run {
                     remotes = loaded
                     errorMessage = nil

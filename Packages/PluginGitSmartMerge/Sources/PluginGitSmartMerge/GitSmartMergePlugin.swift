@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderWorkspaceScene
@@ -44,6 +45,10 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip merge item")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip merge item")
+            return
+        }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
@@ -61,7 +66,7 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
                 order: 24
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    MergeStatusTile(projects: projects)
+                    MergeStatusTile(projects: projects, git: git)
                 }
             },
         ])

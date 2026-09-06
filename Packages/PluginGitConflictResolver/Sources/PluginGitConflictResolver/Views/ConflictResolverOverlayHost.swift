@@ -1,5 +1,6 @@
 import LumiUI
 import ProviderProjects
+import ProviderGit
 import SwiftUI
 
 /// 根视图级冲突弹层宿主。
@@ -10,6 +11,7 @@ import SwiftUI
 struct ConflictResolverOverlayHost: View {
     let content: AnyView
     let projects: any ProjectProviding
+    let git: any GitProviding
     @ObservedObject var viewModel: GitConflictResolverViewModel
 
     var body: some View {
@@ -24,6 +26,7 @@ struct ConflictResolverOverlayHost: View {
 
                 ConflictResolverList(
                     projects: projects,
+                    git: git,
                     viewModel: viewModel,
                     onDismiss: viewModel.dismiss
                 )

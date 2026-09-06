@@ -796,7 +796,7 @@ struct CommitRailView: View {
         let url = project.url
         Task.detached(priority: .userInitiated) {
             do {
-                try GitRemoteOperation.push(in: url)
+                _ = try git.push(in: url)
                 await MainActor.run {
                     isPushing = false
                     pushPopoverCommitHash = nil
