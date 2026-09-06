@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitLocalization"),
+        .package(path: "../ProviderDocsView"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderToolbar"),
@@ -26,6 +27,7 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToolbar", package: "ProviderToolbar"),
