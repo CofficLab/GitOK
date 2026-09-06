@@ -23,6 +23,7 @@ let package = Package(
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderSettingView"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -40,6 +41,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginWorktreeClean",
             resources: [

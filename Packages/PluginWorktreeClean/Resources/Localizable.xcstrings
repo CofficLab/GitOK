@@ -1,172 +1,240 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "Working Tree Clean": {
+    "Add a user preset in User Info settings.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Working Tree Clean"
+            "value": "Add a user preset in User Info settings."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "工作区干净"
+            "value": "请在用户信息设置中添加预设。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "工作區乾淨"
+            "value": "請在使用者資訊設定中新增預設。"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "工作區乾淨"
+            "value": "請在使用者資訊設定中新增預設。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "工作區乾淨"
+            "value": "請在使用者資訊設定中新增預設。"
           }
         }
       }
     },
-    "No uncommitted changes.": {
+    "Add, edit, or delete user presets.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No uncommitted changes."
+            "value": "Add, edit, or delete user presets."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "没有未提交的更改。"
+            "value": "添加、编辑或删除用户预设。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "沒有未提交的變更。"
+            "value": "新增、編輯或刪除使用者預設。"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "沒有未提交的變更。"
+            "value": "新增、編輯或刪除使用者預設。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "沒有未提交的變更。"
+            "value": "新增、編輯或刪除使用者預設。"
           }
         }
       }
     },
-    "Repository Info": {
+    "Analyze": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Repository Info"
+            "value": "Analyze"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "仓库信息"
+            "value": "分析"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫資訊"
+            "value": "分析"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫資訊"
+            "value": "分析"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "儲存庫資訊"
+            "value": "分析"
           }
         }
       }
     },
-    "Git User Configuration": {
+    "Apply": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Git User Configuration"
+            "value": "Apply"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Git 用户配置"
+            "value": "应用"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Git 使用者設定"
+            "value": "套用"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "Git 使用者設定"
+            "value": "套用"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "Git 使用者設定"
+            "value": "套用"
           }
         }
       }
     },
-    "Local Repository": {
+    "Clean": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Local Repository"
+            "value": "Clean"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "本地仓库"
+            "value": "干净"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "本機儲存庫"
+            "value": "乾淨"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "本機儲存庫"
+            "value": "乾淨"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "本機儲存庫"
+            "value": "乾淨"
+          }
+        }
+      }
+    },
+    "Confirm, and the clutter is removed.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm, and the clutter is removed."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认后，杂乱被移除。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認後，雜亂被移除。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認後，雜亂被移除。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認後，雜亂被移除。"
+          }
+        }
+      }
+    },
+    "Core Capabilities": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core Capabilities"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         }
       }
@@ -205,172 +273,70 @@
         }
       }
     },
-    "Remote Repository (%@)": {
+    "Dry Run": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remote Repository (%@)"
+            "value": "Dry Run"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "远程仓库 (%@)"
+            "value": "试运行"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端儲存庫 (%@)"
+            "value": "試運行"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端儲存庫 (%@)"
+            "value": "試運行"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端儲存庫 (%@)"
+            "value": "試運行"
           }
         }
       }
     },
-    "Remote Repository": {
+    "Dry Run First": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remote Repository"
+            "value": "Dry Run First"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "远程仓库"
+            "value": "先试运行"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端儲存庫"
+            "value": "先試運行"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端儲存庫"
+            "value": "先試運行"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端儲存庫"
-          }
-        }
-      }
-    },
-    "Not Configured": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not Configured"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未配置"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定"
-          }
-        }
-      }
-    },
-    "User Name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "User Name"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "用户名"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用者名稱"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用者名稱"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用者名稱"
-          }
-        }
-      }
-    },
-    "user.name not configured": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "user.name not configured"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未配置 user.name"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定 user.name"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定 user.name"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未設定 user.name"
+            "value": "先試運行"
           }
         }
       }
@@ -409,6 +375,890 @@
         }
       }
     },
+    "Git User Configuration": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git User Configuration"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 用户配置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 使用者設定"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 使用者設定"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 使用者設定"
+          }
+        }
+      }
+    },
+    "Git User Presets": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git User Presets"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 用户预设"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 使用者預設"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 使用者預設"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 使用者預設"
+          }
+        }
+      }
+    },
+    "Git reports what is untracked or ignored.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git reports what is untracked or ignored."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 报告未跟踪或被忽略的内容。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 報告未跟蹤或被忽略的內容。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 報告未跟蹤或被忽略的內容。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 報告未跟蹤或被忽略的內容。"
+          }
+        }
+      }
+    },
+    "How It Works": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How It Works"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
+          }
+        }
+      }
+    },
+    "Ignored": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignored"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已忽略"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已忽略"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已忽略"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已忽略"
+          }
+        }
+      }
+    },
+    "Local Repository": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local Repository"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地仓库"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本機儲存庫"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本機儲存庫"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本機儲存庫"
+          }
+        }
+      }
+    },
+    "Manage Presets": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage Presets"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理预设"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理預設"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理預設"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理預設"
+          }
+        }
+      }
+    },
+    "No Presets": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Presets"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无预设"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫無預設"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫無預設"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫無預設"
+          }
+        }
+      }
+    },
+    "No uncommitted changes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No uncommitted changes."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有未提交的更改。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有未提交的變更。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有未提交的變更。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有未提交的變更。"
+          }
+        }
+      }
+    },
+    "Not Configured": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not Configured"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未配置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定"
+          }
+        }
+      }
+    },
+    "Preview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预览"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預覽"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預覽"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預覽"
+          }
+        }
+      }
+    },
+    "Preview every file that would be removed before anything happens.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview every file that would be removed before anything happens."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在动手前预览每个将被移除的文件。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在動手前預覽每個將被移除的文件。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在動手前預覽每個將被移除的文件。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在動手前預覽每個將被移除的文件。"
+          }
+        }
+      }
+    },
+    "Protected by Default": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protected by Default"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认受保护"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默認受保護"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默認受保護"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默認受保護"
+          }
+        }
+      }
+    },
+    "Remote Repository": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote Repository"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程仓库"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫"
+          }
+        }
+      }
+    },
+    "Remote Repository (%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote Repository (%@)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程仓库 (%@)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫 (%@)"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫 (%@)"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠端儲存庫 (%@)"
+          }
+        }
+      }
+    },
+    "Remove stray untracked files and directories safely.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove stray untracked files and directories safely."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安全移除游离的未跟踪文件与目录。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安全移除遊離的未跟蹤文件與目錄。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安全移除遊離的未跟蹤文件與目錄。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安全移除遊離的未跟蹤文件與目錄。"
+          }
+        }
+      }
+    },
+    "Repository Info": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository Info"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库信息"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫資訊"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫資訊"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫資訊"
+          }
+        }
+      }
+    },
+    "Sweep away clutter and keep your repository pristine.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sweep away clutter and keep your repository pristine."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扫走杂乱，让仓库保持纯净。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "掃走雜亂，讓倉庫保持純淨。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "掃走雜亂，讓倉庫保持純淨。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "掃走雜亂，讓倉庫保持純淨。"
+          }
+        }
+      }
+    },
+    "Tracked content is never touched, only verified clutter goes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tracked content is never touched, only verified clutter goes."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已跟踪内容绝不触碰，只清除确认的杂乱。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已跟蹤內容絕不觸碰，只清除確認的雜亂。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已跟蹤內容絕不觸碰，只清除確認的雜亂。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已跟蹤內容絕不觸碰，只清除確認的雜亂。"
+          }
+        }
+      }
+    },
+    "Untracked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untracked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟踪"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤"
+          }
+        }
+      }
+    },
+    "Untracked Cleanup": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untracked Cleanup"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟踪清理"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤清理"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤清理"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤清理"
+          }
+        }
+      }
+    },
+    "User Name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User Name"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用户名"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者名稱"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者名稱"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用者名稱"
+          }
+        }
+      }
+    },
+    "Working Tree Clean": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working Tree Clean"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作区干净"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作區乾淨"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作區乾淨"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作區乾淨"
+          }
+        }
+      }
+    },
+    "You review the exact list in a dry run.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You review the exact list in a dry run."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在试运行中审阅确切清单。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在試運行中審閱確切清單。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在試運行中審閲確切清單。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在試運行中審閱確切清單。"
+          }
+        }
+      }
+    },
+    "click to clean": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "click to clean"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一键清理"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一鍵清理"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一鍵清理"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一鍵清理"
+          }
+        }
+      }
+    },
+    "risk with dry run": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "risk with dry run"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "试运行风险"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "試運行風險"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "試運行風險"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "試運行風險"
+          }
+        }
+      }
+    },
     "user.email not configured": {
       "localizations": {
         "en": {
@@ -443,58 +1293,38 @@
         }
       }
     },
-    "Git User Presets": {
+    "user.name not configured": {
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Git User Presets" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "Git 用户预设" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Git 使用者預設" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "Git 使用者預設" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "Git 使用者預設" } }
-      }
-    },
-    "No Presets": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "No Presets" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "暂无预设" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "暫無預設" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "暫無預設" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "暫無預設" } }
-      }
-    },
-    "Add a user preset in User Info settings.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Add a user preset in User Info settings." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "请在用户信息设置中添加预设。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "請在使用者資訊設定中新增預設。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "請在使用者資訊設定中新增預設。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "請在使用者資訊設定中新增預設。" } }
-      }
-    },
-    "Manage Presets": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Manage Presets" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "管理预设" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "管理預設" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "管理預設" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "管理預設" } }
-      }
-    },
-    "Add, edit, or delete user presets.": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Add, edit, or delete user presets." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "添加、编辑或删除用户预设。" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "新增、編輯或刪除使用者預設。" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "新增、編輯或刪除使用者預設。" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "新增、編輯或刪除使用者預設。" } }
-      }
-    },
-    "Apply": {
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Apply" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "应用" } },
-        "zh-Hant": { "stringUnit": { "state": "translated", "value": "套用" } },
-        "zh-HK": { "stringUnit": { "state": "translated", "value": "套用" } },
-        "zh-TW": { "stringUnit": { "state": "translated", "value": "套用" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "user.name not configured"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未配置 user.name"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定 user.name"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定 user.name"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定 user.name"
+          }
+        }
       }
     }
   },

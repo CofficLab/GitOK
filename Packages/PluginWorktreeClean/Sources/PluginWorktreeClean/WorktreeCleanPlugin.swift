@@ -10,6 +10,7 @@ import ProviderProjects
 import ProviderSettingView
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Worktree Clean SuperPlugin
 
@@ -49,6 +50,16 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     private var sceneObserver: WorktreeCleanSceneObserver?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { WorktreeCleanAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let contentView = kernel.resolveProvider((any ContentViewProviding).self) else {
