@@ -5,7 +5,7 @@ import KitGit
 ///
 /// 路由器由宿主注册一次；CLI / LibGit2 插件只注册具体后端。路由器本身
 /// 不携带 Git 实现，因此切换或禁用后端不会改变业务插件依赖的 Provider 身份。
-public final class DefaultGitProvider: GitProviding {
+public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
     private let lock = NSLock()
     private var backends: [String: any GitBackendProviding] = [:]
     private var selectedID: String?

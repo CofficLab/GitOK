@@ -37,7 +37,7 @@ public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
 /// 业务插件只依赖这个协议，不再直接依赖 CLI 或 LibGit2。当前先覆盖
 /// 现有 GitOK 中最常用的读取、提交、分支、远程和合并能力；后续能力继续
 /// 以同一协议扩展，模型仍复用 KitGit 的公共值类型。
-public protocol GitOperationProviding: AnyObject {
+public protocol GitOperationProviding: AnyObject, Sendable {
     func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit]
     func unpushedCommitHashes(in repository: URL) throws -> Set<String>
 

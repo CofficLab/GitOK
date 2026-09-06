@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 import ProviderRailView
 import ProviderWorkspaceScene
@@ -55,6 +56,10 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip rail section injection")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip rail section injection")
+            return
+        }
 
         // GitRepositoryWatching 可选：插件可能未注册（例如测试环境），此时仅依赖 ProjectProviding 刷新
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
@@ -67,7 +72,7 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         let section = RailSectionItem(id: "\(id).section", order: 20) {
             WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                CommitRailView(projects: projects, gitWatch: gitWatch)
+                CommitRailView(projects: projects, git: git, gitWatch: gitWatch)
             }
         }
         self.sceneViewModel = sceneViewModel

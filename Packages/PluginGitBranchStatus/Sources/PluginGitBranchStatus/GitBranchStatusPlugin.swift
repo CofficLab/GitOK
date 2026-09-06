@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
 import ProviderToolbar
@@ -45,6 +46,10 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip branch status plugin")
             return
         }
+        guard let git = kernel.resolveProvider((any GitProviding).self) else {
+            Self.logger.error("\(self.t)GitProviding not registered; skip branch status plugin")
+            return
+        }
         guard let scene = kernel.resolveProvider((any WorkspaceSceneProviding).self) else {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
@@ -58,7 +63,11 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
         let branchCapability = GitBranchStatusCapabilityAdapter(projects: projects, gitWatch: gitWatch)
         let branchViewModel = GitBranchStatusViewModel()
         self.branchViewModel = branchViewModel
-        self.branchObserver = GitBranchStatusObserver(capability: branchCapability, viewModel: branchViewModel)
+        self.branchObserver = GitBranchStatusObserver(
+            capability: branchCapability,
+            git: git,
+            viewModel: branchViewModel
+        )
 
         // 工具栏右上角：分支选择器（显示当前分支 + 切换分支）。
         if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {

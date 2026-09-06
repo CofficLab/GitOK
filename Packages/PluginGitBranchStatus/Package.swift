@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../KernelCore"),
         .package(path: "../KitGit"),
+        .package(path: "../ProviderGit"),
         .package(path: "../KitSuperLog"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderGitRepositoryWatch"),
@@ -30,6 +31,7 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),

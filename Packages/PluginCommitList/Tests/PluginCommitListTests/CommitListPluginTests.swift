@@ -2,8 +2,10 @@ import Foundation
 import KernelCore
 import KitGit
 import ProviderProjects
+import ProviderGit
 import ProviderRailView
 import ProviderRootView
+import ProviderWorkspaceScene
 import SwiftUI
 import XCTest
 @testable import PluginCommitList
@@ -63,6 +65,11 @@ final class CommitListPluginTests: XCTestCase {
         let rail = DefaultRailViewProviding()
         try kernel.registerProvider((any RailViewProviding).self, rail)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
+        try kernel.registerProvider(
+            (any WorkspaceSceneProviding).self,
+            DefaultWorkspaceSceneProvider()
+        )
         return (kernel, rail)
     }
 

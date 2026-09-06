@@ -1,6 +1,7 @@
 import KitGit
 import LumiUI
 import ProviderGitRepositoryWatch
+import ProviderGit
 import ProviderProjects
 import SwiftUI
 
@@ -32,6 +33,7 @@ private extension GitRemoteOperation.SyncStep {
 /// 用户点选 commit 行后取消选中，背景恢复 `theme.surface`。
 struct WorkingTreeStatusView: View {
     let projects: any ProjectProviding
+    let git: any GitProviding
     let gitWatch: (any GitRepositoryWatching)?
     let syncFailureCenter: WorktreeSyncFailureCenter?
     @LumiTheme private var theme
@@ -56,10 +58,12 @@ struct WorkingTreeStatusView: View {
 
     init(
         projects: any ProjectProviding,
+        git: any GitProviding,
         gitWatch: (any GitRepositoryWatching)? = nil,
         syncFailureCenter: WorktreeSyncFailureCenter? = nil
     ) {
         self.projects = projects
+        self.git = git
         self.gitWatch = gitWatch
         self.syncFailureCenter = syncFailureCenter
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
@@ -233,7 +237,7 @@ struct WorkingTreeStatusView: View {
         activityStatus = loc("Synchronizing")
         let url = project.url
         Task.detached(priority: .userInitiated) {
-            let result = Result { try GitRemoteOperation.synchronize(in: url) }
+            let result = Result { try git.synchronize(in: url) }
             await MainActor.run {
                 isSynchronizing = false
                 activityStatus = nil
@@ -253,7 +257,7 @@ struct WorkingTreeStatusView: View {
         activityStatus = loc("Pushing")
         let url = project.url
         Task.detached(priority: .userInitiated) {
-            let result = Result { try GitCommitOperation.push(in: url) }
+            let result = Result { try git.push(in: url) }
             await MainActor.run {
                 isPushing = false
                 activityStatus = nil
@@ -279,7 +283,7 @@ struct WorkingTreeStatusView: View {
             // Merge 冲突由 GitConflictResolverPlugin 接管并自动打开冲突面板；
             // 不再叠加阻断层，避免把可操作的冲突解决 UI 盖住。
             if case .merge = syncError.step,
-               GitMergeOperation.hasConflictOperation(in: repository) {
+               git.hasConflictOperation(in: repository) {
                 reloadIfNeeded(force: true)
                 return
             }
@@ -318,8 +322,8 @@ struct WorkingTreeStatusView: View {
 
         let url = project.url
         Task.detached(priority: .userInitiated) {
-            let statusResult = Result { try GitStatusLoader.loadStatus(in: url) }
-            let tracking = GitRefReader.remoteTrackingStatus(in: url)
+            let statusResult = Result { try git.loadStatus(in: url) }
+            let tracking = git.remoteTrackingStatus(in: url)
             await MainActor.run {
                 isLoading = false
                 if case .success(let loaded) = statusResult {

@@ -7,7 +7,7 @@ import ProviderGit
 /// KitGit 目前仍保留原有的 CLI 操作实现；这里将它适配到 Provider 契约，
 /// 让业务插件不再需要知道这些静态操作类型。后续 LibGit2 插件实现同一
 /// `GitBackendProviding`，即可在路由器层切换实现。
-final class GitCLIBackend: GitBackendProviding {
+final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
     let descriptor = GitBackendDescriptor(
         id: "com.coffic.gitok.git-backend.cli",
         name: "Git CLI",
