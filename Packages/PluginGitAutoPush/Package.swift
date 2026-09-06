@@ -26,6 +26,7 @@ let package = Package(
         .package(path: "../ProviderStatusBar"),
         .package(path: "../ProviderStorage"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -43,6 +44,7 @@ let package = Package(
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginGitAutoPush",
             resources: [
