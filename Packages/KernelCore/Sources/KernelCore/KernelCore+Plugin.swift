@@ -86,6 +86,7 @@ extension KernelCoreContainer {
 
         setLifecycleState(.starting)
         var bootedIDs: [String] = []
+        var enabledExclusiveGroups: Set<String> = []
 
         do {
             for plugin in sorted {
@@ -96,6 +97,17 @@ extension KernelCoreContainer {
                 // 用户已禁用的插件仅注册、不 Boot：跳过 onBoot/onReady，
                 // 等待运行时 enablePlugin 时再恢复。
                 guard isPluginEnabled(id: plugin.id) else { continue }
+
+                // 同一互斥组在启动时也只能有一个成员运行。按稳定 order
+                // 保留第一个，避免历史状态文件曾同时保存多个后端为 enabled
+                // 时把两套实现一起装配。
+                if let group = plugin.metadata.exclusiveGroup {
+                    guard enabledExclusiveGroups.insert(group).inserted else {
+                        pluginEnabledStates[plugin.id] = false
+                        persistEnabledState(false, pluginID: plugin.id)
+                        continue
+                    }
+                }
 
                 activePluginID = plugin.id
                 activePluginLifecyclePhase = .boot

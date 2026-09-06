@@ -4,6 +4,7 @@ import KitGit
 import ProviderProjects
 import ProviderGit
 import ProviderRootView
+import ProviderStorage
 import ProviderToast
 import ProviderToolbar
 import ProviderWorkspaceScene
@@ -21,6 +22,14 @@ import PluginToast
 /// `.alwaysOn`）不在此基线断言范围内，各自有独立的插件级测试。
 @MainActor
 final class KernelBootIntegrationTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        let stateFile = DefaultStorageProvider.makeDefaultDataRootDirectory()
+            .appendingPathComponent("com.coffic.gitok.plugin.plugin-manager", isDirectory: true)
+            .appendingPathComponent("plugin-enabled-overrides.plist", isDirectory: false)
+        try? FileManager.default.removeItem(at: stateFile)
+    }
+
     /// 默认 disabled 插件不启动；核心 Toast 插件会替换宿主 no-op provider。
     func testBootDefaultsToDisabledPlugins() throws {
         let kernel = try KernelFactory.makeKernel()
