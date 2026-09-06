@@ -3,6 +3,7 @@ import os
 import ProviderLogo
 import KitSuperLog
 import SwiftUI
+import ProviderDocsView
 
 /// Coffic Logo 插件
 ///
@@ -30,6 +31,16 @@ public final class LogoCofficPlugin: SuperPlugin, SuperLog {
     )
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { LogoCofficAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let logo = kernel.resolveProvider((any LogoProviding).self) else {
