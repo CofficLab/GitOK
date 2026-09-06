@@ -7,6 +7,7 @@ import ProviderGit
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDocsView
 
 // MARK: - Git Unpushed Status SuperPlugin
 
@@ -35,6 +36,16 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
     private var sceneObserver: GitUnpushedStatusSceneObserver?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { GitUnpushedStatusAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
