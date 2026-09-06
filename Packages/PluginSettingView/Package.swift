@@ -19,6 +19,7 @@ let package = Package(
         .package(path: "../ProviderSettingView"),
         .package(path: "../KitSuperLog"),
         .package(path: "../KitLocalization"),
+        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -29,6 +30,7 @@ let package = Package(
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             resources: [.process("../../Resources/Localizable.xcstrings")]
         ),

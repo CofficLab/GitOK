@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderSettingView
+import ProviderDocsView
 
 /// 设置视图管理器插件（KernelCore 生态）。
 ///
@@ -34,6 +35,16 @@ public final class PluginSettingView: SuperPlugin, SuperLog {
     private var manager: SettingViewManager?
 
     public init() {}
+
+    public func onRegister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
+            DocsEntry(id: id, name: metadata.name) { PluginSettingViewAboutView() }
+        )
+    }
+
+    public func onUnregister(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider((any DocsViewProviding).self)?.removeEntries(id: id)
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         let manager = SettingViewManager()
