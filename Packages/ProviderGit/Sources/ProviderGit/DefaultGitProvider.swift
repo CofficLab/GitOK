@@ -131,6 +131,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         primaryBackendOrNil()?.currentBranch(in: repository)
     }
 
+    public func latestTag(in repository: URL) -> String? {
+        primaryBackendOrNil()?.latestTag(in: repository)
+    }
+
     public func unpushedCount(in repository: URL) -> Int? {
         primaryBackendOrNil()?.unpushedCount(in: repository)
     }

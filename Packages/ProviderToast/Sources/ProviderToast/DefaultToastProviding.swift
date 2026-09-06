@@ -11,4 +11,12 @@ public final class DefaultToastProviding: ToastProviding {
     public func show(_ toast: LumiToast) {
         // no-op：骨架阶段不渲染，静默丢弃。
     }
+
+    public func presentError(title: String, message: String) {
+        // no-op：骨架阶段不渲染，静默丢弃。
+    }
+
+    public func dismissError() {
+        // no-op：骨架阶段不渲染，静默丢弃。
+    }
 }

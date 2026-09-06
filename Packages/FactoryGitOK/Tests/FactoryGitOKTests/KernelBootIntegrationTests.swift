@@ -63,9 +63,9 @@ final class KernelBootIntegrationTests: XCTestCase {
 
         XCTAssertTrue(
             kernel.resolveProvider((any RootViewProviding).self)?.overlays.contains {
-                $0.id == "com.coffic.gitok.plugin.worktree-status.sync-failure"
+                $0.id == "toast"
             } == true,
-            "worktree sync failures should be mounted as a root overlay"
+            "toast and persistent error notices should share the toast root overlay"
         )
         XCTAssertTrue(
             kernel.resolveProvider((any RootViewProviding).self)?.overlays.contains {

@@ -10,6 +10,19 @@ public enum GitRefReader {
         return value
     }
 
+    /// 当前 HEAD 可追溯到的最近 tag（`git describe --tags --abbrev=0`）。
+    ///
+    /// 没有 tag、仓库尚未产生 commit 或当前 HEAD 不可解析时返回 nil。
+    public static func latestTag(in repository: URL) -> String? {
+        let out = try? GitProcessRunner.run(
+            ["describe", "--tags", "--abbrev=0", "HEAD"],
+            in: repository
+        )
+        let value = out?.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let value, !value.isEmpty else { return nil }
+        return value
+    }
+
     /// 当前分支相对上游未推送的提交数（`git rev-list --count @{u}..HEAD`）。
     ///
     /// 没有上游分支（未 push 过）时返回 nil，调用方应隐藏未推送提示。

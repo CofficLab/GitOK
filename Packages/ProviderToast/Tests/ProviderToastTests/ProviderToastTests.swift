@@ -7,10 +7,17 @@ final class ProviderToastTests: XCTestCase {
     /// 测试用实现：记录收到的 Toast。
     private final class RecordingToastProvider: ToastProviding {
         var received: [LumiToast] = []
+        var receivedErrors: [LumiErrorNotice] = []
 
         func show(_ toast: LumiToast) {
             received.append(toast)
         }
+
+        func presentError(title: String, message: String) {
+            receivedErrors.append(LumiErrorNotice(title: title, message: message))
+        }
+
+        func dismissError() {}
     }
 
     func testToastValueSemantics() {
@@ -43,6 +50,16 @@ final class ProviderToastTests: XCTestCase {
         let recording = provider as! RecordingToastProvider
         XCTAssertEqual(recording.received.count, 1)
         XCTAssertEqual(recording.received[0].title, "hello")
+    }
+
+    func testPersistentErrorIsAvailableThroughProtocol() {
+        let provider = RecordingToastProvider()
+
+        provider.presentError(title: "Pull failed", message: "hint: divergent branches")
+
+        XCTAssertEqual(provider.receivedErrors.count, 1)
+        XCTAssertEqual(provider.receivedErrors[0].title, "Pull failed")
+        XCTAssertEqual(provider.receivedErrors[0].message, "hint: divergent branches")
     }
 
     // MARK: - DefaultToastProviding

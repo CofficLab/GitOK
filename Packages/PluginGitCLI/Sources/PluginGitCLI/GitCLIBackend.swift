@@ -46,6 +46,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitRefReader.currentBranch(in: repository)
     }
 
+    func latestTag(in repository: URL) -> String? {
+        GitRefReader.latestTag(in: repository)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         GitRefReader.unpushedCount(in: repository)
     }

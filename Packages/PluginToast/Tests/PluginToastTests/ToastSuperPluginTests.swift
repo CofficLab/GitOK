@@ -36,4 +36,16 @@ final class ToastSuperPluginTests: XCTestCase {
         center.dismiss()
         XCTAssertNil(center.currentToast)
     }
+
+    func testPersistentErrorRequiresExplicitDismissal() {
+        let center = ToastCenter()
+        center.presentError(title: "Pull failed", message: "hint: divergent branches")
+
+        XCTAssertEqual(center.currentError?.title, "Pull failed")
+        XCTAssertEqual(center.currentError?.message, "hint: divergent branches")
+
+        center.dismissError()
+
+        XCTAssertNil(center.currentError)
+    }
 }

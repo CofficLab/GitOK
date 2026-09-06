@@ -152,6 +152,23 @@ final class GitRefReaderTests: XCTestCase {
         XCTAssertNil(GitRefReader.currentBranch(in: repo))
     }
 
+    func testLatestTagFollowsCurrentHeadHistory() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        XCTAssertNil(GitRefReader.latestTag(in: repo))
+
+        _ = try runGit(["tag", "v1.0.0"], in: repo)
+        XCTAssertEqual(GitRefReader.latestTag(in: repo), "v1.0.0")
+
+        try Data("next\n".utf8).write(to: repo.appendingPathComponent("README.md"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "next", in: repo)
+        _ = try runGit(["tag", "v2.0.0"], in: repo)
+
+        XCTAssertEqual(GitRefReader.latestTag(in: repo), "v2.0.0")
+    }
+
     func testHasRemotes() throws {
         let repo = try makeRepo()
         defer { try? FileManager.default.removeItem(at: repo) }

@@ -11,7 +11,7 @@ import os
 
 /// Toast 插件：实现 `ToastProviding` 能力。
 ///
-/// 在 `onBoot` 中注册 `ToastCenter`（替换式节流 + 自动消失），并通过
+/// 在 `onBoot` 中注册 `ToastCenter`（替换式节流 + 自动消失 + 持久错误面板），并通过
 /// `RootViewProviding` 的覆盖层（overlays）把 `ToastOverlay` 挂到根视图，
 /// 让所有 toast 显示在窗口顶部。
 /// 任何持有内核的代码可通过
@@ -86,6 +86,8 @@ public final class ToastSuperPlugin: SuperPlugin, SuperLog {
 public final class ToastCenter: ObservableObject, ToastProviding {
     /// 当前显示的 toast；`nil` 表示不显示。
     @Published public private(set) var currentToast: LumiToast?
+    /// 当前需要用户明确关闭的错误；`nil` 表示不显示错误面板。
+    @Published public private(set) var currentError: LumiErrorNotice?
 
     private var dismissTask: Task<Void, Never>?
     private static let defaultDisplayDuration: Duration = .seconds(3)
@@ -107,9 +109,18 @@ public final class ToastCenter: ObservableObject, ToastProviding {
         }
     }
 
+    public func presentError(title: String, message: String) {
+        currentError = LumiErrorNotice(title: title, message: message)
+    }
+
+    public func dismissError() {
+        currentError = nil
+    }
+
     /// 立即隐藏当前 toast（供测试与调试）。
     public func dismiss() {
         dismissTask?.cancel()
         currentToast = nil
+        currentError = nil
     }
 }
