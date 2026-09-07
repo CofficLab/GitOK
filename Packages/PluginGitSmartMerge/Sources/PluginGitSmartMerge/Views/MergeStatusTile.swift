@@ -1,3 +1,4 @@
+import Foundation
 import KitGit
 import LumiUI
 import ProviderGit
@@ -8,12 +9,18 @@ import SwiftUI
 public struct MergeStatusTile: View {
     let projects: any ProjectProviding
     let git: any GitProviding
+    let storageDirectory: URL?
     @StateObject private var observation: ProjectObservationModel
     @State private var isPresented = false
 
-    public init(projects: any ProjectProviding, git: any GitProviding) {
+    public init(
+        projects: any ProjectProviding,
+        git: any GitProviding,
+        storageDirectory: URL? = nil
+    ) {
         self.projects = projects
         self.git = git
+        self.storageDirectory = storageDirectory
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -28,7 +35,11 @@ public struct MergeStatusTile: View {
                     }
                     .help(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
                     .popover(isPresented: $isPresented) {
-                        MergeForm(projects: projects, git: git)
+                        MergeForm(
+                            projects: projects,
+                            git: git,
+                            storageDirectory: storageDirectory
+                        )
                             .padding()
                             .frame(width: 280)
                     }
@@ -42,16 +53,24 @@ public struct MergeStatusTile: View {
 public struct MergeForm: View {
     let projects: any ProjectProviding
     let git: any GitProviding
+    private let selectionStore: MergeSelectionStore
     @State private var branches: [GitBranchSummary] = []
     @State private var sourceBranch: GitBranchSummary?
     @State private var targetBranch: GitBranchSummary?
     @State private var isWorking = false
     @State private var statusMessage: String?
     @State private var errorMessage: String?
+    @State private var didRestoreSelection = false
+    @State private var loadToken = 0
 
-    public init(projects: any ProjectProviding, git: any GitProviding) {
+    public init(
+        projects: any ProjectProviding,
+        git: any GitProviding,
+        storageDirectory: URL? = nil
+    ) {
         self.projects = projects
         self.git = git
+        self.selectionStore = MergeSelectionStore(storageDirectory: storageDirectory)
     }
 
     public var body: some View {
@@ -109,26 +128,66 @@ public struct MergeForm: View {
             }
         }
         .onAppear(perform: loadBranches)
+        .onChange(of: projects.currentProject?.url) { _, _ in
+            loadBranches()
+        }
+        .onChange(of: sourceBranch?.name) { _, _ in
+            persistSelectionIfReady()
+        }
+        .onChange(of: targetBranch?.name) { _, _ in
+            persistSelectionIfReady()
+        }
     }
 
     @MainActor
     private func loadBranches() {
         guard let projectURL = projects.currentProject?.url else { return }
+        loadToken &+= 1
+        let token = loadToken
+        didRestoreSelection = false
+        sourceBranch = nil
+        targetBranch = nil
+        let savedSelection = selectionStore.selection(for: projectURL)
         Task.detached(priority: .userInitiated) {
             let loaded = ((try? git.listBranches(in: projectURL)) ?? [])
                 .filter { !$0.isRemote }
             await MainActor.run {
+                guard token == loadToken,
+                      projects.currentProject?.url == projectURL else { return }
                 branches = loaded
-                sourceBranch = loaded.first(where: { !$0.isCurrent }) ?? loaded.first
-                targetBranch = loaded.first(where: \.isCurrent) ?? loaded.first
+                sourceBranch = savedSelection?.sourceBranchName
+                    .flatMap { name in loaded.first(where: { $0.name == name }) }
+                    ?? loaded.first(where: { !$0.isCurrent })
+                    ?? loaded.first
+                targetBranch = savedSelection?.targetBranchName
+                    .flatMap { name in loaded.first(where: { $0.name == name }) }
+                    ?? loaded.first(where: \.isCurrent)
+                    ?? loaded.first
+                didRestoreSelection = true
             }
         }
+    }
+
+    @MainActor
+    private func persistSelectionIfReady() {
+        guard didRestoreSelection,
+              let projectURL = projects.currentProject?.url,
+              let sourceBranch,
+              let targetBranch else { return }
+        selectionStore.save(
+            MergeSelection(
+                sourceBranchName: sourceBranch.name,
+                targetBranchName: targetBranch.name
+            ),
+            for: projectURL
+        )
     }
 
     @MainActor
     private func merge() {
         guard let sourceBranch, let targetBranch,
               let projectURL = projects.currentProject?.url else { return }
+        persistSelectionIfReady()
         isWorking = true
         statusMessage = nil
         errorMessage = nil
