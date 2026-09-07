@@ -4,7 +4,7 @@ import Foundation
 public struct GitWorktreeStatus: Equatable, Sendable {
     /// 工作区是否干净（无任何未提交/未跟踪变更）。
     public let isClean: Bool
-    /// 未提交变更的条数（porcelain 行数，不含 `##` 分支行）。
+    /// 未提交变更的条数（展开未跟踪目录后的文件条数，不含分支行）。
     public let changeCount: Int
     /// 当前分支名（如 `main`）；处于 detached HEAD 时为 `HEAD`，无仓库时为 nil。
     public let branch: String?
@@ -44,12 +44,12 @@ public struct GitStatusEntry: Equatable, Sendable, Identifiable {
 public enum GitStatusLoader {
     /// 读取工作区状态。
     ///
-    /// 使用 `git status --porcelain=v1 --branch --untracked-files=normal`：
+    /// 使用 `git status --porcelain=v1 --branch --untracked-files=all`：
     /// - 首行 `## <branch>...<upstream>` 提供分支名（含 detached HEAD 的 `## HEAD`）；
-    /// - 其余非空行即未提交变更（含未跟踪文件），计数为 `changeCount`。
+    /// - 其余非空行即未提交变更（含展开后的未跟踪目录文件），计数为 `changeCount`。
     public static func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
         let output = try GitProcessRunner.run(
-            ["status", "--porcelain=v1", "--branch", "--untracked-files=normal"],
+            ["status", "--porcelain=v1", "--branch", "--untracked-files=all"],
             in: repository
         )
         var branch: String?
@@ -75,11 +75,11 @@ public enum GitStatusLoader {
 
     /// 读取工作区变动文件列表。
     ///
-    /// 使用 `git status --porcelain=v1 --untracked-files=normal`，解析每一行的
-    /// XY 状态码和路径。重命名/复制（R/C）只取目标路径。
+    /// 使用 `git status --porcelain=v1 --untracked-files=all`，解析每一行的
+    /// XY 状态码和路径。未跟踪目录会展开为其中的文件；重命名/复制（R/C）只取目标路径。
     public static func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
         let output = try GitProcessRunner.run(
-            ["status", "--porcelain=v1", "--untracked-files=normal"],
+            ["status", "--porcelain=v1", "--untracked-files=all"],
             in: repository
         )
         var entries: [GitStatusEntry] = []

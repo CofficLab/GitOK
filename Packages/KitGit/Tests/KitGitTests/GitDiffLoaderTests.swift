@@ -171,4 +171,43 @@ final class GitDiffLoaderTests: XCTestCase {
         XCTAssertEqual(status.changeCount, 1)
         XCTAssertEqual(status.branch, "dev")
     }
+
+    /// 未跟踪目录应展开为文件条目，避免不同 Git 后端出现目录 / 文件两种展示结果。
+    func testLoadEntriesExpandsUntrackedDirectories() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-untracked-directory-(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        func run(_ args: [String]) throws {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            p.arguments = args
+            p.currentDirectoryURL = repo
+            p.standardOutput = Pipe()
+            p.standardError = Pipe()
+            try p.run()
+            p.waitUntilExit()
+        }
+        try run(["init", "-q"])
+
+        let nestedDirectory = repo.appendingPathComponent("Packages/ProviderToast/Sources/ProviderToast", isDirectory: true)
+        try FileManager.default.createDirectory(at: nestedDirectory, withIntermediateDirectories: true)
+        try Data("package\n".utf8).write(to: repo.appendingPathComponent("Packages/ProviderToast/Package.swift"))
+        try Data("protocol\n".utf8).write(to: nestedDirectory.appendingPathComponent("ToastProviding.swift"))
+
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        XCTAssertEqual(
+            entries.map(\.path).sorted(),
+            [
+                "Packages/ProviderToast/Package.swift",
+                "Packages/ProviderToast/Sources/ProviderToast/ToastProviding.swift",
+            ]
+        )
+        XCTAssertTrue(entries.allSatisfy(\.isUntracked))
+        XCTAssertTrue(entries.allSatisfy { !$0.path.hasSuffix("/") })
+
+        let status = try GitStatusLoader.loadStatus(in: repo)
+        XCTAssertEqual(status.changeCount, 2)
+    }
 }
