@@ -3,9 +3,11 @@ import LumiUI
 import ProviderGitRepositoryWatch
 import ProviderGit
 import ProviderProjects
+import AppKit
 import SwiftUI
 
 private let commitPageSize = 50
+private let jumpToOldestTriggerDistance: CGFloat = 220
 
 /// Commit 列表 Rail 视图：显示当前打开项目的提交历史。
 ///
@@ -28,6 +30,11 @@ private let commitPageSize = 50
 /// AppListRow / AppAvatar / AppTag / AppEmptyState / AppDivider）保证与整体
 /// 设计语言一致。
 struct CommitRailView: View {
+    private enum CommitScrollAnchor: Hashable {
+        case latest
+        case oldest
+    }
+
     let projects: any ProjectProviding
     let git: any GitProviding
     let gitWatch: (any GitRepositoryWatching)?
@@ -47,6 +54,12 @@ struct CommitRailView: View {
     @State private var loadToken = 0
     /// 本次刷新新增的 commit，只用于触发顶部进入动画。
     @State private var animatedCommitHashes: Set<String> = []
+    /// 首尾锚点是否处于可见区域，用于控制快速滚动按钮。
+    @State private var isLatestCommitVisible = true
+    @State private var isOldestCommitVisible = false
+    @State private var hasScrolledDownEnough = false
+    /// 点击“跳到第一个提交”后，自动加载剩余分页的状态。
+    @State private var isJumpingToOldest = false
 
     // Push 状态
     @State private var pushPopoverCommitHash: String?
@@ -443,28 +456,59 @@ struct CommitRailView: View {
                         .background(theme.error.opacity(0.08))
                 }
 
-                ZStack(alignment: .top) {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        LazyVStack(spacing: 0) {
-                            ForEach(commits) { commit in
-                                commitRow(commit)
-                                    .onAppear {
-                                        loadMoreIfNeeded(after: commit)
+                ScrollViewReader { proxy in
+                    VStack(spacing: 0) {
+                        if shouldShowJumpToLatest {
+                            jumpToLatestButton(using: proxy)
+                        }
+
+                        ZStack(alignment: .top) {
+                            ScrollView(.vertical, showsIndicators: false) {
+                                VStack(spacing: 0) {
+                                    CommitScrollOffsetReader { offset, maximumOffset in
+                                        updateCommitScrollPosition(
+                                            offset: offset,
+                                            maximumOffset: maximumOffset
+                                        )
                                     }
-                                if commit.id != commits.last?.id {
-                                    AppDivider()
+                                    .frame(width: 0, height: 0)
+
+                                    LazyVStack(spacing: 0) {
+                                        Color.clear
+                                            .frame(height: 1)
+                                            .id(CommitScrollAnchor.latest)
+
+                                        ForEach(commits) { commit in
+                                            commitRow(commit)
+                                                .onAppear {
+                                                    loadMoreIfNeeded(after: commit)
+                                                }
+                                            if commit.id != commits.last?.id {
+                                                AppDivider()
+                                            }
+                                        }
+
+                                        Color.clear
+                                            .frame(height: 1)
+                                            .id(CommitScrollAnchor.oldest)
+                                    }
+                                    .padding(.vertical, 4)
                                 }
                             }
-                        }
-                        .padding(.vertical, 4)
-                    }
 
-                    if isLoading {
-                        ProgressView()
-                            .progressViewStyle(.linear)
-                            .frame(height: 2)
-                            .padding(.horizontal, 2)
+                            if isLoading {
+                                ProgressView()
+                                    .progressViewStyle(.linear)
+                                    .frame(height: 2)
+                                    .padding(.horizontal, 2)
+                            }
+                        }
+
+                        if shouldShowJumpToOldest {
+                            jumpToOldestButton(using: proxy)
+                        }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
         }
@@ -1118,6 +1162,137 @@ struct CommitRailView: View {
             || isTagOperationRunning
     }
 
+    private var shouldShowJumpToLatest: Bool {
+        commits.count > 1 && !isLatestCommitVisible
+    }
+
+    private var shouldShowJumpToOldest: Bool {
+        commits.count > 1 && hasScrolledDownEnough && !isOldestCommitVisible
+    }
+
+    private func jumpToLatestButton(using proxy: ScrollViewProxy) -> some View {
+        HStack {
+            Spacer(minLength: 0)
+            AppIconButton(
+                systemImage: "arrow.up.to.line",
+                label: LumiPluginLocalization.string("Back to Latest Commit", bundle: .module),
+                size: .compact
+            ) {
+                scrollToLatest(using: proxy)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 5)
+        .background(theme.surface)
+        .borderBottom()
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+
+    private func jumpToOldestButton(using proxy: ScrollViewProxy) -> some View {
+        HStack {
+            Spacer(minLength: 0)
+            if isJumpingToOldest {
+                ProgressView()
+                    .controlSize(.small)
+            } else {
+                AppIconButton(
+                    systemImage: "arrow.down.to.line",
+                    label: LumiPluginLocalization.string("Jump to First Commit", bundle: .module),
+                    size: .compact
+                ) {
+                    scrollToOldest(using: proxy)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 5)
+        .background(theme.surface)
+        .borderTop()
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    private func updateCommitScrollPosition(offset: CGFloat, maximumOffset: CGFloat) {
+        let topTolerance: CGFloat = 8
+        let isAtLatest = offset <= topTolerance
+        let isAtOldest = maximumOffset <= topTolerance
+            || maximumOffset - offset <= topTolerance
+
+        isLatestCommitVisible = isAtLatest
+        isOldestCommitVisible = isAtOldest
+        hasScrolledDownEnough = offset >= jumpToOldestTriggerDistance
+    }
+
+    private func scrollToLatest(using proxy: ScrollViewProxy) {
+        hasScrolledDownEnough = false
+        withAnimation(.easeInOut(duration: 0.25)) {
+            proxy.scrollTo(CommitScrollAnchor.latest, anchor: .top)
+        }
+    }
+
+    /// 先加载完剩余分页，再滚动到仓库历史中最早的 commit。
+    private func scrollToOldest(using proxy: ScrollViewProxy) {
+        guard !isJumpingToOldest,
+              !isLoading,
+              let url = loadedProjectURL else { return }
+
+        guard hasMoreCommits else {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                proxy.scrollTo(CommitScrollAnchor.oldest, anchor: .bottom)
+            }
+            return
+        }
+
+        isJumpingToOldest = true
+        let token = loadToken
+        Task { @MainActor in
+            while hasMoreCommits {
+                guard token == loadToken, loadedProjectURL == url else {
+                    isLoading = false
+                    isJumpingToOldest = false
+                    return
+                }
+
+                isLoading = true
+                let offset = nextCommitOffset
+                let result = await Task.detached(priority: .userInitiated) {
+                    Result {
+                        try git.loadCommits(
+                            in: url,
+                            limit: commitPageSize,
+                            offset: offset
+                        )
+                    }
+                }.value
+
+                guard token == loadToken, loadedProjectURL == url else {
+                    isLoading = false
+                    isJumpingToOldest = false
+                    return
+                }
+
+                switch result {
+                case .success(let loaded):
+                    nextCommitOffset += loaded.count
+                    let existingHashes = Set(commits.map(\.hash))
+                    let newCommits = loaded.filter { !existingHashes.contains($0.hash) }
+                    commits.append(contentsOf: newCommits)
+                    hasMoreCommits = loaded.count == commitPageSize && !newCommits.isEmpty
+                case .failure(let error):
+                    isLoading = false
+                    isJumpingToOldest = false
+                    loadError = error.localizedDescription
+                    return
+                }
+            }
+
+            isLoading = false
+            isJumpingToOldest = false
+            withAnimation(.easeInOut(duration: 0.25)) {
+                proxy.scrollTo(CommitScrollAnchor.oldest, anchor: .bottom)
+            }
+        }
+    }
+
     private func canUndo(_ commit: GitCommit) -> Bool {
         commits.first?.hash == commit.hash
             && unpushedHashes.contains(commit.hash)
@@ -1216,6 +1391,10 @@ struct CommitRailView: View {
                 nextCommitOffset = 0
                 animatedCommitHashes = []
             }
+            isLatestCommitVisible = true
+            isOldestCommitVisible = false
+            hasScrolledDownEnough = false
+            isJumpingToOldest = false
             return
         }
         if loadedProjectURL == project.url && !force { return }
@@ -1229,6 +1408,10 @@ struct CommitRailView: View {
             commits = []
             unpushedHashes = []
             animatedCommitHashes = []
+            isLatestCommitVisible = true
+            isOldestCommitVisible = false
+            hasScrolledDownEnough = false
+            isJumpingToOldest = false
         }
         hasMoreCommits = true
         nextCommitOffset = 0
@@ -1285,6 +1468,156 @@ struct CommitRailView: View {
     private func refreshSelectionState() {
         // 只需触发 body 重算；选中态以 Provider 为权威来源（isSelected 实时读取）。
     }
+}
+
+/// 读取 macOS 原生滚动容器的实时位置，避免依赖 LazyVStack 子视图只触发一次的 onAppear。
+private struct CommitScrollOffsetReader: NSViewRepresentable {
+    let onChange: @MainActor (CGFloat, CGFloat) -> Void
+
+    func makeNSView(context: Context) -> CommitScrollOffsetTrackingView {
+        CommitScrollOffsetTrackingView(onChange: onChange)
+    }
+
+    func updateNSView(_ nsView: CommitScrollOffsetTrackingView, context: Context) {
+        nsView.onChange = onChange
+        nsView.attachIfNeeded()
+    }
+}
+
+@MainActor
+private final class CommitScrollOffsetTrackingView: NSView {
+    var onChange: @MainActor (CGFloat, CGFloat) -> Void
+
+    private weak var observedScrollView: NSScrollView?
+    private var observationTokens: [NSObjectProtocol] = []
+    private var retryScheduled = false
+
+    init(onChange: @escaping @MainActor (CGFloat, CGFloat) -> Void) {
+        self.onChange = onChange
+        super.init(frame: .zero)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        if window == nil {
+            removeObservers()
+            return
+        }
+        attachIfNeeded()
+    }
+
+    override func viewWillMove(toWindow newWindow: NSWindow?) {
+        if newWindow == nil {
+            removeObservers()
+        }
+        super.viewWillMove(toWindow: newWindow)
+    }
+
+    func attachIfNeeded() {
+        guard let scrollView = enclosingScrollView() else {
+            scheduleAttachRetry()
+            return
+        }
+
+        guard observedScrollView !== scrollView else {
+            reportScrollPosition()
+            return
+        }
+
+        removeObservers()
+        observedScrollView = scrollView
+
+        let clipView = scrollView.contentView
+        clipView.postsBoundsChangedNotifications = true
+        clipView.postsFrameChangedNotifications = true
+        scrollView.postsFrameChangedNotifications = true
+        scrollView.documentView?.postsFrameChangedNotifications = true
+
+        let notificationCenter = NotificationCenter.default
+        observationTokens = [
+            notificationCenter.addObserver(
+                forName: NSView.boundsDidChangeNotification,
+                object: clipView,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.reportScrollPosition()
+                }
+            },
+            notificationCenter.addObserver(
+                forName: NSView.frameDidChangeNotification,
+                object: clipView,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.reportScrollPosition()
+                }
+            },
+            notificationCenter.addObserver(
+                forName: NSView.frameDidChangeNotification,
+                object: scrollView.documentView,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.reportScrollPosition()
+                }
+            },
+            notificationCenter.addObserver(
+                forName: NSView.frameDidChangeNotification,
+                object: scrollView,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.reportScrollPosition()
+                }
+            },
+        ]
+
+        reportScrollPosition()
+    }
+
+    private func enclosingScrollView() -> NSScrollView? {
+        var ancestor = superview
+        while let view = ancestor {
+            if let scrollView = view as? NSScrollView {
+                return scrollView
+            }
+            ancestor = view.superview
+        }
+        return nil
+    }
+
+    private func scheduleAttachRetry() {
+        guard !retryScheduled else { return }
+        retryScheduled = true
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            retryScheduled = false
+            attachIfNeeded()
+        }
+    }
+
+    private func reportScrollPosition() {
+        guard let scrollView = observedScrollView else { return }
+        let clipView = scrollView.contentView
+        let viewportHeight = clipView.bounds.height
+        let documentHeight = scrollView.documentView?.bounds.height ?? 0
+        let maximumOffset = max(0, documentHeight - viewportHeight)
+        let offset = min(max(0, clipView.bounds.origin.y), maximumOffset)
+        onChange(offset, maximumOffset)
+    }
+
+    private func removeObservers() {
+        let notificationCenter = NotificationCenter.default
+        observationTokens.forEach(notificationCenter.removeObserver)
+        observationTokens.removeAll()
+        observedScrollView = nil
+    }
+
 }
 
 /// Commit 刷新时的纯数据判断，供 UI 增量更新和测试复用。
