@@ -33,9 +33,7 @@ struct CommitDetailView: View {
                 commit: commit,
                 projectURL: projectURL,
                 selectedFile: viewModel.selectedFile,
-                changes: viewModel.currentCommitFiles ?? [],
-                isLoadingChanges: viewModel.isLoadingCommitFiles,
-                loadError: viewModel.commitFilesLoadError,
+                filePageStore: viewModel.filePageStore,
                 animatedFilePaths: viewModel.animatedFilePaths,
                 onSelectFile: onSelectFile
             )

@@ -38,6 +38,24 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitDiffLoader.loadChanges(commit: hash, in: repository)
     }
 
+    func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
+        try GitDiffLoader.countChanges(commit: hash, in: repository)
+    }
+
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL
+    ) throws -> GitFileChangePage {
+        try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: limit,
+            offset: offset,
+            in: repository
+        )
+    }
+
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try GitDiffLoader.loadDiff(commit: hash, filePath: filePath, in: repository)
     }

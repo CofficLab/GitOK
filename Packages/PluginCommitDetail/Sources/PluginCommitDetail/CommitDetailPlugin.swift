@@ -93,7 +93,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         // 插件入口是插件级外部监听的唯一持有者）。Observer 负责订阅外部
         // providing、读取快照并直接更新 ViewModel。
         let capability = CommitDetailProjectCapabilityAdapter(projects: projects)
-        let viewModel = CommitDetailViewModel()
+        let viewModel = CommitDetailViewModel(git: git)
         self.viewModel = viewModel
         observer = CommitDetailObserver(
             capability: capability,

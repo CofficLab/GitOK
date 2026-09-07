@@ -28,6 +28,113 @@ final class GitDiffLoaderTests: XCTestCase {
         XCTAssertTrue(changes.allSatisfy { !$0.path.isEmpty })
     }
 
+    func testLoadChangesPageMatchesEagerCompatibilityAPI() throws {
+        let repo = selfRepoURL
+        guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {
+            throw XCTSkip("not inside a GitOK git checkout: \(repo.path)")
+        }
+        let commits = try GitCommitLoader.loadCommits(in: repo, limit: 5)
+        guard let head = commits.first else {
+            throw XCTSkip("no commits in self repo")
+        }
+
+        let allChanges = try GitDiffLoader.loadChanges(commit: head.hash, in: repo)
+        let total = try GitDiffLoader.countChanges(commit: head.hash, in: repo)
+        XCTAssertEqual(total, allChanges.count)
+
+        let firstPage = try GitDiffLoader.loadChangesPage(
+            commit: head.hash,
+            limit: 1,
+            offset: 0,
+            in: repo
+        )
+        XCTAssertEqual(firstPage.changes, Array(allChanges.prefix(1)))
+        XCTAssertEqual(firstPage.hasMore, allChanges.count > 1)
+
+        if allChanges.count > 1 {
+            let secondPage = try GitDiffLoader.loadChangesPage(
+                commit: head.hash,
+                limit: 1,
+                offset: 1,
+                in: repo
+            )
+            XCTAssertEqual(secondPage.changes, [allChanges[1]])
+        }
+    }
+
+    func testLoadChangesPagePreservesRenames() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-rename-(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        func run(_ args: [String]) throws {
+            _ = try GitProcessRunner.run(args, in: repo)
+        }
+
+        try run(["init", "-q"])
+        try run(["config", "user.email", "t@t.com"])
+        try run(["config", "user.name", "t"])
+        try Data("one\ntwo\nthree\n".utf8).write(to: repo.appendingPathComponent("old.txt"))
+        try run(["add", "old.txt"])
+        try run(["commit", "-qm", "init"])
+        try run(["mv", "old.txt", "new.txt"])
+        try run(["commit", "-qam", "rename"])
+        let renameHash = try runAndRead(["rev-parse", "HEAD"], in: repo)
+
+        let page = try GitDiffLoader.loadChangesPage(
+            commit: renameHash,
+            limit: 10,
+            offset: 0,
+            in: repo
+        )
+        XCTAssertEqual(page.changes.count, 1)
+        XCTAssertEqual(page.changes.first?.status, .renamed)
+        XCTAssertEqual(page.changes.first?.oldPath, "old.txt")
+        XCTAssertEqual(page.changes.first?.path, "new.txt")
+    }
+
+    func testLoadChangesPageHandlesLargeCommitWithoutEagerOutputParsing() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-large-diff-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        let filesDirectory = repo.appendingPathComponent("files", isDirectory: true)
+        try FileManager.default.createDirectory(at: filesDirectory, withIntermediateDirectories: true)
+
+        func run(_ args: [String]) throws {
+            _ = try GitProcessRunner.run(args, in: repo)
+        }
+
+        try run(["init", "-q"])
+        try run(["config", "user.email", "t@t.com"])
+        try run(["config", "user.name", "t"])
+        for index in 0..<1_000 {
+            let file = filesDirectory.appendingPathComponent("file-\(index).txt")
+            try Data("file \(index)\n".utf8).write(to: file)
+        }
+        try run(["add", "files"])
+        try run(["commit", "-qm", "large change"])
+        let hash = try runAndRead(["rev-parse", "HEAD"], in: repo)
+
+        XCTAssertEqual(try GitDiffLoader.countChanges(commit: hash, in: repo), 1_000)
+        // git 按字典序输出路径（file-1, file-10, file-100, ...），因此「第 900 条
+        // 记录」并不等于 file-900.txt；以字典序排序后的真实路径列表为准。
+        let sortedPaths = (0..<1_000).map { "files/file-\($0).txt" }.sorted()
+        let page = try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: 100,
+            offset: 900,
+            in: repo
+        )
+        XCTAssertEqual(page.changes.count, 100)
+        XCTAssertFalse(page.hasMore)
+        XCTAssertEqual(page.changes.map(\.path), Array(sortedPaths[900..<1_000]))
+    }
+
+    private func runAndRead(_ args: [String], in repo: URL) throws -> String {
+        try GitProcessRunner.run(args, in: repo).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     func testLoadDiffOnSelf() throws {
         let repo = selfRepoURL
         guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {
