@@ -206,11 +206,11 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
                 trailingPane.saveWidth(width)
             }
         ) {
-            panelSurface
+            panelSurface(containerWidth: containerWidth)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #else
-        panelSurface
+        panelSurface(containerWidth: containerWidth)
             .frame(width: min(containerWidth, effectivePaneWidth))
             .frame(maxHeight: .infinity)
             .overlay(alignment: .leading) {
@@ -219,12 +219,14 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
         #endif
     }
 
-    private var panelSurface: some View {
+    private func panelSurface(containerWidth: CGFloat) -> some View {
         VStack(spacing: 0) {
             // 顶部栏：返回按钮单独占一行，不覆盖下方正式视图。
             HStack {
                 dismissButton
                 Spacer(minLength: 0)
+                minimizeButton
+                maximizeButton(containerWidth: containerWidth)
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -246,6 +248,26 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
                 .frame(width: 1)
         }
         .shadow(color: .black.opacity(0.14), radius: 10, x: -3, y: 0)
+    }
+
+    private func setPaneWidth(_ width: CGFloat) {
+        let resolvedWidth = trailingPane.width.clamped(width)
+        trailingPane.setWidth(resolvedWidth)
+        trailingPane.saveWidth(resolvedWidth)
+    }
+
+    private var minimizeButton: some View {
+        AppIconButton(systemImage: "arrow.left.and.right.inward", size: .regular) {
+            setPaneWidth(trailingPane.minWidth)
+        }
+        .help(LumiPluginLocalization.string("Minimize Right Panel", bundle: .module))
+    }
+
+    private func maximizeButton(containerWidth: CGFloat) -> some View {
+        AppIconButton(systemImage: "arrow.left.and.right.outward", size: .regular) {
+            setPaneWidth(min(containerWidth, trailingPane.maxWidth))
+        }
+        .help(LumiPluginLocalization.string("Maximize Right Panel", bundle: .module))
     }
 
     #if !os(macOS)
