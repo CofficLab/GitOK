@@ -257,14 +257,14 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
     }
 
     private var minimizeButton: some View {
-        AppIconButton(systemImage: "arrow.left.and.right.inward", size: .regular) {
+        AppIconButton(systemImage: "arrow.right.to.line", size: .regular) {
             setPaneWidth(trailingPane.minWidth)
         }
         .help(LumiPluginLocalization.string("Minimize Right Panel", bundle: .module))
     }
 
     private func maximizeButton(containerWidth: CGFloat) -> some View {
-        AppIconButton(systemImage: "arrow.left.and.right.outward", size: .regular) {
+        AppIconButton(systemImage: "arrow.left.to.line", size: .regular) {
             setPaneWidth(min(containerWidth, trailingPane.maxWidth))
         }
         .help(LumiPluginLocalization.string("Maximize Right Panel", bundle: .module))
