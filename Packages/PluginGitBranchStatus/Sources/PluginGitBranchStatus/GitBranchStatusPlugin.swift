@@ -88,7 +88,9 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
                     title: LumiPluginLocalization.string("Current Branch", bundle: .module),
                     placement: .trailing,
                     category: .project,
-                    order: 40
+                    // 负 order 使其排在 trailing 组所有项（OpenIn 最小 10、
+                    // 设置按钮 150）之前，位于工具栏右侧最左一个。
+                    order: -50
                 ) {
                     WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
                         BranchPickerView(projects: projects, git: git, viewModel: branchViewModel)

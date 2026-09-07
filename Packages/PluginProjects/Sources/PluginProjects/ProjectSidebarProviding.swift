@@ -93,8 +93,8 @@ private struct ProjectSidebarView: View {
                 } else {
                     ScrollView(.vertical, showsIndicators: false) {
                         LazyVStack(spacing: 2) {
-                            ForEach(filteredProjects) { project in
-                                projectRow(project)
+                            ForEach(Array(filteredProjects.enumerated()), id: \.element.id) { index, project in
+                                projectRow(project, isLastPinned: index == (pinnedDividerIndex ?? Int.max) - 1)
                             }
                         }
                         .padding(.horizontal, 8)
@@ -140,16 +140,38 @@ private struct ProjectSidebarView: View {
         .padding(.vertical, 6)
     }
 
-    private func projectRow(_ project: Project) -> some View {
+    /// 置顶项目与未置顶项目的分界索引（用于插入分隔线）。
+    private var pinnedDividerIndex: Int? {
+        let list = filteredProjects
+        guard !list.isEmpty else { return nil }
+        let hasPinned = list.contains(where: \.isPinned)
+        let hasUnpinned = list.contains(where: { !$0.isPinned })
+        guard hasPinned && hasUnpinned else { return nil }
+        // 第一个非置顶项的位置。
+        return list.firstIndex(where: { !$0.isPinned })
+    }
+
+    private func projectRow(_ project: Project, isLastPinned: Bool = false) -> some View {
         AppSettingsSidebarItem(
             title: project.title,
-            systemImage: "folder",
+            systemImage: project.isPinned ? "pin.fill" : "folder",
             isSelected: projects.currentProject?.id == project.id
         ) {
             projects.openProject(at: project.url)
         }
         .id(project.id)
         .contextMenu {
+            Button {
+                projects.pinProject(id: project.id, isPinned: !project.isPinned)
+            } label: {
+                Label(
+                    LumiPluginLocalization.string(project.isPinned ? "Unpin" : "Pin to Top", bundle: .module),
+                    systemImage: project.isPinned ? "pin.slash" : "pin"
+                )
+            }
+
+            Divider()
+
             Button {
                 copyProjectPath(project)
             } label: {
@@ -174,6 +196,11 @@ private struct ProjectSidebarView: View {
                 projects.removeProject(id: project.id)
             } label: {
                 Label(LumiPluginLocalization.string("Remove Project", bundle: .module), systemImage: "trash")
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if isLastPinned {
+                AppDivider().padding(.vertical, 2)
             }
         }
     }

@@ -147,10 +147,32 @@
     },
     "Confirm Discard": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm Discard"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "确认丢弃"
+          }
+        }
+      }
+    },
+    "Confirm Discard All": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm Discard All"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认放弃全部修改"
           }
         }
       }
@@ -225,10 +247,32 @@
     },
     "Discard": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "丢弃"
+          }
+        }
+      }
+    },
+    "Discard All Changes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard All Changes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放弃所有修改"
           }
         }
       }
@@ -249,6 +293,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "确定要丢弃已选择的 %lld 个文件的更改吗？此操作不可撤销。"
+          }
+        }
+      }
+    },
+    "Discard all %lld changes, including staged, unstaged, and untracked files? This cannot be undone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard all %lld changes, including staged, unstaged, and untracked files? This cannot be undone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确定要放弃全部 %lld 项修改吗？包括已暂存、未暂存和未跟踪文件，此操作不可撤销。"
           }
         }
       }

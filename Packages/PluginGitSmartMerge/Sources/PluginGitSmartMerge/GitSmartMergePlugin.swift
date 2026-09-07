@@ -5,6 +5,7 @@ import os
 import ProviderGit
 import ProviderProjects
 import ProviderStatusBar
+import ProviderStorage
 import ProviderWorkspaceScene
 import SwiftUI
 import ProviderDocsView
@@ -64,6 +65,9 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
         }
+        let storageDirectory = kernel
+            .resolveProvider((any StorageProviding).self)?
+            .pluginDataDirectory(for: id)
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         self.sceneViewModel = sceneViewModel
         let sceneCapability = GitSmartMergeSceneCapabilityAdapter(scene: scene)
@@ -77,7 +81,11 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
                 order: 24
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    MergeStatusTile(projects: projects, git: git)
+                    MergeStatusTile(
+                        projects: projects,
+                        git: git,
+                        storageDirectory: storageDirectory
+                    )
                 }
             },
         ])

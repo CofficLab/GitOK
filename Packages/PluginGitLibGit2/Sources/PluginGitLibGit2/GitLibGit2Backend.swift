@@ -22,6 +22,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }
     }
 
+    func countCommits(in repository: URL) throws -> Int {
+        try GitCommitLoader.countCommits(in: repository)
+    }
+
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try Set(LibGit2.getUnPushedCommits(at: repository.path, verbose: false).map(\.hash))
     }
@@ -364,6 +368,12 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
 
     func discardFiles(_ filePaths: [String], in repository: URL) throws {
         try LibGit2.checkoutFiles(filePaths, at: repository.path)
+    }
+
+    func discardAllChanges(in repository: URL) throws {
+        // LibGit2Swift 当前没有覆盖 ignored 边界的 clean API，复用 KitGit 的
+        // 经过测试的仓库级实现，保证 CLI 与 LibGit2 后端的破坏性语义一致。
+        try GitCommitOperation.discardAllChanges(in: repository)
     }
 
     func commit(message: String, in repository: URL) throws -> String {

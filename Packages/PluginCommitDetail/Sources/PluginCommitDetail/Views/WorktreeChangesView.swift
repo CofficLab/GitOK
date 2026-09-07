@@ -38,9 +38,12 @@ struct WorktreeChangesView: View {
     @State private var stagingPath: String?
     @State private var unstagingPath: String?
     @State private var discardingPaths: Set<String> = []
+    @State private var isPreparingDiscardAll = false
+    @State private var isDiscardingAll = false
     @State private var selectedPaths: Set<String> = []
     @State private var batchAction: BatchAction?
     @State private var discardCandidates: [GitStatusEntry] = []
+    @State private var discardAllCandidates: [GitStatusEntry] = []
     @State private var loadedProjectURL: URL?
     @State private var hasLoadedSnapshot = false
     @State private var loadToken = 0
@@ -128,6 +131,27 @@ struct WorktreeChangesView: View {
         } message: {
             Text(discardMessage)
         }
+        .alert(
+            loc("Confirm Discard All"),
+            isPresented: Binding(
+                get: { !discardAllCandidates.isEmpty },
+                set: { isPresented in
+                    if !isPresented { discardAllCandidates.removeAll() }
+                }
+            )
+        ) {
+            Button(loc("Cancel"), role: .cancel) {
+                discardAllCandidates.removeAll()
+            }
+            Button(loc("Discard All Changes"), role: .destructive) {
+                guard !discardAllCandidates.isEmpty else { return }
+                let count = discardAllCandidates.count
+                discardAllCandidates.removeAll()
+                discardAll(count: count)
+            }
+        } message: {
+            Text(discardAllMessage)
+        }
     }
 
     // MARK: - Header
@@ -147,6 +171,20 @@ struct WorktreeChangesView: View {
                 Text("\(entries.count)")
                     .font(.appMicro)
                     .foregroundStyle(theme.textTertiary)
+                if isPreparingDiscardAll || isDiscardingAll {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    AppIconButton(
+                        systemImage: "trash",
+                        label: loc("Discard All Changes"),
+                        tint: theme.warning,
+                        size: .compact
+                    ) {
+                        prepareDiscardAll()
+                    }
+                    .disabled(isActionInProgress)
+                }
             }
         }
         .borderBottom()
@@ -269,7 +307,8 @@ struct WorktreeChangesView: View {
     // MARK: - Actions
 
     private var isActionInProgress: Bool {
-        stagingPath != nil || unstagingPath != nil || !discardingPaths.isEmpty || batchAction != nil
+        stagingPath != nil || unstagingPath != nil || !discardingPaths.isEmpty
+            || isPreparingDiscardAll || isDiscardingAll || batchAction != nil
     }
 
     private var discardMessage: String {
@@ -278,6 +317,14 @@ struct WorktreeChangesView: View {
             return String(format: loc("Discard changes for %@? This cannot be undone."), entry.path)
         }
         return String(format: loc("Discard changes for %lld selected files? This cannot be undone."), discardCandidates.count)
+    }
+
+    private var discardAllMessage: String {
+        guard !discardAllCandidates.isEmpty else { return "" }
+        return String(
+            format: loc("Discard all %lld changes, including staged, unstaged, and untracked files? This cannot be undone."),
+            discardAllCandidates.count
+        )
     }
 
     private var selectedEntries: [GitStatusEntry] {
@@ -379,6 +426,33 @@ struct WorktreeChangesView: View {
         discardCandidates = entries
     }
 
+    /// 先重新读取一次工作区，确认弹窗展示的是最新快照，避免后台刷新期间丢失新文件。
+    private func prepareDiscardAll() {
+        guard let projectURL = viewModel.selectedProjectURL else { return }
+        guard !isActionInProgress else { return }
+
+        let url = projectURL
+        let token = loadToken
+        isPreparingDiscardAll = true
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            let result = Result { try git.loadEntries(in: url) }
+            await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else {
+                    isPreparingDiscardAll = false
+                    return
+                }
+                isPreparingDiscardAll = false
+                switch result {
+                case .success(let loaded):
+                    discardAllCandidates = loaded
+                case .failure(let error):
+                    actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                }
+            }
+        }
+    }
+
     private func stage(_ entry: GitStatusEntry) {
         guard let projectURL = viewModel.selectedProjectURL else { return }
 
@@ -444,6 +518,31 @@ struct WorktreeChangesView: View {
         }
     }
 
+    private func discardAll(count: Int) {
+        guard let projectURL = viewModel.selectedProjectURL else { return }
+        guard count > 0 else { return }
+
+        isDiscardingAll = true
+        actionError = nil
+        let url = projectURL
+        Task.detached(priority: .userInitiated) {
+            let result = Result {
+                try git.discardAllChanges(in: url)
+            }
+            await MainActor.run {
+                isDiscardingAll = false
+                switch result {
+                case .success:
+                    entries.removeAll()
+                    selectedPaths.removeAll()
+                    onDataChanged()
+                case .failure(let error):
+                    actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                }
+            }
+        }
+    }
+
     private func performBatch(_ action: BatchAction) {
         guard let projectURL = viewModel.selectedProjectURL else { return }
 
@@ -493,9 +592,12 @@ struct WorktreeChangesView: View {
             stagingPath = nil
             unstagingPath = nil
             discardingPaths.removeAll()
+            isPreparingDiscardAll = false
+            isDiscardingAll = false
             selectedPaths.removeAll()
             batchAction = nil
             discardCandidates.removeAll()
+            discardAllCandidates.removeAll()
             return
         }
         let isProjectSwitch = loadedProjectURL != projectURL
@@ -511,6 +613,7 @@ struct WorktreeChangesView: View {
             selectedPaths.removeAll()
             batchAction = nil
             discardCandidates.removeAll()
+            discardAllCandidates.removeAll()
             loadError = nil
         }
 

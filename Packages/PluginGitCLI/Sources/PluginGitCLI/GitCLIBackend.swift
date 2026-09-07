@@ -18,6 +18,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset)
     }
 
+    func countCommits(in repository: URL) throws -> Int {
+        try GitCommitLoader.countCommits(in: repository)
+    }
+
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try GitCommitLoader.unpushedCommitHashes(in: repository)
     }
@@ -232,6 +236,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func discardFiles(_ filePaths: [String], in repository: URL) throws {
         try GitCommitOperation.discardFiles(filePaths, in: repository)
+    }
+
+    func discardAllChanges(in repository: URL) throws {
+        try GitCommitOperation.discardAllChanges(in: repository)
     }
 
     func commit(message: String, in repository: URL) throws -> String {

@@ -103,6 +103,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("loadCommits") { try $0.loadCommits(in: repository, limit: limit, offset: offset) }
     }
 
+    public func countCommits(in repository: URL) throws -> Int {
+        try execute("countCommits") { try $0.countCommits(in: repository) }
+    }
+
     public func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try execute("unpushedCommitHashes") { try $0.unpushedCommitHashes(in: repository) }
     }
@@ -318,6 +322,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
 
     public func discardFiles(_ filePaths: [String], in repository: URL) throws {
         try execute("discardFiles") { try $0.discardFiles(filePaths, in: repository) }
+    }
+
+    public func discardAllChanges(in repository: URL) throws {
+        try execute("discardAllChanges") { try $0.discardAllChanges(in: repository) }
     }
 
     public func commit(message: String, in repository: URL) throws -> String {

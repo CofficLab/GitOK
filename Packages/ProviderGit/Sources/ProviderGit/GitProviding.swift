@@ -90,6 +90,7 @@ public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
 /// 以同一协议扩展，模型仍复用 KitGit 的公共值类型。
 public protocol GitOperationProviding: AnyObject, Sendable {
     func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit]
+    func countCommits(in repository: URL) throws -> Int
     func unpushedCommitHashes(in repository: URL) throws -> Set<String>
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus
@@ -154,6 +155,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func unstageFiles(_ filePaths: [String], in repository: URL) throws
     func discardFileChanges(_ filePath: String, in repository: URL) throws
     func discardFiles(_ filePaths: [String], in repository: URL) throws
+    func discardAllChanges(in repository: URL) throws
     func commit(message: String, in repository: URL) throws -> String
     func push(in repository: URL) throws -> String
 

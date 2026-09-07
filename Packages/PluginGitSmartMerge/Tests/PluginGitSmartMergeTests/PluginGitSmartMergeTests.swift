@@ -12,6 +12,6 @@ struct PluginGitSmartMergeTests {
         let plugin = GitSmartMergePlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-smart-merge")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .required)
     }
 }
