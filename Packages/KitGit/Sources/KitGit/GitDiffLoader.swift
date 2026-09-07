@@ -41,8 +41,205 @@ public struct GitFileChange: Identifiable, Equatable, Sendable {
     }
 }
 
+/// 单次分页读取的 commit 文件变更。
+public struct GitFileChangePage: Equatable, Sendable {
+    public let offset: Int
+    public let changes: [GitFileChange]
+    public let hasMore: Bool
+
+    public init(offset: Int, changes: [GitFileChange], hasMore: Bool) {
+        self.offset = offset
+        self.changes = changes
+        self.hasMore = hasMore
+    }
+}
+
 /// 通过 git CLI 加载单个 commit 的变动（文件列表 + unified diff）。
 public enum GitDiffLoader {
+    private struct NulTokenParser {
+        private var buffer = Data()
+
+        mutating func append(_ data: Data, handle: (Data) -> Bool) -> Bool {
+            buffer.append(data)
+            while let separator = buffer.firstIndex(of: 0) {
+                let token = Data(buffer[..<separator])
+                buffer.removeSubrange(buffer.startIndex...separator)
+                if !handle(token) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        mutating func finish(handle: (Data) -> Bool) -> Bool {
+            guard !buffer.isEmpty else { return true }
+            let token = buffer
+            buffer.removeAll(keepingCapacity: false)
+            return handle(token)
+        }
+    }
+
+    /// 统计 commit 的变更文件数，只保留计数，不保留路径数组。
+    public static func countChanges(commit hash: String, in repository: URL) throws -> Int {
+        var parser = NulTokenParser()
+        var pendingStatus: String?
+        var expectedPaths = 0
+        var pathCount = 0
+
+        try GitProcessRunner.stream(
+            ["diff-tree", "--no-commit-id", "--root", "--name-status", "-r", "-z", "--find-renames", hash],
+            in: repository
+        ) { data in
+            parser.append(data) { token in
+                let value = String(decoding: token, as: UTF8.self)
+                if pendingStatus == nil {
+                    pendingStatus = value
+                    expectedPaths = value.first == "R" || value.first == "C" ? 2 : 1
+                    return true
+                }
+
+                expectedPaths -= 1
+                if expectedPaths == 0 {
+                    pathCount += 1
+                    pendingStatus = nil
+                }
+                return true
+            }
+        }
+        _ = parser.finish { _ in true }
+        return pathCount
+    }
+
+    /// 读取 commit 中指定偏移和数量的变更文件。
+    ///
+    /// 名称状态使用 NUL 分隔输出并在读完目标页后尽早终止 git；numstat
+    /// 只扫描流，不把其它文件的统计信息放入内存。
+    public static func loadChangesPage(
+        commit hash: String,
+        limit requestedLimit: Int,
+        offset requestedOffset: Int,
+        in repository: URL
+    ) throws -> GitFileChangePage {
+        let limit = max(requestedLimit, 0)
+        let offset = max(requestedOffset, 0)
+        guard limit > 0 else {
+            return GitFileChangePage(offset: offset, changes: [], hasMore: false)
+        }
+
+        var parser = NulTokenParser()
+        var pendingStatus: String?
+        var paths: [String] = []
+        var changeIndex = 0
+        var changes: [GitFileChange] = []
+        var hasMore = false
+
+        func consume(_ token: Data) -> Bool {
+            let value = String(decoding: token, as: UTF8.self)
+            if pendingStatus == nil {
+                pendingStatus = value
+                paths.removeAll(keepingCapacity: true)
+                return true
+            }
+
+            paths.append(value)
+            let statusValue = pendingStatus ?? "?"
+            let isRename = statusValue.first == "R" || statusValue.first == "C"
+            let expectedPaths = isRename ? 2 : 1
+            guard paths.count == expectedPaths else { return true }
+
+            if changeIndex >= offset {
+                if changes.count < limit {
+                    let status = GitFileChange.Status(rawValue: String(statusValue.prefix(1))) ?? .unknown
+                    changes.append(
+                        GitFileChange(
+                            path: paths.last ?? "",
+                            status: status,
+                            addedLines: 0,
+                            deletedLines: 0,
+                            oldPath: isRename ? paths.first : nil
+                        )
+                    )
+                } else {
+                    hasMore = true
+                    return false
+                }
+            }
+
+            changeIndex += 1
+            pendingStatus = nil
+            paths.removeAll(keepingCapacity: true)
+            return true
+        }
+
+        try GitProcessRunner.stream(
+            ["diff-tree", "--no-commit-id", "--root", "--name-status", "-r", "-z", "--find-renames", hash],
+            in: repository
+        ) { data in
+            parser.append(data, handle: consume)
+        }
+        _ = parser.finish(handle: consume)
+
+        guard !changes.isEmpty else {
+            return GitFileChangePage(offset: offset, changes: [], hasMore: false)
+        }
+
+        var stats: [String: (added: Int, deleted: Int)] = [:]
+        var numstatParser = NulTokenParser()
+        var waitingRenamePaths = false
+        var renameStat: (added: Int, deleted: Int)?
+        var renamePaths: [String] = []
+
+        func consumeNumstat(_ token: Data) -> Bool {
+            let value = String(decoding: token, as: UTF8.self)
+            if waitingRenamePaths {
+                renamePaths.append(value)
+                if renamePaths.count == 2 {
+                    if let renameStat {
+                        stats[renamePaths[1]] = renameStat
+                        stats[renamePaths[0]] = renameStat
+                    }
+                    waitingRenamePaths = false
+                    renamePaths.removeAll(keepingCapacity: true)
+                }
+                return true
+            }
+
+            let fields = value.split(separator: "\t", maxSplits: 2, omittingEmptySubsequences: false)
+            guard fields.count == 3,
+                  let added = Int(fields[0]),
+                  let deleted = Int(fields[1])
+            else { return true }
+
+            let path = String(fields[2])
+            if path.isEmpty {
+                waitingRenamePaths = true
+                renameStat = (added, deleted)
+            } else {
+                stats[path] = (added, deleted)
+            }
+            return true
+        }
+
+        try? GitProcessRunner.stream(
+            ["show", "--format=", "--numstat", "-z", "--find-renames", hash],
+            in: repository,
+            onOutput: { data in numstatParser.append(data, handle: consumeNumstat) }
+        )
+        _ = numstatParser.finish(handle: consumeNumstat)
+
+        let completedChanges = changes.map { change in
+            let stat = stats[change.path] ?? stats[change.oldPath ?? ""] ?? (0, 0)
+            return GitFileChange(
+                path: change.path,
+                status: change.status,
+                addedLines: stat.added,
+                deletedLines: stat.deleted,
+                oldPath: change.oldPath
+            )
+        }
+        return GitFileChangePage(offset: offset, changes: completedChanges, hasMore: hasMore)
+    }
+
     /// 读取指定 commit 涉及的文件变更（名称 + 状态 + 增删行）。
     ///
     /// 数据来自两条命令：
@@ -50,54 +247,22 @@ public enum GitDiffLoader {
     /// - `git show --format= --numstat <hash>`：每个文件的增删行数。
     /// 两者都带 `--root` 以覆盖根提交（无父提交）。
     public static func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
-        let nameStatus = try GitProcessRunner.run(
-            ["diff-tree", "--no-commit-id", "--root", "--name-status", "-r", hash],
-            in: repository
-        )
-        let numstat: String
-        do {
-            numstat = try GitProcessRunner.run(
-                ["show", "--format=", "--numstat", hash],
-                in: repository
-            )
-        } catch {
-            numstat = ""
-        }
-
-        var stats: [String: (added: Int, deleted: Int)] = [:]
-        for line in numstat.split(separator: "\n") {
-            let fields = line.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
-            guard fields.count >= 3,
-                  let added = Int(fields[0]),
-                  let deleted = Int(fields[1])
-            else { continue }
-            // numstat 的 path 是"新路径"；rename 行含 "old => new"
-            let path = fields[2...].joined(separator: "\t")
-            stats[path] = (added, deleted)
-        }
+        let total = try countChanges(commit: hash, in: repository)
+        guard total > 0 else { return [] }
 
         var result: [GitFileChange] = []
-        for line in nameStatus.split(separator: "\n") {
-            let fields = line.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
-            guard fields.count >= 2 else { continue }
-            let rawStatus = fields[0]
-            guard let status = GitFileChange.Status(rawValue: String(rawStatus.prefix(1))) else { continue }
-
-            var oldPath: String? = nil
-            var path = fields[1]
-            if (status == .renamed || status == .copied) && fields.count >= 3 {
-                oldPath = path
-                path = fields[2]
-            }
-
-            let stat = stats[path] ?? stats[fields[1]] ?? (0, 0)
-            result.append(GitFileChange(
-                path: path,
-                status: status,
-                addedLines: stat.added,
-                deletedLines: stat.deleted,
-                oldPath: oldPath
-            ))
+        var offset = 0
+        let pageSize = 256
+        while offset < total {
+            let page = try loadChangesPage(
+                commit: hash,
+                limit: pageSize,
+                offset: offset,
+                in: repository
+            )
+            result.append(contentsOf: page.changes)
+            guard !page.changes.isEmpty else { break }
+            offset += page.changes.count
         }
         return result
     }

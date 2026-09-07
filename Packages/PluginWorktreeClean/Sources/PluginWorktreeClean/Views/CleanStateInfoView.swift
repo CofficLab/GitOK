@@ -20,6 +20,7 @@ struct CleanStateInfoView: View {
     @State private var remotes: [GitRemoteSummary] = []
     @State private var branchName: String?
     @State private var latestTag: String?
+    @State private var commitCount: Int?
     @State private var isLoadingInfo = true
 
     var body: some View {
@@ -36,6 +37,9 @@ struct CleanStateInfoView: View {
 
                     Divider().padding(.vertical, 8)
                     latestTagRow
+
+                    Divider().padding(.vertical, 8)
+                    commitCountRow
 
                     if !remotes.isEmpty {
                         Divider().padding(.vertical, 8)
@@ -116,6 +120,21 @@ struct CleanStateInfoView: View {
         }
     }
 
+    // MARK: - Commit Count Row
+
+    private var commitCountRow: some View {
+        AppSettingRow(
+            title: loc("Commits"),
+            description: commitCount.map(String.init)
+                ?? (isLoadingInfo ? "" : loc("Not Available")),
+            icon: "number"
+        ) {
+            if isLoadingInfo {
+                ProgressView().controlSize(.small)
+            }
+        }
+    }
+
     // MARK: - Remote Repository Row
 
     private func remoteRepositoryRow(for remote: GitRemoteSummary) -> some View {
@@ -189,10 +208,14 @@ struct CleanStateInfoView: View {
             // 加载当前 HEAD 可追溯到的最近 tag
             let loadedLatestTag = git.latestTag(in: project.url)
 
+            // 加载提交总数（`git rev-list --count HEAD`；空仓库 / 失败时为 nil）
+            let loadedCommitCount = try? git.countCommits(in: project.url)
+
             await MainActor.run {
                 remotes = loadedRemotes
                 branchName = loadedBranchName
                 latestTag = loadedLatestTag
+                commitCount = loadedCommitCount
                 isLoadingInfo = false
             }
         }

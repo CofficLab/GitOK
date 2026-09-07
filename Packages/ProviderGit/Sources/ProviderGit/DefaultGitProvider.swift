@@ -123,6 +123,21 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("loadChanges") { try $0.loadChanges(commit: hash, in: repository) }
     }
 
+    public func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
+        try execute("countCommitChanges") { try $0.countCommitChanges(commit: hash, in: repository) }
+    }
+
+    public func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL
+    ) throws -> GitFileChangePage {
+        try execute("loadCommitChangesPage") {
+            try $0.loadCommitChangesPage(commit: hash, limit: limit, offset: offset, in: repository)
+        }
+    }
+
     public func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try execute("loadDiff") { try $0.loadDiff(commit: hash, filePath: filePath, in: repository) }
     }

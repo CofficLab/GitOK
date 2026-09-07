@@ -242,25 +242,56 @@ public struct WorkspaceSceneVisibilityView<Content: View>: View {
 }
 
 /// 主窗口工具栏使用的工作场景选择器。
+///
+/// 视觉与交互对齐工具栏的分支选择器 `BranchPickerView`：
+/// - 图标 + 场景名 + chevron 的胶囊按钮，圆角背景随悬停 / 展开高亮；
+/// - 点击弹出 `popover`（而非原生 Menu），弹层内容为
+///   `WorkspaceScenePickerPopoverView`（场景列表，当前场景高亮打勾）。
 @MainActor
 public struct WorkspaceScenePickerView: View {
     @StateObject private var model: WorkspaceScenePickerModel
+    @State private var isPopoverPresented = false
+    @State private var isHovering = false
 
     public init(provider: any WorkspaceSceneProviding) {
         _model = StateObject(wrappedValue: WorkspaceScenePickerModel(provider: provider))
     }
 
     public var body: some View {
-        Picker(WorkspaceSceneLocalization.string("Workspace", bundle: .module), selection: Binding(
-            get: { model.selectedScene },
-            set: { model.select($0) }
-        )) {
-            ForEach(model.availableScenes) { scene in
-                Label(scene.title, systemImage: scene.systemImage)
-                    .tag(scene)
+        Button {
+            isPopoverPresented = true
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: model.selectedScene.systemImage)
+                    .font(.system(size: 12, weight: .semibold))
+
+                Text(model.selectedScene.title)
+                    .font(.system(size: 13, weight: .medium))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+
+                Image(systemName: isPopoverPresented ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.secondary)
             }
+            .foregroundStyle(.primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isHighlighted ? Color.secondary.opacity(0.15) : Color.secondary.opacity(0.07))
+            )
         }
-        .pickerStyle(.menu)
-        .accessibilityLabel(WorkspaceSceneLocalization.string("Workspace", bundle: .module))
+        .buttonStyle(.plain)
+        .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
+            WorkspaceScenePickerPopoverView(model: model, isPresented: $isPopoverPresented)
+        }
+        .onHover { isHovering = $0 }
+        .help(WorkspaceSceneLocalization.string("Switch Scene", bundle: .module))
+    }
+
+    /// 控件是否应显示高亮（悬停或弹层已展开）。
+    private var isHighlighted: Bool {
+        isHovering || isPopoverPresented
     }
 }

@@ -65,7 +65,9 @@ public final class SidebarTogglePlugin: SuperPlugin, SuperLog {
                 title: SidebarToggleLocalization.string("Toggle Sidebar", bundle: .module),
                 placement: .leading,
                 category: .global,
-                order: 10
+                // 负 order 使其排在所有工具栏项（含场景选择器 order 0）之前，
+                // 始终位于整个工具栏最左侧。
+                order: -100
             ) {
                 SidebarToggleButtonView(rootView: rootView)
             },
