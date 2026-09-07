@@ -30,6 +30,22 @@ public enum GitCommitLoader {
         return parse(output).sorted { $0.date > $1.date }
     }
 
+    /// 获取当前 HEAD 可达的提交总数，不返回提交详情。
+    ///
+    /// 用于提交列表按页定位到历史末端，避免为了计算最早一页而把整个
+    /// 仓库历史读入应用内存。
+    public static func countCommits(in repository: URL) throws -> Int {
+        _ = try buildCommand(in: repository, limit: 1, offset: 0)
+        let output = try runGit(
+            ["/usr/bin/git", "-C", repository.path, "rev-list", "--count", "HEAD"],
+            in: repository
+        )
+        guard let count = Int(output.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            throw GitCommitLoaderError.gitFailed("Unable to parse commit count.")
+        }
+        return count
+    }
+
     // MARK: - Command
 
     private static func buildCommand(in repository: URL, limit: Int, offset: Int) throws -> [String] {

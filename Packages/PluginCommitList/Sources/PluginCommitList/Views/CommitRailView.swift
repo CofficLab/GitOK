@@ -43,6 +43,12 @@ struct CommitRailView: View {
     @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
 
     @State private var commits: [GitCommit] = []
+    /// 回到最近提交时恢复的首屏快照，始终限制为一页，避免额外保留完整历史。
+    @State private var latestCommitSnapshot: [GitCommit] = []
+    /// 是否正在展示历史末端的一页，而不是完整的连续分页列表。
+    @State private var isShowingOldestPage = false
+    /// 当前最早页在完整 Git 日志中的 offset；向上滚动时从这里向前分页。
+    @State private var oldestLoadedOffset: Int?
     @State private var unpushedHashes: Set<String> = []
     @State private var isLoading = false
     @State private var loadedProjectURL: URL?
@@ -58,7 +64,7 @@ struct CommitRailView: View {
     @State private var isLatestCommitVisible = true
     @State private var isOldestCommitVisible = false
     @State private var hasScrolledDownEnough = false
-    /// 点击“跳到第一个提交”后，自动加载剩余分页的状态。
+    /// 点击“跳到第一个提交”后，定位并加载历史末端一页的状态。
     @State private var isJumpingToOldest = false
 
     // Push 状态
@@ -482,6 +488,10 @@ struct CommitRailView: View {
                                             commitRow(commit)
                                                 .onAppear {
                                                     loadMoreIfNeeded(after: commit)
+                                                    loadMoreTowardsLatestIfNeeded(
+                                                        when: commit,
+                                                        using: proxy
+                                                    )
                                                 }
                                             if commit.id != commits.last?.id {
                                                 AppDivider()
@@ -1163,11 +1173,14 @@ struct CommitRailView: View {
     }
 
     private var shouldShowJumpToLatest: Bool {
-        commits.count > 1 && !isLatestCommitVisible
+        commits.count > 1 && (isShowingOldestPage || !isLatestCommitVisible)
     }
 
     private var shouldShowJumpToOldest: Bool {
-        commits.count > 1 && hasScrolledDownEnough && !isOldestCommitVisible
+        commits.count > 1
+            && !isShowingOldestPage
+            && hasScrolledDownEnough
+            && !isOldestCommitVisible
     }
 
     private func jumpToLatestButton(using proxy: ScrollViewProxy) -> some View {
@@ -1223,13 +1236,32 @@ struct CommitRailView: View {
     }
 
     private func scrollToLatest(using proxy: ScrollViewProxy) {
+        if isShowingOldestPage {
+            commits = latestCommitSnapshot
+            isShowingOldestPage = false
+            oldestLoadedOffset = nil
+            hasMoreCommits = latestCommitSnapshot.count == commitPageSize
+            nextCommitOffset = latestCommitSnapshot.count
+            isLatestCommitVisible = true
+            isOldestCommitVisible = false
+            hasScrolledDownEnough = false
+
+            Task { @MainActor in
+                await Task.yield()
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    proxy.scrollTo(CommitScrollAnchor.latest, anchor: .top)
+                }
+            }
+            return
+        }
+
         hasScrolledDownEnough = false
         withAnimation(.easeInOut(duration: 0.25)) {
             proxy.scrollTo(CommitScrollAnchor.latest, anchor: .top)
         }
     }
 
-    /// 先加载完剩余分页，再滚动到仓库历史中最早的 commit。
+    /// 只加载历史末端一页，再滚动到其中最早的 commit。
     private func scrollToOldest(using proxy: ScrollViewProxy) {
         guard !isJumpingToOldest,
               !isLoading,
@@ -1245,50 +1277,49 @@ struct CommitRailView: View {
         isJumpingToOldest = true
         let token = loadToken
         Task { @MainActor in
-            while hasMoreCommits {
-                guard token == loadToken, loadedProjectURL == url else {
-                    isLoading = false
-                    isJumpingToOldest = false
-                    return
+            isLoading = true
+            let result = await Task.detached(priority: .userInitiated) {
+                Result {
+                    let totalCount = try git.countCommits(in: url)
+                    let offset = max(0, totalCount - commitPageSize)
+                    let loaded = try git.loadCommits(
+                        in: url,
+                        limit: commitPageSize,
+                        offset: offset
+                    )
+                    return (totalCount, loaded)
                 }
+            }.value
 
-                isLoading = true
-                let offset = nextCommitOffset
-                let result = await Task.detached(priority: .userInitiated) {
-                    Result {
-                        try git.loadCommits(
-                            in: url,
-                            limit: commitPageSize,
-                            offset: offset
-                        )
-                    }
-                }.value
-
-                guard token == loadToken, loadedProjectURL == url else {
-                    isLoading = false
-                    isJumpingToOldest = false
-                    return
-                }
-
-                switch result {
-                case .success(let loaded):
-                    nextCommitOffset += loaded.count
-                    let existingHashes = Set(commits.map(\.hash))
-                    let newCommits = loaded.filter { !existingHashes.contains($0.hash) }
-                    commits.append(contentsOf: newCommits)
-                    hasMoreCommits = loaded.count == commitPageSize && !newCommits.isEmpty
-                case .failure(let error):
-                    isLoading = false
-                    isJumpingToOldest = false
-                    loadError = error.localizedDescription
-                    return
-                }
+            guard token == loadToken, loadedProjectURL == url else {
+                isLoading = false
+                isJumpingToOldest = false
+                return
             }
 
-            isLoading = false
-            isJumpingToOldest = false
-            withAnimation(.easeInOut(duration: 0.25)) {
-                proxy.scrollTo(CommitScrollAnchor.oldest, anchor: .bottom)
+            switch result {
+            case .success(let result):
+                latestCommitSnapshot = Array(commits.prefix(commitPageSize))
+                commits = result.1
+                isShowingOldestPage = true
+                oldestLoadedOffset = max(0, result.0 - result.1.count)
+                hasMoreCommits = false
+                nextCommitOffset = result.0
+                isLatestCommitVisible = false
+                isOldestCommitVisible = false
+                hasScrolledDownEnough = false
+                isLoading = false
+                isJumpingToOldest = false
+                Task { @MainActor in
+                    await Task.yield()
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        proxy.scrollTo(CommitScrollAnchor.oldest, anchor: .bottom)
+                    }
+                }
+            case .failure(let error):
+                isLoading = false
+                isJumpingToOldest = false
+                loadError = error.localizedDescription
             }
         }
     }
@@ -1373,6 +1404,68 @@ struct CommitRailView: View {
         }
     }
 
+    /// 在历史末端页向上滚动时，按页加载更接近最新提交的历史。
+    ///
+    /// 新页面插入到当前列表前方，并把原来的首条 commit 恢复到顶部，
+    /// 避免分页完成时视图突然跳动。
+    private func loadMoreTowardsLatestIfNeeded(
+        when commit: GitCommit,
+        using proxy: ScrollViewProxy
+    ) {
+        guard isShowingOldestPage,
+              commit.id == commits.first?.id,
+              !isLoading,
+              let url = loadedProjectURL,
+              let currentOffset = oldestLoadedOffset,
+              currentOffset > 0 else { return }
+
+        let nextOffset = max(0, currentOffset - commitPageSize)
+        let pageLimit = currentOffset - nextOffset
+        let previousFirstID = commit.id
+        let token = loadToken
+        isLoading = true
+
+        Task { @MainActor in
+            let result = await Task.detached(priority: .userInitiated) {
+                Result {
+                    try git.loadCommits(
+                        in: url,
+                        limit: pageLimit,
+                        offset: nextOffset
+                    )
+                }
+            }.value
+
+            guard token == loadToken, loadedProjectURL == url else {
+                isLoading = false
+                return
+            }
+
+            isLoading = false
+            switch result {
+            case .success(let loaded):
+                let existingHashes = Set(commits.map(\.hash))
+                let newCommits = loaded.filter { !existingHashes.contains($0.hash) }
+                commits.insert(contentsOf: newCommits, at: 0)
+                oldestLoadedOffset = nextOffset
+
+                if nextOffset == 0 {
+                    isShowingOldestPage = false
+                    oldestLoadedOffset = nil
+                    nextCommitOffset = commits.count
+                    hasMoreCommits = false
+                }
+
+                await Task.yield()
+                withAnimation(.none) {
+                    proxy.scrollTo(previousFirstID, anchor: .top)
+                }
+            case .failure(let error):
+                loadError = error.localizedDescription
+            }
+        }
+    }
+
     /// 项目变化时重新加载 commit 列表。切换项目时 Provider 内部已联动清空
     /// 选中状态（`ProjectManager` 保证选择属于当前项目）。
     ///
@@ -1384,6 +1477,9 @@ struct CommitRailView: View {
             if loadedProjectURL != nil {
                 loadedProjectURL = nil
                 commits = []
+                latestCommitSnapshot = []
+                isShowingOldestPage = false
+                oldestLoadedOffset = nil
                 unpushedHashes = []
                 isLoading = false
                 loadError = nil
@@ -1401,11 +1497,16 @@ struct CommitRailView: View {
 
         loadToken &+= 1
         let token = loadToken
-        let isRefreshingExistingProject = loadedProjectURL == project.url && !commits.isEmpty
+        let isRefreshingExistingProject = loadedProjectURL == project.url
+            && !commits.isEmpty
+            && !isShowingOldestPage
         loadedProjectURL = project.url
         isLoading = true
         if !isRefreshingExistingProject {
             commits = []
+            latestCommitSnapshot = []
+            isShowingOldestPage = false
+            oldestLoadedOffset = nil
             unpushedHashes = []
             animatedCommitHashes = []
             isLatestCommitVisible = true
@@ -1435,6 +1536,7 @@ struct CommitRailView: View {
                 case .success(let loaded):
                     nextCommitOffset = loaded.count
                     hasMoreCommits = loaded.count == commitPageSize
+                    latestCommitSnapshot = Array(loaded.prefix(commitPageSize))
                     let insertedHashes = CommitListRefreshPolicy.insertedCommitHashes(
                         previous: commits,
                         current: loaded

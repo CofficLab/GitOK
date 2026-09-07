@@ -22,6 +22,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }
     }
 
+    func countCommits(in repository: URL) throws -> Int {
+        try GitCommitLoader.countCommits(in: repository)
+    }
+
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try Set(LibGit2.getUnPushedCommits(at: repository.path, verbose: false).map(\.hash))
     }

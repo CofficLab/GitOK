@@ -87,6 +87,7 @@ final class GitCommitLoaderTests: XCTestCase {
         )
 
         let commits = try GitCommitLoader.loadCommits(in: repo, limit: 10)
+        XCTAssertEqual(try GitCommitLoader.countCommits(in: repo), 2)
         XCTAssertEqual(commits.count, 2)
         XCTAssertEqual(commits[0].message, "second commit", "最新提交应在最前")
         XCTAssertEqual(commits[1].message, "first commit")
