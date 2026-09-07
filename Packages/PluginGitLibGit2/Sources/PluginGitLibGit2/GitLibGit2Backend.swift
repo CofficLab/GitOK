@@ -69,6 +69,27 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }
     }
 
+    // LibGit2Swift 当前公开的 diff API 会一次性生成完整文件数组；分页能力
+    // 先复用 KitGit 的 NUL 流式读取，确保 Commit Detail 不因后端选择而失去
+    // 有界内存特性。普通 diff 读取仍保持 LibGit2 实现。
+    func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
+        try GitDiffLoader.countChanges(commit: hash, in: repository)
+    }
+
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL
+    ) throws -> GitFileChangePage {
+        try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: limit,
+            offset: offset,
+            in: repository
+        )
+    }
+
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try LibGit2.getFileDiff(atCommit: hash, for: filePath, at: repository.path)
     }

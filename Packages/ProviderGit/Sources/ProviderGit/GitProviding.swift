@@ -96,6 +96,13 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus
     func loadEntries(in repository: URL) throws -> [GitStatusEntry]
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
+    func countCommitChanges(commit hash: String, in repository: URL) throws -> Int
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL
+    ) throws -> GitFileChangePage
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String
 

@@ -1,5 +1,6 @@
 import Foundation
 import KitGit
+import ProviderGit
 import SwiftUI
 
 /// 提交详情插件的自有状态模型。
@@ -9,6 +10,16 @@ import SwiftUI
 /// 读取 Provider 或监听系统通知。
 @MainActor
 final class CommitDetailViewModel: ObservableObject {
+    private let git: (any GitProviding)?
+
+    /// Commit 文件页缓存；它只保留附近页面，不暴露整份变更数组给视图。
+    let filePageStore: CommitFilePageStore
+
+    init(git: (any GitProviding)? = nil) {
+        self.git = git
+        self.filePageStore = CommitFilePageStore()
+    }
+
     /// 当前选中的 commit；未选中时为 nil。
     @Published private(set) var selectedCommit: GitCommit?
 
@@ -50,6 +61,8 @@ final class CommitDetailViewModel: ObservableObject {
 
     /// 外部项目 / 选中状态变化 → 同步最新值。
     func handleSelectionChanged(commit: GitCommit?, projectURL: URL?, file: String?) {
+        let previousHash = selectedCommit?.hash
+        let previousURL = selectedProjectURL
         selectedCommit = commit
         selectedProjectURL = projectURL
         selectedFile = file
@@ -62,6 +75,11 @@ final class CommitDetailViewModel: ObservableObject {
             isLoadingCommitFiles = false
             commitFilesLoadError = nil
             filesRefreshToken &+= 1
+            filePageStore.reset(commitHash: nil, repositoryURL: nil, git: git)
+        } else if previousHash != commit?.hash || previousURL != projectURL {
+            // Commit 或仓库切换时，分页缓存必须整体失效；同一 commit 的文件
+            // 点击 / 外部状态通知不能重复发起第一页请求。
+            filePageStore.reset(commitHash: commit?.hash, repositoryURL: projectURL, git: git)
         }
     }
 

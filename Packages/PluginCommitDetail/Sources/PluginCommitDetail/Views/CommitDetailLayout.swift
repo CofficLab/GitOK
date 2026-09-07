@@ -17,12 +17,8 @@ struct CommitDetailLayout: View {
     let projectURL: URL
     /// 当前选中的文件（Provider 的单一权威来源）。
     let selectedFile: String?
-    /// 当前 commit 下的变动的文件（由 Provider 加载维护）。
-    let changes: [GitFileChange]
-    /// 是否正在加载变动文件。
-    let isLoadingChanges: Bool
-    /// 变动文件加载失败的错误描述。
-    let loadError: String?
+    /// 当前 commit 的分页文件缓存。
+    @ObservedObject var filePageStore: CommitFilePageStore
     /// 本次刷新新增的文件路径（仅用于触发顶部进入动画，对齐 commitlist）。
     let animatedFilePaths: Set<String>
     /// 用户点击文件行时回调（由宿主写入 Provider）。
@@ -63,7 +59,7 @@ struct CommitDetailLayout: View {
                 Text(loc("Files"))
                     .font(.appCaptionEmphasized)
                 Spacer()
-                Text("\(changes.count)")
+                Text(fileCountText)
                     .font(.appMicro)
                     .foregroundStyle(theme.textTertiary)
             }
@@ -73,60 +69,95 @@ struct CommitDetailLayout: View {
 
     @ViewBuilder
     private var fileListContent: some View {
-        if isLoadingChanges && changes.isEmpty {
+        if filePageStore.totalCount == nil && filePageStore.isLoadingCount {
             // 首次加载（尚无任何历史数据）：全屏转圈。
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if changes.isEmpty, let loadError {
-            AppEmptyState(
-                icon: "exclamationmark.triangle",
-                title: loc("Unable to Load Changes"),
-                description: loadError
-            )
+        } else if filePageStore.totalCount == nil, let loadError = filePageStore.firstError {
+            VStack(spacing: 10) {
+                AppEmptyState(
+                    icon: "exclamationmark.triangle",
+                    title: loc("Unable to Load Changes"),
+                    description: loadError
+                )
+                Button("Retry") {
+                    filePageStore.retry(pageIndex: -1)
+                }
+                .buttonStyle(.borderless)
+                .font(.appCaptionEmphasized)
+            }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if changes.isEmpty {
+        } else if filePageStore.totalCount == 0 {
             AppEmptyState(icon: "doc", title: loc("No Changes"), description: loc("This commit has no file changes."))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             VStack(spacing: 0) {
-                if let loadError {
+                if let loadError = filePageStore.firstError {
                     // 刷新失败但保留旧列表：顶部横幅提示，不清空内容。
-                    Text(loadError)
-                        .font(.appCaption)
-                        .foregroundStyle(theme.error)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(theme.error.opacity(0.08))
+                    HStack(spacing: 8) {
+                        Text(loadError)
+                            .font(.appCaption)
+                            .foregroundStyle(theme.error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        if let failedPage = filePageStore.firstFailedPageIndex {
+                            Button("Retry") {
+                                filePageStore.retry(pageIndex: failedPage)
+                            }
+                            .buttonStyle(.borderless)
+                            .font(.appCaptionEmphasized)
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(theme.error.opacity(0.08))
                 }
-                // 与 CommitRailView 一致：加载新数据期间保留旧列表，
-                // 顶部细进度条提示，新行从顶部滑入（行级进入动画）。
+                // 每一行只是一个稳定索引；真正的 GitFileChange 按页按需取回。
+                // 未加载的行保留固定高度，避免分页返回时滚动位置跳动。
                 ZStack(alignment: .top) {
                     ScrollView(.vertical, showsIndicators: false) {
                         LazyVStack(spacing: 0) {
-                            ForEach(changes) { change in
-                                FileChangeRow(
-                                    change: change,
-                                    isSelected: selectedFile == change.path
-                                ) {
-                                    onSelectFile(change.path)
-                                }
-                                .transition(
-                                    animatedFilePaths.contains(change.path)
-                                        ? .asymmetric(
-                                            insertion: .move(edge: .top).combined(with: .opacity),
-                                            removal: .opacity
+                            ForEach(0..<(filePageStore.totalCount ?? 0), id: \.self) { index in
+                                Group {
+                                    if let change = filePageStore.change(at: index) {
+                                        FileChangeRow(
+                                            change: change,
+                                            isSelected: selectedFile == change.path
+                                        ) {
+                                            onSelectFile(change.path)
+                                        }
+                                        .transition(
+                                            animatedFilePaths.contains(change.path)
+                                                ? .asymmetric(
+                                                    insertion: .move(edge: .top).combined(with: .opacity),
+                                                    removal: .opacity
+                                                )
+                                                : .identity
                                         )
-                                        : .identity
-                                )
-                                if change.id != changes.last?.id {
+                                    } else {
+                                        FileChangePlaceholderRow()
+                                    }
+                                }
+                                .onAppear {
+                                    let pageIndex = index / CommitFilePageStore.pageSize
+                                    let positionInPage = index % CommitFilePageStore.pageSize
+                                    filePageStore.requestPage(at: pageIndex)
+                                    // 进入一页的头尾时各预取相邻页，向上和向下
+                                    // 滚动都能减少占位行停留时间。
+                                    if positionInPage < 10 {
+                                        filePageStore.requestPage(at: pageIndex - 1)
+                                    }
+                                    if positionInPage >= CommitFilePageStore.pageSize - 10 {
+                                        filePageStore.requestPage(at: pageIndex + 1)
+                                    }
+                                }
+                                if index + 1 < (filePageStore.totalCount ?? 0) {
                                     AppDivider()
                                 }
                             }
                         }
                         .padding(.vertical, 2)
                     }
-                    if isLoadingChanges {
+                    if filePageStore.isLoading {
                         ProgressView()
                             .progressViewStyle(.linear)
                             .frame(height: 2)
@@ -135,6 +166,13 @@ struct CommitDetailLayout: View {
                 }
             }
         }
+    }
+
+    private var fileCountText: String {
+        if let totalCount = filePageStore.totalCount {
+            return "\(totalCount)"
+        }
+        return filePageStore.isLoadingCount ? "…" : "—"
     }
 }
 
@@ -227,6 +265,7 @@ struct FileChangeRow: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.vertical, 3)
+            .frame(minHeight: 34)
         }
     }
 
@@ -252,5 +291,21 @@ struct FileChangeRow: View {
             Image(systemName: "questionmark.circle")
                 .foregroundStyle(theme.textTertiary)
         }
+    }
+}
+
+private struct FileChangePlaceholderRow: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(.secondary.opacity(0.12))
+                .frame(width: 16, height: 16)
+            RoundedRectangle(cornerRadius: 3)
+                .fill(.secondary.opacity(0.12))
+                .frame(maxWidth: .infinity)
+                .frame(height: 12)
+        }
+        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
     }
 }
