@@ -320,6 +320,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("discardFiles") { try $0.discardFiles(filePaths, in: repository) }
     }
 
+    public func discardAllChanges(in repository: URL) throws {
+        try execute("discardAllChanges") { try $0.discardAllChanges(in: repository) }
+    }
+
     public func commit(message: String, in repository: URL) throws -> String {
         try execute("commit") { try $0.commit(message: message, in: repository) }
     }

@@ -78,6 +78,28 @@ public enum GitCommitOperation {
         }
     }
 
+    /// 丢弃当前工作区的全部改动（包括暂存、未暂存、删除、重命名和未跟踪文件），不可逆。
+    ///
+    /// 只清理 Git 工作区可见的非 ignored 内容：已跟踪文件恢复到 `HEAD`，索引恢复到
+    /// 当前 `HEAD`，未跟踪文件和目录通过 `git clean -fd` 删除；ignored 文件不会被删除。
+    /// 没有首个 commit 的仓库没有可恢复的 `HEAD`，此时只清理索引和未跟踪内容。
+    public static func discardAllChanges(in repository: URL) throws {
+        // 先清空索引，确保 staged modification/deletion/rename 不会残留。
+        _ = try GitProcessRunner.run(["reset", "--"], in: repository)
+
+        // 有 HEAD 时把所有已跟踪路径恢复到提交状态；没有 HEAD 的 unborn repository
+        // 没有可供 restore 的版本，跳过这一步即可。
+        if hasHead(in: repository) {
+            _ = try GitProcessRunner.run(
+                ["restore", "--source=HEAD", "--worktree", "--", "."],
+                in: repository
+            )
+        }
+
+        // -f 不使用 -x，因此保留 ignored 文件；-d 同时清理未跟踪目录。
+        _ = try GitProcessRunner.run(["clean", "-fd", "--", "."], in: repository)
+    }
+
     /// 创建提交。
     ///
     /// 消息按空行分段为多个 `-m`（git 会用空行连接各段），支持
@@ -138,6 +160,10 @@ public enum GitCommitOperation {
             // 没有首个 commit 时 HEAD 不存在，当前路径只能是新增文件。
             return false
         }
+    }
+
+    private static func hasHead(in repository: URL) -> Bool {
+        (try? GitProcessRunner.run(["rev-parse", "--verify", "HEAD"], in: repository)) != nil
     }
 
     private static func removeWorkingTreeItem(_ filePath: String, in repository: URL) throws {

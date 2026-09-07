@@ -146,6 +146,82 @@ final class GitCommitOperationTests: XCTestCase {
         XCTAssertEqual(remaining.worktreeStatus, " ")
     }
 
+    func testDiscardAllChangesRestoresTrackedStateAndRemovesNonIgnoredUntrackedItems() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("tracked initial\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        try Data("deleted initial\n".utf8).write(to: repo.appendingPathComponent("deleted.txt"))
+        try Data("*.ignored\n".utf8).write(to: repo.appendingPathComponent(".gitignore"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        // 同时构造 staged、unstaged、删除、staged 新文件和未跟踪目录。
+        try Data("staged changed\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+        try GitCommitOperation.stageFiles(["tracked.txt"], in: repo)
+        try Data("unstaged changed\n".utf8).write(to: repo.appendingPathComponent("tracked.txt"))
+
+        try FileManager.default.removeItem(at: repo.appendingPathComponent("deleted.txt"))
+        try GitCommitOperation.stageFiles(["deleted.txt"], in: repo)
+
+        let stagedNew = repo.appendingPathComponent("staged-new.txt")
+        try Data("staged new\n".utf8).write(to: stagedNew)
+        try GitCommitOperation.stageFiles(["staged-new.txt"], in: repo)
+
+        let untracked = repo.appendingPathComponent("untracked.txt")
+        try Data("untracked\n".utf8).write(to: untracked)
+        let untrackedDirectory = repo.appendingPathComponent("scratch", isDirectory: true)
+        try FileManager.default.createDirectory(at: untrackedDirectory, withIntermediateDirectories: true)
+        try Data("scratch\n".utf8).write(to: untrackedDirectory.appendingPathComponent("note.txt"))
+        let ignored = repo.appendingPathComponent("debug.ignored")
+        try Data("keep me\n".utf8).write(to: ignored)
+
+        try GitCommitOperation.discardAllChanges(in: repo)
+
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("tracked.txt"), encoding: .utf8),
+            "tracked initial\n"
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("deleted.txt"), encoding: .utf8),
+            "deleted initial\n"
+        )
+        XCTAssertFalse(FileManager.default.fileExists(atPath: stagedNew.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: untracked.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: untrackedDirectory.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: ignored.path))
+    }
+
+    func testDiscardAllChangesOnRepositoryWithoutHeadRemovesUntrackedItems() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        let untracked = repo.appendingPathComponent("draft.txt")
+        try Data("draft\n".utf8).write(to: untracked)
+
+        try GitCommitOperation.discardAllChanges(in: repo)
+
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: untracked.path))
+    }
+
+    func testDiscardAllChangesOnCleanRepositoryIsNoOp() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try Data("initial\n".utf8).write(to: repo.appendingPathComponent("a.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "initial", in: repo)
+
+        try GitCommitOperation.discardAllChanges(in: repo)
+
+        XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("a.txt"), encoding: .utf8),
+            "initial\n"
+        )
+    }
+
     func testCommitWithNothingToCommitThrows() throws {
         let repo = try makeRepo()
         defer { try? FileManager.default.removeItem(at: repo) }

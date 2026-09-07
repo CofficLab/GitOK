@@ -154,6 +154,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func unstageFiles(_ filePaths: [String], in repository: URL) throws
     func discardFileChanges(_ filePath: String, in repository: URL) throws
     func discardFiles(_ filePaths: [String], in repository: URL) throws
+    func discardAllChanges(in repository: URL) throws
     func commit(message: String, in repository: URL) throws -> String
     func push(in repository: URL) throws -> String
 

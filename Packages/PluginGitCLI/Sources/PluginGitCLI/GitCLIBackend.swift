@@ -234,6 +234,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitOperation.discardFiles(filePaths, in: repository)
     }
 
+    func discardAllChanges(in repository: URL) throws {
+        try GitCommitOperation.discardAllChanges(in: repository)
+    }
+
     func commit(message: String, in repository: URL) throws -> String {
         try GitCommitOperation.commit(message: message, in: repository)
     }
