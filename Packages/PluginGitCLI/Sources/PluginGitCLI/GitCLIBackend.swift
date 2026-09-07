@@ -54,6 +54,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitRefReader.latestTag(in: repository)
     }
 
+    func firstCommitDate(in repository: URL) -> Date? {
+        GitRefReader.firstCommitDate(in: repository)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         GitRefReader.unpushedCount(in: repository)
     }

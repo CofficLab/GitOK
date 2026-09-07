@@ -139,6 +139,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         primaryBackendOrNil()?.latestTag(in: repository)
     }
 
+    public func firstCommitDate(in repository: URL) -> Date? {
+        primaryBackendOrNil()?.firstCommitDate(in: repository)
+    }
+
     public func unpushedCount(in repository: URL) -> Int? {
         primaryBackendOrNil()?.unpushedCount(in: repository)
     }

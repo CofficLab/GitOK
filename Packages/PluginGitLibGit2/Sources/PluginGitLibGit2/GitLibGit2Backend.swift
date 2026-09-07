@@ -88,6 +88,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         return Self.tagName(from: description)
     }
 
+    func firstCommitDate(in repository: URL) -> Date? {
+        GitRefReader.firstCommitDate(in: repository)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         try? LibGit2.getUnPushedCommits(at: repository.path, verbose: false).count
     }

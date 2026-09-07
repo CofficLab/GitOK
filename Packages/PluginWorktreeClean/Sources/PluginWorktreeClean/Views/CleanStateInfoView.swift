@@ -21,6 +21,7 @@ struct CleanStateInfoView: View {
     @State private var branchName: String?
     @State private var latestTag: String?
     @State private var commitCount: Int?
+    @State private var firstCommitDate: Date?
     @State private var isLoadingInfo = true
 
     var body: some View {
@@ -40,6 +41,9 @@ struct CleanStateInfoView: View {
 
                     Divider().padding(.vertical, 8)
                     commitCountRow
+
+                    Divider().padding(.vertical, 8)
+                    firstCommitRow
 
                     if !remotes.isEmpty {
                         Divider().padding(.vertical, 8)
@@ -135,6 +139,21 @@ struct CleanStateInfoView: View {
         }
     }
 
+    // MARK: - First Commit Row
+
+    private var firstCommitRow: some View {
+        AppSettingRow(
+            title: loc("First Commit"),
+            description: firstCommitDate.map { Self.dateFormatter.string(from: $0) }
+                ?? (isLoadingInfo ? "" : loc("Not Available")),
+            icon: "calendar"
+        ) {
+            if isLoadingInfo {
+                ProgressView().controlSize(.small)
+            }
+        }
+    }
+
     // MARK: - Remote Repository Row
 
     private func remoteRepositoryRow(for remote: GitRemoteSummary) -> some View {
@@ -211,15 +230,26 @@ struct CleanStateInfoView: View {
             // 加载提交总数（`git rev-list --count HEAD`；空仓库 / 失败时为 nil）
             let loadedCommitCount = try? git.countCommits(in: project.url)
 
+            // 加载第一次提交时间（空仓库 / 失败时为 nil）
+            let loadedFirstCommitDate = git.firstCommitDate(in: project.url)
+
             await MainActor.run {
                 remotes = loadedRemotes
                 branchName = loadedBranchName
                 latestTag = loadedLatestTag
                 commitCount = loadedCommitCount
+                firstCommitDate = loadedFirstCommitDate
                 isLoadingInfo = false
             }
         }
     }
 
     // MARK: - Helpers
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
 }
