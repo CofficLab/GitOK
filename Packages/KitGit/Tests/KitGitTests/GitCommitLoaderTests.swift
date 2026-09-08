@@ -130,6 +130,37 @@ final class GitCommitLoaderTests: XCTestCase {
         XCTAssertTrue(Set(firstPage.map(\.hash)).isDisjoint(with: secondPage.map(\.hash)))
     }
 
+    func testLoadCommitsCanIncludeAllRefs() throws {
+        guard FileManager.default.isExecutableFile(atPath: "/usr/bin/git") else {
+            throw XCTSkip("git not available")
+        }
+
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GitCommitLoaderAllRefsTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        try run(["git", "-C", repo.path, "init", "-q", "-b", "main"])
+        try run([
+            "git", "-C", repo.path,
+            "-c", "user.name=Test User", "-c", "user.email=test@example.com",
+            "commit", "-q", "--allow-empty", "-m", "main commit",
+        ])
+        try run(["git", "-C", repo.path, "checkout", "-q", "-b", "feature"])
+        try run([
+            "git", "-C", repo.path,
+            "-c", "user.name=Test User", "-c", "user.email=test@example.com",
+            "commit", "-q", "--allow-empty", "-m", "feature commit",
+        ])
+        try run(["git", "-C", repo.path, "checkout", "-q", "main"])
+
+        let currentBranchCommits = try GitCommitLoader.loadCommits(in: repo, limit: 10)
+        let allRefsCommits = try GitCommitLoader.loadCommits(in: repo, limit: 10, allRefs: true)
+
+        XCTAssertEqual(currentBranchCommits.map(\.message), ["main commit"])
+        XCTAssertEqual(Set(allRefsCommits.map(\.message)), ["main commit", "feature commit"])
+    }
+
     func testLoadCommitsInNonRepositoryThrows() {
         let dir = FileManager.default.temporaryDirectory
             .appendingPathComponent("NotARepo-\(UUID().uuidString)", isDirectory: true)
