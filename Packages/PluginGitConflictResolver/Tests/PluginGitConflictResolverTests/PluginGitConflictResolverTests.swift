@@ -59,6 +59,31 @@ struct PluginGitConflictResolverTests {
         #expect(viewModel.isPresented)
     }
 
+    @Test("合并已无冲突但仍未完成时自动打开引导弹层")
+    func pendingMergeWithoutConflictsPresentsResolver() {
+        let viewModel = GitConflictResolverViewModel()
+        let projectURL = URL(fileURLWithPath: "/tmp/project")
+
+        viewModel.update(
+            projectURL: projectURL,
+            conflictedFiles: [],
+            isOperationInProgress: true,
+            isCherryPicking: false
+        )
+
+        #expect(viewModel.isPresented)
+
+        viewModel.dismiss()
+        viewModel.update(
+            projectURL: projectURL,
+            conflictedFiles: [],
+            isOperationInProgress: true,
+            isCherryPicking: false
+        )
+
+        #expect(!viewModel.isPresented)
+    }
+
     @Test("插件元数据符合 Lumi 插件规范")
     func pluginMetadata() {
         let plugin = GitConflictResolverPlugin()

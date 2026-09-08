@@ -43,6 +43,27 @@ public struct ConflictResolverList: View {
                     if viewModel.isLoading {
                         ProgressView(LumiPluginLocalization.string("Checking conflicts…", bundle: .module))
                             .frame(maxWidth: .infinity, minHeight: 120)
+                    } else if viewModel.conflictedFiles.isEmpty && viewModel.isOperationInProgress {
+                        VStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundStyle(theme.success)
+                            Text(LumiPluginLocalization.string(
+                                viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge ready to complete",
+                                bundle: .module
+                            ))
+                                .font(.system(size: 13, weight: .semibold))
+                            Text(LumiPluginLocalization.string(
+                                viewModel.isCherryPicking
+                                    ? "All conflicts are resolved. Continue the cherry-pick to finish it."
+                                    : "All conflicts are resolved. Continue the merge to create the merge commit.",
+                                bundle: .module
+                            ))
+                            .font(.caption)
+                            .foregroundStyle(theme.textSecondary)
+                            .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 120)
                     } else if viewModel.conflictedFiles.isEmpty {
                         VStack(spacing: 6) {
                             Image(systemName: "checkmark.circle")
@@ -110,7 +131,7 @@ public struct ConflictResolverList: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(LumiPluginLocalization.string("Conflict Resolution", bundle: .module))
                     .font(.headline)
-                Text(viewModel.conflictedFiles.isEmpty ? LumiPluginLocalization.string("No conflicted files", bundle: .module) : String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), viewModel.conflictedFiles.count))
+                Text(headerSubtitle)
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
@@ -126,6 +147,19 @@ public struct ConflictResolverList: View {
                 .help(LumiPluginLocalization.string("Close", bundle: .module))
             }
         }
+    }
+
+    private var headerSubtitle: String {
+        if !viewModel.conflictedFiles.isEmpty {
+            return String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), viewModel.conflictedFiles.count)
+        }
+        if viewModel.isOperationInProgress {
+            return LumiPluginLocalization.string(
+                viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge is ready to continue",
+                bundle: .module
+            )
+        }
+        return LumiPluginLocalization.string("No conflicted files", bundle: .module)
     }
 
     private var actionBar: some View {

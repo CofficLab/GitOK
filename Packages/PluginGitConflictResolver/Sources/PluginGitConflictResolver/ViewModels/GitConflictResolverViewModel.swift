@@ -30,8 +30,10 @@ public final class GitConflictResolverViewModel: ObservableObject {
         isCherryPicking: Bool
     ) {
         let projectChanged = currentProjectURL != projectURL
+        // A merge can remain in progress after every conflict has been staged.
+        // That state still needs the resolver surface: the next action is to
+        // continue the merge and create the merge commit, not to sync again.
         let operationStarted = isOperationInProgress
-            && !conflictedFiles.isEmpty
             && (!lastReportedOperationInProgress || projectChanged)
 
         currentProjectURL = projectURL
