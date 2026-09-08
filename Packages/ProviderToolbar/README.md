@@ -1,6 +1,6 @@
 # ProviderToolbar
 
-工具栏能力协议包：定义 `ToolbarProviding` / `ToolbarItem` 与默认实现。
+工具栏能力协议包：定义 `ToolbarProviding` / `ToolbarItem` 与默认实现。默认工具栏会在普通隐藏标题栏窗口中为红绿灯保留空间，并在全屏时自动取消该预留，让注入按钮从左侧自然排列。
 
 ## 本 Package 的位置
 

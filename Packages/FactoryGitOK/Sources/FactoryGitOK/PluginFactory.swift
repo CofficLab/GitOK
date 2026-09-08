@@ -4,6 +4,7 @@ import KernelCore
 import PluginActivityStatus
 import PluginCommand
 import PluginCommitDetail
+import PluginActivityHeatmap
 import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
@@ -82,6 +83,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CloneRepositoryPlugin(),
             WorktreeStatusPlugin(),
             CommitListPlugin(),
+            ActivityHeatmapPlugin(),
             CommitDetailPlugin(),
             CommitFormPlugin(),
             GitDiffPlugin(),
