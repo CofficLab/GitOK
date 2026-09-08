@@ -50,7 +50,7 @@ public final class ActivityHeatmapPlugin: SuperPlugin, SuperLog {
         projectsHandle = projects.addObserver { [weak provider, weak projects] event in
             guard let provider, let projects else { return }
             switch event {
-            case .selectionChanged, .dataChanged:
+            case .selectionChanged:
                 provider.refresh(for: projects.currentProject?.url)
             default:
                 break
@@ -59,10 +59,13 @@ public final class ActivityHeatmapPlugin: SuperPlugin, SuperLog {
 
         if let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self) {
             gitWatchHandle = gitWatch.addObserver { [weak provider, weak projects] event in
-                guard case .workingTreeChanged = event,
-                      let provider,
-                      let projects else { return }
-                provider.refresh(for: projects.currentProject?.url)
+                guard let provider, let projects else { return }
+                switch event {
+                case .refsChanged:
+                    provider.refresh(for: projects.currentProject?.url)
+                default:
+                    break
+                }
             }
         }
     }
