@@ -39,6 +39,21 @@ public enum AppLauncher {
         }
     }
 
+    /// 用指定应用打开项目中的单个文件。
+    public static func openFile(_ fileURL: URL, in target: OpenTarget) {
+        Task.detached(priority: .userInitiated) {
+            guard target != .remote,
+                  let appURL = applicationURL(for: target) else { return }
+            await MainActor.run {
+                NSWorkspace.shared.open(
+                    [fileURL],
+                    withApplicationAt: appURL,
+                    configuration: NSWorkspace.OpenConfiguration()
+                )
+            }
+        }
+    }
+
     // MARK: - App Resolution
 
     static func applicationURL(for target: OpenTarget) -> URL? {
