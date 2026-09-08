@@ -1,6 +1,6 @@
 # PluginCommitDetail
 
-提交详情插件：`CommitDetailView` 展示选中提交的完整详情与工作区变更（`WorktreeChangesView`），通过 `CommitDetailObserver` 响应选择变化。
+提交详情插件：`CommitDetailView` 展示选中提交的完整详情与工作区变更（`WorktreeChangesView`）。工作区干净状态与右侧本地提交活跃度热力图由 `PluginWorktreeClean` 负责；活跃度数据由 `PluginActivityHeatmap` 实现并缓存到其自身插件目录。
 
 ## 本 Package 的位置
 

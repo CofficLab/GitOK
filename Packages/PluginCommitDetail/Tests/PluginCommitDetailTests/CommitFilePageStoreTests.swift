@@ -84,6 +84,7 @@ final class CommitFilePageStoreTests: XCTestCase {
         func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String { "" }
         func currentBranch(in repository: URL) -> String? { nil }
         func latestTag(in repository: URL) -> String? { nil }
+        func firstCommitDate(in repository: URL) -> Date? { nil }
         func unpushedCount(in repository: URL) -> Int? { nil }
         func hasRemotes(in repository: URL) -> Bool { false }
         func unpulledCount(in repository: URL) -> Int? { nil }
