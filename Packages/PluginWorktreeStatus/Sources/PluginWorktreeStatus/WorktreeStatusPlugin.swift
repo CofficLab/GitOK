@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
 import ProviderGit
+import ProviderGitConflictResolver
 import ProviderProjects
 import ProviderRailView
 import ProviderToast
@@ -84,7 +85,12 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
                         projects: projects,
                         git: git,
                         gitWatch: gitWatch,
-                        toast: toast
+                        toast: toast,
+                        requestConflictResolution: { @MainActor in
+                            kernel
+                                .resolveProvider((any GitConflictResolutionProviding).self)?
+                                .requestPresentation()
+                        }
                     )
             }
         }

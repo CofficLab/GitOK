@@ -86,6 +86,11 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
             // 初始可见性与当前是否有选中文件一致；无选中文件时右侧面板隐藏，
             // 避免空占位（下方 observer 会在文件选择变化时同步显隐）。
             isVisible: capability.currentFile != nil,
+            // 关闭面板同时清除文件选择；否则再次点击同一文件不会产生
+            // currentFileChanged 事件，面板也就无法重新显示。
+            onDismiss: { [weak projects] in
+                projects?.selectFile(nil)
+            },
             content: AnyView(
                 GitDiffPaneView(viewModel: viewModel, git: git)
                     // Debug 构建下左下角叠加插件名 badge，便于识别视图来源。

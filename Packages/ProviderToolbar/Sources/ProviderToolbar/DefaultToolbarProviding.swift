@@ -11,6 +11,7 @@ import AppKit
 ///
 /// 尺寸与旧版 Lumi（`FactoryCore.AppTitleToolbar`）保持完全一致：
 /// - 高度 44pt，左侧红绿灯预留 76pt（`trafficLightReserveWidth`）；
+///   全屏窗口没有红绿灯时自动取消这段预留；
 /// - 整条工具栏可作为窗口拖拽区（macOS）；
 /// - center 项绝对居中（`maxWidth 420` + 水平 padding 88），
 ///   不被 leading / trailing 内容位置影响；
@@ -69,6 +70,7 @@ public final class DefaultToolbarProviding: ToolbarProviding, ObservableObject {
 /// 按 placement 渲染工具栏项的视图。
 private struct ToolbarView: View {
     @LumiTheme private var theme
+    @StateObject private var windowState = ToolbarWindowState()
 
     @ObservedObject var provider: DefaultToolbarProviding
 
@@ -81,6 +83,7 @@ private struct ToolbarView: View {
         let leading = items.filter { $0.placement == .leading }
         let center = items.filter { $0.placement == .center }
         let trailing = items.filter { $0.placement == .trailing }
+        let leadingInset = windowState.isFullScreen ? 0 : trafficLightReserveWidth
 
         AppToolbarContainer(
             height: height,
@@ -89,15 +92,15 @@ private struct ToolbarView: View {
         ) {
             ZStack {
                 #if os(macOS)
-                WindowDragRegion()
+                WindowDragRegion(windowState: windowState)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 #endif
 
                 HStack(spacing: 8) {
                     // 红绿灯预留：hiddenTitleBar 下红绿灯悬浮于左上角，
-                    // leading 项从此宽度之后开始排布（与旧版完全一致）。
+                    // leading 项从此宽度之后开始排布；全屏时没有预留区。
                     Color.clear
-                        .frame(width: trafficLightReserveWidth, height: height)
+                        .frame(width: leadingInset, height: height)
                         .accessibilityHidden(true)
 
                     group(leading)
@@ -112,7 +115,7 @@ private struct ToolbarView: View {
                 // center 项绝对居中，maxWidth 420，并左右留出红绿灯空间。
                 group(center)
                     .frame(maxWidth: 420)
-                    .padding(.horizontal, trafficLightReserveWidth + 12)
+                    .padding(.horizontal, leadingInset + 12)
             }
             .frame(height: height)
             .frame(maxWidth: .infinity)
@@ -134,17 +137,85 @@ private struct ToolbarView: View {
 
 #if os(macOS)
 /// 整条工具栏的窗口拖拽区：与旧版 `AppTitleToolbar` 的拖拽行为一致。
+@MainActor
 private struct WindowDragRegion: NSViewRepresentable {
+    let windowState: ToolbarWindowState
+
     func makeNSView(context: Context) -> DragRegionView {
-        DragRegionView()
+        DragRegionView(windowState: windowState)
     }
 
-    func updateNSView(_ nsView: DragRegionView, context: Context) {}
+    func updateNSView(_ nsView: DragRegionView, context: Context) {
+        windowState.attach(to: nsView.window)
+    }
 }
 
+@MainActor
 private final class DragRegionView: NSView {
+    private let windowState: ToolbarWindowState
+
+    init(windowState: ToolbarWindowState) {
+        self.windowState = windowState
+        super.init(frame: .zero)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        windowState.attach(to: window)
+    }
+
     override var mouseDownCanMoveWindow: Bool {
         true
+    }
+}
+
+/// Tracks the host window so title-bar-specific spacing does not leak into full screen.
+@MainActor
+private final class ToolbarWindowState: NSObject, ObservableObject {
+    @Published private(set) var isFullScreen = false
+
+    private weak var window: NSWindow?
+
+    func attach(to window: NSWindow?) {
+        guard self.window !== window else {
+            refresh()
+            return
+        }
+
+        NotificationCenter.default.removeObserver(self)
+        self.window = window
+        refresh()
+
+        guard let window else { return }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleFullScreenChange),
+            name: NSWindow.didEnterFullScreenNotification,
+            object: window
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleFullScreenChange),
+            name: NSWindow.didExitFullScreenNotification,
+            object: window
+        )
+    }
+
+    @objc private func handleFullScreenChange() {
+        refresh()
+    }
+
+    private func refresh() {
+        isFullScreen = window?.styleMask.contains(.fullScreen) == true
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 #endif

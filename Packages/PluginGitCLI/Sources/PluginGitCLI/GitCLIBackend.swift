@@ -18,6 +18,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset)
     }
 
+    func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
+        try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
+    }
+
     func countCommits(in repository: URL) throws -> Int {
         try GitCommitLoader.countCommits(in: repository)
     }
@@ -38,6 +42,24 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitDiffLoader.loadChanges(commit: hash, in: repository)
     }
 
+    func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
+        try GitDiffLoader.countChanges(commit: hash, in: repository)
+    }
+
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL
+    ) throws -> GitFileChangePage {
+        try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: limit,
+            offset: offset,
+            in: repository
+        )
+    }
+
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try GitDiffLoader.loadDiff(commit: hash, filePath: filePath, in: repository)
     }
@@ -52,6 +74,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func latestTag(in repository: URL) -> String? {
         GitRefReader.latestTag(in: repository)
+    }
+
+    func firstCommitDate(in repository: URL) -> Date? {
+        GitRefReader.firstCommitDate(in: repository)
     }
 
     func unpushedCount(in repository: URL) -> Int? {

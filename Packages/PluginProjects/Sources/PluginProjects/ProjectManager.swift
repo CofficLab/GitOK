@@ -11,9 +11,9 @@ import ProviderProjects
 /// 插件数据目录下的 `projects.json`（目录遵循 Lumi 存储规律：
 /// `~/Library/Application Support/<bundleID>/db_<env>_v<major>/com.coffic.gitok.plugin.projects/`）。
 ///
-/// 同时作为「当前 commit / 当前文件 / 当前 commit 下的变动的文件」这些
-/// 会话级选择状态的唯一权威来源：commit 列表写入选择，commit 详情 / diff /
-/// 状态栏等消费方读取。切换项目时自动清空选择，保证选择永远属于当前项目。
+/// 同时作为「当前 commit / 当前文件」这些会话级选择状态的唯一权威来源：
+/// commit 列表写入选择，commit 详情按页读取文件列表。切换项目时自动清空
+/// 选择，保证选择永远属于当前项目。
 ///
 /// 排序规则（与旧版一致）：
 /// - 置顶（pinned）项目在最上方；
@@ -39,14 +39,8 @@ public final class ProjectManager: ProjectProviding, SuperLog {
     /// 当前 commit 变动文件加载失败的错误描述（成功 / 未加载时为 nil）。
     public private(set) var currentCommitFilesLoadError: String?
 
-    /// 变动文件加载任务序号：仅最后一次加载的结果会落地，防止旧任务覆盖新选择。
-    private var commitFilesLoadToken = 0
-
     /// 项目列表 JSON 文件的 URL。
     public private(set) var storeURL: URL
-
-    /// Git 操作通过稳定 Provider 注入；项目管理本身不再直接选择 CLI/LibGit2。
-    private var gitProvider: (any GitProviding)?
 
     /// 观察者集合（弱引用，自动清理失联者）。
     private var observers: [WeakObserver] = []
@@ -60,7 +54,9 @@ public final class ProjectManager: ProjectProviding, SuperLog {
     }
 
     public func setGitProvider(_ git: any GitProviding) {
-        gitProvider = git
+        // Commit Detail 现在直接通过分页 Git Provider 读取文件页。保留这个
+        // 入口以兼容宿主装配，但 ProjectManager 不再缓存整份变更数组。
+        _ = git
     }
 
     // MARK: - ProjectProviding
@@ -189,15 +185,15 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         // 新 commit 尚无选中文件：清空并广播文件变化，让 diff 等消费方跟随。
         let hadFile = currentFile != nil
         currentFile = nil
-        // 变动文件重新加载：先清空旧列表并进入加载态。
+        // 文件列表由 Commit Detail 自己按页加载；ProjectManager 只维护选择
+        // 状态，避免在这里把一个大 commit 的所有文件放入内存。
         currentCommitFiles = nil
         currentCommitFilesLoadError = nil
-        isLoadingCommitFiles = true
+        isLoadingCommitFiles = false
         notify(.commitSelectionChanged)
         if hadFile {
             notify(.currentFileChanged)
         }
-        loadCommitFiles(for: commit)
     }
 
     public func selectFile(_ path: String?) {
@@ -215,49 +211,9 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         currentCommitFiles = nil
         currentCommitFilesLoadError = nil
         isLoadingCommitFiles = false
-        // 失效所有在途的变动文件加载任务。
-        commitFilesLoadToken &+= 1
         notify(.commitSelectionChanged)
         if hadFile {
             notify(.currentFileChanged)
-        }
-    }
-
-    /// 异步加载当前 commit 的变动文件（git diff-tree）。
-    ///
-    /// 仅最后一次发起的加载会把结果写入状态（`commitFilesLoadToken` 保证
-    /// 竞态下不被旧任务覆盖）；加载完成后广播 `commitSelectionChanged`。
-    private func loadCommitFiles(for commit: GitCommit) {
-        guard let project = currentProject else {
-            isLoadingCommitFiles = false
-            return
-        }
-        let url = project.url
-        let hash = commit.hash
-        commitFilesLoadToken &+= 1
-        let token = commitFilesLoadToken
-        guard let git = gitProvider else {
-            isLoadingCommitFiles = false
-            currentCommitFiles = []
-            currentCommitFilesLoadError = GitProviderError.noBackendAvailable.localizedDescription
-            notify(.commitSelectionChanged)
-            return
-        }
-        Task.detached(priority: .userInitiated) {
-            let result = Result { try git.loadChanges(commit: hash, in: url) }
-            await MainActor.run {
-                guard token == self.commitFilesLoadToken else { return }
-                self.isLoadingCommitFiles = false
-                switch result {
-                case .success(let loaded):
-                    self.currentCommitFiles = loaded
-                case .failure(let error):
-                    self.currentCommitFiles = []
-                    self.currentCommitFilesLoadError =
-                        (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-                }
-                self.notify(.commitSelectionChanged)
-            }
         }
     }
 

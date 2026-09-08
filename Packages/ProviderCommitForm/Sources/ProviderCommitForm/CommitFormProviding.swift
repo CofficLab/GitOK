@@ -1,5 +1,6 @@
 import Foundation
 import KitGit
+import ProviderCoAuthor
 import ProviderGit
 
 // MARK: - Events

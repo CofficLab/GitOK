@@ -15,8 +15,8 @@ public enum ProjectProvidingEvent {
     /// 消费方（commit 列表 / 工作区状态 / diff）应重新加载展示，
     /// 但**不改变**当前项目选择。
     case dataChanged
-    /// 当前选中的 commit 发生变化；回调执行时 `currentCommit` / `currentCommitFiles`
-    /// / `isLoadingCommitFiles` 已是新值（选中 commit 后会异步加载其变动文件）。
+    /// 当前选中的 commit 发生变化；回调执行时 `currentCommit` / `currentFile`
+    /// 已是新值。Commit Detail 会根据当前项目和 commit 自己按页读取文件列表。
     case commitSelectionChanged
     /// 当前选中的文件发生变化；回调执行时 `currentFile` 已是新值。
     case currentFileChanged
@@ -73,17 +73,17 @@ public protocol ProjectProviding: AnyObject {
     /// 工作区模式（未选中 commit）下也可用于选中工作区变动文件。
     var currentFile: String? { get }
 
-    /// 当前 commit 下的变动的文件；`nil` 表示未选中 commit 或变动文件尚未加载完成。
+    /// 兼容旧消费方的 commit 文件快照。
     ///
-    /// 选中 commit 后由实现异步加载（`GitDiffLoader.loadChanges`），
-    /// 加载期间为 `nil`、`isLoadingCommitFiles` 为 true，完成后更新并广播
-    /// `commitSelectionChanged`。diff 视图等消费方据此渲染文件列表。
+    /// 新实现不再在 ProjectProviding 中整量加载此数组；Commit Detail 使用
+    /// `GitProviding.countCommitChanges` / `loadCommitChangesPage` 按页读取。
+    /// 该属性保留以兼容旧插件和测试实现，生产 ProjectManager 通常返回 nil。
     var currentCommitFiles: [GitFileChange]? { get }
 
-    /// 当前 commit 的变动文件是否正在加载。
+    /// 旧版整量文件快照的加载状态；分页列表不依赖此状态。
     var isLoadingCommitFiles: Bool { get }
 
-    /// 当前 commit 变动文件加载失败的错误描述（成功 / 未加载时为 nil）。
+    /// 旧版整量文件快照的错误描述。
     var currentCommitFilesLoadError: String? { get }
 
     // MARK: - 监听
@@ -129,15 +129,15 @@ public protocol ProjectProviding: AnyObject {
 
     /// 选中一个 commit（写入 `currentCommit` 并广播 `commitSelectionChanged`）。
     ///
-    /// 会同时清空 `currentFile`（新 commit 尚无选中的文件），并异步加载该
-    /// commit 的变动文件到 `currentCommitFiles`。commit 必须属于当前项目。
+    /// 会同时清空 `currentFile`；文件列表由 Commit Detail 按页读取。
+    /// commit 必须属于当前项目。
     func selectCommit(_ commit: GitCommit)
 
     /// 选中当前 commit 内的某个文件（写入 `currentFile` 并广播 `currentFileChanged`）。
     /// 传 `nil` 表示取消文件选择。
     func selectFile(_ path: String?)
 
-    /// 清除 commit 选择（`currentCommit` / `currentFile` / `currentCommitFiles` 置空）。
+    /// 清除 commit 选择（`currentCommit` / `currentFile` / 兼容快照置空）。
     ///
     /// 通常由实现内部在切换项目时调用；消费方也可显式调用（例如用户点击
     /// 工作区状态条回到工作区视图）。

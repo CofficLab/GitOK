@@ -103,6 +103,12 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("loadCommits") { try $0.loadCommits(in: repository, limit: limit, offset: offset) }
     }
 
+    public func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
+        try execute("loadAllCommits") {
+            try $0.loadAllCommits(in: repository, limit: limit, offset: offset)
+        }
+    }
+
     public func countCommits(in repository: URL) throws -> Int {
         try execute("countCommits") { try $0.countCommits(in: repository) }
     }
@@ -123,6 +129,21 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("loadChanges") { try $0.loadChanges(commit: hash, in: repository) }
     }
 
+    public func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
+        try execute("countCommitChanges") { try $0.countCommitChanges(commit: hash, in: repository) }
+    }
+
+    public func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL
+    ) throws -> GitFileChangePage {
+        try execute("loadCommitChangesPage") {
+            try $0.loadCommitChangesPage(commit: hash, limit: limit, offset: offset, in: repository)
+        }
+    }
+
     public func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try execute("loadDiff") { try $0.loadDiff(commit: hash, filePath: filePath, in: repository) }
     }
@@ -137,6 +158,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
 
     public func latestTag(in repository: URL) -> String? {
         primaryBackendOrNil()?.latestTag(in: repository)
+    }
+
+    public func firstCommitDate(in repository: URL) -> Date? {
+        primaryBackendOrNil()?.firstCommitDate(in: repository)
     }
 
     public func unpushedCount(in repository: URL) -> Int? {

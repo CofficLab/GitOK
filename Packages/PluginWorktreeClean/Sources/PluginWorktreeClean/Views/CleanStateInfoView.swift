@@ -21,7 +21,11 @@ struct CleanStateInfoView: View {
     @State private var branchName: String?
     @State private var latestTag: String?
     @State private var commitCount: Int?
+    @State private var firstCommitDate: Date?
     @State private var isLoadingInfo = true
+    @State private var copiedRemoteNames: Set<String> = []
+    @State private var isLocalRepositoryCopied = false
+    @State private var isLatestTagCopied = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -40,6 +44,9 @@ struct CleanStateInfoView: View {
 
                     Divider().padding(.vertical, 8)
                     commitCountRow
+
+                    Divider().padding(.vertical, 8)
+                    firstCommitRow
 
                     if !remotes.isEmpty {
                         Divider().padding(.vertical, 8)
@@ -74,6 +81,15 @@ struct CleanStateInfoView: View {
                 onApply: viewModel.applyUserPreset,
                 onManage: openUserSettings
             )
+
+            CollaboratorSectionView(
+                collaborators: viewModel.collaborators,
+                currentUserName: viewModel.currentUserName,
+                currentUserEmail: viewModel.currentUserEmail,
+                isLoadingUserConfiguration: viewModel.isLoadingUserConfiguration,
+                isApplying: viewModel.isApplyingUserPreset,
+                onApply: viewModel.applyCollaborator
+            )
         }
         .onAppear(perform: loadInfo)
     }
@@ -87,10 +103,23 @@ struct CleanStateInfoView: View {
             icon: "folder"
         ) {
             HStack(spacing: 8) {
+                Group {
+                    if isLocalRepositoryCopied {
+                        AppIconButton(systemImage: "checkmark", size: .regular) {
+                            copyLocalRepositoryPath()
+                        }
+                        .foregroundStyle(.green)
+                    } else {
+                        AppIconButton(systemImage: "doc.on.doc", size: .regular) {
+                            copyLocalRepositoryPath()
+                        }
+                    }
+                }
                 AppIconButton(systemImage: "folder", size: .regular) {
                     NSWorkspace.shared.activateFileViewerSelecting([project.url])
                 }
             }
+            .animation(.easeInOut(duration: 0.2), value: isLocalRepositoryCopied)
         }
     }
 
@@ -116,6 +145,20 @@ struct CleanStateInfoView: View {
         ) {
             if isLoadingInfo {
                 ProgressView().controlSize(.small)
+            } else if let latestTag, !latestTag.isEmpty {
+                Group {
+                    if isLatestTagCopied {
+                        AppIconButton(systemImage: "checkmark", size: .regular) {
+                            copyLatestTag()
+                        }
+                        .foregroundStyle(.green)
+                    } else {
+                        AppIconButton(systemImage: "doc.on.doc", size: .regular) {
+                            copyLatestTag()
+                        }
+                    }
+                }
+                .animation(.easeInOut(duration: 0.2), value: isLatestTagCopied)
             }
         }
     }
@@ -135,21 +178,56 @@ struct CleanStateInfoView: View {
         }
     }
 
+    // MARK: - First Commit Row
+
+    private var firstCommitRow: some View {
+        AppSettingRow(
+            title: loc("First Commit"),
+            description: firstCommitDate.map { Self.dateFormatter.string(from: $0) }
+                ?? (isLoadingInfo ? "" : loc("Not Available")),
+            icon: "calendar"
+        ) {
+            if isLoadingInfo {
+                ProgressView().controlSize(.small)
+            }
+        }
+    }
+
     // MARK: - Remote Repository Row
 
     private func remoteRepositoryRow(for remote: GitRemoteSummary) -> some View {
-        AppSettingRow(
+        let isCopied = copiedRemoteNames.contains(remote.name)
+        return AppSettingRow(
             title: String(format: loc("Remote Repository (%@)"), remote.name),
             description: remote.url,
             icon: "cloud"
         ) {
             HStack(spacing: 8) {
+                Group {
+                    if isCopied {
+                        AppIconButton(
+                            systemImage: "checkmark",
+                            size: .regular
+                        ) {
+                            copyRemoteURL(remote)
+                        }
+                        .foregroundStyle(.green)
+                    } else {
+                        AppIconButton(
+                            systemImage: "doc.on.doc",
+                            size: .regular
+                        ) {
+                            copyRemoteURL(remote)
+                        }
+                    }
+                }
                 if let httpsURL = git.webLink(for: remote.url) {
                     AppIconButton(systemImage: "safari", size: .regular) {
                         NSWorkspace.shared.open(httpsURL)
                     }
                 }
             }
+            .animation(.easeInOut(duration: 0.2), value: isCopied)
         }
     }
 
@@ -211,15 +289,56 @@ struct CleanStateInfoView: View {
             // 加载提交总数（`git rev-list --count HEAD`；空仓库 / 失败时为 nil）
             let loadedCommitCount = try? git.countCommits(in: project.url)
 
+            // 加载第一次提交时间（空仓库 / 失败时为 nil）
+            let loadedFirstCommitDate = git.firstCommitDate(in: project.url)
+
             await MainActor.run {
                 remotes = loadedRemotes
                 branchName = loadedBranchName
                 latestTag = loadedLatestTag
                 commitCount = loadedCommitCount
+                firstCommitDate = loadedFirstCommitDate
                 isLoadingInfo = false
             }
         }
     }
 
     // MARK: - Helpers
+
+    private func copyText(_ text: String) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+    }
+
+    private func copyLocalRepositoryPath() {
+        copyText(project.url.path)
+        isLocalRepositoryCopied = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            isLocalRepositoryCopied = false
+        }
+    }
+
+    private func copyLatestTag() {
+        guard let latestTag else { return }
+        copyText(latestTag)
+        isLatestTagCopied = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            isLatestTagCopied = false
+        }
+    }
+
+    private func copyRemoteURL(_ remote: GitRemoteSummary) {
+        copyText(remote.url)
+        copiedRemoteNames.insert(remote.name)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            copiedRemoteNames.remove(remote.name)
+        }
+    }
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
 }

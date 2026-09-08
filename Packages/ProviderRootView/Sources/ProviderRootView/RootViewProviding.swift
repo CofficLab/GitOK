@@ -207,6 +207,10 @@ public final class RootTrailingPane: ObservableObject {
     public let content: AnyView
 
     @Published public var isVisible: Bool
+    /// Called when the user dismisses the pane from its own toolbar.
+    /// Consumers can use this callback to clear the selection that caused
+    /// the pane to be shown.
+    public var onDismiss: (@MainActor () -> Void)?
     private var visibilitySubscription: AnyCancellable?
     private var widthSubscription: AnyCancellable?
     private var widthResizeHandler: (@MainActor (CGFloat) -> Void)?
@@ -218,6 +222,7 @@ public final class RootTrailingPane: ObservableObject {
         maxWidth: CGFloat = .infinity,
         width: ChatSectionWidth? = nil,
         isVisible: Bool = true,
+        onDismiss: (@MainActor () -> Void)? = nil,
         content: AnyView
     ) {
         self.id = id
@@ -227,6 +232,7 @@ public final class RootTrailingPane: ObservableObject {
             maxWidth: maxWidth
         )
         self.isVisible = isVisible
+        self.onDismiss = onDismiss
         self.content = content
     }
 

@@ -2,6 +2,7 @@ import KitGit
 import LumiUI
 import ProviderGitRepositoryWatch
 import ProviderGit
+import ProviderGitConflictResolver
 import ProviderProjects
 import ProviderToast
 import SwiftUI
@@ -37,6 +38,7 @@ struct WorkingTreeStatusView: View {
     let git: any GitProviding
     let gitWatch: (any GitRepositoryWatching)?
     let toast: (any ToastProviding)?
+    let requestConflictResolution: @MainActor () -> Void
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
     @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
@@ -61,12 +63,14 @@ struct WorkingTreeStatusView: View {
         projects: any ProjectProviding,
         git: any GitProviding,
         gitWatch: (any GitRepositoryWatching)? = nil,
-        toast: (any ToastProviding)? = nil
+        toast: (any ToastProviding)? = nil,
+        requestConflictResolution: @escaping @MainActor () -> Void = {}
     ) {
         self.projects = projects
         self.git = git
         self.gitWatch = gitWatch
         self.toast = toast
+        self.requestConflictResolution = requestConflictResolution
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
@@ -223,6 +227,14 @@ struct WorkingTreeStatusView: View {
     }
 
     private func performPrimaryAction() {
+        if let project = projects.currentProject,
+           git.hasConflictOperation(in: project.url) {
+            // 合并/Cherry-pick 已经在进行时，工作区按钮的语义应变成
+            // “继续处理冲突”，不能再次发起同步。
+            requestConflictResolution()
+            reloadIfNeeded(force: true)
+            return
+        }
         if trackingStatus.hasUpstream {
             performSynchronize()
         } else {
@@ -287,6 +299,7 @@ struct WorkingTreeStatusView: View {
             if case .merge = syncError.step,
                git.hasConflictOperation(in: repository) {
                 reloadIfNeeded(force: true)
+                requestConflictResolution()
                 return
             }
             operation = loc(syncError.step.localizationKey)

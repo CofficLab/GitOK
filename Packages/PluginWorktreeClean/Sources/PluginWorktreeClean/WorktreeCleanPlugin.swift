@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderActivityHeatmap
 import ProviderContentView
 import ProviderGit
 import ProviderGitUser
@@ -16,14 +17,14 @@ import ProviderDocsView
 
 /// 工作区干净视图插件。
 ///
-/// 从 CommitDetail 插件中独立出来：当「当前项目已打开 + 未选中 commit +
-/// 工作区无未提交变更」时，通过 `ContentViewProviding` 向主内容区贡献一块
-/// 「工作区干净」视图（绿色对勾提示 + 仓库信息 + Git 用户配置）。
+/// 当「当前项目已打开 + 未选中 commit + 工作区无未提交变更」时，通过
+/// `ContentViewProviding` 向主内容区贡献工作区概览：顶部一行是「工作区干净」
+/// 提示与本地 Git 提交活跃度热力图，下面是全宽的信息区块。
 ///
 /// 状态由插件自有 ViewModel 持有；外部事件（项目 / commit 选择、仓库与工作区
 /// 数据变化）由 `WorktreeCleanObserver` 翻译进 ViewModel。其余情况渲染
 /// `EmptyView` 不占用布局——工作区变更列表仍由 CommitDetail 插件展示，
-/// 二者内容块互斥。
+/// 并与本插件的概览内容互斥。
 @MainActor
 public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.worktree-clean", category: "WorktreeClean")
@@ -36,7 +37,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.worktree-clean",
         name: "Worktree Clean",
-        description: "Show working-tree clean state (repo info & git user config) when there are no uncommitted changes",
+        description: "Show working-tree clean state and local commit activity when there are no uncommitted changes",
         category: .project,
         stage: .stable,
         policy: .required
@@ -48,6 +49,8 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     private var observer: WorktreeCleanObserver?
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: WorktreeCleanSceneObserver?
+    private var activityHeatmapObserver: WorktreeCleanActivityHeatmapObserver?
+    private var activityHeatmapViewModel: WorktreeCleanActivityHeatmapViewModel?
 
     public init() {}
 
@@ -84,6 +87,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         // （如其他编辑器把文件改干净 / 改脏后，干净视图据此刷新）。
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
         let userPresets = kernel.resolveProvider((any GitUserPresetProviding).self)
+        let collaborators = kernel.resolveProvider((any CollaboratorProviding).self)
 
         let ensureUserPreset: ((String, String) -> Void)?
         if let userPresets {
@@ -108,6 +112,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             capability: capability,
             gitWatch: gitWatch,
             userPresets: userPresets,
+            collaborators: collaborators,
             onProjectChanged: { [weak viewModel, capability] in
                 viewModel?.handleProjectChanged(
                     project: capability.currentProject,
@@ -119,6 +124,9 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             },
             onUserPresetsChanged: { [weak viewModel] presets in
                 viewModel?.handleUserPresetsChanged(presets)
+            },
+            onCollaboratorsChanged: { [weak viewModel] collaborators in
+                viewModel?.handleCollaboratorsChanged(collaborators)
             }
         )
         viewModel.handleProjectChanged(
@@ -130,6 +138,19 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         self.sceneViewModel = sceneViewModel
         let sceneCapability = WorktreeCleanSceneCapabilityAdapter(scene: scene)
         self.sceneObserver = WorktreeCleanSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
+
+        let activityViewModel = WorktreeCleanActivityHeatmapViewModel()
+        self.activityHeatmapViewModel = activityViewModel
+        if let activityProvider = kernel.resolveProvider((any ActivityHeatmapProviding).self) {
+            let activityCapability = WorktreeCleanActivityHeatmapCapabilityAdapter(
+                provider: activityProvider
+            )
+            self.activityHeatmapObserver = WorktreeCleanActivityHeatmapObserver(
+                capability: activityCapability,
+                projects: projects,
+                viewModel: activityViewModel
+            )
+        }
 
         let openUserSettings: (() -> Void)?
         if kernel.resolveProvider((any SettingViewProviding).self) != nil {
@@ -144,11 +165,16 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             openUserSettings = nil
         }
 
-        // 作为主内容区的一块贡献（与 CommitDetail 同层；二者互斥，不会同时占位）。
+        // 一个完整的工作区概览：顶部提示与热力图横向排列，信息区块在下面纵向排列。
         contentView.addContentView(
             AnyView(
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    WorktreeCleanView(viewModel: viewModel, git: git, openUserSettings: openUserSettings)
+                    WorktreeCleanView(
+                        viewModel: viewModel,
+                        activityHeatmapViewModel: activityViewModel,
+                        git: git,
+                        openUserSettings: openUserSettings
+                    )
                 }
                     // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
                     .debugPluginBadge(metadata.name)
@@ -159,6 +185,9 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        activityHeatmapObserver?.cancel()
+        activityHeatmapObserver = nil
+        activityHeatmapViewModel = nil
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
