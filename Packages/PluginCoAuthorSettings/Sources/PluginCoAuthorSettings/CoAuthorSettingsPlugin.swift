@@ -59,6 +59,11 @@ public final class CoAuthorSettingsPlugin: SuperPlugin, SuperLog {
             return
         }
 
+        guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
+            Self.logger.error("\(self.t)ProjectProviding not registered; skip co-author settings entry")
+            return
+        }
+
         let toast = kernel.resolveProvider((any ToastProviding).self)
 
         // 管理统一交给 ProviderCoAuthor；宿主未注册时用默认实现兜底并注册。
@@ -85,7 +90,7 @@ public final class CoAuthorSettingsPlugin: SuperPlugin, SuperLog {
             systemImage: "person.2",
             order: 21
         ) { [provider, toast] in
-            CoAuthorSettingView(provider: provider, toast: toast)
+            CoAuthorSettingView(projects: projects, provider: provider, toast: toast)
         }
         settings.addEntries([entry])
     }

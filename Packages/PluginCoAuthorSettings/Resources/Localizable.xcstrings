@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ <%@>" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ <%@>"
+          }
+        }
+      }
+    },
     "Add Co-Author" : {
       "localizations" : {
         "zh-Hans" : {
@@ -41,6 +51,36 @@
         }
       }
     },
+    "Apply" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "应用"
+          }
+        }
+      }
+    },
+    "Applied Co-Author" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "已应用协作者"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "取消"
+          }
+        }
+      }
+    },
     "Co-Authors" : {
       "localizations" : {
         "zh-Hans" : {
@@ -57,6 +97,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "删除此协作者"
+          }
+        }
+      }
+    },
+    "Edit this co-author" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "编辑此协作者"
           }
         }
       }
@@ -137,6 +187,56 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "在下方添加协作者。"
+          }
+        }
+      }
+    },
+    "No Project" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "无项目"
+          }
+        }
+      }
+    },
+    "Open a project to apply git user info." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "打开项目以应用 git 用户信息。"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "保存"
+          }
+        }
+      }
+    },
+    "Save failed: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "保存失败：%@"
+          }
+        }
+      }
+    },
+    "Updated Co-Author" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "已更新协作者"
           }
         }
       }
