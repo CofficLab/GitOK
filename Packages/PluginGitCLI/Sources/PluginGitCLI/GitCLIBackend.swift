@@ -18,6 +18,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset)
     }
 
+    func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
+        try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
+    }
+
     func countCommits(in repository: URL) throws -> Int {
         try GitCommitLoader.countCommits(in: repository)
     }
