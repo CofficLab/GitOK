@@ -6,6 +6,7 @@ import ProviderCommitForm
 import ProviderGit
 import ProviderContentView
 import ProviderGitRepositoryWatch
+import ProviderGitUser
 import ProviderProjects
 import ProviderRootView
 import ProviderWorkspaceScene
@@ -106,6 +107,8 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
             // ProjectProviding.dataChanged 刷新；真实运行时由 PluginGitRepositoryWatch 提供，
             // 使外部把工作区改干净后表单也能隐藏。
             let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
+            // GitUserPresetProviding 可选：未注册时用户选择器退回静态 AppTag。
+            let gitUserPresets = kernel.resolveProvider((any GitUserPresetProviding).self)
             contentView.addContentView(
                 AnyView(
                     WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
@@ -114,7 +117,8 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
                             form: form,
                             git: git,
                             gitWatch: gitWatch,
-                            errorCenter: errorCenter
+                            errorCenter: errorCenter,
+                            gitUserPresets: gitUserPresets
                         )
                     }
                         // Debug 构建下左下角叠加插件名 badge，便于识别内容区来源。
