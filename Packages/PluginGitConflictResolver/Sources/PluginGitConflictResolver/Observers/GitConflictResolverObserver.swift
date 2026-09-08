@@ -18,6 +18,7 @@ final class GitConflictResolverObserver {
     private var projectHandle: (any ProjectProvidingObserverHandle)?
     private var repositoryHandle: (any GitRepositoryWatchingObserverHandle)?
     private var reloadGeneration = 0
+    private var presentationRequested = false
 
     init(
         capability: any GitConflictResolverCapability,
@@ -50,6 +51,13 @@ final class GitConflictResolverObserver {
         viewModel = nil
     }
 
+    /// 外部插件请求展示时，先刷新 Git 状态，避免 ViewModel 还没来得及
+    /// 看到 MERGE_HEAD 就直接被 present() 的状态保护挡住。
+    func requestPresentation() {
+        presentationRequested = true
+        reload()
+    }
+
     private func reload() {
         reloadGeneration += 1
         let generation = reloadGeneration
@@ -75,12 +83,19 @@ final class GitConflictResolverObserver {
         Task { @MainActor [weak self] in
             let snapshot = await snapshotTask.value
             guard let self, self.reloadGeneration == generation else { return }
+            let operationInProgress = snapshot.isOperationInProgress || snapshot.isCherryPicking
             self.viewModel?.update(
                 projectURL: url,
                 conflictedFiles: snapshot.conflictedFiles,
-                isOperationInProgress: snapshot.isOperationInProgress || snapshot.isCherryPicking,
+                isOperationInProgress: operationInProgress,
                 isCherryPicking: snapshot.isCherryPicking
             )
+            if self.presentationRequested {
+                self.presentationRequested = false
+                if operationInProgress {
+                    self.viewModel?.present()
+                }
+            }
         }
     }
 }

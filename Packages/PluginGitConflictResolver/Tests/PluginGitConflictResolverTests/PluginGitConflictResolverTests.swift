@@ -84,6 +84,26 @@ struct PluginGitConflictResolverTests {
         #expect(!viewModel.isPresented)
     }
 
+    @Test("跨插件展示请求会打开冲突解决界面")
+    func presentationRequestOpensResolver() {
+        let viewModel = GitConflictResolverViewModel()
+        viewModel.update(
+            projectURL: URL(fileURLWithPath: "/tmp/project"),
+            conflictedFiles: ["README.md"],
+            isOperationInProgress: true,
+            isCherryPicking: false
+        )
+        viewModel.dismiss()
+
+        let presenter = GitConflictResolutionPresenter(
+            viewModel: viewModel,
+            requestReload: {}
+        )
+        presenter.requestPresentation()
+
+        #expect(viewModel.isPresented)
+    }
+
     @Test("插件元数据符合 Lumi 插件规范")
     func pluginMetadata() {
         let plugin = GitConflictResolverPlugin()
