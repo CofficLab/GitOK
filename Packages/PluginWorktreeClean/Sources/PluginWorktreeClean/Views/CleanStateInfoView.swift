@@ -24,6 +24,8 @@ struct CleanStateInfoView: View {
     @State private var firstCommitDate: Date?
     @State private var isLoadingInfo = true
     @State private var copiedRemoteNames: Set<String> = []
+    @State private var isLocalRepositoryCopied = false
+    @State private var isLatestTagCopied = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -92,10 +94,23 @@ struct CleanStateInfoView: View {
             icon: "folder"
         ) {
             HStack(spacing: 8) {
+                Group {
+                    if isLocalRepositoryCopied {
+                        AppIconButton(systemImage: "checkmark", size: .regular) {
+                            copyLocalRepositoryPath()
+                        }
+                        .foregroundStyle(.green)
+                    } else {
+                        AppIconButton(systemImage: "doc.on.doc", size: .regular) {
+                            copyLocalRepositoryPath()
+                        }
+                    }
+                }
                 AppIconButton(systemImage: "folder", size: .regular) {
                     NSWorkspace.shared.activateFileViewerSelecting([project.url])
                 }
             }
+            .animation(.easeInOut(duration: 0.2), value: isLocalRepositoryCopied)
         }
     }
 
@@ -121,6 +136,20 @@ struct CleanStateInfoView: View {
         ) {
             if isLoadingInfo {
                 ProgressView().controlSize(.small)
+            } else if let latestTag, !latestTag.isEmpty {
+                Group {
+                    if isLatestTagCopied {
+                        AppIconButton(systemImage: "checkmark", size: .regular) {
+                            copyLatestTag()
+                        }
+                        .foregroundStyle(.green)
+                    } else {
+                        AppIconButton(systemImage: "doc.on.doc", size: .regular) {
+                            copyLatestTag()
+                        }
+                    }
+                }
+                .animation(.easeInOut(duration: 0.2), value: isLatestTagCopied)
             }
         }
     }
@@ -270,6 +299,23 @@ struct CleanStateInfoView: View {
     private func copyText(_ text: String) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
+    }
+
+    private func copyLocalRepositoryPath() {
+        copyText(project.url.path)
+        isLocalRepositoryCopied = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            isLocalRepositoryCopied = false
+        }
+    }
+
+    private func copyLatestTag() {
+        guard let latestTag else { return }
+        copyText(latestTag)
+        isLatestTagCopied = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            isLatestTagCopied = false
+        }
     }
 
     private func copyRemoteURL(_ remote: GitRemoteSummary) {
