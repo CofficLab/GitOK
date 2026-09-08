@@ -17,6 +17,7 @@ let package = Package(
         .package(path: "../KitGit"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderGit"),
+        .package(path: "../ProviderCoAuthor"),
     ],
     targets: [
         .target(
@@ -25,6 +26,7 @@ let package = Package(
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderCoAuthor", package: "ProviderCoAuthor"),
             ],
             path: "Sources/ProviderCommitForm",
             resources: [
