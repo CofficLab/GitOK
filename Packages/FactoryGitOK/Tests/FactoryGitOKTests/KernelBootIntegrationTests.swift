@@ -3,6 +3,7 @@ import XCTest
 import KitGit
 import ProviderProjects
 import ProviderGit
+import ProviderGitConflictResolver
 import ProviderRootView
 import ProviderStorage
 import ProviderToast
@@ -37,6 +38,10 @@ final class KernelBootIntegrationTests: XCTestCase {
         // 宿主仍注册了默认 provider（保证 app 不崩、可渲染空壳）。
         XCTAssertNotNil(kernel.resolveProvider((any ProjectProviding).self))
         XCTAssertNotNil(kernel.resolveProvider((any ToastProviding).self))
+        XCTAssertNotNil(
+            kernel.resolveProvider((any GitConflictResolutionProviding).self),
+            "the conflict resolver must expose its presentation capability to workspace actions"
+        )
         XCTAssertEqual(
             kernel.resolveProvider((any WorkspaceSceneProviding).self)?.currentScene,
             .git
