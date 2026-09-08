@@ -59,6 +59,22 @@ public enum GitRefReader {
         return count
     }
 
+    /// 仓库第一次提交的作者日期（`git log --format=%aI --reverse --max-parents=0`）。
+    ///
+    /// 取所有 root commit（无父提交的提交）中最早的一个；空仓库或命令失败时返回 nil。
+    public static func firstCommitDate(in repository: URL) -> Date? {
+        guard let out = try? GitProcessRunner.run(
+            ["log", "--format=%aI", "--reverse", "--max-parents=0"],
+            in: repository
+        ) else { return nil }
+
+        let lines = out.split(separator: "\n").map(String.init)
+        guard let firstLine = lines.first, !firstLine.isEmpty else { return nil }
+
+        let formatter = ISO8601DateFormatter()
+        return formatter.date(from: firstLine.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
     /// 远程跟踪状态：ahead（本地领先上游的提交数）、behind（上游领先本地的提交数）、hasUpstream。
     ///
     /// 使用 `git rev-list --left-right --count HEAD...@{u}`。

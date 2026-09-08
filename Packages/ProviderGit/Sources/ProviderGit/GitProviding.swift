@@ -108,6 +108,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 
     func currentBranch(in repository: URL) -> String?
     func latestTag(in repository: URL) -> String?
+    func firstCommitDate(in repository: URL) -> Date?
     func unpushedCount(in repository: URL) -> Int?
     func hasRemotes(in repository: URL) -> Bool
     func unpulledCount(in repository: URL) -> Int?
