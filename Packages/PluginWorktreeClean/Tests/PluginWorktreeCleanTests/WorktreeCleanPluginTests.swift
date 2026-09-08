@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderGitUser
 import ProviderGit
+import ProviderActivityHeatmap
 import ProviderContentView
 import ProviderProjects
 import ProviderWorkspaceScene
@@ -98,6 +99,10 @@ final class WorktreeCleanPluginTests: XCTestCase {
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
         try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
         try kernel.registerProvider(
+            (any ActivityHeatmapProviding).self,
+            DefaultActivityHeatmapProvider()
+        )
+        try kernel.registerProvider(
             (any WorkspaceSceneProviding).self,
             DefaultWorkspaceSceneProvider()
         )
@@ -106,7 +111,9 @@ final class WorktreeCleanPluginTests: XCTestCase {
         try plugin.onBoot(kernel: kernel)
 
         let contentID = "\(plugin.id).content"
+        let activityID = "\(plugin.id).activity-heatmap"
         XCTAssertTrue(contentView.registeredIDs.contains(contentID))
+        XCTAssertFalse(contentView.registeredIDs.contains(activityID))
     }
 
     func testOnShutdownClearsContent() throws {
@@ -116,6 +123,10 @@ final class WorktreeCleanPluginTests: XCTestCase {
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
         try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
         try kernel.registerProvider(
+            (any ActivityHeatmapProviding).self,
+            DefaultActivityHeatmapProvider()
+        )
+        try kernel.registerProvider(
             (any WorkspaceSceneProviding).self,
             DefaultWorkspaceSceneProvider()
         )
@@ -123,10 +134,13 @@ final class WorktreeCleanPluginTests: XCTestCase {
         let plugin = WorktreeCleanPlugin()
         try plugin.onBoot(kernel: kernel)
         let contentID = "\(plugin.id).content"
+        let activityID = "\(plugin.id).activity-heatmap"
         XCTAssertTrue(contentView.registeredIDs.contains(contentID))
+        XCTAssertFalse(contentView.registeredIDs.contains(activityID))
 
         try plugin.onShutdown(kernel: kernel)
         XCTAssertFalse(contentView.registeredIDs.contains(contentID))
+        XCTAssertFalse(contentView.registeredIDs.contains(activityID))
     }
 
     // MARK: - ViewModel state
