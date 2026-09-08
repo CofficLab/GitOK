@@ -1593,6 +1593,7 @@ private final class CommitScrollOffsetTrackingView: NSView {
     private weak var observedScrollView: NSScrollView?
     private var observationTokens: [NSObjectProtocol] = []
     private var retryScheduled = false
+    private var reportScheduled = false
 
     init(onChange: @escaping @MainActor (CGFloat, CGFloat) -> Void) {
         self.onChange = onChange
@@ -1626,7 +1627,7 @@ private final class CommitScrollOffsetTrackingView: NSView {
         }
 
         guard observedScrollView !== scrollView else {
-            reportScrollPosition()
+            scheduleReportScrollPosition()
             return
         }
 
@@ -1647,7 +1648,7 @@ private final class CommitScrollOffsetTrackingView: NSView {
                 queue: .main
             ) { [weak self] _ in
                 Task { @MainActor [weak self] in
-                    self?.reportScrollPosition()
+                    self?.scheduleReportScrollPosition()
                 }
             },
             notificationCenter.addObserver(
@@ -1656,7 +1657,7 @@ private final class CommitScrollOffsetTrackingView: NSView {
                 queue: .main
             ) { [weak self] _ in
                 Task { @MainActor [weak self] in
-                    self?.reportScrollPosition()
+                    self?.scheduleReportScrollPosition()
                 }
             },
             notificationCenter.addObserver(
@@ -1665,7 +1666,7 @@ private final class CommitScrollOffsetTrackingView: NSView {
                 queue: .main
             ) { [weak self] _ in
                 Task { @MainActor [weak self] in
-                    self?.reportScrollPosition()
+                    self?.scheduleReportScrollPosition()
                 }
             },
             notificationCenter.addObserver(
@@ -1674,12 +1675,12 @@ private final class CommitScrollOffsetTrackingView: NSView {
                 queue: .main
             ) { [weak self] _ in
                 Task { @MainActor [weak self] in
-                    self?.reportScrollPosition()
+                    self?.scheduleReportScrollPosition()
                 }
             },
         ]
 
-        reportScrollPosition()
+        scheduleReportScrollPosition()
     }
 
     private func enclosingScrollView() -> NSScrollView? {
@@ -1711,6 +1712,20 @@ private final class CommitScrollOffsetTrackingView: NSView {
         let maximumOffset = max(0, documentHeight - viewportHeight)
         let offset = min(max(0, clipView.bounds.origin.y), maximumOffset)
         onChange(offset, maximumOffset)
+    }
+
+    /// Defer callbacks originating from NSViewRepresentable updates until the
+    /// current SwiftUI update pass has completed. Coalesce repeated layout
+    /// notifications into one position report.
+    private func scheduleReportScrollPosition() {
+        guard !reportScheduled else { return }
+        reportScheduled = true
+        Task { @MainActor [weak self] in
+            await Task.yield()
+            guard let self else { return }
+            reportScheduled = false
+            reportScrollPosition()
+        }
     }
 
     private func removeObservers() {
