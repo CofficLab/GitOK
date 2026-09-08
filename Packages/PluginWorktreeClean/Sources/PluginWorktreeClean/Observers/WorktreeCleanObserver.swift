@@ -19,14 +19,17 @@ final class WorktreeCleanObserver {
     private var projectsHandle: (any ProjectProvidingObserverHandle)?
     private var gitWatchHandle: (any GitRepositoryWatchingObserverHandle)?
     private var userPresetsHandle: (any GitUserPresetProvidingObserverHandle)?
+    private var collaboratorsHandle: (any CollaboratorProvidingObserverHandle)?
 
     init(
         capability: any WorktreeCleanProjectCapability,
         gitWatch: (any GitRepositoryWatching)?,
         userPresets: (any GitUserPresetProviding)?,
+        collaborators: (any CollaboratorProviding)?,
         onProjectChanged: @escaping () -> Void,
         onDataChanged: @escaping () -> Void,
-        onUserPresetsChanged: @escaping ([GitUserPreset]) -> Void
+        onUserPresetsChanged: @escaping ([GitUserPreset]) -> Void,
+        onCollaboratorsChanged: @escaping ([Collaborator]) -> Void
     ) {
         projectsHandle = capability.addObserver { event in
             switch event {
@@ -59,6 +62,18 @@ final class WorktreeCleanObserver {
         } else {
             onUserPresetsChanged([])
         }
+
+        if let collaborators {
+            onCollaboratorsChanged(collaborators.loadCollaborators())
+            collaboratorsHandle = collaborators.addObserver { event in
+                switch event {
+                case .collaboratorsChanged:
+                    onCollaboratorsChanged(collaborators.loadCollaborators())
+                }
+            }
+        } else {
+            onCollaboratorsChanged([])
+        }
     }
 
     @available(*, deprecated, message: "Inject WorktreeCleanProjectCapability from WorktreeCleanPlugin")
@@ -72,9 +87,11 @@ final class WorktreeCleanObserver {
             capability: WorktreeCleanProjectCapabilityAdapter(projects: projects),
             gitWatch: gitWatch,
             userPresets: nil,
+            collaborators: nil,
             onProjectChanged: onProjectChanged,
             onDataChanged: onDataChanged,
-            onUserPresetsChanged: { _ in }
+            onUserPresetsChanged: { _ in },
+            onCollaboratorsChanged: { _ in }
         )
     }
 
@@ -86,5 +103,7 @@ final class WorktreeCleanObserver {
         gitWatchHandle = nil
         userPresetsHandle?.cancel()
         userPresetsHandle = nil
+        collaboratorsHandle?.cancel()
+        collaboratorsHandle = nil
     }
 }

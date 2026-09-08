@@ -41,6 +41,8 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
 
     /// 由本插件注册进内核的默认 provider（宿主未注册时）；用于 onShutdown 时反注册。
     private var registeredDefaultProvider: DefaultGitUserPresetProvider?
+    /// 由本插件注册进内核的默认协作者 provider（宿主未注册时）；用于 onShutdown 时反注册。
+    private var registeredDefaultCollaboratorProvider: DefaultCollaboratorProvider?
 
     public init() {}
 
@@ -84,6 +86,24 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
             provider = defaultProvider
         }
 
+        // 协作者管理统一交给 ProviderGitUser；宿主未注册时用默认实现兜底并注册。
+        let collaboratorProvider: any CollaboratorProviding
+        if let resolved = kernel.resolveProvider((any CollaboratorProviding).self) {
+            collaboratorProvider = resolved
+        } else {
+            let directory: URL
+            if let storage = kernel.resolveProvider((any StorageProviding).self) {
+                directory = storage.pluginDataDirectory(for: "\(id).collaborators")
+            } else {
+                directory = FileManager.default.homeDirectoryForCurrentUser
+                    .appendingPathComponent("Library/Application Support/GitOK/com.coffic.gitok.plugin.git-user-settings.collaborators")
+            }
+            let defaultCollaboratorProvider = DefaultCollaboratorProvider(directory: directory)
+            try kernel.registerProvider((any CollaboratorProviding).self, defaultCollaboratorProvider)
+            registeredDefaultCollaboratorProvider = defaultCollaboratorProvider
+            collaboratorProvider = defaultCollaboratorProvider
+        }
+
         let entry = SettingEntryItem(
             id: "userInfo",
             title: LumiPluginLocalization.string("User Info", bundle: .module),
@@ -101,6 +121,10 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
         if registeredDefaultProvider != nil {
             kernel.unregisterProvider((any GitUserPresetProviding).self)
             registeredDefaultProvider = nil
+        }
+        if registeredDefaultCollaboratorProvider != nil {
+            kernel.unregisterProvider((any CollaboratorProviding).self)
+            registeredDefaultCollaboratorProvider = nil
         }
     }
 }
