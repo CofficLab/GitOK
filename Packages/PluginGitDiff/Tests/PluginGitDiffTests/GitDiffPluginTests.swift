@@ -142,10 +142,16 @@ final class GitDiffPluginTests: XCTestCase {
         projects.notifySelectionChanged()
         XCTAssertTrue(rootView.trailingPane?.isVisible ?? false, "选中文件后 diff 面板应显示")
 
-        // 清除 commit 选择（联动清空文件）→ 面板隐藏。
-        projects.clearCommitSelection()
+        // 用户关闭面板 → 插件清除文件选择，面板隐藏。
+        rootView.trailingPane?.onDismiss?()
         projects.notifySelectionChanged()
         XCTAssertFalse(rootView.trailingPane?.isVisible ?? true, "清除文件选择后 diff 面板应隐藏")
+        XCTAssertNil(projects.currentFile)
+
+        // 再次点击同一个文件 → currentFile 从 nil 变回路径，面板重新显示。
+        projects.selectFile("src/a.swift")
+        projects.notifySelectionChanged()
+        XCTAssertTrue(rootView.trailingPane?.isVisible ?? false, "关闭后重新选择同一文件时面板应显示")
 
         try plugin.onShutdown(kernel: kernel)
     }

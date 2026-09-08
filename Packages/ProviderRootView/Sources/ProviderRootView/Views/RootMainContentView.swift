@@ -312,6 +312,7 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
 
     private var dismissButton: some View {
         AppIconButton(systemImage: "chevron.left", size: .regular) {
+            trailingPane.onDismiss?()
             withAnimation(.easeInOut(duration: 0.22)) {
                 trailingPane.isVisible = false
             }
