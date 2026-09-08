@@ -23,6 +23,7 @@ struct CleanStateInfoView: View {
     @State private var commitCount: Int?
     @State private var firstCommitDate: Date?
     @State private var isLoadingInfo = true
+    @State private var copiedRemoteNames: Set<String> = []
 
     var body: some View {
         VStack(spacing: 16) {
@@ -157,18 +158,38 @@ struct CleanStateInfoView: View {
     // MARK: - Remote Repository Row
 
     private func remoteRepositoryRow(for remote: GitRemoteSummary) -> some View {
-        AppSettingRow(
+        let isCopied = copiedRemoteNames.contains(remote.name)
+        return AppSettingRow(
             title: String(format: loc("Remote Repository (%@)"), remote.name),
             description: remote.url,
             icon: "cloud"
         ) {
             HStack(spacing: 8) {
+                Group {
+                    if isCopied {
+                        AppIconButton(
+                            systemImage: "checkmark",
+                            size: .regular
+                        ) {
+                            copyRemoteURL(remote)
+                        }
+                        .foregroundStyle(.green)
+                    } else {
+                        AppIconButton(
+                            systemImage: "doc.on.doc",
+                            size: .regular
+                        ) {
+                            copyRemoteURL(remote)
+                        }
+                    }
+                }
                 if let httpsURL = git.webLink(for: remote.url) {
                     AppIconButton(systemImage: "safari", size: .regular) {
                         NSWorkspace.shared.open(httpsURL)
                     }
                 }
             }
+            .animation(.easeInOut(duration: 0.2), value: isCopied)
         }
     }
 
@@ -245,6 +266,19 @@ struct CleanStateInfoView: View {
     }
 
     // MARK: - Helpers
+
+    private func copyText(_ text: String) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+    }
+
+    private func copyRemoteURL(_ remote: GitRemoteSummary) {
+        copyText(remote.url)
+        copiedRemoteNames.insert(remote.name)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            copiedRemoteNames.remove(remote.name)
+        }
+    }
 
     private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
