@@ -59,6 +59,54 @@ struct PluginGitConflictResolverTests {
         #expect(viewModel.isPresented)
     }
 
+    @Test("刷新冲突状态时保留当前文件，避免列表闪烁")
+    func refreshKeepsCurrentConflictFilesVisible() {
+        let viewModel = GitConflictResolverViewModel()
+        let projectURL = URL(fileURLWithPath: "/tmp/project")
+
+        viewModel.update(
+            projectURL: projectURL,
+            conflictedFiles: ["README.md"],
+            isOperationInProgress: true,
+            isCherryPicking: false
+        )
+        viewModel.beginLoading(projectURL: projectURL)
+
+        #expect(viewModel.isLoading)
+        #expect(viewModel.conflictedFiles == ["README.md"])
+        #expect(viewModel.isOperationInProgress)
+        #expect(viewModel.hasLoadedSnapshot)
+    }
+
+    @Test("单个文件解决后显示待暂存状态")
+    func resolvedFileIsShownSeparatelyFromUnresolvedFiles() {
+        let viewModel = GitConflictResolverViewModel()
+        let projectURL = URL(fileURLWithPath: "/tmp/project")
+
+        viewModel.update(
+            projectURL: projectURL,
+            conflictedFiles: ["README.md", "Sources/App.swift"],
+            isOperationInProgress: true,
+            isCherryPicking: false,
+            resolvedFiles: ["README.md"]
+        )
+
+        #expect(viewModel.conflictedFiles == ["README.md", "Sources/App.swift"])
+        #expect(viewModel.resolvedConflictFiles == ["README.md"])
+        #expect(viewModel.isConflictFileResolved("README.md"))
+        #expect(!viewModel.isConflictFileResolved("Sources/App.swift"))
+
+        viewModel.update(
+            projectURL: projectURL,
+            conflictedFiles: ["Sources/App.swift"],
+            isOperationInProgress: true,
+            isCherryPicking: false
+        )
+
+        #expect(viewModel.displayedConflictFiles == ["Sources/App.swift", "README.md"])
+        #expect(viewModel.isConflictFileResolved("README.md"))
+    }
+
     @Test("合并已无冲突但仍未完成时自动打开引导弹层")
     func pendingMergeWithoutConflictsPresentsResolver() {
         let viewModel = GitConflictResolverViewModel()

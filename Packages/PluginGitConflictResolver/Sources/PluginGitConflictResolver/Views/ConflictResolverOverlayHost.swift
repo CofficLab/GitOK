@@ -13,6 +13,7 @@ struct ConflictResolverOverlayHost: View {
     let projects: any ProjectProviding
     let git: any GitProviding
     @ObservedObject var viewModel: GitConflictResolverViewModel
+    @LumiTheme private var theme
 
     var body: some View {
         ZStack {
@@ -20,7 +21,8 @@ struct ConflictResolverOverlayHost: View {
 
             if viewModel.isPresented {
                 Color.black
-                    .opacity(0.18)
+                    // Keep the workspace readable while still establishing modal focus.
+                    .opacity(0.12)
                     .ignoresSafeArea()
                     .transition(.opacity)
 
@@ -31,15 +33,23 @@ struct ConflictResolverOverlayHost: View {
                     onDismiss: viewModel.dismiss
                 )
                 .frame(width: 680, height: 560)
-                .background(theme.surface)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .shadow(color: .black.opacity(0.22), radius: 24, y: 8)
+                // A modal needs a stable surface. Using regularMaterial here made
+                // the dialog inherit the dimmed workspace and appear gray.
+                .appSurface(
+                    style: .panel,
+                    cornerRadius: 12,
+                    borderColor: theme.textTertiary.opacity(0.12)
+                )
+                .appClipRounded(12)
+                .shadow(
+                    color: Color.black.opacity(0.14),
+                    radius: 20,
+                    y: 8
+                )
                 .transition(.scale(scale: 0.96).combined(with: .opacity))
                 .zIndex(1)
             }
         }
         .animation(.easeInOut(duration: 0.18), value: viewModel.isPresented)
     }
-
-    @LumiTheme private var theme: LumiUITheme
 }

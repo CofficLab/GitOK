@@ -1,3 +1,4 @@
+import Foundation
 import KitGit
 import ProviderGitRepositoryWatch
 import ProviderGit
@@ -5,6 +6,7 @@ import ProviderProjects
 
 private struct GitConflictResolverSnapshot: Sendable {
     let conflictedFiles: [String]
+    let resolvedFiles: [String]
     let isOperationInProgress: Bool
     let isCherryPicking: Bool
 }
@@ -36,8 +38,14 @@ final class GitConflictResolverObserver {
                 break
             }
         }
-        repositoryHandle = capability.addRepositoryObserver { [weak self] _ in
-            self?.reload()
+        repositoryHandle = capability.addRepositoryObserver { [weak self] event in
+            switch event {
+            case .started, .stopped, .headChanged, .indexChanged, .workingTreeChanged:
+                self?.reload()
+            case .stashChanged, .refsChanged:
+                // These events do not change the current merge conflict state.
+                break
+            }
         }
         reload()
     }
@@ -66,7 +74,8 @@ final class GitConflictResolverObserver {
                 projectURL: nil,
                 conflictedFiles: [],
                 isOperationInProgress: false,
-                isCherryPicking: false
+                isCherryPicking: false,
+                resolvedFiles: []
             )
             return
         }
@@ -74,8 +83,12 @@ final class GitConflictResolverObserver {
         viewModel?.beginLoading(projectURL: url)
         let git = self.git
         let snapshotTask = Task.detached(priority: .utility) {
-            GitConflictResolverSnapshot(
-                conflictedFiles: git.conflictFiles(in: url),
+            let conflictedFiles = git.conflictFiles(in: url)
+            return GitConflictResolverSnapshot(
+                conflictedFiles: conflictedFiles,
+                resolvedFiles: conflictedFiles.filter {
+                    !Self.containsConflictMarkers(path: $0, in: url)
+                },
                 isOperationInProgress: git.isMerging(in: url),
                 isCherryPicking: git.cherryPickStatus(in: url).isCherryPicking
             )
@@ -88,7 +101,8 @@ final class GitConflictResolverObserver {
                 projectURL: url,
                 conflictedFiles: snapshot.conflictedFiles,
                 isOperationInProgress: operationInProgress,
-                isCherryPicking: snapshot.isCherryPicking
+                isCherryPicking: snapshot.isCherryPicking,
+                resolvedFiles: snapshot.resolvedFiles
             )
             if self.presentationRequested {
                 self.presentationRequested = false
@@ -96,6 +110,23 @@ final class GitConflictResolverObserver {
                     self.viewModel?.present()
                 }
             }
+        }
+    }
+
+    private nonisolated static func containsConflictMarkers(path: String, in repository: URL) -> Bool {
+        let fileURL = repository.appendingPathComponent(path)
+        guard let data = try? Data(contentsOf: fileURL),
+              let contents = String(data: data, encoding: .utf8) else {
+            // Binary or unreadable files cannot be classified from their contents;
+            // keep them unresolved until Git reports them as staged.
+            return true
+        }
+
+        return contents.split(whereSeparator: \.isNewline).contains { line in
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            return trimmed.hasPrefix("<<<<<<<")
+                || trimmed.hasPrefix("=======")
+                || trimmed.hasPrefix(">>>>>>>")
         }
     }
 }
