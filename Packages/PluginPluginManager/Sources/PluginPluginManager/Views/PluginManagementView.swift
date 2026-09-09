@@ -60,6 +60,7 @@ struct PluginManagementView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
+        .padding(.bottom, 16)
         .onAppear {
             if selectedPluginID == nil {
                 selectedPluginID = selectedPlugin?.id
