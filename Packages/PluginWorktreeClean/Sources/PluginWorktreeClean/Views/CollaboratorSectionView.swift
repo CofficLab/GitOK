@@ -1,4 +1,5 @@
 import LumiUI
+import ProviderContentView
 import ProviderGitUser
 import SwiftUI
 
@@ -50,7 +51,10 @@ struct CollaboratorSectionView: View {
             icon: "person.2"
         ) {
             if isLoadingUserConfiguration || (isApplying && !isCurrent) {
-                ProgressView().controlSize(.small)
+                ContentLoadingIndicator(
+                    isApplying ? collaboratorLoc("Applying collaborator...") : collaboratorLoc("Loading Git user..."),
+                    controlSize: .small
+                )
             } else if isCurrent {
                 Image(systemName: "checkmark")
                     .foregroundStyle(.tint)

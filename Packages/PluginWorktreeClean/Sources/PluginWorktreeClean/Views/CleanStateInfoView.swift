@@ -1,6 +1,7 @@
 import Foundation
 import KitGit
 import LumiUI
+import ProviderContentView
 import ProviderGit
 import ProviderProjects
 import SwiftUI
@@ -144,7 +145,7 @@ struct CleanStateInfoView: View {
             icon: "tag"
         ) {
             if isLoadingInfo {
-                ProgressView().controlSize(.small)
+                ContentLoadingIndicator(loc("Loading latest tag..."), controlSize: .small)
             } else if let latestTag, !latestTag.isEmpty {
                 Group {
                     if isLatestTagCopied {
@@ -173,7 +174,7 @@ struct CleanStateInfoView: View {
             icon: "number"
         ) {
             if isLoadingInfo {
-                ProgressView().controlSize(.small)
+                ContentLoadingIndicator(loc("Loading commit count..."), controlSize: .small)
             }
         }
     }
@@ -188,7 +189,7 @@ struct CleanStateInfoView: View {
             icon: "calendar"
         ) {
             if isLoadingInfo {
-                ProgressView().controlSize(.small)
+                ContentLoadingIndicator(loc("Loading first commit..."), controlSize: .small)
             }
         }
     }
@@ -252,7 +253,7 @@ struct CleanStateInfoView: View {
             icon: "person"
         ) {
             if viewModel.isLoadingUserConfiguration {
-                ProgressView().controlSize(.small)
+                ContentLoadingIndicator(loc("Loading Git user..."), controlSize: .small)
             }
         }
     }
@@ -266,7 +267,7 @@ struct CleanStateInfoView: View {
             icon: "envelope"
         ) {
             if viewModel.isLoadingUserConfiguration {
-                ProgressView().controlSize(.small)
+                ContentLoadingIndicator(loc("Loading Git user..."), controlSize: .small)
             }
         }
     }

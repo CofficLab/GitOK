@@ -1,4 +1,5 @@
 import LumiUI
+import ProviderContentView
 import ProviderGitUser
 import SwiftUI
 
@@ -64,7 +65,10 @@ struct GitUserPresetSectionView: View {
             icon: "person.crop.circle"
         ) {
             if isLoadingUserConfiguration || (isApplying && !isCurrent) {
-                ProgressView().controlSize(.small)
+                ContentLoadingIndicator(
+                    isApplying ? presetLoc("Applying Git user...") : presetLoc("Loading Git user..."),
+                    controlSize: .small
+                )
             } else if isCurrent {
                 Image(systemName: "checkmark")
                     .foregroundStyle(.tint)

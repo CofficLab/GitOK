@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderContentView
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -70,8 +71,8 @@ struct CommitDetailLayout: View {
     @ViewBuilder
     private var fileListContent: some View {
         if filePageStore.totalCount == nil && filePageStore.isLoadingCount {
-            // 首次加载（尚无任何历史数据）：全屏转圈。
-            ProgressView()
+            // 首次加载（尚无任何历史数据）：展示明确的加载状态。
+            ContentLoadingIndicator(loc("Loading changed files..."))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if filePageStore.totalCount == nil, let loadError = filePageStore.firstError {
             VStack(spacing: 10) {
@@ -158,9 +159,14 @@ struct CommitDetailLayout: View {
                         .padding(.vertical, 2)
                     }
                     if filePageStore.isLoading {
-                        ProgressView()
-                            .progressViewStyle(.linear)
-                            .frame(height: 2)
+                        VStack(spacing: 3) {
+                            ProgressView()
+                                .progressViewStyle(.linear)
+                                .frame(height: 2)
+                            Text(loc("Loading more files..."))
+                                .font(.appMicro)
+                                .foregroundStyle(theme.textTertiary)
+                        }
                             .padding(.horizontal, 2)
                     }
                 }

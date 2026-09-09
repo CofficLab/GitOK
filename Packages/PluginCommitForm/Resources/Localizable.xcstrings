@@ -862,6 +862,22 @@
           }
         }
       }
+    },
+    "Submitting...": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Submitting..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在提交…"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

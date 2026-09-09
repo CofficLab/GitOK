@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderContentView
 import ProviderCommitForm
 import ProviderGit
 import ProviderGitRepositoryWatch
@@ -196,8 +197,7 @@ public struct CommitFormView: View {
             .frame(maxWidth: .infinity)
 
             if form.isSubmitting {
-                ProgressView()
-                    .controlSize(.small)
+                ContentLoadingIndicator(loc("Submitting..."), controlSize: .small)
             } else {
                 AppButton(loc("Commit"), systemImage: "checkmark.circle", style: .secondary, size: .small, action: {
                     submit(commitOnly: true)

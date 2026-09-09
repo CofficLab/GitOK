@@ -1,6 +1,7 @@
 import Foundation
 import LumiUI
 import ProviderActivityHeatmap
+import ProviderContentView
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -46,20 +47,16 @@ struct WorktreeCleanActivityHeatmapView: View {
                 Text(loc("Commit Activity"))
                     .font(.headline)
 
-                HStack(alignment: .top, spacing: 10) {
-                    ProgressView()
-                        .controlSize(.small)
+                VStack(spacing: 6) {
+                    ContentLoadingIndicator(loc("Loading commit activity..."), controlSize: .small)
                         .tint(theme.primary)
-
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(loc("Loading commit activity..."))
-                            .font(.body)
                         Text(loc("Analyzing recent Git history..."))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
-                .frame(maxWidth: .infinity, minHeight: 105, alignment: .leading)
+                .frame(maxWidth: .infinity, minHeight: 105)
             }
         }
     }
@@ -92,10 +89,8 @@ struct WorktreeCleanActivityHeatmapView: View {
                         }
                         Spacer(minLength: 8)
                         if viewModel.isLoading {
-                            ProgressView()
-                                .controlSize(.small)
+                            ContentLoadingIndicator(loc("Updating commit activity..."), controlSize: .small)
                                 .tint(theme.primary)
-                                .help(loc("Updating commit activity..."))
                         }
                     }
 

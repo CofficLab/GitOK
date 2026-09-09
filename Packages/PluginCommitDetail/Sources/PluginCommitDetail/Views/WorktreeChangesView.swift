@@ -1,5 +1,6 @@
 import KitGit
 import LumiUI
+import ProviderContentView
 import ProviderGit
 import SwiftUI
 
@@ -51,7 +52,7 @@ struct WorktreeChangesView: View {
     var body: some View {
         Group {
             if isLoading && entries.isEmpty && !hasLoadedSnapshot {
-                ProgressView()
+                ContentLoadingIndicator(loc("Loading workspace changes..."))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background {
                         theme.surface
@@ -172,8 +173,10 @@ struct WorktreeChangesView: View {
                     .font(.appMicro)
                     .foregroundStyle(theme.textTertiary)
                 if isPreparingDiscardAll || isDiscardingAll {
-                    ProgressView()
-                        .controlSize(.small)
+                    ContentLoadingIndicator(
+                        isDiscardingAll ? loc("Discarding all changes...") : loc("Preparing changes..."),
+                        controlSize: .small
+                    )
                 } else {
                     AppIconButton(
                         systemImage: "trash",
@@ -228,8 +231,7 @@ struct WorktreeChangesView: View {
 
                 if entry.isStaged {
                     if unstagingPath == entry.path {
-                        ProgressView()
-                            .controlSize(.small)
+                        ContentLoadingIndicator(loc("Unstaging..."), controlSize: .small)
                     } else {
                         AppIconButton(
                             systemImage: "minus.rectangle.on.folder",
@@ -243,8 +245,7 @@ struct WorktreeChangesView: View {
                     }
                 } else if entry.isUntracked || entry.isWorktreeModified {
                     if stagingPath == entry.path {
-                        ProgressView()
-                            .controlSize(.small)
+                        ContentLoadingIndicator(loc("Staging..."), controlSize: .small)
                     } else {
                         AppIconButton(
                             systemImage: "plus.rectangle.on.folder",
@@ -259,8 +260,7 @@ struct WorktreeChangesView: View {
                 }
 
                 if discardingPaths.contains(entry.path) {
-                    ProgressView()
-                        .controlSize(.small)
+                    ContentLoadingIndicator(loc("Discarding..."), controlSize: .small)
                 } else {
                     AppIconButton(
                         systemImage: "trash",
