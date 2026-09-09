@@ -28,9 +28,9 @@ final class WorktreeCleanActivityHeatmapViewModel: ObservableObject {
         projectURL != nil && !hasSelectedCommit && (snapshot != nil || isLoading)
     }
 
-    func level(for day: ActivityHeatmapDay) -> Int {
+    func level(for day: ActivityHeatmapDay, maximum: Int? = nil) -> Int {
         guard day.commitCount > 0, let snapshot else { return 0 }
-        let maximum = snapshot.days.map(\.commitCount).max() ?? 0
+        let maximum = maximum ?? snapshot.days.map(\.commitCount).max() ?? 0
         guard maximum > 0 else { return 0 }
         if maximum <= 4 { return min(day.commitCount, 4) }
         let ratio = Double(day.commitCount) / Double(maximum)

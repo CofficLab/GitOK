@@ -7,10 +7,11 @@ import ProviderGit
 /// Plugin-owned local Git implementation of the shared activity data contract.
 ///
 /// This type deliberately contains no SwiftUI code. It reads the current
-/// repository, filters to the six-month display window, and persists snapshots
+/// repository, filters to the one-year history window, and persists snapshots
 /// below this plugin's own storage directory.
 @MainActor
 final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
+    private nonisolated static let historyMonths = 12
     private nonisolated static let logger = Logger(
         subsystem: "com.coffic.gitok.plugin.activity-heatmap",
         category: "LocalActivityHeatmapProvider"
@@ -171,7 +172,7 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         calendar: Calendar,
         loadCommits: CommitLoader
     ) throws -> [GitCommit] {
-        guard let cutoff = calendar.date(byAdding: .month, value: -6, to: now) else { return [] }
+        guard let cutoff = calendar.date(byAdding: .month, value: -historyMonths, to: now) else { return [] }
 
         var offset = 0
         var commits: [GitCommit] = []
