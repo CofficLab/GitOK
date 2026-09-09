@@ -123,9 +123,7 @@ struct WorktreeCleanActivityHeatmapView: View {
                         .strokeBorder(.quaternary, lineWidth: 1)
                 }
         }
-        .padding(.trailing, 20)
-        .padding(.vertical, 16)
-        .frame(minWidth: 300, idealWidth: 360, maxWidth: 420, alignment: .topLeading)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
     private var weekdayLabels: some View {
