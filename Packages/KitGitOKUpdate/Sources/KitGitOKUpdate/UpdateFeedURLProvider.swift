@@ -3,7 +3,7 @@ import Foundation
 /// GitOK 的 Sparkle feed 地址。
 ///
 /// 发布工作流会把同一份 appcast 发布到 GitOK 自有更新服务和 GitHub Release，
-/// 运行时优先使用自有服务，网络不可达时回退到 GitHub。
+/// 运行时优先使用自有更新服务，网络不可达时回退到 GitHub。
 public enum UpdateFeedURLProvider {
     public static var primary: URL {
         primary(forArchitecture: currentArchitecture)
@@ -18,9 +18,11 @@ public enum UpdateFeedURLProvider {
             architecture == "arm64" || architecture == "x86_64",
             "Unsupported architecture: \(architecture)"
         )
-        return URL(
-            string: "https://api.kuaiyizhi.cn/gitok/appcast-\(architecture).xml"
+        var components = URLComponents(
+            string: "https://api.kuaiyizhi.cn/gitok/appcast.xml"
         )!
+        components.queryItems = [URLQueryItem(name: "arch", value: architecture)]
+        return components.url!
     }
 
     public static func fallback(forArchitecture architecture: String) -> URL {
