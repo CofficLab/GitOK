@@ -72,6 +72,7 @@ struct LocalActivityHeatmapProviderTests {
         second.refresh(for: repository)
 
         #expect(second.currentSnapshot == cached)
+        #expect(!second.isLoading)
     }
 
     @Test("clears loading after a refresh completes")

@@ -20,7 +20,10 @@ public struct URLSessionFeedURLReachabilityChecker: FeedURLReachabilityChecking 
 
         do {
             let (_, response) = try await URLSession.shared.data(for: request)
-            return (response as? HTTPURLResponse)?.statusCode == 200
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
+                return false
+            }
+            return (200..<300).contains(statusCode)
         } catch {
             return false
         }

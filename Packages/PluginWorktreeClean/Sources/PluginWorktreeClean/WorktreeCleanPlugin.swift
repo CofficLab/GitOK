@@ -87,6 +87,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         // （如其他编辑器把文件改干净 / 改脏后，干净视图据此刷新）。
         let gitWatch = kernel.resolveProvider((any GitRepositoryWatching).self)
         let userPresets = kernel.resolveProvider((any GitUserPresetProviding).self)
+        let collaborators = kernel.resolveProvider((any CollaboratorProviding).self)
 
         let ensureUserPreset: ((String, String) -> Void)?
         if let userPresets {
@@ -111,6 +112,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             capability: capability,
             gitWatch: gitWatch,
             userPresets: userPresets,
+            collaborators: collaborators,
             onProjectChanged: { [weak viewModel, capability] in
                 viewModel?.handleProjectChanged(
                     project: capability.currentProject,
@@ -122,6 +124,9 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             },
             onUserPresetsChanged: { [weak viewModel] presets in
                 viewModel?.handleUserPresetsChanged(presets)
+            },
+            onCollaboratorsChanged: { [weak viewModel] collaborators in
+                viewModel?.handleCollaboratorsChanged(collaborators)
             }
         )
         viewModel.handleProjectChanged(

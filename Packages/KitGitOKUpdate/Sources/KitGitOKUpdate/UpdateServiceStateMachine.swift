@@ -37,6 +37,12 @@ public actor UpdateServiceStateMachine {
         state = .error
     }
 
+    public func finishCheckingIfNeeded() {
+        if state == .checking {
+            state = .idle
+        }
+    }
+
     public func reset() {
         state = .idle
         latestVersion = nil

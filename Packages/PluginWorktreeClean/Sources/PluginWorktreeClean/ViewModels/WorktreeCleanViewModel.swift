@@ -45,6 +45,9 @@ final class WorktreeCleanViewModel: ObservableObject {
     /// Git 用户预设列表，由 `GitUserPresetProviding` 通过插件级 Observer 驱动。
     @Published private(set) var userPresets: [GitUserPreset] = []
 
+    /// 协作者列表，由 `CollaboratorProviding` 通过插件级 Observer 驱动。
+    @Published private(set) var collaborators: [Collaborator] = []
+
     /// 当前项目仓库配置中的 Git 用户身份。
     @Published private(set) var currentUserName = ""
     @Published private(set) var currentUserEmail = ""
@@ -120,6 +123,11 @@ final class WorktreeCleanViewModel: ObservableObject {
         userPresets = presets
     }
 
+    /// 外部协作者 Provider 发生变化后，由插件级 Observer 推送最新快照。
+    func handleCollaboratorsChanged(_ collaborators: [Collaborator]) {
+        self.collaborators = collaborators
+    }
+
     /// 将选中的预设应用到当前项目仓库，并同步当前身份展示。
     func applyUserPreset(_ preset: GitUserPreset) {
         guard let project, !hasSelectedCommit else { return }
@@ -135,6 +143,30 @@ final class WorktreeCleanViewModel: ObservableObject {
                     guard self.project?.url == url else { return }
                     self.currentUserName = preset.name
                     self.currentUserEmail = preset.email
+                }
+            } catch {
+                await MainActor.run {
+                    self.isApplyingUserPreset = false
+                }
+            }
+        }
+    }
+
+    /// 将选中的协作者应用到当前项目仓库，并同步当前身份展示。
+    func applyCollaborator(_ collaborator: Collaborator) {
+        guard let project, !hasSelectedCommit else { return }
+        let url = project.url
+        isApplyingUserPreset = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitConfigReader.setValue("user.name", collaborator.name, in: url)
+                try GitConfigReader.setValue("user.email", collaborator.email, in: url)
+                await MainActor.run {
+                    self.isApplyingUserPreset = false
+                    guard self.project?.url == url else { return }
+                    self.currentUserName = collaborator.name
+                    self.currentUserEmail = collaborator.email
                 }
             } catch {
                 await MainActor.run {

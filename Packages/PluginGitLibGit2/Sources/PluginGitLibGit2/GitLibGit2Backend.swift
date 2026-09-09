@@ -22,6 +22,12 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }
     }
 
+    func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [KitGit.GitCommit] {
+        // LibGit2Swift's list API follows HEAD; use the shared CLI loader for
+        // the explicit all-refs history required by the activity heatmap.
+        try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
+    }
+
     func countCommits(in repository: URL) throws -> Int {
         try GitCommitLoader.countCommits(in: repository)
     }

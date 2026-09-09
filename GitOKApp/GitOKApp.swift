@@ -12,13 +12,13 @@ struct GitOKApp: App {
     @Environment(\.openWindow) private var openWindow
 
     init() {
+        AppUpdateBootstrap.start()
         if let assembledKernel = try? FactoryGitOK.makeKernel() {
             kernel = assembledKernel
             mainView = (try? FactoryGitOK.makeMainView(kernel: assembledKernel))
                 ?? AnyView(Text("Failed to assemble main view"))
             settingsView = (try? FactoryGitOK.makeSettingsView(kernel: assembledKernel))
                 ?? AnyView(Text("Failed to assemble settings view"))
-            AppUpdateBootstrap.start()
         } else {
             let fallbackKernel = KernelCoreContainer()
             kernel = fallbackKernel

@@ -15,9 +15,8 @@ public final class UpdateService: NSObject, SPUUpdaterDelegate {
 
     private var feedURLDetector: FeedURLDetector
     private var resolvedFeedURL = UpdateFeedURLProvider.primary
+    private var feedPreparationTask: Task<Void, Never>?
     private let stateMachine = UpdateServiceStateMachine()
-    private var pendingImmediateInstallHandler: (() -> Void)?
-
     private override init() {
         feedURLDetector = FeedURLDetector(
             initialURL: UpdateFeedURLProvider.primary,
@@ -43,20 +42,41 @@ public final class UpdateService: NSObject, SPUUpdaterDelegate {
     public func setupFeedURLIfNeeded() {
         guard AppUpdateRuntimeEnvironment.allowsAppUpdates else { return }
 
+        _ = prepareFeedURLIfNeeded()
+    }
+
+    @discardableResult
+    private func prepareFeedURLIfNeeded() -> Task<Void, Never> {
+        if let feedPreparationTask {
+            return feedPreparationTask
+        }
+
         let detector = feedURLDetector
-        Task { @MainActor [weak self] in
+        let task = Task { @MainActor [weak self] in
             await detector.detectIfNeeded()
             guard let self else { return }
             self.resolvedFeedURL = await detector.resolvedFeedURL
+            self.feedPreparationTask = nil
             self.ensureUpdaterInitialized()
         }
+        feedPreparationTask = task
+        return task
     }
 
     public func checkForUpdates() {
         guard AppUpdateRuntimeEnvironment.allowsAppUpdates else { return }
-        ensureUpdaterInitialized()
-        Task { await stateMachine.beginChecking() }
-        updaterController?.checkForUpdates(nil)
+
+        // Feed selection is asynchronous. Wait for it before starting Sparkle so
+        // a slow/unavailable primary endpoint cannot race a manual check and
+        // cause that check to use the wrong feed.
+        let preparationTask = prepareFeedURLIfNeeded()
+        Task { @MainActor [weak self] in
+            await preparationTask.value
+            guard let self, AppUpdateRuntimeEnvironment.allowsAppUpdates else { return }
+            self.ensureUpdaterInitialized()
+            await self.stateMachine.beginChecking()
+            self.updaterController?.checkForUpdates(nil)
+        }
     }
 
     public var currentState: UpdateLifecycleState {
@@ -72,12 +92,15 @@ public final class UpdateService: NSObject, SPUUpdaterDelegate {
         willInstallUpdateOnQuit item: SUAppcastItem,
         immediateInstallationBlock immediateInstallHandler: @escaping () -> Void
     ) -> Bool {
-        pendingImmediateInstallHandler = immediateInstallHandler
         Task {
             await stateMachine.markReadyToInstall(version: item.displayVersionString)
         }
         NotificationCenter.postAppUpdateReadyToInstall(version: item.displayVersionString)
-        return true
+
+        // The standard Sparkle user driver owns the install/relaunch UI. Returning
+        // true here would transfer ownership to this service, but GitOK has no
+        // custom install UI that invokes immediateInstallHandler.
+        return false
     }
 
     public func feedURLString(for updater: SPUUpdater) -> String? {
@@ -89,9 +112,35 @@ public final class UpdateService: NSObject, SPUUpdaterDelegate {
     }
 
     public func handleInstallPreparedAppUpdateRequest() {
-        guard let handler = pendingImmediateInstallHandler else { return }
-        pendingImmediateInstallHandler = nil
-        Task { await stateMachine.beginInstalling() }
-        handler()
+        // Kept as a notification endpoint for compatibility with older clients.
+        // Installation is intentionally left to Sparkle's standard user driver.
+    }
+
+    public func updater(
+        _ updater: SPUUpdater,
+        willDownloadUpdate item: SUAppcastItem,
+        with request: NSMutableURLRequest
+    ) {
+        Task { await stateMachine.beginDownloading() }
+    }
+
+    public func updater(_ updater: SPUUpdater, failedToDownloadUpdate item: SUAppcastItem, error: Error) {
+        Task { await stateMachine.markError() }
+    }
+
+    public func updater(_ updater: SPUUpdater, didAbortWithError error: Error) {
+        Task { await stateMachine.markError() }
+    }
+
+    public func updater(
+        _ updater: SPUUpdater,
+        didFinishUpdateCycleFor updateCheck: SPUUpdateCheck,
+        error: Error?
+    ) {
+        if error != nil {
+            Task { await stateMachine.markError() }
+        } else {
+            Task { await stateMachine.finishCheckingIfNeeded() }
+        }
     }
 }

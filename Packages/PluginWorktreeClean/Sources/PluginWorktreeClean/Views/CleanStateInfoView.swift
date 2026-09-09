@@ -81,6 +81,15 @@ struct CleanStateInfoView: View {
                 onApply: viewModel.applyUserPreset,
                 onManage: openUserSettings
             )
+
+            CollaboratorSectionView(
+                collaborators: viewModel.collaborators,
+                currentUserName: viewModel.currentUserName,
+                currentUserEmail: viewModel.currentUserEmail,
+                isLoadingUserConfiguration: viewModel.isLoadingUserConfiguration,
+                isApplying: viewModel.isApplyingUserPreset,
+                onApply: viewModel.applyCollaborator
+            )
         }
         .onAppear(perform: loadInfo)
     }

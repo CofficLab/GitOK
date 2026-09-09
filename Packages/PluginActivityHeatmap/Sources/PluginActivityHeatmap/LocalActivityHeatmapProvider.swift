@@ -49,7 +49,7 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         self.now = now
         self.loadCommits = commitLoader ?? { [git] repository, limit, offset in
             guard let git else { throw GitProviderError.noBackendAvailable }
-            return try git.loadCommits(in: repository, limit: limit, offset: offset)
+            return try git.loadAllCommits(in: repository, limit: limit, offset: offset)
         }
         self.loadStatus = statusLoader ?? { [git] repository in
             guard let git else { throw GitProviderError.noBackendAvailable }
@@ -69,8 +69,12 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
             return
         }
 
-        setLoading(true)
-        setSnapshot(loadCachedSnapshot(for: repository))
+        let cachedSnapshot = loadCachedSnapshot(for: repository)
+        setSnapshot(cachedSnapshot)
+        // A cached snapshot is already useful to the UI. Keep it visible and
+        // refresh silently in the background; only the first uncached load
+        // needs a visible loading state.
+        setLoading(cachedSnapshot == nil)
         let loadCommits = self.loadCommits
         let loadStatus = self.loadStatus
         let calendar = self.calendar

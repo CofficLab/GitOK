@@ -153,6 +153,54 @@
         }
       }
     },
+    "Cherry-pick is ready to continue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cherry-pick is ready to continue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cherry-pick 已准备继续"
+          }
+        }
+      }
+    },
+    "Cherry-pick is ready to continue. Click to finish it.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cherry-pick is ready to continue. Click to finish it."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cherry-pick 已准备继续，点击完成。"
+          }
+        }
+      }
+    },
+    "Cherry-pick pending": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cherry-pick pending"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cherry-pick 待完成"
+          }
+        }
+      }
+    },
     "Choose": {
       "localizations": {
         "en": {
@@ -369,6 +417,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "衝突 %lld"
+          }
+        }
+      }
+    },
+    "All conflicts are resolved. Continue the cherry-pick to finish it.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All conflicts are resolved. Continue the cherry-pick to finish it."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冲突已全部解决，继续 Cherry-pick 以完成操作。"
+          }
+        }
+      }
+    },
+    "All conflicts are resolved. Continue the merge to create the merge commit.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All conflicts are resolved. Continue the merge to create the merge commit."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冲突已全部解决，继续合并以创建合并提交。"
+          }
+        }
+      }
+    },
+    "All conflicts are resolved. Click to finish the merge.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All conflicts are resolved. Click to finish the merge."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冲突已全部解决，点击完成合并。"
           }
         }
       }
@@ -726,6 +822,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "合併正常"
+          }
+        }
+      }
+    },
+    "Merge is ready to continue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge is ready to continue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并已准备继续"
+          }
+        }
+      }
+    },
+    "Merge pending": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge pending"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并待完成"
+          }
+        }
+      }
+    },
+    "Merge ready to complete": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge ready to complete"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并已准备完成"
           }
         }
       }
@@ -1438,6 +1582,185 @@
           "stringUnit": {
             "state": "translated",
             "value": "解決選項"
+          }
+        }
+      }
+    },
+    "%lld conflicted file(s) remaining": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld conflicted file(s) remaining"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还剩 %lld 个冲突文件"
+          }
+        }
+      }
+    },
+    "%lld resolved": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld resolved"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个已解决"
+          }
+        }
+      }
+    },
+    "%lld resolved; ready to continue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld resolved; ready to continue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个已解决，可继续合并"
+          }
+        }
+      }
+    },
+    "%lld resolved; stage to continue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld resolved; stage to continue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个已解决，暂存后继续"
+          }
+        }
+      }
+    },
+    "%lld staged": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld staged"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个已暂存"
+          }
+        }
+      }
+    },
+    "More Actions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More Actions"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更多操作"
+          }
+        }
+      }
+    },
+    "Open in VS Code": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in VS Code"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 VS Code 中打开"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 VS Code 中開啟"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 VS Code 中開啟"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 VS Code 中開啟"
+          }
+        }
+      }
+    },
+    "Resolved; stage to continue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolved; stage to continue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已解决，待暂存"
+          }
+        }
+      }
+    },
+    "Stage Resolved Files": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stage Resolved Files"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂存已解决文件"
+          }
+        }
+      }
+    },
+    "Staged": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staged"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暂存"
           }
         }
       }

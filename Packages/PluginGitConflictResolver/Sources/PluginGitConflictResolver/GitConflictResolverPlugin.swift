@@ -4,6 +4,7 @@ import KitSuperLog
 import os
 import ProviderGitRepositoryWatch
 import ProviderGit
+import ProviderGitConflictResolver
 import ProviderProjects
 import ProviderRootView
 import ProviderStatusBar
@@ -39,6 +40,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
     private var sceneObserver: GitConflictResolverSceneObserver?
     private var conflictViewModel: GitConflictResolverViewModel?
     private var conflictObserver: GitConflictResolverObserver?
+    private var presentationProvider: GitConflictResolutionProviding?
 
     public init() {}
 
@@ -86,6 +88,17 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
             git: git,
             viewModel: conflictViewModel
         )
+        let presentationProvider = GitConflictResolutionPresenter(
+            viewModel: conflictViewModel,
+            requestReload: { [weak self] in
+                self?.conflictObserver?.requestPresentation()
+            }
+        )
+        try kernel.registerProvider(
+            (any GitConflictResolutionProviding).self,
+            presentationProvider
+        )
+        self.presentationProvider = presentationProvider
 
         rootView.addOverlays([
             RootOverlayItem(id: Self.overlayID, order: 9000) { content in
@@ -119,6 +132,10 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         sceneViewModel = nil
         conflictObserver?.cancel()
         conflictObserver = nil
+        if presentationProvider != nil {
+            kernel.unregisterProvider((any GitConflictResolutionProviding).self)
+        }
+        presentationProvider = nil
         conflictViewModel = nil
         kernel.resolveProvider((any StatusBarProviding).self)?
             .removeStatusBarItems(ids: [Self.itemID])

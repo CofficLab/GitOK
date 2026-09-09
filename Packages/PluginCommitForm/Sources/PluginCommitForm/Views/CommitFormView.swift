@@ -3,6 +3,7 @@ import LumiUI
 import ProviderCommitForm
 import ProviderGit
 import ProviderGitRepositoryWatch
+import ProviderGitUser
 import ProviderProjects
 import SwiftUI
 
@@ -23,8 +24,8 @@ private extension GitRemoteOperation.SyncStep {
 
 /// 提交表单视图（对齐旧版 CommitFormLayout）。
 ///
-/// 显示在详情区顶部：第一行「提交风格 + 提交类别 + 消息输入」，
-/// 第二行「当前 git 用户 + 共同作者 + 提交 / 提交并推送」。
+/// 显示在详情区顶部：第一行「提交风格 + 提交类别 + 当前 git 用户 + 共同作者」，
+/// 最后一行「消息输入 + 提交 / 提交并推送」。
 ///
 /// 表单状态与提交动作的权威源是 `CommitFormProviding`；本视图只是 UI 呈现，
 /// 编辑即时写回 Provider，提交后由 Provider 重置 subject。
@@ -37,6 +38,8 @@ public struct CommitFormView: View {
     /// 工作区文件），外部修改（终端 commit / checkout / stash 等）也能触发
     /// 工作区干净状态重算，避免工作区已干净但表单仍显示的漏刷新。
     let gitWatch: (any GitRepositoryWatching)?
+    /// Git 用户预设管理（可选）：用于用户选择器下拉列表。
+    let gitUserPresets: (any GitUserPresetProviding)?
     @LumiTheme private var theme
     @StateObject private var formObservation: CommitFormObservationModel
     @StateObject private var projectObservation: ProjectObservationModel
@@ -48,6 +51,14 @@ public struct CommitFormView: View {
     @State private var coAuthors: [CoAuthor] = []
     @State private var user: (name: String?, email: String?)?
     @State private var showCoAuthorSheet = false
+    /// 共同作者弹窗（popover）是否展示。
+    @State private var isCoAuthorPopoverPresented = false
+    /// 共同作者按钮是否悬停。
+    @State private var isCoAuthorHovering = false
+    /// 用户选择器弹窗（popover）是否展示。
+    @State private var isUserBadgePopoverPresented = false
+    /// 用户选择器按钮是否悬停。
+    @State private var isUserBadgeHovering = false
 
     /// 当前项目工作区是否干净（无未提交 / 未跟踪变更）。
     /// 对齐旧版 `GitDetailPresentationRules`：工作区干净时提交表单隐藏自身。
@@ -62,13 +73,15 @@ public struct CommitFormView: View {
         form: any CommitFormProviding,
         git: any GitProviding,
         gitWatch: (any GitRepositoryWatching)? = nil,
-        errorCenter: CommitFormErrorCenter? = nil
+        errorCenter: CommitFormErrorCenter? = nil,
+        gitUserPresets: (any GitUserPresetProviding)? = nil
     ) {
         self.projects = projects
         self.form = form
         self.git = git
         self.gitWatch = gitWatch
         self.errorCenter = errorCenter
+        self.gitUserPresets = gitUserPresets
         _formObservation = StateObject(wrappedValue: CommitFormObservationModel(form: form))
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
@@ -143,33 +156,36 @@ public struct CommitFormView: View {
 
     // MARK: - Rows
 
-    /// 第一行：风格 + 类别 + 消息输入。
+    /// 第一行：风格 + 类别 + 用户 + 共同作者。
     private var firstRow: some View {
         HStack(spacing: 8) {
-            Picker("", selection: Binding(
-                get: { style },
-                set: { form.setStyle($0) }
-            )) {
-                ForEach(CommitStyle.allCases, id: \.self) { s in
-                    Text(s.label).tag(s)
-                }
-            }
-            .frame(width: 118)
-            .labelsHidden()
+            ToolbarStylePicker(
+                title: loc("Commit Style"),
+                options: CommitStyle.allCases,
+                selection: style,
+                labelForOption: { $0.label }
+            ) { form.setStyle($0) }
+            .frame(width: 140)
 
-            Picker("", selection: Binding(
-                get: { category },
-                set: { form.setCategory($0) }
-            )) {
-                ForEach(CommitCategory.allCases, id: \.self) { c in
-                    Text(displayLabel(for: c)).tag(c)
-                }
-            }
+            ToolbarStylePicker(
+                title: loc("Commit Category"),
+                options: CommitCategory.allCases,
+                selection: category,
+                labelForOption: { displayLabel(for: $0) }
+            ) { form.setCategory($0) }
             .frame(width: 150)
-            .labelsHidden()
 
-            Spacer(minLength: 8)
+            userBadge
 
+            coAuthorButton
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    /// 最后一行：消息输入 + 提交 + 提交并推送。
+    private var secondRow: some View {
+        HStack(spacing: 8) {
             AppInputField(LocalizedStringKey(loc("commit")), text: Binding(
                 get: { subject },
                 set: {
@@ -178,16 +194,6 @@ public struct CommitFormView: View {
                 }
             ))
             .frame(maxWidth: .infinity)
-        }
-    }
-
-    /// 第二行：用户 + 共同作者 + 提交按钮。
-    private var secondRow: some View {
-        HStack(spacing: 8) {
-            userBadge
-            Spacer(minLength: 8)
-
-            coAuthorButton
 
             if form.isSubmitting {
                 ProgressView()
@@ -206,15 +212,44 @@ public struct CommitFormView: View {
         }
     }
 
-    /// 当前 git 用户徽标（未配置时提示去设置）。
+    /// 当前 git 用户选择器，视觉风格对齐左侧 ToolbarStylePicker。
+    ///
+    /// 有预设时展示下拉列表（popover），选中预设后写入当前项目 git 配置；
+    /// 无预设 provider 或无当前用户时退回静态 AppTag。
     @ViewBuilder
     private var userBadge: some View {
         if let user, let name = user.name, !name.isEmpty {
-            AppTag(
-                user.email?.isEmpty == false ? "\(name) <\(user.email!)>" : name,
-                systemImage: "person.crop.circle"
-            )
-            .lineLimit(1)
+            let displayName = user.email?.isEmpty == false ? "\(name) <\(user.email!)>" : name
+            if gitUserPresets != nil {
+                Button {
+                    isUserBadgePopoverPresented = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(displayName)
+                            .font(.system(size: 13, weight: .medium))
+                            .lineLimit(1)
+
+                        Image(systemName: isUserBadgePopoverPresented ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(isUserBadgeHovering || isUserBadgePopoverPresented ? Color.secondary.opacity(0.15) : Color.secondary.opacity(0.07))
+                    )
+                }
+                .buttonStyle(.plain)
+                .popover(isPresented: $isUserBadgePopoverPresented, arrowEdge: .bottom) {
+                    userBadgePopoverContent
+                }
+                .onHover { isUserBadgeHovering = $0 }
+            } else {
+                AppTag(displayName, systemImage: "person.crop.circle")
+                    .lineLimit(1)
+            }
         } else {
             AppTag(
                 loc("Git user not configured"),
@@ -224,42 +259,187 @@ public struct CommitFormView: View {
         }
     }
 
-    /// 共同作者选择按钮（Menu 多选 + 添加入口）。
-    private var coAuthorButton: some View {
-        Menu {
-            ForEach(CoAuthorStore.shared.loadCoAuthors()) { author in
-                Button {
-                    toggle(author)
-                } label: {
-                    if coAuthors.contains(where: { $0.id == author.id }) {
-                        Label(author.displayText, systemImage: "checkmark")
-                    } else {
-                        Text(author.displayText)
+    /// 用户预设选择面板：列出 `GitUserPresetProviding` 中的预设，
+    /// 点击某条后将 name / email 写入当前项目的仓库级 git 配置。
+    @ViewBuilder
+    private var userBadgePopoverContent: some View {
+        VStack(spacing: 0) {
+            Text(loc("Git User"))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+            AppDivider()
+
+            let presets = gitUserPresets?.loadPresets() ?? []
+            ScrollView {
+                VStack(spacing: 2) {
+                    ForEach(presets) { preset in
+                        userPresetRow(preset: preset)
                     }
                 }
+                .padding(8)
             }
+            .frame(maxHeight: 200)
+        }
+        .frame(width: 260)
+    }
+
+    private func userPresetRow(preset: GitUserPreset) -> some View {
+        let isCurrent = preset.name == user?.name && preset.email == user?.email
+        return Button {
+            applyUserPreset(preset)
+        } label: {
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(preset.title)
+                        .font(.system(size: 13))
+                        .lineLimit(1)
+                    Text(preset.email)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                Spacer()
+                if isCurrent {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isCurrent ? Color.accentColor.opacity(0.12) : Color.clear)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// 将预设写入当前项目仓库级 git 配置，并刷新 user 状态。
+    private func applyUserPreset(_ preset: GitUserPreset) {
+        guard let project = projects.currentProject else {
+            isUserBadgePopoverPresented = false
+            return
+        }
+        isUserBadgePopoverPresented = false
+        let url = project.url
+        Task.detached(priority: .userInitiated) {
+            do {
+                try GitConfigReader.setValue("user.name", preset.name, in: url)
+                try GitConfigReader.setValue("user.email", preset.email, in: url)
+                await MainActor.run {
+                    self.user = (name: preset.name, email: preset.email)
+                    self.projects.notifyDataChanged()
+                }
+            } catch {
+                // 写入失败时静默处理，用户可在设置页手动配置。
+            }
+        }
+    }
+
+    /// 共同作者选择按钮（Menu 多选 + 添加入口），视觉风格对齐左侧 ToolbarStylePicker。
+    private var coAuthorButton: some View {
+        Button {
+            isCoAuthorPopoverPresented = true
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "person.2")
+                    .font(.system(size: 13, weight: .medium))
+
+                if !coAuthors.isEmpty {
+                    Text("\(coAuthors.count)")
+                        .font(.system(size: 13, weight: .medium))
+                }
+
+                Image(systemName: isCoAuthorPopoverPresented ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.secondary)
+            }
+            .foregroundStyle(coAuthors.isEmpty ? theme.textTertiary : theme.textPrimary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isCoAuthorHovering || isCoAuthorPopoverPresented ? Color.secondary.opacity(0.15) : Color.secondary.opacity(0.07))
+            )
+        }
+        .buttonStyle(.plain)
+        .popover(isPresented: $isCoAuthorPopoverPresented, arrowEdge: .bottom) {
+            coAuthorPopoverContent
+        }
+        .onHover { isCoAuthorHovering = $0 }
+    }
+
+    /// 共同作者弹出面板：多选 + 添加入口。
+    @ViewBuilder
+    private var coAuthorPopoverContent: some View {
+        VStack(spacing: 0) {
+            Text(loc("Co-authors"))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+            AppDivider()
+
+            ScrollView {
+                VStack(spacing: 2) {
+                    ForEach(CoAuthorStore.shared.loadCoAuthors()) { author in
+                        coAuthorRow(author: author)
+                    }
+                }
+                .padding(8)
+            }
+            .frame(maxHeight: 200)
+
             AppDivider()
             Button {
                 showCoAuthorSheet = true
             } label: {
-                Label(loc("Add Co-author"), systemImage: "plus.circle")
+                HStack(spacing: 8) {
+                    Image(systemName: "plus.circle")
+                    Text(loc("Add Co-author"))
+                }
+                .font(.system(size: 13))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
             }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.accentColor.opacity(0.08))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+            )
+            .padding(.bottom, 8)
+        }
+        .frame(width: 220)
+    }
+
+    private func coAuthorRow(author: CoAuthor) -> some View {
+        let isSelected = coAuthors.contains(where: { $0.id == author.id })
+        return Button {
+            toggle(author)
         } label: {
-            HStack(spacing: 4) {
-                Image(systemName: "person.2")
-                if !coAuthors.isEmpty {
-                    Text("\(coAuthors.count)")
-                        .font(DesignTokens.Typography.caption2.weight(.semibold))
+            HStack(spacing: 8) {
+                Text(author.displayText)
+                    .font(.system(size: 13))
+                    .lineLimit(1)
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.accentColor)
                 }
             }
-            .font(DesignTokens.Typography.caption1)
-            .foregroundStyle(coAuthors.isEmpty ? theme.textTertiary : theme.textPrimary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .appSurface(style: .subtle, cornerRadius: DesignTokens.Radius.sm)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isSelected ? Color.accentColor.opacity(0.12) : Color.clear)
+            )
         }
-        .menuStyle(.borderlessButton)
-        .fixedSize()
+        .buttonStyle(.plain)
     }
 
     // MARK: - Actions

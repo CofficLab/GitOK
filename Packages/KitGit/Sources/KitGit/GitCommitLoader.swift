@@ -17,13 +17,21 @@ public enum GitCommitLoader {
     ///
     /// `offset` 与 `limit` 组成稳定的 Git 日志分页游标，调用方可以把后续
     /// 页面追加到已有结果，而不需要一次性把整个仓库历史读入内存。
+    /// `allRefs` 为 `true` 时跨所有本地 refs 读取提交，而不是只读取当前 HEAD
+    /// 可达的提交。
     /// - Throws: `GitCommitLoaderError`（非 git 仓库 / 命令失败 / 输出不可解析）。
     public static func loadCommits(
         in repository: URL,
         limit: Int = 50,
-        offset: Int = 0
+        offset: Int = 0,
+        allRefs: Bool = false
     ) throws -> [GitCommit] {
-        let command = try buildCommand(in: repository, limit: limit, offset: offset)
+        let command = try buildCommand(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            allRefs: allRefs
+        )
         let output = try runGit(command, in: repository)
         // 显式按提交日期倒序：不依赖 git log 的默认输出顺序
         // （不同 git 配置 / 沙盒环境下默认顺序可能不一致）。
@@ -48,7 +56,12 @@ public enum GitCommitLoader {
 
     // MARK: - Command
 
-    private static func buildCommand(in repository: URL, limit: Int, offset: Int) throws -> [String] {
+    private static func buildCommand(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        allRefs: Bool = false
+    ) throws -> [String] {
         guard repository.hasDirectoryPath || FileManager.default.fileExists(atPath: repository.path) else {
             throw GitCommitLoaderError.notARepository(repository)
         }
@@ -64,6 +77,9 @@ public enum GitCommitLoader {
             "--format=\(format)",
             "-n", "\(limit)",
         ]
+        if allRefs {
+            command.append("--all")
+        }
         if offset > 0 {
             command += ["--skip", "\(offset)"]
         }

@@ -73,6 +73,7 @@ final class CommitFilePageStoreTests: XCTestCase {
         // MARK: - 桩实现（本测试不调用）
 
         func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] { [] }
+        func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] { [] }
         func countCommits(in repository: URL) throws -> Int { 0 }
         func unpushedCommitHashes(in repository: URL) throws -> Set<String> { [] }
         func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
