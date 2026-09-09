@@ -40,6 +40,7 @@ GitOK 是一个综合性的项目管理工具。
 ## Our Other Projects
 
 * [Cisum](https://github.com/CofficLab/Cisum_SwiftUI) - Apple 平台音频播放器
+* [Lumi](https://github.com/CofficLab/Lumi) - AI 驱动的 macOS 个人桌面助手
 
 ## References
 

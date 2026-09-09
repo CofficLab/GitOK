@@ -40,6 +40,7 @@ We need a tool to improve our work efficiency, and we'd like it to have the foll
 ## Our Other Projects
 
 * [Cisum](https://github.com/CofficLab/Cisum_SwiftUI) - A player for Apple platform
+* [Lumi](https://github.com/CofficLab/Lumi) - AI-powered personal desktop assistant for macOS
 
 ## References
 
