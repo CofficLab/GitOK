@@ -13,7 +13,11 @@ struct WorktreeCleanActivityHeatmapView: View {
     @LumiTheme private var theme
 
     private let calendar: Calendar
-    private let weekCount = 26
+    private let minimumWeekCount = 26
+    private let maximumWeekCount = 52
+    private let cellSpacing: CGFloat = 3
+    private let minimumCellSize: CGFloat = 10
+    private let heatmapContentMinHeight: CGFloat = 196
 
     init(viewModel: WorktreeCleanActivityHeatmapViewModel, calendar: Calendar = .current) {
         self.viewModel = viewModel
@@ -62,51 +66,144 @@ struct WorktreeCleanActivityHeatmapView: View {
 
     private func heatmap(snapshot: ActivityHeatmapSnapshot) -> some View {
         activityCard {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .firstTextBaseline) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(loc("Commit Activity"))
-                            .font(.headline)
-                        Text(summary(for: snapshot))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer(minLength: 8)
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .controlSize(.small)
-                            .tint(.green)
-                            .help(loc("Updating commit activity..."))
-                    }
-                }
+            GeometryReader { proxy in
+                let layout = layout(for: proxy.size.width)
+                let summaryWidth = layout.showsSummary
+                    ? min(240, max(190, proxy.size.width * 0.28))
+                    : 0
+                let gridWidth = layout.showsSummary
+                    ? proxy.size.width - summaryWidth - 20
+                    : proxy.size.width
+                let weekCount = weekCount(for: gridWidth)
+                let cellSize = cellSize(for: gridWidth, weekCount: weekCount)
+                let maximumCommitCount = visibleDays(
+                    in: snapshot,
+                    weekCount: weekCount
+                ).map(\.commitCount).max() ?? 0
 
-                HStack(alignment: .top, spacing: 5) {
-                    weekdayLabels
-                    LazyHStack(alignment: .top, spacing: 3) {
-                        ForEach(Array(weeks.enumerated()), id: \.offset) { _, week in
-                            VStack(spacing: 3) {
-                                ForEach(week) { cell in
-                                    dayCell(cell)
-                                }
-                            }
+                VStack(alignment: .leading, spacing: 14) {
+                    HStack(alignment: .firstTextBaseline) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(loc("Commit Activity"))
+                                .font(.headline)
+                            Text(summary(for: snapshot, weekCount: weekCount))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer(minLength: 8)
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(.green)
+                                .help(loc("Updating commit activity..."))
+                        }
+                    }
+
+                    HStack(alignment: .top, spacing: 20) {
+                        heatmapGrid(
+                            weekCount: weekCount,
+                            cellSize: cellSize,
+                            maximumCommitCount: maximumCommitCount
+                        )
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        if layout.showsSummary {
+                            Divider()
+                                .frame(height: 7 * cellSize + 6 * cellSpacing)
+                            activitySummary(snapshot: snapshot, weekCount: weekCount)
+                                .frame(width: summaryWidth, alignment: .topLeading)
+                        }
+                    }
+
+                    legend(cellSize: cellSize)
+                }
+            }
+            // GeometryReader does not grow to fit its child in a vertical
+            // ScrollView. Reserve enough height for the largest cell size,
+            // otherwise the legend can render outside the card background.
+            .frame(minHeight: heatmapContentMinHeight)
+        }
+    }
+
+    private func heatmapGrid(
+        weekCount: Int,
+        cellSize: CGFloat,
+        maximumCommitCount: Int?
+    ) -> some View {
+        HStack(alignment: .top, spacing: 5) {
+            weekdayLabels(cellSize: cellSize)
+            LazyHStack(alignment: .top, spacing: cellSpacing) {
+                ForEach(Array(weeks(weekCount: weekCount).enumerated()), id: \.offset) { _, week in
+                    VStack(spacing: cellSpacing) {
+                        ForEach(week) { cell in
+                            dayCell(
+                                cell,
+                                size: cellSize,
+                                maximumCommitCount: maximumCommitCount
+                            )
                         }
                     }
                 }
-
-                HStack(spacing: 4) {
-                    Text(loc("Less"))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    ForEach(0..<5, id: \.self) { level in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(color(for: level))
-                            .frame(width: 10, height: 10)
-                    }
-                    Text(loc("More"))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
             }
+        }
+    }
+
+    private func legend(cellSize: CGFloat) -> some View {
+        HStack(spacing: 4) {
+            Text(loc("Less"))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            ForEach(0..<5, id: \.self) { level in
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(color(for: level))
+                    .frame(width: cellSize, height: cellSize)
+            }
+            Text(loc("More"))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func activitySummary(
+        snapshot: ActivityHeatmapSnapshot,
+        weekCount: Int
+    ) -> some View {
+        let metrics = metrics(for: snapshot, weekCount: weekCount)
+
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text("\(metrics.totalCommits)")
+                    .font(.system(size: 25, weight: .semibold, design: .rounded))
+                Text(loc("Commits"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Divider()
+
+            LazyVGrid(
+                columns: [GridItem(.flexible()), GridItem(.flexible())],
+                alignment: .leading,
+                spacing: 12
+            ) {
+                metric(label: loc("Active days"), value: "\(metrics.activeDays)")
+                metric(label: loc("Busiest day"), value: metrics.busiestDay)
+                metric(label: loc("Longest streak"), value: "\(metrics.longestStreak)")
+                metric(label: loc("Avg. per week"), value: metrics.averagePerWeek(weekCount: weekCount))
+            }
+        }
+    }
+
+    private func metric(label: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(value)
+                .font(.callout.weight(.medium))
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
         }
     }
 
@@ -126,20 +223,20 @@ struct WorktreeCleanActivityHeatmapView: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
-    private var weekdayLabels: some View {
+    private func weekdayLabels(cellSize: CGFloat) -> some View {
         VStack(alignment: .trailing, spacing: 3) {
-            Color.clear.frame(height: 10)
-            Text(loc("Mon")).font(.caption2).foregroundStyle(.secondary).frame(height: 10)
-            Color.clear.frame(height: 10)
-            Text(loc("Wed")).font(.caption2).foregroundStyle(.secondary).frame(height: 10)
-            Color.clear.frame(height: 10)
-            Text(loc("Fri")).font(.caption2).foregroundStyle(.secondary).frame(height: 10)
-            Color.clear.frame(height: 10)
+            Color.clear.frame(height: cellSize)
+            Text(loc("Mon")).font(.caption2).foregroundStyle(.secondary).frame(height: cellSize)
+            Color.clear.frame(height: cellSize)
+            Text(loc("Wed")).font(.caption2).foregroundStyle(.secondary).frame(height: cellSize)
+            Color.clear.frame(height: cellSize)
+            Text(loc("Fri")).font(.caption2).foregroundStyle(.secondary).frame(height: cellSize)
+            Color.clear.frame(height: cellSize)
         }
         .frame(width: 23)
     }
 
-    private var weeks: [[HeatmapCell]] {
+    private func weeks(weekCount: Int) -> [[HeatmapCell]] {
         let referenceDate = calendar.startOfDay(for: viewModel.snapshot?.generatedAt ?? Date())
         let weekStart = calendar.dateInterval(of: .weekOfYear, for: referenceDate)?.start ?? referenceDate
         let start = calendar.date(byAdding: .weekOfYear, value: -(weekCount - 1), to: weekStart) ?? weekStart
@@ -159,11 +256,17 @@ struct WorktreeCleanActivityHeatmapView: View {
         }
     }
 
-    private func dayCell(_ cell: HeatmapCell) -> some View {
-        let level = cell.activity.map(viewModel.level(for:)) ?? 0
+    private func dayCell(
+        _ cell: HeatmapCell,
+        size: CGFloat,
+        maximumCommitCount: Int? = nil
+    ) -> some View {
+        let level = cell.activity.map {
+            viewModel.level(for: $0, maximum: maximumCommitCount)
+        } ?? 0
         return RoundedRectangle(cornerRadius: 2)
             .fill(color(for: level))
-            .frame(width: 10, height: 10)
+            .frame(width: size, height: size)
             .accessibilityLabel(accessibilityLabel(for: cell))
             .help(accessibilityLabel(for: cell))
     }
@@ -178,8 +281,91 @@ struct WorktreeCleanActivityHeatmapView: View {
         }
     }
 
-    private func summary(for snapshot: ActivityHeatmapSnapshot) -> String {
-        String(format: loc("%lld commits in the last six months"), snapshot.totalCommitCount)
+    private func summary(for snapshot: ActivityHeatmapSnapshot, weekCount: Int) -> String {
+        let totalCommits = metrics(for: snapshot, weekCount: weekCount).totalCommits
+        return String(
+            format: loc("%lld commits in the last %lld months"),
+            totalCommits,
+            periodMonths(for: weekCount)
+        )
+    }
+
+    private func layout(for width: CGFloat) -> ActivityLayout {
+        ActivityLayout(showsSummary: width >= 680)
+    }
+
+    private func weekCount(for width: CGFloat) -> Int {
+        let availableGridWidth = max(0, width - 23 - 5)
+        let possibleWeeks = Int(
+            floor((availableGridWidth + cellSpacing) / (minimumCellSize + cellSpacing))
+        )
+
+        if possibleWeeks >= maximumWeekCount { return maximumWeekCount }
+        if possibleWeeks >= 39 { return 39 }
+        return minimumWeekCount
+    }
+
+    private func cellSize(for width: CGFloat, weekCount: Int) -> CGFloat {
+        let availableGridWidth = max(0, width - 23 - 5)
+        let size = (availableGridWidth - CGFloat(weekCount - 1) * cellSpacing)
+            / CGFloat(weekCount)
+        return min(13, max(minimumCellSize, size))
+    }
+
+    private func periodMonths(for weekCount: Int) -> Int {
+        switch weekCount {
+        case 52: return 12
+        case 39: return 9
+        default: return 6
+        }
+    }
+
+    private func visibleDays(
+        in snapshot: ActivityHeatmapSnapshot,
+        weekCount: Int
+    ) -> [ActivityHeatmapDay] {
+        let referenceDate = calendar.startOfDay(for: snapshot.generatedAt)
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: referenceDate)?.start ?? referenceDate
+        let start = calendar.date(byAdding: .weekOfYear, value: -(weekCount - 1), to: weekStart) ?? weekStart
+        let end = calendar.date(byAdding: .day, value: weekCount * 7 - 1, to: start) ?? start
+        return snapshot.days.filter { $0.date >= start && $0.date <= end }
+    }
+
+    private func metrics(
+        for snapshot: ActivityHeatmapSnapshot,
+        weekCount: Int
+    ) -> ActivityMetrics {
+        let activeDays = visibleDays(in: snapshot, weekCount: weekCount)
+            .filter { $0.commitCount > 0 }
+        let busiest = activeDays.max {
+            if $0.commitCount == $1.commitCount {
+                return $0.date < $1.date
+            }
+            return $0.commitCount < $1.commitCount
+        }
+
+        var longestStreak = 0
+        var currentStreak = 0
+        var previousDate: Date?
+        for day in activeDays.sorted(by: { $0.date < $1.date }) {
+            if let previousDate,
+               calendar.dateComponents([.day], from: previousDate, to: day.date).day == 1 {
+                currentStreak += 1
+            } else {
+                currentStreak = 1
+            }
+            longestStreak = max(longestStreak, currentStreak)
+            previousDate = day.date
+        }
+
+        return ActivityMetrics(
+            activeDays: activeDays.count,
+            busiestDay: busiest.map {
+                "\($0.commitCount) · \($0.date.formatted(date: .abbreviated, time: .omitted))"
+            } ?? "—",
+            longestStreak: longestStreak,
+            totalCommits: activeDays.reduce(0) { $0 + $1.commitCount }
+        )
     }
 
     private func accessibilityLabel(for cell: HeatmapCell) -> String {
@@ -192,5 +378,21 @@ struct WorktreeCleanActivityHeatmapView: View {
         let date: Date
         let activity: ActivityHeatmapDay?
         var id: Date { date }
+    }
+
+    private struct ActivityLayout {
+        let showsSummary: Bool
+    }
+
+    private struct ActivityMetrics {
+        let activeDays: Int
+        let busiestDay: String
+        let longestStreak: Int
+        let totalCommits: Int
+
+        func averagePerWeek(weekCount: Int) -> String {
+            let average = Double(totalCommits) / Double(max(1, weekCount))
+            return String(format: "%.1f", average)
+        }
     }
 }
