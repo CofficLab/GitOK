@@ -49,7 +49,7 @@ struct WorktreeCleanActivityHeatmapView: View {
                 HStack(alignment: .top, spacing: 10) {
                     ProgressView()
                         .controlSize(.small)
-                        .tint(.green)
+                        .tint(theme.primary)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(loc("Loading commit activity..."))
@@ -94,7 +94,7 @@ struct WorktreeCleanActivityHeatmapView: View {
                         if viewModel.isLoading {
                             ProgressView()
                                 .controlSize(.small)
-                                .tint(.green)
+                                .tint(theme.primary)
                                 .help(loc("Updating commit activity..."))
                         }
                     }
@@ -272,12 +272,13 @@ struct WorktreeCleanActivityHeatmapView: View {
     }
 
     private func color(for level: Int) -> Color {
+        let accent = theme.primary
         switch level {
-        case 1: return .green.opacity(0.28)
-        case 2: return .green.opacity(0.48)
-        case 3: return .green.opacity(0.70)
-        case 4: return .green.opacity(0.92)
-        default: return .green.opacity(0.10)
+        case 1: return accent.opacity(0.28)
+        case 2: return accent.opacity(0.48)
+        case 3: return accent.opacity(0.70)
+        case 4: return accent.opacity(0.92)
+        default: return accent.opacity(0.10)
         }
     }
 
