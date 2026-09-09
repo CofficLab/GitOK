@@ -5,14 +5,10 @@ import ProviderGit
 import ProviderProjects
 import SwiftUI
 
-private func loc(_ key: String) -> String {
-    WorktreeCleanLocalization.string(key, bundle: .module)
-}
-
 /// 工作区干净视图。
 ///
 /// 当「当前项目已打开 + 未选中 commit + 工作区无未提交变更」时，作为主内容区
-/// 的一块展示干净状态：顶部是绿色对勾提示与提交活跃度热力图，下面是仓库信息、
+/// 的一块展示干净状态：顶部是提交活跃度热力图，下面是仓库信息、
 /// Git 用户配置与用户预设（`CleanStateInfoView`）。其余情况（无项目 / 已选中 commit / 工作区有变更）
 /// 渲染 `EmptyView` 且**不占任何布局**——变更列表由 CommitDetail 插件展示，
 /// 两个插件的内容块互斥，避免在内容区 VStack 中叠加。
@@ -52,14 +48,8 @@ struct WorktreeCleanView: View {
     private func cleanStateView(project: Project) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
-                // 只有顶部提示和活跃图横向排列；下面的信息区块各自占满整行。
-                HStack(alignment: .center, spacing: 20) {
-                    cleanStateHeader
-                        .frame(maxWidth: .infinity, minHeight: 170)
-
-                    WorktreeCleanActivityHeatmapView(viewModel: activityHeatmapViewModel)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                WorktreeCleanActivityHeatmapView(viewModel: activityHeatmapViewModel)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 CleanStateInfoView(
                     project: project,
@@ -75,22 +65,5 @@ struct WorktreeCleanView: View {
         .background {
             theme.surface
         }
-    }
-
-    private var cleanStateHeader: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "checkmark.circle")
-                .font(.system(size: 48))
-                .foregroundStyle(.green)
-
-            Text(loc("Working Tree Clean"))
-                .font(.title3)
-                .fontWeight(.medium)
-
-            Text(loc("No uncommitted changes."))
-                .font(.body)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.vertical, 20)
     }
 }
