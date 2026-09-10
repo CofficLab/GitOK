@@ -17,24 +17,15 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
     @Published public private(set) var railWidth: RailViewWidth
 
     private var allSections: [RailSectionItem] = []
-    /// 每个 section 的可见性状态，key 为 section id
-    private var sectionVisibility: [String: Bool] = [:]
-    private var sectionVisibilityCancellables: [String: AnyCancellable] = [:]
 
     private let defaultWidthStore: (any RailViewWidthStoring)?
     private var activeWidthStore: (any RailViewWidthStoring)?
     private var activeWidthOwnerID: String?
 
-    public var hasVisibleSections: Bool { !sections.isEmpty && sectionVisibility.values.contains(true) }
+    public var hasVisibleSections: Bool { !sections.isEmpty }
 
     public var railVisibilityPublisher: AnyPublisher<Bool, Never> {
-        let tabsPublisher = $hasVisibleTabs
-        let sectionsPublisher = $sections
-            .combineLatest($hasVisibleTabs)
-            .map { [weak self] sections, _ in
-                self?.computeSectionsVisibility(sections) ?? false
-            }
-        return tabsPublisher.combineLatest(sectionsPublisher)
+        $hasVisibleTabs.combineLatest($sections.map { !$0.isEmpty })
             .map { $0 || $1 }
             .eraseToAnyPublisher()
     }
@@ -62,7 +53,6 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
     public func registerSections(_ newSections: [RailSectionItem]) {
         allSections = newSections.sorted { $0.order < $1.order }
         sections = allSections
-        updateSectionVisibilitySubscriptions()
     }
 
     public func addSections(_ newSections: [RailSectionItem]) {
@@ -75,46 +65,6 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
 
     public func removeSections(ids: Set<String>) {
         registerSections(allSections.filter { !ids.contains($0.id) })
-        // 清理已移除 section 的可见性状态和订阅
-        for id in ids {
-            sectionVisibility.removeValue(forKey: id)
-            sectionVisibilityCancellables.removeValue(forKey: id)
-        }
-    }
-
-    /// 计算 sections 的可见性：只要有一个 section 可见就返回 true
-    private func computeSectionsVisibility(_ sections: [RailSectionItem]) -> Bool {
-        if sections.isEmpty { return false }
-        // 如果没有订阅任何 section 的可见性，默认所有 section 都可见
-        if sectionVisibility.isEmpty {
-            return !sections.isEmpty
-        }
-        // 只要有一个 section 可见就返回 true
-        return sections.contains { section in
-            sectionVisibility[section.id] ?? true
-        }
-    }
-
-    /// 更新 section 可见性订阅
-    private func updateSectionVisibilitySubscriptions() {
-        // 清理不存在的 section 的订阅
-        let currentSectionIds = Set(sections.map { $0.id })
-        for id in sectionVisibilityCancellables.keys where !currentSectionIds.contains(id) {
-            sectionVisibilityCancellables.removeValue(forKey: id)
-            sectionVisibility.removeValue(forKey: id)
-        }
-
-        // 为新 section 添加订阅
-        for section in sections where sectionVisibilityCancellables[section.id] == nil {
-            sectionVisibility[section.id] = true // 默认可见
-            let cancellable = section.hasVisibleContentPublisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] isVisible in
-                    guard let self else { return }
-                    self.sectionVisibility[section.id] = isVisible
-                }
-            sectionVisibilityCancellables[section.id] = cancellable
-        }
     }
 
     public func activateTab(id: String?) {

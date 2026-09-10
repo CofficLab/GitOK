@@ -1,4 +1,3 @@
-import Combine
 import SwiftUI
 
 /// Rail（侧边栏）的纵向区块视图（由外部注入）。
@@ -15,22 +14,13 @@ public struct RailSectionItem: Identifiable {
     public let order: Int
     /// 区块视图。
     public let makeView: @MainActor () -> AnyView
-    /// 区块内容是否可见。
-    ///
-    /// 插件可以通过此属性告知 Rail 当前区块是否实际渲染了可见内容。
-    /// 当所有区块的 `hasVisibleContent` 都为 false 时，Rail 会自动隐藏。
-    /// 默认为 true，表示区块始终可见。
-    public let hasVisibleContentPublisher: AnyPublisher<Bool, Never>
-
     public init<Content: View>(
         id: String,
         order: Int = 200,
-        hasVisibleContent: AnyPublisher<Bool, Never> = Just(true).eraseToAnyPublisher(),
         @ViewBuilder content: @escaping @MainActor () -> Content
     ) {
         self.id = id
         self.order = order
         self.makeView = { AnyView(content()) }
-        self.hasVisibleContentPublisher = hasVisibleContent
     }
 }
