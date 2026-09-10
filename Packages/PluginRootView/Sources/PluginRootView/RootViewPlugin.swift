@@ -83,7 +83,10 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip no-project guide")
             return
         }
-        let cloneProvider = kernel.resolveProvider((any CloneRepositoryProviding).self)
+        // 克隆入口是可选能力；未启用克隆插件时保持无入口，不产生误报日志。
+        let cloneProvider = kernel.isProviderRegistered((any CloneRepositoryProviding).self)
+            ? kernel.resolveProvider((any CloneRepositoryProviding).self)
+            : nil
 
         // 初始同步：如果启动时就没有项目，立即显示引导视图。
         guideState.showGuide = projects.projects.isEmpty

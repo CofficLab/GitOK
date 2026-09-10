@@ -1519,7 +1519,9 @@ struct CommitRailView: View {
         loadError = nil
 
         let url = project.url
-        Task.detached(priority: .userInitiated) {
+        // 首屏提交列表和未推送状态都是后台读取，避免与 GitProcessRunner
+        // 的 utility 管道读取形成 QoS 优先级反转。
+        Task.detached(priority: .utility) {
             let commitsResult = Result {
                 try git.loadCommits(
                     in: url,

@@ -93,8 +93,11 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
 
         // 2) 项目列表侧边栏：用 ProjectSidebarProviding 替换默认实现。
         let projects = kernel.resolveProvider((any ProjectProviding).self) ?? projectService
-        // 克隆仓库能力（PluginCloneRepository 注册）；无则为 nil（不显示克隆入口）。
-        let cloneProvider = kernel.resolveProvider((any CloneRepositoryProviding).self)
+        // 克隆仓库能力是可选的；先检查注册表，避免缺少可选插件时把正常
+        // 的降级路径记录成 onBoot 错误。
+        let cloneProvider = kernel.isProviderRegistered((any CloneRepositoryProviding).self)
+            ? kernel.resolveProvider((any CloneRepositoryProviding).self)
+            : nil
 
         let sidebar = ProjectSidebarProviding(projects: projects, cloneProvider: cloneProvider)
         self.sidebarService = sidebar

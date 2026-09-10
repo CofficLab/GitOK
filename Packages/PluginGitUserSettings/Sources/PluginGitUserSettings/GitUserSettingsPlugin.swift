@@ -70,7 +70,8 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
 
         // 预设管理统一交给 ProviderGitUser；宿主未注册时用默认实现兜底并注册。
         let provider: any GitUserPresetProviding
-        if let resolved = kernel.resolveProvider((any GitUserPresetProviding).self) {
+        if kernel.isProviderRegistered((any GitUserPresetProviding).self),
+           let resolved = kernel.resolveProvider((any GitUserPresetProviding).self) {
             provider = resolved
         } else {
             let directory: URL
@@ -88,7 +89,8 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
 
         // 协作者管理统一交给 ProviderGitUser；宿主未注册时用默认实现兜底并注册。
         let collaboratorProvider: any CollaboratorProviding
-        if let resolved = kernel.resolveProvider((any CollaboratorProviding).self) {
+        if kernel.isProviderRegistered((any CollaboratorProviding).self),
+           let resolved = kernel.resolveProvider((any CollaboratorProviding).self) {
             collaboratorProvider = resolved
         } else {
             let directory: URL
