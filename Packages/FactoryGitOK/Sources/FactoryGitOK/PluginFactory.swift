@@ -5,6 +5,7 @@ import PluginActivityStatus
 import PluginCommand
 import PluginCommitDetail
 import PluginActivityHeatmap
+import PluginProjectLanguages
 import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
@@ -84,6 +85,7 @@ public struct DefaultPluginFactory: PluginFactory {
             WorktreeStatusPlugin(),
             CommitListPlugin(),
             ActivityHeatmapPlugin(),
+            ProjectLanguagesPlugin(),
             CommitDetailPlugin(),
             CommitFormPlugin(),
             GitDiffPlugin(),
