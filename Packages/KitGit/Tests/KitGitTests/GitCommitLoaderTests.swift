@@ -130,6 +130,32 @@ final class GitCommitLoaderTests: XCTestCase {
         XCTAssertTrue(Set(firstPage.map(\.hash)).isDisjoint(with: secondPage.map(\.hash)))
     }
 
+    func testLoadCommitsDrainsLargeOutputBeforeWaiting() throws {
+        guard FileManager.default.isExecutableFile(atPath: "/usr/bin/git") else {
+            throw XCTSkip("git not available")
+        }
+
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GitCommitLoaderLargeOutputTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        try run(["git", "-C", repo.path, "init", "-q", "-b", "main"])
+        let longMessage = String(repeating: "large-output-", count: 180)
+        for index in 0..<100 {
+            try run([
+                "git", "-C", repo.path,
+                "-c", "user.name=Test User", "-c", "user.email=test@example.com",
+                "commit", "-q", "--allow-empty", "-m", "\(index)-\(longMessage)",
+            ])
+        }
+
+        let commits = try GitCommitLoader.loadCommits(in: repo, limit: 100)
+
+        XCTAssertEqual(commits.count, 100)
+        XCTAssertTrue(commits.allSatisfy { $0.message.contains("large-output-") })
+    }
+
     func testLoadCommitsCanIncludeAllRefs() throws {
         guard FileManager.default.isExecutableFile(atPath: "/usr/bin/git") else {
             throw XCTSkip("git not available")

@@ -1533,10 +1533,10 @@ struct CommitRailView: View {
                     offset: 0
                 )
             }
-            // 获取未推送的 commit 哈希（无 upstream 时返回空集合）
-            let unpushedResult = Result { try git.unpushedCommitHashes(in: url) }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                // 提交历史是列表本身的唯一依赖；历史读取完成后立即结束
+                // loading，不等待未推送状态查询。
                 isLoading = false
                 switch commitsResult {
                 case .success(let loaded):
@@ -1565,6 +1565,14 @@ struct CommitRailView: View {
                 case .failure(let error):
                     loadError = error.localizedDescription
                 }
+            }
+        }
+
+        // 未推送状态仅用于标记提交，不应阻塞提交列表首次展示。
+        Task.detached(priority: .utility) {
+            let unpushedResult = Result { try git.unpushedCommitHashes(in: url) }
+            await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else { return }
                 if case .success(let hashes) = unpushedResult {
                     unpushedHashes = hashes
                 }
