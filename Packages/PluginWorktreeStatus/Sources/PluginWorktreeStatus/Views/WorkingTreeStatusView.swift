@@ -49,6 +49,20 @@ enum WorktreeSyncBadgeFormatter {
     }
 }
 
+private enum WorktreeStatusPublishError: LocalizedError {
+    case noCurrentBranch
+    case noRemote
+
+    var errorDescription: String? {
+        switch self {
+        case .noCurrentBranch:
+            "Unable to publish because the repository is not on a local branch."
+        case .noRemote:
+            "Unable to publish because the repository has no remote configured."
+        }
+    }
+}
+
 /// 工作区状态 Rail 区块视图：复刻旧版 GitOK 的 commit 列表顶部状态头。
 ///
 /// 视觉：72pt 高，左侧两行文字（标题+副标题），右侧主题色 Branch Pulse 按钮
@@ -245,7 +259,7 @@ struct WorkingTreeStatusView: View {
         if trackingStatus.hasUpstream {
             performSynchronize()
         } else {
-            performPush()
+            performPublish()
         }
     }
 
@@ -271,13 +285,34 @@ struct WorkingTreeStatusView: View {
         }
     }
 
-    private func performPush() {
+    /// 首次推送不能调用裸 `git push`：没有 upstream 时 Git 会直接失败。
+    /// 这里通过稳定的 Git Provider 发布当前分支，并同时设置 upstream。
+    private func performPublish() {
         guard let project = projects.currentProject else { return }
         isPushing = true
         activityStatus = loc("Pushing")
         let url = project.url
         Task.detached(priority: .userInitiated) {
-            let result = Result { try git.push(in: url) }
+            let result = Result<Void, Error> {
+                guard let branch = git.currentBranch(in: url) else {
+                    throw WorktreeStatusPublishError.noCurrentBranch
+                }
+
+                let remotes = git.listRemotes(in: url)
+                let remote = remotes
+                    .first(where: { $0.name == "origin" })
+                    ?? remotes.first
+                guard let remote else {
+                    throw WorktreeStatusPublishError.noRemote
+                }
+
+                try git.publishBranch(
+                    localBranch: branch,
+                    remote: remote.name,
+                    remoteBranch: branch,
+                    in: url
+                )
+            }
             await MainActor.run {
                 isPushing = false
                 activityStatus = nil
