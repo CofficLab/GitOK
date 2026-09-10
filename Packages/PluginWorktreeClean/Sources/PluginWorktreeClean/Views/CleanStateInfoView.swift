@@ -20,10 +20,12 @@ struct CleanStateInfoView: View {
 
     @State private var remotes: [GitRemoteSummary] = []
     @State private var branchName: String?
+    @State private var repositoryDiskUsage: Int64?
     @State private var latestTag: String?
     @State private var commitCount: Int?
     @State private var firstCommitDate: Date?
     @State private var isLoadingInfo = true
+    @State private var isLoadingDiskUsage = true
     @State private var copiedRemoteNames: Set<String> = []
     @State private var isLocalRepositoryCopied = false
     @State private var isLatestTagCopied = false
@@ -34,6 +36,9 @@ struct CleanStateInfoView: View {
             AppSettingSection(title: loc("Repository Info"), titleAlignment: .leading) {
                 VStack(spacing: 0) {
                     localRepositoryRow
+
+                    Divider().padding(.vertical, 8)
+                    repositoryDiskUsageRow
 
                     if let branchName {
                         Divider().padding(.vertical, 8)
@@ -93,6 +98,21 @@ struct CleanStateInfoView: View {
             )
         }
         .onAppear(perform: loadInfo)
+    }
+
+    // MARK: - Repository Disk Usage Row
+
+    private var repositoryDiskUsageRow: some View {
+        AppSettingRow(
+            title: loc("Disk Usage"),
+            description: repositoryDiskUsage.map(Self.byteCountFormatter.string)
+                ?? (isLoadingDiskUsage ? "" : loc("Not Available")),
+            icon: "internaldrive"
+        ) {
+            if isLoadingDiskUsage {
+                ContentLoadingIndicator(loc("Loading disk usage..."), controlSize: .small)
+            }
+        }
     }
 
     // MARK: - Local Repository Row
@@ -276,6 +296,7 @@ struct CleanStateInfoView: View {
 
     private func loadInfo() {
         isLoadingInfo = true
+        isLoadingDiskUsage = true
 
         Task.detached(priority: .utility) {
             // 加载远程仓库
@@ -300,6 +321,16 @@ struct CleanStateInfoView: View {
                 commitCount = loadedCommitCount
                 firstCommitDate = loadedFirstCommitDate
                 isLoadingInfo = false
+            }
+        }
+
+        Task.detached(priority: .utility) {
+            // 统计仓库目录实际分配的文件空间（包含隐藏的 .git）
+            let loadedRepositoryDiskUsage = RepositoryDiskUsage.calculate(at: project.url)
+
+            await MainActor.run {
+                repositoryDiskUsage = loadedRepositoryDiskUsage
+                isLoadingDiskUsage = false
             }
         }
     }
@@ -340,6 +371,15 @@ struct CleanStateInfoView: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
+        return formatter
+    }()
+
+    private static let byteCountFormatter: ByteCountFormatter = {
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .file
+        formatter.includesUnit = true
+        formatter.includesCount = true
+        formatter.isAdaptive = true
         return formatter
     }()
 }

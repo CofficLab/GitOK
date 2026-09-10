@@ -182,6 +182,29 @@ final class WorktreeCleanPluginTests: XCTestCase {
         XCTAssertTrue(WorktreeCleanRefreshPolicy.didChange(previous: previous, current: current))
     }
 
+    func testRepositoryDiskUsageIncludesHiddenFiles() throws {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageTests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        try Data(repeating: 0, count: 1_024).write(to: dir.appendingPathComponent("visible.txt"))
+        let gitDirectory = dir.appendingPathComponent(".git")
+        try FileManager.default.createDirectory(at: gitDirectory, withIntermediateDirectories: true)
+        try Data(repeating: 0, count: 2_048).write(to: gitDirectory.appendingPathComponent("hidden-object"))
+
+        let usage = try XCTUnwrap(RepositoryDiskUsage.calculate(at: dir))
+
+        XCTAssertGreaterThanOrEqual(usage, 3_072)
+    }
+
+    func testRepositoryDiskUsageReturnsNilForMissingDirectory() {
+        let missingDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageMissing-\(UUID().uuidString)")
+
+        XCTAssertNil(RepositoryDiskUsage.calculate(at: missingDirectory))
+    }
+
     /// 回归：选中 commit 后，后续 dataChanged（提交 / 推送 / 分支切换 / 外部编辑）
     /// 不应重新点亮「工作区干净」视图——即使工作区实际是干净的。
     func testDataChangedDoesNotResurrectCleanViewAfterCommitSelected() async throws {
