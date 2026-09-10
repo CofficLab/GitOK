@@ -378,12 +378,17 @@ private struct WorktreeActionButton: View {
     var body: some View {
         Button(action: action) {
             buttonContent
-            .foregroundStyle(theme.primary)
+            .foregroundStyle(actionColor)
             .padding(.horizontal, 10)
-            .frame(width: buttonWidth, height: 30)
+            .frame(width: buttonWidth, height: 34)
             .background(buttonBackground)
             .overlay(buttonBorder)
             .clipShape(Capsule())
+            .shadow(
+                color: actionColor.opacity(isHovered ? 0.18 : 0.10),
+                radius: isHovered ? 7 : 3,
+                y: 1
+            )
             .scaleEffect(isHovered && motionPreference.allowsMotion ? 1.015 : 1)
         }
         .buttonStyle(.plain)
@@ -399,9 +404,16 @@ private struct WorktreeActionButton: View {
     }
 
     private var buttonWidth: CGFloat {
-        if isLoading || isBusy { return 32 }
-        guard let badge else { return 32 }
-        return badge.contains(" ") ? 72 : 48
+        if isLoading || isBusy { return 36 }
+        guard let badge else { return 36 }
+        return badge.contains(" ") ? 82 : 58
+    }
+
+    /// The row uses `primary` for the selected workspace; the action uses the
+    /// separate informational accent so remote work reads as a different
+    /// visual layer.
+    private var actionColor: Color {
+        theme.info
     }
 
     @ViewBuilder
@@ -433,16 +445,16 @@ private struct WorktreeActionButton: View {
                     Image(systemName: "arrow.up")
                     Text(String(badge.dropFirst()))
                 }
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
             } else if badge.hasPrefix("↓"), !badge.contains(" ") {
                 HStack(spacing: 3) {
                     Image(systemName: "arrow.down")
                     Text(String(badge.dropFirst()))
                 }
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
             } else {
                 Text(badge)
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .lineLimit(1)
             }
         }
@@ -450,12 +462,12 @@ private struct WorktreeActionButton: View {
 
     private var buttonBackground: some View {
         Capsule(style: .continuous)
-            .fill(theme.primary.opacity(isHovered ? 0.18 : 0.11))
+            .fill(actionColor.opacity(isHovered ? 0.18 : 0.11))
     }
 
     private var buttonBorder: some View {
         Capsule(style: .continuous)
-            .stroke(theme.primary.opacity(isHovered ? 0.34 : 0.18), lineWidth: 0.75)
+            .stroke(actionColor.opacity(isHovered ? 0.34 : 0.18), lineWidth: 0.75)
     }
 }
 
@@ -466,12 +478,12 @@ private struct WorktreePrimaryActionIcon: View {
 
     var body: some View {
         Image(systemName: mode == .publish ? "arrow.up" : "arrow.triangle.2.circlepath")
-            .font(.system(size: 17, weight: .bold))
-        .frame(width: 18, height: 18)
+            .font(.system(size: 19, weight: .bold))
+        .frame(width: 20, height: 20)
     }
 }
 
-/// Theme-colored orbit loader. The center stays recognizable as a branch mark
+/// Theme-colored orbit loader. The center stays recognizable as a sync mark
 /// while the outer sweep communicates that the remote operation is active.
 private struct WorktreeOrbitLoader: View {
     @LumiTheme private var theme
@@ -481,29 +493,28 @@ private struct WorktreeOrbitLoader: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(theme.primary.opacity(0.20), lineWidth: 1)
+                .stroke(theme.info.opacity(0.20), lineWidth: 1)
 
             Circle()
                 .trim(from: 0.08, to: 0.76)
                 .stroke(
                     AngularGradient(
                         colors: [
-                            theme.primary.opacity(0.25),
                             theme.info,
                             theme.primarySecondary.opacity(0.75),
-                            theme.primary,
+                            theme.info.opacity(0.25),
                         ],
                         center: .center
                     ),
-                    style: StrokeStyle(lineWidth: 2.2, lineCap: .round)
+                    style: StrokeStyle(lineWidth: 2.4, lineCap: .round)
                 )
                 .rotationEffect(.degrees(rotation - 90))
 
             Image(systemName: "arrow.triangle.2.circlepath")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(theme.primary)
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(theme.info)
         }
-        .frame(width: 18, height: 18)
+        .frame(width: 20, height: 20)
         .animation(
             motionPreference.allowsMotion
                 ? .linear(duration: 1.15).repeatForever(autoreverses: false)
