@@ -75,10 +75,15 @@ public enum GitProcessRunner {
         let errorGroup = DispatchGroup()
         let errorData = DataBox()
         errorGroup.enter()
-        DispatchQueue.global(qos: .utility).async {
+        // 不要把排水任务放到调用方可能正在占满的全局队列中。
+        // Git 查询通常从 utility 任务启动；如果排水任务也进入 utility，
+        // 所有 worker 都可能阻塞在下面的 errorGroup.wait()，导致排水任务永远
+        // 无法获得 worker，最终表现为所有 Git 加载器无限 loading。
+        let errorThread = Thread {
             errorData.value = errorPipe.fileHandleForReading.readDataToEndOfFile()
             errorGroup.leave()
         }
+        errorThread.start()
 
         var shouldStop = false
         while true {
