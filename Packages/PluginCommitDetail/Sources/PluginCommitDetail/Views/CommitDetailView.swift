@@ -27,26 +27,28 @@ struct CommitDetailView: View {
     let onDataChanged: () -> Void
 
     var body: some View {
-        if let commit = viewModel.selectedCommit,
-           let projectURL = viewModel.selectedProjectURL {
-            CommitDetailLayout(
-                commit: commit,
-                projectURL: projectURL,
-                selectedFile: viewModel.selectedFile,
-                filePageStore: viewModel.filePageStore,
-                animatedFilePaths: viewModel.animatedFilePaths,
-                onSelectFile: onSelectFile
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-            // 无选中 commit 时展示工作区变动文件列表（用户点击工作区状态条触发）。
-            // 尺寸由 WorktreeChangesView 自决：干净 → EmptyView 不占布局。
-            WorktreeChangesView(
-                viewModel: viewModel,
-                git: git,
-                onSelectFile: onSelectFile,
-                onDataChanged: onDataChanged
-            )
+        if let projectURL = viewModel.selectedProjectURL,
+           FileManager.default.fileExists(atPath: projectURL.path) {
+            if let commit = viewModel.selectedCommit {
+                CommitDetailLayout(
+                    commit: commit,
+                    projectURL: projectURL,
+                    selectedFile: viewModel.selectedFile,
+                    filePageStore: viewModel.filePageStore,
+                    animatedFilePaths: viewModel.animatedFilePaths,
+                    onSelectFile: onSelectFile
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                // 无选中 commit 时展示工作区变动文件列表（用户点击工作区状态条触发）。
+                // 尺寸由 WorktreeChangesView 自决：干净 → EmptyView 不占布局。
+                WorktreeChangesView(
+                    viewModel: viewModel,
+                    git: git,
+                    onSelectFile: onSelectFile,
+                    onDataChanged: onDataChanged
+                )
+            }
         }
     }
 }
