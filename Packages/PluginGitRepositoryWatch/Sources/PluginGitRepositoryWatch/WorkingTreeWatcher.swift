@@ -11,7 +11,7 @@ import Foundation
 /// - `WorkingTreeWatcher` 监听项目根目录，检测工作区文件变化。
 ///
 /// 注意事项：
-/// - 自动忽略 `.git` 目录（由 `kFSEventStreamCreateFlagIgnoreSelf` 配合路径过滤）；
+/// - 自动忽略 `.git`、`.build` 和 DerivedData 等仓库内部生成目录；
 /// - 0.5 秒延迟窗口合并突发事件；
 /// - 派发到 `utility` 队列，避免阻塞主线程；
 /// - `onChange` 在 MainActor 上执行。
@@ -89,7 +89,18 @@ final class WorkingTreeWatcher: @unchecked Sendable {
         }
 
         self.stream = stream
+        FSEventStreamSetExclusionPaths(stream, Self.excludedPaths(for: url) as CFArray)
         FSEventStreamSetDispatchQueue(stream, DispatchQueue.global(qos: .utility))
         FSEventStreamStart(stream)
+    }
+
+    /// 返回仓库内由 Git / 构建工具维护的目录，交给 FSEventStream 原生排除。
+    static func excludedPaths(for repositoryURL: URL) -> [String] {
+        let repository = repositoryURL.standardizedFileURL
+        return [
+            repository.appendingPathComponent(".git").path,
+            repository.appendingPathComponent(".build").path,
+            repository.appendingPathComponent("DerivedData").path,
+        ]
     }
 }

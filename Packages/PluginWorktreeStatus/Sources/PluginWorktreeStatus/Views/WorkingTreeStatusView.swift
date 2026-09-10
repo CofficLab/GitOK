@@ -109,14 +109,17 @@ struct WorkingTreeStatusView: View {
                 summaryRow
             }
         }
-        .onReceive(projectObservation.$revision) { _ in reloadIfNeeded() }
         .onReceive(projectObservation.$lastEvent) { event in
+            guard let event else { return }
             if case .dataChanged = event {
                 reloadIfNeeded(force: true)
+            } else {
+                reloadIfNeeded()
             }
         }
-        .onReceive(gitWatchObservation.$revision) { _ in
-            // .git 目录变化（HEAD / index / stash / refs 任一变化）→ 强制刷新工作区状态
+        .onReceive(gitWatchObservation.$lastEvent) { event in
+            guard event != nil else { return }
+            // 仓库或工作区变化 → 强制刷新工作区状态；后台刷新不切换 loading UI。
             reloadIfNeeded(force: true)
         }
         .onAppear { reloadIfNeeded() }
@@ -333,10 +336,15 @@ struct WorkingTreeStatusView: View {
             isLoading = false
             return
         }
-        if loadedProjectURL == project.url && !force { return }
+        let projectChanged = loadedProjectURL != project.url
+        if !projectChanged, !force { return }
 
         loadedProjectURL = project.url
-        isLoading = true
+        // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
+        // 保留当前按钮内容，避免每次文件事件都闪成 loading 动画。
+        if projectChanged {
+            isLoading = true
+        }
 
         let url = project.url
         Task.detached(priority: .userInitiated) {

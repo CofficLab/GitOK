@@ -154,6 +154,22 @@ final class PluginGitRepositoryWatchTests: XCTestCase {
         XCTAssertNil(missing)
     }
 
+    // MARK: - Working tree path filtering
+
+    func testWorkingTreeWatcherExcludesInternalGeneratedDirectories() {
+        let repositoryURL = URL(fileURLWithPath: "/tmp/GitOK-filter-test")
+        let excluded = WorkingTreeWatcher.excludedPaths(for: repositoryURL)
+
+        XCTAssertEqual(
+            excluded,
+            [
+                "/tmp/GitOK-filter-test/.git",
+                "/tmp/GitOK-filter-test/.build",
+                "/tmp/GitOK-filter-test/DerivedData",
+            ]
+        )
+    }
+
     // MARK: - Helpers
 
     /// 向上查找最近的 git 仓库（用于测试环境定位 GitOK 仓库）。
