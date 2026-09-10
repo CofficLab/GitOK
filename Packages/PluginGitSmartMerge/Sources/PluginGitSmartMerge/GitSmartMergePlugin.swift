@@ -77,7 +77,7 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
             StatusBarItem(
                 id: Self.itemID,
                 title: GitSmartMergeLocalization.string("Merge", bundle: .module),
-                placement: .leading,
+                placement: .trailing,
                 order: 24
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
