@@ -83,6 +83,10 @@ public enum GitProcessRunner {
             errorData.value = errorPipe.fileHandleForReading.readDataToEndOfFile()
             errorGroup.leave()
         }
+        // The caller may be a user-initiated task and waits for this thread
+        // below. Match that QoS so the wait cannot be reported as a priority
+        // inversion against a default-priority stderr reader.
+        errorThread.qualityOfService = .userInitiated
         errorThread.start()
 
         var shouldStop = false
