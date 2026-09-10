@@ -45,6 +45,7 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: CommitListSceneObserver?
+    private var visibilityModel: CommitRailVisibilityModel?
 
     public init() {}
 
@@ -80,8 +81,16 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             return
         }
 
+        // 创建可见性模型，跟踪项目是否存在于磁盘
+        let visibilityModel = CommitRailVisibilityModel(projects: projects)
+        self.visibilityModel = visibilityModel
+
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
-        let section = RailSectionItem(id: "\(id).section", order: 20) {
+        let section = RailSectionItem(
+            id: "\(id).section",
+            order: 20,
+            hasVisibleContent: visibilityModel.visibilityPublisher
+        ) {
             WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
                 CommitRailView(projects: projects, git: git, gitWatch: gitWatch)
             }
@@ -106,6 +115,8 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        visibilityModel?.cancel()
+        visibilityModel = nil
         kernel.resolveProvider((any RailViewProviding).self)?
             .removeSections(ids: ["\(id).section"])
     }
