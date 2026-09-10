@@ -64,6 +64,22 @@
           }
         }
       }
+    },
+    "Project Path" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project Path"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "项目路径"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

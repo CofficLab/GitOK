@@ -42,56 +42,40 @@ struct ProjectMissingView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            // 图标
-            Image(systemName: "folder.badge.questionmark")
-                .font(.system(size: 56, weight: .light))
-                .foregroundStyle(theme.textTertiary)
+            // 主内容区：使用 AppEmptyState 展示核心信息
+            AppEmptyState(
+                icon: "folder.badge.questionmark",
+                title: loc("Project Not Found"),
+                description: loc("The project directory no longer exists on disk."),
+                actionTitle: onRemoveProject != nil ? loc("Remove from Project List") : "",
+                action: onRemoveProject ?? {}
+            )
+            .frame(maxWidth: 500)
 
-            // 标题
-            Text(loc("Project Not Found"))
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(theme.textPrimary)
+            // 项目路径信息卡片
+            AppCard(style: .subtle) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Label(loc("Project Path"), systemImage: "folder")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(theme.textSecondary)
 
-            // 描述
-            VStack(spacing: 8) {
-                Text(loc("The project directory no longer exists on disk."))
-                    .font(.body)
-                    .foregroundStyle(theme.textSecondary)
-                    .multilineTextAlignment(.center)
-
-                Text(project.url.path)
-                    .font(.callout.monospaced())
-                    .foregroundStyle(theme.textTertiary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(3)
-                    .truncationMode(.middle)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .fill(theme.textTertiary.opacity(0.08))
-                    )
+                    Text(project.url.path)
+                        .font(.callout.monospaced())
+                        .foregroundStyle(theme.textPrimary)
+                        .lineLimit(3)
+                        .truncationMode(.middle)
+                        .textSelection(.enabled)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: 500)
 
-            // 提示
+            // 提示文字
             Text(loc("You can remove this project from the project list, or move the directory back to the original location."))
                 .font(.callout)
-                .foregroundStyle(theme.textSecondary)
+                .foregroundStyle(theme.textTertiary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 400)
-
-            // 操作按钮
-            if let onRemoveProject {
-                Button(role: .destructive) {
-                    onRemoveProject()
-                } label: {
-                    Label(loc("Remove from Project List"), systemImage: "trash")
-                        .font(.callout.weight(.medium))
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(theme.error)
-                .padding(.top, 8)
-            }
 
             Spacer()
         }
