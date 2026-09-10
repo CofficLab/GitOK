@@ -115,7 +115,9 @@ final class WorktreeCleanViewModel: ObservableObject {
     /// 提交、外部把工作区改干净后，干净状态需要据此重新判定。
     func handleDataChanged() {
         reload(force: true)
-        loadUserConfiguration(for: project, clearBeforeLoad: false)
+        // 工作区变化不会改变仓库级 Git 用户身份。不要在每次文件事件
+        // 中重新读取配置并切换 isLoadingUserConfiguration，否则用户名、
+        // 预设和协作者区域会随着文件监听事件反复闪烁。
     }
 
     /// 外部预设 Provider 发生变化后，由插件级 Observer 推送最新快照。

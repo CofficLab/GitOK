@@ -21,9 +21,37 @@ private extension GitRemoteOperation.SyncStep {
     }
 }
 
+/// The two intentional actions represented by the compact rail control.
+/// Keeping this mapping separate from the view makes the button's visual state
+/// deterministic and easy to cover without reaching into SwiftUI state.
+enum WorktreeStatusActionMode: Equatable {
+    case publish
+    case synchronize
+
+    static func resolve(hasUpstream: Bool) -> Self {
+        hasUpstream ? .synchronize : .publish
+    }
+}
+
+enum WorktreeSyncBadgeFormatter {
+    static func text(ahead: Int, behind: Int, hasUpstream: Bool) -> String? {
+        guard hasUpstream else { return nil }
+        if ahead > 0, behind > 0 {
+            return "↑\(ahead) ↓\(behind)"
+        }
+        if ahead > 0 {
+            return "↑\(ahead)"
+        }
+        if behind > 0 {
+            return "↓\(behind)"
+        }
+        return nil
+    }
+}
+
 /// 工作区状态 Rail 区块视图：复刻旧版 GitOK 的 commit 列表顶部状态头。
 ///
-/// 视觉：72pt 高，左侧两行文字（标题+副标题），右侧蓝色同步按钮
+/// 视觉：72pt 高，左侧两行文字（标题+副标题），右侧主题色 Branch Pulse 按钮
 /// （显示 ↑/↓ 计数，点击执行 fetch/pull/push 主操作）。
 ///
 /// 功能：未提交更改计数、未推送/未拉取计数、远程跟踪状态、
@@ -81,14 +109,17 @@ struct WorkingTreeStatusView: View {
                 summaryRow
             }
         }
-        .onReceive(projectObservation.$revision) { _ in reloadIfNeeded() }
         .onReceive(projectObservation.$lastEvent) { event in
+            guard let event else { return }
             if case .dataChanged = event {
                 reloadIfNeeded(force: true)
+            } else {
+                reloadIfNeeded()
             }
         }
-        .onReceive(gitWatchObservation.$revision) { _ in
-            // .git 目录变化（HEAD / index / stash / refs 任一变化）→ 强制刷新工作区状态
+        .onReceive(gitWatchObservation.$lastEvent) { event in
+            guard event != nil else { return }
+            // 仓库或工作区变化 → 强制刷新工作区状态；后台刷新不切换 loading UI。
             reloadIfNeeded(force: true)
         }
         .onAppear { reloadIfNeeded() }
@@ -174,38 +205,19 @@ struct WorkingTreeStatusView: View {
 
     @ViewBuilder
     private var syncButton: some View {
-        let isWorking = isSynchronizing || isPushing
-        Button(action: performPrimaryAction) {
-            HStack(spacing: 6) {
-                if isWorking {
-                    ProgressView()
-                        .controlSize(.small)
-                        .tint(.white)
-                } else {
-                    Image(systemName: primaryActionIcon)
-                        .font(.system(size: 13, weight: .semibold))
-                }
-                if let badge = syncBadgeText {
-                    Text(badge)
-                        .font(DesignTokens.Typography.caption1.weight(.semibold))
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.accentColor)
-            )
-            .foregroundStyle(.white)
-        }
-        .buttonStyle(.plain)
-        .disabled(isWorking)
+        WorktreeActionButton(
+            mode: primaryActionMode,
+            badge: syncBadgeText,
+            isLoading: isLoading,
+            activity: activityStatus,
+            action: performPrimaryAction
+        )
+        .disabled(isSynchronizing || isPushing || isLoading)
         .help(primaryActionHelp)
-        .fixedSize(horizontal: true, vertical: false)
     }
 
-    private var primaryActionIcon: String {
-        trackingStatus.hasUpstream ? "arrow.triangle.2.circlepath" : "arrow.up"
+    private var primaryActionMode: WorktreeStatusActionMode {
+        WorktreeStatusActionMode.resolve(hasUpstream: trackingStatus.hasUpstream)
     }
 
     private var primaryActionHelp: String {
@@ -213,17 +225,11 @@ struct WorkingTreeStatusView: View {
     }
 
     private var syncBadgeText: String? {
-        guard trackingStatus.hasUpstream else { return nil }
-        if trackingStatus.ahead > 0, trackingStatus.behind > 0 {
-            return "↑\(trackingStatus.ahead) ↓\(trackingStatus.behind)"
-        }
-        if trackingStatus.ahead > 0 {
-            return "↑\(trackingStatus.ahead)"
-        }
-        if trackingStatus.behind > 0 {
-            return "↓\(trackingStatus.behind)"
-        }
-        return nil
+        WorktreeSyncBadgeFormatter.text(
+            ahead: trackingStatus.ahead,
+            behind: trackingStatus.behind,
+            hasUpstream: trackingStatus.hasUpstream
+        )
     }
 
     private func performPrimaryAction() {
@@ -330,10 +336,15 @@ struct WorkingTreeStatusView: View {
             isLoading = false
             return
         }
-        if loadedProjectURL == project.url && !force { return }
+        let projectChanged = loadedProjectURL != project.url
+        if !projectChanged, !force { return }
 
         loadedProjectURL = project.url
-        isLoading = true
+        // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
+        // 保留当前按钮内容，避免每次文件事件都闪成 loading 动画。
+        if projectChanged {
+            isLoading = true
+        }
 
         let url = project.url
         Task.detached(priority: .userInitiated) {
@@ -348,6 +359,179 @@ struct WorkingTreeStatusView: View {
                 }
                 trackingStatus = tracking
             }
+        }
+    }
+}
+
+// MARK: - Branch Pulse Button
+
+/// A compact, theme-aware primary action control for the worktree rail.
+///
+/// The button stays icon-only to fit the narrow rail. It expands only when a
+/// remote delta badge is present. Its branch mark and orbit loader are drawn
+/// locally instead of using the system button/progress treatment.
+private struct WorktreeActionButton: View {
+    let mode: WorktreeStatusActionMode
+    let badge: String?
+    let isLoading: Bool
+    let activity: String?
+    let action: () -> Void
+
+    @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isHovered = false
+
+    private var isBusy: Bool { activity != nil }
+
+    var body: some View {
+        Button(action: action) {
+            buttonContent
+            .foregroundStyle(actionColor)
+            .padding(.horizontal, 10)
+            .frame(width: buttonWidth, height: 34)
+            .background(buttonBackground)
+            .overlay(buttonBorder)
+            .clipShape(Capsule())
+            .shadow(
+                color: actionColor.opacity(isHovered ? 0.18 : 0.10),
+                radius: isHovered ? 7 : 3,
+                y: 1
+            )
+            .scaleEffect(isHovered && motionPreference.allowsMotion ? 1.015 : 1)
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            LumiMotion.animate(
+                LumiMotion.enabled(LumiMotion.hover, preference: motionPreference)
+            ) {
+                isHovered = hovering
+            }
+        }
+        .accessibilityLabel(accessibilityTitle)
+        .accessibilityValue(badge ?? "")
+    }
+
+    private var buttonWidth: CGFloat {
+        if isLoading || isBusy { return 36 }
+        guard let badge else { return 36 }
+        return badge.contains(" ") ? 82 : 58
+    }
+
+    /// The row uses `primary` for the selected workspace; the action uses the
+    /// separate informational accent so remote work reads as a different
+    /// visual layer.
+    private var actionColor: Color {
+        theme.info
+    }
+
+    @ViewBuilder
+    private var buttonContent: some View {
+        if isLoading || isBusy {
+            WorktreeOrbitLoader()
+        } else if badge != nil {
+            badgeView
+        } else {
+            WorktreePrimaryActionIcon(mode: mode)
+        }
+    }
+
+    private var accessibilityTitle: String {
+        if isLoading && !isBusy {
+            return loc("Loading")
+        }
+        if let activity {
+            return activity
+        }
+        return mode == .publish ? loc("Publish branch") : loc("Synchronize with remote")
+    }
+
+    @ViewBuilder
+    private var badgeView: some View {
+        if let badge, !isLoading, !isBusy {
+            if badge.hasPrefix("↑"), !badge.contains(" ") {
+                HStack(spacing: 3) {
+                    Image(systemName: "arrow.up")
+                    Text(String(badge.dropFirst()))
+                }
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+            } else if badge.hasPrefix("↓"), !badge.contains(" ") {
+                HStack(spacing: 3) {
+                    Image(systemName: "arrow.down")
+                    Text(String(badge.dropFirst()))
+                }
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+            } else {
+                Text(badge)
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .lineLimit(1)
+            }
+        }
+    }
+
+    private var buttonBackground: some View {
+        Capsule(style: .continuous)
+            .fill(actionColor.opacity(isHovered ? 0.18 : 0.11))
+    }
+
+    private var buttonBorder: some View {
+        Capsule(style: .continuous)
+            .stroke(actionColor.opacity(isHovered ? 0.34 : 0.18), lineWidth: 0.75)
+    }
+}
+
+/// Large, immediately recognizable action glyph. Remote counts remain a
+/// secondary badge so the direction itself is the visual protagonist.
+private struct WorktreePrimaryActionIcon: View {
+    let mode: WorktreeStatusActionMode
+
+    var body: some View {
+        Image(systemName: mode == .publish ? "arrow.up" : "arrow.triangle.2.circlepath")
+            .font(.system(size: 19, weight: .bold))
+        .frame(width: 20, height: 20)
+    }
+}
+
+/// Theme-colored orbit loader. The center stays recognizable as a sync mark
+/// while the outer sweep communicates that the remote operation is active.
+private struct WorktreeOrbitLoader: View {
+    @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var rotation: Double = 0
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(theme.info.opacity(0.20), lineWidth: 1)
+
+            Circle()
+                .trim(from: 0.08, to: 0.76)
+                .stroke(
+                    AngularGradient(
+                        colors: [
+                            theme.info,
+                            theme.primarySecondary.opacity(0.75),
+                            theme.info.opacity(0.25),
+                        ],
+                        center: .center
+                    ),
+                    style: StrokeStyle(lineWidth: 2.4, lineCap: .round)
+                )
+                .rotationEffect(.degrees(rotation - 90))
+
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(theme.info)
+        }
+        .frame(width: 20, height: 20)
+        .animation(
+            motionPreference.allowsMotion
+                ? .linear(duration: 1.15).repeatForever(autoreverses: false)
+                : nil,
+            value: rotation
+        )
+        .onAppear {
+            guard motionPreference.allowsMotion else { return }
+            rotation = 360
         }
     }
 }

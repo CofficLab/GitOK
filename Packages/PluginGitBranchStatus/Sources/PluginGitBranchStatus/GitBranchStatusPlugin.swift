@@ -5,7 +5,6 @@ import os
 import ProviderGitRepositoryWatch
 import ProviderGit
 import ProviderProjects
-import ProviderStatusBar
 import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
@@ -13,7 +12,7 @@ import ProviderDocsView
 
 // MARK: - Git Branch Status SuperPlugin
 
-/// 分支状态插件：在状态栏显示当前分支名，并在工具栏右上角提供分支选择器
+/// 分支状态插件：在工具栏右上角提供分支选择器
 /// （对齐旧版 PluginGitBranch / GitBranchPlugin）。
 @MainActor
 public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
@@ -26,13 +25,12 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-branch-status",
         name: "Git Branch Status",
-        description: "Show the current branch in the status bar and switch branches from the toolbar",
+        description: "Switch branches from the toolbar",
         category: .project,
         stage: .stable,
         policy: .alwaysOn
     )
 
-    static let itemID = "com.coffic.gitok.plugin.git-branch-status.id"
     static let toolbarItemID = "com.coffic.gitok.plugin.git-branch-status.toolbar"
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
@@ -101,23 +99,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ToolbarProviding not registered; skip branch picker item")
         }
 
-        // 状态栏左侧：当前分支名（点击弹出分支管理面板）。
-        guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
-            Self.logger.error("\(self.t)StatusBarProviding not registered; skip branch status item")
-            return
-        }
-        statusBar.addStatusBarItems([
-            StatusBarItem(
-                id: Self.itemID,
-                title: LumiPluginLocalization.string("Current Branch", bundle: .module),
-                placement: .leading,
-                order: 15
-            ) {
-                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    BranchStatusTile(projects: projects, git: git, viewModel: branchViewModel)
-                }
-            },
-        ])
+        // 分支选择器仅保留在工具栏右侧；状态栏不再提供切换入口。
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
@@ -127,8 +109,6 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
         branchObserver?.cancel()
         branchObserver = nil
         branchViewModel = nil
-        kernel.resolveProvider((any StatusBarProviding).self)?
-            .removeStatusBarItems(ids: [Self.itemID])
         kernel.resolveProvider((any ToolbarProviding).self)?
             .removeToolbarItems(ids: [Self.toolbarItemID])
     }

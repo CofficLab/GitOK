@@ -37,6 +37,14 @@ public final class UpdateService: NSObject, SPUUpdaterDelegate {
         _ = controller.updater.clearFeedURLFromUserDefaults()
         controller.startUpdater()
         updaterController = controller
+
+        // Sparkle's scheduled checks run on a daily interval by default. Run a
+        // background check immediately after startup as well, while respecting
+        // the user's automatic-check preference. This is the earliest point at
+        // which the feed URL is resolved and the updater has been started.
+        if controller.updater.automaticallyChecksForUpdates {
+            controller.updater.checkForUpdatesInBackground()
+        }
     }
 
     public func setupFeedURLIfNeeded() {

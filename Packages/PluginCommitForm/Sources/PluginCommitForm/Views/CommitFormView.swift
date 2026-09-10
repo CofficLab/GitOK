@@ -166,7 +166,6 @@ public struct CommitFormView: View {
                 selection: style,
                 labelForOption: { $0.label }
             ) { form.setStyle($0) }
-            .frame(width: 140)
 
             ToolbarStylePicker(
                 title: loc("Commit Category"),
@@ -174,7 +173,6 @@ public struct CommitFormView: View {
                 selection: category,
                 labelForOption: { displayLabel(for: $0) }
             ) { form.setCategory($0) }
-            .frame(width: 150)
 
             userBadge
 

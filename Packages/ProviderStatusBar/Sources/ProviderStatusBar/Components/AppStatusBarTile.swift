@@ -1,7 +1,7 @@
 import SwiftUI
 import LumiUI
 
-/// 状态栏项组件：图标 + 内容的小胶囊，hover 时显示状态栏强调背景。
+/// 状态栏项组件：图标 + 内容的小胶囊，hover 时显示状态栏强调背景和轻微动效。
 ///
 /// 对齐旧版 GitOK 的 `AppStatusBarTile`（24pt 高、8pt 横向 padding、
 /// 4pt 圆角、hover 背景），配色使用 LumiUI 主题的 `statusBarItem*` 色板，
@@ -11,9 +11,12 @@ import LumiUI
 /// 移入本包（ProviderStatusBar）作为 GitOK 状态栏专用组件。
 public struct AppStatusBarTile<Content: View>: View {
     @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
 
     let systemImage: String?
     let tint: Color?
+    let iconSize: CGFloat
+    let hoverScale: CGFloat
     let action: (() -> Void)?
     let content: Content
 
@@ -22,11 +25,15 @@ public struct AppStatusBarTile<Content: View>: View {
     public init(
         systemImage: String? = nil,
         tint: Color? = nil,
+        iconSize: CGFloat = 11,
+        hoverScale: CGFloat = 1,
         action: (() -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) {
         self.systemImage = systemImage
         self.tint = tint
+        self.iconSize = iconSize
+        self.hoverScale = hoverScale
         self.action = action
         self.content = content()
     }
@@ -42,8 +49,15 @@ public struct AppStatusBarTile<Content: View>: View {
                 label
             }
         }
+        .scaleEffect(
+            isHovered && motionPreference.allowsMotion
+                ? hoverScale
+                : 1
+        )
         .onHover { hovering in
-            withAnimation(.easeOut(duration: 0.12)) {
+            LumiMotion.animate(
+                LumiMotion.enabled(LumiMotion.hover, preference: motionPreference)
+            ) {
                 isHovered = hovering
             }
         }
@@ -53,7 +67,7 @@ public struct AppStatusBarTile<Content: View>: View {
         HStack(spacing: 6) {
             if let systemImage {
                 Image(systemName: systemImage)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: iconSize, weight: .semibold))
                     .foregroundStyle(tint ?? theme.statusBarItemForeground)
             }
 
@@ -83,9 +97,17 @@ public extension AppStatusBarTile where Content == EmptyView {
     init(
         systemImage: String? = nil,
         tint: Color? = nil,
+        iconSize: CGFloat = 11,
+        hoverScale: CGFloat = 1,
         action: (() -> Void)? = nil
     ) {
-        self.init(systemImage: systemImage, tint: tint, action: action) {
+        self.init(
+            systemImage: systemImage,
+            tint: tint,
+            iconSize: iconSize,
+            hoverScale: hoverScale,
+            action: action
+        ) {
             EmptyView()
         }
     }

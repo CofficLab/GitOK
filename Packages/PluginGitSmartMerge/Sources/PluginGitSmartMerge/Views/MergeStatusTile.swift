@@ -3,6 +3,7 @@ import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 合并状态图标：点击弹出分支合并表单（对齐旧版 MergeStatusTile）。
@@ -12,6 +13,8 @@ public struct MergeStatusTile: View {
     let storageDirectory: URL?
     @StateObject private var observation: ProjectObservationModel
     @State private var isPresented = false
+
+    @LumiTheme private var theme: LumiUITheme
 
     public init(
         projects: any ProjectProviding,
@@ -27,22 +30,25 @@ public struct MergeStatusTile: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Image(systemName: "arrow.trianglehead.merge")
-                    .font(.system(size: 10))
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isPresented.toggle()
-                    }
-                    .help(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
-                    .popover(isPresented: $isPresented) {
-                        MergeForm(
-                            projects: projects,
-                            git: git,
-                            storageDirectory: storageDirectory
-                        )
-                            .padding()
-                            .frame(width: 280)
-                    }
+                AppStatusBarTile(
+                    systemImage: "arrow.trianglehead.merge",
+                    tint: theme.info,
+                    iconSize: 13,
+                    hoverScale: LumiMotion.hoverScale,
+                    action: { isPresented.toggle() }
+                )
+                .accessibilityLabel(
+                    GitSmartMergeLocalization.string("Merge branches", bundle: .module)
+                )
+                .popover(isPresented: $isPresented) {
+                    MergeForm(
+                        projects: projects,
+                        git: git,
+                        storageDirectory: storageDirectory
+                    )
+                        .padding()
+                        .frame(width: 280)
+                }
             }
         }
         .onReceive(observation.$revision) { _ in }
