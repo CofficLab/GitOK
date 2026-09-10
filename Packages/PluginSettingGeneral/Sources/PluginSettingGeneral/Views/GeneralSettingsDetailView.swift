@@ -56,10 +56,6 @@ struct GeneralSettingsDetailView: View {
         ) {
             AppSettingRow(
                 title: LumiPluginLocalization.string("Check for Updates", bundle: .module),
-                description: LumiPluginLocalization.string(
-                    "Check for a newer GitOK release and install it with Sparkle.",
-                    bundle: .module
-                ),
                 icon: "arrow.triangle.2.circlepath"
             ) {
                 AppButton(
