@@ -11,18 +11,26 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
         category: "LocalProjectLanguagesProvider"
     )
 
-    private let analyzer: RepositoryLanguageAnalyzer
+    private let analyzer: any RepositoryLanguageAnalyzing
+    private let cache: ProjectLanguagesCache
     private var refreshToken = 0
+    private var analysisTask: Task<Void, Never>?
     private var observers: [WeakObserver] = []
 
     private(set) var currentSnapshot: ProjectLanguagesSnapshot?
     private(set) var isLoading = false
 
-    init(analyzer: RepositoryLanguageAnalyzer = RepositoryLanguageAnalyzer()) {
+    init(
+        analyzer: any RepositoryLanguageAnalyzing = RepositoryLanguageAnalyzer(),
+        cache: ProjectLanguagesCache = ProjectLanguagesCache()
+    ) {
         self.analyzer = analyzer
+        self.cache = cache
     }
 
     func refresh(for repository: URL?) {
+        analysisTask?.cancel()
+        analysisTask = nil
         refreshToken &+= 1
         let token = refreshToken
         let repository = repository?.standardizedFileURL
@@ -36,16 +44,38 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
         setSnapshot(nil)
         setLoading(true)
         let analyzer = self.analyzer
-        Task.detached(priority: .utility) {
-            do {
-                let snapshot = try analyzer.analyze(repository: repository)
-                await self.apply(snapshot, token: token)
-            } catch {
-                Self.logger.error(
-                    "Language analysis failed for \(repository.path, privacy: .public): \(error.localizedDescription, privacy: .public)"
-                )
-                await self.finishLoading(token: token)
+        let cache = self.cache
+        analysisTask = Task.detached(priority: .utility) { [weak self] in
+            if !Task.isCancelled {
+                do {
+                    let context = try analyzer.context(for: repository)
+                    guard context.isWorktreeClean, !Task.isCancelled else {
+                        await self?.finishLoading(token: token)
+                        return
+                    }
+
+                    if let snapshot = cache.load(for: context.cacheKey) {
+                        await self?.apply(snapshot, token: token)
+                        return
+                    }
+
+                    let snapshot = try analyzer.analyze(repository: repository)
+                    cache.store(snapshot, for: context.cacheKey)
+                    if !Task.isCancelled {
+                        await self?.apply(snapshot, token: token)
+                    }
+                } catch is CancellationError {
+                    // Cancellation is expected when switching projects or refreshing.
+                } catch {
+                    Self.logger.error(
+                        "Language analysis failed for \(repository.path, privacy: .public): \(error.localizedDescription, privacy: .public)"
+                    )
+                    if !Task.isCancelled {
+                        await self?.finishLoading(token: token)
+                    }
+                }
             }
+            await self?.clearAnalysisTask(token: token)
         }
     }
 
@@ -67,6 +97,11 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
     private func finishLoading(token: Int) {
         guard token == refreshToken else { return }
         setLoading(false)
+    }
+
+    private func clearAnalysisTask(token: Int) {
+        guard token == refreshToken else { return }
+        analysisTask = nil
     }
 
     private func setSnapshot(_ snapshot: ProjectLanguagesSnapshot?) {

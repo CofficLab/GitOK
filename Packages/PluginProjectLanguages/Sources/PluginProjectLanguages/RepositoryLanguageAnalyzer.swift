@@ -2,12 +2,24 @@ import Foundation
 import KitGit
 import ProviderProjectLanguages
 
+struct RepositoryLanguageAnalysisContext: Sendable {
+    let cacheKey: ProjectLanguagesCacheKey
+    let isWorktreeClean: Bool
+}
+
+protocol RepositoryLanguageAnalyzing: Sendable {
+    func analyze(repository: URL) throws -> ProjectLanguagesSnapshot
+    func context(for repository: URL) throws -> RepositoryLanguageAnalysisContext
+}
+
 /// Performs local, source-only language analysis for the current Git tree.
 ///
 /// The analyzer intentionally lives in the implementation plugin rather than
 /// the provider contract. This leaves room for a future Linguist-compatible
 /// implementation without coupling consumers to a particular detector.
-struct RepositoryLanguageAnalyzer: Sendable {
+struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
+    static let cacheVersion = 1
+
     private struct Definition: Sendable {
         let id: String
         let name: String
@@ -87,6 +99,25 @@ struct RepositoryLanguageAnalyzer: Sendable {
         ".build", "build", "carthage", "coverage", "deriveddata", "dist",
         "node_modules", "pods", "target", "vendor", "vendors"
     ]
+
+    func context(for repository: URL) throws -> RepositoryLanguageAnalysisContext {
+        let repository = repository.standardizedFileURL
+        let headHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repository)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !headHash.isEmpty else {
+            throw GitProcessRunner.Error.gitFailed("Repository has no HEAD")
+        }
+
+        let status = try GitStatusLoader.loadStatus(in: repository)
+        return RepositoryLanguageAnalysisContext(
+            cacheKey: ProjectLanguagesCacheKey(
+                repositoryPath: repository.path,
+                headHash: headHash,
+                analyzerVersion: Self.cacheVersion
+            ),
+            isWorktreeClean: status.isClean
+        )
+    }
 
     func analyze(repository: URL) throws -> ProjectLanguagesSnapshot {
         let output = try GitProcessRunner.run(

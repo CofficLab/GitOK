@@ -33,29 +33,14 @@ public enum GitProcessRunner {
         in repository: URL,
         successExitCodes: Set<Int32> = [0]
     ) throws -> String {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.arguments = arguments
-        process.currentDirectoryURL = repository
-
-        let pipe = Pipe()
-        let errorPipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = errorPipe
-
-        do {
-            try process.run()
-        } catch {
-            throw Error.gitUnavailable(error.localizedDescription)
-        }
-        process.waitUntilExit()
-
-        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-        let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
-
-        guard successExitCodes.contains(process.terminationStatus) else {
-            let message = Self.decode(errorData, fallback: "unknown error")
-            throw Error.gitFailed(message)
+        var outputData = Data()
+        try stream(
+            arguments,
+            in: repository,
+            successExitCodes: successExitCodes
+        ) { data in
+            outputData.append(data)
+            return true
         }
         return Self.decode(outputData)
     }
