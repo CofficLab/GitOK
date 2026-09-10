@@ -14,4 +14,19 @@ struct PluginWorktreeStatusTests {
         #expect(plugin.metadata.policy == .required)
     }
 
+    @Test("主操作根据 upstream 状态映射")
+    func primaryActionMode() {
+        #expect(WorktreeStatusActionMode.resolve(hasUpstream: false) == .publish)
+        #expect(WorktreeStatusActionMode.resolve(hasUpstream: true) == .synchronize)
+    }
+
+    @Test("同步 badge 正确展示 ahead 和 behind")
+    func syncBadgeText() {
+        #expect(WorktreeSyncBadgeFormatter.text(ahead: 2, behind: 3, hasUpstream: true) == "↑2 ↓3")
+        #expect(WorktreeSyncBadgeFormatter.text(ahead: 2, behind: 0, hasUpstream: true) == "↑2")
+        #expect(WorktreeSyncBadgeFormatter.text(ahead: 0, behind: 4, hasUpstream: true) == "↓4")
+        #expect(WorktreeSyncBadgeFormatter.text(ahead: 0, behind: 0, hasUpstream: true) == nil)
+        #expect(WorktreeSyncBadgeFormatter.text(ahead: 4, behind: 1, hasUpstream: false) == nil)
+    }
+
 }
