@@ -3,6 +3,7 @@
   "strings" : {
     "Rail" : {
       "comment" : "Debug badge label for the rail view",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
