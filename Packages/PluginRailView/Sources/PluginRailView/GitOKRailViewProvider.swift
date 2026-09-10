@@ -13,9 +13,10 @@ public final class GitOKRailViewProvider: RailViewProviding, ObservableObject {
     @Published public private(set) var visibleCategories: Set<RailViewCategory>
     @Published public private(set) var visibleTabID: String?
     @Published public private(set) var activeTabID: String?
-    @Published public private(set) var hasVisibleTabs = false
     @Published public private(set) var sections: [RailSectionItem] = []
     @Published public private(set) var railWidth: RailViewWidth
+
+    @Published public private(set) var hasVisibleTabs = false
 
     private var allSections: [RailSectionItem] = []
 
@@ -25,9 +26,12 @@ public final class GitOKRailViewProvider: RailViewProviding, ObservableObject {
 
     public var hasVisibleSections: Bool { !sections.isEmpty }
 
+    public var isRailVisible: Bool { hasVisibleTabs || hasVisibleSections }
+
     public var railVisibilityPublisher: AnyPublisher<Bool, Never> {
         $hasVisibleTabs.combineLatest($sections.map { !$0.isEmpty })
             .map { $0 || $1 }
+            .removeDuplicates()
             .eraseToAnyPublisher()
     }
 
@@ -94,6 +98,8 @@ public final class GitOKRailViewProvider: RailViewProviding, ObservableObject {
         updateVisibleTabState()
     }
 
+    // MARK: - Width
+
     public func activateWidthProfile(
         ownerID: String,
         recommended: RailViewWidth,
@@ -133,7 +139,7 @@ public final class GitOKRailViewProvider: RailViewProviding, ObservableObject {
         AnyView(RailView(provider: self))
     }
 
-    fileprivate var visibleTabs: [RailTabItem] {
+    var visibleTabs: [RailTabItem] {
         tabs.filter { tab in
             visibleCategories.contains(tab.category)
                 && (visibleTabID == nil || tab.id == visibleTabID)

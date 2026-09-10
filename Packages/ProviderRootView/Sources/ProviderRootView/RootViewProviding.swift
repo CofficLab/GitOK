@@ -3,6 +3,29 @@ import SwiftUI
 import ProviderChatSection
 import ProviderRailView
 
+/// 根布局当前工作区的可用状态。
+///
+/// 该状态只控制工作区内容是否挂载；工具栏和项目 Sidebar 始终保留，
+/// 这样用户仍然可以切换项目、添加项目或移除失效项目。
+@MainActor
+public enum RootWorkspaceState: Equatable, Sendable {
+    case noProject
+    case projectMissing(path: String)
+    case ready
+
+    /// 用于 macOS 原生分栏层级变化时生成稳定的布局 identity。
+    public var layoutID: String {
+        switch self {
+        case .noProject:
+            return "no-project"
+        case let .projectMissing(path):
+            return "project-missing:\(path)"
+        case .ready:
+            return "ready"
+        }
+    }
+}
+
 /// 根视图提供能力协议
 ///
 /// 定义「内核 → 应用根布局视图」这一段的最小契约：宿主在启动时
@@ -78,6 +101,15 @@ public protocol RootViewProviding: AnyObject, ObservableObject
 
     /// 绑定 Rail provider 的可见状态，使 tab 过滤或增删能同步到根布局。
     func bindRailViewVisibility(to publisher: AnyPublisher<Bool, Never>)
+
+    /// 当前工作区状态。非 `ready` 时，根布局不挂载业务工作区。
+    var workspaceState: RootWorkspaceState { get }
+
+    /// 设置当前工作区状态。
+    func setWorkspaceState(_ state: RootWorkspaceState)
+
+    /// 设置工作区不可用时显示的占位视图。
+    func setWorkspaceUnavailableView(_ view: AnyView?)
 
     /// 当前 Rail 的有效宽度。
     var railWidth: RailViewWidth { get }
@@ -168,6 +200,9 @@ public extension RootViewProviding {
     func setContentFooterViewHidden(_ hidden: Bool) {}
     func setRailViewVisible(_ visible: Bool) {}
     func bindRailViewVisibility(to publisher: AnyPublisher<Bool, Never>) {}
+    var workspaceState: RootWorkspaceState { .ready }
+    func setWorkspaceState(_ state: RootWorkspaceState) {}
+    func setWorkspaceUnavailableView(_ view: AnyView?) {}
     var railWidth: RailViewWidth { .standard }
     func bindRailViewWidth(
         to publisher: AnyPublisher<RailViewWidth, Never>,

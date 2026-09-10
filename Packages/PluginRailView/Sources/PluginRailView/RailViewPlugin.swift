@@ -4,8 +4,6 @@ import KitSuperLog
 import LumiUI
 import os
 import ProviderRailView
-import ProviderProjects
-import ProviderWorkspaceScene
 import SwiftUI
 import ProviderDocsView
 
@@ -62,6 +60,7 @@ public final class RailViewPlugin: SuperPlugin, SuperLog {
         if Self.verbose {
             Self.logger.info("\(self.t)Replaced default RailViewProviding with GitOKRailViewProvider")
         }
+
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {

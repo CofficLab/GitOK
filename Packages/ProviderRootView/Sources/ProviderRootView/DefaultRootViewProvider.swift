@@ -31,6 +31,8 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     @Published var trailingPane: RootTrailingPane?
     @Published public private(set) var isRailViewVisible = true
     @Published public private(set) var railWidth: RailViewWidth = .standard
+    @Published public private(set) var workspaceState: RootWorkspaceState = .ready
+    @Published private(set) var workspaceUnavailableView: AnyView?
     @Published public private(set) var sidebarWidth: SidebarWidth
     @Published public private(set) var contentFooterHeight: ContentFooterHeight = .standard
     @Published public private(set) var overlays: [RootOverlayItem] = []
@@ -121,10 +123,22 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
 
     public func bindRailViewVisibility(to publisher: AnyPublisher<Bool, Never>) {
         railVisibilitySubscription = publisher.sink { [weak self] visible in
-            Task { @MainActor [weak self] in
-                self?.setRailViewVisible(visible)
-            }
+            // Rail 的可见性来自主线程上的 provider 状态快照（例如当前项目
+            // 是否仍存在于磁盘），必须在同一轮状态传播中更新根布局。异步再
+            // hop 到 MainActor 会让 Rail 先挂载一帧，CommitRailView 也就会
+            // 先显示 loading，随后才被移除。
+            self?.setRailViewVisible(visible)
         }
+    }
+
+    public func setWorkspaceState(_ state: RootWorkspaceState) {
+        guard workspaceState != state else { return }
+        workspaceState = state
+    }
+
+    public func setWorkspaceUnavailableView(_ view: AnyView?) {
+        guard !isSameView(workspaceUnavailableView, view) else { return }
+        workspaceUnavailableView = view
     }
 
     public func bindRailViewWidth(

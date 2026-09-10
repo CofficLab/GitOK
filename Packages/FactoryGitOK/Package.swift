@@ -98,7 +98,6 @@ let package = Package(
         .package(path: "../PluginToast"),
         .package(path: "../PluginWorktreeStatus"),
         .package(path: "../PluginWorktreeClean"),
-        .package(path: "../PluginProjectMissing"),
         .package(path: "../ProviderToolbar"),
     ],
     targets: [
@@ -125,7 +124,6 @@ let package = Package(
                 .product(name: "PluginToast", package: "PluginToast"),
                 .product(name: "PluginWorktreeStatus", package: "PluginWorktreeStatus"),
                 .product(name: "PluginWorktreeClean", package: "PluginWorktreeClean"),
-                .product(name: "PluginProjectMissing", package: "PluginProjectMissing"),
                 .product(name: "ProviderToolbar", package: "ProviderToolbar"),
                 .product(name: "PluginActivityStatus", package: "PluginActivityStatus"),
                 .product(name: "PluginCommand", package: "PluginCommand"),

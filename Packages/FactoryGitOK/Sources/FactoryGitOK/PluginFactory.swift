@@ -62,7 +62,6 @@ import PluginToast
 import PluginThemePack
 import PluginWorktreeClean
 import PluginWorktreeStatus
-import PluginProjectMissing
 #endif
 
 /// GitOK 的专用插件目录。
@@ -94,7 +93,6 @@ public struct DefaultPluginFactory: PluginFactory {
             GitDiffPlugin(),
             GitUserSettingsPlugin(),
             WorktreeCleanPlugin(),
-            ProjectMissingPlugin(),
             GitNetworkSettingsPlugin(),
             GitRepositorySettingsPlugin(),
             GitCommitStyleSettingsPlugin(),
