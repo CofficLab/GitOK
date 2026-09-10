@@ -42,7 +42,8 @@ struct LocalActivityHeatmapProviderTests {
         defer { try? FileManager.default.removeItem(at: directory) }
 
         let calendar = calendar
-        let repository = URL(fileURLWithPath: "/tmp/cached-repo")
+        let repository = try makeRepository()
+        defer { try? FileManager.default.removeItem(at: repository) }
         let now = calendar.date(from: DateComponents(year: 2026, month: 9, day: 8))!
         let cached = LocalActivityHeatmapProvider.makeSnapshot(
             repository: repository,
@@ -81,7 +82,8 @@ struct LocalActivityHeatmapProviderTests {
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
         defer { try? FileManager.default.removeItem(at: directory) }
 
-        let repository = URL(fileURLWithPath: "/tmp/loading-repo")
+        let repository = try makeRepository()
+        defer { try? FileManager.default.removeItem(at: repository) }
         let provider = LocalActivityHeatmapProvider(
             directory: directory,
             commitLoader: { _, _, _ in [] },
@@ -96,6 +98,37 @@ struct LocalActivityHeatmapProviderTests {
             try await Task.sleep(nanoseconds: 5_000_000)
         }
         #expect(!provider.isLoading)
+    }
+
+    @Test("does not start loading for a missing repository")
+    func ignoresMissingRepository() {
+        let cacheDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let missingRepository = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let provider = LocalActivityHeatmapProvider(
+            directory: cacheDirectory,
+            commitLoader: { _, _, _ in
+                Issue.record("a missing repository must not start a Git query")
+                return []
+            },
+            statusLoader: { _ in
+                Issue.record("a missing repository must not start a Git query")
+                return GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main")
+            }
+        )
+
+        provider.refresh(for: missingRepository)
+
+        #expect(provider.currentSnapshot == nil)
+        #expect(!provider.isLoading)
+    }
+
+    private func makeRepository() throws -> URL {
+        let repository = FileManager.default.temporaryDirectory
+            .appendingPathComponent("LocalActivityHeatmapProviderTests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: repository, withIntermediateDirectories: true)
+        return repository
     }
 
     private func waitUntil(

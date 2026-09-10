@@ -16,8 +16,12 @@ struct LocalProjectLanguagesProviderTests {
             analyzer: analyzer,
             cache: cache
         )
-        let firstRepository = URL(fileURLWithPath: "/tmp/first-project")
-        let secondRepository = URL(fileURLWithPath: "/tmp/second-project")
+        let firstRepository = try makeRepository()
+        let secondRepository = try makeRepository()
+        defer {
+            try? FileManager.default.removeItem(at: firstRepository)
+            try? FileManager.default.removeItem(at: secondRepository)
+        }
 
         provider.refresh(for: firstRepository)
         let firstAnalysisStarted = await withCheckedContinuation { continuation in
@@ -53,7 +57,8 @@ struct LocalProjectLanguagesProviderTests {
         let cacheDirectory = try makeTemporaryDirectory()
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
         let cache = ProjectLanguagesCache(directoryURL: cacheDirectory)
-        let repository = URL(fileURLWithPath: "/tmp/cached-project")
+        let repository = try makeRepository()
+        defer { try? FileManager.default.removeItem(at: repository) }
         let key = ProjectLanguagesCacheKey(
             repositoryPath: repository.path,
             headHash: repository.lastPathComponent,
@@ -76,11 +81,34 @@ struct LocalProjectLanguagesProviderTests {
         #expect(analyzer.numberOfAnalyses == 0)
     }
 
+    @Test("does not start loading for a missing repository")
+    @MainActor
+    func ignoresMissingRepository() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let provider = LocalProjectLanguagesProvider(
+            analyzer: ControlledAnalyzer(),
+            cache: ProjectLanguagesCache(directoryURL: directory)
+        )
+
+        provider.refresh(for: directory)
+
+        #expect(provider.currentSnapshot == nil)
+        #expect(!provider.isLoading)
+    }
+
     private func makeTemporaryDirectory() throws -> URL {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("LocalProjectLanguagesProviderTests-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return directory
+    }
+
+    private func makeRepository() throws -> URL {
+        let repository = FileManager.default.temporaryDirectory
+            .appendingPathComponent("LocalProjectLanguagesProviderTests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: repository, withIntermediateDirectories: true)
+        return repository
     }
 
     private final class ControlledAnalyzer: RepositoryLanguageAnalyzing, @unchecked Sendable {

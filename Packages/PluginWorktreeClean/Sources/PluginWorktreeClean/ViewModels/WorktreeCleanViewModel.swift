@@ -236,6 +236,13 @@ final class WorktreeCleanViewModel: ObservableObject {
         let token = loadToken
         checkedProjectURL = project.url
 
+        guard FileManager.default.fileExists(atPath: project.url.path) else {
+            isClean = false
+            isLoading = false
+            lastStatus = nil
+            return
+        }
+
         // 与 commitlist 保留已有列表的策略一致：已有快照时保持当前页面稳定，
         // 不因为一次后台校验而切换加载态。首次加载仍显示 loading 状态。
         if lastStatus == nil {

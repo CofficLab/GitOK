@@ -70,6 +70,14 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
             return
         }
 
+        // 项目可能已被用户在 Finder 中移动或删除。不要为失效路径启动
+        // Git 查询；否则切换项目时旧任务会持续失败并制造无意义的 loading。
+        guard FileManager.default.fileExists(atPath: repository.path) else {
+            setSnapshot(nil)
+            setLoading(false)
+            return
+        }
+
         let cachedSnapshot = loadCachedSnapshot(for: repository)
         setSnapshot(cachedSnapshot)
         // A cached snapshot is already useful to the UI. Keep it visible and

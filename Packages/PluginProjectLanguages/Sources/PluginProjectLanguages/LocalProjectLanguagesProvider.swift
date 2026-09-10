@@ -41,6 +41,14 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
             return
         }
 
+        // 项目目录被移动或删除时立即结束刷新，避免把失效路径交给 Git
+        // 并在切换项目后继续打印失败日志。
+        guard FileManager.default.fileExists(atPath: repository.path) else {
+            setSnapshot(nil)
+            setLoading(false)
+            return
+        }
+
         setSnapshot(nil)
         setLoading(true)
         let analyzer = self.analyzer
