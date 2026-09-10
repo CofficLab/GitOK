@@ -411,13 +411,17 @@ struct CommitRailView: View {
 
     @ViewBuilder
     private var content: some View {
-        if projects.currentProject == nil {
-            AppEmptyState(
-                icon: "folder",
-                title: LumiPluginLocalization.string("Select a Project", bundle: .module),
-                description: LumiPluginLocalization.string("Choose a project from the sidebar to see its commits.", bundle: .module)
-            )
-        } else if isLoading && commits.isEmpty {
+        if let project = projects.currentProject,
+           FileManager.default.fileExists(atPath: project.url.path) {
+            commitListContent(for: project)
+        } else {
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private func commitListContent(for project: Project) -> some View {
+        if isLoading && commits.isEmpty {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if commits.isEmpty, let loadError {
