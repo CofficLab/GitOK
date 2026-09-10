@@ -1,3 +1,4 @@
+import Foundation
 import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
@@ -51,7 +52,8 @@ final class GitBranchStatusObserver {
     private func reload() {
         reloadGeneration += 1
         let generation = reloadGeneration
-        guard let url = capability.currentProject?.url else {
+        guard let url = capability.currentProject?.url,
+              FileManager.default.fileExists(atPath: url.path) else {
             viewModel?.update(projectURL: nil, branch: nil)
             return
         }
