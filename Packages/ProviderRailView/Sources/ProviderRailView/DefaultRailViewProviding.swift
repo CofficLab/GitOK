@@ -159,8 +159,8 @@ public final class DefaultRailViewProviding: RailViewProviding, ObservableObject
 ///
 /// 视觉与旧版 `FactoryCore` 的 `RailView` + `RailTabBarView` + `RailContentView`
 /// 完全一致：
-/// - 顶层 `VStack(spacing: 0)`：标签栏 + 内容区（无自带右侧分隔线，
-///   分隔线由宿主的 `HSplitView` / `AppDivider` 提供）；
+/// - 顶层 `VStack(spacing: 0)`：标签栏 + 内容区（不自带分隔线，
+///   分隔线由宿主的 `HSplitView` / `AppSplitDivider` 提供）；
 /// - 标签栏复用 `AppToolbarContainer`（height 40、`.panel` 背景、
 ///   上下 8 / 左右 10 内边距）+ `AppTabBar(showText: false)`（图标式），
 ///   并带 `borderBottom` + `shadowMd`；仅在 tab 数量大于一个时显示；
