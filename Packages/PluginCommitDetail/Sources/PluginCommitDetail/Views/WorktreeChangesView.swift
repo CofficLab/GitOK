@@ -618,7 +618,16 @@ struct WorktreeChangesView: View {
         }
 
         let url = projectURL
-        Task.detached(priority: .userInitiated) {
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            isLoading = false
+            hasLoadedSnapshot = false
+            entries = []
+            loadError = "Repository path no longer exists: \(url.path)"
+            return
+        }
+
+        // 工作区变更是后台快照读取，不应以 userInitiated 优先级占用并发线程。
+        Task.detached(priority: .utility) {
             let result = Result { try git.loadEntries(in: url) }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }

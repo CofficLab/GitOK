@@ -34,10 +34,20 @@ struct DefaultRootHostView: View {
                             )
                             .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
                             .transition(sidebarTransition)
-                        WorkbenchSplitView(provider: provider)
+                        workbenchView
+                            // The workbench must remain the flexible pane. Without
+                            // an explicit zero minimum/ideal width, AppKit can
+                            // re-solve the outer split after the inner Rail is
+                            // removed and expand the sidebar to its max width.
+                            .frame(minWidth: 0, idealWidth: 0, maxWidth: .infinity)
                     }
+                    // Recreate the native split only when the Rail is shown or
+                    // hidden. This makes its initial position run again and
+                    // restores the user's persisted sidebar width after the
+                    // nested split hierarchy changes.
+                    .id("root-sidebar-split-\(provider.workspaceState.layoutID)-\(provider.isRailViewVisible)")
                 } else {
-                    WorkbenchSplitView(provider: provider)
+                    workbenchView
                 }
                 #else
                 HStack(spacing: 0) {
@@ -47,7 +57,7 @@ struct DefaultRootHostView: View {
                             .transition(sidebarTransition)
                     }
 
-                    WorkbenchSplitView(provider: provider)
+                    workbenchView
                 }
                 #endif
             }
@@ -82,5 +92,17 @@ struct DefaultRootHostView: View {
     /// 侧边栏显隐过渡：沿左边缘滑入/滑出并叠加透明度变化。
     private var sidebarTransition: AnyTransition {
         .move(edge: .leading).combined(with: .opacity)
+    }
+
+    @ViewBuilder
+    private var workbenchView: some View {
+        if provider.workspaceState == .ready {
+            WorkbenchSplitView(provider: provider)
+        } else if let workspaceUnavailableView = provider.workspaceUnavailableView {
+            workspaceUnavailableView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            RootWelcomeView()
+        }
     }
 }

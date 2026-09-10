@@ -16,6 +16,9 @@ struct WorktreeCleanActivityHeatmapView: View {
     private let calendar: Calendar
     private let minimumWeekCount = 26
     private let maximumWeekCount = 52
+    private let minimumSummaryWidth: CGFloat = 224
+    private let summaryColumnSpacing: CGFloat = 20
+    private let summaryDividerWidth: CGFloat = 1
     private let cellSpacing: CGFloat = 3
     private let minimumCellSize: CGFloat = 10
     private let heatmapContentMinHeight: CGFloat = 196
@@ -66,10 +69,13 @@ struct WorktreeCleanActivityHeatmapView: View {
             GeometryReader { proxy in
                 let layout = layout(for: proxy.size.width)
                 let summaryWidth = layout.showsSummary
-                    ? min(240, max(190, proxy.size.width * 0.28))
+                    ? min(240, max(minimumSummaryWidth, proxy.size.width * 0.28))
                     : 0
                 let gridWidth = layout.showsSummary
-                    ? proxy.size.width - summaryWidth - 20
+                    ? proxy.size.width
+                        - summaryWidth
+                        - summaryColumnSpacing * 2
+                        - summaryDividerWidth
                     : proxy.size.width
                 let weekCount = weekCount(for: gridWidth)
                 let cellSize = cellSize(for: gridWidth, weekCount: weekCount)
@@ -94,7 +100,7 @@ struct WorktreeCleanActivityHeatmapView: View {
                         }
                     }
 
-                    HStack(alignment: .top, spacing: 20) {
+                    HStack(alignment: .top, spacing: summaryColumnSpacing) {
                         heatmapGrid(
                             weekCount: weekCount,
                             cellSize: cellSize,
@@ -107,6 +113,7 @@ struct WorktreeCleanActivityHeatmapView: View {
                                 .frame(height: 7 * cellSize + 6 * cellSpacing)
                             activitySummary(snapshot: snapshot, weekCount: weekCount)
                                 .frame(width: summaryWidth, alignment: .topLeading)
+                                .clipped()
                         }
                     }
 
@@ -194,12 +201,18 @@ struct WorktreeCleanActivityHeatmapView: View {
             Text(value)
                 .font(.callout.weight(.medium))
                 .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                .minimumScaleFactor(0.7)
+                .allowsTightening(true)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
             Text(label)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func activityCard<Content: View>(

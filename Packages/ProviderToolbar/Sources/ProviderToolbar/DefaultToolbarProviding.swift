@@ -180,6 +180,7 @@ private final class ToolbarWindowState: NSObject, ObservableObject {
     @Published private(set) var isFullScreen = false
 
     private weak var window: NSWindow?
+    private var refreshScheduled = false
 
     func attach(to window: NSWindow?) {
         guard self.window !== window else {
@@ -211,7 +212,21 @@ private final class ToolbarWindowState: NSObject, ObservableObject {
     }
 
     private func refresh() {
-        isFullScreen = window?.styleMask.contains(.fullScreen) == true
+        let nextValue = window?.styleMask.contains(.fullScreen) == true
+        guard isFullScreen != nextValue, !refreshScheduled else { return }
+
+        // `attach(to:)` is called from NSViewRepresentable.updateNSView, which can
+        // run during SwiftUI's layout pass. Publishing here makes SwiftUI mutate
+        // its graph while that pass is still active and produces the re-entrant
+        // "Publishing changes from within view updates" warning.
+        refreshScheduled = true
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.refreshScheduled = false
+            let currentValue = self.window?.styleMask.contains(.fullScreen) == true
+            guard self.isFullScreen != currentValue else { return }
+            self.isFullScreen = currentValue
+        }
     }
 
     deinit {

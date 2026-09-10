@@ -73,8 +73,8 @@ struct ProviderRootViewTests {
         #expect(resizedWidth == 460)
     }
 
-    @Test("Rail 可见性绑定到根布局")
-    func railVisibilityFollowsPublisher() async {
+    @Test("Rail 可见性同步绑定到根布局")
+    func railVisibilityFollowsPublisherSynchronously() {
         let provider = DefaultRootViewProvider()
         let visibility = CurrentValueSubject<Bool, Never>(true)
 
@@ -82,12 +82,21 @@ struct ProviderRootViewTests {
         #expect(provider.isRailViewVisible)
 
         visibility.send(false)
-        await Task.yield()
         #expect(!provider.isRailViewVisible)
 
         visibility.send(true)
-        await Task.yield()
         #expect(provider.isRailViewVisible)
+    }
+
+    @Test("工作区状态支持在根布局中切换")
+    func workspaceStateCanBeChanged() {
+        let provider = DefaultRootViewProvider()
+
+        provider.setWorkspaceState(.projectMissing(path: "/missing/repo"))
+        #expect(provider.workspaceState == .projectMissing(path: "/missing/repo"))
+
+        provider.setWorkspaceState(.ready)
+        #expect(provider.workspaceState == .ready)
     }
 
     @Test("Rail 宽度绑定并转发用户拖拽回调")

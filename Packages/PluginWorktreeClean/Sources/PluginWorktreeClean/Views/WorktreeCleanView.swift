@@ -15,6 +15,7 @@ import SwiftUI
 struct WorktreeCleanView: View {
     @ObservedObject var viewModel: WorktreeCleanViewModel
     @ObservedObject var activityHeatmapViewModel: WorktreeCleanActivityHeatmapViewModel
+    @ObservedObject var projectLanguagesViewModel: WorktreeCleanProjectLanguagesViewModel
     let git: any GitProviding
     let openUserSettings: (() -> Void)?
     @LumiTheme private var theme
@@ -22,11 +23,13 @@ struct WorktreeCleanView: View {
     init(
         viewModel: WorktreeCleanViewModel,
         activityHeatmapViewModel: WorktreeCleanActivityHeatmapViewModel,
+        projectLanguagesViewModel: WorktreeCleanProjectLanguagesViewModel,
         git: any GitProviding,
         openUserSettings: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self._activityHeatmapViewModel = ObservedObject(wrappedValue: activityHeatmapViewModel)
+        self._projectLanguagesViewModel = ObservedObject(wrappedValue: projectLanguagesViewModel)
         self.git = git
         self.openUserSettings = openUserSettings
     }
@@ -49,6 +52,9 @@ struct WorktreeCleanView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
                 WorktreeCleanActivityHeatmapView(viewModel: activityHeatmapViewModel)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                WorktreeCleanProjectLanguagesView(viewModel: projectLanguagesViewModel)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 CleanStateInfoView(

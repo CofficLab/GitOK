@@ -51,6 +51,14 @@ final class PluginRootViewTests: XCTestCase {
             let current = observers
             for observer in current { observer.callback(.projectsChanged) }
         }
+
+        /// 测试辅助：广播当前项目变化事件。
+        func notifySelectionChanged() {
+            let current = observers
+            for observer in current {
+                observer.callback(.selectionChanged(projectID: currentProject?.id))
+            }
+        }
     }
 
     private final class MockHandle: ProjectProvidingObserverHandle {
@@ -130,24 +138,20 @@ final class PluginRootViewTests: XCTestCase {
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        // onBoot 会注册 no-project overlay。
-        XCTAssertTrue(plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID })
-
         // 手动添加额外 overlay。
         plugin.provider.addOverlays([
             RootOverlayItem(id: "test-overlay", order: 100) { content in content },
         ])
-        XCTAssertEqual(plugin.provider.overlays.count, 2)
+        XCTAssertEqual(plugin.provider.overlays.count, 1)
 
         // 同 id 不重复注册。
         plugin.provider.addOverlays([
             RootOverlayItem(id: "test-overlay", order: 200) { content in content },
         ])
-        XCTAssertEqual(plugin.provider.overlays.count, 2)
+        XCTAssertEqual(plugin.provider.overlays.count, 1)
 
         plugin.provider.removeOverlays(ids: ["test-overlay"])
-        XCTAssertEqual(plugin.provider.overlays.count, 1)
-        XCTAssertTrue(plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID })
+        XCTAssertEqual(plugin.provider.overlays.count, 0)
     }
 
     // MARK: - Rail / Content 显隐
@@ -178,10 +182,10 @@ final class PluginRootViewTests: XCTestCase {
         XCTAssertTrue(plugin.provider.isContentViewHidden)
     }
 
-    // MARK: - 无项目引导视图
+    // MARK: - 工作区状态门控
 
-    /// 启动时无项目 → overlay 已挂载。
-    func testOnBootMountsNoProjectOverlayWhenNoProjects() throws {
+    /// 启动时没有当前项目 → 根布局进入 noProject 状态。
+    func testOnBootSetsNoProjectWorkspaceState() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
         try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
@@ -190,33 +194,47 @@ final class PluginRootViewTests: XCTestCase {
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        XCTAssertTrue(
-            plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID },
-            "无项目时 onBoot 应挂载 no-project overlay"
-        )
+        XCTAssertEqual(plugin.provider.workspaceState, .noProject)
     }
 
-    /// 启动时已有项目 → overlay 仍然挂载（条件渲染，内容为隐藏）。
-    func testOnBootMountsOverlayEvenWithProjects() throws {
+    /// 当前项目目录不存在 → 根布局进入 projectMissing 状态。
+    func testOnBootSetsMissingProjectWorkspaceState() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
         mockProjects.projects = [
-            Project(url: URL(fileURLWithPath: "/tmp/repo1"), title: "Repo1"),
+            Project(url: URL(fileURLWithPath: "/definitely/missing/repo"), title: "Missing"),
         ]
+        mockProjects.currentProject = mockProjects.projects[0]
         try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        // overlay 始终挂载，但 guideState.showGuide 应为 false。
-        XCTAssertTrue(
-            plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID }
+        XCTAssertEqual(
+            plugin.provider.workspaceState,
+            .projectMissing(path: "/definitely/missing/repo")
         )
     }
 
-    /// 项目列表从空变非空 → guide 状态切换为不显示。
-    func testProjectsChangedFromEmptyToNonEmpty() throws {
+    /// 当前项目目录存在 → 根布局进入 ready 状态。
+    func testOnBootSetsReadyWorkspaceState() throws {
+        let kernel = KernelCoreContainer()
+        let mockProjects = MockProjects()
+        let project = Project(url: FileManager.default.temporaryDirectory, title: "Temp")
+        mockProjects.projects = [project]
+        mockProjects.currentProject = project
+        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any ProjectProviding).self, mockProjects)
+
+        let plugin = RootViewPlugin()
+        try plugin.onBoot(kernel: kernel)
+
+        XCTAssertEqual(plugin.provider.workspaceState, .ready)
+    }
+
+    /// 项目切换时状态同步更新，业务工作区无需先渲染一次。
+    func testWorkspaceStateUpdatesOnProjectSelectionChange() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
         try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
@@ -224,50 +242,27 @@ final class PluginRootViewTests: XCTestCase {
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
+        XCTAssertEqual(plugin.provider.workspaceState, .noProject)
 
-        // 初始无项目 → overlay 已挂载。
-        XCTAssertTrue(
-            plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID }
+        let project = Project(url: FileManager.default.temporaryDirectory, title: "Temp")
+        mockProjects.projects = [project]
+        mockProjects.currentProject = project
+        mockProjects.notifySelectionChanged()
+        XCTAssertEqual(plugin.provider.workspaceState, .ready)
+
+        mockProjects.currentProject = Project(
+            url: URL(fileURLWithPath: "/definitely/missing/repo"),
+            title: "Missing"
         )
-
-        // 添加项目后广播变化。
-        mockProjects.projects = [
-            Project(url: URL(fileURLWithPath: "/tmp/repo1"), title: "Repo1"),
-        ]
-        mockProjects.notifyProjectsChanged()
-
-        // overlay 仍然挂载（条件渲染），但不再显示引导。
-        XCTAssertTrue(
-            plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID },
-            "overlay 始终挂载，由条件渲染控制显隐"
-        )
-    }
-
-    /// 项目列表从非空变空 → guide 状态切换为显示。
-    func testProjectsChangedFromNonEmptyToEmpty() throws {
-        let kernel = KernelCoreContainer()
-        let mockProjects = MockProjects()
-        mockProjects.projects = [
-            Project(url: URL(fileURLWithPath: "/tmp/repo1"), title: "Repo1"),
-        ]
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
-        try kernel.registerProvider((any ProjectProviding).self, mockProjects)
-
-        let plugin = RootViewPlugin()
-        try plugin.onBoot(kernel: kernel)
-
-        // 移除所有项目后广播变化。
-        mockProjects.projects = []
-        mockProjects.notifyProjectsChanged()
-
-        // overlay 仍然挂载，引导视图应该显示。
-        XCTAssertTrue(
-            plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID }
+        mockProjects.notifySelectionChanged()
+        XCTAssertEqual(
+            plugin.provider.workspaceState,
+            .projectMissing(path: "/definitely/missing/repo")
         )
     }
 
-    /// onShutdown 后 observer 被取消，overlay 被移除。
-    func testOnShutdownCancelsObserverAndRemovesOverlay() throws {
+    /// onShutdown 后 observer 被取消，工作区占位视图被清理。
+    func testOnShutdownCancelsObserverAndResetsWorkspace() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
         try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
@@ -275,16 +270,11 @@ final class PluginRootViewTests: XCTestCase {
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
-        XCTAssertTrue(
-            plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID }
-        )
+        XCTAssertEqual(plugin.provider.workspaceState, .noProject)
 
         try plugin.onShutdown(kernel: kernel)
 
-        XCTAssertFalse(
-            plugin.provider.overlays.contains { $0.id == RootViewPlugin.noProjectOverlayID },
-            "onShutdown 后应移除 no-project overlay"
-        )
+        XCTAssertNil(kernel.resolveProvider((any RootViewProviding).self).flatMap { $0 as? GitOKRootViewProvider })
     }
 
     /// 无 ProjectProviding 时 onBoot 不崩溃（优雅降级）。

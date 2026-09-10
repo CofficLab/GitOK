@@ -108,31 +108,21 @@ public enum GitCommitLoader {
     // MARK: - Process
 
     private static func runGit(_ command: [String], in repository: URL) throws -> String {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: command[0])
-        process.arguments = Array(command.dropFirst())
-        process.currentDirectoryURL = repository
-
-        let pipe = Pipe()
-        let errorPipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = errorPipe
-
         do {
-            try process.run()
-        } catch {
-            throw GitCommitLoaderError.gitUnavailable(error.localizedDescription)
+            // GitProcessRunner 会在进程运行期间持续消费 stdout/stderr，避免大
+            // 输出填满 Pipe 后 git 等待读取、而调用方又在等待进程退出的死锁。
+            return try GitProcessRunner.run(
+                Array(command.dropFirst()),
+                in: repository
+            )
+        } catch let error as GitProcessRunner.Error {
+            switch error {
+            case .gitUnavailable(let message):
+                throw GitCommitLoaderError.gitUnavailable(message)
+            case .gitFailed(let message):
+                throw GitCommitLoaderError.gitFailed(message)
+            }
         }
-        process.waitUntilExit()
-
-        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-        let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
-
-        guard process.terminationStatus == 0 else {
-            let message = String(data: errorData, encoding: .utf8) ?? "unknown error"
-            throw GitCommitLoaderError.gitFailed(message)
-        }
-        return String(data: outputData, encoding: .utf8) ?? ""
     }
 
     // MARK: - Parse

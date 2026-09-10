@@ -105,7 +105,8 @@ struct WorkingTreeStatusView: View {
 
     var body: some View {
         Group {
-            if projects.currentProject != nil {
+            if let project = projects.currentProject,
+               FileManager.default.fileExists(atPath: project.url.path) {
                 summaryRow
             }
         }
@@ -347,7 +348,18 @@ struct WorkingTreeStatusView: View {
         }
 
         let url = project.url
-        Task.detached(priority: .userInitiated) {
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            isLoading = false
+            isClean = false
+            changeCount = 0
+            branch = nil
+            trackingStatus = GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            return
+        }
+
+        // GitProcessRunner 是同步 CLI 调用；工作区状态属于后台刷新，使用
+        // utility 优先级可避免高优先级 Swift 任务等待运行器的 stderr 读取队列。
+        Task.detached(priority: .utility) {
             let statusResult = Result { try git.loadStatus(in: url) }
             let tracking = git.remoteTrackingStatus(in: url)
             await MainActor.run {

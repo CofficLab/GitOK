@@ -10,7 +10,7 @@ import SwiftUI
 /// - 图标 + 分支名 + chevron 的胶囊按钮，圆角背景随悬停 / 展开高亮；
 /// - 点击弹出 `popover`（而非原生 Menu），弹层内容为
 ///   `BranchPickerPopoverView`（搜索 + 新建 + 分支列表，对齐项目管理弹层）；
-/// - 无项目 / 非 git 仓库时显示 "No Branch" 并禁用点击。
+/// - 无项目 / 项目在磁盘不存在时隐藏整个控件。
 public struct BranchPickerView: View {
     let projects: any ProjectProviding
     let git: any GitProviding
@@ -25,6 +25,13 @@ public struct BranchPickerView: View {
     }
 
     public var body: some View {
+        if viewModel.currentProjectURL != nil {
+            branchPickerContent
+        }
+    }
+
+    /// 分支选择器的实际内容。
+    private var branchPickerContent: some View {
         Button {
             isPopoverPresented = true
         } label: {
@@ -55,7 +62,6 @@ public struct BranchPickerView: View {
             )
         }
         .buttonStyle(.plain)
-        .disabled(viewModel.currentProjectURL == nil)
         .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
             BranchPickerPopoverView(
                 projects: projects,

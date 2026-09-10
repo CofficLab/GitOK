@@ -33,29 +33,14 @@ public enum GitProcessRunner {
         in repository: URL,
         successExitCodes: Set<Int32> = [0]
     ) throws -> String {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.arguments = arguments
-        process.currentDirectoryURL = repository
-
-        let pipe = Pipe()
-        let errorPipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = errorPipe
-
-        do {
-            try process.run()
-        } catch {
-            throw Error.gitUnavailable(error.localizedDescription)
-        }
-        process.waitUntilExit()
-
-        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-        let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
-
-        guard successExitCodes.contains(process.terminationStatus) else {
-            let message = Self.decode(errorData, fallback: "unknown error")
-            throw Error.gitFailed(message)
+        var outputData = Data()
+        try stream(
+            arguments,
+            in: repository,
+            successExitCodes: successExitCodes
+        ) { data in
+            outputData.append(data)
+            return true
         }
         return Self.decode(outputData)
     }
@@ -90,10 +75,19 @@ public enum GitProcessRunner {
         let errorGroup = DispatchGroup()
         let errorData = DataBox()
         errorGroup.enter()
-        DispatchQueue.global(qos: .utility).async {
+        // 不要把排水任务放到调用方可能正在占满的全局队列中。
+        // Git 查询通常从 utility 任务启动；如果排水任务也进入 utility，
+        // 所有 worker 都可能阻塞在下面的 errorGroup.wait()，导致排水任务永远
+        // 无法获得 worker，最终表现为所有 Git 加载器无限 loading。
+        let errorThread = Thread {
             errorData.value = errorPipe.fileHandleForReading.readDataToEndOfFile()
             errorGroup.leave()
         }
+        // The caller may be a user-initiated task and waits for this thread
+        // below. Match that QoS so the wait cannot be reported as a priority
+        // inversion against a default-priority stderr reader.
+        errorThread.qualityOfService = .userInitiated
+        errorThread.start()
 
         var shouldStop = false
         while true {

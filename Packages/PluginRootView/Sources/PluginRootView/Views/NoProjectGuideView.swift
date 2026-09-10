@@ -8,8 +8,7 @@ import SwiftUI
 
 /// 无项目时的全屏引导视图。
 ///
-/// 当 `ProjectProviding.projects` 为空时由 RootViewPlugin 通过 overlay
-/// 展示在根视图最上层，引导用户添加或克隆仓库。
+/// 当根工作区没有当前项目时显示在工作区区域，引导用户添加或克隆仓库。
 @MainActor
 struct NoProjectGuideView: View {
     let projects: any ProjectProviding

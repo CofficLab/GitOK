@@ -5,12 +5,14 @@ import PluginActivityStatus
 import PluginCommand
 import PluginCommitDetail
 import PluginActivityHeatmap
+import PluginProjectLanguages
 import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
 import PluginCloneRepository
 import PluginRootView
+import PluginRailView
 import PluginGitDiff
 import PluginGitCLI
 import PluginGitLibGit2
@@ -78,12 +80,14 @@ public struct DefaultPluginFactory: PluginFactory {
             GitLibGit2Plugin(),
             try! StorageSuperPlugin(),
             RootViewPlugin(),
+            RailViewPlugin(),
             CommandPlugin(),
             ProjectsPlugin(),
             CloneRepositoryPlugin(),
             WorktreeStatusPlugin(),
             CommitListPlugin(),
             ActivityHeatmapPlugin(),
+            ProjectLanguagesPlugin(),
             CommitDetailPlugin(),
             CommitFormPlugin(),
             GitDiffPlugin(),

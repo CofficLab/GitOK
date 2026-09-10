@@ -8,6 +8,7 @@ import ProviderGit
 import ProviderGitUser
 import ProviderGitRepositoryWatch
 import ProviderProjects
+import ProviderProjectLanguages
 import ProviderSettingView
 import ProviderWorkspaceScene
 import SwiftUI
@@ -51,6 +52,8 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     private var sceneObserver: WorktreeCleanSceneObserver?
     private var activityHeatmapObserver: WorktreeCleanActivityHeatmapObserver?
     private var activityHeatmapViewModel: WorktreeCleanActivityHeatmapViewModel?
+    private var projectLanguagesObserver: WorktreeCleanProjectLanguagesObserver?
+    private var projectLanguagesViewModel: WorktreeCleanProjectLanguagesViewModel?
 
     public init() {}
 
@@ -152,6 +155,18 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             )
         }
 
+        let projectLanguagesViewModel = WorktreeCleanProjectLanguagesViewModel()
+        self.projectLanguagesViewModel = projectLanguagesViewModel
+        if let projectLanguagesProvider = kernel.resolveProvider((any ProjectLanguagesProviding).self) {
+            let projectLanguagesCapability = WorktreeCleanProjectLanguagesCapabilityAdapter(
+                provider: projectLanguagesProvider
+            )
+            self.projectLanguagesObserver = WorktreeCleanProjectLanguagesObserver(
+                capability: projectLanguagesCapability,
+                viewModel: projectLanguagesViewModel
+            )
+        }
+
         let openUserSettings: (() -> Void)?
         if kernel.resolveProvider((any SettingViewProviding).self) != nil {
             openUserSettings = {
@@ -172,6 +187,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
                     WorktreeCleanView(
                         viewModel: viewModel,
                         activityHeatmapViewModel: activityViewModel,
+                        projectLanguagesViewModel: projectLanguagesViewModel,
                         git: git,
                         openUserSettings: openUserSettings
                     )
@@ -188,6 +204,9 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         activityHeatmapObserver?.cancel()
         activityHeatmapObserver = nil
         activityHeatmapViewModel = nil
+        projectLanguagesObserver?.cancel()
+        projectLanguagesObserver = nil
+        projectLanguagesViewModel = nil
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil

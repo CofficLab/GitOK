@@ -411,13 +411,17 @@ struct CommitRailView: View {
 
     @ViewBuilder
     private var content: some View {
-        if projects.currentProject == nil {
-            AppEmptyState(
-                icon: "folder",
-                title: LumiPluginLocalization.string("Select a Project", bundle: .module),
-                description: LumiPluginLocalization.string("Choose a project from the sidebar to see its commits.", bundle: .module)
-            )
-        } else if isLoading && commits.isEmpty {
+        if let project = projects.currentProject,
+           FileManager.default.fileExists(atPath: project.url.path) {
+            commitListContent(for: project)
+        } else {
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private func commitListContent(for project: Project) -> some View {
+        if isLoading && commits.isEmpty {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if commits.isEmpty, let loadError {
@@ -1519,7 +1523,9 @@ struct CommitRailView: View {
         loadError = nil
 
         let url = project.url
-        Task.detached(priority: .userInitiated) {
+        // 首屏提交列表和未推送状态都是后台读取，避免与 GitProcessRunner
+        // 的 utility 管道读取形成 QoS 优先级反转。
+        Task.detached(priority: .utility) {
             let commitsResult = Result {
                 try git.loadCommits(
                     in: url,
@@ -1527,10 +1533,10 @@ struct CommitRailView: View {
                     offset: 0
                 )
             }
-            // 获取未推送的 commit 哈希（无 upstream 时返回空集合）
-            let unpushedResult = Result { try git.unpushedCommitHashes(in: url) }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                // 提交历史是列表本身的唯一依赖；历史读取完成后立即结束
+                // loading，不等待未推送状态查询。
                 isLoading = false
                 switch commitsResult {
                 case .success(let loaded):
@@ -1559,6 +1565,14 @@ struct CommitRailView: View {
                 case .failure(let error):
                     loadError = error.localizedDescription
                 }
+            }
+        }
+
+        // 未推送状态仅用于标记提交，不应阻塞提交列表首次展示。
+        Task.detached(priority: .utility) {
+            let unpushedResult = Result { try git.unpushedCommitHashes(in: url) }
+            await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else { return }
                 if case .success(let hashes) = unpushedResult {
                     unpushedHashes = hashes
                 }
