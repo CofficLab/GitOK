@@ -210,7 +210,7 @@ struct WorktreeChangesView: View {
 
                 Image(systemName: statusIcon(entry))
                     .font(.system(size: 11))
-                    .foregroundStyle(statusColor(entry))
+                    .foregroundStyle(CommitDetailChangeColors.worktreeStatus(entry))
                     .frame(width: 16)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -274,6 +274,12 @@ struct WorktreeChangesView: View {
                 }
             }
         }
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(CommitDetailChangeColors.worktreeStatus(entry))
+                .frame(width: 3)
+                .allowsHitTesting(false)
+        }
     }
 
     // MARK: - Status Helpers
@@ -289,12 +295,6 @@ struct WorktreeChangesView: View {
         case "C": return "doc.on.doc"
         default: return "circle"
         }
-    }
-
-    private func statusColor(_ entry: GitStatusEntry) -> Color {
-        if entry.isUntracked { return theme.warning }
-        if entry.isStaged { return theme.success }
-        return theme.error
     }
 
     private func statusLabel(_ entry: GitStatusEntry) -> String {

@@ -249,6 +249,7 @@ struct FileChangeRow: View {
         AppListRow(isSelected: isSelected, action: onSelect) {
             HStack(spacing: 8) {
                 statusIcon
+                    .foregroundStyle(CommitDetailChangeColors.commitStatus(change.status))
                     .frame(width: 16)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -273,6 +274,12 @@ struct FileChangeRow: View {
             .padding(.vertical, 3)
             .frame(minHeight: 34)
         }
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(CommitDetailChangeColors.commitStatus(change.status))
+                .frame(width: 3)
+                .allowsHitTesting(false)
+        }
     }
 
     @ViewBuilder
@@ -280,22 +287,16 @@ struct FileChangeRow: View {
         switch change.status {
         case .added:
             Image(systemName: "plus.circle.fill")
-                .foregroundStyle(theme.success)
         case .deleted:
             Image(systemName: "minus.circle.fill")
-                .foregroundStyle(theme.error)
         case .modified:
             Image(systemName: "pencil.circle.fill")
-                .foregroundStyle(theme.info)
         case .renamed, .copied:
             Image(systemName: "arrow.right.circle.fill")
-                .foregroundStyle(theme.info)
         case .unmerged:
             Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(theme.error)
         case .unknown:
             Image(systemName: "questionmark.circle")
-                .foregroundStyle(theme.textTertiary)
         }
     }
 }
