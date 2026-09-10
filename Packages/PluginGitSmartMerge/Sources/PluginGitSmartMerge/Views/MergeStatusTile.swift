@@ -3,6 +3,7 @@ import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 合并状态图标：点击弹出分支合并表单（对齐旧版 MergeStatusTile）。
@@ -12,10 +13,8 @@ public struct MergeStatusTile: View {
     let storageDirectory: URL?
     @StateObject private var observation: ProjectObservationModel
     @State private var isPresented = false
-    @State private var isHovered = false
 
     @LumiTheme private var theme: LumiUITheme
-    @LumiMotionPreferenceReader private var motionPreference
 
     public init(
         projects: any ProjectProviding,
@@ -31,43 +30,16 @@ public struct MergeStatusTile: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Button {
-                    isPresented.toggle()
-                } label: {
-                    Image(systemName: "arrow.trianglehead.merge")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(isHovered ? theme.info : theme.statusBarItemForeground)
-                        .frame(width: 28, height: 24)
-                        .background {
-                            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                .fill(isHovered ? theme.statusBarItemBackground : Color.clear)
-                        }
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                .stroke(
-                                    isHovered ? theme.info.opacity(0.24) : Color.clear,
-                                    lineWidth: 0.75
-                                )
-                        }
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .scaleEffect(
-                    isHovered && motionPreference.allowsMotion
-                        ? LumiMotion.hoverScale
-                        : 1
+                AppStatusBarTile(
+                    systemImage: "arrow.trianglehead.merge",
+                    tint: theme.info,
+                    iconSize: 13,
+                    hoverScale: LumiMotion.hoverScale,
+                    action: { isPresented.toggle() }
                 )
-                .onHover { hovering in
-                    LumiMotion.animate(
-                        LumiMotion.enabled(LumiMotion.hover, preference: motionPreference)
-                    ) {
-                        isHovered = hovering
-                    }
-                }
                 .accessibilityLabel(
                     GitSmartMergeLocalization.string("Merge branches", bundle: .module)
                 )
-                .help(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
                 .popover(isPresented: $isPresented) {
                     MergeForm(
                         projects: projects,
