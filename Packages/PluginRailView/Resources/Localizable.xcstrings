@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Rail" : {
+      "comment" : "Debug badge label for the rail view",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "侧栏"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
