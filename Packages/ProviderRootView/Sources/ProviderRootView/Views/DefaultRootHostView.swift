@@ -62,7 +62,7 @@ struct DefaultRootHostView: View {
             // 窗口底部状态栏（工具栏的对称位置）。
             if let statusBarView = provider.statusBarView {
                 statusBarView
-                    .debugBlockBadge(LumiPluginLocalization.string("Status Bar", bundle: .module))
+                    .debugBlockBadge(LumiPluginLocalization.string("Status Bar", bundle: .module), alignment: .bottomLeading)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
