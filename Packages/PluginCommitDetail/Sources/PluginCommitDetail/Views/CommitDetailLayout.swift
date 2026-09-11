@@ -114,61 +114,58 @@ struct CommitDetailLayout: View {
                 }
                 // 每一行只是一个稳定索引；真正的 GitFileChange 按页按需取回。
                 // 未加载的行保留固定高度，避免分页返回时滚动位置跳动。
-                ZStack(alignment: .top) {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        LazyVStack(spacing: 0) {
-                            ForEach(0..<(filePageStore.totalCount ?? 0), id: \.self) { index in
-                                Group {
-                                    if let change = filePageStore.change(at: index) {
-                                        FileChangeRow(
-                                            change: change,
-                                            isSelected: selectedFile == change.path
-                                        ) {
-                                            onSelectFile(change.path)
-                                        }
-                                        .transition(
-                                            animatedFilePaths.contains(change.path)
-                                                ? .asymmetric(
-                                                    insertion: .move(edge: .top).combined(with: .opacity),
-                                                    removal: .opacity
-                                                )
-                                                : .identity
+                // 滚动由内容区整体容器承担，分页懒加载靠行可见性继续触发。
+                LazyVStack(spacing: 0) {
+                    ForEach(0..<(filePageStore.totalCount ?? 0), id: \.self) { index in
+                        Group {
+                            if let change = filePageStore.change(at: index) {
+                                FileChangeRow(
+                                    change: change,
+                                    isSelected: selectedFile == change.path
+                                ) {
+                                    onSelectFile(change.path)
+                                }
+                                .transition(
+                                    animatedFilePaths.contains(change.path)
+                                        ? .asymmetric(
+                                            insertion: .move(edge: .top).combined(with: .opacity),
+                                            removal: .opacity
                                         )
-                                    } else {
-                                        FileChangePlaceholderRow()
-                                    }
-                                }
-                                .onAppear {
-                                    let pageIndex = index / CommitFilePageStore.pageSize
-                                    let positionInPage = index % CommitFilePageStore.pageSize
-                                    filePageStore.requestPage(at: pageIndex)
-                                    // 进入一页的头尾时各预取相邻页，向上和向下
-                                    // 滚动都能减少占位行停留时间。
-                                    if positionInPage < 10 {
-                                        filePageStore.requestPage(at: pageIndex - 1)
-                                    }
-                                    if positionInPage >= CommitFilePageStore.pageSize - 10 {
-                                        filePageStore.requestPage(at: pageIndex + 1)
-                                    }
-                                }
-                                if index + 1 < (filePageStore.totalCount ?? 0) {
-                                    AppDivider()
-                                }
+                                        : .identity
+                                )
+                            } else {
+                                FileChangePlaceholderRow()
                             }
                         }
-                        .padding(.vertical, 2)
-                    }
-                    if filePageStore.isLoading {
-                        VStack(spacing: 3) {
-                            ProgressView()
-                                .progressViewStyle(.linear)
-                                .frame(height: 2)
-                            Text(loc("Loading more files..."))
-                                .font(.appMicro)
-                                .foregroundStyle(theme.textTertiary)
+                        .onAppear {
+                            let pageIndex = index / CommitFilePageStore.pageSize
+                            let positionInPage = index % CommitFilePageStore.pageSize
+                            filePageStore.requestPage(at: pageIndex)
+                            // 进入一页的头尾时各预取相邻页，向上和向下
+                            // 滚动都能减少占位行停留时间。
+                            if positionInPage < 10 {
+                                filePageStore.requestPage(at: pageIndex - 1)
+                            }
+                            if positionInPage >= CommitFilePageStore.pageSize - 10 {
+                                filePageStore.requestPage(at: pageIndex + 1)
+                            }
                         }
-                            .padding(.horizontal, 2)
+                        if index + 1 < (filePageStore.totalCount ?? 0) {
+                            AppDivider()
+                        }
                     }
+                }
+                .padding(.vertical, 2)
+                if filePageStore.isLoading {
+                    VStack(spacing: 3) {
+                        ProgressView()
+                            .progressViewStyle(.linear)
+                            .frame(height: 2)
+                        Text(loc("Loading more files..."))
+                            .font(.appMicro)
+                            .foregroundStyle(theme.textTertiary)
+                    }
+                        .padding(.horizontal, 2)
                 }
             }
         }
