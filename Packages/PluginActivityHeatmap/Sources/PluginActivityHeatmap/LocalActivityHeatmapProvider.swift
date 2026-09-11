@@ -18,7 +18,6 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
     )
 
     typealias CommitLoader = @Sendable (URL, Int, Int) throws -> [GitCommit]
-    typealias StatusLoader = @Sendable (URL) throws -> GitWorktreeStatus
 
     private nonisolated static let cacheFileName = "activity-heatmap.json"
     // Keep Git CLI output below the process pipe buffer. GitCommitLoader waits
@@ -28,7 +27,6 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
 
     private let directory: URL
     private let loadCommits: CommitLoader
-    private let loadStatus: StatusLoader
     private let calendar: Calendar
     private let now: @Sendable () -> Date
     private var refreshToken = 0
@@ -42,8 +40,7 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         git: (any GitProviding)? = nil,
         calendar: Calendar = .current,
         now: @escaping @Sendable () -> Date = Date.init,
-        commitLoader: CommitLoader? = nil,
-        statusLoader: StatusLoader? = nil
+        commitLoader: CommitLoader? = nil
     ) {
         self.directory = directory
         self.calendar = calendar
@@ -51,10 +48,6 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         self.loadCommits = commitLoader ?? { [git] repository, limit, offset in
             guard let git else { throw GitProviderError.noBackendAvailable }
             return try git.loadAllCommits(in: repository, limit: limit, offset: offset)
-        }
-        self.loadStatus = statusLoader ?? { [git] repository in
-            guard let git else { throw GitProviderError.noBackendAvailable }
-            return try git.loadStatus(in: repository)
         }
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     }
@@ -85,19 +78,13 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         // needs a visible loading state.
         setLoading(cachedSnapshot == nil)
         let loadCommits = self.loadCommits
-        let loadStatus = self.loadStatus
         let calendar = self.calendar
         let now = self.now()
         Task.detached(priority: .utility) {
             let result: RefreshResult
             do {
-                let status = try loadStatus(repository)
-                guard status.isClean else {
-                    result = RefreshResult(snapshot: nil)
-                    await self.apply(result, token: token)
-                    return
-                }
-
+                // 工作区是否有未提交变更不影响提交活跃度统计：
+                // 有变更时同样生成热力图快照。
                 let commits = try Self.loadRecentCommits(
                     in: repository,
                     now: now,

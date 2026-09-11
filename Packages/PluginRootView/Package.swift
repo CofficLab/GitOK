@@ -39,6 +39,7 @@ let package = Package(
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
             ],
             path: "Tests/PluginRootViewTests"
         ),

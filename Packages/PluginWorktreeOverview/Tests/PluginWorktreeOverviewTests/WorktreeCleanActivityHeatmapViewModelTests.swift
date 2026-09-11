@@ -1,7 +1,7 @@
 import Foundation
 import ProviderActivityHeatmap
 import Testing
-@testable import PluginWorktreeClean
+@testable import PluginWorktreeOverview
 
 @MainActor
 @Suite("WorktreeCleanActivityHeatmapViewModel")

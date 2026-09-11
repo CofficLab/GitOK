@@ -49,6 +49,7 @@ let package = Package(
             dependencies: [
                 "PluginCommitDetail",
                 .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
             ],
             path: "Tests/PluginCommitDetailTests"
         ),

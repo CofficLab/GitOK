@@ -69,13 +69,13 @@ struct ProjectMissingView: View {
 struct RootWorkspaceUnavailableView: View {
     @ObservedObject var model: RootWorkspaceModel
     let projects: any ProjectProviding
-    let cloneProvider: (any CloneRepositoryProviding)?
+    let cloneRepository: (any CloneRepositoryProviding)?
 
     var body: some View {
         Group {
             switch model.state {
             case .noProject:
-                NoProjectGuideView(projects: projects, cloneProvider: cloneProvider)
+                NoProjectGuideView(projects: projects)
             case .projectMissing:
                 if let project = model.project {
                     ProjectMissingView(
@@ -83,7 +83,13 @@ struct RootWorkspaceUnavailableView: View {
                         onRemoveProject: { projects.removeProject(id: project.id) }
                     )
                 } else {
-                    NoProjectGuideView(projects: projects, cloneProvider: cloneProvider)
+                    NoProjectGuideView(projects: projects)
+                }
+            case .cloning:
+                if let project = model.project, let cloneRepository {
+                    CloneInProgressView(project: project, cloneRepository: cloneRepository)
+                } else {
+                    NoProjectGuideView(projects: projects)
                 }
             case .ready:
                 EmptyView()

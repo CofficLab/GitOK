@@ -19,7 +19,7 @@ import SwiftUI
 /// 尺寸约定：只有 commit 详情（`CommitDetailLayout`）由本视图统一用
 /// `.frame(maxHeight: .infinity)` 弹性填充；工作区模式交给
 /// `WorktreeChangesView` 自行决定尺寸——工作区干净时它渲染 `EmptyView`
-/// 不占布局，干净状态视图由 `PluginWorktreeClean` 插件作为另一块内容展示。
+/// 不占布局，干净状态视图由 `PluginWorktreeOverview` 插件作为另一块内容展示。
 struct CommitDetailView: View {
     @ObservedObject var viewModel: CommitDetailViewModel
     let git: any GitProviding

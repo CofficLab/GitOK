@@ -11,7 +11,7 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
     let descriptor = GitBackendCatalog.cli
 
     var isAvailable: Bool {
-        FileManager.default.isExecutableFile(atPath: "/usr/bin/git")
+        GitProcessRunner.isAvailable
     }
 
     func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
@@ -238,6 +238,32 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func clone(remoteURL: String, destination: URL) throws -> URL {
         try GitCloneOperation.clone(remoteURL: remoteURL, destination: destination)
+    }
+
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void
+    ) throws -> URL {
+        try GitCloneOperation.clone(
+            remoteURL: remoteURL,
+            destination: destination,
+            onProgress: progress
+        )
+    }
+
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void,
+        cancellation: GitProcessCancellation?
+    ) throws -> URL {
+        try GitCloneOperation.clone(
+            remoteURL: remoteURL,
+            destination: destination,
+            onProgress: progress,
+            cancellation: cancellation
+        )
     }
 
     func hasStagedChanges(in repository: URL) throws -> Bool {

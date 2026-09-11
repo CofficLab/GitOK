@@ -3,9 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "ProviderCloneRepository",
-    platforms: [
-        .macOS(.v14),
-    ],
+    platforms: [.macOS(.v14)],
     products: [
         .library(
             name: "ProviderCloneRepository",
@@ -16,6 +14,11 @@ let package = Package(
         .target(
             name: "ProviderCloneRepository",
             path: "Sources/ProviderCloneRepository"
+        ),
+        .testTarget(
+            name: "ProviderCloneRepositoryTests",
+            dependencies: ["ProviderCloneRepository"],
+            path: "Tests/ProviderCloneRepositoryTests"
         ),
     ]
 )

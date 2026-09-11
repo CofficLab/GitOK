@@ -3,6 +3,7 @@ import KernelCore
 #if os(macOS)
 import PluginActivityStatus
 import PluginCommand
+import PluginCloneRepository
 import PluginCommitDetail
 import PluginActivityHeatmap
 import PluginProjectLanguages
@@ -10,7 +11,6 @@ import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
-import PluginCloneRepository
 import PluginRootView
 import PluginRailView
 import PluginGitDiff
@@ -60,7 +60,7 @@ import PluginStatusBar
 import PluginStorage
 import PluginToast
 import PluginThemePack
-import PluginWorktreeClean
+import PluginWorktreeOverview
 import PluginWorktreeStatus
 #endif
 
@@ -79,11 +79,11 @@ public struct DefaultPluginFactory: PluginFactory {
             GitCLIPlugin(),
             GitLibGit2Plugin(),
             try! StorageSuperPlugin(),
+            CloneRepositoryPlugin(),
             RootViewPlugin(),
             RailViewPlugin(),
             CommandPlugin(),
             ProjectsPlugin(),
-            CloneRepositoryPlugin(),
             WorktreeStatusPlugin(),
             CommitListPlugin(),
             ActivityHeatmapPlugin(),

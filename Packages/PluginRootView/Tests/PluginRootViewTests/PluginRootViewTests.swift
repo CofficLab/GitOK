@@ -1,6 +1,7 @@
 import Foundation
 import KernelCore
 import KitGit
+import ProviderCloneRepository
 import ProviderProjects
 import ProviderRootView
 import SwiftUI
@@ -65,6 +66,71 @@ final class PluginRootViewTests: XCTestCase {
         private let onCancel: () -> Void
         init(onCancel: @escaping () -> Void) { self.onCancel = onCancel }
         func cancel() { onCancel() }
+    }
+
+    @MainActor
+    private final class MockCloneRepository: CloneRepositoryProviding {
+        var activeDestinations: Set<URL> = []
+        private var observers: [(id: UUID, callback: (CloneRepositoryEvent) -> Void)] = []
+
+        var tasks: [CloneTask] {
+            activeDestinations.map {
+                CloneTask(
+                    remoteURL: "https://example.com/repository.git",
+                    destination: $0,
+                    repositoryName: "repository",
+                    status: .cloning
+                )
+            }
+        }
+
+        func isCloning(for projectURL: URL) -> Bool {
+            activeDestinations.contains(projectURL.standardizedFileURL)
+        }
+
+        func task(for destination: URL) -> CloneTask? {
+            tasks.first { $0.destination.standardizedFileURL == destination.standardizedFileURL }
+        }
+
+        func enqueue(remoteURL: String, destination: URL, repositoryName: String) throws -> CloneTask {
+            fatalError("Not used by this test double")
+        }
+
+        func cancel(taskID: UUID) {}
+
+        func retry(taskID: UUID) throws -> CloneTask {
+            fatalError("Not used by this test double")
+        }
+
+        @discardableResult
+        func addObserver(
+            _ callback: @escaping (CloneRepositoryEvent) -> Void
+        ) -> any CloneRepositoryObserverHandle {
+            let id = UUID()
+            observers.append((id: id, callback: callback))
+            return MockCloneHandle { [weak self] in
+                self?.observers.removeAll { $0.id == id }
+            }
+        }
+
+        func notify(_ event: CloneRepositoryEvent) {
+            for observer in observers {
+                observer.callback(event)
+            }
+        }
+    }
+
+    @MainActor
+    private final class MockCloneHandle: CloneRepositoryObserverHandle {
+        private let onCancel: () -> Void
+
+        init(onCancel: @escaping () -> Void) {
+            self.onCancel = onCancel
+        }
+
+        func cancel() {
+            onCancel()
+        }
     }
 
     // MARK: - 基本元数据
@@ -214,6 +280,59 @@ final class PluginRootViewTests: XCTestCase {
         XCTAssertEqual(
             plugin.provider.workspaceState,
             .projectMissing(path: "/definitely/missing/repo")
+        )
+    }
+
+    /// 目标目录尚未创建但存在 active clone 任务 → 根布局显示克隆中视图。
+    func testOnBootSetsCloningWorkspaceState() throws {
+        let kernel = KernelCoreContainer()
+        let mockProjects = MockProjects()
+        let project = Project(
+            url: URL(fileURLWithPath: "/definitely/missing/clone-repository"),
+            title: "Clone repository"
+        )
+        mockProjects.projects = [project]
+        mockProjects.currentProject = project
+        let mockCloneRepository = MockCloneRepository()
+        mockCloneRepository.activeDestinations = [project.url]
+
+        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any ProjectProviding).self, mockProjects)
+        try kernel.registerProvider((any CloneRepositoryProviding).self, mockCloneRepository)
+
+        let plugin = RootViewPlugin()
+        try plugin.onBoot(kernel: kernel)
+
+        XCTAssertEqual(plugin.provider.workspaceState, .cloning)
+    }
+
+    /// clone 结束后任务事件驱动根布局重新判断目录状态。
+    func testCloneEventUpdatesWorkspaceState() throws {
+        let kernel = KernelCoreContainer()
+        let mockProjects = MockProjects()
+        let project = Project(
+            url: URL(fileURLWithPath: "/definitely/missing/clone-repository"),
+            title: "Clone repository"
+        )
+        mockProjects.projects = [project]
+        mockProjects.currentProject = project
+        let mockCloneRepository = MockCloneRepository()
+        mockCloneRepository.activeDestinations = [project.url]
+
+        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any ProjectProviding).self, mockProjects)
+        try kernel.registerProvider((any CloneRepositoryProviding).self, mockCloneRepository)
+
+        let plugin = RootViewPlugin()
+        try plugin.onBoot(kernel: kernel)
+        XCTAssertEqual(plugin.provider.workspaceState, .cloning)
+
+        mockCloneRepository.activeDestinations.removeAll()
+        mockCloneRepository.notify(.tasksChanged)
+
+        XCTAssertEqual(
+            plugin.provider.workspaceState,
+            .projectMissing(path: project.url.path)
         )
     }
 

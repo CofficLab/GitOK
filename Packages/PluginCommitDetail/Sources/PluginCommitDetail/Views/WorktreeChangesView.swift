@@ -15,7 +15,7 @@ private func loc(_ key: String) -> String {
 /// 选中文件时通过插件注入的 intent 写入 Provider，右侧 git diff 插件据此展示 diff。
 ///
 /// 工作区干净（无未提交变更）时不渲染任何内容、不占布局——「干净状态视图」
-/// （仓库信息 + Git 用户配置）已独立到 `PluginWorktreeClean` 插件，作为主内容区
+/// （仓库信息 + Git 用户配置）已独立到 `PluginWorktreeOverview` 插件，作为主内容区
 /// 的另一块贡献展示，两个插件的内容块互斥。
 ///
 /// 外部仓库数据变化（提交 / 推送 / 分支切换）由 `CommitDetailObserver` 翻译成
@@ -52,11 +52,9 @@ struct WorktreeChangesView: View {
     var body: some View {
         Group {
             if isLoading && entries.isEmpty && !hasLoadedSnapshot {
-                ContentLoadingIndicator(loc("Loading workspace changes..."))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background {
-                        theme.surface
-                    }
+                // 骨架占位由内容区整体容器滚动，本视图只平铺内容。
+                WorktreeChangesSkeletonView()
+                    .frame(maxWidth: .infinity)
             } else if let loadError {
                 AppEmptyState(
                     icon: "exclamationmark.triangle",
@@ -69,7 +67,7 @@ struct WorktreeChangesView: View {
                 }
             } else if entries.isEmpty {
                 // 工作区干净（或未打开项目）：不渲染任何内容、不占布局，
-                // 干净状态视图由 PluginWorktreeClean 插件独立展示。
+                // 干净状态视图由 PluginWorktreeOverview 插件独立展示。
                 EmptyView()
             } else {
                 VStack(spacing: 0) {
@@ -84,19 +82,18 @@ struct WorktreeChangesView: View {
                             .background(theme.error.opacity(0.08))
                     }
                     // 与其他列表（CommitRailView / CommitDetailLayout）一致：
-                    // ScrollView + LazyVStack + AppListRow（自带选中 / hover 背景与描边），
-                    // 行间用 AppDivider 分隔。
-                    ScrollView(.vertical, showsIndicators: false) {
-                        LazyVStack(spacing: 0) {
-                            ForEach(entries) { entry in
-                                fileRow(entry)
-                                if entry.id != entries.last?.id {
-                                    AppDivider()
-                                }
+                    // LazyVStack + AppListRow（自带选中 / hover 背景与描边），
+                    // 行间用 AppDivider 分隔。滚动由内容区整体容器承担，
+                    // 本视图只负责平铺列表（懒加载保持生效）。
+                    LazyVStack(spacing: 0) {
+                        ForEach(entries) { entry in
+                            fileRow(entry)
+                            if entry.id != entries.last?.id {
+                                AppDivider()
                             }
                         }
-                        .padding(.vertical, 4)
                     }
+                    .padding(.vertical, 4)
                     if !selectedPaths.isEmpty {
                         batchActionBar
                     }
@@ -208,11 +205,6 @@ struct WorktreeChangesView: View {
                 .disabled(isActionInProgress)
                 .help(selectedPaths.contains(entry.path) ? loc("Clear Selection") : loc("Select File"))
 
-                Image(systemName: statusIcon(entry))
-                    .font(.system(size: 11))
-                    .foregroundStyle(CommitDetailChangeColors.worktreeStatus(entry))
-                    .frame(width: 16)
-
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.path)
                         .font(DesignTokens.Typography.caption1)
@@ -220,10 +212,17 @@ struct WorktreeChangesView: View {
                         .lineLimit(1)
                         .truncationMode(.middle)
 
-                    Text(statusLabel(entry))
-                        .font(DesignTokens.Typography.caption2)
-                        .foregroundStyle(theme.textTertiary)
-                        .lineLimit(1)
+                    HStack(spacing: 5) {
+                        Image(systemName: statusIcon(entry))
+                            .font(.system(size: 11))
+                            .foregroundStyle(CommitDetailChangeColors.worktreeStatus(entry))
+                            .frame(width: 16)
+
+                        Text(statusLabel(entry))
+                            .font(DesignTokens.Typography.caption2)
+                            .foregroundStyle(theme.textTertiary)
+                            .lineLimit(1)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -234,7 +233,7 @@ struct WorktreeChangesView: View {
                         ContentLoadingIndicator(loc("Unstaging..."), controlSize: .small)
                     } else {
                         AppIconButton(
-                            systemImage: "minus.rectangle.on.folder",
+                            systemImage: "minus.circle",
                             label: loc("Unstage"),
                             tint: theme.primary,
                             size: .compact
@@ -248,7 +247,7 @@ struct WorktreeChangesView: View {
                         ContentLoadingIndicator(loc("Staging..."), controlSize: .small)
                     } else {
                         AppIconButton(
-                            systemImage: "plus.rectangle.on.folder",
+                            systemImage: "plus.circle",
                             label: loc("Stage"),
                             tint: theme.primary,
                             size: .compact
@@ -352,7 +351,7 @@ struct WorktreeChangesView: View {
 
             AppButton(
                 loc("Stage"),
-                systemImage: "plus.rectangle.on.folder",
+                systemImage: "plus.circle",
                 style: .secondary,
                 size: .small
             ) {
@@ -362,7 +361,7 @@ struct WorktreeChangesView: View {
 
             AppButton(
                 loc("Unstage"),
-                systemImage: "minus.rectangle.on.folder",
+                systemImage: "minus.circle",
                 style: .secondary,
                 size: .small
             ) {

@@ -2,12 +2,14 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderActivity
 import ProviderCloneRepository
 import ProviderGit
 import ProviderProjects
 import ProviderSettingView
 import ProviderSidebar
 import ProviderStorage
+import ProviderToast
 import ProviderToolbar
 import ProviderDocsView
 
@@ -93,13 +95,13 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
 
         // 2) 项目列表侧边栏：用 ProjectSidebarProviding 替换默认实现。
         let projects = kernel.resolveProvider((any ProjectProviding).self) ?? projectService
-        // 克隆仓库能力是可选的；先检查注册表，避免缺少可选插件时把正常
-        // 的降级路径记录成 onBoot 错误。
-        let cloneProvider = kernel.isProviderRegistered((any CloneRepositoryProviding).self)
-            ? kernel.resolveProvider((any CloneRepositoryProviding).self)
-            : nil
-
-        let sidebar = ProjectSidebarProviding(projects: projects, cloneProvider: cloneProvider)
+        let sidebar = ProjectSidebarProviding(
+            projects: projects,
+            git: kernel.resolveProvider((any GitProviding).self),
+            activity: kernel.resolveProvider((any ActivityProviding).self),
+            toast: kernel.resolveProvider((any ToastProviding).self),
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+        )
         self.sidebarService = sidebar
         kernel.unregisterProvider((any SidebarProviding).self)
         try kernel.registerProvider((any SidebarProviding).self, sidebar)

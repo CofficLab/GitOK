@@ -74,22 +74,18 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             Self.logger.info("\(self.t)Replaced default RootViewProviding with GitOKRootViewProvider")
         }
 
-        // 解析项目服务与克隆仓库能力。
+        // 解析项目服务。
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip no-project guide")
             return
         }
-        // 克隆入口是可选能力；未启用克隆插件时保持无入口，不产生误报日志。
-        let cloneProvider = kernel.isProviderRegistered((any CloneRepositoryProviding).self)
-            ? kernel.resolveProvider((any CloneRepositoryProviding).self)
-            : nil
 
         provider.setWorkspaceUnavailableView(
             AnyView(
                 RootWorkspaceUnavailableView(
                     model: workspaceModel,
                     projects: projects,
-                    cloneProvider: cloneProvider
+                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
                 )
             )
         )
@@ -97,12 +93,19 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         // 项目列表 / 当前选择发生变化时同步更新根布局门控。
         observer = RootViewProjectObserver(
             projects: projects,
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self),
             onWorkspaceChanged: { [weak self, weak projects] in
                 guard let self, let projects else { return }
-                self.updateWorkspaceState(projects: projects)
+                self.updateWorkspaceState(
+                    projects: projects,
+                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+                )
             }
         )
-        updateWorkspaceState(projects: projects)
+        updateWorkspaceState(
+            projects: projects,
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+        )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
@@ -119,10 +122,15 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         }
     }
 
-    private func updateWorkspaceState(projects: any ProjectProviding) {
+    private func updateWorkspaceState(
+        projects: any ProjectProviding,
+        cloneRepository: (any CloneRepositoryProviding)?
+    ) {
         let state: RootWorkspaceState
         if let project = projects.currentProject {
-            if FileManager.default.fileExists(atPath: project.url.path) {
+            if cloneRepository?.isCloning(for: project.url) == true {
+                state = .cloning
+            } else if FileManager.default.fileExists(atPath: project.url.path) {
                 state = .ready
             } else {
                 state = .projectMissing(path: project.url.path)

@@ -3,6 +3,75 @@ import KitGit
 import LibGit2Swift
 import ProviderGit
 
+private final class LibGit2CloneProgressTracker: @unchecked Sendable {
+    private let lock = NSLock()
+    private var lastTimestamp = Date()
+    private var lastBytes = 0
+    private var bytesPerSecond = 0.0
+
+    func progress(for value: LibGit2CloneProgress) -> GitCloneProgress {
+        let now = Date()
+        lock.lock()
+        let elapsed = now.timeIntervalSince(lastTimestamp)
+        let byteDelta = max(0, value.receivedBytes - lastBytes)
+        if elapsed >= 0.1, byteDelta > 0 {
+            let instantaneousRate = Double(byteDelta) / elapsed
+            bytesPerSecond = bytesPerSecond == 0
+                ? instantaneousRate
+                : bytesPerSecond * 0.7 + instantaneousRate * 0.3
+            lastTimestamp = now
+            lastBytes = value.receivedBytes
+        }
+        let rate = bytesPerSecond
+        lock.unlock()
+
+        if value.totalObjects > 0, value.receivedObjects < value.totalObjects {
+            let stageFraction = value.fractionCompleted
+            let overallFraction = stageFraction.map { 0.05 + $0 * 0.65 }
+            let percent = Int((stageFraction ?? 0) * 100)
+            return GitCloneProgress(
+                phase: .receivingObjects,
+                fractionCompleted: overallFraction,
+                detail: "Receiving objects: \(percent)% (\(value.receivedObjects)/\(value.totalObjects)), \(formatBytes(Double(value.receivedBytes))) | \(formatBytes(rate))/s"
+            )
+        }
+
+        if value.totalDeltas > 0, value.indexedDeltas < value.totalDeltas {
+            let stageFraction = min(max(Double(value.indexedDeltas) / Double(value.totalDeltas), 0), 1)
+            return GitCloneProgress(
+                phase: .resolvingDeltas,
+                fractionCompleted: 0.70 + stageFraction * 0.20,
+                detail: "Resolving deltas: \(Int(stageFraction * 100))% (\(value.indexedDeltas)/\(value.totalDeltas))"
+            )
+        }
+
+        let stageFraction = value.fractionCompleted
+        let overallFraction = stageFraction.map { 0.05 + $0 * 0.65 }
+        let percent = Int((stageFraction ?? 0) * 100)
+        return GitCloneProgress(
+            phase: .receivingObjects,
+            fractionCompleted: overallFraction,
+            detail: "Receiving objects: \(percent)% (\(value.receivedObjects)/\(value.totalObjects)), \(formatBytes(Double(value.receivedBytes))) | \(formatBytes(rate))/s"
+        )
+    }
+
+    private func formatBytes(_ bytes: Double) -> String {
+        let units = ["B", "KiB", "MiB", "GiB"]
+        var value = max(bytes, 0)
+        var unitIndex = 0
+        while value >= 1024, unitIndex < units.count - 1 {
+            value /= 1024
+            unitIndex += 1
+        }
+        return String(
+            format: "%.2f %@",
+            locale: Locale(identifier: "en_US_POSIX"),
+            value,
+            units[unitIndex]
+        )
+    }
+}
+
 /// 使用 LibGit2Swift 实现 Git Provider 的后端。
 final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     let descriptor = GitBackendCatalog.libGit2
@@ -371,6 +440,77 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     func clone(remoteURL: String, destination: URL) throws -> URL {
         try validateCloneDestination(destination)
         try LibGit2.clone(url: remoteURL, to: destination.path)
+        return destination
+    }
+
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void
+    ) throws -> URL {
+        try cloneUsingLibGit2(
+            remoteURL: remoteURL,
+            destination: destination,
+            progress: progress,
+            cancellation: nil
+        )
+    }
+
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void,
+        cancellation: GitProcessCancellation?
+    ) throws -> URL {
+        // 系统 Git 可用时复用 CLI 实现；否则使用 libgit2 的原生传输
+        // 回调，同样提供可见进度和中途取消能力。
+        if GitProcessRunner.isAvailable {
+            return try GitCloneOperation.clone(
+                remoteURL: remoteURL,
+                destination: destination,
+                onProgress: progress,
+                cancellation: cancellation
+            )
+        }
+
+        return try cloneUsingLibGit2(
+            remoteURL: remoteURL,
+            destination: destination,
+            progress: progress,
+            cancellation: cancellation
+        )
+    }
+
+    private func cloneUsingLibGit2(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void,
+        cancellation: GitProcessCancellation?
+    ) throws -> URL {
+        try validateCloneDestination(destination)
+        progress(.init(phase: .preparing))
+
+        if cancellation?.isCancelled == true {
+            throw CancellationError()
+        }
+
+        let tracker = LibGit2CloneProgressTracker()
+        try LibGit2.clone(
+            url: remoteURL,
+            to: destination.path,
+            onProgress: { value in
+                progress(tracker.progress(for: value))
+            },
+            shouldCancel: {
+                cancellation?.isCancelled == true
+            }
+        )
+
+        if cancellation?.isCancelled == true {
+            throw CancellationError()
+        }
+
+        progress(.init(phase: .completed, fractionCompleted: 1))
         return destination
     }
 

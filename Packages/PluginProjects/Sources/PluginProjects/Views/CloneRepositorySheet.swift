@@ -1,45 +1,29 @@
 import AppKit
-import KitGit
 import LumiUI
+import ProviderCloneRepository
 import ProviderGit
-import ProviderActivity
 import ProviderProjects
 import ProviderToast
 import SwiftUI
 
-/// 克隆仓库 sheet（对齐旧版 CloneRepositorySheet 的核心流程）。
+/// 克隆任务创建 sheet。
 ///
-/// 输入远程仓库 URL → 自动填充仓库名 → 选择目标目录 → 校验 → 克隆；
-/// 成功后打开项目并提示。省略旧版的 GitHub 账号 / SSH / 搜索等重量级能力。
-public struct CloneRepositorySheet: View {
+/// 这里仅收集并校验任务参数。点击 Clone 后任务立即交给
+/// `CloneRepositoryProviding`，sheet 随即关闭；后台执行和进度展示由
+/// `PluginCloneRepository` 负责。
+struct CloneRepositorySheet: View {
     let projects: any ProjectProviding
-    let activity: (any ActivityProviding)?
     let toast: (any ToastProviding)?
     let git: any GitProviding
+    let cloneRepository: any CloneRepositoryProviding
     @LumiTheme private var theme
 
     @Environment(\.dismiss) private var dismiss
-
     @State private var remoteURL = ""
     @State private var destinationFolder = FileManager.default.homeDirectoryForCurrentUser
     @State private var repositoryName = ""
-    @State private var isCloning = false
     @State private var errorMessage: String?
     @State private var didManuallyEditName = false
-
-    public init(
-        projects: any ProjectProviding,
-        activity: (any ActivityProviding)?,
-        toast: (any ToastProviding)?,
-        git: any GitProviding
-    ) {
-        self.projects = projects
-        self.activity = activity
-        self.toast = toast
-        self.git = git
-    }
-
-    // MARK: - Derived State
 
     private var trimmedRemoteURL: String {
         remoteURL.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -55,33 +39,18 @@ public struct CloneRepositorySheet: View {
     }
 
     private var validationMessage: String? {
-        if trimmedRemoteURL.isEmpty {
-            return LumiPluginLocalization.string("Enter a remote repository URL.", bundle: .module)
-        }
-        if trimmedName.isEmpty {
-            return LumiPluginLocalization.string("Enter a repository name.", bundle: .module)
-        }
-        guard let destination = destinationURL else {
-            return LumiPluginLocalization.string("Invalid destination path.", bundle: .module)
-        }
+        if trimmedRemoteURL.isEmpty { return "Enter a remote repository URL." }
+        if trimmedName.isEmpty { return "Enter a repository name." }
+        guard let destination = destinationURL else { return "Invalid destination path." }
         do {
             try git.validateCloneDestination(destination)
         } catch {
             return error.localizedDescription
         }
-        if projects.projects.contains(where: { $0.url == destination }) {
-            return LumiPluginLocalization.string("This repository is already in your projects.", bundle: .module)
-        }
         return nil
     }
 
-    private var canClone: Bool {
-        !isCloning && validationMessage == nil
-    }
-
-    // MARK: - Body
-
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             header
             Divider()
@@ -105,17 +74,15 @@ public struct CloneRepositorySheet: View {
         }
     }
 
-    // MARK: - Sections
-
     private var header: some View {
         HStack(spacing: 10) {
             Image(systemName: "arrow.triangle.branch")
                 .font(.system(size: 18))
                 .foregroundStyle(theme.primary)
             VStack(alignment: .leading, spacing: 2) {
-                Text(LumiPluginLocalization.string("Clone Repository", bundle: .module))
+                Text("Clone Repository")
                     .font(.headline)
-                Text(LumiPluginLocalization.string("Clone a remote repository and add it to your projects.", bundle: .module))
+                Text("Clone a remote repository and add it to your projects.")
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
@@ -125,7 +92,7 @@ public struct CloneRepositorySheet: View {
 
     private var remoteSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(LumiPluginLocalization.string("Remote URL", bundle: .module))
+            Text("Remote URL")
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             AppInputField("https://github.com/owner/repo.git", text: $remoteURL)
@@ -134,7 +101,7 @@ public struct CloneRepositorySheet: View {
 
     private var destinationSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(LumiPluginLocalization.string("Destination", bundle: .module))
+            Text("Destination")
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             HStack(spacing: 8) {
@@ -149,15 +116,15 @@ public struct CloneRepositorySheet: View {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .fill(theme.textSecondary.opacity(0.08))
                     )
-                AppButton(LumiPluginLocalization.string("Choose...", bundle: .module), systemImage: "folder", style: .secondary, size: .small) {
+                AppButton("Choose...", systemImage: "folder", style: .secondary, size: .small) {
                     chooseDestinationFolder()
                 }
             }
             HStack(spacing: 6) {
-                Text(LumiPluginLocalization.string("Name", bundle: .module))
+                Text("Name")
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
-                    .frame(width: 34, alignment: .leading)
+                    .frame(width: 44, alignment: .leading)
                 AppInputField("repository-name", text: $repositoryName)
             }
             if let destination = destinationURL {
@@ -172,29 +139,20 @@ public struct CloneRepositorySheet: View {
 
     private var footer: some View {
         HStack {
-            if let validationMessage, !isCloning {
+            if let validationMessage {
                 Text(validationMessage)
                     .font(.caption2)
                     .foregroundStyle(theme.warning)
                     .lineLimit(2)
             }
             Spacer()
-            AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, action: { dismiss() })
+            AppButton("Cancel", style: .secondary, action: { dismiss() })
                 .keyboardShortcut(.cancelAction)
-            if isCloning {
-                ProgressView()
-                    .controlSize(.small)
-            } else {
-                AppButton(LumiPluginLocalization.string("Clone", bundle: .module), systemImage: "arrow.down.circle", style: .primary, action: {
-                    Task { await clone() }
-                })
-                .disabled(!canClone)
+            AppButton("Clone", systemImage: "arrow.down.circle", style: .primary, action: enqueueClone)
+                .disabled(validationMessage != nil)
                 .keyboardShortcut(.defaultAction)
-            }
         }
     }
-
-    // MARK: - Actions
 
     private func chooseDestinationFolder() {
         let panel = NSOpenPanel()
@@ -202,38 +160,27 @@ public struct CloneRepositorySheet: View {
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
         panel.directoryURL = destinationFolder
-        panel.prompt = LumiPluginLocalization.string("Choose", bundle: .module)
+        panel.prompt = "Choose"
         if panel.runModal() == .OK, let url = panel.url {
             destinationFolder = url
         }
     }
 
-    private func clone() async {
-        guard let destination = destinationURL else { return }
-        errorMessage = nil
-        isCloning = true
-        activity?.setActivity(String(format: LumiPluginLocalization.string("Cloning %@...", bundle: .module), trimmedName))
-
-        // 捕获脱离主 actor 使用的值。
-        let remote = trimmedRemoteURL
-
+    private func enqueueClone() {
+        guard let destination = destinationURL, validationMessage == nil else { return }
         do {
-            try await Task.detached(priority: .userInitiated) {
-                _ = try git.clone(remoteURL: remote, destination: destination)
-            }.value
-            await MainActor.run {
-                isCloning = false
-                activity?.clearActivity()
-                projects.openProject(at: destination)
-                toast?.show("Cloned", detail: trimmedName, style: .success)
-                dismiss()
-            }
+            _ = try cloneRepository.enqueue(
+                remoteURL: trimmedRemoteURL,
+                destination: destination,
+                repositoryName: trimmedName
+            )
+            // 先把目标路径登记到项目列表；目录由后台任务创建，用户随后
+            // 点击这个项目即可进入克隆详情页。
+            projects.addProject(at: destination)
+            toast?.show("Clone started", detail: trimmedName, style: .info)
+            dismiss()
         } catch {
-            await MainActor.run {
-                isCloning = false
-                activity?.clearActivity()
-                errorMessage = String(format: LumiPluginLocalization.string("Clone failed: %@", bundle: .module), error.localizedDescription)
-            }
+            errorMessage = error.localizedDescription
         }
     }
 }

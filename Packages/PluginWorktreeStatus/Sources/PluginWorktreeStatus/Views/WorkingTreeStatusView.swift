@@ -100,6 +100,8 @@ struct WorkingTreeStatusView: View {
 
     @State private var loadedProjectURL: URL?
     @State private var isLoading = false
+    @State private var loadError: String?
+    @State private var loadToken = 0
 
     init(
         projects: any ProjectProviding,
@@ -199,6 +201,9 @@ struct WorkingTreeStatusView: View {
         if let activityStatus {
             return activityStatus
         }
+        if loadError != nil {
+            return loc("Unable to Load Git Status")
+        }
         if isClean {
             return loc("Working Tree Clean")
         } else {
@@ -207,6 +212,9 @@ struct WorkingTreeStatusView: View {
     }
 
     private var statusSubtitle: String {
+        if let loadError {
+            return loadError
+        }
         if !isClean {
             return String(format: loc("(%lld) Uncommitted"), changeCount)
         }
@@ -364,6 +372,7 @@ struct WorkingTreeStatusView: View {
     /// 项目变化时重新加载工作区状态和远程跟踪状态；force 为 true 时强制刷新。
     private func reloadIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
+            loadToken &+= 1
             loadedProjectURL = nil
             isClean = true
             changeCount = 0
@@ -375,7 +384,10 @@ struct WorkingTreeStatusView: View {
         let projectChanged = loadedProjectURL != project.url
         if !projectChanged, !force { return }
 
+        loadToken &+= 1
+        let token = loadToken
         loadedProjectURL = project.url
+        loadError = nil
         // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
         // 保留当前按钮内容，避免每次文件事件都闪成 loading 动画。
         if projectChanged {
@@ -396,13 +408,23 @@ struct WorkingTreeStatusView: View {
         // utility 优先级可避免高优先级 Swift 任务等待运行器的 stderr 读取队列。
         Task.detached(priority: .utility) {
             let statusResult = Result { try git.loadStatus(in: url) }
-            let tracking = git.remoteTrackingStatus(in: url)
+            let tracking: GitRefReader.RemoteTrackingStatus
+            if case .success = statusResult {
+                tracking = git.remoteTrackingStatus(in: url)
+            } else {
+                tracking = GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            }
             await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else { return }
                 isLoading = false
-                if case .success(let loaded) = statusResult {
+                switch statusResult {
+                case .success(let loaded):
                     isClean = loaded.isClean
                     changeCount = loaded.changeCount
                     branch = loaded.branch
+                    loadError = nil
+                case .failure(let error):
+                    loadError = error.localizedDescription
                 }
                 trackingStatus = tracking
             }
