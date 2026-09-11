@@ -234,7 +234,7 @@ struct WorktreeChangesView: View {
                         ContentLoadingIndicator(loc("Unstaging..."), controlSize: .small)
                     } else {
                         AppIconButton(
-                            systemImage: "minus.rectangle.on.folder",
+                            systemImage: "minus.circle",
                             label: loc("Unstage"),
                             tint: theme.primary,
                             size: .compact
@@ -248,7 +248,7 @@ struct WorktreeChangesView: View {
                         ContentLoadingIndicator(loc("Staging..."), controlSize: .small)
                     } else {
                         AppIconButton(
-                            systemImage: "plus.rectangle.on.folder",
+                            systemImage: "plus.circle",
                             label: loc("Stage"),
                             tint: theme.primary,
                             size: .compact
@@ -352,7 +352,7 @@ struct WorktreeChangesView: View {
 
             AppButton(
                 loc("Stage"),
-                systemImage: "plus.rectangle.on.folder",
+                systemImage: "plus.circle",
                 style: .secondary,
                 size: .small
             ) {
@@ -362,7 +362,7 @@ struct WorktreeChangesView: View {
 
             AppButton(
                 loc("Unstage"),
-                systemImage: "minus.rectangle.on.folder",
+                systemImage: "minus.circle",
                 style: .secondary,
                 size: .small
             ) {
