@@ -10,7 +10,6 @@ import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
-import PluginCloneRepository
 import PluginRootView
 import PluginRailView
 import PluginGitDiff
@@ -83,7 +82,6 @@ public struct DefaultPluginFactory: PluginFactory {
             RailViewPlugin(),
             CommandPlugin(),
             ProjectsPlugin(),
-            CloneRepositoryPlugin(),
             WorktreeStatusPlugin(),
             CommitListPlugin(),
             ActivityHeatmapPlugin(),
