@@ -1,6 +1,6 @@
 import ProviderWorkspaceScene
 
-/// Worktree Clean 插件的场景观察者。
+/// Worktree Overview 插件的场景观察者。
 @MainActor
 final class WorktreeCleanSceneObserver {
     private weak var viewModel: WorkspaceSceneVisibilityViewModel?

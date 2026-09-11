@@ -60,7 +60,7 @@ import PluginStatusBar
 import PluginStorage
 import PluginToast
 import PluginThemePack
-import PluginWorktreeClean
+import PluginWorktreeOverview
 import PluginWorktreeStatus
 #endif
 

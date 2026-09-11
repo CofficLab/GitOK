@@ -108,7 +108,7 @@ public final class SettingViewManager: SettingViewProviding, ObservableObject, S
             let data = try JSONEncoder().encode(snapshot)
             try data.write(to: fileURL, options: .atomic)
             if Self.verbose {
-                Self.logger.debug("\(Self.t)persisted selectedEntryID: \(selectedEntryID ?? "nil", privacy: .public)")
+                Self.logger.debug("\(Self.t)persisted selectedEntryID: \(self.selectedEntryID ?? "nil", privacy: .public)")
             }
         } catch {
             // 持久化只是体验增强；写入失败不能阻塞设置功能。
