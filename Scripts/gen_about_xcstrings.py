@@ -99,26 +99,6 @@ ZH: dict[str, str] = {
     "Assets": "素材",
     "resolution": "分辨率",
 
-    # ---------- PluginCloneRepository ----------
-    "Bring any repository into GitOK in seconds.": "几秒内把任意仓库带进 GitOK。",
-    "Any Remote URL": "任意远程地址",
-    "Clone over HTTPS or SSH from GitHub, GitLab, Gitee, and more.": "支持 HTTPS 或 SSH 克隆 GitHub、GitLab、Gitee 等仓库。",
-    "Live Progress": "实时进度",
-    "See the transfer in real time with status and error feedback.": "实时查看传输进度，带状态与错误反馈。",
-    "Open on Finish": "完成后打开",
-    "The cloned project lands in your list and opens immediately.": "克隆完成的项目进入列表并立即打开。",
-    "Paste the URL": "粘贴地址",
-    "Enter an HTTPS or SSH clone URL.": "输入 HTTPS 或 SSH 克隆地址。",
-    "Choose a location": "选择位置",
-    "Pick where the folder should live on disk.": "选择文件夹在磁盘上的存放位置。",
-    "Clone & open": "克隆并打开",
-    "GitOK clones with live progress, then adds and opens the project.": "GitOK 实时显示克隆进度，随后添加并打开项目。",
-    "HTTPS & SSH": "HTTPS 与 SSH",
-    "Open after clone": "克隆后打开",
-    "Progress": "进度",
-    "URL to start": "从一个地址开始",
-    "progress": "进度",
-
     # ---------- PluginCommand ----------
     "Every action, reachable from the keyboard.": "所有操作，键盘即可触达。",
     "Command Palette": "命令面板",
