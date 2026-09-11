@@ -57,7 +57,8 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
             if !Task.isCancelled {
                 do {
                     let context = try analyzer.context(for: repository)
-                    guard context.isWorktreeClean, !Task.isCancelled else {
+                    // 工作区是否有未提交变更不影响语言统计：有变更时同样分析。
+                    guard !Task.isCancelled else {
                         await self?.finishLoading(token: token)
                         return
                     }

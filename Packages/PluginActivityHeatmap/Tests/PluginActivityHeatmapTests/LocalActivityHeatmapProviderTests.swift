@@ -57,8 +57,7 @@ struct LocalActivityHeatmapProviderTests {
             directory: directory,
             calendar: calendar,
             now: { now },
-            commitLoader: { _, _, _ in [] },
-            statusLoader: { _ in GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main") }
+            commitLoader: { _, _, _ in [] }
         )
         first.refresh(for: repository)
         try await waitUntil { first.currentSnapshot != nil }
@@ -67,8 +66,7 @@ struct LocalActivityHeatmapProviderTests {
             directory: directory,
             calendar: calendar,
             now: { now },
-            commitLoader: { _, _, _ in [] },
-            statusLoader: { _ in GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main") }
+            commitLoader: { _, _, _ in [] }
         )
         second.refresh(for: repository)
 
@@ -86,8 +84,7 @@ struct LocalActivityHeatmapProviderTests {
         defer { try? FileManager.default.removeItem(at: repository) }
         let provider = LocalActivityHeatmapProvider(
             directory: directory,
-            commitLoader: { _, _, _ in [] },
-            statusLoader: { _ in GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main") }
+            commitLoader: { _, _, _ in [] }
         )
 
         provider.refresh(for: repository)
@@ -111,10 +108,6 @@ struct LocalActivityHeatmapProviderTests {
             commitLoader: { _, _, _ in
                 Issue.record("a missing repository must not start a Git query")
                 return []
-            },
-            statusLoader: { _ in
-                Issue.record("a missing repository must not start a Git query")
-                return GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main")
             }
         )
 
