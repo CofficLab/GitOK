@@ -2,9 +2,11 @@ import AppKit
 import Combine
 import Foundation
 import LumiUI
-import ProviderCloneRepository
+import ProviderActivity
+import ProviderGit
 import ProviderProjects
 import ProviderSidebar
+import ProviderToast
 import SwiftUI
 
 /// `SidebarProviding` 的项目列表实现。
@@ -19,15 +21,21 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     /// 项目数据源（契约）。
     private let projects: any ProjectProviding
 
-    /// 克隆仓库能力（由 PluginCloneRepository 注册）；为 nil 时不显示克隆入口。
-    private let cloneProvider: (any CloneRepositoryProviding)?
+    /// 克隆所需的 Git 与反馈能力。Git 不可用时隐藏克隆按钮。
+    private let git: (any GitProviding)?
+    private let activity: (any ActivityProviding)?
+    private let toast: (any ToastProviding)?
 
     public init(
         projects: any ProjectProviding,
-        cloneProvider: (any CloneRepositoryProviding)? = nil
+        git: (any GitProviding)? = nil,
+        activity: (any ActivityProviding)? = nil,
+        toast: (any ToastProviding)? = nil
     ) {
         self.projects = projects
-        self.cloneProvider = cloneProvider
+        self.git = git
+        self.activity = activity
+        self.toast = toast
     }
 
     public func registerItems(_ items: [SidebarItem]) {
@@ -38,24 +46,30 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     public func activateItem(id: String?) {}
 
     public func makeSidebarView() -> AnyView {
-        AnyView(ProjectSidebarView(projects: projects, cloneProvider: cloneProvider))
+        AnyView(ProjectSidebarView(projects: projects, git: git, activity: activity, toast: toast))
     }
 }
 
 /// 项目列表侧边栏视图：从 `ProjectProviding` 读取项目。
 private struct ProjectSidebarView: View {
     let projects: any ProjectProviding
-    let cloneProvider: (any CloneRepositoryProviding)?
+    let git: (any GitProviding)?
+    let activity: (any ActivityProviding)?
+    let toast: (any ToastProviding)?
     @StateObject private var observation: ProjectObservationModel
     @State private var searchText = ""
     @State private var isPresentingClone = false
 
     init(
         projects: any ProjectProviding,
-        cloneProvider: (any CloneRepositoryProviding)?
+        git: (any GitProviding)?,
+        activity: (any ActivityProviding)?,
+        toast: (any ToastProviding)?
     ) {
         self.projects = projects
-        self.cloneProvider = cloneProvider
+        self.git = git
+        self.activity = activity
+        self.toast = toast
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -69,9 +83,15 @@ private struct ProjectSidebarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // 搜索框 + 添加项目按钮
+            // 搜索框 + 克隆项目 + 添加项目
             HStack(spacing: 4) {
                 AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search", bundle: .module)))
+                if git != nil {
+                    AppIconButton(systemImage: "arrow.down.circle", size: .compact) {
+                        isPresentingClone = true
+                    }
+                    .help(LumiPluginLocalization.string("Clone Repository", bundle: .module))
+                }
                 AppIconButton(systemImage: "plus", size: .compact) {
                     addExistingProject()
                 }
@@ -104,11 +124,6 @@ private struct ProjectSidebarView: View {
             }
             .frame(maxHeight: .infinity)
 
-            // 底部操作栏：克隆仓库入口（由 PluginCloneRepository 提供）。
-            if let cloneProvider {
-                AppDivider()
-                sidebarFooter(cloneProvider)
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.background.opacity(0.6))
@@ -117,27 +132,15 @@ private struct ProjectSidebarView: View {
             // 项目状态变化时重算 body，读取最新项目列表。
         }
         .sheet(isPresented: $isPresentingClone) {
-            if let cloneProvider {
-                cloneProvider.makeCloneSheetView()
+            if let git {
+                CloneRepositorySheet(
+                    projects: projects,
+                    activity: activity,
+                    toast: toast,
+                    git: git
+                )
             }
         }
-    }
-
-    /// 侧边栏底部操作栏（对齐旧版底部的项目操作区）。
-    private func sidebarFooter(_ cloneProvider: any CloneRepositoryProviding) -> some View {
-        HStack(spacing: 8) {
-            Spacer()
-            AppButton(
-                LumiPluginLocalization.string("Clone Repository", bundle: .module),
-                systemImage: "arrow.triangle.branch",
-                style: .secondary,
-                size: .small
-            ) {
-                isPresentingClone = true
-            }
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
     }
 
     /// 置顶项目与未置顶项目的分界索引（用于插入分隔线）。
