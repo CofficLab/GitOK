@@ -42,7 +42,9 @@ final class CommitDetailObserver {
         gitWatchHandle = gitWatch?.addObserver { [weak self] event in
             guard let self else { return }
             switch event {
-            case .workingTreeChanged:
+            case .headChanged, .indexChanged, .refsChanged, .workingTreeChanged:
+                // 外部提交通常只改变 .git/HEAD 和 index，工作区文件本身
+                // 不一定发生变化，因此不能只依赖 workingTreeChanged。
                 self.viewModel.handleProjectDataChanged()
             default:
                 break

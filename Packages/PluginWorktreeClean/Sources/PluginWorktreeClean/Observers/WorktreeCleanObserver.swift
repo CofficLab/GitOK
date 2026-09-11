@@ -44,7 +44,9 @@ final class WorktreeCleanObserver {
 
         gitWatchHandle = gitWatch?.addObserver { event in
             switch event {
-            case .workingTreeChanged:
+            case .headChanged, .indexChanged, .refsChanged, .workingTreeChanged:
+                // 外部提交可能只产生 .git/HEAD/index 事件，仍需重新判断
+                // 工作区是否已经从 dirty 变为 clean。
                 onDataChanged()
             default:
                 break

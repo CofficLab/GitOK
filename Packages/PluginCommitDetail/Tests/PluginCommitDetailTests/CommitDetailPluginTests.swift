@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderContentView
 import ProviderGit
+import ProviderGitRepositoryWatch
 import ProviderProjects
 import ProviderWorkspaceScene
 import XCTest
@@ -131,11 +132,12 @@ final class CommitDetailPluginTests: XCTestCase {
     /// 组装与插件 onBoot 一致的 Observer→ViewModel 链路。
     private func makeObserver(
         projects: any ProjectProviding,
-        viewModel: CommitDetailViewModel
+        viewModel: CommitDetailViewModel,
+        gitWatch: (any GitRepositoryWatching)? = nil
     ) -> CommitDetailObserver {
         CommitDetailObserver(
             projects: projects,
-            gitWatch: nil,
+            gitWatch: gitWatch,
             viewModel: viewModel
         )
     }
@@ -202,6 +204,21 @@ final class CommitDetailPluginTests: XCTestCase {
         XCTAssertEqual(viewModel.worktreeRevision, 1)
         projects.notifyDataChanged()
         XCTAssertEqual(viewModel.worktreeRevision, 2)
+    }
+
+    func testObserverRefreshesWorktreeForExternalRepositoryChanges() {
+        let projects = MockProjects()
+        let watch = DefaultGitRepositoryWatching()
+        let viewModel = CommitDetailViewModel()
+        let observer = makeObserver(projects: projects, viewModel: viewModel, gitWatch: watch)
+        defer { observer.cancel() }
+
+        watch.broadcast(.indexChanged)
+        watch.broadcast(.headChanged(previousHead: "old", head: "new"))
+        watch.broadcast(.refsChanged)
+        watch.broadcast(.workingTreeChanged)
+
+        XCTAssertEqual(viewModel.worktreeRevision, 4)
     }
 
     /// 切换 / 打开 / 关闭项目时，即使没有选中 commit（场景 B），
