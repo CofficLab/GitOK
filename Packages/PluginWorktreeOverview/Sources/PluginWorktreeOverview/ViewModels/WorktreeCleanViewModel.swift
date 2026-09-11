@@ -31,9 +31,6 @@ final class WorktreeCleanViewModel: ObservableObject {
     /// 当前项目工作区是否干净（无未提交变更）。
     @Published private(set) var isClean = false
 
-    /// 当前项目未提交变更的条数（工作区状态提示用；无项目或未读取时为 0）。
-    @Published private(set) var changeCount = 0
-
     /// 是否正在首次检查工作区状态。
     @Published private(set) var isLoading = false
 
@@ -85,7 +82,6 @@ final class WorktreeCleanViewModel: ObservableObject {
         if projectChanged {
             checkedProjectURL = nil
             lastStatus = nil
-            changeCount = 0
             loadUserConfiguration(for: project)
             if isClean {
                 isClean = false
@@ -96,7 +92,6 @@ final class WorktreeCleanViewModel: ObservableObject {
             if isClean {
                 isClean = false
             }
-            changeCount = 0
             if isLoading {
                 isLoading = false
             }
@@ -228,7 +223,6 @@ final class WorktreeCleanViewModel: ObservableObject {
             if isClean {
                 isClean = false
             }
-            changeCount = 0
             if isLoading {
                 isLoading = false
             }
@@ -244,7 +238,6 @@ final class WorktreeCleanViewModel: ObservableObject {
 
         guard FileManager.default.fileExists(atPath: project.url.path) else {
             isClean = false
-            changeCount = 0
             isLoading = false
             lastStatus = nil
             return
@@ -285,9 +278,6 @@ final class WorktreeCleanViewModel: ObservableObject {
                     self.lastStatus = status
                     if didChange, self.isClean != status.isClean {
                         self.isClean = status.isClean
-                    }
-                    if didChange, self.changeCount != status.changeCount {
-                        self.changeCount = status.changeCount
                     }
                     if self.isLoading {
                         self.isLoading = false

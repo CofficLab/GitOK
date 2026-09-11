@@ -328,7 +328,6 @@ final class WorktreeCleanPluginTests: XCTestCase {
         // GitStatusLoader 在后台任务执行，等待状态收敛。
         await waitUntilClean(viewModel, expecting: true)
         XCTAssertTrue(viewModel.isClean)
-        XCTAssertEqual(viewModel.changeCount, 0)
     }
 
     func testViewModelDetectsDirtyRepository() async throws {
@@ -343,7 +342,6 @@ final class WorktreeCleanPluginTests: XCTestCase {
 
         await waitUntilClean(viewModel, expecting: false)
         XCTAssertFalse(viewModel.isClean)
-        XCTAssertEqual(viewModel.changeCount, 1)
     }
 
     /// 轮询等待 viewModel.isClean 收敛到期望值（后台 git 任务完成）。
