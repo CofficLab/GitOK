@@ -2,9 +2,17 @@ import Foundation
 
 /// 读取 git 引用 / 分支状态（供状态栏、工作区状态等消费方使用）。
 public enum GitRefReader {
+    /// 引用查询是工作区状态首屏的一部分，不能让任一 Git 子进程无限期
+    /// 阻塞状态栏的 loading 状态。
+    private static let commandTimeout: TimeInterval = GitStatusLoader.commandTimeout
+
     /// 当前分支名（`git branch --show-current`）；detached HEAD 时返回 nil。
     public static func currentBranch(in repository: URL) -> String? {
-        let out = try? GitProcessRunner.run(["branch", "--show-current"], in: repository)
+        let out = try? GitProcessRunner.run(
+            ["branch", "--show-current"],
+            in: repository,
+            timeout: commandTimeout
+        )
         let value = out?.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let value, !value.isEmpty else { return nil }
         return value
@@ -16,7 +24,8 @@ public enum GitRefReader {
     public static func latestTag(in repository: URL) -> String? {
         let out = try? GitProcessRunner.run(
             ["describe", "--tags", "--abbrev=0", "HEAD"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         )
         let value = out?.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let value, !value.isEmpty else { return nil }
@@ -29,7 +38,8 @@ public enum GitRefReader {
     public static func unpushedCount(in repository: URL) -> Int? {
         guard let out = try? GitProcessRunner.run(
             ["rev-list", "--count", "@{u}..HEAD"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         ) else {
             return nil
         }
@@ -40,7 +50,11 @@ public enum GitRefReader {
 
     /// 是否有已配置的远程（`git remote` 非空）。
     public static func hasRemotes(in repository: URL) -> Bool {
-        guard let out = try? GitProcessRunner.run(["remote"], in: repository) else { return false }
+        guard let out = try? GitProcessRunner.run(
+            ["remote"],
+            in: repository,
+            timeout: commandTimeout
+        ) else { return false }
         return !out.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
@@ -50,7 +64,8 @@ public enum GitRefReader {
     public static func unpulledCount(in repository: URL) -> Int? {
         guard let out = try? GitProcessRunner.run(
             ["rev-list", "--count", "HEAD..@{u}"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         ) else {
             return nil
         }
@@ -65,7 +80,8 @@ public enum GitRefReader {
     public static func firstCommitDate(in repository: URL) -> Date? {
         guard let out = try? GitProcessRunner.run(
             ["log", "--format=%aI", "--reverse", "--max-parents=0"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         ) else { return nil }
 
         let lines = out.split(separator: "\n").map(String.init)
@@ -94,7 +110,8 @@ public enum GitRefReader {
     public static func remoteTrackingStatus(in repository: URL) -> RemoteTrackingStatus {
         guard let out = try? GitProcessRunner.run(
             ["rev-list", "--left-right", "--count", "HEAD...@{u}"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         ) else {
             return RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
         }

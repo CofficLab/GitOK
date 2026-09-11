@@ -11,6 +11,22 @@
         }
       }
     },
+    "Unable to Load Git Status" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to Load Git Status"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法加载 Git 状态"
+          }
+        }
+      }
+    },
     "(%lld) Uncommitted" : {
       "localizations" : {
         "zh-Hans" : {

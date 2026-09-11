@@ -12,6 +12,8 @@ import Foundation
 /// 本类型为无状态纯逻辑，可在任意线程调用（含后台线程），
 /// 视图侧通过 `Task.detached` 使用，避免阻塞主线程。
 public enum GitCommitLoader {
+    /// 提交列表读取属于只读查询；仓库异常时不能让首屏 skeleton 永久存在。
+    public static let commandTimeout: TimeInterval = 15
 
     /// 读取仓库中从 `offset` 开始的 `limit` 条提交（按提交时间倒序）。
     ///
@@ -46,7 +48,8 @@ public enum GitCommitLoader {
         _ = try buildCommand(in: repository, limit: 1, offset: 0)
         let output = try runGit(
             ["/usr/bin/git", "-C", repository.path, "rev-list", "--count", "HEAD"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         )
         guard let count = Int(output.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw GitCommitLoaderError.gitFailed("Unable to parse commit count.")
@@ -93,7 +96,8 @@ public enum GitCommitLoader {
     public static func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         let output = try GitProcessRunner.run(
             ["log", "@{upstream}..HEAD", "--format=%H"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         )
         let hashes = output
             .split(separator: "\n", omittingEmptySubsequences: true)
@@ -108,12 +112,21 @@ public enum GitCommitLoader {
     // MARK: - Process
 
     private static func runGit(_ command: [String], in repository: URL) throws -> String {
+        try runGit(command, in: repository, timeout: commandTimeout)
+    }
+
+    private static func runGit(
+        _ command: [String],
+        in repository: URL,
+        timeout: TimeInterval
+    ) throws -> String {
         do {
             // GitProcessRunner 会在进程运行期间持续消费 stdout/stderr，避免大
             // 输出填满 Pipe 后 git 等待读取、而调用方又在等待进程退出的死锁。
             return try GitProcessRunner.run(
                 Array(command.dropFirst()),
-                in: repository
+                in: repository,
+                timeout: timeout
             )
         } catch let error as GitProcessRunner.Error {
             switch error {
@@ -121,6 +134,8 @@ public enum GitCommitLoader {
                 throw GitCommitLoaderError.gitUnavailable(message)
             case .gitFailed(let message):
                 throw GitCommitLoaderError.gitFailed(message)
+            case .timedOut(let command):
+                throw GitCommitLoaderError.timedOut(command)
             }
         }
     }
@@ -196,6 +211,7 @@ public enum GitCommitLoaderError: Error, Equatable, LocalizedError {
     case notARepository(URL)
     case gitUnavailable(String)
     case gitFailed(String)
+    case timedOut(String)
 
     public var errorDescription: String? {
         switch self {
@@ -205,6 +221,8 @@ public enum GitCommitLoaderError: Error, Equatable, LocalizedError {
             LumiPluginLocalization.string("Git command not found. Please make sure git is installed.", bundle: .module)
         case .gitFailed(let message):
             message
+        case .timedOut(let command):
+            String(format: LumiPluginLocalization.string("Git command timed out: %@", bundle: .module), command)
         }
     }
 }

@@ -1,4 +1,5 @@
 import Foundation
+import Darwin
 
 /// 可安全跨任务传递的 Git 子进程取消句柄。
 public final class GitProcessCancellation: @unchecked Sendable {
@@ -57,9 +58,27 @@ public enum GitProcessRunner {
         var value = Data()
     }
 
+    private final class TimeoutState: @unchecked Sendable {
+        private let lock = NSLock()
+        private var didTimeout = false
+
+        func markTimedOut() {
+            lock.lock()
+            didTimeout = true
+            lock.unlock()
+        }
+
+        var hasTimedOut: Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            return didTimeout
+        }
+    }
+
     public enum Error: Swift.Error, LocalizedError {
         case gitUnavailable(String)
         case gitFailed(String)
+        case timedOut(String)
 
         public var errorDescription: String? {
             switch self {
@@ -67,6 +86,8 @@ public enum GitProcessRunner {
                 String(format: LumiPluginLocalization.string("Git unavailable: %@", bundle: .module), message)
             case .gitFailed(let message):
                 message
+            case .timedOut(let command):
+                String(format: LumiPluginLocalization.string("Git command timed out: %@", bundle: .module), command)
             }
         }
     }
@@ -101,13 +122,15 @@ public enum GitProcessRunner {
     public static func run(
         _ arguments: [String],
         in repository: URL,
-        successExitCodes: Set<Int32> = [0]
+        successExitCodes: Set<Int32> = [0],
+        timeout: TimeInterval? = nil
     ) throws -> String {
         var outputData = Data()
         try stream(
             arguments,
             in: repository,
-            successExitCodes: successExitCodes
+            successExitCodes: successExitCodes,
+            timeout: timeout
         ) { data in
             outputData.append(data)
             return true
@@ -123,6 +146,7 @@ public enum GitProcessRunner {
         successExitCodes: Set<Int32> = [0],
         chunkSize: Int = 64 * 1024,
         cancellation: GitProcessCancellation? = nil,
+        timeout: TimeInterval? = nil,
         onOutput: (Data) -> Bool,
         onErrorOutput: (@Sendable (Data) -> Void)? = nil
     ) throws {
@@ -150,6 +174,31 @@ public enum GitProcessRunner {
 
         if cancelBeforeRun {
             process.terminate()
+        }
+
+        let timeoutState = timeout.map { _ in TimeoutState() }
+        let timeoutWorkItem: DispatchWorkItem?
+        if let timeout, timeout >= 0 {
+            let workItem = DispatchWorkItem {
+                guard process.isRunning else { return }
+                timeoutState?.markTimedOut()
+                process.terminate()
+                // A Git process blocked in a filesystem call may not handle
+                // SIGTERM promptly. Escalate only this timed-out child after
+                // a short grace period so callers never wait indefinitely.
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 1) {
+                    if process.isRunning {
+                        Darwin.kill(process.processIdentifier, SIGKILL)
+                    }
+                }
+            }
+            timeoutWorkItem = workItem
+            DispatchQueue.global(qos: .utility).asyncAfter(
+                deadline: .now() + timeout,
+                execute: workItem
+            )
+        } else {
+            timeoutWorkItem = nil
         }
 
         // stderr 必须与 stdout 并行消费，否则 git 在输出大量警告时可能因为
@@ -189,12 +238,18 @@ public enum GitProcessRunner {
 
         process.waitUntilExit()
         let wasCancelled = cancellation?.finish(process) ?? false
+        timeoutWorkItem?.cancel()
+        let didTimeout = timeoutState?.hasTimedOut ?? false
         // 终止早停后仍然清空剩余管道，避免文件描述符和子进程资源泄漏。
         _ = outputPipe.fileHandleForReading.readDataToEndOfFile()
         errorGroup.wait()
 
         if wasCancelled {
             throw CancellationError()
+        }
+
+        if didTimeout {
+            throw Error.timedOut(arguments.joined(separator: " "))
         }
 
         guard shouldStop || successExitCodes.contains(process.terminationStatus) else {

@@ -477,6 +477,22 @@
         }
       }
     },
+    "Git command timed out: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git command timed out: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 命令超时：%@"
+          }
+        }
+      }
+    },
     "Git unavailable: %@" : {
       "localizations" : {
         "en" : {
