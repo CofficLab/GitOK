@@ -157,6 +157,17 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func validateCloneDestination(_ destination: URL) throws
     func defaultRepositoryName(from remoteURL: String) -> String?
     func clone(remoteURL: String, destination: URL) throws -> URL
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void
+    ) throws -> URL
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void,
+        cancellation: GitProcessCancellation?
+    ) throws -> URL
 
     func hasStagedChanges(in repository: URL) throws -> Bool
     func addAll(in repository: URL) throws
@@ -187,6 +198,40 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func continueMerge(in repository: URL) throws -> String
     func abortMerge(in repository: URL) throws -> String
     func finalizeMergeIfNeeded(in repository: URL) throws -> String?
+}
+
+public extension GitOperationProviding {
+    /// 默认兼容实现：没有原生进度支持的后端仍提供开始 / 完成状态。
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void
+    ) throws -> URL {
+        try clone(
+            remoteURL: remoteURL,
+            destination: destination,
+            progress: progress,
+            cancellation: nil
+        )
+    }
+
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void,
+        cancellation: GitProcessCancellation?
+    ) throws -> URL {
+        progress(.init(phase: .preparing))
+        if cancellation?.isCancelled == true {
+            throw CancellationError()
+        }
+        let result = try clone(remoteURL: remoteURL, destination: destination)
+        if cancellation?.isCancelled == true {
+            throw CancellationError()
+        }
+        progress(.init(phase: .completed, fractionCompleted: 1))
+        return result
+    }
 }
 
 /// 一个可被插件装配的 Git 实现。

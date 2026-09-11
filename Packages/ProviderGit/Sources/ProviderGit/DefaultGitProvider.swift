@@ -325,6 +325,32 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("clone") { try $0.clone(remoteURL: remoteURL, destination: destination) }
     }
 
+    public func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void
+    ) throws -> URL {
+        try execute("clone") {
+            try $0.clone(remoteURL: remoteURL, destination: destination, progress: progress)
+        }
+    }
+
+    public func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void,
+        cancellation: GitProcessCancellation?
+    ) throws -> URL {
+        try execute("clone") {
+            try $0.clone(
+                remoteURL: remoteURL,
+                destination: destination,
+                progress: progress,
+                cancellation: cancellation
+            )
+        }
+    }
+
     public func hasStagedChanges(in repository: URL) throws -> Bool {
         try execute("hasStagedChanges") { try $0.hasStagedChanges(in: repository) }
     }
