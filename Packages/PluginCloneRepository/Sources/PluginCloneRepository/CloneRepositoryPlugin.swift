@@ -166,6 +166,10 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
         }
     }
 
+    func isCloning(for projectURL: URL) -> Bool {
+        task(for: projectURL)?.status.isActive == true
+    }
+
     func task(for destination: URL) -> CloneTask? {
         let standardized = destination.standardizedFileURL
         return tasks.first { $0.destination.standardizedFileURL == standardized }

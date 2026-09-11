@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld%%" : {
+
+    },
     "Add" : {
       "localizations" : {
         "en" : {
@@ -203,6 +206,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "複製儲存庫"
+          }
+        }
+      }
+    },
+    "Cloning repository" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloning repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在克隆仓库"
           }
         }
       }
@@ -441,6 +460,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "每個功能註冊自己的工具欄、側邊欄或內容視圖。"
+          }
+        }
+      }
+    },
+    "GitOK is cloning this repository in the background." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitOK is cloning this repository in the background."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitOK 正在后台克隆此仓库。"
           }
         }
       }

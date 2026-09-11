@@ -1,4 +1,5 @@
 import Foundation
+import ProviderCloneRepository
 import ProviderProjects
 
 /// 根视图插件的项目观察者。
@@ -11,9 +12,11 @@ import ProviderProjects
 @MainActor
 final class RootViewProjectObserver {
     private var projectsHandle: (any ProjectProvidingObserverHandle)?
+    private var cloneRepositoryHandle: (any CloneRepositoryObserverHandle)?
 
     init(
         projects: any ProjectProviding,
+        cloneRepository: (any CloneRepositoryProviding)?,
         onWorkspaceChanged: @escaping () -> Void
     ) {
         projectsHandle = projects.addObserver { event in
@@ -24,11 +27,19 @@ final class RootViewProjectObserver {
                 break
             }
         }
+        cloneRepositoryHandle = cloneRepository?.addObserver { event in
+            switch event {
+            case .tasksChanged, .taskUpdated:
+                onWorkspaceChanged()
+            }
+        }
     }
 
     /// 取消全部订阅；插件卸载后不再有任何回调。
     func cancel() {
         projectsHandle?.cancel()
         projectsHandle = nil
+        cloneRepositoryHandle?.cancel()
+        cloneRepositoryHandle = nil
     }
 }

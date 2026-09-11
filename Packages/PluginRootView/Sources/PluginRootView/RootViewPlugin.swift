@@ -84,7 +84,8 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             AnyView(
                 RootWorkspaceUnavailableView(
                     model: workspaceModel,
-                    projects: projects
+                    projects: projects,
+                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
                 )
             )
         )
@@ -92,6 +93,7 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         // 项目列表 / 当前选择发生变化时同步更新根布局门控。
         observer = RootViewProjectObserver(
             projects: projects,
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self),
             onWorkspaceChanged: { [weak self, weak projects] in
                 guard let self, let projects else { return }
                 self.updateWorkspaceState(
@@ -126,8 +128,9 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
     ) {
         let state: RootWorkspaceState
         if let project = projects.currentProject {
-            let isCloning = cloneRepository?.task(for: project.url)?.status.isActive == true
-            if isCloning || FileManager.default.fileExists(atPath: project.url.path) {
+            if cloneRepository?.isCloning(for: project.url) == true {
+                state = .cloning
+            } else if FileManager.default.fileExists(atPath: project.url.path) {
                 state = .ready
             } else {
                 state = .projectMissing(path: project.url.path)

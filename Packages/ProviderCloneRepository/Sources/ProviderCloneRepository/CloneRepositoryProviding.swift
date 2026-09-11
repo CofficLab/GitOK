@@ -111,6 +111,8 @@ public protocol CloneRepositoryObserverHandle: AnyObject {
 public protocol CloneRepositoryProviding: AnyObject {
     var tasks: [CloneTask] { get }
 
+    /// 返回项目目录当前是否存在仍在运行的克隆任务。
+    func isCloning(for projectURL: URL) -> Bool
     func task(for destination: URL) -> CloneTask?
     func enqueue(remoteURL: String, destination: URL, repositoryName: String) throws -> CloneTask
     func cancel(taskID: UUID)

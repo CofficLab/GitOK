@@ -1,4 +1,5 @@
 import LumiUI
+import ProviderCloneRepository
 import ProviderProjects
 import SwiftUI
 
@@ -68,6 +69,7 @@ struct ProjectMissingView: View {
 struct RootWorkspaceUnavailableView: View {
     @ObservedObject var model: RootWorkspaceModel
     let projects: any ProjectProviding
+    let cloneRepository: (any CloneRepositoryProviding)?
 
     var body: some View {
         Group {
@@ -80,6 +82,12 @@ struct RootWorkspaceUnavailableView: View {
                         project: project,
                         onRemoveProject: { projects.removeProject(id: project.id) }
                     )
+                } else {
+                    NoProjectGuideView(projects: projects)
+                }
+            case .cloning:
+                if let project = model.project, let cloneRepository {
+                    CloneInProgressView(project: project, cloneRepository: cloneRepository)
                 } else {
                     NoProjectGuideView(projects: projects)
                 }
