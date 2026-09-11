@@ -52,7 +52,10 @@ struct WorktreeChangesView: View {
     var body: some View {
         Group {
             if isLoading && entries.isEmpty && !hasLoadedSnapshot {
-                ContentLoadingIndicator(loc("Loading workspace changes..."))
+                ScrollView(.vertical, showsIndicators: false) {
+                    WorktreeChangesSkeletonView()
+                        .frame(maxWidth: .infinity)
+                }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background {
                         theme.surface
@@ -208,11 +211,6 @@ struct WorktreeChangesView: View {
                 .disabled(isActionInProgress)
                 .help(selectedPaths.contains(entry.path) ? loc("Clear Selection") : loc("Select File"))
 
-                Image(systemName: statusIcon(entry))
-                    .font(.system(size: 11))
-                    .foregroundStyle(statusColor(entry))
-                    .frame(width: 16)
-
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.path)
                         .font(DesignTokens.Typography.caption1)
@@ -220,10 +218,17 @@ struct WorktreeChangesView: View {
                         .lineLimit(1)
                         .truncationMode(.middle)
 
-                    Text(statusLabel(entry))
-                        .font(DesignTokens.Typography.caption2)
-                        .foregroundStyle(theme.textTertiary)
-                        .lineLimit(1)
+                    HStack(spacing: 5) {
+                        Image(systemName: statusIcon(entry))
+                            .font(.system(size: 11))
+                            .foregroundStyle(CommitDetailChangeColors.worktreeStatus(entry))
+                            .frame(width: 16)
+
+                        Text(statusLabel(entry))
+                            .font(DesignTokens.Typography.caption2)
+                            .foregroundStyle(theme.textTertiary)
+                            .lineLimit(1)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -234,7 +239,7 @@ struct WorktreeChangesView: View {
                         ContentLoadingIndicator(loc("Unstaging..."), controlSize: .small)
                     } else {
                         AppIconButton(
-                            systemImage: "minus.rectangle.on.folder",
+                            systemImage: "minus.circle",
                             label: loc("Unstage"),
                             tint: theme.primary,
                             size: .compact
@@ -248,7 +253,7 @@ struct WorktreeChangesView: View {
                         ContentLoadingIndicator(loc("Staging..."), controlSize: .small)
                     } else {
                         AppIconButton(
-                            systemImage: "plus.rectangle.on.folder",
+                            systemImage: "plus.circle",
                             label: loc("Stage"),
                             tint: theme.primary,
                             size: .compact
@@ -274,6 +279,12 @@ struct WorktreeChangesView: View {
                 }
             }
         }
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(CommitDetailChangeColors.worktreeStatus(entry))
+                .frame(width: 3)
+                .allowsHitTesting(false)
+        }
     }
 
     // MARK: - Status Helpers
@@ -289,12 +300,6 @@ struct WorktreeChangesView: View {
         case "C": return "doc.on.doc"
         default: return "circle"
         }
-    }
-
-    private func statusColor(_ entry: GitStatusEntry) -> Color {
-        if entry.isUntracked { return theme.warning }
-        if entry.isStaged { return theme.success }
-        return theme.error
     }
 
     private func statusLabel(_ entry: GitStatusEntry) -> String {
@@ -352,7 +357,7 @@ struct WorktreeChangesView: View {
 
             AppButton(
                 loc("Stage"),
-                systemImage: "plus.rectangle.on.folder",
+                systemImage: "plus.circle",
                 style: .secondary,
                 size: .small
             ) {
@@ -362,7 +367,7 @@ struct WorktreeChangesView: View {
 
             AppButton(
                 loc("Unstage"),
-                systemImage: "minus.rectangle.on.folder",
+                systemImage: "minus.circle",
                 style: .secondary,
                 size: .small
             ) {

@@ -8,7 +8,7 @@
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitLocalization`、`KitSuperLog`、`ProviderCloneRepository`、`ProviderProjects`、`ProviderRootView`；https://github.com/CofficLab/LumiUI.git |
+| **上游依赖** | `KernelCore`、`KitLocalization`、`KitSuperLog`、`ProviderProjects`、`ProviderRootView`；https://github.com/CofficLab/LumiUI.git |
 | **平台** | macOS 14+ |
 
 ## 目录结构

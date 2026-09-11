@@ -1,5 +1,53 @@
 import Foundation
 
+/// 可安全跨任务传递的 Git 子进程取消句柄。
+public final class GitProcessCancellation: @unchecked Sendable {
+    private let lock = NSLock()
+    private var process: Process?
+    private var cancelled = false
+    private var finished = false
+
+    public init() {}
+
+    public var isCancelled: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return cancelled
+    }
+
+    public func cancel() {
+        lock.lock()
+        guard !finished else {
+            lock.unlock()
+            return
+        }
+        cancelled = true
+        let process = self.process
+        lock.unlock()
+
+        if process?.isRunning == true {
+            process?.terminate()
+        }
+    }
+
+    fileprivate func attach(_ process: Process) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        self.process = process
+        return cancelled
+    }
+
+    fileprivate func finish(_ process: Process) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        if self.process === process {
+            self.process = nil
+        }
+        finished = true
+        return cancelled
+    }
+}
+
 /// 统一 git CLI 执行入口（供 KitGit 内各加载器复用）。
 ///
 /// 当前阶段使用系统自带 git（macOS 预装）以零第三方依赖读取 git 数据；
@@ -21,6 +69,28 @@ public enum GitProcessRunner {
                 message
             }
         }
+    }
+
+    public static var isAvailable: Bool {
+        gitExecutableURL != nil
+    }
+
+    private static var gitExecutableURL: URL? {
+        let candidates = [
+            "/usr/bin/git",
+            "/opt/homebrew/bin/git",
+            "/usr/local/bin/git",
+            "/usr/local/git/bin/git",
+        ]
+        if let bundled = candidates.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) {
+            return URL(fileURLWithPath: bundled)
+        }
+
+        let pathEntries = ProcessInfo.processInfo.environment["PATH"]?.split(separator: ":") ?? []
+        return pathEntries
+            .map { String($0) }
+            .map { URL(fileURLWithPath: $0).appendingPathComponent("git") }
+            .first(where: { FileManager.default.isExecutableFile(atPath: $0.path) })
     }
 
     /// 在指定仓库目录执行 git 命令并返回标准输出（UTF-8）。
@@ -52,12 +122,19 @@ public enum GitProcessRunner {
         in repository: URL,
         successExitCodes: Set<Int32> = [0],
         chunkSize: Int = 64 * 1024,
-        onOutput: (Data) -> Bool
+        cancellation: GitProcessCancellation? = nil,
+        onOutput: (Data) -> Bool,
+        onErrorOutput: (@Sendable (Data) -> Void)? = nil
     ) throws {
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        guard let gitExecutableURL else {
+            throw Error.gitUnavailable("git executable not found")
+        }
+        process.executableURL = gitExecutableURL
         process.arguments = arguments
         process.currentDirectoryURL = repository
+
+        let cancelBeforeRun = cancellation?.attach(process) ?? false
 
         let outputPipe = Pipe()
         let errorPipe = Pipe()
@@ -67,7 +144,12 @@ public enum GitProcessRunner {
         do {
             try process.run()
         } catch {
+            _ = cancellation?.finish(process)
             throw Error.gitUnavailable(error.localizedDescription)
+        }
+
+        if cancelBeforeRun {
+            process.terminate()
         }
 
         // stderr 必须与 stdout 并行消费，否则 git 在输出大量警告时可能因为
@@ -80,7 +162,12 @@ public enum GitProcessRunner {
         // 所有 worker 都可能阻塞在下面的 errorGroup.wait()，导致排水任务永远
         // 无法获得 worker，最终表现为所有 Git 加载器无限 loading。
         let errorThread = Thread {
-            errorData.value = errorPipe.fileHandleForReading.readDataToEndOfFile()
+            while true {
+                let data = errorPipe.fileHandleForReading.readData(ofLength: max(chunkSize, 1))
+                if data.isEmpty { break }
+                errorData.value.append(data)
+                onErrorOutput?(data)
+            }
             errorGroup.leave()
         }
         // The caller may be a user-initiated task and waits for this thread
@@ -101,9 +188,14 @@ public enum GitProcessRunner {
         }
 
         process.waitUntilExit()
+        let wasCancelled = cancellation?.finish(process) ?? false
         // 终止早停后仍然清空剩余管道，避免文件描述符和子进程资源泄漏。
         _ = outputPipe.fileHandleForReading.readDataToEndOfFile()
         errorGroup.wait()
+
+        if wasCancelled {
+            throw CancellationError()
+        }
 
         guard shouldStop || successExitCodes.contains(process.terminationStatus) else {
             let message = Self.decode(errorData.value, fallback: "unknown error")

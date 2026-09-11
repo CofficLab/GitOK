@@ -422,6 +422,22 @@
         }
       }
     },
+    "Disk Usage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Usage"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "磁盘占用"
+          }
+        }
+      }
+    },
     "Confirm, and the clutter is removed." : {
       "localizations" : {
         "en" : {
@@ -1936,6 +1952,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在加载提交数量…"
+          }
+        }
+      }
+    },
+    "Loading disk usage..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading disk usage..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在加载磁盘占用…"
           }
         }
       }

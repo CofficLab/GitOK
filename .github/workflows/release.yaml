@@ -167,8 +167,8 @@ jobs:
       - name: Create DMG
         run: |
           set -euo pipefail
+          chmod +x .github/scripts/create-designed-dmg.sh
           for arch in ${{ env.RELEASE_ARCHS }}; do
-            staging_dir="./temp/dmg_staging_${arch}"
             volume_name="${{ env.SCHEME }}-${arch}"
             app_path="./temp/${{ env.SCHEME }}-${arch}.app"
             version_dmg=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist" | tr . _)
@@ -179,33 +179,11 @@ jobs:
               exit 1
             fi
 
-            rm -rf "$staging_dir"
-            mkdir -p "$staging_dir"
-            ditto "$app_path" "$staging_dir/${{ env.SCHEME }}.app"
-            ln -sfn /Applications "$staging_dir/Applications"
-            mdutil -i off "$staging_dir" 2>/dev/null || true
-            mdutil -i off ./temp 2>/dev/null || true
-            sync
-            sleep 1
-
-            create_dmg() {
-              hdiutil detach "/Volumes/${volume_name}" -force 2>/dev/null || true
-              rm -f "$dmg_name"
-              hdiutil create -volname "$volume_name" -srcfolder "$staging_dir" -ov -format UDZO "$dmg_name"
-            }
-
-            attempt=0
-            until create_dmg; do
-              attempt=$((attempt + 1))
-              if [ "$attempt" -ge 6 ]; then
-                echo "❌ hdiutil create failed after 6 attempts for $arch"
-                exit 1
-              fi
-              echo "⚠️ hdiutil failed for $arch (attempt $attempt/6), retrying..."
-              sleep $((attempt * 3))
-            done
-
-            rm -rf "$staging_dir"
+            .github/scripts/create-designed-dmg.sh \
+              "$app_path" \
+              "$dmg_name" \
+              "$volume_name" \
+              ".github/dmg/GitOK-dmg-background.png"
             echo "✅ Created: $dmg_name"
           done
           ls -alh ./temp/*.dmg

@@ -58,6 +58,7 @@ let package = Package(
                 "PluginWorktreeClean",
                 .product(name: "ProviderActivityHeatmap", package: "ProviderActivityHeatmap"),
                 .product(name: "ProviderGitUser", package: "ProviderGitUser"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
             ],
             path: "Tests/PluginWorktreeCleanTests"
         ),

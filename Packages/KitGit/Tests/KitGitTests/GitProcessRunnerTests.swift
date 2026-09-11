@@ -4,6 +4,22 @@ import Testing
 
 @Suite("GitProcessRunner")
 struct GitProcessRunnerTests {
+    @Test("cancellation terminates the git process")
+    func cancellationStopsProcess() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try GitProcessRunner.stream(
+                ["--version"],
+                in: FileManager.default.temporaryDirectory,
+                cancellation: cancellation
+            ) { _ in
+                true
+            }
+        }
+    }
+
     @Test("drains large stdout before waiting for git")
     func handlesLargeOutput() throws {
         let repository = try makeRepository()

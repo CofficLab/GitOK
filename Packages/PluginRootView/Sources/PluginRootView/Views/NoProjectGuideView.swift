@@ -2,7 +2,6 @@
 import AppKit
 #endif
 import LumiUI
-import ProviderCloneRepository
 import ProviderProjects
 import SwiftUI
 
@@ -12,9 +11,6 @@ import SwiftUI
 @MainActor
 struct NoProjectGuideView: View {
     let projects: any ProjectProviding
-    let cloneProvider: (any CloneRepositoryProviding)?
-
-    @State private var isPresentingClone = false
 
     @LumiTheme private var theme
 
@@ -54,16 +50,6 @@ struct NoProjectGuideView: View {
                         addExistingProject()
                     }
 
-                    if cloneProvider != nil {
-                        AppButton(
-                            LumiPluginLocalization.string("Clone Repository", bundle: .module),
-                            systemImage: "arrow.triangle.branch",
-                            style: .secondary,
-                            size: .medium
-                        ) {
-                            isPresentingClone = true
-                        }
-                    }
                 }
                 .padding(.top, DesignTokens.Spacing.sm)
 
@@ -76,13 +62,6 @@ struct NoProjectGuideView: View {
         .background {
             backgroundGradient
         }
-        #if os(macOS)
-        .sheet(isPresented: $isPresentingClone) {
-            if let cloneProvider {
-                cloneProvider.makeCloneSheetView()
-            }
-        }
-        #endif
     }
 
     private var backgroundGradient: some View {

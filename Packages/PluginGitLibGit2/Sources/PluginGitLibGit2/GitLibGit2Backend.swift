@@ -374,6 +374,48 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         return destination
     }
 
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void
+    ) throws -> URL {
+        // LibGit2Swift 当前只暴露同步 clone API，没有把 transfer progress
+        // 回调传出来；先明确报告“进行中”，避免界面显示一个假 0%。
+        progress(.init(phase: .preparing))
+        let result = try clone(remoteURL: remoteURL, destination: destination)
+        progress(.init(phase: .completed, fractionCompleted: 1))
+        return result
+    }
+
+    func clone(
+        remoteURL: String,
+        destination: URL,
+        progress: @escaping @Sendable (GitCloneProgress) -> Void,
+        cancellation: GitProcessCancellation?
+    ) throws -> URL {
+        // 新的克隆弹窗需要可取消的子进程。系统 Git 可用时复用 CLI
+        // 实现；LibGit2Swift 当前只暴露同步 clone API，无法中途终止。
+        if GitProcessRunner.isAvailable {
+            return try GitCloneOperation.clone(
+                remoteURL: remoteURL,
+                destination: destination,
+                onProgress: progress,
+                cancellation: cancellation
+            )
+        }
+
+        progress(.init(phase: .preparing))
+        if cancellation?.isCancelled == true {
+            throw CancellationError()
+        }
+        let result = try clone(remoteURL: remoteURL, destination: destination)
+        if cancellation?.isCancelled == true {
+            throw CancellationError()
+        }
+        progress(.init(phase: .completed, fractionCompleted: 1))
+        return result
+    }
+
     func hasStagedChanges(in repository: URL) throws -> Bool {
         try !LibGit2.getDiffFileList(at: repository.path, staged: true).isEmpty
     }

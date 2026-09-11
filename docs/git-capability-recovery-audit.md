@@ -64,7 +64,7 @@
 2. 旧版 `Plugins/GitDetailPlugin/Sources/Views/Row/CommitRowContextMenu.swift` 提供 Create Tag、Push/Delete Tag、Undo、Revert、Squash、Soft/Mixed/Hard Reset；当前 `Packages/PluginCommitList/Sources/PluginCommitList/Views/CommitRailView.swift` 目前只有提交列表和未推送 commit 的 push 入口。
 3. 旧版 `GitBranchPlugin` 的管理页有 rename、set/unset upstream、publish、删除远程分支、compare、merge compare 结果和 Create PR；当前 `PluginGitBranchStatus` 管理页只有新建、切换、删除本地分支，远程分支只展示。
 4. 旧版 `GitWorkingStatePlugin` 有 fetch、pull、push、stash-and-pull、认证输入、网络失败后的 SSH fallback、push 重试和冲突文件 stage/checkout ours/theirs/continue/abort；当前 `PluginWorktreeStatus` 只有基本 fetch/pull/push，`PluginGitConflictResolver` 只有冲突列表、复制路径和 Finder 定位。
-5. 旧版 `CreateRepositorySheet` 可初始化本地仓库、选择 README/.gitignore/LICENSE 并创建初始提交；当前 `PluginProjects` 的空状态只提供 Add Project，`PluginCloneRepository` 只提供 Clone Repository。
+5. 旧版 `CreateRepositorySheet` 可初始化本地仓库、选择 README/.gitignore/LICENSE 并创建初始提交；当前 `PluginProjects` 的项目侧边栏提供 Add Project 与 Clone Repository。
 
 ### 2.3 集成层风险
 

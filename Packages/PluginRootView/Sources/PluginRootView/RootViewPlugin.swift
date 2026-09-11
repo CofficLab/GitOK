@@ -3,7 +3,6 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
-import ProviderCloneRepository
 import ProviderProjects
 import ProviderRailView
 import ProviderRootView
@@ -74,22 +73,17 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             Self.logger.info("\(self.t)Replaced default RootViewProviding with GitOKRootViewProvider")
         }
 
-        // 解析项目服务与克隆仓库能力。
+        // 解析项目服务。
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip no-project guide")
             return
         }
-        // 克隆入口是可选能力；未启用克隆插件时保持无入口，不产生误报日志。
-        let cloneProvider = kernel.isProviderRegistered((any CloneRepositoryProviding).self)
-            ? kernel.resolveProvider((any CloneRepositoryProviding).self)
-            : nil
 
         provider.setWorkspaceUnavailableView(
             AnyView(
                 RootWorkspaceUnavailableView(
                     model: workspaceModel,
-                    projects: projects,
-                    cloneProvider: cloneProvider
+                    projects: projects
                 )
             )
         )

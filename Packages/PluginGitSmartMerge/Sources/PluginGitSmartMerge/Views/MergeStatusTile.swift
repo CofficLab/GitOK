@@ -94,10 +94,28 @@ public struct MergeForm: View {
             .labelsHidden()
             .frame(maxWidth: .infinity)
 
-            Text(GitSmartMergeLocalization.string("into", bundle: .module))
-                .font(.caption)
-                .foregroundStyle(theme.textSecondary)
-                .frame(maxWidth: .infinity)
+            HStack(spacing: 8) {
+                Text(GitSmartMergeLocalization.string("into", bundle: .module))
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+
+                Spacer(minLength: 0)
+
+                AppButton(
+                    systemImage: "arrow.up.arrow.down",
+                    style: .tonal,
+                    size: .small
+                ) {
+                    swapBranches()
+                }
+                .accessibilityLabel(
+                    GitSmartMergeLocalization.string("Swap branches", bundle: .module)
+                )
+                .help(
+                    GitSmartMergeLocalization.string("Swap branches", bundle: .module)
+                )
+                .disabled(sourceBranch == nil || targetBranch == nil || isWorking)
+            }
 
             Picker(GitSmartMergeLocalization.string("Target", bundle: .module), selection: $targetBranch) {
                 Text(GitSmartMergeLocalization.string("Select target", bundle: .module)).tag(nil as GitBranchSummary?)
@@ -187,6 +205,14 @@ public struct MergeForm: View {
             ),
             for: projectURL
         )
+    }
+
+    @MainActor
+    private func swapBranches() {
+        guard !isWorking else { return }
+        let currentSource = sourceBranch
+        sourceBranch = targetBranch
+        targetBranch = currentSource
     }
 
     @MainActor

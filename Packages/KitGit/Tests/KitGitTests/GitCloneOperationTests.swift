@@ -57,13 +57,39 @@ struct GitCloneOperationTests {
 
         // 克隆
         let destination = base.appendingPathComponent("cloned")
-        let cloned = try GitCloneOperation.clone(remoteURL: source.path, destination: destination)
+        let progress = ProgressCollector()
+        let cloned = try GitCloneOperation.clone(
+            remoteURL: source.path,
+            destination: destination,
+            onProgress: { progress.append($0) }
+        )
         #expect(cloned == destination)
         #expect(FileManager.default.fileExists(atPath: destination.appendingPathComponent("readme.txt").path))
+        #expect(progress.values.first?.phase == .preparing)
+        #expect(progress.values.first?.fractionCompleted == nil)
+        #expect(progress.values.last?.phase == .completed)
+        #expect(progress.values.last?.fractionCompleted == 1)
 
         // 已是 git 仓库不可再克隆到该处
         #expect(throws: GitCloneError.self) {
             try GitCloneOperation.clone(remoteURL: source.path, destination: destination)
         }
+    }
+}
+
+private final class ProgressCollector: @unchecked Sendable {
+    private let lock = NSLock()
+    private var storage: [GitCloneProgress] = []
+
+    var values: [GitCloneProgress] {
+        lock.lock()
+        defer { lock.unlock() }
+        return storage
+    }
+
+    func append(_ progress: GitCloneProgress) {
+        lock.lock()
+        storage.append(progress)
+        lock.unlock()
     }
 }

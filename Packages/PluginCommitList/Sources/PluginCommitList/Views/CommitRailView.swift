@@ -422,7 +422,10 @@ struct CommitRailView: View {
     @ViewBuilder
     private func commitListContent(for project: Project) -> some View {
         if isLoading && commits.isEmpty {
-            ProgressView()
+            ScrollView(.vertical, showsIndicators: false) {
+                CommitListSkeletonView()
+                    .frame(maxWidth: .infinity)
+            }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if commits.isEmpty, let loadError {
             AppEmptyState(
@@ -505,16 +508,13 @@ struct CommitRailView: View {
                                         Color.clear
                                             .frame(height: 1)
                                             .id(CommitScrollAnchor.oldest)
+
+                                        if isLoading {
+                                            CommitListSkeletonView(rowCount: 2)
+                                        }
                                     }
                                     .padding(.vertical, 4)
                                 }
-                            }
-
-                            if isLoading {
-                                ProgressView()
-                                    .progressViewStyle(.linear)
-                                    .frame(height: 2)
-                                    .padding(.horizontal, 2)
                             }
                         }
 

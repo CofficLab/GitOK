@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderGitUser
 import ProviderGit
+import ProviderGitRepositoryWatch
 import ProviderActivityHeatmap
 import ProviderContentView
 import ProviderProjects
@@ -182,6 +183,29 @@ final class WorktreeCleanPluginTests: XCTestCase {
         XCTAssertTrue(WorktreeCleanRefreshPolicy.didChange(previous: previous, current: current))
     }
 
+    func testRepositoryDiskUsageIncludesHiddenFiles() throws {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageTests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        try Data(repeating: 0, count: 1_024).write(to: dir.appendingPathComponent("visible.txt"))
+        let gitDirectory = dir.appendingPathComponent(".git")
+        try FileManager.default.createDirectory(at: gitDirectory, withIntermediateDirectories: true)
+        try Data(repeating: 0, count: 2_048).write(to: gitDirectory.appendingPathComponent("hidden-object"))
+
+        let usage = try XCTUnwrap(RepositoryDiskUsage.calculate(at: dir))
+
+        XCTAssertGreaterThanOrEqual(usage, 3_072)
+    }
+
+    func testRepositoryDiskUsageReturnsNilForMissingDirectory() {
+        let missingDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageMissing-\(UUID().uuidString)")
+
+        XCTAssertNil(RepositoryDiskUsage.calculate(at: missingDirectory))
+    }
+
     /// 回归：选中 commit 后，后续 dataChanged（提交 / 推送 / 分支切换 / 外部编辑）
     /// 不应重新点亮「工作区干净」视图——即使工作区实际是干净的。
     func testDataChangedDoesNotResurrectCleanViewAfterCommitSelected() async throws {
@@ -227,6 +251,51 @@ final class WorktreeCleanPluginTests: XCTestCase {
         try? await Task.sleep(for: .milliseconds(150))
         XCTAssertTrue(viewModel.isClean)
         XCTAssertFalse(viewModel.isLoading)
+    }
+
+    /// 回归：外部提交主要改变 .git/HEAD 和 index，不能只依赖
+    /// workingTreeChanged 才刷新干净状态。
+    func testRepositoryChangesRefreshCleanState() async throws {
+        let dir = try makeGitRepository()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        try "hello".write(
+            to: dir.appendingPathComponent("dirty.txt"),
+            atomically: true,
+            encoding: .utf8
+        )
+
+        let projects = MockProjects()
+        projects.currentProject = Project(url: dir)
+        let watch = DefaultGitRepositoryWatching()
+        let viewModel = WorktreeCleanViewModel(fallbackStatusLoader: Self.loadStatus)
+        let observer = WorktreeCleanObserver(
+            capability: WorktreeCleanProjectCapabilityAdapter(projects: projects),
+            gitWatch: watch,
+            userPresets: nil,
+            collaborators: nil,
+            onProjectChanged: { [weak viewModel, projects] in
+                viewModel?.handleProjectChanged(
+                    project: projects.currentProject,
+                    hasSelectedCommit: projects.currentCommit != nil
+                )
+            },
+            onDataChanged: { [weak viewModel] in
+                viewModel?.handleDataChanged()
+            },
+            onUserPresetsChanged: { _ in },
+            onCollaboratorsChanged: { _ in }
+        )
+        defer { observer.cancel() }
+
+        viewModel.handleProjectChanged(project: projects.currentProject, hasSelectedCommit: false)
+        await waitUntilClean(viewModel, expecting: false)
+        XCTAssertFalse(viewModel.isClean)
+
+        try FileManager.default.removeItem(at: dir.appendingPathComponent("dirty.txt"))
+        watch.broadcast(.indexChanged)
+
+        await waitUntilClean(viewModel, expecting: true)
+        XCTAssertTrue(viewModel.isClean)
     }
 
     // MARK: - Cleanliness detection (real git repo)

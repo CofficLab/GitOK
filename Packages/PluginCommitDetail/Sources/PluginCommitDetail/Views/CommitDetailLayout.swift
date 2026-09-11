@@ -248,9 +248,6 @@ struct FileChangeRow: View {
     var body: some View {
         AppListRow(isSelected: isSelected, action: onSelect) {
             HStack(spacing: 8) {
-                statusIcon
-                    .frame(width: 16)
-
                 VStack(alignment: .leading, spacing: 2) {
                     Text(change.displayPath)
                         .font(DesignTokens.Typography.caption1.weight(.medium))
@@ -258,20 +255,30 @@ struct FileChangeRow: View {
                         .lineLimit(1)
                         .truncationMode(.middle)
 
-                    if change.addedLines > 0 || change.deletedLines > 0 {
-                        HStack(spacing: 5) {
+                    HStack(spacing: 5) {
+                        statusIcon
+                            .foregroundStyle(CommitDetailChangeColors.commitStatus(change.status))
+                            .frame(width: 16)
+
+                        if change.addedLines > 0 || change.deletedLines > 0 {
                             Text("+\(change.addedLines)")
                                 .foregroundStyle(theme.success)
                             Text("−\(change.deletedLines)")
                                 .foregroundStyle(theme.error)
                         }
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
                     }
+                    .font(.system(size: 10, weight: .medium, design: .monospaced))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.vertical, 3)
             .frame(minHeight: 34)
+        }
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(CommitDetailChangeColors.commitStatus(change.status))
+                .frame(width: 3)
+                .allowsHitTesting(false)
         }
     }
 
@@ -280,22 +287,16 @@ struct FileChangeRow: View {
         switch change.status {
         case .added:
             Image(systemName: "plus.circle.fill")
-                .foregroundStyle(theme.success)
         case .deleted:
             Image(systemName: "minus.circle.fill")
-                .foregroundStyle(theme.error)
         case .modified:
             Image(systemName: "pencil.circle.fill")
-                .foregroundStyle(theme.info)
         case .renamed, .copied:
             Image(systemName: "arrow.right.circle.fill")
-                .foregroundStyle(theme.info)
         case .unmerged:
             Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(theme.error)
         case .unknown:
             Image(systemName: "questionmark.circle")
-                .foregroundStyle(theme.textTertiary)
         }
     }
 }

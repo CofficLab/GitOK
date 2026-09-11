@@ -4,6 +4,7 @@ import LumiUI
 @MainActor
 struct WorkbenchSplitView: View {
     @ObservedObject var provider: DefaultRootViewProvider
+    @LumiTheme private var theme
 
     private var showsRail: Bool {
         provider.railView != nil && provider.isRailViewVisible
@@ -26,7 +27,10 @@ struct WorkbenchSplitView: View {
                             onResize: provider.saveRailViewWidth
                         )
                         .debugBlockBadge("Rail")
-                    provider.hasActiveContent ? AnyView(mainContent) : AnyView(RootWelcomeView())
+                    (provider.hasActiveContent ? AnyView(mainContent) : AnyView(RootWelcomeView()))
+                        .overlay(alignment: .leading) {
+                            railTrailingDividerDecoration
+                        }
                 }
                 #else
                 HStack(spacing: 0) {
@@ -58,5 +62,23 @@ struct WorkbenchSplitView: View {
             isContentViewHidden: provider.isContentViewHidden,
             trailingPane: provider.trailingPane
         )
+    }
+
+    /// Draw the rail divider's matching decoration inside the content pane as
+    /// well, so both sides of the split retain a visible border and shadow.
+    private var railTrailingDividerDecoration: some View {
+        ZStack(alignment: .leading) {
+            LinearGradient(
+                colors: [.black.opacity(0.04), .clear],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+
+            Rectangle()
+                .fill(theme.divider)
+                .frame(width: 0.5)
+        }
+        .frame(width: 8)
+        .allowsHitTesting(false)
     }
 }
