@@ -248,10 +248,6 @@ struct FileChangeRow: View {
     var body: some View {
         AppListRow(isSelected: isSelected, action: onSelect) {
             HStack(spacing: 8) {
-                statusIcon
-                    .foregroundStyle(CommitDetailChangeColors.commitStatus(change.status))
-                    .frame(width: 16)
-
                 VStack(alignment: .leading, spacing: 2) {
                     Text(change.displayPath)
                         .font(DesignTokens.Typography.caption1.weight(.medium))
@@ -259,15 +255,19 @@ struct FileChangeRow: View {
                         .lineLimit(1)
                         .truncationMode(.middle)
 
-                    if change.addedLines > 0 || change.deletedLines > 0 {
-                        HStack(spacing: 5) {
+                    HStack(spacing: 5) {
+                        statusIcon
+                            .foregroundStyle(CommitDetailChangeColors.commitStatus(change.status))
+                            .frame(width: 16)
+
+                        if change.addedLines > 0 || change.deletedLines > 0 {
                             Text("+\(change.addedLines)")
                                 .foregroundStyle(theme.success)
                             Text("−\(change.deletedLines)")
                                 .foregroundStyle(theme.error)
                         }
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
                     }
+                    .font(.system(size: 10, weight: .medium, design: .monospaced))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

@@ -208,11 +208,6 @@ struct WorktreeChangesView: View {
                 .disabled(isActionInProgress)
                 .help(selectedPaths.contains(entry.path) ? loc("Clear Selection") : loc("Select File"))
 
-                Image(systemName: statusIcon(entry))
-                    .font(.system(size: 11))
-                    .foregroundStyle(CommitDetailChangeColors.worktreeStatus(entry))
-                    .frame(width: 16)
-
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.path)
                         .font(DesignTokens.Typography.caption1)
@@ -220,10 +215,17 @@ struct WorktreeChangesView: View {
                         .lineLimit(1)
                         .truncationMode(.middle)
 
-                    Text(statusLabel(entry))
-                        .font(DesignTokens.Typography.caption2)
-                        .foregroundStyle(theme.textTertiary)
-                        .lineLimit(1)
+                    HStack(spacing: 5) {
+                        Image(systemName: statusIcon(entry))
+                            .font(.system(size: 11))
+                            .foregroundStyle(CommitDetailChangeColors.worktreeStatus(entry))
+                            .frame(width: 16)
+
+                        Text(statusLabel(entry))
+                            .font(DesignTokens.Typography.caption2)
+                            .foregroundStyle(theme.textTertiary)
+                            .lineLimit(1)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
