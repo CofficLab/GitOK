@@ -3,6 +3,7 @@ import Combine
 import Foundation
 import LumiUI
 import ProviderActivity
+import ProviderCloneRepository
 import ProviderGit
 import ProviderProjects
 import ProviderSidebar
@@ -25,17 +26,20 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     private let git: (any GitProviding)?
     private let activity: (any ActivityProviding)?
     private let toast: (any ToastProviding)?
+    private let cloneRepository: (any CloneRepositoryProviding)?
 
     public init(
         projects: any ProjectProviding,
         git: (any GitProviding)? = nil,
         activity: (any ActivityProviding)? = nil,
-        toast: (any ToastProviding)? = nil
+        toast: (any ToastProviding)? = nil,
+        cloneRepository: (any CloneRepositoryProviding)? = nil
     ) {
         self.projects = projects
         self.git = git
         self.activity = activity
         self.toast = toast
+        self.cloneRepository = cloneRepository
     }
 
     public func registerItems(_ items: [SidebarItem]) {
@@ -46,7 +50,15 @@ public final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     public func activateItem(id: String?) {}
 
     public func makeSidebarView() -> AnyView {
-        AnyView(ProjectSidebarView(projects: projects, git: git, activity: activity, toast: toast))
+        AnyView(
+            ProjectSidebarView(
+                projects: projects,
+                git: git,
+                activity: activity,
+                toast: toast,
+                cloneRepository: cloneRepository
+            )
+        )
     }
 }
 
@@ -56,6 +68,7 @@ private struct ProjectSidebarView: View {
     let git: (any GitProviding)?
     let activity: (any ActivityProviding)?
     let toast: (any ToastProviding)?
+    let cloneRepository: (any CloneRepositoryProviding)?
     @StateObject private var observation: ProjectObservationModel
     @State private var searchText = ""
     @State private var isPresentingClone = false
@@ -64,12 +77,14 @@ private struct ProjectSidebarView: View {
         projects: any ProjectProviding,
         git: (any GitProviding)?,
         activity: (any ActivityProviding)?,
-        toast: (any ToastProviding)?
+        toast: (any ToastProviding)?,
+        cloneRepository: (any CloneRepositoryProviding)?
     ) {
         self.projects = projects
         self.git = git
         self.activity = activity
         self.toast = toast
+        self.cloneRepository = cloneRepository
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -86,7 +101,7 @@ private struct ProjectSidebarView: View {
             // 搜索框 + 克隆项目 + 添加项目
             HStack(spacing: 4) {
                 AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search", bundle: .module)))
-                if git != nil {
+                if git != nil, cloneRepository != nil {
                     AppIconButton(systemImage: "arrow.down.circle", size: .compact) {
                         isPresentingClone = true
                     }
@@ -132,12 +147,12 @@ private struct ProjectSidebarView: View {
             // 项目状态变化时重算 body，读取最新项目列表。
         }
         .sheet(isPresented: $isPresentingClone) {
-            if let git {
+            if let git, let cloneRepository {
                 CloneRepositorySheet(
                     projects: projects,
-                    activity: activity,
                     toast: toast,
-                    git: git
+                    git: git,
+                    cloneRepository: cloneRepository
                 )
             }
         }

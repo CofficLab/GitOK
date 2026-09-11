@@ -2,15 +2,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "PluginProjects",
+    name: "PluginCloneRepository",
     defaultLocalization: "en",
-    platforms: [
-        .macOS(.v14),
-    ],
+    platforms: [.macOS(.v14)],
     products: [
         .library(
-            name: "PluginProjects",
-            targets: ["PluginProjects"]
+            name: "PluginCloneRepository",
+            targets: ["PluginCloneRepository"]
         ),
     ],
     dependencies: [
@@ -20,19 +18,16 @@ let package = Package(
         .package(path: "../KitSuperLog"),
         .package(path: "../ProviderActivity"),
         .package(path: "../ProviderCloneRepository"),
+        .package(path: "../ProviderContentView"),
         .package(path: "../ProviderGit"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderProjects"),
-        .package(path: "../ProviderSettingView"),
-        .package(path: "../ProviderSidebar"),
         .package(path: "../ProviderStorage"),
         .package(path: "../ProviderToast"),
-        .package(path: "../ProviderToolbar"),
-        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
     ],
     targets: [
         .target(
-            name: "PluginProjects",
+            name: "PluginCloneRepository",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
@@ -41,25 +36,22 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderActivity", package: "ProviderActivity"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
+                .product(name: "ProviderContentView", package: "ProviderContentView"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
-                .product(name: "ProviderSettingView", package: "ProviderSettingView"),
-                .product(name: "ProviderSidebar", package: "ProviderSidebar"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
-                .product(name: "ProviderToolbar", package: "ProviderToolbar"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
-            path: "Sources/PluginProjects",
+            path: "Sources/PluginCloneRepository",
             resources: [.process("../../Resources/Localizable.xcstrings")]
         ),
         .testTarget(
-            name: "PluginProjectsTests",
+            name: "PluginCloneRepositoryTests",
             dependencies: [
-                "PluginProjects",
-                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                "PluginCloneRepository",
+                .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
             ],
-            path: "Tests/PluginProjectsTests"
+            path: "Tests/PluginCloneRepositoryTests"
         ),
     ]
 )

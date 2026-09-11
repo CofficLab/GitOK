@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderActivity
+import ProviderCloneRepository
 import ProviderGit
 import ProviderProjects
 import ProviderSettingView
@@ -98,7 +99,8 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
             projects: projects,
             git: kernel.resolveProvider((any GitProviding).self),
             activity: kernel.resolveProvider((any ActivityProviding).self),
-            toast: kernel.resolveProvider((any ToastProviding).self)
+            toast: kernel.resolveProvider((any ToastProviding).self),
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
         )
         self.sidebarService = sidebar
         kernel.unregisterProvider((any SidebarProviding).self)

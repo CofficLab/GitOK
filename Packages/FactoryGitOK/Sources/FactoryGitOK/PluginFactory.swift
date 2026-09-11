@@ -3,6 +3,7 @@ import KernelCore
 #if os(macOS)
 import PluginActivityStatus
 import PluginCommand
+import PluginCloneRepository
 import PluginCommitDetail
 import PluginActivityHeatmap
 import PluginProjectLanguages
@@ -78,6 +79,7 @@ public struct DefaultPluginFactory: PluginFactory {
             GitCLIPlugin(),
             GitLibGit2Plugin(),
             try! StorageSuperPlugin(),
+            CloneRepositoryPlugin(),
             RootViewPlugin(),
             RailViewPlugin(),
             CommandPlugin(),

@@ -3,6 +3,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderCloneRepository
 import ProviderProjects
 import ProviderRailView
 import ProviderRootView
@@ -93,10 +94,16 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             projects: projects,
             onWorkspaceChanged: { [weak self, weak projects] in
                 guard let self, let projects else { return }
-                self.updateWorkspaceState(projects: projects)
+                self.updateWorkspaceState(
+                    projects: projects,
+                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+                )
             }
         )
-        updateWorkspaceState(projects: projects)
+        updateWorkspaceState(
+            projects: projects,
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+        )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
@@ -113,10 +120,14 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         }
     }
 
-    private func updateWorkspaceState(projects: any ProjectProviding) {
+    private func updateWorkspaceState(
+        projects: any ProjectProviding,
+        cloneRepository: (any CloneRepositoryProviding)?
+    ) {
         let state: RootWorkspaceState
         if let project = projects.currentProject {
-            if FileManager.default.fileExists(atPath: project.url.path) {
+            let isCloning = cloneRepository?.task(for: project.url)?.status.isActive == true
+            if isCloning || FileManager.default.fileExists(atPath: project.url.path) {
                 state = .ready
             } else {
                 state = .projectMissing(path: project.url.path)

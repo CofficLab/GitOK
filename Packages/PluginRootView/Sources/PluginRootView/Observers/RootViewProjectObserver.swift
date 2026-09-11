@@ -18,7 +18,7 @@ final class RootViewProjectObserver {
     ) {
         projectsHandle = projects.addObserver { event in
             switch event {
-            case .projectsChanged, .selectionChanged:
+            case .projectsChanged, .selectionChanged, .dataChanged:
                 onWorkspaceChanged()
             default:
                 break
