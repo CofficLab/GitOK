@@ -76,5 +76,6 @@
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "开始时间" } }
       }
     }
-  }
+  },
+  "version" : "1.0"
 }
