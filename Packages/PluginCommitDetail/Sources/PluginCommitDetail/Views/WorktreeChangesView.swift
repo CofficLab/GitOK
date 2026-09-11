@@ -52,7 +52,10 @@ struct WorktreeChangesView: View {
     var body: some View {
         Group {
             if isLoading && entries.isEmpty && !hasLoadedSnapshot {
-                ContentLoadingIndicator(loc("Loading workspace changes..."))
+                ScrollView(.vertical, showsIndicators: false) {
+                    WorktreeChangesSkeletonView()
+                        .frame(maxWidth: .infinity)
+                }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background {
                         theme.surface
