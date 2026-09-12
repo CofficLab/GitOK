@@ -95,6 +95,7 @@ final class CommitFilePageStoreTests: XCTestCase {
         func listBranches(in repository: URL) throws -> [GitBranchSummary] { [] }
         func createBranch(named name: String, in repository: URL) throws {}
         func checkoutBranch(named name: String, in repository: URL) throws {}
+        func checkoutRemoteBranch(named remoteBranch: String, as localBranch: String?, in repository: URL) throws {}
         func deleteBranch(named name: String, in repository: URL) throws {}
         func renameBranch(from currentName: String, to newName: String, in repository: URL) throws {}
         func setUpstream(localBranch: String, upstreamBranch: String, in repository: URL) throws {}
