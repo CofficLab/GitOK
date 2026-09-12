@@ -131,7 +131,14 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             if cloneRepository?.isCloning(for: project.url) == true {
                 state = .cloning
             } else if FileManager.default.fileExists(atPath: project.url.path) {
-                state = .ready
+                // 目录存在但缺少 `.git`（目录或 worktree 指针文件）→ 不是 Git 项目。
+                if FileManager.default.fileExists(
+                    atPath: project.url.appendingPathComponent(".git").path
+                ) {
+                    state = .ready
+                } else {
+                    state = .notGitRepository(path: project.url.path)
+                }
             } else {
                 state = .projectMissing(path: project.url.path)
             }

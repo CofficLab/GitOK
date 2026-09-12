@@ -11,6 +11,7 @@ import ProviderRailView
 public enum RootWorkspaceState: Equatable, Sendable {
     case noProject
     case projectMissing(path: String)
+    case notGitRepository(path: String)
     case cloning
     case ready
 
@@ -21,6 +22,8 @@ public enum RootWorkspaceState: Equatable, Sendable {
             return "no-project"
         case let .projectMissing(path):
             return "project-missing:\(path)"
+        case let .notGitRepository(path):
+            return "not-git-repository:\(path)"
         case .cloning:
             return "cloning"
         case .ready:

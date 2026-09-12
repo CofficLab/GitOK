@@ -68,6 +68,22 @@ final class PluginRootViewTests: XCTestCase {
         func cancel() { onCancel() }
     }
 
+    /// 创建一个临时目录并放入 `.git` 子目录，模拟真实 Git 仓库；测试结束自动清理。
+    @MainActor
+    private func makeTempGitRepository() throws -> URL {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GitOKTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(
+            at: url.appendingPathComponent(".git", isDirectory: true),
+            withIntermediateDirectories: true
+        )
+        addTeardownBlock {
+            try? FileManager.default.removeItem(at: url)
+        }
+        return url
+    }
+
     @MainActor
     private final class MockCloneRepository: CloneRepositoryProviding {
         var activeDestinations: Set<URL> = []
@@ -336,11 +352,11 @@ final class PluginRootViewTests: XCTestCase {
         )
     }
 
-    /// 当前项目目录存在 → 根布局进入 ready 状态。
+    /// 当前项目目录存在且是 Git 仓库 → 根布局进入 ready 状态。
     func testOnBootSetsReadyWorkspaceState() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
-        let project = Project(url: FileManager.default.temporaryDirectory, title: "Temp")
+        let project = Project(url: try makeTempGitRepository(), title: "Temp")
         mockProjects.projects = [project]
         mockProjects.currentProject = project
         try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
@@ -350,6 +366,31 @@ final class PluginRootViewTests: XCTestCase {
         try plugin.onBoot(kernel: kernel)
 
         XCTAssertEqual(plugin.provider.workspaceState, .ready)
+    }
+
+    /// 当前项目目录存在但不是 Git 仓库 → 根布局进入 notGitRepository 状态。
+    func testOnBootSetsNotGitRepositoryWorkspaceState() throws {
+        let kernel = KernelCoreContainer()
+        let mockProjects = MockProjects()
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GitOKTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        addTeardownBlock {
+            try? FileManager.default.removeItem(at: url)
+        }
+        let project = Project(url: url, title: "Not Git")
+        mockProjects.projects = [project]
+        mockProjects.currentProject = project
+        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any ProjectProviding).self, mockProjects)
+
+        let plugin = RootViewPlugin()
+        try plugin.onBoot(kernel: kernel)
+
+        XCTAssertEqual(
+            plugin.provider.workspaceState,
+            .notGitRepository(path: url.path)
+        )
     }
 
     /// 项目切换时状态同步更新，业务工作区无需先渲染一次。
@@ -363,7 +404,7 @@ final class PluginRootViewTests: XCTestCase {
         try plugin.onBoot(kernel: kernel)
         XCTAssertEqual(plugin.provider.workspaceState, .noProject)
 
-        let project = Project(url: FileManager.default.temporaryDirectory, title: "Temp")
+        let project = Project(url: try makeTempGitRepository(), title: "Temp")
         mockProjects.projects = [project]
         mockProjects.currentProject = project
         mockProjects.notifySelectionChanged()
