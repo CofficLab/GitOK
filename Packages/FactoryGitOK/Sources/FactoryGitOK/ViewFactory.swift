@@ -103,6 +103,11 @@ public struct DefaultViewFactory: ViewFactory {
         let chrome = PaletteChromeTheme(theme: selected, colorScheme: colorScheme)
         ActiveChromeTheme.current = chrome
         LumiUIThemeStore.shared.setTheme(ChromeToUIThemeAdapter(chrome: chrome))
+
+        // ThemeProviding is the source of truth in the new architecture, while
+        // native views such as the project file tree listen for the shared
+        // window-appearance sync notification to rebuild cached cells.
+        ThemeWindowAppearanceSync.syncAllWindows()
     }
 
     // MARK: - Theme Application
@@ -133,6 +138,8 @@ private struct ThemeHostingView<Content: View>: View {
     }
 
     var body: some View {
+        let _ = refreshTick
+
         content
             .preferredColorScheme(preferredColorScheme)
             .background(backgroundColor)
@@ -143,6 +150,18 @@ private struct ThemeHostingView<Content: View>: View {
                 refreshTick.toggle()
                 DefaultViewFactory.syncLumiTheme(theme)
             }
+            #if os(macOS)
+            .onReceive(
+                DistributedNotificationCenter.default().publisher(
+                    for: Notification.Name("AppleInterfaceThemeChangedNotification")
+                )
+                .receive(on: RunLoop.main)
+            ) { _ in
+                guard theme.followsSystemAppearance else { return }
+                refreshTick.toggle()
+                DefaultViewFactory.syncLumiTheme(theme)
+            }
+            #endif
     }
 
     private var preferredColorScheme: ColorScheme? {
