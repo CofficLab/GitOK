@@ -8,7 +8,7 @@ import SwiftUI
 /// 结构与样式对齐工具栏中部的项目管理弹层 `ProjectToolbarPopoverView`：
 /// - header 为搜索框 + 新建分支按钮（+），点击后展开内嵌输入行，回车创建并切换；
 /// - 本地分支列表当前分支高亮打勾，点击其他分支执行 checkout 并关闭弹层；
-/// - 远程分支仅展示（network 图标），避免 checkout 产生 detached HEAD；
+/// - 点击远程分支会创建对应的本地跟踪分支并切换过去；
 /// - 无项目 / 加载失败时显示空状态。
 struct BranchPickerPopoverView: View {
     let projects: any ProjectProviding
@@ -152,17 +152,26 @@ struct BranchPickerPopoverView: View {
     private var remoteSection: some View {
         VStack(spacing: 2) {
             ForEach(remoteBranches) { branch in
-                HStack(spacing: 8) {
-                    Image(systemName: "network")
-                        .foregroundStyle(.secondary)
-                    Text(branch.name)
-                        .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                    Spacer()
+                Button {
+                    switchRemoteBranch(branch)
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "network")
+                            .foregroundStyle(.secondary)
+                        Text(branch.name)
+                            .font(.system(size: 13))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                        Spacer()
+                        Image(systemName: "arrow.down.to.line")
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
+                .buttonStyle(.plain)
+                .disabled(isLoading)
+                .help(LumiPluginLocalization.string("Checkout locally", bundle: .module))
             }
         }
     }
@@ -242,6 +251,28 @@ struct BranchPickerPopoverView: View {
         Task.detached(priority: .userInitiated) {
             do {
                 try git.checkoutBranch(named: branch.name, in: url)
+                await MainActor.run {
+                    isLoading = false
+                    projects.notifyDataChanged()
+                    isPresented.wrappedValue = false
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func switchRemoteBranch(_ branch: GitBranchSummary) {
+        guard let url = projects.currentProject?.url else { return }
+        errorMessage = nil
+        isLoading = true
+        Task.detached(priority: .userInitiated) {
+            do {
+                try git.checkoutRemoteBranch(named: branch.name, as: nil, in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()

@@ -52,9 +52,8 @@ public final class DefaultContentViewProviding: ContentViewProviding, Observable
 /// 稳定挂在 RootView 中并观察 Provider；后续 `addContentView` / `removeContentView`
 /// 会直接刷新内容区。
 ///
-/// 内容区是一个**整体滚动容器**：所有内容块按 order 升序在 `LazyVStack` 中
-/// 自上而下平铺，由外层 `ScrollView` 统一滚动。贡献块的插件不应再自带垂直
-/// `ScrollView`（否则会与整体滚动嵌套），只需平铺自己的内容。
+/// 内容块按 order 升序在 `VStack` 中自上而下排列；各插件负责自己内容区的
+/// 滚动和尺寸策略。
 private struct ContentHostView: View {
     @ObservedObject var provider: DefaultContentViewProviding
 
@@ -63,11 +62,9 @@ private struct ContentHostView: View {
             if provider.visibleEntries.isEmpty {
                 ContentPlaceholderView()
             } else {
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: 0) {
-                        ForEach(provider.visibleEntries) { entry in
-                            entry.view
-                        }
+                VStack(spacing: 0) {
+                    ForEach(provider.visibleEntries) { entry in
+                        entry.view
                     }
                 }
             }

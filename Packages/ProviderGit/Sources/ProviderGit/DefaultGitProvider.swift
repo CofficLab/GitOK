@@ -193,6 +193,16 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("checkoutBranch") { try $0.checkoutBranch(named: name, in: repository) }
     }
 
+    public func checkoutRemoteBranch(
+        named remoteBranch: String,
+        as localBranch: String?,
+        in repository: URL
+    ) throws {
+        try execute("checkoutRemoteBranch") {
+            try $0.checkoutRemoteBranch(named: remoteBranch, as: localBranch, in: repository)
+        }
+    }
+
     public func deleteBranch(named name: String, in repository: URL) throws {
         try execute("deleteBranch") { try $0.deleteBranch(named: name, in: repository) }
     }

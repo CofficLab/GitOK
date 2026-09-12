@@ -97,7 +97,7 @@ let package = Package(
         .package(path: "../PluginRailView"),
         .package(path: "../PluginToast"),
         .package(path: "../PluginWorktreeStatus"),
-        .package(path: "../PluginWorktreeOverview"),
+        .package(path: "../PluginWorktreeClean"),
         .package(path: "../ProviderToolbar"),
     ],
     targets: [
@@ -125,7 +125,7 @@ let package = Package(
                 .product(name: "PluginRailView", package: "PluginRailView"),
                 .product(name: "PluginToast", package: "PluginToast"),
                 .product(name: "PluginWorktreeStatus", package: "PluginWorktreeStatus"),
-                .product(name: "PluginWorktreeOverview", package: "PluginWorktreeOverview"),
+                .product(name: "PluginWorktreeClean", package: "PluginWorktreeClean"),
                 .product(name: "ProviderToolbar", package: "ProviderToolbar"),
                 .product(name: "PluginActivityStatus", package: "PluginActivityStatus"),
                 .product(name: "PluginCommand", package: "PluginCommand"),

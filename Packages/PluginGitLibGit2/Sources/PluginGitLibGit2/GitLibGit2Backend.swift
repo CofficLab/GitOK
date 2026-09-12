@@ -242,6 +242,57 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try LibGit2.checkout(branch: name, at: repository.path)
     }
 
+    func checkoutRemoteBranch(
+        named remoteBranch: String,
+        as localBranch: String?,
+        in repository: URL
+    ) throws {
+        let remote = remoteBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let separator = remote.firstIndex(of: "/"), separator != remote.startIndex else {
+            throw GitProviderError.backendOperationUnsupported(
+                "A remote branch must include a remote name."
+            )
+        }
+
+        let inferredLocal = String(remote[remote.index(after: separator)...])
+        let local = (localBranch ?? inferredLocal).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !local.isEmpty else {
+            throw GitProviderError.backendOperationUnsupported("A local branch name is required.")
+        }
+
+        let localBranches = try LibGit2.getLocalBranches(at: repository.path)
+        guard !localBranches.contains(where: { $0.name == local }) else {
+            throw GitProviderError.backendOperationUnsupported("Local branch already exists: \(local)")
+        }
+
+        let remoteBranches = try LibGit2.getRemoteBranches(at: repository.path)
+        guard let remoteBranchInfo = remoteBranches.first(where: { $0.id == remote }),
+              !remoteBranchInfo.latestCommitHash.isEmpty else {
+            throw GitProviderError.backendOperationUnsupported("Remote branch not found: \(remote)")
+        }
+
+        // LibGit2Swift's public branch creator starts from HEAD rather than an
+        // arbitrary ref. Move to the remote commit first, create the local
+        // branch there, then set its upstream and switch to the local ref.
+        let previousBranch = try? LibGit2.getCurrentBranchInfo(at: repository.path)?.name
+        try LibGit2.checkoutCommit(remoteBranchInfo.latestCommitHash, at: repository.path)
+        var createdLocalBranch = false
+        do {
+            _ = try LibGit2.createBranch(named: local, at: repository.path)
+            createdLocalBranch = true
+            try LibGit2.setUpstream(localBranch: local, upstreamBranch: remote, at: repository.path)
+            try LibGit2.checkout(branch: local, at: repository.path)
+        } catch {
+            if createdLocalBranch {
+                try? LibGit2.deleteBranch(named: local, at: repository.path)
+            }
+            if let previousBranch {
+                try? LibGit2.checkout(branch: previousBranch, at: repository.path)
+            }
+            throw error
+        }
+    }
+
     func deleteBranch(named name: String, in repository: URL) throws {
         try LibGit2.deleteBranch(named: name, at: repository.path)
     }

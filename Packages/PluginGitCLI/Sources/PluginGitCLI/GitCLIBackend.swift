@@ -108,6 +108,18 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitBranchOperation.checkoutBranch(named: name, in: repository)
     }
 
+    func checkoutRemoteBranch(
+        named remoteBranch: String,
+        as localBranch: String?,
+        in repository: URL
+    ) throws {
+        try GitBranchOperation.checkoutRemoteBranch(
+            named: remoteBranch,
+            as: localBranch,
+            in: repository
+        )
+    }
+
     func deleteBranch(named name: String, in repository: URL) throws {
         try GitBranchOperation.deleteBranch(named: name, in: repository)
     }

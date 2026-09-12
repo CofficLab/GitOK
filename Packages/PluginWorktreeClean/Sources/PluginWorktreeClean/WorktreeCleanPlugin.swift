@@ -14,32 +14,31 @@ import ProviderWorkspaceScene
 import SwiftUI
 import ProviderDocsView
 
-// MARK: - Worktree Overview SuperPlugin
+// MARK: - Worktree Clean SuperPlugin
 
-/// 工作区概览插件。
+/// 工作区干净视图插件。
 ///
-/// 当「当前项目已打开 + 未选中 commit」时，通过 `ContentViewProviding`
-/// 向主内容区贡献工作区概览：顶部一行是工作区状态提示（干净 / 有未提交
-/// 变更）与本地 Git 提交活跃度热力图，下面是项目语言、仓库信息、
-/// Git 用户配置等全宽信息区块。工作区干净与否都会展示。
+/// 当「当前项目已打开 + 未选中 commit + 工作区无未提交变更」时，通过
+/// `ContentViewProviding` 向主内容区贡献工作区概览：顶部一行是「工作区干净」
+/// 提示与本地 Git 提交活跃度热力图，下面是全宽的信息区块。
 ///
 /// 状态由插件自有 ViewModel 持有；外部事件（项目 / commit 选择、仓库与工作区
-/// 数据变化）由 `WorktreeCleanObserver` 翻译进 ViewModel。选中 commit 时渲染
-/// `EmptyView` 不占用布局——commit 详情与工作区变更列表由 CommitDetail 插件
-/// 展示，两者在选中 commit 时互斥。
+/// 数据变化）由 `WorktreeCleanObserver` 翻译进 ViewModel。其余情况渲染
+/// `EmptyView` 不占用布局——工作区变更列表仍由 CommitDetail 插件展示，
+/// 并与本插件的概览内容互斥。
 @MainActor
 public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.worktree-clean", category: "WorktreeClean")
-    nonisolated public static let emoji = "🗂"
+    nonisolated public static let emoji = "✅"
     nonisolated static let verbose = false
 
     public let id = "com.coffic.gitok.plugin.worktree-clean"
-    /// 依赖项目 Provider 先启动（概览需要读取当前项目）。
+    /// 依赖项目 Provider 先启动（干净视图需要读取当前项目）。
     public let order = 22
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.worktree-clean",
-        name: "Worktree Overview",
-        description: "Worktree overview: clean/dirty state, commit activity, repository info and Git user configuration",
+        name: "Worktree Clean",
+        description: "Show working-tree clean state and local commit activity when there are no uncommitted changes",
         category: .project,
         stage: .stable,
         policy: .required

@@ -24,6 +24,7 @@ public enum GitBranchOperation {
         case renameFailed(String)
         case upstreamFailed(String)
         case publishFailed(String)
+        case remoteCheckoutFailed(String)
         case deleteRemoteFailed(String)
 
         public var errorDescription: String? {
@@ -40,6 +41,8 @@ public enum GitBranchOperation {
                 String(format: LumiPluginLocalization.string("Upstream update failed: %@", bundle: .module), message)
             case .publishFailed(let message):
                 String(format: LumiPluginLocalization.string("Branch publish failed: %@", bundle: .module), message)
+            case .remoteCheckoutFailed(let message):
+                String(format: LumiPluginLocalization.string("Remote branch checkout failed: %@", bundle: .module), message)
             case .deleteRemoteFailed(let message):
                 String(format: LumiPluginLocalization.string("Remote branch deletion failed: %@", bundle: .module), message)
             }
@@ -89,6 +92,44 @@ public enum GitBranchOperation {
     /// 切换分支。
     public static func checkoutBranch(named name: String, in repository: URL) throws {
         _ = try GitProcessRunner.run(["checkout", name], in: repository)
+    }
+
+    /// 将远程跟踪分支检出为本地分支并设置 upstream。
+    ///
+    /// 例如 `origin/feature/login` 默认会创建并切换到本地
+    /// `feature/login`，而不是直接 checkout 远程引用导致 detached HEAD。
+    public static func checkoutRemoteBranch(
+        named remoteBranch: String,
+        as localBranch: String? = nil,
+        in repository: URL
+    ) throws {
+        let remote = remoteBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let separator = remote.firstIndex(of: "/"), separator != remote.startIndex else {
+            throw Error.remoteCheckoutFailed(
+                LumiPluginLocalization.string("A remote branch must include a remote name.", bundle: .module)
+            )
+        }
+
+        let inferredLocal = String(remote[remote.index(after: separator)...])
+        let local = (localBranch ?? inferredLocal).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !local.isEmpty else {
+            throw Error.remoteCheckoutFailed(
+                LumiPluginLocalization.string("A local branch name is required.", bundle: .module)
+            )
+        }
+
+        do {
+            _ = try validatedBranchName(local, in: repository)
+            _ = try validatedBranchName(remote, in: repository)
+            _ = try GitProcessRunner.run(
+                ["checkout", "--track", "-b", local, remote],
+                in: repository
+            )
+        } catch let error as Error {
+            throw error
+        } catch {
+            throw Error.remoteCheckoutFailed(Self.message(for: error))
+        }
     }
 
     /// 删除本地分支（-d 保守删除，仅已合并分支）。

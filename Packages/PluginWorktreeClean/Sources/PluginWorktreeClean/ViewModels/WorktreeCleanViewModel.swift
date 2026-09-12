@@ -4,7 +4,7 @@ import ProviderGit
 import ProviderGitUser
 import ProviderProjects
 
-/// 工作区概览的自有状态模型。
+/// 工作区干净视图的自有状态模型。
 ///
 /// 由插件入口在装配阶段创建并注入视图；`WorktreeCleanObserver` 把外部
 /// （Provider / GitRepositoryWatching）事件翻译成本模型的领域方法。
@@ -36,11 +36,11 @@ final class WorktreeCleanViewModel: ObservableObject {
 
     /// 当前是否选中了 commit。
     ///
-    /// 概览只在「有项目 + 未选中 commit」时展示；把该状态存下来是为了让
+    /// 干净视图只在「有项目 + 未选中 commit」时展示；把该状态存下来是为了让
     /// 后续 `handleDataChanged`（提交 / 推送 / 分支切换 / 外部编辑触发）触发的
     /// `reload` 也保持隐藏——否则已选 commit 后的一次 dataChanged 会因工作区
-    /// 干净而重新亮起概览，盖住 commit 详情。
-    @Published private(set) var hasSelectedCommit = false
+    /// 干净而重新亮起干净视图，盖住 commit 详情。
+    private var hasSelectedCommit = false
 
     /// Git 用户预设列表，由 `GitUserPresetProviding` 通过插件级 Observer 驱动。
     @Published private(set) var userPresets: [GitUserPreset] = []
@@ -70,7 +70,7 @@ final class WorktreeCleanViewModel: ObservableObject {
 
     /// 外部项目 / 选中状态变化（打开 / 切换 / 关闭项目、选中 / 取消 commit）。
     ///
-    /// 概览只在「有项目 + 未选中 commit」时展示，其余情况直接隐藏。
+    /// 干净视图只在「有项目 + 未选中 commit」时展示，其余情况直接隐藏。
     func handleProjectChanged(project: Project?, hasSelectedCommit: Bool) {
         let previousProjectURL = self.project?.url
         let previousHasSelectedCommit = self.hasSelectedCommit
@@ -215,7 +215,7 @@ final class WorktreeCleanViewModel: ObservableObject {
 
     /// 重新检查当前项目工作区是否干净。
     ///
-    /// 选中 commit 后工作区数据变化不应重新点亮概览，因此这里同样
+    /// 选中 commit 后工作区数据变化不应重新点亮干净视图，因此这里同样
     /// 以 `!hasSelectedCommit` 为前提（与 `handleProjectChanged` 一致）。
     private func reload(force: Bool = false) {
         guard let project, !hasSelectedCommit else {

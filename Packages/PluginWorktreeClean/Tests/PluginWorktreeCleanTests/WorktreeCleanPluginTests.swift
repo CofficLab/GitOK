@@ -9,7 +9,7 @@ import ProviderContentView
 import ProviderProjects
 import ProviderWorkspaceScene
 import XCTest
-@testable import PluginWorktreeOverview
+@testable import PluginWorktreeClean
 @testable import ProviderContentView
 
 @MainActor
