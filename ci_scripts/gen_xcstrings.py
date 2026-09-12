@@ -5,7 +5,7 @@ Usage:
     python3 gen_xcstrings.py <output_path> '<json_translations>'
 
 `json_translations` maps each key to {en, zh-Hans, zh-Hant, zh-HK, zh-TW}.
-Format mirrors the PluginWorktreeOverview template (sourceLanguage en).
+Format mirrors the PluginWorktreeClean template (sourceLanguage en).
 """
 import json
 import sys

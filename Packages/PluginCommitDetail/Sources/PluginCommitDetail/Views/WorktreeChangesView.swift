@@ -15,7 +15,7 @@ private func loc(_ key: String) -> String {
 /// 选中文件时通过插件注入的 intent 写入 Provider，右侧 git diff 插件据此展示 diff。
 ///
 /// 工作区干净（无未提交变更）时不渲染任何内容、不占布局——「干净状态视图」
-/// （仓库信息 + Git 用户配置）已独立到 `PluginWorktreeOverview` 插件，作为主内容区
+/// （仓库信息 + Git 用户配置）已独立到 `PluginWorktreeClean` 插件，作为主内容区
 /// 的另一块贡献展示，两个插件的内容块互斥。
 ///
 /// 外部仓库数据变化（提交 / 推送 / 分支切换）由 `CommitDetailObserver` 翻译成
@@ -67,7 +67,7 @@ struct WorktreeChangesView: View {
                 }
             } else if entries.isEmpty {
                 // 工作区干净（或未打开项目）：不渲染任何内容、不占布局，
-                // 干净状态视图由 PluginWorktreeOverview 插件独立展示。
+                // 干净状态视图由 PluginWorktreeClean 插件独立展示。
                 EmptyView()
             } else {
                 VStack(spacing: 0) {

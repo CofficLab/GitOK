@@ -708,7 +708,7 @@ ZH: dict[str, str] = {
     "Light/Dark": "浅色/深色",
     "themes": "主题数",
 
-    # ---------- PluginWorktreeOverview ----------
+    # ---------- PluginWorktreeClean ----------
     "Sweep away clutter and keep your repository pristine.": "扫走杂乱，让仓库保持纯净。",
     "Dry Run First": "先试运行",
     "Preview every file that would be removed before anything happens.": "在动手前预览每个将被移除的文件。",

@@ -1,7 +1,7 @@
 import Foundation
 import ProviderProjects
 
-/// Worktree Overview 插件读取项目/commit 选择状态的最小能力。
+/// Worktree Clean 插件读取项目/commit 选择状态的最小能力。
 @MainActor
 protocol WorktreeCleanProjectCapability: AnyObject {
     var currentProject: Project? { get }

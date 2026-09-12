@@ -1,6 +1,6 @@
-# PluginWorktreeOverview
+# PluginWorktreeClean
 
-工作区概览插件（显示名 Worktree Overview）：`WorktreeCleanView` 在顶部展示工作区状态提示（干净 / 有未提交变更）与本地 Git 提交活跃度热力图，下面按整行展示项目语言、仓库信息、Git 用户配置与用户预设。工作区干净与否都会展示；有未提交变更时，变更文件列表由 `PluginCommitDetail` 在工作区上方展示，本插件概览在其下方继续展示。`WorktreeCleanViewModel` / `WorktreeCleanObserver` 驱动工作区状态，热力图通过 `ProviderActivityHeatmap` 消费 `PluginActivityHeatmap` 提供的数据。
+工作区状态插件：`WorktreeCleanView` 在顶部同一行展示工作区干净提示与本地 Git 提交活跃度热力图，下面按整行展示仓库信息、Git 用户配置与用户预设。`WorktreeCleanViewModel` / `WorktreeCleanObserver` 驱动工作区状态，热力图通过 `ProviderActivityHeatmap` 消费 `PluginActivityHeatmap` 提供的数据。
 
 ## 本 Package 的位置
 
@@ -14,11 +14,11 @@
 ## 目录结构
 
 ```text
-└── PluginWorktreeOverview
+└── PluginWorktreeClean
     ├── Resources
     │   └── Localizable.xcstrings
     ├── Sources
-    │   └── PluginWorktreeOverview
+    │   └── PluginWorktreeClean
     │       ├── Capabilities
     │       │   └── WorktreeCleanActivityHeatmapCapability.swift
     │       ├── Observers
@@ -37,7 +37,7 @@
     │       │   └── WorktreeCleanView.swift
     │       └── WorktreeCleanPlugin.swift
     └── Tests
-        └── PluginWorktreeOverviewTests
+        └── PluginWorktreeCleanTests
             └── WorktreeCleanPluginTests.swift
 ```
 

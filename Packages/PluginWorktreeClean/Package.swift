@@ -2,13 +2,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "PluginWorktreeOverview",
+    name: "PluginWorktreeClean",
     defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
     products: [
-        .library(name: "PluginWorktreeOverview", targets: ["PluginWorktreeOverview"]),
+        .library(name: "PluginWorktreeClean", targets: ["PluginWorktreeClean"]),
     ],
     dependencies: [
         .package(path: "../KernelCore"),
@@ -29,7 +29,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "PluginWorktreeOverview",
+            name: "PluginWorktreeClean",
             dependencies: [
                 .product(name: "KernelCore", package: "KernelCore"),
                 .product(name: "KitGit", package: "KitGit"),
@@ -47,20 +47,20 @@ let package = Package(
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
-            path: "Sources/PluginWorktreeOverview",
+            path: "Sources/PluginWorktreeClean",
             resources: [
                 .process("../../Resources/Localizable.xcstrings"),
             ]
         ),
         .testTarget(
-            name: "PluginWorktreeOverviewTests",
+            name: "PluginWorktreeCleanTests",
             dependencies: [
-                "PluginWorktreeOverview",
+                "PluginWorktreeClean",
                 .product(name: "ProviderActivityHeatmap", package: "ProviderActivityHeatmap"),
                 .product(name: "ProviderGitUser", package: "ProviderGitUser"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
             ],
-            path: "Tests/PluginWorktreeOverviewTests"
+            path: "Tests/PluginWorktreeCleanTests"
         ),
     ]
 )

@@ -5,17 +5,13 @@ import ProviderGit
 import ProviderProjects
 import SwiftUI
 
-/// 工作区概览视图。
+/// 工作区干净视图。
 ///
-/// 当「当前项目已打开 + 未选中 commit」时，作为主内容区的一块展示工作区
-/// 概览：顶部是提交活跃度热力图，下面是项目语言、仓库信息、Git 用户配置
-/// 与用户预设（`CleanStateInfoView`）。工作区干净与否都会展示——干净时
-/// CommitDetail 插件渲染 `EmptyView` 不占布局，本视图占满内容区；有未提交
-/// 变更时 CommitDetail 插件在工作区上方展示变更文件列表，本视图在其下方
-/// 继续展示概览。
-/// 其余情况（无项目 / 已选中 commit）渲染 `EmptyView` 且**不占任何布局**——
-/// commit 详情由 CommitDetail 插件展示，两个插件的内容块互斥，避免在内容区
-/// VStack 中叠加。
+/// 当「当前项目已打开 + 未选中 commit + 工作区无未提交变更」时，作为主内容区
+/// 的一块展示干净状态：顶部是提交活跃度热力图，下面是仓库信息、
+/// Git 用户配置与用户预设（`CleanStateInfoView`）。其余情况（无项目 / 已选中 commit / 工作区有变更）
+/// 渲染 `EmptyView` 且**不占任何布局**——变更列表由 CommitDetail 插件展示，
+/// 两个插件的内容块互斥，避免在内容区 VStack 中叠加。
 struct WorktreeCleanView: View {
     @ObservedObject var viewModel: WorktreeCleanViewModel
     @ObservedObject var activityHeatmapViewModel: WorktreeCleanActivityHeatmapViewModel
@@ -40,8 +36,8 @@ struct WorktreeCleanView: View {
 
     var body: some View {
         Group {
-            if let project = viewModel.project, !viewModel.hasSelectedCommit {
-                overviewView(project: project)
+            if viewModel.isClean, let project = viewModel.project {
+                cleanStateView(project: project)
             } else {
                 // 不占布局：EmptyView 本身零尺寸，避免与 CommitDetail 的内容块
                 // 在 VStack 中同时弹性拉伸。
@@ -50,9 +46,9 @@ struct WorktreeCleanView: View {
         }
     }
 
-    // MARK: - Overview View
+    // MARK: - Clean State View
 
-    private func overviewView(project: Project) -> some View {
+    private func cleanStateView(project: Project) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             WorktreeCleanActivityHeatmapView(viewModel: activityHeatmapViewModel)
                 .frame(maxWidth: .infinity, alignment: .leading)
