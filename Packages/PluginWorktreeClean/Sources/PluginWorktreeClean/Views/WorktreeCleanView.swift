@@ -49,22 +49,27 @@ struct WorktreeCleanView: View {
     // MARK: - Clean State View
 
     private func cleanStateView(project: Project) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
-            WorktreeCleanActivityHeatmapView(viewModel: activityHeatmapViewModel)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 20) {
+                WorktreeCleanActivityHeatmapView(viewModel: activityHeatmapViewModel)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-            WorktreeCleanProjectLanguagesView(viewModel: projectLanguagesViewModel)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                WorktreeCleanProjectLanguagesView(viewModel: projectLanguagesViewModel)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-            CleanStateInfoView(
-                project: project,
-                viewModel: viewModel,
-                git: git,
-                openUserSettings: openUserSettings
-            )
+                CleanStateInfoView(
+                    project: project,
+                    viewModel: viewModel,
+                    git: git,
+                    openUserSettings: openUserSettings
+                )
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            theme.surface
+        }
     }
 }

@@ -52,9 +52,14 @@ struct WorktreeChangesView: View {
     var body: some View {
         Group {
             if isLoading && entries.isEmpty && !hasLoadedSnapshot {
-                // 骨架占位由内容区整体容器滚动，本视图只平铺内容。
-                WorktreeChangesSkeletonView()
-                    .frame(maxWidth: .infinity)
+                ScrollView(.vertical, showsIndicators: false) {
+                    WorktreeChangesSkeletonView()
+                        .frame(maxWidth: .infinity)
+                }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background {
+                        theme.surface
+                    }
             } else if let loadError {
                 AppEmptyState(
                     icon: "exclamationmark.triangle",
@@ -82,18 +87,19 @@ struct WorktreeChangesView: View {
                             .background(theme.error.opacity(0.08))
                     }
                     // 与其他列表（CommitRailView / CommitDetailLayout）一致：
-                    // LazyVStack + AppListRow（自带选中 / hover 背景与描边），
-                    // 行间用 AppDivider 分隔。滚动由内容区整体容器承担，
-                    // 本视图只负责平铺列表（懒加载保持生效）。
-                    LazyVStack(spacing: 0) {
-                        ForEach(entries) { entry in
-                            fileRow(entry)
-                            if entry.id != entries.last?.id {
-                                AppDivider()
+                    // ScrollView + LazyVStack + AppListRow（自带选中 / hover 背景与描边），
+                    // 行间用 AppDivider 分隔。
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVStack(spacing: 0) {
+                            ForEach(entries) { entry in
+                                fileRow(entry)
+                                if entry.id != entries.last?.id {
+                                    AppDivider()
+                                }
                             }
                         }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                     if !selectedPaths.isEmpty {
                         batchActionBar
                     }
