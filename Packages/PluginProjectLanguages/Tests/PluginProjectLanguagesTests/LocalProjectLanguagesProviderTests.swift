@@ -48,6 +48,11 @@ struct LocalProjectLanguagesProviderTests {
             headHash: secondRepository.lastPathComponent,
             analyzerVersion: 1
         ))?.repositoryPath == secondRepository.path)
+        #expect(cache.load(for: ProjectLanguagesCacheKey(
+            repositoryPath: firstRepository.path,
+            headHash: firstRepository.lastPathComponent,
+            analyzerVersion: 1
+        )) == nil)
     }
 
     @Test("loads a clean snapshot from disk without re-analyzing")
