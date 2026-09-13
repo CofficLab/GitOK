@@ -97,13 +97,19 @@ public enum GitStatusLoader {
     ///
     /// 使用 `git status --porcelain=v1 --untracked-files=all`，解析每一行的
     /// XY 状态码和路径。未跟踪目录会展开为其中的文件；重命名/复制（R/C）只取目标路径。
-    public static func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
+    public static func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> [GitStatusEntry] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         try validateRepository(repository)
         let output = try GitProcessRunner.run(
             ["status", "--porcelain=v1", "--untracked-files=all"],
             in: repository,
+            cancellation: cancellation,
             timeout: commandTimeout
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         var entries: [GitStatusEntry] = []
         for line in output.split(separator: "\n") {
             let s = String(line)

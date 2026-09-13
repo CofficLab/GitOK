@@ -63,12 +63,27 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitStatusLoader.loadEntries(in: repository)
     }
 
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        try GitStatusLoader.loadEntries(in: repository, cancellation: cancellation)
+    }
+
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
         try GitDiffLoader.loadChanges(commit: hash, in: repository)
     }
 
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
         try GitDiffLoader.countChanges(commit: hash, in: repository)
+    }
+
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        try GitDiffLoader.countChanges(commit: hash, in: repository, cancellation: cancellation)
     }
 
     func loadCommitChangesPage(
@@ -85,12 +100,54 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         )
     }
 
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: limit,
+            offset: offset,
+            in: repository,
+            cancellation: cancellation
+        )
+    }
+
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try GitDiffLoader.loadDiff(commit: hash, filePath: filePath, in: repository)
     }
 
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadDiff(
+            commit: hash,
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
+    }
+
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
         try GitDiffLoader.loadWorktreeDiff(filePath: filePath, in: repository)
+    }
+
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadWorktreeDiff(
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
     }
 
     func currentBranch(in repository: URL) -> String? {

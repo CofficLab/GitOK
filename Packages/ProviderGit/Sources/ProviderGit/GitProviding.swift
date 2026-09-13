@@ -109,16 +109,43 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus
     func loadEntries(in repository: URL) throws -> [GitStatusEntry]
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry]
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int
     func loadCommitChangesPage(
         commit hash: String,
         limit: Int,
         offset: Int,
         in repository: URL
     ) throws -> GitFileChangePage
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String
 
     func currentBranch(in repository: URL) -> String?
     func latestTag(in repository: URL) -> String?
@@ -242,6 +269,63 @@ public extension GitOperationProviding {
         let hashes = try unpushedCommitHashes(in: repository)
         if cancellation?.isCancelled == true { throw CancellationError() }
         return hashes
+    }
+
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let entries = try loadEntries(in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return entries
+    }
+
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let count = try countCommitChanges(commit: hash, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return count
+    }
+
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let page = try loadCommitChangesPage(commit: hash, limit: limit, offset: offset, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return page
+    }
+
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let diff = try loadDiff(commit: hash, filePath: filePath, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return diff
+    }
+
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let diff = try loadWorktreeDiff(filePath: filePath, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return diff
     }
 
     /// 默认兼容实现：没有原生进度支持的后端仍提供开始 / 完成状态。

@@ -146,6 +146,13 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try GitStatusLoader.loadEntries(in: repository)
     }
 
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        try GitStatusLoader.loadEntries(in: repository, cancellation: cancellation)
+    }
+
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
         try LibGit2.getCommitDiffFiles(atCommit: hash, at: repository.path).map { file in
             let status = GitFileChange.Status(rawValue: String(file.changeType.prefix(1))) ?? .unknown
@@ -168,6 +175,14 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try GitDiffLoader.countChanges(commit: hash, in: repository)
     }
 
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        try GitDiffLoader.countChanges(commit: hash, in: repository, cancellation: cancellation)
+    }
+
     func loadCommitChangesPage(
         commit hash: String,
         limit: Int,
@@ -182,14 +197,56 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         )
     }
 
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: limit,
+            offset: offset,
+            in: repository,
+            cancellation: cancellation
+        )
+    }
+
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try LibGit2.getFileDiff(atCommit: hash, for: filePath, at: repository.path)
+    }
+
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadDiff(
+            commit: hash,
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
     }
 
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
         let staged = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: true)
         let unstaged = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: false)
         return [staged, unstaged].filter { !$0.isEmpty }.joined(separator: "\n")
+    }
+
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadWorktreeDiff(
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
     }
 
     func currentBranch(in repository: URL) -> String? {

@@ -156,12 +156,31 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("loadEntries") { try $0.loadEntries(in: repository) }
     }
 
+    public func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        try execute("loadEntries") {
+            try $0.loadEntries(in: repository, cancellation: cancellation)
+        }
+    }
+
     public func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
         try execute("loadChanges") { try $0.loadChanges(commit: hash, in: repository) }
     }
 
     public func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
         try execute("countCommitChanges") { try $0.countCommitChanges(commit: hash, in: repository) }
+    }
+
+    public func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        try execute("countCommitChanges") {
+            try $0.countCommitChanges(commit: hash, in: repository, cancellation: cancellation)
+        }
     }
 
     public func loadCommitChangesPage(
@@ -175,12 +194,51 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         }
     }
 
+    public func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        try execute("loadCommitChangesPage") {
+            try $0.loadCommitChangesPage(
+                commit: hash,
+                limit: limit,
+                offset: offset,
+                in: repository,
+                cancellation: cancellation
+            )
+        }
+    }
+
     public func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try execute("loadDiff") { try $0.loadDiff(commit: hash, filePath: filePath, in: repository) }
     }
 
+    public func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try execute("loadDiff") {
+            try $0.loadDiff(commit: hash, filePath: filePath, in: repository, cancellation: cancellation)
+        }
+    }
+
     public func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
         try execute("loadWorktreeDiff") { try $0.loadWorktreeDiff(filePath: filePath, in: repository) }
+    }
+
+    public func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try execute("loadWorktreeDiff") {
+            try $0.loadWorktreeDiff(filePath: filePath, in: repository, cancellation: cancellation)
+        }
     }
 
     public func currentBranch(in repository: URL) -> String? {
