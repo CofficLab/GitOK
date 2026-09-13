@@ -113,6 +113,21 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
     }
 
+    func loadAllCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [KitGit.GitCommit] {
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            allRefs: true,
+            cancellation: cancellation
+        )
+    }
+
     func countCommits(in repository: URL) throws -> Int {
         try GitCommitLoader.countCommits(in: repository)
     }
@@ -140,6 +155,13 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         // CLI loader's command timeout; LibGit2Swift remains the primary
         // backend for the other Git operations.
         try GitStatusLoader.loadStatus(in: repository)
+    }
+
+    func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        try GitStatusLoader.loadStatus(in: repository, cancellation: cancellation)
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
@@ -258,12 +280,24 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         return Self.tagName(from: description)
     }
 
+    func latestTag(in repository: URL, cancellation: GitProcessCancellation?) -> String? {
+        GitRefReader.latestTag(in: repository, cancellation: cancellation)
+    }
+
     func firstCommitDate(in repository: URL) -> Date? {
         GitRefReader.firstCommitDate(in: repository)
     }
 
+    func firstCommitDate(in repository: URL, cancellation: GitProcessCancellation?) -> Date? {
+        GitRefReader.firstCommitDate(in: repository, cancellation: cancellation)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         try? LibGit2.getUnPushedCommits(at: repository.path, verbose: false).count
+    }
+
+    func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int? {
+        GitRefReader.unpushedCount(in: repository, cancellation: cancellation)
     }
 
     func hasRemotes(in repository: URL) -> Bool {
@@ -480,6 +514,13 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }) ?? []
     }
 
+    func listStashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [KitGit.GitStashEntry] {
+        GitStashOperation.list(in: repository, cancellation: cancellation)
+    }
+
     func hasChangesToStash(in repository: URL) -> Bool {
         !((try? loadEntries(in: repository)) ?? []).isEmpty
     }
@@ -527,6 +568,13 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         (try? LibGit2.submodules(at: repository.path).map {
             GitSubmoduleSummary(path: $0.path, commit: $0.commitHash, url: $0.description ?? "")
         }) ?? []
+    }
+
+    func listSubmodules(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [GitSubmoduleSummary] {
+        GitSubmoduleOperation.list(in: repository, cancellation: cancellation)
     }
 
     func updateSubmodules(in repository: URL) throws {
