@@ -23,6 +23,9 @@ struct BranchPickerPopoverView: View {
     @State private var newBranchName = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var loadGeneration = 0
+    @State private var projectGeneration = 0
+    @State private var loadTask: Task<Void, Never>?
     @FocusState private var isNewBranchFieldFocused: Bool
 
     init(
@@ -67,10 +70,20 @@ struct BranchPickerPopoverView: View {
         .frame(minHeight: 220, maxHeight: 420)
         .onAppear(perform: load)
         .onReceive(observation.$lastEvent) { event in
-            if case .dataChanged = event {
+            switch event {
+            case .selectionChanged:
+                projectGeneration += 1
+                branches = []
+                errorMessage = nil
+                isLoading = false
                 load()
+            case .dataChanged:
+                load()
+            default:
+                break
             }
         }
+        .onDisappear(perform: cancelLoad)
     }
 
     // MARK: - Header
@@ -220,47 +233,75 @@ struct BranchPickerPopoverView: View {
 
     @MainActor
     private func load() {
+        loadGeneration += 1
+        let generation = loadGeneration
+        let requestProjectGeneration = projectGeneration
+        loadTask?.cancel()
+        loadTask = nil
+
         guard let url = projects.currentProject?.url else {
             branches = []
             isLoading = false
+            errorMessage = nil
             return
         }
+        let repositoryURL = url.standardizedFileURL
         isLoading = true
         errorMessage = nil
-        Task.detached(priority: .utility) {
-            do {
-                let loaded = try git.listBranches(in: url)
-                await MainActor.run {
-                    branches = loaded
-                    isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    branches = []
-                    isLoading = false
-                }
+
+        loadTask = Task { @MainActor in
+            let result = await Task.detached(priority: .utility) {
+                Result { try git.listBranches(in: repositoryURL) }
+            }.value
+
+            guard !Task.isCancelled,
+                  loadGeneration == generation,
+                  projectGeneration == requestProjectGeneration,
+                  projects.currentProject?.url.standardizedFileURL == repositoryURL
+            else { return }
+
+            loadTask = nil
+            isLoading = false
+            switch result {
+            case .success(let loaded):
+                branches = loaded
+            case .failure(let error):
+                branches = []
+                errorMessage = error.localizedDescription
             }
         }
     }
 
     @MainActor
+    private func cancelLoad() {
+        loadGeneration += 1
+        loadTask?.cancel()
+        loadTask = nil
+    }
+
+    @MainActor
     private func switchBranch(_ branch: GitBranchSummary) {
         guard let url = projects.currentProject?.url, branch.name != viewModel.currentBranch else { return }
+        let repositoryURL = url.standardizedFileURL
+        let requestProjectGeneration = projectGeneration
         errorMessage = nil
         isLoading = true
-        Task.detached(priority: .userInitiated) {
-            do {
-                try git.checkoutBranch(named: branch.name, in: url)
-                await MainActor.run {
-                    isLoading = false
-                    projects.notifyDataChanged()
-                    isPresented.wrappedValue = false
-                }
-            } catch {
-                await MainActor.run {
-                    errorMessage = error.localizedDescription
-                    isLoading = false
-                }
+        Task { @MainActor in
+            let result = await Task.detached(priority: .userInitiated) {
+                Result { try git.checkoutBranch(named: branch.name, in: repositoryURL) }
+            }.value
+            if case .success = result,
+               projects.currentProject?.url.standardizedFileURL == repositoryURL {
+                projects.notifyDataChanged()
+            }
+            guard projectGeneration == requestProjectGeneration,
+                  projects.currentProject?.url.standardizedFileURL == repositoryURL else { return }
+            isLoading = false
+            switch result {
+            case .success:
+                isPresented.wrappedValue = false
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -268,21 +309,26 @@ struct BranchPickerPopoverView: View {
     @MainActor
     private func switchRemoteBranch(_ branch: GitBranchSummary) {
         guard let url = projects.currentProject?.url else { return }
+        let repositoryURL = url.standardizedFileURL
+        let requestProjectGeneration = projectGeneration
         errorMessage = nil
         isLoading = true
-        Task.detached(priority: .userInitiated) {
-            do {
-                try git.checkoutRemoteBranch(named: branch.name, as: nil, in: url)
-                await MainActor.run {
-                    isLoading = false
-                    projects.notifyDataChanged()
-                    isPresented.wrappedValue = false
-                }
-            } catch {
-                await MainActor.run {
-                    errorMessage = error.localizedDescription
-                    isLoading = false
-                }
+        Task { @MainActor in
+            let result = await Task.detached(priority: .userInitiated) {
+                Result { try git.checkoutRemoteBranch(named: branch.name, as: nil, in: repositoryURL) }
+            }.value
+            if case .success = result,
+               projects.currentProject?.url.standardizedFileURL == repositoryURL {
+                projects.notifyDataChanged()
+            }
+            guard projectGeneration == requestProjectGeneration,
+                  projects.currentProject?.url.standardizedFileURL == repositoryURL else { return }
+            isLoading = false
+            switch result {
+            case .success:
+                isPresented.wrappedValue = false
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -290,26 +336,33 @@ struct BranchPickerPopoverView: View {
     @MainActor
     private func createBranch() {
         guard let url = projects.currentProject?.url else { return }
+        let repositoryURL = url.standardizedFileURL
+        let requestProjectGeneration = projectGeneration
         let name = newBranchName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { return }
         errorMessage = nil
         isLoading = true
-        Task.detached(priority: .userInitiated) {
-            do {
-                try git.createBranch(named: name, in: url)
-                try git.checkoutBranch(named: name, in: url)
-                await MainActor.run {
-                    isLoading = false
-                    isCreatingNew = false
-                    newBranchName = ""
-                    projects.notifyDataChanged()
-                    isPresented.wrappedValue = false
+        Task { @MainActor in
+            let result = await Task.detached(priority: .userInitiated) {
+                Result {
+                    try git.createBranch(named: name, in: repositoryURL)
+                    try git.checkoutBranch(named: name, in: repositoryURL)
                 }
-            } catch {
-                await MainActor.run {
-                    errorMessage = error.localizedDescription
-                    isLoading = false
-                }
+            }.value
+            if case .success = result,
+               projects.currentProject?.url.standardizedFileURL == repositoryURL {
+                projects.notifyDataChanged()
+            }
+            guard projectGeneration == requestProjectGeneration,
+                  projects.currentProject?.url.standardizedFileURL == repositoryURL else { return }
+            isLoading = false
+            switch result {
+            case .success:
+                isCreatingNew = false
+                newBranchName = ""
+                isPresented.wrappedValue = false
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
         }
     }
