@@ -13,6 +13,9 @@ public struct SubmoduleStatusTile: View {
     @State private var isPresented = false
     @State private var submodules: [GitSubmoduleSummary] = []
     @State private var isLoading = true
+    @State private var loadTask: Task<Void, Never>?
+    @State private var loadCancellation: GitProcessCancellation?
+    @State private var loadGeneration = 0
 
     public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
@@ -45,38 +48,65 @@ public struct SubmoduleStatusTile: View {
         }
         .onReceive(observation.$revision) { _ in refresh() }
         .onAppear(perform: refresh)
+        .onDisappear(perform: cancelRefresh)
     }
 
     @MainActor
     private func refresh() {
+        loadGeneration &+= 1
+        let generation = loadGeneration
+        cancelRefresh()
+
         guard let projectURL = projects.currentProject?.url else {
             submodules = []
             isLoading = false
             return
         }
+        submodules = []
         isLoading = true
-        Task.detached(priority: .utility) {
-            let loaded = git.listSubmodules(in: projectURL)
+        let cancellation = GitProcessCancellation()
+        loadCancellation = cancellation
+        loadTask = Task.detached(priority: .utility) {
+            let loaded = git.listSubmodules(in: projectURL, cancellation: cancellation)
             await MainActor.run {
+                guard generation == loadGeneration, !cancellation.isCancelled else { return }
                 submodules = loaded
                 isLoading = false
+                loadTask = nil
+                loadCancellation = nil
             }
         }
     }
 
     @MainActor
+    private func cancelRefresh() {
+        loadTask?.cancel()
+        loadTask = nil
+        loadCancellation?.cancel()
+        loadCancellation = nil
+    }
+
+    @MainActor
     private func updateAll() {
         guard let projectURL = projects.currentProject?.url else { return }
+        loadGeneration &+= 1
+        let generation = loadGeneration
         Task.detached(priority: .userInitiated) {
             do {
                 try git.updateSubmodules(in: projectURL)
                 let loaded = git.listSubmodules(in: projectURL)
                 await MainActor.run {
+                    guard generation == loadGeneration,
+                          projects.currentProject?.url == projectURL else { return }
                     submodules = loaded
                     isLoading = false
                 }
             } catch {
-                await MainActor.run { isLoading = false }
+                await MainActor.run {
+                    guard generation == loadGeneration,
+                          projects.currentProject?.url == projectURL else { return }
+                    isLoading = false
+                }
             }
         }
     }
@@ -151,8 +181,13 @@ final class ProjectObservationModel: ObservableObject {
     private var handle: (any ProjectProvidingObserverHandle)?
 
     init(projects: any ProjectProviding) {
-        handle = projects.addObserver { [weak self] _ in
-            self?.revision += 1
+        handle = projects.addObserver { [weak self] event in
+            switch event {
+            case .selectionChanged, .dataChanged:
+                self?.revision += 1
+            default:
+                break
+            }
         }
     }
 }
