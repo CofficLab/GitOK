@@ -4,6 +4,19 @@ import Testing
 
 @Suite("GitStatusLoader")
 struct GitStatusLoaderTests {
+    @Test("honors pre-cancelled status requests")
+    func honorsPreCancelledRequest() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try GitStatusLoader.loadStatus(
+                in: URL(fileURLWithPath: "/missing/repository"),
+                cancellation: cancellation
+            )
+        }
+    }
+
     @Test("does not discover a parent repository for a nested non-repository directory")
     func rejectsNestedDirectory() throws {
         let parent = FileManager.default.temporaryDirectory

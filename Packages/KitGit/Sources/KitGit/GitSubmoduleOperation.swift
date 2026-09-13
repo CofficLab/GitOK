@@ -4,11 +4,26 @@ import Foundation
 public enum GitSubmoduleOperation {
     /// 列出子模块（`git submodule status` / `.gitmodules` 解析）。
     public static func list(in repository: URL) -> [GitSubmoduleSummary] {
-        guard let out = try? GitProcessRunner.run(["submodule", "status"], in: repository) else {
+        list(in: repository, cancellation: nil)
+    }
+
+    /// 可取消的子模块列表读取，供项目切换敏感的工具栏状态使用。
+    public static func list(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [GitSubmoduleSummary] {
+        guard cancellation?.isCancelled != true,
+              let out = try? GitProcessRunner.run(
+                ["submodule", "status"],
+                in: repository,
+                cancellation: cancellation
+              ),
+              cancellation?.isCancelled != true else {
             return []
         }
         var result: [GitSubmoduleSummary] = []
         for line in out.split(separator: "\n") {
+            guard cancellation?.isCancelled != true else { return [] }
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             guard trimmed.count > 42 else { continue }
             // 格式: <status> <sha> <path> (rev)
@@ -21,10 +36,10 @@ public enum GitSubmoduleOperation {
             result.append(GitSubmoduleSummary(
                 path: path,
                 commit: sha,
-                url: remoteURL(for: path, in: repository)
+                url: remoteURL(for: path, in: repository, cancellation: cancellation)
             ))
         }
-        return result
+        return cancellation?.isCancelled == true ? [] : result
     }
 
     /// 更新全部子模块（`git submodule update --init --recursive`）。
@@ -35,12 +50,18 @@ public enum GitSubmoduleOperation {
         )
     }
 
-    private static func remoteURL(for path: String, in repository: URL) -> String {
+    private static func remoteURL(
+        for path: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String {
         let gitmodules = repository.appendingPathComponent(".gitmodules")
+        guard cancellation?.isCancelled != true else { return "" }
         guard let data = try? String(contentsOf: gitmodules, encoding: .utf8) else { return "" }
         var currentPath: String?
         var url = ""
         for line in data.split(separator: "\n") {
+            guard cancellation?.isCancelled != true else { return "" }
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.hasPrefix("[submodule") {
                 // 提取 path = "xxx"
