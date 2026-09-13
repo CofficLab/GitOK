@@ -33,7 +33,7 @@ public enum GitBackendCatalog {
         pluginID: "com.coffic.gitok.plugin.git-cli",
         name: "Git CLI",
         version: "1.0.0",
-        priority: 100
+        priority: 50
     )
 
     public static let libGit2 = GitBackendDescriptor(
@@ -41,7 +41,7 @@ public enum GitBackendCatalog {
         pluginID: "com.coffic.gitok.plugin.git-libgit2",
         name: "LibGit2Swift",
         version: "7005a738",
-        priority: 50
+        priority: 100
     )
 
     public static let all: [GitBackendDescriptor] = [cli, libGit2]
@@ -90,9 +90,22 @@ public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
 /// 以同一协议扩展，模型仍复用 KitGit 的公共值类型。
 public protocol GitOperationProviding: AnyObject, Sendable {
     func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit]
+    /// Cancellable read used by project-scoped screens. Legacy backends may
+    /// inherit the compatibility implementation below.
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit]
     func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit]
     func countCommits(in repository: URL) throws -> Int
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int
     func unpushedCommitHashes(in repository: URL) throws -> Set<String>
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String>
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus
     func loadEntries(in repository: URL) throws -> [GitStatusEntry]
@@ -202,6 +215,35 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 }
 
 public extension GitOperationProviding {
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let commits = try loadCommits(in: repository, limit: limit, offset: offset)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return commits
+    }
+
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let count = try countCommits(in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return count
+    }
+
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let hashes = try unpushedCommitHashes(in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return hashes
+    }
+
     /// 默认兼容实现：没有原生进度支持的后端仍提供开始 / 完成状态。
     func clone(
         remoteURL: String,

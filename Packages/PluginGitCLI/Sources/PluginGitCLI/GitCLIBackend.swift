@@ -18,6 +18,20 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset)
     }
 
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            cancellation: cancellation
+        )
+    }
+
     func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
     }
@@ -26,8 +40,19 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.countCommits(in: repository)
     }
 
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        try GitCommitLoader.countCommits(in: repository, cancellation: cancellation)
+    }
+
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try GitCommitLoader.unpushedCommitHashes(in: repository)
+    }
+
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        try GitCommitLoader.unpushedCommitHashes(in: repository, cancellation: cancellation)
     }
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {

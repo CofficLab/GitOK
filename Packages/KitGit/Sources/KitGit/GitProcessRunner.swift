@@ -1,14 +1,16 @@
 import Foundation
 import Darwin
 
-/// 可安全跨任务传递的 Git 子进程取消句柄。
+/// 可安全跨任务传递的 Git 读取请求取消句柄，可覆盖请求内连续执行的多条 Git 命令。
 public final class GitProcessCancellation: @unchecked Sendable {
     private let lock = NSLock()
+    private let forceKillAfter: TimeInterval?
     private var process: Process?
     private var cancelled = false
-    private var finished = false
 
-    public init() {}
+    public init(forceKillAfter: TimeInterval? = nil) {
+        self.forceKillAfter = forceKillAfter
+    }
 
     public var isCancelled: Bool {
         lock.lock()
@@ -18,17 +20,11 @@ public final class GitProcessCancellation: @unchecked Sendable {
 
     public func cancel() {
         lock.lock()
-        guard !finished else {
-            lock.unlock()
-            return
-        }
         cancelled = true
         let process = self.process
         lock.unlock()
 
-        if process?.isRunning == true {
-            process?.terminate()
-        }
+        if let process { terminate(process) }
     }
 
     fileprivate func attach(_ process: Process) -> Bool {
@@ -44,8 +40,18 @@ public final class GitProcessCancellation: @unchecked Sendable {
         if self.process === process {
             self.process = nil
         }
-        finished = true
         return cancelled
+    }
+
+    fileprivate func terminate(_ process: Process) {
+        guard process.isRunning else { return }
+        process.terminate()
+        guard let forceKillAfter, forceKillAfter >= 0 else { return }
+        let processIdentifier = process.processIdentifier
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + forceKillAfter) {
+            guard process.isRunning else { return }
+            Darwin.kill(processIdentifier, SIGKILL)
+        }
     }
 }
 
@@ -123,6 +129,7 @@ public enum GitProcessRunner {
         _ arguments: [String],
         in repository: URL,
         successExitCodes: Set<Int32> = [0],
+        cancellation: GitProcessCancellation? = nil,
         timeout: TimeInterval? = nil
     ) throws -> String {
         var outputData = Data()
@@ -130,6 +137,7 @@ public enum GitProcessRunner {
             arguments,
             in: repository,
             successExitCodes: successExitCodes,
+            cancellation: cancellation,
             timeout: timeout
         ) { data in
             outputData.append(data)
@@ -173,7 +181,7 @@ public enum GitProcessRunner {
         }
 
         if cancelBeforeRun {
-            process.terminate()
+            cancellation?.terminate(process)
         }
 
         let timeoutState = timeout.map { _ in TimeoutState() }

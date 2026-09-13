@@ -103,6 +103,22 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("loadCommits") { try $0.loadCommits(in: repository, limit: limit, offset: offset) }
     }
 
+    public func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        try execute("loadCommits") {
+            try $0.loadCommits(
+                in: repository,
+                limit: limit,
+                offset: offset,
+                cancellation: cancellation
+            )
+        }
+    }
+
     public func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
         try execute("loadAllCommits") {
             try $0.loadAllCommits(in: repository, limit: limit, offset: offset)
@@ -113,8 +129,23 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("countCommits") { try $0.countCommits(in: repository) }
     }
 
+    public func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        try execute("countCommits") {
+            try $0.countCommits(in: repository, cancellation: cancellation)
+        }
+    }
+
     public func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try execute("unpushedCommitHashes") { try $0.unpushedCommitHashes(in: repository) }
+    }
+
+    public func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        try execute("unpushedCommitHashes") {
+            try $0.unpushedCommitHashes(in: repository, cancellation: cancellation)
+        }
     }
 
     public func loadStatus(in repository: URL) throws -> GitWorktreeStatus {

@@ -91,6 +91,22 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }
     }
 
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [KitGit.GitCommit] {
+        // Project-switch-sensitive list reads must be cancellable and must not
+        // wait behind LibGit2Swift's process-wide synchronous queue.
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            cancellation: cancellation
+        )
+    }
+
     func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [KitGit.GitCommit] {
         // LibGit2Swift's list API follows HEAD; use the shared CLI loader for
         // the explicit all-refs history required by the activity heatmap.
@@ -101,32 +117,33 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.countCommits(in: repository)
     }
 
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        try GitCommitLoader.countCommits(in: repository, cancellation: cancellation)
+    }
+
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try Set(LibGit2.getUnPushedCommits(at: repository.path, verbose: false).map(\.hash))
     }
 
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        try GitCommitLoader.unpushedCommitHashes(in: repository, cancellation: cancellation)
+    }
+
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
-        let entries = try loadEntries(in: repository)
-        return GitWorktreeStatus(
-            isClean: entries.isEmpty,
-            changeCount: entries.count,
-            branch: currentBranch(in: repository)
-        )
+        // libgit2's recursive status scan runs on LibGit2Swift's process-wide
+        // serial queue and has no cancellation or timeout. A scan left behind
+        // by a previous project can therefore block status refreshes for the
+        // newly selected repository. Keep this hot UI path bounded with the
+        // CLI loader's command timeout; LibGit2Swift remains the primary
+        // backend for the other Git operations.
+        try GitStatusLoader.loadStatus(in: repository)
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
-        let output = try LibGit2.getStatus(at: repository.path, verbose: false)
-        return output.split(separator: "\n", omittingEmptySubsequences: true).compactMap { line in
-            let value = String(line)
-            guard value.count >= 4 else { return nil }
-            let start = value.startIndex
-            let x = value[start]
-            let y = value[value.index(after: start)]
-            let pathStart = value.index(start, offsetBy: 3)
-            let rawPath = String(value[pathStart...])
-            let path = rawPath.components(separatedBy: " -> ").last ?? rawPath
-            return GitStatusEntry(path: path, stagedStatus: x, worktreeStatus: y)
-        }
+        try GitStatusLoader.loadEntries(in: repository)
     }
 
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
