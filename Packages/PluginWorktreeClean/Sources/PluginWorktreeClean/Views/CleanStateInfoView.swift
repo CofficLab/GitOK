@@ -29,6 +29,11 @@ struct CleanStateInfoView: View {
     @State private var copiedRemoteNames: Set<String> = []
     @State private var isLocalRepositoryCopied = false
     @State private var isLatestTagCopied = false
+    @State private var loadToken = 0
+    @State private var infoTask: Task<Void, Never>?
+    @State private var diskUsageTask: Task<Void, Never>?
+    @State private var infoCancellation: GitProcessCancellation?
+    @State private var diskUsageCancellation: GitProcessCancellation?
 
     var body: some View {
         VStack(spacing: 16) {
@@ -98,6 +103,8 @@ struct CleanStateInfoView: View {
             )
         }
         .onAppear(perform: loadInfo)
+        .onChange(of: project.url) { _, _ in loadInfo() }
+        .onDisappear(perform: cancelLoads)
     }
 
     // MARK: - Repository Disk Usage Row
@@ -294,45 +301,100 @@ struct CleanStateInfoView: View {
 
     // MARK: - Load Data
 
+    @MainActor
     private func loadInfo() {
+        loadToken &+= 1
+        let token = loadToken
+        infoTask?.cancel()
+        diskUsageTask?.cancel()
+        infoCancellation?.cancel()
+        diskUsageCancellation?.cancel()
+        infoTask = nil
+        diskUsageTask = nil
+
+        let repositoryURL = project.url.standardizedFileURL
+        remotes = []
+        branchName = nil
+        repositoryDiskUsage = nil
+        latestTag = nil
+        commitCount = nil
+        firstCommitDate = nil
         isLoadingInfo = true
         isLoadingDiskUsage = true
 
-        Task.detached(priority: .utility) {
+        let infoCancellation = GitProcessCancellation(forceKillAfter: 1)
+        self.infoCancellation = infoCancellation
+        let git = self.git
+        infoTask = Task.detached(priority: .utility) {
             // 加载远程仓库
-            let loadedRemotes = git.listRemotes(in: project.url)
+            let loadedRemotes = git.listRemotes(in: repositoryURL)
+            guard !infoCancellation.isCancelled else { return }
 
             // 加载当前分支
-            let loadedBranchName = git.currentBranch(in: project.url)
+            let loadedBranchName = git.currentBranch(in: repositoryURL)
+            guard !infoCancellation.isCancelled else { return }
 
             // 加载当前 HEAD 可追溯到的最近 tag
-            let loadedLatestTag = git.latestTag(in: project.url)
+            let loadedLatestTag = git.latestTag(in: repositoryURL, cancellation: infoCancellation)
+            guard !infoCancellation.isCancelled else { return }
 
             // 加载提交总数（`git rev-list --count HEAD`；空仓库 / 失败时为 nil）
-            let loadedCommitCount = try? git.countCommits(in: project.url)
+            let loadedCommitCount = try? git.countCommits(in: repositoryURL, cancellation: infoCancellation)
+            guard !infoCancellation.isCancelled else { return }
 
             // 加载第一次提交时间（空仓库 / 失败时为 nil）
-            let loadedFirstCommitDate = git.firstCommitDate(in: project.url)
+            let loadedFirstCommitDate = git.firstCommitDate(
+                in: repositoryURL,
+                cancellation: infoCancellation
+            )
+            guard !infoCancellation.isCancelled else { return }
 
             await MainActor.run {
+                guard token == loadToken,
+                      project.url.standardizedFileURL == repositoryURL else { return }
                 remotes = loadedRemotes
                 branchName = loadedBranchName
                 latestTag = loadedLatestTag
                 commitCount = loadedCommitCount
                 firstCommitDate = loadedFirstCommitDate
                 isLoadingInfo = false
+                infoTask = nil
+                self.infoCancellation = nil
             }
         }
 
-        Task.detached(priority: .utility) {
+        let diskUsageCancellation = GitProcessCancellation()
+        self.diskUsageCancellation = diskUsageCancellation
+        diskUsageTask = Task.detached(priority: .utility) {
             // 统计仓库目录实际分配的文件空间（包含隐藏的 .git）
-            let loadedRepositoryDiskUsage = RepositoryDiskUsage.calculate(at: project.url)
+            let loadedRepositoryDiskUsage = RepositoryDiskUsage.calculate(
+                at: repositoryURL,
+                cancellation: diskUsageCancellation
+            )
+            guard !diskUsageCancellation.isCancelled else { return }
 
             await MainActor.run {
+                guard token == loadToken,
+                      project.url.standardizedFileURL == repositoryURL else { return }
                 repositoryDiskUsage = loadedRepositoryDiskUsage
                 isLoadingDiskUsage = false
+                diskUsageTask = nil
+                self.diskUsageCancellation = nil
             }
         }
+    }
+
+    @MainActor
+    private func cancelLoads() {
+        loadToken &+= 1
+        infoTask?.cancel()
+        diskUsageTask?.cancel()
+        infoCancellation?.cancel()
+        diskUsageCancellation?.cancel()
+        infoTask = nil
+        diskUsageTask = nil
+        infoCancellation = nil
+        diskUsageCancellation = nil
     }
 
     // MARK: - Helpers
