@@ -13,6 +13,9 @@ public struct GitLFSStatusTile: View {
     @State private var isLFSAvailable = false
     @State private var lfsVersion: String?
     @State private var largeFiles: [String] = []
+    @State private var scanTask: Task<Void, Never>?
+    @State private var scanCancellation: GitProcessCancellation?
+    @State private var refreshGeneration = 0
 
     private let thresholdBytes: Int64 = 50 * 1024 * 1024
 
@@ -48,27 +51,51 @@ public struct GitLFSStatusTile: View {
         }
         .onReceive(observation.$revision) { _ in refresh() }
         .onAppear(perform: refresh)
+        .onDisappear(perform: cancelRefresh)
     }
 
     @MainActor
     private func refresh() {
+        refreshGeneration &+= 1
+        let generation = refreshGeneration
+        cancelRefresh()
+
         guard let projectURL = projects.currentProject?.url else {
             largeFiles = []
             isLFSAvailable = false
+            lfsVersion = nil
             isLoading = false
             return
         }
+
+        let cancellation = GitProcessCancellation()
+        scanCancellation = cancellation
         isLoading = true
-        Task.detached(priority: .utility) {
+        scanTask = Task.detached(priority: .utility) {
             let lfsAvailable = Self.gitBinaryAvailable("git-lfs")
-            let files = Self.scanLargeFiles(in: projectURL, thresholdBytes: thresholdBytes)
+            let files = GitLFSLargeFileScanner.scan(
+                in: projectURL,
+                thresholdBytes: thresholdBytes,
+                shouldCancel: { cancellation.isCancelled }
+            )
             await MainActor.run {
+                guard generation == refreshGeneration, !cancellation.isCancelled else { return }
                 isLFSAvailable = lfsAvailable.0
                 lfsVersion = lfsAvailable.1
                 largeFiles = files
                 isLoading = false
+                scanTask = nil
+                scanCancellation = nil
             }
         }
+    }
+
+    @MainActor
+    private func cancelRefresh() {
+        scanTask?.cancel()
+        scanTask = nil
+        scanCancellation?.cancel()
+        scanCancellation = nil
     }
 
     @MainActor
@@ -98,35 +125,6 @@ public struct GitLFSStatusTile: View {
             }
         } catch {}
         return (false, nil)
-    }
-
-    /// 递归扫描工作区（跳过 .git 与常见构建目录），返回超过阈值的文件相对路径。
-    private nonisolated static func scanLargeFiles(in projectURL: URL, thresholdBytes: Int64) -> [String] {
-        let fm = FileManager.default
-        let keys: [URLResourceKey] = [.isRegularFileKey, .fileSizeKey, .isDirectoryKey]
-        let skipped: Set<String> = [".git", "node_modules", "DerivedData", ".build", "Pods", "build"]
-        var results: [String] = []
-        guard let enumerator = fm.enumerator(
-            at: projectURL,
-            includingPropertiesForKeys: keys,
-            options: [.skipsHiddenFiles]
-        ) else { return [] }
-
-        for case let url as URL in enumerator {
-            let last = url.lastPathComponent
-            if skipped.contains(last) {
-                enumerator.skipDescendants()
-                continue
-            }
-            guard let values = try? url.resourceValues(forKeys: Set(keys)) else { continue }
-            if values.isDirectory == true { continue }
-            if values.isRegularFile == true, let size = values.fileSize, size > thresholdBytes {
-                let relative = url.path.dropFirst(projectURL.path.count + 1)
-                results.append(String(relative))
-                if results.count >= 200 { break }
-            }
-        }
-        return results
     }
 
     @LumiTheme private var theme: LumiUITheme
@@ -206,8 +204,13 @@ final class ProjectObservationModel: ObservableObject {
     private var handle: (any ProjectProvidingObserverHandle)?
 
     init(projects: any ProjectProviding) {
-        handle = projects.addObserver { [weak self] _ in
-            self?.revision += 1
+        handle = projects.addObserver { [weak self] event in
+            switch event {
+            case .selectionChanged, .dataChanged:
+                self?.revision += 1
+            default:
+                break
+            }
         }
     }
 }
