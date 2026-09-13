@@ -68,6 +68,8 @@ public struct CommitFormView: View {
     @State private var loadedProjectURL: URL?
     /// 工作区状态加载序号：仅最后一次加载结果落地，防止旧任务（脏）覆盖新结果（干净）。
     @State private var worktreeStatusLoadToken = 0
+    @State private var worktreeStatusCancellation: GitProcessCancellation?
+    @State private var userLoadToken = 0
 
     public init(
         projects: any ProjectProviding,
@@ -327,6 +329,7 @@ public struct CommitFormView: View {
                 try GitConfigReader.setValue("user.name", preset.name, in: url)
                 try GitConfigReader.setValue("user.email", preset.email, in: url)
                 await MainActor.run {
+                    guard self.projects.currentProject?.url.standardizedFileURL == url.standardizedFileURL else { return }
                     self.user = (name: preset.name, email: preset.email)
                     self.projects.notifyDataChanged()
                 }
@@ -510,13 +513,18 @@ public struct CommitFormView: View {
     }
 
     private func loadUserIfNeeded() {
+        userLoadToken &+= 1
+        let token = userLoadToken
         guard let project = projects.currentProject else {
             user = nil
             return
         }
+        let repositoryURL = project.url.standardizedFileURL
         Task.detached(priority: .utility) {
-            let loaded = GitConfigReader.user(in: project.url)
+            let loaded = GitConfigReader.user(in: repositoryURL)
             await MainActor.run {
+                guard token == userLoadToken,
+                      projects.currentProject?.url.standardizedFileURL == repositoryURL else { return }
                 user = loaded
             }
         }
@@ -534,6 +542,8 @@ public struct CommitFormView: View {
             loadedProjectURL = nil
             isClean = true
             worktreeStatusLoadToken &+= 1
+            worktreeStatusCancellation?.cancel()
+            worktreeStatusCancellation = nil
             return
         }
         if loadedProjectURL == project.url && !force { return }
@@ -541,11 +551,16 @@ public struct CommitFormView: View {
 
         worktreeStatusLoadToken &+= 1
         let token = worktreeStatusLoadToken
+        worktreeStatusCancellation?.cancel()
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        worktreeStatusCancellation = cancellation
         let url = project.url
         Task.detached(priority: .utility) {
-            let status = try? git.loadStatus(in: url)
+            let status = try? git.loadStatus(in: url, cancellation: cancellation)
             await MainActor.run {
-                guard token == self.worktreeStatusLoadToken else { return }
+                guard token == self.worktreeStatusLoadToken,
+                      self.projects.currentProject?.url == url else { return }
+                self.worktreeStatusCancellation = nil
                 self.isClean = status?.isClean ?? true
             }
         }
