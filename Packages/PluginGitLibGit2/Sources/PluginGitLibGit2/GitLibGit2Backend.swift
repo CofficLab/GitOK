@@ -91,42 +91,88 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }
     }
 
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [KitGit.GitCommit] {
+        // Project-switch-sensitive list reads must be cancellable and must not
+        // wait behind LibGit2Swift's process-wide synchronous queue.
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            cancellation: cancellation
+        )
+    }
+
     func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [KitGit.GitCommit] {
         // LibGit2Swift's list API follows HEAD; use the shared CLI loader for
         // the explicit all-refs history required by the activity heatmap.
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
     }
 
+    func loadAllCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [KitGit.GitCommit] {
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            allRefs: true,
+            cancellation: cancellation
+        )
+    }
+
     func countCommits(in repository: URL) throws -> Int {
         try GitCommitLoader.countCommits(in: repository)
+    }
+
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        try GitCommitLoader.countCommits(in: repository, cancellation: cancellation)
     }
 
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try Set(LibGit2.getUnPushedCommits(at: repository.path, verbose: false).map(\.hash))
     }
 
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        try GitCommitLoader.unpushedCommitHashes(in: repository, cancellation: cancellation)
+    }
+
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
-        let entries = try loadEntries(in: repository)
-        return GitWorktreeStatus(
-            isClean: entries.isEmpty,
-            changeCount: entries.count,
-            branch: currentBranch(in: repository)
-        )
+        // libgit2's recursive status scan runs on LibGit2Swift's process-wide
+        // serial queue and has no cancellation or timeout. A scan left behind
+        // by a previous project can therefore block status refreshes for the
+        // newly selected repository. Keep this hot UI path bounded with the
+        // CLI loader's command timeout; LibGit2Swift remains the primary
+        // backend for the other Git operations.
+        try GitStatusLoader.loadStatus(in: repository)
+    }
+
+    func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        try GitStatusLoader.loadStatus(in: repository, cancellation: cancellation)
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
-        let output = try LibGit2.getStatus(at: repository.path, verbose: false)
-        return output.split(separator: "\n", omittingEmptySubsequences: true).compactMap { line in
-            let value = String(line)
-            guard value.count >= 4 else { return nil }
-            let start = value.startIndex
-            let x = value[start]
-            let y = value[value.index(after: start)]
-            let pathStart = value.index(start, offsetBy: 3)
-            let rawPath = String(value[pathStart...])
-            let path = rawPath.components(separatedBy: " -> ").last ?? rawPath
-            return GitStatusEntry(path: path, stagedStatus: x, worktreeStatus: y)
-        }
+        try GitStatusLoader.loadEntries(in: repository)
+    }
+
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        try GitStatusLoader.loadEntries(in: repository, cancellation: cancellation)
     }
 
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
@@ -151,6 +197,14 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try GitDiffLoader.countChanges(commit: hash, in: repository)
     }
 
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        try GitDiffLoader.countChanges(commit: hash, in: repository, cancellation: cancellation)
+    }
+
     func loadCommitChangesPage(
         commit hash: String,
         limit: Int,
@@ -165,14 +219,56 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         )
     }
 
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: limit,
+            offset: offset,
+            in: repository,
+            cancellation: cancellation
+        )
+    }
+
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try LibGit2.getFileDiff(atCommit: hash, for: filePath, at: repository.path)
+    }
+
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadDiff(
+            commit: hash,
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
     }
 
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
         let staged = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: true)
         let unstaged = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: false)
         return [staged, unstaged].filter { !$0.isEmpty }.joined(separator: "\n")
+    }
+
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadWorktreeDiff(
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
     }
 
     func currentBranch(in repository: URL) -> String? {
@@ -184,12 +280,24 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         return Self.tagName(from: description)
     }
 
+    func latestTag(in repository: URL, cancellation: GitProcessCancellation?) -> String? {
+        GitRefReader.latestTag(in: repository, cancellation: cancellation)
+    }
+
     func firstCommitDate(in repository: URL) -> Date? {
         GitRefReader.firstCommitDate(in: repository)
     }
 
+    func firstCommitDate(in repository: URL, cancellation: GitProcessCancellation?) -> Date? {
+        GitRefReader.firstCommitDate(in: repository, cancellation: cancellation)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         try? LibGit2.getUnPushedCommits(at: repository.path, verbose: false).count
+    }
+
+    func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int? {
+        GitRefReader.unpushedCount(in: repository, cancellation: cancellation)
     }
 
     func hasRemotes(in repository: URL) -> Bool {
@@ -406,6 +514,13 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         }) ?? []
     }
 
+    func listStashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [KitGit.GitStashEntry] {
+        GitStashOperation.list(in: repository, cancellation: cancellation)
+    }
+
     func hasChangesToStash(in repository: URL) -> Bool {
         !((try? loadEntries(in: repository)) ?? []).isEmpty
     }
@@ -453,6 +568,13 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         (try? LibGit2.submodules(at: repository.path).map {
             GitSubmoduleSummary(path: $0.path, commit: $0.commitHash, url: $0.description ?? "")
         }) ?? []
+    }
+
+    func listSubmodules(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [GitSubmoduleSummary] {
+        GitSubmoduleOperation.list(in: repository, cancellation: cancellation)
     }
 
     func updateSubmodules(in repository: URL) throws {

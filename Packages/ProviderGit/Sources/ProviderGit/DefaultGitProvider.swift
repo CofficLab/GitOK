@@ -103,9 +103,41 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("loadCommits") { try $0.loadCommits(in: repository, limit: limit, offset: offset) }
     }
 
+    public func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        try execute("loadCommits") {
+            try $0.loadCommits(
+                in: repository,
+                limit: limit,
+                offset: offset,
+                cancellation: cancellation
+            )
+        }
+    }
+
     public func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
         try execute("loadAllCommits") {
             try $0.loadAllCommits(in: repository, limit: limit, offset: offset)
+        }
+    }
+
+    public func loadAllCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        try execute("loadAllCommits") {
+            try $0.loadAllCommits(
+                in: repository,
+                limit: limit,
+                offset: offset,
+                cancellation: cancellation
+            )
         }
     }
 
@@ -113,16 +145,49 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         try execute("countCommits") { try $0.countCommits(in: repository) }
     }
 
+    public func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        try execute("countCommits") {
+            try $0.countCommits(in: repository, cancellation: cancellation)
+        }
+    }
+
     public func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try execute("unpushedCommitHashes") { try $0.unpushedCommitHashes(in: repository) }
+    }
+
+    public func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        try execute("unpushedCommitHashes") {
+            try $0.unpushedCommitHashes(in: repository, cancellation: cancellation)
+        }
     }
 
     public func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
         try execute("loadStatus") { try $0.loadStatus(in: repository) }
     }
 
+    public func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        try execute("loadStatus") {
+            try $0.loadStatus(in: repository, cancellation: cancellation)
+        }
+    }
+
     public func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
         try execute("loadEntries") { try $0.loadEntries(in: repository) }
+    }
+
+    public func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        try execute("loadEntries") {
+            try $0.loadEntries(in: repository, cancellation: cancellation)
+        }
     }
 
     public func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
@@ -131,6 +196,16 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
 
     public func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
         try execute("countCommitChanges") { try $0.countCommitChanges(commit: hash, in: repository) }
+    }
+
+    public func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        try execute("countCommitChanges") {
+            try $0.countCommitChanges(commit: hash, in: repository, cancellation: cancellation)
+        }
     }
 
     public func loadCommitChangesPage(
@@ -144,12 +219,51 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         }
     }
 
+    public func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        try execute("loadCommitChangesPage") {
+            try $0.loadCommitChangesPage(
+                commit: hash,
+                limit: limit,
+                offset: offset,
+                in: repository,
+                cancellation: cancellation
+            )
+        }
+    }
+
     public func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try execute("loadDiff") { try $0.loadDiff(commit: hash, filePath: filePath, in: repository) }
     }
 
+    public func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try execute("loadDiff") {
+            try $0.loadDiff(commit: hash, filePath: filePath, in: repository, cancellation: cancellation)
+        }
+    }
+
     public func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
         try execute("loadWorktreeDiff") { try $0.loadWorktreeDiff(filePath: filePath, in: repository) }
+    }
+
+    public func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try execute("loadWorktreeDiff") {
+            try $0.loadWorktreeDiff(filePath: filePath, in: repository, cancellation: cancellation)
+        }
     }
 
     public func currentBranch(in repository: URL) -> String? {
@@ -160,12 +274,36 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         primaryBackendOrNil()?.latestTag(in: repository)
     }
 
+    public func latestTag(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String? {
+        guard cancellation?.isCancelled != true else { return nil }
+        return primaryBackendOrNil()?.latestTag(in: repository, cancellation: cancellation)
+    }
+
     public func firstCommitDate(in repository: URL) -> Date? {
         primaryBackendOrNil()?.firstCommitDate(in: repository)
     }
 
+    public func firstCommitDate(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> Date? {
+        guard cancellation?.isCancelled != true else { return nil }
+        return primaryBackendOrNil()?.firstCommitDate(in: repository, cancellation: cancellation)
+    }
+
     public func unpushedCount(in repository: URL) -> Int? {
         primaryBackendOrNil()?.unpushedCount(in: repository)
+    }
+
+    public func unpushedCount(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> Int? {
+        guard cancellation?.isCancelled != true else { return nil }
+        return primaryBackendOrNil()?.unpushedCount(in: repository, cancellation: cancellation)
     }
 
     public func hasRemotes(in repository: URL) -> Bool {
@@ -279,6 +417,14 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         primaryBackendOrNil()?.listStashes(in: repository) ?? []
     }
 
+    public func listStashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [GitStashEntry] {
+        guard cancellation?.isCancelled != true else { return [] }
+        return primaryBackendOrNil()?.listStashes(in: repository, cancellation: cancellation) ?? []
+    }
+
     public func hasChangesToStash(in repository: URL) -> Bool {
         primaryBackendOrNil()?.hasChangesToStash(in: repository) ?? false
     }
@@ -317,6 +463,14 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
 
     public func listSubmodules(in repository: URL) -> [GitSubmoduleSummary] {
         primaryBackendOrNil()?.listSubmodules(in: repository) ?? []
+    }
+
+    public func listSubmodules(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [GitSubmoduleSummary] {
+        guard cancellation?.isCancelled != true else { return [] }
+        return primaryBackendOrNil()?.listSubmodules(in: repository, cancellation: cancellation) ?? []
     }
 
     public func updateSubmodules(in repository: URL) throws {

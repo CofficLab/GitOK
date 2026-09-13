@@ -50,8 +50,8 @@ final class KernelBootIntegrationTests: XCTestCase {
         XCTAssertEqual(
             git.availableBackends.map(\.id),
             [
-                "com.coffic.gitok.git-backend.cli",
-                "com.coffic.gitok.git-backend.libgit2"
+                "com.coffic.gitok.git-backend.libgit2",
+                "com.coffic.gitok.git-backend.cli"
             ]
         )
         XCTAssertTrue(
@@ -105,8 +105,8 @@ final class KernelBootIntegrationTests: XCTestCase {
         XCTAssertEqual(
             git.availableBackends.map(\.id),
             [
-                "com.coffic.gitok.git-backend.cli",
-                "com.coffic.gitok.git-backend.libgit2"
+                "com.coffic.gitok.git-backend.libgit2",
+                "com.coffic.gitok.git-backend.cli"
             ]
         )
     }

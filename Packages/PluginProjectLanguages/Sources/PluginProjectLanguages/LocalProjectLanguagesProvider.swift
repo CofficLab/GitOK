@@ -15,6 +15,7 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
     private let cache: ProjectLanguagesCache
     private var refreshToken = 0
     private var analysisTask: Task<Void, Never>?
+    private var analysisCancellation: GitProcessCancellation?
     private var observers: [WeakObserver] = []
 
     private(set) var currentSnapshot: ProjectLanguagesSnapshot?
@@ -31,6 +32,8 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
     func refresh(for repository: URL?) {
         analysisTask?.cancel()
         analysisTask = nil
+        analysisCancellation?.cancel()
+        analysisCancellation = nil
         refreshToken &+= 1
         let token = refreshToken
         let repository = repository?.standardizedFileURL
@@ -53,12 +56,14 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
         setLoading(true)
         let analyzer = self.analyzer
         let cache = self.cache
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        analysisCancellation = cancellation
         analysisTask = Task.detached(priority: .utility) { [weak self] in
-            if !Task.isCancelled {
+            if !Task.isCancelled, !cancellation.isCancelled {
                 do {
-                    let context = try analyzer.context(for: repository)
+                    let context = try analyzer.context(for: repository, cancellation: cancellation)
                     // 工作区是否有未提交变更不影响语言统计：有变更时同样分析。
-                    guard !Task.isCancelled else {
+                    guard !Task.isCancelled, !cancellation.isCancelled else {
                         await self?.finishLoading(token: token)
                         return
                     }
@@ -68,11 +73,10 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
                         return
                     }
 
-                    let snapshot = try analyzer.analyze(repository: repository)
+                    let snapshot = try analyzer.analyze(repository: repository, cancellation: cancellation)
+                    guard !Task.isCancelled, !cancellation.isCancelled else { return }
                     cache.store(snapshot, for: context.cacheKey)
-                    if !Task.isCancelled {
-                        await self?.apply(snapshot, token: token)
-                    }
+                    await self?.apply(snapshot, token: token)
                 } catch is CancellationError {
                     // Cancellation is expected when switching projects or refreshing.
                 } catch {
@@ -111,6 +115,7 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
     private func clearAnalysisTask(token: Int) {
         guard token == refreshToken else { return }
         analysisTask = nil
+        analysisCancellation = nil
     }
 
     private func setSnapshot(_ snapshot: ProjectLanguagesSnapshot?) {

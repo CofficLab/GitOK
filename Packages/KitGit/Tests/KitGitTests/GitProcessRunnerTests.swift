@@ -20,6 +20,40 @@ struct GitProcessRunnerTests {
         }
     }
 
+    @Test("run forwards cancellation to the git process")
+    func runCancellationStopsProcess() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try GitProcessRunner.run(
+                ["--version"],
+                in: FileManager.default.temporaryDirectory,
+                cancellation: cancellation
+            )
+        }
+    }
+
+    @Test("cancellation remains effective across sequential commands")
+    func cancellationStopsNextSequentialCommand() throws {
+        let cancellation = GitProcessCancellation()
+        _ = try GitProcessRunner.run(
+            ["--version"],
+            in: FileManager.default.temporaryDirectory,
+            cancellation: cancellation
+        )
+
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try GitProcessRunner.run(
+                ["--version"],
+                in: FileManager.default.temporaryDirectory,
+                cancellation: cancellation
+            )
+        }
+    }
+
     @Test("drains large stdout before waiting for git")
     func handlesLargeOutput() throws {
         let repository = try makeRepository()

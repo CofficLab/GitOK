@@ -66,12 +66,23 @@ public enum GitStatusLoader {
     /// - 首行 `## <branch>...<upstream>` 提供分支名（含 detached HEAD 的 `## HEAD`）；
     /// - 其余非空行即未提交变更（含展开后的未跟踪目录文件），计数为 `changeCount`。
     public static func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
+        try loadStatus(in: repository, cancellation: nil)
+    }
+
+    /// 读取可被项目切换打断的工作区状态。
+    public static func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         try validateRepository(repository)
         let output = try GitProcessRunner.run(
             ["status", "--porcelain=v1", "--branch", "--untracked-files=all"],
             in: repository,
+            cancellation: cancellation,
             timeout: commandTimeout
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         var branch: String?
         var changeCount = 0
         for line in output.split(separator: "\n") {
@@ -97,13 +108,19 @@ public enum GitStatusLoader {
     ///
     /// 使用 `git status --porcelain=v1 --untracked-files=all`，解析每一行的
     /// XY 状态码和路径。未跟踪目录会展开为其中的文件；重命名/复制（R/C）只取目标路径。
-    public static func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
+    public static func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> [GitStatusEntry] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         try validateRepository(repository)
         let output = try GitProcessRunner.run(
             ["status", "--porcelain=v1", "--untracked-files=all"],
             in: repository,
+            cancellation: cancellation,
             timeout: commandTimeout
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         var entries: [GitStatusEntry] = []
         for line in output.split(separator: "\n") {
             let s = String(line)

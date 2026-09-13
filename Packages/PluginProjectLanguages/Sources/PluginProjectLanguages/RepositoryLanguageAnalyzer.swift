@@ -9,7 +9,25 @@ struct RepositoryLanguageAnalysisContext: Sendable {
 
 protocol RepositoryLanguageAnalyzing: Sendable {
     func analyze(repository: URL) throws -> ProjectLanguagesSnapshot
+    func analyze(repository: URL, cancellation: GitProcessCancellation?) throws -> ProjectLanguagesSnapshot
     func context(for repository: URL) throws -> RepositoryLanguageAnalysisContext
+    func context(for repository: URL, cancellation: GitProcessCancellation?) throws -> RepositoryLanguageAnalysisContext
+}
+
+extension RepositoryLanguageAnalyzing {
+    func analyze(repository: URL, cancellation: GitProcessCancellation?) throws -> ProjectLanguagesSnapshot {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let snapshot = try analyze(repository: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return snapshot
+    }
+
+    func context(for repository: URL, cancellation: GitProcessCancellation?) throws -> RepositoryLanguageAnalysisContext {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let context = try context(for: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return context
+    }
 }
 
 /// Performs local, source-only language analysis for the current Git tree.
@@ -19,6 +37,7 @@ protocol RepositoryLanguageAnalyzing: Sendable {
 /// implementation without coupling consumers to a particular detector.
 struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
     static let cacheVersion = 1
+    private static let commandTimeout: TimeInterval = 15
 
     private struct Definition: Sendable {
         let id: String
@@ -101,14 +120,27 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
     ]
 
     func context(for repository: URL) throws -> RepositoryLanguageAnalysisContext {
+        try context(for: repository, cancellation: nil)
+    }
+
+    func context(
+        for repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> RepositoryLanguageAnalysisContext {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let repository = repository.standardizedFileURL
-        let headHash = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repository)
+        let headHash = try GitProcessRunner.run(
+            ["rev-parse", "HEAD"],
+            in: repository,
+            cancellation: cancellation,
+            timeout: Self.commandTimeout
+        )
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !headHash.isEmpty else {
             throw GitProcessRunner.Error.gitFailed("Repository has no HEAD")
         }
 
-        let status = try GitStatusLoader.loadStatus(in: repository)
+        let status = try GitStatusLoader.loadStatus(in: repository, cancellation: cancellation)
         return RepositoryLanguageAnalysisContext(
             cacheKey: ProjectLanguagesCacheKey(
                 repositoryPath: repository.path,
@@ -120,14 +152,26 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
     }
 
     func analyze(repository: URL) throws -> ProjectLanguagesSnapshot {
+        try analyze(repository: repository, cancellation: nil)
+    }
+
+    func analyze(
+        repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> ProjectLanguagesSnapshot {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let output = try GitProcessRunner.run(
             ["ls-tree", "-r", "--name-only", "-z", "HEAD"],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: Self.commandTimeout
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let fileManager = FileManager.default
         var byteCounts: [String: (name: String, bytes: Int64)] = [:]
 
         for rawPath in output.split(separator: "\0", omittingEmptySubsequences: true) {
+            if cancellation?.isCancelled == true { throw CancellationError() }
             let path = String(rawPath)
             guard !isExcluded(path),
                   let definition = Self.definition(for: path) else { continue }
@@ -138,7 +182,7 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
                   type == .typeRegular,
                   let size = (attributes[.size] as? NSNumber)?.int64Value,
                   size > 0,
-                  !isBinary(fileURL) else { continue }
+                  !isBinary(fileURL, cancellation: cancellation) else { continue }
 
             byteCounts[definition.id, default: (definition.name, 0)].bytes += size
         }
@@ -166,10 +210,12 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
         }
     }
 
-    private func isBinary(_ url: URL) -> Bool {
+    private func isBinary(_ url: URL, cancellation: GitProcessCancellation?) -> Bool {
+        if cancellation?.isCancelled == true { return true }
         guard let handle = try? FileHandle(forReadingFrom: url) else { return true }
         defer { try? handle.close() }
         guard let data = try? handle.read(upToCount: 8 * 1024) else { return true }
+        if cancellation?.isCancelled == true { return true }
         return data.contains(0)
     }
 }

@@ -102,6 +102,7 @@ struct WorkingTreeStatusView: View {
     @State private var isLoading = false
     @State private var loadError: String?
     @State private var loadToken = 0
+    @State private var statusCancellation: GitProcessCancellation?
 
     init(
         projects: any ProjectProviding,
@@ -140,6 +141,11 @@ struct WorkingTreeStatusView: View {
             reloadIfNeeded(force: true)
         }
         .onAppear { reloadIfNeeded() }
+        .onDisappear {
+            loadToken &+= 1
+            statusCancellation?.cancel()
+            statusCancellation = nil
+        }
     }
 
     // MARK: - Summary Row (复刻旧版 WorkingStateSummaryView，72pt 高)
@@ -373,6 +379,8 @@ struct WorkingTreeStatusView: View {
     private func reloadIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
             loadToken &+= 1
+            statusCancellation?.cancel()
+            statusCancellation = nil
             loadedProjectURL = nil
             isClean = true
             changeCount = 0
@@ -386,6 +394,8 @@ struct WorkingTreeStatusView: View {
 
         loadToken &+= 1
         let token = loadToken
+        statusCancellation?.cancel()
+        statusCancellation = nil
         loadedProjectURL = project.url
         loadError = nil
         // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
@@ -403,11 +413,13 @@ struct WorkingTreeStatusView: View {
             trackingStatus = GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
             return
         }
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        statusCancellation = cancellation
 
         // GitProcessRunner 是同步 CLI 调用；工作区状态属于后台刷新，使用
         // utility 优先级可避免高优先级 Swift 任务等待运行器的 stderr 读取队列。
         Task.detached(priority: .utility) {
-            let statusResult = Result { try git.loadStatus(in: url) }
+            let statusResult = Result { try git.loadStatus(in: url, cancellation: cancellation) }
             let tracking: GitRefReader.RemoteTrackingStatus
             if case .success = statusResult {
                 tracking = git.remoteTrackingStatus(in: url)
@@ -416,6 +428,7 @@ struct WorkingTreeStatusView: View {
             }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                statusCancellation = nil
                 isLoading = false
                 switch statusResult {
                 case .success(let loaded):

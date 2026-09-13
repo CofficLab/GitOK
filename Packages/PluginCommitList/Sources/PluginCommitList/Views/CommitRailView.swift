@@ -1,3 +1,4 @@
+import Foundation
 import KitGit
 import LumiUI
 import ProviderGitRepositoryWatch
@@ -8,6 +9,35 @@ import SwiftUI
 
 private let commitPageSize = 50
 private let jumpToOldestTriggerDistance: CGFloat = 220
+
+/// A write action can be suppressed before it enters Git, but is allowed to
+/// finish once started so a project switch cannot interrupt a repository mutation.
+private final class CommitListWriteGate: @unchecked Sendable {
+    private enum State: Equatable {
+        case pending
+        case cancelled
+        case started
+    }
+
+    private let lock = NSLock()
+    private var state = State.pending
+
+    func begin() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard state == .pending else { return false }
+        state = .started
+        return true
+    }
+
+    func cancelIfPending() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard state == .pending else { return false }
+        state = .cancelled
+        return true
+    }
+}
 
 /// Commit 列表 Rail 视图：显示当前打开项目的提交历史。
 ///
@@ -58,6 +88,10 @@ struct CommitRailView: View {
     @State private var nextCommitOffset = 0
     /// 加载序号：只接受最后一次刷新结果，避免旧任务覆盖新项目或新快照。
     @State private var loadToken = 0
+    /// 当前 CommitList 发起的 Git 读取；项目切换时终止其 CLI 子进程。
+    @State private var activeReadRequests: [UUID: GitProcessCancellation] = [:]
+    /// 项目切换时阻止尚未进入 Git 的旧项目写操作启动。
+    @State private var pendingWriteOperations: [UUID: CommitListWriteGate] = [:]
     /// 本次刷新新增的 commit，只用于触发顶部进入动画。
     @State private var animatedCommitHashes: Set<String> = []
     /// 首尾锚点是否处于可见区域，用于控制快速滚动按钮。
@@ -852,10 +886,14 @@ struct CommitRailView: View {
         isPushing = true
         pushError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             do {
                 _ = try git.push(in: url)
                 await MainActor.run {
+                    finishWriteOperation(operation.id)
+                    guard isCurrentProject(url) else { return }
                     isPushing = false
                     pushPopoverCommitHash = nil
                     pushError = nil
@@ -864,6 +902,8 @@ struct CommitRailView: View {
                 }
             } catch {
                 await MainActor.run {
+                    finishWriteOperation(operation.id)
+                    guard isCurrentProject(url) else { return }
                     isPushing = false
                     pushError = error.localizedDescription
                 }
@@ -877,11 +917,15 @@ struct CommitRailView: View {
         revertingHash = commit.hash
         historyError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.revertCommit(commit.hash, in: url)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 revertingHash = nil
                 switch result {
                 case .success:
@@ -906,11 +950,15 @@ struct CommitRailView: View {
         undoingHash = commit.hash
         historyError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.undoCommit(commit.hash, parentHash: parentHash, in: url)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 undoingHash = nil
                 switch result {
                 case .success:
@@ -930,7 +978,9 @@ struct CommitRailView: View {
         softResettingHash = commit.hash
         historyError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.softReset(
                     to: commit.hash,
@@ -939,6 +989,8 @@ struct CommitRailView: View {
                 )
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 softResettingHash = nil
                 switch result {
                 case .success:
@@ -958,7 +1010,9 @@ struct CommitRailView: View {
         mixedResettingHash = commit.hash
         historyError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.mixedReset(
                     to: commit.hash,
@@ -967,6 +1021,8 @@ struct CommitRailView: View {
                 )
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 mixedResettingHash = nil
                 switch result {
                 case .success:
@@ -986,7 +1042,9 @@ struct CommitRailView: View {
         hardResettingHash = commit.hash
         historyError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.hardReset(
                     to: commit.hash,
@@ -995,6 +1053,8 @@ struct CommitRailView: View {
                 )
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 hardResettingHash = nil
                 switch result {
                 case .success:
@@ -1018,7 +1078,9 @@ struct CommitRailView: View {
         squashingHash = commit.hash
         historyError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.squash(
                     to: commit.hash,
@@ -1029,6 +1091,8 @@ struct CommitRailView: View {
                 )
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 squashingHash = nil
                 switch result {
                 case .success:
@@ -1049,11 +1113,15 @@ struct CommitRailView: View {
         creatingTagHash = commit.hash
         tagError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.createLightweightTag(named: name, at: commit.hash, in: url)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 creatingTagHash = nil
                 switch result {
                 case .success:
@@ -1074,7 +1142,9 @@ struct CommitRailView: View {
         creatingAnnotatedTagHash = commit.hash
         tagError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.createAnnotatedTag(
                     named: name,
@@ -1084,6 +1154,8 @@ struct CommitRailView: View {
                 )
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 creatingAnnotatedTagHash = nil
                 switch result {
                 case .success:
@@ -1100,11 +1172,15 @@ struct CommitRailView: View {
         deletingTagName = name
         tagError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.deleteLocalTag(named: name, in: url)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 deletingTagName = nil
                 switch result {
                 case .success:
@@ -1121,11 +1197,15 @@ struct CommitRailView: View {
         pushingTagName = name
         tagError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.pushTag(named: name, remote: "origin", in: url)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 pushingTagName = nil
                 switch result {
                 case .success:
@@ -1142,11 +1222,15 @@ struct CommitRailView: View {
         deletingRemoteTagName = name
         tagError = nil
         let url = project.url
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.deleteRemoteTag(named: name, remote: "origin", in: url)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 deletingRemoteTagName = nil
                 switch result {
                 case .success:
@@ -1280,24 +1364,28 @@ struct CommitRailView: View {
 
         isJumpingToOldest = true
         let token = loadToken
+        let request = beginReadRequest()
         Task { @MainActor in
             isLoading = true
             let result = await Task.detached(priority: .userInitiated) {
                 Result {
-                    let totalCount = try git.countCommits(in: url)
+                    let totalCount = try git.countCommits(
+                        in: url,
+                        cancellation: request.cancellation
+                    )
                     let offset = max(0, totalCount - commitPageSize)
                     let loaded = try git.loadCommits(
                         in: url,
                         limit: commitPageSize,
-                        offset: offset
+                        offset: offset,
+                        cancellation: request.cancellation
                     )
                     return (totalCount, loaded)
                 }
             }.value
+            finishReadRequest(request.id)
 
             guard token == loadToken, loadedProjectURL == url else {
-                isLoading = false
-                isJumpingToOldest = false
                 return
             }
 
@@ -1381,15 +1469,18 @@ struct CommitRailView: View {
         isLoading = true
         let token = loadToken
         let offset = nextCommitOffset
+        let request = beginReadRequest()
         Task.detached(priority: .userInitiated) {
             let result = Result {
                 try git.loadCommits(
                     in: url,
                     limit: commitPageSize,
-                    offset: offset
+                    offset: offset,
+                    cancellation: request.cancellation
                 )
             }
             await MainActor.run {
+                finishReadRequest(request.id)
                 guard token == loadToken, loadedProjectURL == url else { return }
                 isLoading = false
                 switch result {
@@ -1428,6 +1519,7 @@ struct CommitRailView: View {
         let previousFirstID = commit.id
         let token = loadToken
         isLoading = true
+        let request = beginReadRequest()
 
         Task { @MainActor in
             let result = await Task.detached(priority: .userInitiated) {
@@ -1435,13 +1527,14 @@ struct CommitRailView: View {
                     try git.loadCommits(
                         in: url,
                         limit: pageLimit,
-                        offset: nextOffset
+                        offset: nextOffset,
+                        cancellation: request.cancellation
                     )
                 }
             }.value
+            finishReadRequest(request.id)
 
             guard token == loadToken, loadedProjectURL == url else {
-                isLoading = false
                 return
             }
 
@@ -1477,6 +1570,8 @@ struct CommitRailView: View {
     /// 以便展示新提交。
     private func reloadIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
+            cancelReadRequests()
+            cancelUnstartedWriteOperations()
             loadToken &+= 1
             if loadedProjectURL != nil {
                 loadedProjectURL = nil
@@ -1499,13 +1594,22 @@ struct CommitRailView: View {
         }
         if loadedProjectURL == project.url && !force { return }
 
+        cancelReadRequests()
         loadToken &+= 1
         let token = loadToken
+        let projectChanged = loadedProjectURL != project.url
         let isRefreshingExistingProject = loadedProjectURL == project.url
             && !commits.isEmpty
             && !isShowingOldestPage
+        if projectChanged {
+            cancelUnstartedWriteOperations()
+            resetProjectScopedActionState()
+        }
         loadedProjectURL = project.url
         isLoading = true
+        // Any new list request supersedes an in-flight jump-to-oldest request.
+        // Its eventual stale completion must not clear loading state for this request.
+        isJumpingToOldest = false
         if !isRefreshingExistingProject {
             commits = []
             latestCommitSnapshot = []
@@ -1523,17 +1627,20 @@ struct CommitRailView: View {
         loadError = nil
 
         let url = project.url
-        // 首屏提交列表和未推送状态都是后台读取，避免与 GitProcessRunner
-        // 的 utility 管道读取形成 QoS 优先级反转。
-        Task.detached(priority: .utility) {
+        // 首屏查询通过可取消的 CLI 读取通道，避免排在旧项目的 LibGit2Swift
+        // 全局同步队列后；未推送标记独立加载，不阻塞首屏提交列表。
+        let commitsRequest = beginReadRequest()
+        Task.detached(priority: .userInitiated) {
             let commitsResult = Result {
                 try git.loadCommits(
                     in: url,
                     limit: commitPageSize,
-                    offset: 0
+                    offset: 0,
+                    cancellation: commitsRequest.cancellation
                 )
             }
             await MainActor.run {
+                finishReadRequest(commitsRequest.id)
                 guard token == loadToken, loadedProjectURL == url else { return }
                 // 提交历史是列表本身的唯一依赖；历史读取完成后立即结束
                 // loading，不等待未推送状态查询。
@@ -1569,15 +1676,96 @@ struct CommitRailView: View {
         }
 
         // 未推送状态仅用于标记提交，不应阻塞提交列表首次展示。
+        let unpushedRequest = beginReadRequest()
         Task.detached(priority: .utility) {
-            let unpushedResult = Result { try git.unpushedCommitHashes(in: url) }
+            let unpushedResult = Result {
+                try git.unpushedCommitHashes(
+                    in: url,
+                    cancellation: unpushedRequest.cancellation
+                )
+            }
             await MainActor.run {
+                finishReadRequest(unpushedRequest.id)
                 guard token == loadToken, loadedProjectURL == url else { return }
                 if case .success(let hashes) = unpushedResult {
                     unpushedHashes = hashes
                 }
             }
         }
+    }
+
+    private func beginReadRequest() -> (id: UUID, cancellation: GitProcessCancellation) {
+        let id = UUID()
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        activeReadRequests[id] = cancellation
+        return (id, cancellation)
+    }
+
+    private func finishReadRequest(_ id: UUID) {
+        activeReadRequests[id] = nil
+    }
+
+    private func cancelReadRequests() {
+        let requests = Array(activeReadRequests.values)
+        activeReadRequests.removeAll()
+        requests.forEach { $0.cancel() }
+    }
+
+    private func resetProjectScopedActionState() {
+        pushPopoverCommitHash = nil
+        isPushing = false
+        pushError = nil
+
+        pendingUndo = nil
+        pendingRevert = nil
+        pendingSoftReset = nil
+        pendingMixedReset = nil
+        pendingHardReset = nil
+        pendingSquash = nil
+        squashMessage = ""
+        undoingHash = nil
+        revertingHash = nil
+        softResettingHash = nil
+        mixedResettingHash = nil
+        hardResettingHash = nil
+        squashingHash = nil
+        historyError = nil
+
+        pendingCreateTag = nil
+        pendingCreateAnnotatedTag = nil
+        tagName = ""
+        annotatedTagName = ""
+        annotatedTagMessage = ""
+        pendingDeleteTag = nil
+        pendingDeleteRemoteTag = nil
+        creatingTagHash = nil
+        creatingAnnotatedTagHash = nil
+        deletingTagName = nil
+        pushingTagName = nil
+        deletingRemoteTagName = nil
+        tagError = nil
+    }
+
+    private func isCurrentProject(_ repository: URL) -> Bool {
+        projects.currentProject?.url.standardizedFileURL == repository.standardizedFileURL
+    }
+
+    private func beginWriteOperation() -> (id: UUID, gate: CommitListWriteGate) {
+        let id = UUID()
+        let gate = CommitListWriteGate()
+        pendingWriteOperations[id] = gate
+        return (id, gate)
+    }
+
+    private func finishWriteOperation(_ id: UUID) {
+        pendingWriteOperations[id] = nil
+    }
+
+    private func cancelUnstartedWriteOperations() {
+        let cancelledIDs = pendingWriteOperations.compactMap { id, gate in
+            gate.cancelIfPending() ? id : nil
+        }
+        cancelledIDs.forEach { pendingWriteOperations[$0] = nil }
     }
 
     /// Provider 选中状态变化时刷新视图（驱动 SwiftUI 重算选中态高亮）。

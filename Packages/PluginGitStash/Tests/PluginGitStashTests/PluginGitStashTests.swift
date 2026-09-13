@@ -12,6 +12,6 @@ struct PluginGitStashTests {
         let plugin = GitStashPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-stash")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
     }
 }

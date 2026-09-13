@@ -29,17 +29,17 @@ struct DefaultRootHostView: View {
                             )
                             .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
                             .transition(sidebarTransition)
+                            .appSplitDivider(
+                                .trailing,
+                                initialPosition: provider.sidebarWidth.idealWidth,
+                                onResize: provider.saveSidebarWidth
+                            )
                         workbenchView
                             // The workbench must remain the flexible pane. Without
                             // an explicit zero minimum/ideal width, AppKit can
                             // re-solve the outer split after the inner Rail is
                             // removed and expand the sidebar to its max width.
                             .frame(minWidth: 0, idealWidth: 0, maxWidth: .infinity)
-                            .appSplitDivider(
-                                .leading,
-                                initialPosition: provider.sidebarWidth.idealWidth,
-                                onResize: provider.saveSidebarWidth
-                            )
                     }
                     // Recreate the native split only when the Rail is shown or
                     // hidden. This makes its initial position run again and

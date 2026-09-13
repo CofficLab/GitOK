@@ -1,16 +1,13 @@
 import Foundation
 
-/// 通过 git CLI 读取仓库提交历史的轻量加载器。
+/// 通过 git CLI 读取仓库提交历史的轻量加载器，支持可取消的界面读取请求。
 ///
 /// 执行 `git -C <目录> log` 并用 `\x1f` 分隔字段解析，避免 subject 中的
 /// 空格 / 特殊字符影响解析。输出格式：
 /// `%H\x1f%h\x1f%s\x1f%an\x1f%ae\x1f%aI`（完整哈希 / 短哈希 / 主题 / 作者 / 邮箱 / ISO 时间）。
 ///
-/// 说明：当前阶段使用系统自带 git（macOS 预装）以零第三方依赖读取提交；
-/// 后续若迁移到 LibGit2（旧版方案），只需替换本加载器的实现。
-///
-/// 本类型为无状态纯逻辑，可在任意线程调用（含后台线程），
-/// 视图侧通过 `Task.detached` 使用，避免阻塞主线程。
+/// 该加载器用于 LibGit2Swift 无法及时取消的项目切换敏感读取，以及需要
+/// CLI 特有语义的历史查询。类型无状态，可在后台线程调用。
 public enum GitCommitLoader {
     /// 提交列表读取属于只读查询；仓库异常时不能让首屏 skeleton 永久存在。
     public static let commandTimeout: TimeInterval = 15
@@ -26,15 +23,18 @@ public enum GitCommitLoader {
         in repository: URL,
         limit: Int = 50,
         offset: Int = 0,
-        allRefs: Bool = false
+        allRefs: Bool = false,
+        cancellation: GitProcessCancellation? = nil
     ) throws -> [GitCommit] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let command = try buildCommand(
             in: repository,
             limit: limit,
             offset: offset,
             allRefs: allRefs
         )
-        let output = try runGit(command, in: repository)
+        let output = try runGit(command, in: repository, cancellation: cancellation)
+        if cancellation?.isCancelled == true { throw CancellationError() }
         // 显式按提交日期倒序：不依赖 git log 的默认输出顺序
         // （不同 git 配置 / 沙盒环境下默认顺序可能不一致）。
         return parse(output).sorted { $0.date > $1.date }
@@ -44,13 +44,19 @@ public enum GitCommitLoader {
     ///
     /// 用于提交列表按页定位到历史末端，避免为了计算最早一页而把整个
     /// 仓库历史读入应用内存。
-    public static func countCommits(in repository: URL) throws -> Int {
+    public static func countCommits(
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> Int {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         _ = try buildCommand(in: repository, limit: 1, offset: 0)
         let output = try runGit(
             ["/usr/bin/git", "-C", repository.path, "rev-list", "--count", "HEAD"],
             in: repository,
-            timeout: commandTimeout
+            timeout: commandTimeout,
+            cancellation: cancellation
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         guard let count = Int(output.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw GitCommitLoaderError.gitFailed("Unable to parse commit count.")
         }
@@ -93,10 +99,15 @@ public enum GitCommitLoader {
     ///
     /// 使用 `git log @{upstream}..HEAD --format=%H` 获取当前分支领先上游的提交。
     /// 若无上游分支（未设置 tracking）则返回空集合。
-    public static func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
+    public static func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> Set<String> {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let output = try GitProcessRunner.run(
             ["log", "@{upstream}..HEAD", "--format=%H"],
             in: repository,
+            cancellation: cancellation,
             timeout: commandTimeout
         )
         let hashes = output
@@ -111,14 +122,19 @@ public enum GitCommitLoader {
 
     // MARK: - Process
 
-    private static func runGit(_ command: [String], in repository: URL) throws -> String {
-        try runGit(command, in: repository, timeout: commandTimeout)
+    private static func runGit(
+        _ command: [String],
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> String {
+        try runGit(command, in: repository, timeout: commandTimeout, cancellation: cancellation)
     }
 
     private static func runGit(
         _ command: [String],
         in repository: URL,
-        timeout: TimeInterval
+        timeout: TimeInterval,
+        cancellation: GitProcessCancellation? = nil
     ) throws -> String {
         do {
             // GitProcessRunner 会在进程运行期间持续消费 stdout/stderr，避免大
@@ -126,6 +142,7 @@ public enum GitCommitLoader {
             return try GitProcessRunner.run(
                 Array(command.dropFirst()),
                 in: repository,
+                cancellation: cancellation,
                 timeout: timeout
             )
         } catch let error as GitProcessRunner.Error {
@@ -145,11 +162,11 @@ public enum GitCommitLoader {
     /// 解析 git log 输出为提交数组（按行拆分，`\x1f` 分隔字段）。
     static func parse(_ output: String) -> [GitCommit] {
         let lines = output.split(separator: "\n", omittingEmptySubsequences: true)
+        let formatter = ISO8601DateFormatter()
         return lines.compactMap { line -> GitCommit? in
             let fields = line.split(separator: "\u{1f}", omittingEmptySubsequences: false).map(String.init)
             guard fields.count >= 5 else { return nil }
             let hash = fields[0]
-            let formatter = ISO8601DateFormatter()
             // 兼容旧缓存/调用方传入的五字段格式：邮箱缺失时仍可显示提交。
             let authorEmail: String
             let date: Date

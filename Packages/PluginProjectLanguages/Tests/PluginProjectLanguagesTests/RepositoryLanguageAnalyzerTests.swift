@@ -1,9 +1,23 @@
 import Foundation
+import KitGit
 import Testing
 @testable import PluginProjectLanguages
 
 @Suite("RepositoryLanguageAnalyzer")
 struct RepositoryLanguageAnalyzerTests {
+    @Test("honors pre-cancelled repository analysis")
+    func honorsPreCancelledAnalysis() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try RepositoryLanguageAnalyzer().analyze(
+                repository: URL(fileURLWithPath: "/missing/repository"),
+                cancellation: cancellation
+            )
+        }
+    }
+
     @Test("counts recognized tracked text files by byte size")
     func countsRecognizedFiles() throws {
         let repository = try makeRepository()

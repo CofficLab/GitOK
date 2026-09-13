@@ -56,6 +56,10 @@ public struct GitFileChangePage: Equatable, Sendable {
 
 /// 通过 git CLI 加载单个 commit 的变动（文件列表 + unified diff）。
 public enum GitDiffLoader {
+    /// Diff enumeration can traverse large trees or invoke clean filters; bound
+    /// each CLI stage so a stale detail request cannot keep loading forever.
+    public static let commandTimeout: TimeInterval = 15
+
     private struct NulTokenParser {
         private var buffer = Data()
 
@@ -80,7 +84,12 @@ public enum GitDiffLoader {
     }
 
     /// 统计 commit 的变更文件数，只保留计数，不保留路径数组。
-    public static func countChanges(commit hash: String, in repository: URL) throws -> Int {
+    public static func countChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> Int {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         var parser = NulTokenParser()
         var pendingStatus: String?
         var expectedPaths = 0
@@ -88,7 +97,9 @@ public enum GitDiffLoader {
 
         try GitProcessRunner.stream(
             ["diff-tree", "--no-commit-id", "--root", "--name-status", "-r", "-z", "--find-renames", hash],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         ) { data in
             parser.append(data) { token in
                 let value = String(decoding: token, as: UTF8.self)
@@ -106,6 +117,7 @@ public enum GitDiffLoader {
                 return true
             }
         }
+        if cancellation?.isCancelled == true { throw CancellationError() }
         _ = parser.finish { _ in true }
         return pathCount
     }
@@ -118,8 +130,10 @@ public enum GitDiffLoader {
         commit hash: String,
         limit requestedLimit: Int,
         offset requestedOffset: Int,
-        in repository: URL
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
     ) throws -> GitFileChangePage {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let limit = max(requestedLimit, 0)
         let offset = max(requestedOffset, 0)
         guard limit > 0 else {
@@ -173,10 +187,13 @@ public enum GitDiffLoader {
 
         try GitProcessRunner.stream(
             ["diff-tree", "--no-commit-id", "--root", "--name-status", "-r", "-z", "--find-renames", hash],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         ) { data in
             parser.append(data, handle: consume)
         }
+        if cancellation?.isCancelled == true { throw CancellationError() }
         _ = parser.finish(handle: consume)
 
         guard !changes.isEmpty else {
@@ -184,6 +201,10 @@ public enum GitDiffLoader {
         }
 
         var stats: [String: (added: Int, deleted: Int)] = [:]
+        let targetPaths = Set(changes.flatMap { change in
+            [change.path, change.oldPath].compactMap { $0 }
+        })
+        var foundPaths: Set<String> = []
         var numstatParser = NulTokenParser()
         var waitingRenamePaths = false
         var renameStat: (added: Int, deleted: Int)?
@@ -197,34 +218,44 @@ public enum GitDiffLoader {
                     if let renameStat {
                         stats[renamePaths[1]] = renameStat
                         stats[renamePaths[0]] = renameStat
+                        if targetPaths.contains(renamePaths[0]) { foundPaths.insert(renamePaths[0]) }
+                        if targetPaths.contains(renamePaths[1]) { foundPaths.insert(renamePaths[1]) }
                     }
                     waitingRenamePaths = false
                     renamePaths.removeAll(keepingCapacity: true)
                 }
-                return true
+                return !targetPaths.isSubset(of: foundPaths)
             }
 
             let fields = value.split(separator: "\t", maxSplits: 2, omittingEmptySubsequences: false)
-            guard fields.count == 3,
-                  let added = Int(fields[0]),
-                  let deleted = Int(fields[1])
-            else { return true }
+            guard fields.count == 3 else { return true }
+
+            // Binary files use "-" for both counts; record them as zero so
+            // they do not force a scan through the rest of a huge commit.
+            let added = Int(fields[0]) ?? 0
+            let deleted = Int(fields[1]) ?? 0
 
             let path = String(fields[2])
             if path.isEmpty {
                 waitingRenamePaths = true
                 renameStat = (added, deleted)
             } else {
-                stats[path] = (added, deleted)
+                if targetPaths.contains(path) {
+                    stats[path] = (added, deleted)
+                    foundPaths.insert(path)
+                }
             }
-            return true
+            return !targetPaths.isSubset(of: foundPaths)
         }
 
-        try? GitProcessRunner.stream(
+        try GitProcessRunner.stream(
             ["show", "--format=", "--numstat", "-z", "--find-renames", hash],
             in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout,
             onOutput: { data in numstatParser.append(data, handle: consumeNumstat) }
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         _ = numstatParser.finish(handle: consumeNumstat)
 
         let completedChanges = changes.map { change in
@@ -279,12 +310,17 @@ public enum GitDiffLoader {
     public static func loadDiff(
         commit hash: String,
         filePath: String,
-        in repository: URL
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
     ) throws -> String {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let output = try GitProcessRunner.run(
             ["show", "--format=", "--no-color", "--find-renames", hash, "--", filePath],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         return output
     }
 
@@ -298,29 +334,42 @@ public enum GitDiffLoader {
     /// - 未跟踪文件：`git diff --no-index /dev/null -- <path>`，整文件作为新增展示。
     /// - 未跟踪目录（路径以 `/` 结尾）：git 无法对目录生成文本 diff，返回空串，
     ///   由视图层提示 "No Text Diff"。
-    public static func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
+    public static func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> String {
+        if cancellation?.isCancelled == true { throw CancellationError() }
         if filePath.hasSuffix("/") {
             return ""
         }
-        let entries = try GitStatusLoader.loadEntries(in: repository)
+        let entries = try GitStatusLoader.loadEntries(in: repository, cancellation: cancellation)
+        if cancellation?.isCancelled == true { throw CancellationError() }
         let isUntracked = entries.contains { $0.path == filePath && $0.isUntracked }
         if isUntracked {
             // `git diff --no-index` 有差异时退出码为 1，属正常结果，需容忍。
             return try GitProcessRunner.run(
                 ["diff", "--no-index", "/dev/null", "--", filePath],
                 in: repository,
-                successExitCodes: [0, 1]
+                successExitCodes: [0, 1],
+                cancellation: cancellation,
+                timeout: commandTimeout
             )
         }
         do {
             return try GitProcessRunner.run(
                 ["diff", "HEAD", "--", filePath],
-                in: repository
+                in: repository,
+                cancellation: cancellation,
+                timeout: commandTimeout
             )
         } catch {
+            if cancellation?.isCancelled == true { throw CancellationError() }
             return try GitProcessRunner.run(
                 ["diff", "--cached", "--", filePath],
-                in: repository
+                in: repository,
+                cancellation: cancellation,
+                timeout: commandTimeout
             )
         }
     }

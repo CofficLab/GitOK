@@ -26,6 +26,8 @@ final class CommitFilePageStoreTests: XCTestCase {
         private var _failCounts: [Int: Int] = [:]
         private var _pageLoadCounts: [Int: Int] = [:]
         private var _countCalls = 0
+        private var _countWaitsForCancellation = false
+        private var _lastCountCancellation: GitProcessCancellation?
 
         var changes: [GitFileChange] {
             get { lock.lock(); defer { lock.unlock() }; return _changes }
@@ -42,10 +44,39 @@ final class CommitFilePageStoreTests: XCTestCase {
             lock.lock(); defer { lock.unlock() }; return _countCalls
         }
 
+        var countWaitsForCancellation: Bool {
+            get { lock.lock(); defer { lock.unlock() }; return _countWaitsForCancellation }
+            set { lock.lock(); defer { lock.unlock() }; _countWaitsForCancellation = newValue }
+        }
+
+        var lastCountCancellation: GitProcessCancellation? {
+            lock.lock(); defer { lock.unlock() }; return _lastCountCancellation
+        }
+
         func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
             lock.lock(); defer { lock.unlock() }
             _countCalls += 1
             return _changes.count
+        }
+
+        func countCommitChanges(
+            commit hash: String,
+            in repository: URL,
+            cancellation: GitProcessCancellation?
+        ) throws -> Int {
+            lock.lock()
+            _lastCountCancellation = cancellation
+            let waitForCancellation = _countWaitsForCancellation
+            lock.unlock()
+
+            if waitForCancellation, let cancellation {
+                while !cancellation.isCancelled {
+                    Thread.sleep(forTimeInterval: 0.005)
+                }
+                throw CancellationError()
+            }
+            if cancellation?.isCancelled == true { throw CancellationError() }
+            return try countCommitChanges(commit: hash, in: repository)
         }
 
         func loadCommitChangesPage(
@@ -68,6 +99,24 @@ final class CommitFilePageStoreTests: XCTestCase {
                 changes: Array(_changes[start..<end]),
                 hasMore: end < _changes.count
             )
+        }
+
+        func loadCommitChangesPage(
+            commit hash: String,
+            limit: Int,
+            offset: Int,
+            in repository: URL,
+            cancellation: GitProcessCancellation?
+        ) throws -> GitFileChangePage {
+            if cancellation?.isCancelled == true { throw CancellationError() }
+            let page = try loadCommitChangesPage(
+                commit: hash,
+                limit: limit,
+                offset: offset,
+                in: repository
+            )
+            if cancellation?.isCancelled == true { throw CancellationError() }
+            return page
         }
 
         // MARK: - 桩实现（本测试不调用）
@@ -220,6 +269,42 @@ final class CommitFilePageStoreTests: XCTestCase {
         XCTAssertEqual(store.change(at: 0)?.path, "files/file-0.txt")
         XCTAssertEqual(store.change(at: 24)?.path, "files/file-24.txt")
         XCTAssertNil(store.change(at: 25), "越界索引应返回 nil")
+    }
+
+    /// 首屏页与全量计数并行：文件行应先显示，计数稍后再补成精确值。
+    func testShowsFirstPageBeforeExactCountCompletes() async {
+        let store = CommitFilePageStore()
+        let mock = MockGitProviding()
+        mock.changes = makeChanges(count: 250)
+        mock.countWaitsForCancellation = true
+
+        store.reset(commitHash: "c1", repositoryURL: repoURL("a"), git: mock)
+
+        await waitUntil { store.pages[0] != nil }
+        XCTAssertNil(store.totalCount)
+        XCTAssertEqual(store.provisionalCount, 100)
+        XCTAssertTrue(store.provisionalHasMore)
+        XCTAssertEqual(store.visibleCount, 101)
+
+        store.reset(commitHash: nil, repositoryURL: nil, git: nil)
+    }
+
+    /// 切换 commit 会把旧的 count 子进程取消，而不是只取消等待它的 Swift Task。
+    func testResetCancelsPreviousCountRead() async {
+        let store = CommitFilePageStore()
+        let mockA = MockGitProviding()
+        mockA.changes = makeChanges(count: 250)
+        mockA.countWaitsForCancellation = true
+        store.reset(commitHash: "aaa", repositoryURL: repoURL("a"), git: mockA)
+        await waitUntil { mockA.lastCountCancellation != nil }
+        let oldCancellation = mockA.lastCountCancellation
+
+        let mockB = MockGitProviding()
+        mockB.changes = makeChanges(count: 30)
+        store.reset(commitHash: "bbb", repositoryURL: repoURL("b"), git: mockB)
+
+        XCTAssertTrue(oldCancellation?.isCancelled == true)
+        await waitUntil { store.totalCount == 30 && store.pages[0] != nil }
     }
 
     /// 并发去重：同一页在途时重复请求只触发一次后端加载。

@@ -1,3 +1,4 @@
+import KitGit
 import LumiUI
 import MagicDiffView
 import ProviderGit
@@ -28,6 +29,8 @@ struct GitDiffPaneView: View {
     @State private var isLoading = false
     @State private var loadError: String?
     @State private var loadedKey: String?
+    @State private var loadToken = 0
+    @State private var activeReadCancellation: GitProcessCancellation?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,6 +44,7 @@ struct GitDiffPaneView: View {
         }
         .onReceive(viewModel.$revision) { _ in loadIfNeeded() }
         .onAppear { loadIfNeeded() }
+        .onDisappear { invalidateLoad() }
     }
 
     // MARK: - Header
@@ -108,20 +112,20 @@ struct GitDiffPaneView: View {
         guard let projectURL = viewModel.selectedProjectURL,
               let path = viewModel.selectedFile else {
             // 无完整上下文：清空并回到占位。
-            if loadedKey != nil {
-                loadedKey = nil
-                diffText = nil
-                isLoading = false
-                loadError = nil
-            }
+            invalidateLoad()
             return
         }
 
         let commit = viewModel.selectedCommit
         // 同一文件在「commit 上下文」与「工作区上下文」下的 diff 不同，
         // 用 commit hash（无 commit 时用 "worktree"）区分缓存键。
-        let key = "\(commit?.hash ?? "worktree")|\(path)"
+        let key = "\(projectURL.standardizedFileURL.path)|\(commit?.hash ?? "worktree")|\(path)"
         guard loadedKey != key else { return }
+        activeReadCancellation?.cancel()
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        activeReadCancellation = cancellation
+        loadToken &+= 1
+        let token = loadToken
         loadedKey = key
         isLoading = true
         diffText = nil
@@ -131,11 +135,26 @@ struct GitDiffPaneView: View {
         Task.detached(priority: .userInitiated) {
             let result: Result<String, Error>
             if let commit {
-                result = Result { try git.loadDiff(commit: commit.hash, filePath: path, in: url) }
+                result = Result {
+                    try git.loadDiff(
+                        commit: commit.hash,
+                        filePath: path,
+                        in: url,
+                        cancellation: cancellation
+                    )
+                }
             } else {
-                result = Result { try git.loadWorktreeDiff(filePath: path, in: url) }
+                result = Result {
+                    try git.loadWorktreeDiff(
+                        filePath: path,
+                        in: url,
+                        cancellation: cancellation
+                    )
+                }
             }
             await MainActor.run {
+                guard token == loadToken, loadedKey == key else { return }
+                activeReadCancellation = nil
                 isLoading = false
                 switch result {
                 case .success(let text):
@@ -146,5 +165,15 @@ struct GitDiffPaneView: View {
                 }
             }
         }
+    }
+
+    private func invalidateLoad() {
+        activeReadCancellation?.cancel()
+        activeReadCancellation = nil
+        loadToken &+= 1
+        loadedKey = nil
+        diffText = nil
+        isLoading = false
+        loadError = nil
     }
 }
