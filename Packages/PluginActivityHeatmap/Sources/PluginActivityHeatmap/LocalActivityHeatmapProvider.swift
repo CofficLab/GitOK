@@ -18,6 +18,7 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
     )
 
     typealias CommitLoader = @Sendable (URL, Int, Int) throws -> [GitCommit]
+    typealias CancellableCommitLoader = @Sendable (URL, Int, Int, GitProcessCancellation?) throws -> [GitCommit]
 
     private nonisolated static let cacheFileName = "activity-heatmap.json"
     // Keep Git CLI output below the process pipe buffer. GitCommitLoader waits
@@ -26,10 +27,12 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
     private nonisolated static let pageSize = 50
 
     private let directory: URL
-    private let loadCommits: CommitLoader
+    private let loadCommits: CancellableCommitLoader
     private let calendar: Calendar
     private let now: @Sendable () -> Date
     private var refreshToken = 0
+    private var refreshTask: Task<Void, Never>?
+    private var refreshCancellation: GitProcessCancellation?
     private var observers: [WeakObserver] = []
 
     private(set) var currentSnapshot: ActivityHeatmapSnapshot?
@@ -40,19 +43,37 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         git: (any GitProviding)? = nil,
         calendar: Calendar = .current,
         now: @escaping @Sendable () -> Date = Date.init,
-        commitLoader: CommitLoader? = nil
+        commitLoader: CommitLoader? = nil,
+        cancellableCommitLoader: CancellableCommitLoader? = nil
     ) {
         self.directory = directory
         self.calendar = calendar
         self.now = now
-        self.loadCommits = commitLoader ?? { [git] repository, limit, offset in
-            guard let git else { throw GitProviderError.noBackendAvailable }
-            return try git.loadAllCommits(in: repository, limit: limit, offset: offset)
+        if let cancellableCommitLoader {
+            self.loadCommits = cancellableCommitLoader
+        } else if let commitLoader {
+            self.loadCommits = { repository, limit, offset, _ in
+                try commitLoader(repository, limit, offset)
+            }
+        } else {
+            self.loadCommits = { [git] repository, limit, offset, cancellation in
+                guard let git else { throw GitProviderError.noBackendAvailable }
+                return try git.loadAllCommits(
+                    in: repository,
+                    limit: limit,
+                    offset: offset,
+                    cancellation: cancellation
+                )
+            }
         }
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     }
 
     func refresh(for repository: URL?) {
+        refreshTask?.cancel()
+        refreshTask = nil
+        refreshCancellation?.cancel()
+        refreshCancellation = nil
         refreshToken &+= 1
         let token = refreshToken
         let standardizedRepository = repository?.standardizedFileURL
@@ -80,7 +101,9 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         let loadCommits = self.loadCommits
         let calendar = self.calendar
         let now = self.now()
-        Task.detached(priority: .utility) {
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        refreshCancellation = cancellation
+        refreshTask = Task.detached(priority: .utility) {
             let result: RefreshResult
             do {
                 // 工作区是否有未提交变更不影响提交活跃度统计：
@@ -89,7 +112,8 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
                     in: repository,
                     now: now,
                     calendar: calendar,
-                    loadCommits: loadCommits
+                    loadCommits: loadCommits,
+                    cancellation: cancellation
                 )
                 result = RefreshResult(
                     snapshot: Self.makeSnapshot(
@@ -99,6 +123,8 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
                         now: now
                     )
                 )
+            } catch is CancellationError {
+                return
             } catch {
                 // Preserve a cached snapshot on transient Git failures. The
                 // provider has no fresh status to prove that it is displayable,
@@ -145,6 +171,8 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         token: Int
     ) async {
         guard token == refreshToken else { return }
+        refreshTask = nil
+        refreshCancellation = nil
         if let snapshot = result.snapshot {
             persist(snapshot)
             setSnapshot(snapshot)
@@ -156,6 +184,8 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
 
     private func finishLoading(token: Int) {
         guard token == refreshToken else { return }
+        refreshTask = nil
+        refreshCancellation = nil
         setLoading(false)
     }
 
@@ -165,14 +195,17 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
         in repository: URL,
         now: Date,
         calendar: Calendar,
-        loadCommits: CommitLoader
+        loadCommits: CancellableCommitLoader,
+        cancellation: GitProcessCancellation
     ) throws -> [GitCommit] {
         guard let cutoff = calendar.date(byAdding: .month, value: -historyMonths, to: now) else { return [] }
 
         var offset = 0
         var commits: [GitCommit] = []
         while true {
-            let page = try loadCommits(repository, pageSize, offset)
+            if cancellation.isCancelled { throw CancellationError() }
+            let page = try loadCommits(repository, pageSize, offset, cancellation)
+            if cancellation.isCancelled { throw CancellationError() }
             commits.append(contentsOf: page.filter { $0.date >= cutoff })
             offset += page.count
             if page.isEmpty || page.count < pageSize || page.contains(where: { $0.date < cutoff }) {
