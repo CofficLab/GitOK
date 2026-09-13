@@ -36,6 +36,21 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
     }
 
+    func loadAllCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            allRefs: true,
+            cancellation: cancellation
+        )
+    }
+
     func countCommits(in repository: URL) throws -> Int {
         try GitCommitLoader.countCommits(in: repository)
     }
@@ -57,6 +72,13 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
         try GitStatusLoader.loadStatus(in: repository)
+    }
+
+    func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        try GitStatusLoader.loadStatus(in: repository, cancellation: cancellation)
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
@@ -158,12 +180,24 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitRefReader.latestTag(in: repository)
     }
 
+    func latestTag(in repository: URL, cancellation: GitProcessCancellation?) -> String? {
+        GitRefReader.latestTag(in: repository, cancellation: cancellation)
+    }
+
     func firstCommitDate(in repository: URL) -> Date? {
         GitRefReader.firstCommitDate(in: repository)
     }
 
+    func firstCommitDate(in repository: URL, cancellation: GitProcessCancellation?) -> Date? {
+        GitRefReader.firstCommitDate(in: repository, cancellation: cancellation)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         GitRefReader.unpushedCount(in: repository)
+    }
+
+    func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int? {
+        GitRefReader.unpushedCount(in: repository, cancellation: cancellation)
     }
 
     func hasRemotes(in repository: URL) -> Bool {
@@ -278,6 +312,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitStashOperation.list(in: repository)
     }
 
+    func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry] {
+        GitStashOperation.list(in: repository, cancellation: cancellation)
+    }
+
     func hasChangesToStash(in repository: URL) -> Bool {
         GitStashOperation.hasChanges(in: repository)
     }
@@ -316,6 +354,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func listSubmodules(in repository: URL) -> [GitSubmoduleSummary] {
         GitSubmoduleOperation.list(in: repository)
+    }
+
+    func listSubmodules(in repository: URL, cancellation: GitProcessCancellation?) -> [GitSubmoduleSummary] {
+        GitSubmoduleOperation.list(in: repository, cancellation: cancellation)
     }
 
     func updateSubmodules(in repository: URL) throws {
