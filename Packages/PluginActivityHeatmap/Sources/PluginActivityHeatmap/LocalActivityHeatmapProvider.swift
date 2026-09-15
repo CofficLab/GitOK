@@ -21,9 +21,8 @@ final class LocalActivityHeatmapProvider: ActivityHeatmapProviding {
     typealias CancellableCommitLoader = @Sendable (URL, Int, Int, GitProcessCancellation?) throws -> [GitCommit]
 
     private nonisolated static let cacheFileName = "activity-heatmap.json"
-    // Keep Git CLI output below the process pipe buffer. GitCommitLoader waits
-    // for the process before reading stdout, so oversized pages can deadlock
-    // before a snapshot is published.
+    // Keep history pages bounded so a large repository does not monopolize the
+    // background refresh task before a snapshot is published.
     private nonisolated static let pageSize = 50
 
     private let directory: URL

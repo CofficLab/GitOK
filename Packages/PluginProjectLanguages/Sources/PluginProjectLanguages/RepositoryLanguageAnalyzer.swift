@@ -1,5 +1,6 @@
 import Foundation
 import KitGit
+import LibGit2Swift
 import ProviderProjectLanguages
 
 struct RepositoryLanguageAnalysisContext: Sendable {
@@ -37,7 +38,6 @@ extension RepositoryLanguageAnalyzing {
 /// implementation without coupling consumers to a particular detector.
 struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
     static let cacheVersion = 1
-    private static let commandTimeout: TimeInterval = 15
 
     private struct Definition: Sendable {
         let id: String
@@ -129,18 +129,12 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
     ) throws -> RepositoryLanguageAnalysisContext {
         if cancellation?.isCancelled == true { throw CancellationError() }
         let repository = repository.standardizedFileURL
-        let headHash = try GitProcessRunner.run(
-            ["rev-parse", "HEAD"],
-            in: repository,
-            cancellation: cancellation,
-            timeout: Self.commandTimeout
-        )
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !headHash.isEmpty else {
-            throw GitProcessRunner.Error.gitFailed("Repository has no HEAD")
+        guard let headHash = try LibGit2.getCommitList(at: repository.path, limit: 1).first?.hash else {
+            throw LibGit2Error.invalidReference
         }
-
-        let status = try GitStatusLoader.loadStatus(in: repository, cancellation: cancellation)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let status = try LibGit2.getRepositoryStatus(at: repository.path)
+        if cancellation?.isCancelled == true { throw CancellationError() }
         return RepositoryLanguageAnalysisContext(
             cacheKey: ProjectLanguagesCacheKey(
                 repositoryPath: repository.path,
@@ -160,19 +154,13 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
         cancellation: GitProcessCancellation?
     ) throws -> ProjectLanguagesSnapshot {
         if cancellation?.isCancelled == true { throw CancellationError() }
-        let output = try GitProcessRunner.run(
-            ["ls-tree", "-r", "--name-only", "-z", "HEAD"],
-            in: repository,
-            cancellation: cancellation,
-            timeout: Self.commandTimeout
-        )
+        let trackedPaths = try LibGit2.getTrackedFilePaths(at: repository.path)
         if cancellation?.isCancelled == true { throw CancellationError() }
         let fileManager = FileManager.default
         var byteCounts: [String: (name: String, bytes: Int64)] = [:]
 
-        for rawPath in output.split(separator: "\0", omittingEmptySubsequences: true) {
+        for path in trackedPaths {
             if cancellation?.isCancelled == true { throw CancellationError() }
-            let path = String(rawPath)
             guard !isExcluded(path),
                   let definition = Self.definition(for: path) else { continue }
 

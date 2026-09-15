@@ -27,6 +27,7 @@ public struct GitBackendDescriptor: Equatable, Identifiable, Sendable {
 /// GitOK 内置后端目录。
 ///
 /// 目录只用于稳定标识和默认优先级，不代表用户可选择后端。
+/// GitOK 默认只装配 LibGit2Swift；CLI 描述符仅保留给独立兼容插件使用。
 public enum GitBackendCatalog {
     public static let cli = GitBackendDescriptor(
         id: "com.coffic.gitok.git-backend.cli",
@@ -44,7 +45,7 @@ public enum GitBackendCatalog {
         priority: 100
     )
 
-    public static let all: [GitBackendDescriptor] = [cli, libGit2]
+    public static let all: [GitBackendDescriptor] = [libGit2]
 }
 
 /// Git Provider 的错误。

@@ -20,6 +20,10 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderToolbar"),
+        .package(
+            url: "https://github.com/nookery/LibGit2Swift.git",
+            revision: "123de167c2c88dec083015b2d9ebb07f7b7fc86c"
+        ),
     ],
     targets: [
         .target(
@@ -31,6 +35,7 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToolbar", package: "ProviderToolbar"),
+                .product(name: "LibGit2Swift", package: "libgit2swift"),
             ],
             path: "Sources/KitOpenIn",
             resources: [

@@ -97,20 +97,14 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         offset: Int,
         cancellation: GitProcessCancellation?
     ) throws -> [KitGit.GitCommit] {
-        // Project-switch-sensitive list reads must be cancellable and must not
-        // wait behind LibGit2Swift's process-wide synchronous queue.
-        try GitCommitLoader.loadCommits(
-            in: repository,
-            limit: limit,
-            offset: offset,
-            cancellation: cancellation
-        )
+        try checkCancellation(cancellation)
+        let commits = try LibGit2.getCommitList(at: repository.path, limit: limit, skip: offset)
+        try checkCancellation(cancellation)
+        return commits.map(Self.mapCommit)
     }
 
     func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [KitGit.GitCommit] {
-        // LibGit2Swift's list API follows HEAD; use the shared CLI loader for
-        // the explicit all-refs history required by the activity heatmap.
-        try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
+        try LibGit2.getCommitGraphList(at: repository.path, limit: limit, skip: offset).map(Self.mapCommit)
     }
 
     func loadAllCommits(
@@ -119,21 +113,21 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         offset: Int,
         cancellation: GitProcessCancellation?
     ) throws -> [KitGit.GitCommit] {
-        try GitCommitLoader.loadCommits(
-            in: repository,
-            limit: limit,
-            offset: offset,
-            allRefs: true,
-            cancellation: cancellation
-        )
+        try checkCancellation(cancellation)
+        let commits = try LibGit2.getCommitGraphList(at: repository.path, limit: limit, skip: offset)
+        try checkCancellation(cancellation)
+        return commits.map(Self.mapCommit)
     }
 
     func countCommits(in repository: URL) throws -> Int {
-        try GitCommitLoader.countCommits(in: repository)
+        try LibGit2.getCommitCount(at: repository.path)
     }
 
     func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
-        try GitCommitLoader.countCommits(in: repository, cancellation: cancellation)
+        try checkCancellation(cancellation)
+        let count = try LibGit2.getCommitCount(at: repository.path, cancellation: nil)
+        try checkCancellation(cancellation)
+        return count
     }
 
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
@@ -144,57 +138,47 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> Set<String> {
-        try GitCommitLoader.unpushedCommitHashes(in: repository, cancellation: cancellation)
+        try checkCancellation(cancellation)
+        let hashes = try LibGit2.getUnPushedCommits(at: repository.path, verbose: false).map(\.hash)
+        try checkCancellation(cancellation)
+        return Set(hashes)
     }
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
-        // libgit2's recursive status scan runs on LibGit2Swift's process-wide
-        // serial queue and has no cancellation or timeout. A scan left behind
-        // by a previous project can therefore block status refreshes for the
-        // newly selected repository. Keep this hot UI path bounded with the
-        // CLI loader's command timeout; LibGit2Swift remains the primary
-        // backend for the other Git operations.
-        try GitStatusLoader.loadStatus(in: repository)
+        let status = try LibGit2.getRepositoryStatus(at: repository.path)
+        return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
     }
 
     func loadStatus(
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeStatus {
-        try GitStatusLoader.loadStatus(in: repository, cancellation: cancellation)
+        try checkCancellation(cancellation)
+        let status = try LibGit2.getRepositoryStatus(at: repository.path)
+        try checkCancellation(cancellation)
+        return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
-        try GitStatusLoader.loadEntries(in: repository)
+        try LibGit2.getStatusEntries(at: repository.path).map(Self.mapStatusEntry)
     }
 
     func loadEntries(
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> [GitStatusEntry] {
-        try GitStatusLoader.loadEntries(in: repository, cancellation: cancellation)
+        try checkCancellation(cancellation)
+        let entries = try LibGit2.getStatusEntries(at: repository.path)
+        try checkCancellation(cancellation)
+        return entries.map(Self.mapStatusEntry)
     }
 
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
-        try LibGit2.getCommitDiffFiles(atCommit: hash, at: repository.path).map { file in
-            let status = GitFileChange.Status(rawValue: String(file.changeType.prefix(1))) ?? .unknown
-            let (added, deleted) = Self.lineCounts(in: file.diff)
-            let paths = file.file.components(separatedBy: " -> ")
-            return GitFileChange(
-                path: paths.last ?? file.file,
-                status: status,
-                addedLines: added,
-                deletedLines: deleted,
-                oldPath: paths.count == 2 ? paths.first : nil
-            )
-        }
+        try Self.mapChanges(LibGit2.getCommitDiffFiles(atCommit: hash, at: repository.path))
     }
 
-    // LibGit2Swift 当前公开的 diff API 会一次性生成完整文件数组；分页能力
-    // 先复用 KitGit 的 NUL 流式读取，确保 Commit Detail 不因后端选择而失去
-    // 有界内存特性。普通 diff 读取仍保持 LibGit2 实现。
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
-        try GitDiffLoader.countChanges(commit: hash, in: repository)
+        try LibGit2.getCommitDiffFiles(atCommit: hash, at: repository.path).count
     }
 
     func countCommitChanges(
@@ -202,7 +186,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> Int {
-        try GitDiffLoader.countChanges(commit: hash, in: repository, cancellation: cancellation)
+        try checkCancellation(cancellation)
+        let count = try LibGit2.getCommitDiffFiles(atCommit: hash, at: repository.path).count
+        try checkCancellation(cancellation)
+        return count
     }
 
     func loadCommitChangesPage(
@@ -211,11 +198,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         offset: Int,
         in repository: URL
     ) throws -> GitFileChangePage {
-        try GitDiffLoader.loadChangesPage(
-            commit: hash,
+        try Self.makeChangePage(
+            from: LibGit2.getCommitDiffFiles(atCommit: hash, at: repository.path),
             limit: limit,
-            offset: offset,
-            in: repository
+            offset: offset
         )
     }
 
@@ -226,13 +212,14 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitFileChangePage {
-        try GitDiffLoader.loadChangesPage(
-            commit: hash,
+        try checkCancellation(cancellation)
+        let page = try Self.makeChangePage(
+            from: LibGit2.getCommitDiffFiles(atCommit: hash, at: repository.path),
             limit: limit,
-            offset: offset,
-            in: repository,
-            cancellation: cancellation
+            offset: offset
         )
+        try checkCancellation(cancellation)
+        return page
     }
 
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
@@ -245,12 +232,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> String {
-        try GitDiffLoader.loadDiff(
-            commit: hash,
-            filePath: filePath,
-            in: repository,
-            cancellation: cancellation
-        )
+        try checkCancellation(cancellation)
+        let diff = try LibGit2.getFileDiff(atCommit: hash, for: filePath, at: repository.path)
+        try checkCancellation(cancellation)
+        return diff
     }
 
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
@@ -264,11 +249,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> String {
-        try GitDiffLoader.loadWorktreeDiff(
-            filePath: filePath,
-            in: repository,
-            cancellation: cancellation
-        )
+        try checkCancellation(cancellation)
+        let staged = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: true)
+        let unstaged = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: false)
+        try checkCancellation(cancellation)
+        return [staged, unstaged].filter { !$0.isEmpty }.joined(separator: "\n")
     }
 
     func currentBranch(in repository: URL) -> String? {
@@ -281,15 +266,20 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func latestTag(in repository: URL, cancellation: GitProcessCancellation?) -> String? {
-        GitRefReader.latestTag(in: repository, cancellation: cancellation)
+        guard cancellation?.isCancelled != true,
+              let description = try? LibGit2.describe(path: repository.path) else { return nil }
+        guard cancellation?.isCancelled != true else { return nil }
+        return Self.tagName(from: description)
     }
 
     func firstCommitDate(in repository: URL) -> Date? {
-        GitRefReader.firstCommitDate(in: repository)
+        try? LibGit2.getFirstCommitDate(at: repository.path)
     }
 
     func firstCommitDate(in repository: URL, cancellation: GitProcessCancellation?) -> Date? {
-        GitRefReader.firstCommitDate(in: repository, cancellation: cancellation)
+        guard cancellation?.isCancelled != true else { return nil }
+        let date = try? LibGit2.getFirstCommitDate(at: repository.path)
+        return cancellation?.isCancelled == true ? nil : date ?? nil
     }
 
     func unpushedCount(in repository: URL) -> Int? {
@@ -297,7 +287,9 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int? {
-        GitRefReader.unpushedCount(in: repository, cancellation: cancellation)
+        guard cancellation?.isCancelled != true else { return nil }
+        let count = try? LibGit2.getUnPushedCommits(at: repository.path, verbose: false).count
+        return cancellation?.isCancelled == true ? nil : count ?? nil
     }
 
     func hasRemotes(in repository: URL) -> Bool {
@@ -518,7 +510,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) -> [KitGit.GitStashEntry] {
-        GitStashOperation.list(in: repository, cancellation: cancellation)
+        guard cancellation?.isCancelled != true else { return [] }
+        let stashes = (try? LibGit2.getStashList(at: repository.path)) ?? []
+        return cancellation?.isCancelled == true ? [] : stashes.map {
+            KitGit.GitStashEntry(index: $0.index, message: $0.message)
+        }
     }
 
     func hasChangesToStash(in repository: URL) -> Bool {
@@ -574,7 +570,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) -> [GitSubmoduleSummary] {
-        GitSubmoduleOperation.list(in: repository, cancellation: cancellation)
+        guard cancellation?.isCancelled != true else { return [] }
+        let modules = (try? LibGit2.submodules(at: repository.path)) ?? []
+        return cancellation?.isCancelled == true ? [] : modules.map {
+            GitSubmoduleSummary(path: $0.path, commit: $0.commitHash, url: $0.description ?? "")
+        }
     }
 
     func updateSubmodules(in repository: URL) throws {
@@ -635,22 +635,12 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         progress: @escaping @Sendable (GitCloneProgress) -> Void,
         cancellation: GitProcessCancellation?
     ) throws -> URL {
-        // 系统 Git 可用时复用 CLI 实现；否则使用 libgit2 的原生传输
-        // 回调，同样提供可见进度和中途取消能力。
-        if GitProcessRunner.isAvailable {
-            return try GitCloneOperation.clone(
-                remoteURL: remoteURL,
-                destination: destination,
-                onProgress: progress,
-                cancellation: cancellation
-            )
-        }
-
+        try checkCancellation(cancellation)
         return try cloneUsingLibGit2(
             remoteURL: remoteURL,
             destination: destination,
             progress: progress,
-            cancellation: cancellation
+            cancellation: nil
         )
     }
 
@@ -674,9 +664,7 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
             onProgress: { value in
                 progress(tracker.progress(for: value))
             },
-            shouldCancel: {
-                cancellation?.isCancelled == true
-            }
+            cancellation: nil
         )
 
         if cancellation?.isCancelled == true {
@@ -715,9 +703,7 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func discardAllChanges(in repository: URL) throws {
-        // LibGit2Swift 当前没有覆盖 ignored 边界的 clean API，复用 KitGit 的
-        // 经过测试的仓库级实现，保证 CLI 与 LibGit2 后端的破坏性语义一致。
-        try GitCommitOperation.discardAllChanges(in: repository)
+        try LibGit2.discardAllChanges(at: repository.path, verbose: false)
     }
 
     func commit(message: String, in repository: URL) throws -> String {
@@ -752,9 +738,12 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func pull(in repository: URL, strategy: GitRemoteOperation.PullStrategy) throws {
-        // LibGit2Swift currently exposes the repository's normal merge pull. The
-        // provider keeps the same operation boundary for both pull strategies.
-        try LibGit2.pull(at: repository.path, verbose: false)
+        let libGit2Strategy: LibGit2.PullStrategy
+        switch strategy {
+        case .merge: libGit2Strategy = .merge
+        case .fastForwardOnly: libGit2Strategy = .fastForwardOnly
+        }
+        try LibGit2.pull(at: repository.path, strategy: libGit2Strategy, verbose: false)
     }
 
     func synchronize(in repository: URL) throws -> GitRefReader.RemoteTrackingStatus {
@@ -780,7 +769,7 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func isMerging(in repository: URL) -> Bool {
-        FileManager.default.fileExists(atPath: repository.appendingPathComponent(".git/MERGE_HEAD").path)
+        (try? LibGit2.repositoryState(at: repository.path).isMerge) == true
     }
 
     func hasConflictOperation(in repository: URL) -> Bool {
@@ -810,7 +799,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         case .theirs:
             return try LibGit2.getFileContent(atCommit: mergeHeadHash(in: repository), file: path, at: repository.path)
         case .base:
-            throw GitProviderError.backendOperationUnsupported("LibGit2Swift does not expose the merge-base file API.")
+            guard let content = try LibGit2.mergeBaseFileContent(path: path, at: repository.path) else {
+                throw GitProviderError.backendOperationUnsupported("The merge-base file is unavailable.")
+            }
+            return content
         }
     }
 
@@ -862,10 +854,69 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         return (added, deleted)
     }
 
+    private static func mapChanges(_ files: [LibGit2.DiffFile]) -> [GitFileChange] {
+        files.map { file in
+            let status = GitFileChange.Status(rawValue: String(file.changeType.prefix(1))) ?? .unknown
+            let (added, deleted) = lineCounts(in: file.diff)
+            let paths = file.file.components(separatedBy: " -> ")
+            return GitFileChange(
+                path: paths.last ?? file.file,
+                status: status,
+                addedLines: added,
+                deletedLines: deleted,
+                oldPath: paths.count == 2 ? paths.first : nil
+            )
+        }
+    }
+
+    private static func makeChangePage(
+        from files: [LibGit2.DiffFile],
+        limit requestedLimit: Int,
+        offset requestedOffset: Int
+    ) -> GitFileChangePage {
+        let changes = mapChanges(files)
+        let offset = max(requestedOffset, 0)
+        let limit = max(requestedLimit, 0)
+        guard limit > 0, offset < changes.count else {
+            return GitFileChangePage(offset: offset, changes: [], hasMore: false)
+        }
+        let end = min(offset + limit, changes.count)
+        return GitFileChangePage(
+            offset: offset,
+            changes: Array(changes[offset..<end]),
+            hasMore: end < changes.count
+        )
+    }
+
     private func validateExpectedHead(_ expectedHead: String, in repository: URL) throws {
         let actual = try LibGit2.getCurrentBranchInfo(at: repository.path)?.latestCommitHash
         guard actual == expectedHead else {
             throw GitProviderError.backendOperationUnsupported("The current HEAD changed before the operation could start.")
         }
+    }
+
+    private func checkCancellation(_ cancellation: GitProcessCancellation?) throws {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+    }
+
+    private static func mapCommit(_ value: LibGit2.Commit) -> KitGit.GitCommit {
+        KitGit.GitCommit(
+            hash: value.hash,
+            shortHash: String(value.hash.prefix(7)),
+            message: value.message,
+            author: value.author,
+            authorEmail: value.email,
+            date: value.date,
+            parentHashes: value.parentHashes,
+            tags: value.tags
+        )
+    }
+
+    private static func mapStatusEntry(_ value: LibGit2.RepositoryStatusEntry) -> GitStatusEntry {
+        GitStatusEntry(
+            path: value.path,
+            stagedStatus: value.stagedStatus,
+            worktreeStatus: value.worktreeStatus
+        )
     }
 }

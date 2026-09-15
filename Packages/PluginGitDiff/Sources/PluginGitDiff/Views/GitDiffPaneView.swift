@@ -10,9 +10,9 @@ import SwiftUI
 /// `GitDiffObserver` 从 `ProjectProviding` 翻译进 ViewModel），commit 只作为
 /// 可选上下文决定 diff 来源：
 /// - 已选中 commit + 文件：加载该文件在该 commit 中的 diff
-///   （`GitDiffLoader.loadDiff`）；
+///   （`GitProviding.loadDiff`）；
 /// - 未选中 commit + 文件（工作区变动）：加载该文件相对工作区的 diff
-///   （`GitDiffLoader.loadWorktreeDiff`）。
+///   （`GitProviding.loadWorktreeDiff`）。
 /// 用旧版同款组件 `MagicDiffView` 渲染（git 原生 unified diff 文本）。
 /// 无选中文件时右侧面板整体隐藏（由 `GitDiffPlugin` 通过 observer 监听
 /// 当前文件变化控制 `RootTrailingPane.isVisible`，不渲染本视图），

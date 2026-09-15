@@ -416,8 +416,8 @@ struct WorkingTreeStatusView: View {
         let cancellation = GitProcessCancellation(forceKillAfter: 1)
         statusCancellation = cancellation
 
-        // GitProcessRunner 是同步 CLI 调用；工作区状态属于后台刷新，使用
-        // utility 优先级可避免高优先级 Swift 任务等待运行器的 stderr 读取队列。
+        // LibGit2 读取是同步调用；工作区状态属于后台刷新，使用 utility
+        // 优先级避免它阻塞界面任务。
         Task.detached(priority: .utility) {
             let statusResult = Result { try git.loadStatus(in: url, cancellation: cancellation) }
             let tracking: GitRefReader.RemoteTrackingStatus
