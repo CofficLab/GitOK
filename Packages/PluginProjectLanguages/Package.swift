@@ -16,6 +16,10 @@ let package = Package(
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderGitRepositoryWatch"),
+        .package(
+            url: "https://github.com/nookery/LibGit2Swift.git",
+            revision: "123de167c2c88dec083015b2d9ebb07f7b7fc86c"
+        ),
     ],
     targets: [
         .target(
@@ -28,6 +32,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+                .product(name: "LibGit2Swift", package: "libgit2swift"),
             ],
             path: "Sources/PluginProjectLanguages"
         ),

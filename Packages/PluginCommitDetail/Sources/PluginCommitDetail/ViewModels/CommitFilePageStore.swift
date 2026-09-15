@@ -87,7 +87,7 @@ final class CommitFilePageStore: ObservableObject {
 
         guard commitHash != nil, repositoryURL != nil, git != nil else { return }
         loadCount()
-        // Count and first page are independent CLI reads. Show useful rows as
+        // Count and first page are independent Git provider reads. Show useful rows as
         // soon as the page is ready instead of waiting for a full-tree count.
         requestPage(at: 0)
     }

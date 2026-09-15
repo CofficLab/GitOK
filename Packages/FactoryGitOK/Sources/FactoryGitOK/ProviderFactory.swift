@@ -69,7 +69,7 @@ public struct DefaultProviderFactory: ProviderFactory {
         let workspaceScene = makeWorkspaceSceneProvider()
         try kernel.registerProvider((any WorkspaceSceneProviding).self, workspaceScene)
 
-        // Git Provider 是稳定的业务入口；具体 CLI / LibGit2 实现由后端插件注册。
+        // Git Provider 是稳定的业务入口；LibGit2Swift 实现由内置后端插件注册。
         let git = DefaultGitProvider()
         try kernel.registerProvider((any GitProviding).self, git)
         try kernel.registerProvider((any GitBackendRegistryProviding).self, git)
