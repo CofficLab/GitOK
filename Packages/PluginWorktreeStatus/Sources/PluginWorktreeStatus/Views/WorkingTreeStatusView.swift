@@ -103,6 +103,7 @@ struct WorkingTreeStatusView: View {
     @State private var loadError: String?
     @State private var loadToken = 0
     @State private var statusCancellation: GitProcessCancellation?
+    @State private var reloadRequestedWhileLoading = false
 
     init(
         projects: any ProjectProviding,
@@ -387,6 +388,7 @@ struct WorkingTreeStatusView: View {
             loadToken &+= 1
             statusCancellation?.cancel()
             statusCancellation = nil
+            reloadRequestedWhileLoading = false
             loadedProjectURL = nil
             isClean = true
             changeCount = 0
@@ -397,6 +399,12 @@ struct WorkingTreeStatusView: View {
         }
         let projectChanged = loadedProjectURL != project.url
         if !projectChanged, !force { return }
+        if !projectChanged, force, statusCancellation != nil {
+            // Coalesce watcher events instead of repeatedly cancelling the
+            // same-project read and starving it under continuous file writes.
+            reloadRequestedWhileLoading = true
+            return
+        }
 
         loadToken &+= 1
         let token = loadToken
@@ -405,6 +413,7 @@ struct WorkingTreeStatusView: View {
         loadedProjectURL = project.url
         loadError = nil
         if projectChanged {
+            reloadRequestedWhileLoading = false
             // Never present the previous project's snapshot while the new
             // project's first read is in flight.
             isClean = true
@@ -447,6 +456,8 @@ struct WorkingTreeStatusView: View {
             }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                let shouldReload = reloadRequestedWhileLoading
+                reloadRequestedWhileLoading = false
                 statusCancellation = nil
                 isLoading = false
                 switch statusResult {
@@ -459,6 +470,9 @@ struct WorkingTreeStatusView: View {
                     loadError = error.localizedDescription
                 }
                 trackingStatus = tracking
+                if shouldReload {
+                    reloadIfNeeded(force: true)
+                }
             }
         }
     }
