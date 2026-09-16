@@ -7,6 +7,7 @@ public final class GitProcessCancellation: @unchecked Sendable {
     private let forceKillAfter: TimeInterval?
     private var process: Process?
     private var cancelled = false
+    private var cancellationHandlers: [UUID: @Sendable () -> Void] = [:]
 
     public init(forceKillAfter: TimeInterval? = nil) {
         self.forceKillAfter = forceKillAfter
@@ -20,11 +21,44 @@ public final class GitProcessCancellation: @unchecked Sendable {
 
     public func cancel() {
         lock.lock()
+        guard !cancelled else {
+            lock.unlock()
+            return
+        }
         cancelled = true
         let process = self.process
+        let handlers = Array(cancellationHandlers.values)
+        cancellationHandlers.removeAll()
         lock.unlock()
 
+        handlers.forEach { $0() }
         if let process { terminate(process) }
+    }
+
+    /// Register a synchronous bridge for non-Process backends such as
+    /// LibGit2Swift. The handler runs immediately on the thread requesting
+    /// cancellation, and runs immediately when registered after cancellation.
+    @discardableResult
+    public func addCancellationHandler(
+        _ handler: @escaping @Sendable () -> Void
+    ) -> UUID {
+        let id = UUID()
+        lock.lock()
+        if cancelled {
+            lock.unlock()
+            handler()
+        } else {
+            cancellationHandlers[id] = handler
+            lock.unlock()
+        }
+        return id
+    }
+
+    /// Remove a previously registered cancellation bridge.
+    public func removeCancellationHandler(_ id: UUID) {
+        lock.lock()
+        cancellationHandlers.removeValue(forKey: id)
+        lock.unlock()
     }
 
     fileprivate func attach(_ process: Process) -> Bool {

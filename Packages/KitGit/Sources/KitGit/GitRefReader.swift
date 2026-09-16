@@ -141,11 +141,26 @@ public enum GitRefReader {
     }
 
     public static func remoteTrackingStatus(in repository: URL) -> RemoteTrackingStatus {
+        remoteTrackingStatus(in: repository, cancellation: nil)
+    }
+
+    /// 可取消地读取当前分支相对 upstream 的 ahead/behind 状态。
+    public static func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
         guard let out = try? GitProcessRunner.run(
             ["rev-list", "--left-right", "--count", "HEAD...@{u}"],
             in: repository,
+            cancellation: cancellation,
             timeout: commandTimeout
         ) else {
+            return RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        guard cancellation?.isCancelled != true else {
             return RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
         }
         let parts = out.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: "\t")
