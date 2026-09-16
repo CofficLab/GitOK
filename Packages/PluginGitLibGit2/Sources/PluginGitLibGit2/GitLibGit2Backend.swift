@@ -153,10 +153,18 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeStatus {
-        try checkCancellation(cancellation)
-        let status = try LibGit2.getRepositoryStatus(at: repository.path)
-        try checkCancellation(cancellation)
-        return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
+        try withLibGit2Cancellation(cancellation) { libCancellation in
+            let status = try LibGit2.getRepositoryStatus(
+                at: repository.path,
+                cancellation: libCancellation
+            )
+            try checkCancellation(cancellation)
+            return GitWorktreeStatus(
+                isClean: status.isClean,
+                changeCount: status.changeCount,
+                branch: status.branch
+            )
+        }
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
@@ -167,10 +175,12 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> [GitStatusEntry] {
-        try checkCancellation(cancellation)
-        let entries = try LibGit2.getStatusEntries(at: repository.path)
-        try checkCancellation(cancellation)
-        return entries.map(Self.mapStatusEntry)
+        try withLibGit2Cancellation(cancellation) { libCancellation in
+            try LibGit2.getStatusEntries(
+                at: repository.path,
+                cancellation: libCancellation
+            ).map(Self.mapStatusEntry)
+        }
     }
 
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
@@ -315,6 +325,28 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
 
     func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus {
         guard let status = try? LibGit2.aheadBehind(at: repository.path), status.hasUpstream else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        return GitRefReader.RemoteTrackingStatus(
+            ahead: status.ahead,
+            behind: status.behind,
+            hasUpstream: true
+        )
+    }
+
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        let status = try? withLibGit2Cancellation(cancellation) { libCancellation in
+            try LibGit2.aheadBehind(at: repository.path, cancellation: libCancellation)
+        }
+        guard cancellation?.isCancelled != true,
+              let status,
+              status.hasUpstream else {
             return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
         }
         return GitRefReader.RemoteTrackingStatus(
@@ -897,6 +929,27 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
 
     private func checkCancellation(_ cancellation: GitProcessCancellation?) throws {
         if cancellation?.isCancelled == true { throw CancellationError() }
+    }
+
+    /// Bridges the app-level cancellation handle to LibGit2Swift's native
+    /// callback-aware token. Unlike the old before/after checks, cancellation
+    /// now reaches an in-flight status traversal through the C callback.
+    private func withLibGit2Cancellation<T>(
+        _ cancellation: GitProcessCancellation?,
+        _ operation: (GitCancellationToken?) throws -> T
+    ) throws -> T {
+        try checkCancellation(cancellation)
+        guard let cancellation else {
+            return try operation(nil)
+        }
+
+        let libCancellation = GitCancellationToken()
+        let handlerID = cancellation.addCancellationHandler {
+            libCancellation.cancel()
+        }
+        defer { cancellation.removeCancellationHandler(handlerID) }
+        try checkCancellation(cancellation)
+        return try operation(libCancellation)
     }
 
     private static func mapCommit(_ value: LibGit2.Commit) -> KitGit.GitCommit {

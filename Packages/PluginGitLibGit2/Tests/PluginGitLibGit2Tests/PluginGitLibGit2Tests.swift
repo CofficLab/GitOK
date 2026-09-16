@@ -29,4 +29,16 @@ struct PluginGitLibGit2Tests {
             )
         }
     }
+
+    @Test("cancellable status reads stop before entering LibGit2Swift")
+    func cancellableStatusReadHonorsCancellation() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+        let repository = URL(fileURLWithPath: "/missing/project")
+        let backend = GitLibGit2Backend()
+
+        #expect(throws: CancellationError.self) {
+            try backend.loadStatus(in: repository, cancellation: cancellation)
+        }
+    }
 }
