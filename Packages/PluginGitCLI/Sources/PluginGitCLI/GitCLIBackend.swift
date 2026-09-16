@@ -212,6 +212,13 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitRefReader.remoteTrackingStatus(in: repository)
     }
 
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        GitRefReader.remoteTrackingStatus(in: repository, cancellation: cancellation)
+    }
+
     func listBranches(in repository: URL) throws -> [GitBranchSummary] {
         try GitBranchOperation.listBranches(in: repository)
     }
