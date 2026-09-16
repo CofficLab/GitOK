@@ -727,11 +727,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func discardFileChanges(_ filePath: String, in repository: URL) throws {
-        try LibGit2.checkoutFile(filePath, at: repository.path)
+        try LibGit2.discardFileChanges(filePath, at: repository.path)
     }
 
     func discardFiles(_ filePaths: [String], in repository: URL) throws {
-        try LibGit2.checkoutFiles(filePaths, at: repository.path)
+        try LibGit2.discardFiles(filePaths, at: repository.path)
     }
 
     func discardAllChanges(in repository: URL) throws {
