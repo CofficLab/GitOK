@@ -69,6 +69,7 @@ public struct CommitFormView: View {
     /// 工作区状态加载序号：仅最后一次加载结果落地，防止旧任务（脏）覆盖新结果（干净）。
     @State private var worktreeStatusLoadToken = 0
     @State private var worktreeStatusCancellation: GitProcessCancellation?
+    @State private var worktreeStatusReloadRequested = false
     @State private var userLoadToken = 0
 
     public init(
@@ -544,10 +545,21 @@ public struct CommitFormView: View {
             worktreeStatusLoadToken &+= 1
             worktreeStatusCancellation?.cancel()
             worktreeStatusCancellation = nil
+            worktreeStatusReloadRequested = false
             return
         }
-        if loadedProjectURL == project.url && !force { return }
+        let projectChanged = loadedProjectURL != project.url
+        if !projectChanged && !force { return }
+        if !projectChanged, force, worktreeStatusCancellation != nil {
+            // Coalesce watcher events while the current status read is in
+            // flight; repeated cancellation can otherwise starve the read.
+            worktreeStatusReloadRequested = true
+            return
+        }
         loadedProjectURL = project.url
+        if projectChanged {
+            worktreeStatusReloadRequested = false
+        }
 
         worktreeStatusLoadToken &+= 1
         let token = worktreeStatusLoadToken
@@ -560,8 +572,13 @@ public struct CommitFormView: View {
             await MainActor.run {
                 guard token == self.worktreeStatusLoadToken,
                       self.projects.currentProject?.url == url else { return }
+                let shouldReload = self.worktreeStatusReloadRequested
+                self.worktreeStatusReloadRequested = false
                 self.worktreeStatusCancellation = nil
                 self.isClean = status?.isClean ?? true
+                if shouldReload {
+                    self.reloadWorktreeStatusIfNeeded(force: true)
+                }
             }
         }
     }

@@ -77,6 +77,7 @@ struct WorktreeChangesView: View {
     @State private var hasLoadedSnapshot = false
     @State private var loadToken = 0
     @State private var activeReadCancellation: GitProcessCancellation?
+    @State private var reloadRequestedWhileReading = false
     @State private var activeDiscardPreparationCancellation: GitProcessCancellation?
     @State private var discardPreparationToken = 0
     @State private var pendingWriteOperations: [UUID: WorktreeChangesWriteGate] = [:]
@@ -661,6 +662,7 @@ struct WorktreeChangesView: View {
             hasLoadedSnapshot = false
             entries = []
             isLoading = false
+            reloadRequestedWhileReading = false
             actionError = nil
             stagingPath = nil
             unstagingPath = nil
@@ -675,6 +677,13 @@ struct WorktreeChangesView: View {
         }
         let isProjectSwitch = loadedProjectURL != projectURL
         if !isProjectSwitch && !force && (hasLoadedSnapshot || activeReadCancellation != nil) { return }
+        if !isProjectSwitch && force && activeReadCancellation != nil {
+            // Do not starve the current read when file-system events keep
+            // arriving. One follow-up refresh is enough to observe changes
+            // that happened while this snapshot was being collected.
+            reloadRequestedWhileReading = true
+            return
+        }
 
         activeReadCancellation?.cancel()
         loadToken &+= 1
@@ -682,6 +691,7 @@ struct WorktreeChangesView: View {
         loadedProjectURL = projectURL
         isLoading = true
         if isProjectSwitch {
+            reloadRequestedWhileReading = false
             cancelDiscardPreparation()
             cancelUnstartedWriteOperations()
             resetProjectScopedActionState()
@@ -712,6 +722,8 @@ struct WorktreeChangesView: View {
             }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                let shouldReload = reloadRequestedWhileReading
+                reloadRequestedWhileReading = false
                 activeReadCancellation = nil
                 isLoading = false
                 switch result {
@@ -725,6 +737,9 @@ struct WorktreeChangesView: View {
                 case .failure(let error):
                     loadError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
+                if shouldReload {
+                    reloadIfNeeded(force: true)
+                }
             }
         }
     }
@@ -734,6 +749,7 @@ struct WorktreeChangesView: View {
         activeReadCancellation = nil
         loadToken &+= 1
         isLoading = false
+        reloadRequestedWhileReading = false
     }
 
     private func cancelDiscardPreparation() {
