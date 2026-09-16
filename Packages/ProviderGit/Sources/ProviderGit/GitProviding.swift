@@ -174,6 +174,10 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func hasRemotes(in repository: URL) -> Bool
     func unpulledCount(in repository: URL) -> Int?
     func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus
 
     func listBranches(in repository: URL) throws -> [GitBranchSummary]
     func createBranch(named name: String, in repository: URL) throws
@@ -301,6 +305,19 @@ public extension GitOperationProviding {
         guard cancellation?.isCancelled != true else { return nil }
         let date = firstCommitDate(in: repository)
         return cancellation?.isCancelled == true ? nil : date
+    }
+
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        let status = remoteTrackingStatus(in: repository)
+        return cancellation?.isCancelled == true
+            ? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            : status
     }
 
     func loadAllCommits(

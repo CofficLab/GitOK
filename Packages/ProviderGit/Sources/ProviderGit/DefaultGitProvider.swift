@@ -319,6 +319,22 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
             ?? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
     }
 
+    public func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        let status = primaryBackendOrNil()?.remoteTrackingStatus(
+            in: repository,
+            cancellation: cancellation
+        ) ?? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        return cancellation?.isCancelled == true
+            ? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            : status
+    }
+
     public func listBranches(in repository: URL) throws -> [GitBranchSummary] {
         try execute("listBranches") { try $0.listBranches(in: repository) }
     }
