@@ -97,6 +97,22 @@ final class GitCommitLoaderTests: XCTestCase {
         XCTAssertFalse(commits[0].shortHash.isEmpty)
     }
 
+    func testCancellableReadMethodsHonorPreCancelledRequest() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+        let repository = URL(fileURLWithPath: "/path/that/does/not/exist")
+
+        XCTAssertThrowsError(
+            try GitCommitLoader.loadCommits(in: repository, cancellation: cancellation)
+        ) { XCTAssertTrue($0 is CancellationError) }
+        XCTAssertThrowsError(
+            try GitCommitLoader.countCommits(in: repository, cancellation: cancellation)
+        ) { XCTAssertTrue($0 is CancellationError) }
+        XCTAssertThrowsError(
+            try GitCommitLoader.unpushedCommitHashes(in: repository, cancellation: cancellation)
+        ) { XCTAssertTrue($0 is CancellationError) }
+    }
+
     func testLoadCommitsSupportsOffsetPagination() throws {
         guard FileManager.default.isExecutableFile(atPath: "/usr/bin/git") else {
             throw XCTSkip("git not available")

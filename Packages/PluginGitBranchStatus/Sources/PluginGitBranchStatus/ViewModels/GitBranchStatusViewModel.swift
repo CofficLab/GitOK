@@ -12,6 +12,7 @@ public final class GitBranchStatusViewModel: ObservableObject {
 
     func beginLoading(projectURL: URL) {
         currentProjectURL = projectURL
+        currentBranch = nil
         isLoading = true
     }
 

@@ -15,6 +15,17 @@ import XCTest
 @MainActor
 final class WorktreeCleanPluginTests: XCTestCase {
 
+    func testRepositoryDiskUsageStopsForPreCancelledRequest() throws {
+        let repository = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: repository, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: repository) }
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        XCTAssertNil(RepositoryDiskUsage.calculate(at: repository, cancellation: cancellation))
+    }
+
     /// 最小 ProjectProviding mock：记录观察者并支持主动广播事件，
     /// 同时维护 commit 选择状态（真实实现为 ProjectManager）。
     private final class MockProjects: ProjectProviding {

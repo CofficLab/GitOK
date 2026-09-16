@@ -28,6 +28,44 @@ final class GitDiffLoaderTests: XCTestCase {
         XCTAssertTrue(changes.allSatisfy { !$0.path.isEmpty })
     }
 
+    func testCancellableDiffReadsHonorPreCancelledRequests() {
+        let repository = URL(fileURLWithPath: "/missing/repository")
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        XCTAssertThrowsError(
+            try GitDiffLoader.countChanges(
+                commit: "HEAD",
+                in: repository,
+                cancellation: cancellation
+            )
+        ) { XCTAssertTrue($0 is CancellationError) }
+        XCTAssertThrowsError(
+            try GitDiffLoader.loadChangesPage(
+                commit: "HEAD",
+                limit: 100,
+                offset: 0,
+                in: repository,
+                cancellation: cancellation
+            )
+        ) { XCTAssertTrue($0 is CancellationError) }
+        XCTAssertThrowsError(
+            try GitDiffLoader.loadDiff(
+                commit: "HEAD",
+                filePath: "file.txt",
+                in: repository,
+                cancellation: cancellation
+            )
+        ) { XCTAssertTrue($0 is CancellationError) }
+        XCTAssertThrowsError(
+            try GitDiffLoader.loadWorktreeDiff(
+                filePath: "file.txt",
+                in: repository,
+                cancellation: cancellation
+            )
+        ) { XCTAssertTrue($0 is CancellationError) }
+    }
+
     func testLoadChangesPageMatchesEagerCompatibilityAPI() throws {
         let repo = selfRepoURL
         guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {

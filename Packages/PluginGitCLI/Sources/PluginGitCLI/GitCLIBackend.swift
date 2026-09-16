@@ -18,24 +18,78 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset)
     }
 
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            cancellation: cancellation
+        )
+    }
+
     func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] {
         try GitCommitLoader.loadCommits(in: repository, limit: limit, offset: offset, allRefs: true)
+    }
+
+    func loadAllCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        try GitCommitLoader.loadCommits(
+            in: repository,
+            limit: limit,
+            offset: offset,
+            allRefs: true,
+            cancellation: cancellation
+        )
     }
 
     func countCommits(in repository: URL) throws -> Int {
         try GitCommitLoader.countCommits(in: repository)
     }
 
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        try GitCommitLoader.countCommits(in: repository, cancellation: cancellation)
+    }
+
     func unpushedCommitHashes(in repository: URL) throws -> Set<String> {
         try GitCommitLoader.unpushedCommitHashes(in: repository)
+    }
+
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        try GitCommitLoader.unpushedCommitHashes(in: repository, cancellation: cancellation)
     }
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
         try GitStatusLoader.loadStatus(in: repository)
     }
 
+    func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        try GitStatusLoader.loadStatus(in: repository, cancellation: cancellation)
+    }
+
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
         try GitStatusLoader.loadEntries(in: repository)
+    }
+
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        try GitStatusLoader.loadEntries(in: repository, cancellation: cancellation)
     }
 
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
@@ -44,6 +98,14 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int {
         try GitDiffLoader.countChanges(commit: hash, in: repository)
+    }
+
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        try GitDiffLoader.countChanges(commit: hash, in: repository, cancellation: cancellation)
     }
 
     func loadCommitChangesPage(
@@ -60,12 +122,54 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         )
     }
 
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        try GitDiffLoader.loadChangesPage(
+            commit: hash,
+            limit: limit,
+            offset: offset,
+            in: repository,
+            cancellation: cancellation
+        )
+    }
+
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String {
         try GitDiffLoader.loadDiff(commit: hash, filePath: filePath, in: repository)
     }
 
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadDiff(
+            commit: hash,
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
+    }
+
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String {
         try GitDiffLoader.loadWorktreeDiff(filePath: filePath, in: repository)
+    }
+
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        try GitDiffLoader.loadWorktreeDiff(
+            filePath: filePath,
+            in: repository,
+            cancellation: cancellation
+        )
     }
 
     func currentBranch(in repository: URL) -> String? {
@@ -76,12 +180,24 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitRefReader.latestTag(in: repository)
     }
 
+    func latestTag(in repository: URL, cancellation: GitProcessCancellation?) -> String? {
+        GitRefReader.latestTag(in: repository, cancellation: cancellation)
+    }
+
     func firstCommitDate(in repository: URL) -> Date? {
         GitRefReader.firstCommitDate(in: repository)
     }
 
+    func firstCommitDate(in repository: URL, cancellation: GitProcessCancellation?) -> Date? {
+        GitRefReader.firstCommitDate(in: repository, cancellation: cancellation)
+    }
+
     func unpushedCount(in repository: URL) -> Int? {
         GitRefReader.unpushedCount(in: repository)
+    }
+
+    func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int? {
+        GitRefReader.unpushedCount(in: repository, cancellation: cancellation)
     }
 
     func hasRemotes(in repository: URL) -> Bool {
@@ -96,6 +212,13 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitRefReader.remoteTrackingStatus(in: repository)
     }
 
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        GitRefReader.remoteTrackingStatus(in: repository, cancellation: cancellation)
+    }
+
     func listBranches(in repository: URL) throws -> [GitBranchSummary] {
         try GitBranchOperation.listBranches(in: repository)
     }
@@ -106,6 +229,18 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func checkoutBranch(named name: String, in repository: URL) throws {
         try GitBranchOperation.checkoutBranch(named: name, in: repository)
+    }
+
+    func checkoutRemoteBranch(
+        named remoteBranch: String,
+        as localBranch: String?,
+        in repository: URL
+    ) throws {
+        try GitBranchOperation.checkoutRemoteBranch(
+            named: remoteBranch,
+            as: localBranch,
+            in: repository
+        )
     }
 
     func deleteBranch(named name: String, in repository: URL) throws {
@@ -184,6 +319,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
         GitStashOperation.list(in: repository)
     }
 
+    func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry] {
+        GitStashOperation.list(in: repository, cancellation: cancellation)
+    }
+
     func hasChangesToStash(in repository: URL) -> Bool {
         GitStashOperation.hasChanges(in: repository)
     }
@@ -222,6 +361,10 @@ final class GitCLIBackend: @unchecked Sendable, GitBackendProviding {
 
     func listSubmodules(in repository: URL) -> [GitSubmoduleSummary] {
         GitSubmoduleOperation.list(in: repository)
+    }
+
+    func listSubmodules(in repository: URL, cancellation: GitProcessCancellation?) -> [GitSubmoduleSummary] {
+        GitSubmoduleOperation.list(in: repository, cancellation: cancellation)
     }
 
     func updateSubmodules(in repository: URL) throws {

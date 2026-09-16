@@ -208,6 +208,16 @@ final class GitRefReaderTests: XCTestCase {
         XCTAssertNil(GitRefReader.unpushedCount(in: repo))
     }
 
+    func testUnpushedCountHonorsCancellation() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        XCTAssertNil(GitRefReader.unpushedCount(
+            in: URL(fileURLWithPath: "/missing/repository"),
+            cancellation: cancellation
+        ))
+    }
+
     func testRemoteTrackingStatus() throws {
         let repo = try makeRepo()
         let remote = FileManager.default.temporaryDirectory
@@ -583,6 +593,15 @@ final class GitStashOperationTests: XCTestCase {
         // 无消息时保留 "WIP on <branch>: <sha> <subject>" 的分支前缀，sha 随机。
         XCTAssertTrue(entries[0].message.hasPrefix("main: "), "actual=\(entries[0].message)")
         XCTAssertTrue(entries[0].message.count > "main: ".count)
+    }
+
+    func testListReadsHonorPreCancelledRequest() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+        let missingRepository = URL(fileURLWithPath: "/missing/repository")
+
+        XCTAssertTrue(GitStashOperation.list(in: missingRepository, cancellation: cancellation).isEmpty)
+        XCTAssertTrue(GitSubmoduleOperation.list(in: missingRepository, cancellation: cancellation).isEmpty)
     }
 
     func testDropRemovesEntry() throws {

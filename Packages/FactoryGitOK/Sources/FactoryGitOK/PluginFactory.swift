@@ -3,6 +3,7 @@ import KernelCore
 #if os(macOS)
 import PluginActivityStatus
 import PluginCommand
+import PluginCloneRepository
 import PluginCommitDetail
 import PluginActivityHeatmap
 import PluginProjectLanguages
@@ -13,7 +14,6 @@ import PluginCommitList
 import PluginRootView
 import PluginRailView
 import PluginGitDiff
-import PluginGitCLI
 import PluginGitLibGit2
 import PluginGitBranchStatus
 import PluginGitUnpushedStatus
@@ -75,9 +75,9 @@ public struct DefaultPluginFactory: PluginFactory {
     public func makePlugins() -> [any SuperPlugin] {
         [
             // 基础服务必须先于业务插件启动。
-            GitCLIPlugin(),
             GitLibGit2Plugin(),
             try! StorageSuperPlugin(),
+            CloneRepositoryPlugin(),
             RootViewPlugin(),
             RailViewPlugin(),
             CommandPlugin(),

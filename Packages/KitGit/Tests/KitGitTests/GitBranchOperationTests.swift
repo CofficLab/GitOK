@@ -111,6 +111,40 @@ final class GitBranchOperationTests: XCTestCase {
         XCTAssertThrowsError(try runGit(["show-ref", "--verify", "refs/heads/feature/publish"], in: remote))
     }
 
+    func testChecksOutRemoteBranchAsLocalTrackingBranch() throws {
+        let repo = try makeRepo()
+        let remote = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-branchremote-(UUID().uuidString).git")
+        defer {
+            try? FileManager.default.removeItem(at: repo)
+            try? FileManager.default.removeItem(at: remote)
+        }
+        _ = try runGit(["init", "--bare", "-q", remote.path], in: FileManager.default.temporaryDirectory)
+        _ = try runGit(["remote", "add", "origin", remote.path], in: repo)
+        _ = try runGit(["branch", "feature/remote"], in: repo)
+        _ = try runGit(["push", "-q", "origin", "feature/remote"], in: repo)
+        _ = try runGit(["checkout", "-q", "dev"], in: repo)
+        _ = try runGit(["branch", "-D", "feature/remote"], in: repo)
+        _ = try runGit(["fetch", "-q", "origin"], in: repo)
+
+        try GitBranchOperation.checkoutRemoteBranch(named: "origin/feature/remote", in: repo)
+
+        XCTAssertEqual(GitRefReader.currentBranch(in: repo), "feature/remote")
+        XCTAssertEqual(
+            try GitProcessRunner.run(
+                ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "feature/remote@{upstream}"],
+                in: repo
+            ).trimmingCharacters(in: .whitespacesAndNewlines),
+            "origin/feature/remote"
+        )
+        XCTAssertEqual(
+            try GitProcessRunner.run(["rev-parse", "feature/remote"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            try GitProcessRunner.run(["rev-parse", "origin/feature/remote"], in: repo)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        )
+    }
+
     func testRejectsRemoteHeadDeletion() throws {
         let repo = try makeRepo()
         defer { try? FileManager.default.removeItem(at: repo) }

@@ -1,3 +1,4 @@
+import Foundation
 import KitGit
 import LumiUI
 import ProviderContentView
@@ -6,6 +7,33 @@ import SwiftUI
 
 private func loc(_ key: String) -> String {
     CommitDetailLocalization.string(key, bundle: .module)
+}
+
+private final class WorktreeChangesWriteGate: @unchecked Sendable {
+    private enum State {
+        case pending
+        case cancelled
+        case started
+    }
+
+    private let lock = NSLock()
+    private var state = State.pending
+
+    func begin() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard case .pending = state else { return false }
+        state = .started
+        return true
+    }
+
+    func cancelIfPending() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard case .pending = state else { return false }
+        state = .cancelled
+        return true
+    }
 }
 
 /// 工作区变动文件列表视图。
@@ -48,6 +76,10 @@ struct WorktreeChangesView: View {
     @State private var loadedProjectURL: URL?
     @State private var hasLoadedSnapshot = false
     @State private var loadToken = 0
+    @State private var activeReadCancellation: GitProcessCancellation?
+    @State private var activeDiscardPreparationCancellation: GitProcessCancellation?
+    @State private var discardPreparationToken = 0
+    @State private var pendingWriteOperations: [UUID: WorktreeChangesWriteGate] = [:]
 
     var body: some View {
         Group {
@@ -111,6 +143,12 @@ struct WorktreeChangesView: View {
             }
         }
         .onAppear { reloadIfNeeded() }
+        .onDisappear {
+            cancelActiveRead()
+            cancelDiscardPreparation()
+            cancelUnstartedWriteOperations()
+            resetProjectScopedActionState()
+        }
         .onReceive(viewModel.$worktreeRevision) { _ in
             reloadIfNeeded(force: true)
         }
@@ -437,16 +475,21 @@ struct WorktreeChangesView: View {
         guard !isActionInProgress else { return }
 
         let url = projectURL
-        let token = loadToken
+        discardPreparationToken &+= 1
+        let token = discardPreparationToken
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        activeDiscardPreparationCancellation = cancellation
         isPreparingDiscardAll = true
         actionError = nil
         Task.detached(priority: .userInitiated) {
-            let result = Result { try git.loadEntries(in: url) }
+            let result = Result {
+                try git.loadEntries(in: url, cancellation: cancellation)
+            }
             await MainActor.run {
-                guard token == loadToken, loadedProjectURL == url else {
-                    isPreparingDiscardAll = false
-                    return
-                }
+                guard token == discardPreparationToken,
+                      loadedProjectURL == url,
+                      isCurrentProject(url) else { return }
+                activeDiscardPreparationCancellation = nil
                 isPreparingDiscardAll = false
                 switch result {
                 case .success(let loaded):
@@ -463,11 +506,15 @@ struct WorktreeChangesView: View {
 
         stagingPath = entry.path
         actionError = nil
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.stageFiles([entry.path], in: projectURL)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(projectURL) else { return }
                 stagingPath = nil
                 switch result {
                 case .success:
@@ -484,11 +531,15 @@ struct WorktreeChangesView: View {
 
         unstagingPath = entry.path
         actionError = nil
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.unstageFiles([entry.path], in: projectURL)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(projectURL) else { return }
                 unstagingPath = nil
                 switch result {
                 case .success:
@@ -506,11 +557,15 @@ struct WorktreeChangesView: View {
 
         discardingPaths = Set(paths)
         actionError = nil
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.discardFiles(paths, in: projectURL)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(projectURL) else { return }
                 discardingPaths.removeAll()
                 switch result {
                 case .success:
@@ -530,11 +585,15 @@ struct WorktreeChangesView: View {
         isDiscardingAll = true
         actionError = nil
         let url = projectURL
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 try git.discardAllChanges(in: url)
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(url) else { return }
                 isDiscardingAll = false
                 switch result {
                 case .success:
@@ -562,7 +621,9 @@ struct WorktreeChangesView: View {
 
         batchAction = action
         actionError = nil
+        let operation = beginWriteOperation()
         Task.detached(priority: .userInitiated) {
+            guard operation.gate.begin() else { return }
             let result = Result {
                 switch action {
                 case .stage:
@@ -572,6 +633,8 @@ struct WorktreeChangesView: View {
                 }
             }
             await MainActor.run {
+                finishWriteOperation(operation.id)
+                guard isCurrentProject(projectURL) else { return }
                 batchAction = nil
                 switch result {
                 case .success:
@@ -588,6 +651,11 @@ struct WorktreeChangesView: View {
 
     private func reloadIfNeeded(force: Bool = false) {
         guard let projectURL = viewModel.selectedProjectURL else {
+            activeReadCancellation?.cancel()
+            activeReadCancellation = nil
+            cancelDiscardPreparation()
+            cancelUnstartedWriteOperations()
+            resetProjectScopedActionState()
             loadToken &+= 1
             loadedProjectURL = nil
             hasLoadedSnapshot = false
@@ -606,13 +674,17 @@ struct WorktreeChangesView: View {
             return
         }
         let isProjectSwitch = loadedProjectURL != projectURL
-        if !isProjectSwitch && !force { return }
+        if !isProjectSwitch && !force && (hasLoadedSnapshot || activeReadCancellation != nil) { return }
 
+        activeReadCancellation?.cancel()
         loadToken &+= 1
         let token = loadToken
         loadedProjectURL = projectURL
         isLoading = true
         if isProjectSwitch {
+            cancelDiscardPreparation()
+            cancelUnstartedWriteOperations()
+            resetProjectScopedActionState()
             hasLoadedSnapshot = false
             entries = []
             selectedPaths.removeAll()
@@ -631,11 +703,16 @@ struct WorktreeChangesView: View {
             return
         }
 
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        activeReadCancellation = cancellation
         // 工作区变更是后台快照读取，不应以 userInitiated 优先级占用并发线程。
         Task.detached(priority: .utility) {
-            let result = Result { try git.loadEntries(in: url) }
+            let result = Result {
+                try git.loadEntries(in: url, cancellation: cancellation)
+            }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                activeReadCancellation = nil
                 isLoading = false
                 switch result {
                 case .success(let loaded):
@@ -650,6 +727,55 @@ struct WorktreeChangesView: View {
                 }
             }
         }
+    }
+
+    private func cancelActiveRead() {
+        activeReadCancellation?.cancel()
+        activeReadCancellation = nil
+        loadToken &+= 1
+        isLoading = false
+    }
+
+    private func cancelDiscardPreparation() {
+        activeDiscardPreparationCancellation?.cancel()
+        activeDiscardPreparationCancellation = nil
+        discardPreparationToken &+= 1
+        isPreparingDiscardAll = false
+    }
+
+    private func resetProjectScopedActionState() {
+        actionError = nil
+        stagingPath = nil
+        unstagingPath = nil
+        discardingPaths.removeAll()
+        isPreparingDiscardAll = false
+        isDiscardingAll = false
+        selectedPaths.removeAll()
+        batchAction = nil
+        discardCandidates.removeAll()
+        discardAllCandidates.removeAll()
+    }
+
+    private func beginWriteOperation() -> (id: UUID, gate: WorktreeChangesWriteGate) {
+        let id = UUID()
+        let gate = WorktreeChangesWriteGate()
+        pendingWriteOperations[id] = gate
+        return (id, gate)
+    }
+
+    private func finishWriteOperation(_ id: UUID) {
+        pendingWriteOperations[id] = nil
+    }
+
+    private func cancelUnstartedWriteOperations() {
+        let cancelledIDs = pendingWriteOperations.compactMap { id, gate in
+            gate.cancelIfPending() ? id : nil
+        }
+        cancelledIDs.forEach { pendingWriteOperations[$0] = nil }
+    }
+
+    private func isCurrentProject(_ repository: URL) -> Bool {
+        viewModel.selectedProjectURL?.standardizedFileURL == repository.standardizedFileURL
     }
 }
 

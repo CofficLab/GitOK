@@ -11,6 +11,9 @@ public struct StashStatusTile: View {
     @StateObject private var observation: ProjectObservationModel
     @State private var stashCount = 0
     @State private var isPresented = false
+    @State private var loadTask: Task<Void, Never>?
+    @State private var loadCancellation: GitProcessCancellation?
+    @State private var loadGeneration = 0
 
     public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
@@ -42,26 +45,40 @@ public struct StashStatusTile: View {
             }
         }
         .onReceive(observation.$revision) { _ in load() }
-        .onReceive(observation.$lastEvent) { event in
-            if case .dataChanged = event {
-                load()
-            }
-        }
         .onAppear { load() }
+        .onDisappear(perform: cancelLoad)
     }
 
     @MainActor
     private func load() {
+        loadGeneration &+= 1
+        let generation = loadGeneration
+        cancelLoad()
+
         guard let url = projects.currentProject?.url else {
             stashCount = 0
             return
         }
-        Task.detached(priority: .utility) {
-            let count = git.listStashes(in: url).count
+        stashCount = 0
+        let cancellation = GitProcessCancellation()
+        loadCancellation = cancellation
+        loadTask = Task.detached(priority: .utility) {
+            let count = git.listStashes(in: url, cancellation: cancellation).count
             await MainActor.run {
+                guard generation == loadGeneration, !cancellation.isCancelled else { return }
                 stashCount = count
+                loadTask = nil
+                loadCancellation = nil
             }
         }
+    }
+
+    @MainActor
+    private func cancelLoad() {
+        loadTask?.cancel()
+        loadTask = nil
+        loadCancellation?.cancel()
+        loadCancellation = nil
     }
 }
 
@@ -69,13 +86,16 @@ public struct StashStatusTile: View {
 @MainActor
 final class ProjectObservationModel: ObservableObject {
     @Published private(set) var revision = 0
-    @Published private(set) var lastEvent: ProjectProvidingEvent?
     private var handle: (any ProjectProvidingObserverHandle)?
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
-            self?.lastEvent = event
-            self?.revision += 1
+            switch event {
+            case .selectionChanged, .dataChanged:
+                self?.revision += 1
+            default:
+                break
+            }
         }
     }
 }

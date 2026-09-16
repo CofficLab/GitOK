@@ -1,3 +1,4 @@
+import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
@@ -9,6 +10,9 @@ public struct UnpushedStatusTile: View {
     let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
     @State private var unpushedCount: Int?
+    @State private var countTask: Task<Void, Never>?
+    @State private var countCancellation: GitProcessCancellation?
+    @State private var loadGeneration = 0
 
     public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
@@ -31,27 +35,41 @@ public struct UnpushedStatusTile: View {
             }
         }
         .onReceive(observation.$revision) { _ in load() }
-        .onReceive(observation.$lastEvent) { event in
-            if case .dataChanged = event {
-                load()
-            }
-        }
         .onAppear { load() }
+        .onDisappear(perform: cancelLoad)
     }
 
     @MainActor
     private func load() {
+        loadGeneration &+= 1
+        let generation = loadGeneration
+        cancelLoad()
+
         guard let project = projects.currentProject else {
             unpushedCount = nil
             return
         }
         let url = project.url
-        Task.detached(priority: .utility) {
-            let count = git.unpushedCount(in: url)
+        unpushedCount = nil
+        let cancellation = GitProcessCancellation()
+        countCancellation = cancellation
+        countTask = Task.detached(priority: .utility) {
+            let count = git.unpushedCount(in: url, cancellation: cancellation)
             await MainActor.run {
+                guard generation == loadGeneration, !cancellation.isCancelled else { return }
                 unpushedCount = count
+                countTask = nil
+                countCancellation = nil
             }
         }
+    }
+
+    @MainActor
+    private func cancelLoad() {
+        countTask?.cancel()
+        countTask = nil
+        countCancellation?.cancel()
+        countCancellation = nil
     }
 }
 
@@ -59,13 +77,16 @@ public struct UnpushedStatusTile: View {
 @MainActor
 final class ProjectObservationModel: ObservableObject {
     @Published private(set) var revision = 0
-    @Published private(set) var lastEvent: ProjectProvidingEvent?
     private var handle: (any ProjectProvidingObserverHandle)?
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
-            self?.lastEvent = event
-            self?.revision += 1
+            switch event {
+            case .selectionChanged, .dataChanged:
+                self?.revision += 1
+            default:
+                break
+            }
         }
     }
 }

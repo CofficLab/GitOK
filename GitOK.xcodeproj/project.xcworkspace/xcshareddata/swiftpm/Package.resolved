@@ -6,7 +6,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/LibGit2Swift.git",
       "state" : {
-        "revision" : "7005a7383c4b29a91da418bf24a534992ff5cf27"
+        "revision" : "9f37f312ce010b187c4d8bb5e51450085f6e8e54"
       }
     },
     {

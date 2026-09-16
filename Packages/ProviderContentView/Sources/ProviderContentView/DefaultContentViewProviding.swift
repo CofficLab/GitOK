@@ -51,6 +51,9 @@ public final class DefaultContentViewProviding: ContentViewProviding, Observable
 
 /// 稳定挂在 RootView 中并观察 Provider；后续 `addContentView` / `removeContentView`
 /// 会直接刷新内容区。
+///
+/// 内容块按 order 升序在 `VStack` 中自上而下排列；各插件负责自己内容区的
+/// 滚动和尺寸策略。
 private struct ContentHostView: View {
     @ObservedObject var provider: DefaultContentViewProviding
 

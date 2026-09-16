@@ -27,13 +27,14 @@ public struct GitBackendDescriptor: Equatable, Identifiable, Sendable {
 /// GitOK 内置后端目录。
 ///
 /// 目录只用于稳定标识和默认优先级，不代表用户可选择后端。
+/// GitOK 默认只装配 LibGit2Swift；CLI 描述符仅保留给独立兼容插件使用。
 public enum GitBackendCatalog {
     public static let cli = GitBackendDescriptor(
         id: "com.coffic.gitok.git-backend.cli",
         pluginID: "com.coffic.gitok.plugin.git-cli",
         name: "Git CLI",
         version: "1.0.0",
-        priority: 100
+        priority: 50
     )
 
     public static let libGit2 = GitBackendDescriptor(
@@ -41,10 +42,10 @@ public enum GitBackendCatalog {
         pluginID: "com.coffic.gitok.plugin.git-libgit2",
         name: "LibGit2Swift",
         version: "7005a738",
-        priority: 50
+        priority: 100
     )
 
-    public static let all: [GitBackendDescriptor] = [cli, libGit2]
+    public static let all: [GitBackendDescriptor] = [libGit2]
 }
 
 /// Git Provider 的错误。
@@ -90,34 +91,98 @@ public enum GitProviderError: Error, LocalizedError, Equatable, Sendable {
 /// 以同一协议扩展，模型仍复用 KitGit 的公共值类型。
 public protocol GitOperationProviding: AnyObject, Sendable {
     func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit]
+    /// Cancellable read used by project-scoped screens. Legacy backends may
+    /// inherit the compatibility implementation below.
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit]
     func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit]
+    func loadAllCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit]
     func countCommits(in repository: URL) throws -> Int
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int
     func unpushedCommitHashes(in repository: URL) throws -> Set<String>
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String>
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus
+    func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus
     func loadEntries(in repository: URL) throws -> [GitStatusEntry]
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry]
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int
     func loadCommitChangesPage(
         commit hash: String,
         limit: Int,
         offset: Int,
         in repository: URL
     ) throws -> GitFileChangePage
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage
     func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String
     func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String
 
     func currentBranch(in repository: URL) -> String?
     func latestTag(in repository: URL) -> String?
+    func latestTag(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String?
     func firstCommitDate(in repository: URL) -> Date?
+    func firstCommitDate(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> Date?
     func unpushedCount(in repository: URL) -> Int?
+    func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int?
     func hasRemotes(in repository: URL) -> Bool
     func unpulledCount(in repository: URL) -> Int?
     func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus
 
     func listBranches(in repository: URL) throws -> [GitBranchSummary]
     func createBranch(named name: String, in repository: URL) throws
     func checkoutBranch(named name: String, in repository: URL) throws
+    func checkoutRemoteBranch(named remoteBranch: String, as localBranch: String?, in repository: URL) throws
     func deleteBranch(named name: String, in repository: URL) throws
     func renameBranch(from currentName: String, to newName: String, in repository: URL) throws
     func setUpstream(localBranch: String, upstreamBranch: String, in repository: URL) throws
@@ -140,6 +205,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func deleteRemoteTag(named name: String, remote: String, in repository: URL) throws -> String
 
     func listStashes(in repository: URL) -> [GitStashEntry]
+    func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry]
     func hasChangesToStash(in repository: URL) -> Bool
     func saveStash(message: String?, in repository: URL) throws
     func applyStash(_ entry: GitStashEntry, in repository: URL) throws
@@ -152,6 +218,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func abortCherryPick(in repository: URL) throws -> String
 
     func listSubmodules(in repository: URL) -> [GitSubmoduleSummary]
+    func listSubmodules(in repository: URL, cancellation: GitProcessCancellation?) -> [GitSubmoduleSummary]
     func updateSubmodules(in repository: URL) throws
 
     func validateCloneDestination(_ destination: URL) throws
@@ -201,6 +268,166 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 }
 
 public extension GitOperationProviding {
+    func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry] {
+        guard cancellation?.isCancelled != true else { return [] }
+        let stashes = listStashes(in: repository)
+        return cancellation?.isCancelled == true ? [] : stashes
+    }
+
+    func listSubmodules(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [GitSubmoduleSummary] {
+        guard cancellation?.isCancelled != true else { return [] }
+        let submodules = listSubmodules(in: repository)
+        return cancellation?.isCancelled == true ? [] : submodules
+    }
+
+    func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int? {
+        guard cancellation?.isCancelled != true else { return nil }
+        let count = unpushedCount(in: repository)
+        return cancellation?.isCancelled == true ? nil : count
+    }
+
+    func latestTag(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String? {
+        guard cancellation?.isCancelled != true else { return nil }
+        let tag = latestTag(in: repository)
+        return cancellation?.isCancelled == true ? nil : tag
+    }
+
+    func firstCommitDate(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> Date? {
+        guard cancellation?.isCancelled != true else { return nil }
+        let date = firstCommitDate(in: repository)
+        return cancellation?.isCancelled == true ? nil : date
+    }
+
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        let status = remoteTrackingStatus(in: repository)
+        return cancellation?.isCancelled == true
+            ? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            : status
+    }
+
+    func loadAllCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let commits = try loadAllCommits(in: repository, limit: limit, offset: offset)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return commits
+    }
+
+    func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let status = try loadStatus(in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return status
+    }
+
+    func loadCommits(
+        in repository: URL,
+        limit: Int,
+        offset: Int,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitCommit] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let commits = try loadCommits(in: repository, limit: limit, offset: offset)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return commits
+    }
+
+    func countCommits(in repository: URL, cancellation: GitProcessCancellation?) throws -> Int {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let count = try countCommits(in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return count
+    }
+
+    func unpushedCommitHashes(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Set<String> {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let hashes = try unpushedCommitHashes(in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return hashes
+    }
+
+    func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> [GitStatusEntry] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let entries = try loadEntries(in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return entries
+    }
+
+    func countCommitChanges(
+        commit hash: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Int {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let count = try countCommitChanges(commit: hash, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return count
+    }
+
+    func loadCommitChangesPage(
+        commit hash: String,
+        limit: Int,
+        offset: Int,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitFileChangePage {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let page = try loadCommitChangesPage(commit: hash, limit: limit, offset: offset, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return page
+    }
+
+    func loadDiff(
+        commit hash: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let diff = try loadDiff(commit: hash, filePath: filePath, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return diff
+    }
+
+    func loadWorktreeDiff(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> String {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let diff = try loadWorktreeDiff(filePath: filePath, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return diff
+    }
+
     /// 默认兼容实现：没有原生进度支持的后端仍提供开始 / 完成状态。
     func clone(
         remoteURL: String,

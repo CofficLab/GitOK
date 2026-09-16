@@ -4,6 +4,31 @@ import Testing
 
 @Suite("GitProcessRunner")
 struct GitProcessRunnerTests {
+    private final class Counter: @unchecked Sendable {
+        var value = 0
+    }
+
+    @Test("cancellation handlers bridge non-process backends")
+    func cancellationHandlersRunExactlyOnce() {
+        let cancellation = GitProcessCancellation()
+        let counter = Counter()
+        let handlerID = cancellation.addCancellationHandler {
+            counter.value += 1
+        }
+
+        cancellation.cancel()
+        cancellation.cancel()
+        cancellation.removeCancellationHandler(handlerID)
+
+        #expect(counter.value == 1)
+
+        let lateCounter = Counter()
+        _ = cancellation.addCancellationHandler {
+            lateCounter.value += 1
+        }
+        #expect(lateCounter.value == 1)
+    }
+
     @Test("cancellation terminates the git process")
     func cancellationStopsProcess() {
         let cancellation = GitProcessCancellation()
@@ -17,6 +42,40 @@ struct GitProcessRunnerTests {
             ) { _ in
                 true
             }
+        }
+    }
+
+    @Test("run forwards cancellation to the git process")
+    func runCancellationStopsProcess() {
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try GitProcessRunner.run(
+                ["--version"],
+                in: FileManager.default.temporaryDirectory,
+                cancellation: cancellation
+            )
+        }
+    }
+
+    @Test("cancellation remains effective across sequential commands")
+    func cancellationStopsNextSequentialCommand() throws {
+        let cancellation = GitProcessCancellation()
+        _ = try GitProcessRunner.run(
+            ["--version"],
+            in: FileManager.default.temporaryDirectory,
+            cancellation: cancellation
+        )
+
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try GitProcessRunner.run(
+                ["--version"],
+                in: FileManager.default.temporaryDirectory,
+                cancellation: cancellation
+            )
         }
     }
 

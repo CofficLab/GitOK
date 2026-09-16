@@ -477,6 +477,22 @@
         }
       }
     },
+    "Git command timed out: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git command timed out: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 命令超时：%@"
+          }
+        }
+      }
+    },
     "Git unavailable: %@" : {
       "localizations" : {
         "en" : {
@@ -694,6 +710,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推送失敗：%@"
+          }
+        }
+      }
+    },
+    "Remote branch checkout failed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remote branch checkout failed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检出远程分支失败：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢出遠端分支失敗：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢出遠端分支失敗：%@"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢出遠端分支失敗：%@"
           }
         }
       }

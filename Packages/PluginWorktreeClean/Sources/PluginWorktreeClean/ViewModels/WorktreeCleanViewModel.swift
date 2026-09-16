@@ -66,6 +66,7 @@ final class WorktreeCleanViewModel: ObservableObject {
 
     /// 加载序号：只接受最后一次检查结果，避免旧任务覆盖新快照。
     private var loadToken = 0
+    private var statusCancellation: GitProcessCancellation?
     private var userConfigurationToken = 0
 
     /// 外部项目 / 选中状态变化（打开 / 切换 / 关闭项目、选中 / 取消 commit）。
@@ -89,6 +90,8 @@ final class WorktreeCleanViewModel: ObservableObject {
         }
         guard project != nil, !hasSelectedCommit else {
             loadToken &+= 1
+            statusCancellation?.cancel()
+            statusCancellation = nil
             if isClean {
                 isClean = false
             }
@@ -220,6 +223,8 @@ final class WorktreeCleanViewModel: ObservableObject {
     private func reload(force: Bool = false) {
         guard let project, !hasSelectedCommit else {
             loadToken &+= 1
+            statusCancellation?.cancel()
+            statusCancellation = nil
             if isClean {
                 isClean = false
             }
@@ -234,9 +239,13 @@ final class WorktreeCleanViewModel: ObservableObject {
 
         loadToken &+= 1
         let token = loadToken
+        statusCancellation?.cancel()
+        statusCancellation = nil
         checkedProjectURL = project.url
 
         guard FileManager.default.fileExists(atPath: project.url.path) else {
+            statusCancellation?.cancel()
+            statusCancellation = nil
             isClean = false
             isLoading = false
             lastStatus = nil
@@ -252,10 +261,12 @@ final class WorktreeCleanViewModel: ObservableObject {
         let url = project.url
         let git = self.git
         let fallbackStatusLoader = self.fallbackStatusLoader
+        let cancellation = git.map { _ in GitProcessCancellation(forceKillAfter: 1) }
+        statusCancellation = cancellation
         Task.detached(priority: .utility) {
             let result = Result {
                 if let git {
-                    return try git.loadStatus(in: url)
+                    return try git.loadStatus(in: url, cancellation: cancellation)
                 }
                 if let fallbackStatusLoader {
                     return try fallbackStatusLoader(url)
@@ -269,6 +280,7 @@ final class WorktreeCleanViewModel: ObservableObject {
                       self.project?.url == url,
                       !self.hasSelectedCommit else { return }
 
+                self.statusCancellation = nil
                 switch result {
                 case .success(let status):
                     let didChange = WorktreeCleanRefreshPolicy.didChange(

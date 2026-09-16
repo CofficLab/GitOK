@@ -14,4 +14,16 @@ struct PluginGitBranchStatusTests {
         #expect(plugin.metadata.category == .project)
         #expect(plugin.metadata.policy == .alwaysOn)
     }
+
+    @Test("切换项目开始加载时清除旧分支名")
+    func beginLoadingClearsPreviousBranch() {
+        let viewModel = GitBranchStatusViewModel()
+        viewModel.update(projectURL: URL(fileURLWithPath: "/tmp/old-project"), branch: "main")
+
+        viewModel.beginLoading(projectURL: URL(fileURLWithPath: "/tmp/new-project"))
+
+        #expect(viewModel.currentProjectURL?.path == "/tmp/new-project")
+        #expect(viewModel.currentBranch == nil)
+        #expect(viewModel.isLoading)
+    }
 }

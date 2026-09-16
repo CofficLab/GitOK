@@ -3,6 +3,7 @@ import KernelCore
 import KitSuperLog
 import os
 import ProviderSettingView
+import ProviderStorage
 import ProviderDocsView
 
 /// 设置视图管理器插件（KernelCore 生态）。
@@ -14,6 +15,9 @@ import ProviderDocsView
 /// - 必须先于所有通过 `SettingViewProviding.addEntries(_:)` 贡献设置入口的插件
 ///   （如 `PluginSettingGeneral` order=200、`PluginToolManager` order=6 等），
 ///   确保后续插件 `resolveProvider((any SettingViewProviding).self)` 拿到的是本插件的实现。
+///
+/// 持久化：通过 `StorageProviding` 获取插件数据目录，注入 `SettingViewManager`，
+/// 使上次选中的设置入口 ID 在应用重启后自动恢复。
 @MainActor
 public final class PluginSettingView: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.setting-view", category: "Plugin")
@@ -47,7 +51,10 @@ public final class PluginSettingView: SuperPlugin, SuperLog {
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        let manager = SettingViewManager()
+        // 解析 StorageProviding，获取本插件的数据目录用于持久化选中状态。
+        let storageDirectory = kernel.resolveProvider((any StorageProviding).self)?
+            .pluginDataDirectory(for: id)
+        let manager = SettingViewManager(storageDirectory: storageDirectory)
         self.manager = manager
 
         // 0. 复制先前已注册实现中已有的数据，避免数据丢失。
@@ -59,8 +66,8 @@ public final class PluginSettingView: SuperPlugin, SuperLog {
             if !old.projectDetailSections.isEmpty {
                 manager.addProjectDetailSections(old.projectDetailSections)
             }
-            // 读取先前的选中 id，保持设置 Provider 替换前后的页面状态。
-            if let oldSelection = old.selectedEntryID {
+            // 仅当磁盘没有恢复值时，才使用旧 provider 的选中 id（兼容首次迁移）。
+            if manager.selectedEntryID == nil, let oldSelection = old.selectedEntryID {
                 manager.selectEntry(id: oldSelection)
             }
             if Self.verbose {

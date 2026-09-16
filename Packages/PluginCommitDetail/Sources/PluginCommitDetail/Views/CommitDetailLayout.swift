@@ -70,11 +70,15 @@ struct CommitDetailLayout: View {
 
     @ViewBuilder
     private var fileListContent: some View {
-        if filePageStore.totalCount == nil && filePageStore.isLoadingCount {
+        if filePageStore.totalCount == nil,
+           filePageStore.provisionalCount == nil,
+           filePageStore.isLoadingCount {
             // 首次加载（尚无任何历史数据）：展示明确的加载状态。
             ContentLoadingIndicator(loc("Loading changed files..."))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if filePageStore.totalCount == nil, let loadError = filePageStore.firstError {
+        } else if filePageStore.totalCount == nil,
+                  filePageStore.provisionalCount == nil,
+                  let loadError = filePageStore.firstError {
             VStack(spacing: 10) {
                 AppEmptyState(
                     icon: "exclamationmark.triangle",
@@ -88,7 +92,8 @@ struct CommitDetailLayout: View {
                 .font(.appCaptionEmphasized)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if filePageStore.totalCount == 0 {
+        } else if filePageStore.visibleCount == 0,
+                  filePageStore.totalCount != nil || filePageStore.provisionalCount != nil {
             AppEmptyState(icon: "doc", title: loc("No Changes"), description: loc("This commit has no file changes."))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -106,6 +111,12 @@ struct CommitDetailLayout: View {
                             }
                             .buttonStyle(.borderless)
                             .font(.appCaptionEmphasized)
+                        } else if filePageStore.totalCount == nil {
+                            Button("Retry") {
+                                filePageStore.retry(pageIndex: -1)
+                            }
+                            .buttonStyle(.borderless)
+                            .font(.appCaptionEmphasized)
                         }
                     }
                     .padding(.horizontal, 10)
@@ -117,7 +128,7 @@ struct CommitDetailLayout: View {
                 ZStack(alignment: .top) {
                     ScrollView(.vertical, showsIndicators: false) {
                         LazyVStack(spacing: 0) {
-                            ForEach(0..<(filePageStore.totalCount ?? 0), id: \.self) { index in
+                            ForEach(0..<filePageStore.visibleCount, id: \.self) { index in
                                 Group {
                                     if let change = filePageStore.change(at: index) {
                                         FileChangeRow(
@@ -151,7 +162,7 @@ struct CommitDetailLayout: View {
                                         filePageStore.requestPage(at: pageIndex + 1)
                                     }
                                 }
-                                if index + 1 < (filePageStore.totalCount ?? 0) {
+                                if index + 1 < filePageStore.visibleCount {
                                     AppDivider()
                                 }
                             }
@@ -177,6 +188,11 @@ struct CommitDetailLayout: View {
     private var fileCountText: String {
         if let totalCount = filePageStore.totalCount {
             return "\(totalCount)"
+        }
+        if let provisionalCount = filePageStore.provisionalCount {
+            return filePageStore.provisionalHasMore
+                ? "\(provisionalCount)+"
+                : "\(provisionalCount)"
         }
         return filePageStore.isLoadingCount ? "…" : "—"
     }

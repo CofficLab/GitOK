@@ -172,6 +172,14 @@ public struct BranchManagementView: View {
                         .foregroundStyle(theme.textSecondary)
                     Spacer()
                     AppIconButton(
+                        systemImage: "arrow.down.to.line",
+                        label: LumiPluginLocalization.string("Checkout locally", bundle: .module),
+                        tint: theme.primary
+                    ) {
+                        checkoutRemoteBranch(branch)
+                    }
+                    .disabled(isLoading)
+                    AppIconButton(
                         systemImage: "trash",
                         label: LumiPluginLocalization.string("Delete Remote Branch", bundle: .module),
                         tint: theme.warning
@@ -385,6 +393,27 @@ public struct BranchManagementView: View {
         Task.detached(priority: .userInitiated) {
             do {
                 try git.checkoutBranch(named: branch.name, in: url)
+                await MainActor.run {
+                    isLoading = false
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func checkoutRemoteBranch(_ branch: GitBranchSummary) {
+        guard let url = projectURL else { return }
+        isLoading = true
+        errorMessage = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                try git.checkoutRemoteBranch(named: branch.name, as: nil, in: url)
                 await MainActor.run {
                     isLoading = false
                     projects.notifyDataChanged()

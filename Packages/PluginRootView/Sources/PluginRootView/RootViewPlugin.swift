@@ -3,6 +3,7 @@ import Foundation
 import KernelCore
 import KitSuperLog
 import os
+import ProviderCloneRepository
 import ProviderProjects
 import ProviderRailView
 import ProviderRootView
@@ -83,7 +84,8 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             AnyView(
                 RootWorkspaceUnavailableView(
                     model: workspaceModel,
-                    projects: projects
+                    projects: projects,
+                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
                 )
             )
         )
@@ -91,12 +93,19 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         // 项目列表 / 当前选择发生变化时同步更新根布局门控。
         observer = RootViewProjectObserver(
             projects: projects,
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self),
             onWorkspaceChanged: { [weak self, weak projects] in
                 guard let self, let projects else { return }
-                self.updateWorkspaceState(projects: projects)
+                self.updateWorkspaceState(
+                    projects: projects,
+                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+                )
             }
         )
-        updateWorkspaceState(projects: projects)
+        updateWorkspaceState(
+            projects: projects,
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+        )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
@@ -113,11 +122,23 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         }
     }
 
-    private func updateWorkspaceState(projects: any ProjectProviding) {
+    private func updateWorkspaceState(
+        projects: any ProjectProviding,
+        cloneRepository: (any CloneRepositoryProviding)?
+    ) {
         let state: RootWorkspaceState
         if let project = projects.currentProject {
-            if FileManager.default.fileExists(atPath: project.url.path) {
-                state = .ready
+            if cloneRepository?.isCloning(for: project.url) == true {
+                state = .cloning
+            } else if FileManager.default.fileExists(atPath: project.url.path) {
+                // 目录存在但缺少 `.git`（目录或 worktree 指针文件）→ 不是 Git 项目。
+                if FileManager.default.fileExists(
+                    atPath: project.url.appendingPathComponent(".git").path
+                ) {
+                    state = .ready
+                } else {
+                    state = .notGitRepository(path: project.url.path)
+                }
             } else {
                 state = .projectMissing(path: project.url.path)
             }

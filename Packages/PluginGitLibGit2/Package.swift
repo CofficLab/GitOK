@@ -16,7 +16,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
-            revision: "7005a7383c4b29a91da418bf24a534992ff5cf27"
+            revision: "9f37f312ce010b187c4d8bb5e51450085f6e8e54"
         ),
     ],
     targets: [
@@ -38,7 +38,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitLibGit2Tests",
-            dependencies: ["PluginGitLibGit2"],
+            dependencies: [
+                "PluginGitLibGit2",
+                .product(name: "KitGit", package: "KitGit"),
+            ],
             path: "Tests/PluginGitLibGit2Tests"
         ),
     ]

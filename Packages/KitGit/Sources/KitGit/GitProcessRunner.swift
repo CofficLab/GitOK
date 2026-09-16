@@ -1,13 +1,17 @@
 import Foundation
+import Darwin
 
-/// 可安全跨任务传递的 Git 子进程取消句柄。
+/// 可安全跨任务传递的 Git 读取请求取消句柄，可覆盖请求内连续执行的多条 Git 命令。
 public final class GitProcessCancellation: @unchecked Sendable {
     private let lock = NSLock()
+    private let forceKillAfter: TimeInterval?
     private var process: Process?
     private var cancelled = false
-    private var finished = false
+    private var cancellationHandlers: [UUID: @Sendable () -> Void] = [:]
 
-    public init() {}
+    public init(forceKillAfter: TimeInterval? = nil) {
+        self.forceKillAfter = forceKillAfter
+    }
 
     public var isCancelled: Bool {
         lock.lock()
@@ -17,17 +21,44 @@ public final class GitProcessCancellation: @unchecked Sendable {
 
     public func cancel() {
         lock.lock()
-        guard !finished else {
+        guard !cancelled else {
             lock.unlock()
             return
         }
         cancelled = true
         let process = self.process
+        let handlers = Array(cancellationHandlers.values)
+        cancellationHandlers.removeAll()
         lock.unlock()
 
-        if process?.isRunning == true {
-            process?.terminate()
+        handlers.forEach { $0() }
+        if let process { terminate(process) }
+    }
+
+    /// Register a synchronous bridge for non-Process backends such as
+    /// LibGit2Swift. The handler runs immediately on the thread requesting
+    /// cancellation, and runs immediately when registered after cancellation.
+    @discardableResult
+    public func addCancellationHandler(
+        _ handler: @escaping @Sendable () -> Void
+    ) -> UUID {
+        let id = UUID()
+        lock.lock()
+        if cancelled {
+            lock.unlock()
+            handler()
+        } else {
+            cancellationHandlers[id] = handler
+            lock.unlock()
         }
+        return id
+    }
+
+    /// Remove a previously registered cancellation bridge.
+    public func removeCancellationHandler(_ id: UUID) {
+        lock.lock()
+        cancellationHandlers.removeValue(forKey: id)
+        lock.unlock()
     }
 
     fileprivate func attach(_ process: Process) -> Bool {
@@ -43,8 +74,18 @@ public final class GitProcessCancellation: @unchecked Sendable {
         if self.process === process {
             self.process = nil
         }
-        finished = true
         return cancelled
+    }
+
+    fileprivate func terminate(_ process: Process) {
+        guard process.isRunning else { return }
+        process.terminate()
+        guard let forceKillAfter, forceKillAfter >= 0 else { return }
+        let processIdentifier = process.processIdentifier
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + forceKillAfter) {
+            guard process.isRunning else { return }
+            Darwin.kill(processIdentifier, SIGKILL)
+        }
     }
 }
 
@@ -57,9 +98,27 @@ public enum GitProcessRunner {
         var value = Data()
     }
 
+    private final class TimeoutState: @unchecked Sendable {
+        private let lock = NSLock()
+        private var didTimeout = false
+
+        func markTimedOut() {
+            lock.lock()
+            didTimeout = true
+            lock.unlock()
+        }
+
+        var hasTimedOut: Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            return didTimeout
+        }
+    }
+
     public enum Error: Swift.Error, LocalizedError {
         case gitUnavailable(String)
         case gitFailed(String)
+        case timedOut(String)
 
         public var errorDescription: String? {
             switch self {
@@ -67,6 +126,8 @@ public enum GitProcessRunner {
                 String(format: LumiPluginLocalization.string("Git unavailable: %@", bundle: .module), message)
             case .gitFailed(let message):
                 message
+            case .timedOut(let command):
+                String(format: LumiPluginLocalization.string("Git command timed out: %@", bundle: .module), command)
             }
         }
     }
@@ -101,13 +162,17 @@ public enum GitProcessRunner {
     public static func run(
         _ arguments: [String],
         in repository: URL,
-        successExitCodes: Set<Int32> = [0]
+        successExitCodes: Set<Int32> = [0],
+        cancellation: GitProcessCancellation? = nil,
+        timeout: TimeInterval? = nil
     ) throws -> String {
         var outputData = Data()
         try stream(
             arguments,
             in: repository,
-            successExitCodes: successExitCodes
+            successExitCodes: successExitCodes,
+            cancellation: cancellation,
+            timeout: timeout
         ) { data in
             outputData.append(data)
             return true
@@ -123,6 +188,7 @@ public enum GitProcessRunner {
         successExitCodes: Set<Int32> = [0],
         chunkSize: Int = 64 * 1024,
         cancellation: GitProcessCancellation? = nil,
+        timeout: TimeInterval? = nil,
         onOutput: (Data) -> Bool,
         onErrorOutput: (@Sendable (Data) -> Void)? = nil
     ) throws {
@@ -149,7 +215,32 @@ public enum GitProcessRunner {
         }
 
         if cancelBeforeRun {
-            process.terminate()
+            cancellation?.terminate(process)
+        }
+
+        let timeoutState = timeout.map { _ in TimeoutState() }
+        let timeoutWorkItem: DispatchWorkItem?
+        if let timeout, timeout >= 0 {
+            let workItem = DispatchWorkItem {
+                guard process.isRunning else { return }
+                timeoutState?.markTimedOut()
+                process.terminate()
+                // A Git process blocked in a filesystem call may not handle
+                // SIGTERM promptly. Escalate only this timed-out child after
+                // a short grace period so callers never wait indefinitely.
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 1) {
+                    if process.isRunning {
+                        Darwin.kill(process.processIdentifier, SIGKILL)
+                    }
+                }
+            }
+            timeoutWorkItem = workItem
+            DispatchQueue.global(qos: .utility).asyncAfter(
+                deadline: .now() + timeout,
+                execute: workItem
+            )
+        } else {
+            timeoutWorkItem = nil
         }
 
         // stderr 必须与 stdout 并行消费，否则 git 在输出大量警告时可能因为
@@ -189,12 +280,18 @@ public enum GitProcessRunner {
 
         process.waitUntilExit()
         let wasCancelled = cancellation?.finish(process) ?? false
+        timeoutWorkItem?.cancel()
+        let didTimeout = timeoutState?.hasTimedOut ?? false
         // 终止早停后仍然清空剩余管道，避免文件描述符和子进程资源泄漏。
         _ = outputPipe.fileHandleForReading.readDataToEndOfFile()
         errorGroup.wait()
 
         if wasCancelled {
             throw CancellationError()
+        }
+
+        if didTimeout {
+            throw Error.timedOut(arguments.joined(separator: " "))
         }
 
         guard shouldStop || successExitCodes.contains(process.terminationStatus) else {

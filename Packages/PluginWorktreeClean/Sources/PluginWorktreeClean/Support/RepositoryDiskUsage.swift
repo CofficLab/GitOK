@@ -1,4 +1,5 @@
 import Foundation
+import KitGit
 
 /// Calculates the physical file space occupied by a repository directory.
 ///
@@ -6,7 +7,11 @@ import Foundation
 /// traversed, so a link to a directory outside the repository cannot inflate
 /// the reported size.
 enum RepositoryDiskUsage {
-    static func calculate(at repositoryURL: URL) -> Int64? {
+    static func calculate(
+        at repositoryURL: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) -> Int64? {
+        if cancellation?.isCancelled == true { return nil }
         let fileManager = FileManager.default
         let resourceKeys: Set<URLResourceKey> = [
             .isDirectoryKey,
@@ -25,6 +30,7 @@ enum RepositoryDiskUsage {
 
         var total: Int64 = 0
         for case let fileURL as URL in enumerator {
+            if cancellation?.isCancelled == true { return nil }
             guard let values = try? fileURL.resourceValues(forKeys: resourceKeys) else {
                 return nil
             }

@@ -18,9 +18,24 @@ public struct GitStashEntry: Equatable, Sendable, Identifiable {
 public enum GitStashOperation {
     /// 列出 stash（`git stash list`）。
     public static func list(in repository: URL) -> [GitStashEntry] {
-        guard let out = try? GitProcessRunner.run(["stash", "list"], in: repository) else { return [] }
+        list(in: repository, cancellation: nil)
+    }
+
+    /// 可取消的 stash 列表读取，供切换项目敏感的工具栏状态使用。
+    public static func list(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [GitStashEntry] {
+        guard cancellation?.isCancelled != true,
+              let out = try? GitProcessRunner.run(
+                ["stash", "list"],
+                in: repository,
+                cancellation: cancellation
+              ),
+              cancellation?.isCancelled != true else { return [] }
         var result: [GitStashEntry] = []
         for line in out.split(separator: "\n") {
+            guard cancellation?.isCancelled != true else { return [] }
             let raw = String(line)
             guard let open = raw.firstIndex(of: "{"),
                   let close = raw.firstIndex(of: "}"),

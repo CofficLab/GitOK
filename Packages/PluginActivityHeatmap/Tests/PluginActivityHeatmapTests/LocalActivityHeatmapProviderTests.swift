@@ -57,8 +57,7 @@ struct LocalActivityHeatmapProviderTests {
             directory: directory,
             calendar: calendar,
             now: { now },
-            commitLoader: { _, _, _ in [] },
-            statusLoader: { _ in GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main") }
+            commitLoader: { _, _, _ in [] }
         )
         first.refresh(for: repository)
         try await waitUntil { first.currentSnapshot != nil }
@@ -67,8 +66,7 @@ struct LocalActivityHeatmapProviderTests {
             directory: directory,
             calendar: calendar,
             now: { now },
-            commitLoader: { _, _, _ in [] },
-            statusLoader: { _ in GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main") }
+            commitLoader: { _, _, _ in [] }
         )
         second.refresh(for: repository)
 
@@ -86,8 +84,7 @@ struct LocalActivityHeatmapProviderTests {
         defer { try? FileManager.default.removeItem(at: repository) }
         let provider = LocalActivityHeatmapProvider(
             directory: directory,
-            commitLoader: { _, _, _ in [] },
-            statusLoader: { _ in GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main") }
+            commitLoader: { _, _, _ in [] }
         )
 
         provider.refresh(for: repository)
@@ -97,6 +94,48 @@ struct LocalActivityHeatmapProviderTests {
             if !provider.isLoading { break }
             try await Task.sleep(nanoseconds: 5_000_000)
         }
+        #expect(!provider.isLoading)
+    }
+
+    @Test("cancels a previous repository history scan when switching projects")
+    func cancelsPreviousHistoryScan() async throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let firstRepository = try makeRepository()
+        let secondRepository = try makeRepository()
+        defer {
+            try? FileManager.default.removeItem(at: directory)
+            try? FileManager.default.removeItem(at: firstRepository)
+            try? FileManager.default.removeItem(at: secondRepository)
+        }
+
+        let probe = CancellationProbe()
+        let provider = LocalActivityHeatmapProvider(
+            directory: directory,
+            cancellableCommitLoader: { repository, _, _, cancellation in
+                if repository == firstRepository.standardizedFileURL {
+                    probe.start(cancellation)
+                    while cancellation?.isCancelled == false {
+                        Thread.sleep(forTimeInterval: 0.005)
+                    }
+                    throw CancellationError()
+                }
+                return []
+            }
+        )
+
+        provider.refresh(for: firstRepository)
+        let didStart = await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .utility).async {
+                continuation.resume(returning: probe.started.wait(timeout: .now() + 2) == .success)
+            }
+        }
+        #expect(didStart)
+
+        provider.refresh(for: secondRepository)
+
+        #expect(probe.isCancelled)
+        try await waitUntil { provider.currentSnapshot?.repositoryPath == secondRepository.path }
         #expect(!provider.isLoading)
     }
 
@@ -111,10 +150,6 @@ struct LocalActivityHeatmapProviderTests {
             commitLoader: { _, _, _ in
                 Issue.record("a missing repository must not start a Git query")
                 return []
-            },
-            statusLoader: { _ in
-                Issue.record("a missing repository must not start a Git query")
-                return GitWorktreeStatus(isClean: true, changeCount: 0, branch: "main")
             }
         )
 
@@ -139,5 +174,25 @@ struct LocalActivityHeatmapProviderTests {
             try await Task.sleep(nanoseconds: 5_000_000)
         }
         Issue.record("Timed out waiting for refresh")
+    }
+
+    private final class CancellationProbe: @unchecked Sendable {
+        let started = DispatchSemaphore(value: 0)
+        private let lock = NSLock()
+        private var cancellation: GitProcessCancellation?
+
+        var isCancelled: Bool {
+            lock.lock()
+            let cancellation = self.cancellation
+            lock.unlock()
+            return cancellation?.isCancelled == true
+        }
+
+        func start(_ cancellation: GitProcessCancellation?) {
+            lock.lock()
+            self.cancellation = cancellation
+            lock.unlock()
+            started.signal()
+        }
     }
 }

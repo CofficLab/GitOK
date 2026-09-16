@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld%%" : {
+
+    },
     "Add" : {
       "localizations" : {
         "en" : {
@@ -203,6 +206,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "複製儲存庫"
+          }
+        }
+      }
+    },
+    "Cloning repository" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloning repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在克隆仓库"
           }
         }
       }
@@ -445,6 +464,22 @@
         }
       }
     },
+    "GitOK is cloning this repository in the background." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitOK is cloning this repository in the background."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitOK 正在后台克隆此仓库。"
+          }
+        }
+      }
+    },
     "How It Works" : {
       "localizations" : {
         "en" : {
@@ -475,6 +510,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "工作原理"
+          }
+        }
+      }
+    },
+    "Not a Git Repository" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a Git Repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不是 Git 项目"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不是 Git 專案"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不是 Git 專案"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不是 Git 專案"
           }
         }
       }
@@ -731,6 +800,40 @@
         }
       }
     },
+    "Switch to a Git project from the sidebar, or remove this folder from the project list." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch to a Git project from the sidebar, or remove this folder from the project list."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从侧边栏切换到一个 Git 项目，或从项目列表中移除这个文件夹。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+          }
+        }
+      }
+    },
     "The project directory no longer exists on disk." : {
       "localizations" : {
         "en" : {
@@ -777,6 +880,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "根視圖把所有註冊區域組裝為一個佈局。"
+          }
+        }
+      }
+    },
+    "The selected folder is not a Git repository." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected folder is not a Git repository."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所选文件夹不是 Git 项目。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所選資料夾不是 Git 專案。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所選資料夾不是 Git 專案。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所選資料夾不是 Git 專案。"
           }
         }
       }

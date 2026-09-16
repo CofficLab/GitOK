@@ -42,16 +42,47 @@ public struct GitStatusEntry: Equatable, Sendable, Identifiable {
 
 /// 通过 git CLI 读取仓库工作区状态。
 public enum GitStatusLoader {
+    /// `git status` 会递归检查未跟踪文件；单个异常目录不能无限期阻塞所有
+    /// 工作区视图，因此状态读取设置独立的硬超时。
+    public static let commandTimeout: TimeInterval = 15
+
+    public enum Error: Swift.Error, Equatable, LocalizedError {
+        case notARepository(URL)
+
+        public var errorDescription: String? {
+            switch self {
+            case .notARepository(let url):
+                String(format: LumiPluginLocalization.string(
+                    "This directory is not a Git repository: %@",
+                    bundle: .module
+                ), url.lastPathComponent)
+            }
+        }
+    }
+
     /// 读取工作区状态。
     ///
     /// 使用 `git status --porcelain=v1 --branch --untracked-files=all`：
     /// - 首行 `## <branch>...<upstream>` 提供分支名（含 detached HEAD 的 `## HEAD`）；
     /// - 其余非空行即未提交变更（含展开后的未跟踪目录文件），计数为 `changeCount`。
     public static func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
+        try loadStatus(in: repository, cancellation: nil)
+    }
+
+    /// 读取可被项目切换打断的工作区状态。
+    public static func loadStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeStatus {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        try validateRepository(repository)
         let output = try GitProcessRunner.run(
             ["status", "--porcelain=v1", "--branch", "--untracked-files=all"],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         var branch: String?
         var changeCount = 0
         for line in output.split(separator: "\n") {
@@ -77,11 +108,19 @@ public enum GitStatusLoader {
     ///
     /// 使用 `git status --porcelain=v1 --untracked-files=all`，解析每一行的
     /// XY 状态码和路径。未跟踪目录会展开为其中的文件；重命名/复制（R/C）只取目标路径。
-    public static func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
+    public static func loadEntries(
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> [GitStatusEntry] {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        try validateRepository(repository)
         let output = try GitProcessRunner.run(
             ["status", "--porcelain=v1", "--untracked-files=all"],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         )
+        if cancellation?.isCancelled == true { throw CancellationError() }
         var entries: [GitStatusEntry] = []
         for line in output.split(separator: "\n") {
             let s = String(line)
@@ -101,5 +140,14 @@ public enum GitStatusLoader {
             entries.append(GitStatusEntry(path: path, stagedStatus: x, worktreeStatus: y))
         }
         return entries
+    }
+
+    private static func validateRepository(_ repository: URL) throws {
+        let repository = repository.standardizedFileURL
+        guard FileManager.default.fileExists(
+            atPath: repository.appendingPathComponent(".git").path
+        ) else {
+            throw Error.notARepository(repository)
+        }
     }
 }

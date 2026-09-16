@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LibGit2Swift
 import SwiftUI
 
 /// 打开应用目标的执行器。
@@ -105,27 +106,9 @@ public enum AppLauncher {
         return webURL(fromRemote: remote)
     }
 
-    /// 读取 git remote origin URL（git CLI，零依赖）。
+    /// 读取 git remote origin URL。
     static func gitRemoteURL(for projectURL: URL) -> String? {
-        guard FileManager.default.fileExists(atPath: projectURL.appendingPathComponent(".git").path) else {
-            return nil
-        }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.arguments = ["-C", projectURL.path, "remote", "get-url", "origin"]
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = Pipe()
-        do {
-            try process.run()
-        } catch {
-            return nil
-        }
-        process.waitUntilExit()
-        guard process.terminationStatus == 0 else { return nil }
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        return String(data: data, encoding: .utf8)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        LibGit2.getRemoteURL(at: projectURL.path, remote: "origin")
     }
 
     /// 把 git remote URL 转换为 HTTPS web 链接。

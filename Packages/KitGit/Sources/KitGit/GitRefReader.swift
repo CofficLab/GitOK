@@ -2,9 +2,17 @@ import Foundation
 
 /// 读取 git 引用 / 分支状态（供状态栏、工作区状态等消费方使用）。
 public enum GitRefReader {
+    /// 引用查询是工作区状态首屏的一部分，不能让任一 Git 子进程无限期
+    /// 阻塞状态栏的 loading 状态。
+    private static let commandTimeout: TimeInterval = GitStatusLoader.commandTimeout
+
     /// 当前分支名（`git branch --show-current`）；detached HEAD 时返回 nil。
     public static func currentBranch(in repository: URL) -> String? {
-        let out = try? GitProcessRunner.run(["branch", "--show-current"], in: repository)
+        let out = try? GitProcessRunner.run(
+            ["branch", "--show-current"],
+            in: repository,
+            timeout: commandTimeout
+        )
         let value = out?.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let value, !value.isEmpty else { return nil }
         return value
@@ -14,10 +22,22 @@ public enum GitRefReader {
     ///
     /// 没有 tag、仓库尚未产生 commit 或当前 HEAD 不可解析时返回 nil。
     public static func latestTag(in repository: URL) -> String? {
+        latestTag(in: repository, cancellation: nil)
+    }
+
+    /// 可取消的 tag 读取，供项目切换敏感视图使用。
+    public static func latestTag(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String? {
+        guard cancellation?.isCancelled != true else { return nil }
         let out = try? GitProcessRunner.run(
             ["describe", "--tags", "--abbrev=0", "HEAD"],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         )
+        guard cancellation?.isCancelled != true else { return nil }
         let value = out?.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let value, !value.isEmpty else { return nil }
         return value
@@ -27,12 +47,24 @@ public enum GitRefReader {
     ///
     /// 没有上游分支（未 push 过）时返回 nil，调用方应隐藏未推送提示。
     public static func unpushedCount(in repository: URL) -> Int? {
+        unpushedCount(in: repository, cancellation: nil)
+    }
+
+    /// 可取消的 ahead-count 读取，避免项目切换后旧仓库继续扫描提交图。
+    public static func unpushedCount(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> Int? {
+        guard cancellation?.isCancelled != true else { return nil }
         guard let out = try? GitProcessRunner.run(
             ["rev-list", "--count", "@{u}..HEAD"],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         ) else {
             return nil
         }
+        guard cancellation?.isCancelled != true else { return nil }
         let value = out.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let count = Int(value) else { return nil }
         return count
@@ -40,7 +72,11 @@ public enum GitRefReader {
 
     /// 是否有已配置的远程（`git remote` 非空）。
     public static func hasRemotes(in repository: URL) -> Bool {
-        guard let out = try? GitProcessRunner.run(["remote"], in: repository) else { return false }
+        guard let out = try? GitProcessRunner.run(
+            ["remote"],
+            in: repository,
+            timeout: commandTimeout
+        ) else { return false }
         return !out.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
@@ -50,7 +86,8 @@ public enum GitRefReader {
     public static func unpulledCount(in repository: URL) -> Int? {
         guard let out = try? GitProcessRunner.run(
             ["rev-list", "--count", "HEAD..@{u}"],
-            in: repository
+            in: repository,
+            timeout: commandTimeout
         ) else {
             return nil
         }
@@ -63,10 +100,22 @@ public enum GitRefReader {
     ///
     /// 取所有 root commit（无父提交的提交）中最早的一个；空仓库或命令失败时返回 nil。
     public static func firstCommitDate(in repository: URL) -> Date? {
+        firstCommitDate(in: repository, cancellation: nil)
+    }
+
+    /// 可取消的首次提交日期读取，供项目切换敏感视图使用。
+    public static func firstCommitDate(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> Date? {
+        guard cancellation?.isCancelled != true else { return nil }
         guard let out = try? GitProcessRunner.run(
             ["log", "--format=%aI", "--reverse", "--max-parents=0"],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         ) else { return nil }
+        guard cancellation?.isCancelled != true else { return nil }
 
         let lines = out.split(separator: "\n").map(String.init)
         guard let firstLine = lines.first, !firstLine.isEmpty else { return nil }
@@ -92,10 +141,26 @@ public enum GitRefReader {
     }
 
     public static func remoteTrackingStatus(in repository: URL) -> RemoteTrackingStatus {
+        remoteTrackingStatus(in: repository, cancellation: nil)
+    }
+
+    /// 可取消地读取当前分支相对 upstream 的 ahead/behind 状态。
+    public static func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
         guard let out = try? GitProcessRunner.run(
             ["rev-list", "--left-right", "--count", "HEAD...@{u}"],
-            in: repository
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
         ) else {
+            return RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        guard cancellation?.isCancelled != true else {
             return RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
         }
         let parts = out.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: "\t")

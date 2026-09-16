@@ -16,8 +16,8 @@ import PluginToast
 /// 真实内核装配集成测试：验证内核启动基线。
 ///
 /// 大部分插件在注册文件中声明 `disabled`（彻底停用，不可配置），因此启动后
-/// 这些插件 onBoot 不会运行；两个 Git 后端是 required，由 ProviderGit 统一
-/// 注册并按优先级管理。
+/// 这些插件 onBoot 不会运行；LibGit2 后端是 required，由 ProviderGit 统一
+/// 注册。
 ///
 /// 已恢复的插件（policy 非 `.disabled`，例如 `GitBranchStatusPlugin` 的
 /// `.alwaysOn`）不在此基线断言范围内，各自有独立的插件级测试。
@@ -49,10 +49,7 @@ final class KernelBootIntegrationTests: XCTestCase {
         let git = try XCTUnwrap(kernel.resolveProvider((any GitProviding).self))
         XCTAssertEqual(
             git.availableBackends.map(\.id),
-            [
-                "com.coffic.gitok.git-backend.cli",
-                "com.coffic.gitok.git-backend.libgit2"
-            ]
+            ["com.coffic.gitok.git-backend.libgit2"]
         )
         XCTAssertTrue(
             kernel.resolveProvider((any ToolbarProviding).self)?.toolbarItems.contains {
@@ -83,7 +80,7 @@ final class KernelBootIntegrationTests: XCTestCase {
     func testGitBackendsAreRequired() async throws {
         let kernel = try KernelFactory.makeKernel()
         let git = try XCTUnwrap(kernel.resolveProvider((any GitProviding).self))
-        let pluginID = "com.coffic.gitok.plugin.git-cli"
+        let pluginID = "com.coffic.gitok.plugin.git-libgit2"
 
         XCTAssertTrue(kernel.isPluginEnabled(id: pluginID))
         do {
@@ -93,21 +90,17 @@ final class KernelBootIntegrationTests: XCTestCase {
             // Required plugins reject runtime disable requests.
         }
         XCTAssertTrue(kernel.isPluginEnabled(id: pluginID))
-        XCTAssertEqual(git.availableBackends.count, 2)
+        XCTAssertEqual(git.availableBackends.count, 1)
     }
 
     func testGitBackendsAreLoadedAndOrderedByPriority() throws {
         let kernel = try KernelFactory.makeKernel()
         let git = try XCTUnwrap(kernel.resolveProvider((any GitProviding).self))
 
-        XCTAssertTrue(kernel.isPluginEnabled(id: "com.coffic.gitok.plugin.git-cli"))
         XCTAssertTrue(kernel.isPluginEnabled(id: "com.coffic.gitok.plugin.git-libgit2"))
         XCTAssertEqual(
             git.availableBackends.map(\.id),
-            [
-                "com.coffic.gitok.git-backend.cli",
-                "com.coffic.gitok.git-backend.libgit2"
-            ]
+            ["com.coffic.gitok.git-backend.libgit2"]
         )
     }
 }

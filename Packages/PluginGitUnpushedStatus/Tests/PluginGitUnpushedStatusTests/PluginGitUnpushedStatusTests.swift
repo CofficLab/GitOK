@@ -12,6 +12,6 @@ struct PluginGitUnpushedStatusTests {
         let plugin = GitUnpushedStatusPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-unpushed-status")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
     }
 }

@@ -100,6 +100,9 @@ struct WorkingTreeStatusView: View {
 
     @State private var loadedProjectURL: URL?
     @State private var isLoading = false
+    @State private var loadError: String?
+    @State private var loadToken = 0
+    @State private var statusCancellation: GitProcessCancellation?
 
     init(
         projects: any ProjectProviding,
@@ -138,6 +141,11 @@ struct WorkingTreeStatusView: View {
             reloadIfNeeded(force: true)
         }
         .onAppear { reloadIfNeeded() }
+        .onDisappear {
+            loadToken &+= 1
+            statusCancellation?.cancel()
+            statusCancellation = nil
+        }
     }
 
     // MARK: - Summary Row (复刻旧版 WorkingStateSummaryView，72pt 高)
@@ -196,8 +204,14 @@ struct WorkingTreeStatusView: View {
     }
 
     private var statusTitle: String {
+        if isLoading {
+            return loc("Loading")
+        }
         if let activityStatus {
             return activityStatus
+        }
+        if loadError != nil {
+            return loc("Unable to Load Git Status")
         }
         if isClean {
             return loc("Working Tree Clean")
@@ -207,6 +221,12 @@ struct WorkingTreeStatusView: View {
     }
 
     private var statusSubtitle: String {
+        if isLoading {
+            return ""
+        }
+        if let loadError {
+            return loadError
+        }
         if !isClean {
             return String(format: loc("(%lld) Uncommitted"), changeCount)
         }
@@ -364,6 +384,9 @@ struct WorkingTreeStatusView: View {
     /// 项目变化时重新加载工作区状态和远程跟踪状态；force 为 true 时强制刷新。
     private func reloadIfNeeded(force: Bool = false) {
         guard let project = projects.currentProject else {
+            loadToken &+= 1
+            statusCancellation?.cancel()
+            statusCancellation = nil
             loadedProjectURL = nil
             isClean = true
             changeCount = 0
@@ -375,7 +398,24 @@ struct WorkingTreeStatusView: View {
         let projectChanged = loadedProjectURL != project.url
         if !projectChanged, !force { return }
 
+        loadToken &+= 1
+        let token = loadToken
+        statusCancellation?.cancel()
+        statusCancellation = nil
         loadedProjectURL = project.url
+        loadError = nil
+        if projectChanged {
+            // Never present the previous project's snapshot while the new
+            // project's first read is in flight.
+            isClean = true
+            changeCount = 0
+            branch = nil
+            trackingStatus = GitRefReader.RemoteTrackingStatus(
+                ahead: 0,
+                behind: 0,
+                hasUpstream: false
+            )
+        }
         // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
         // 保留当前按钮内容，避免每次文件事件都闪成 loading 动画。
         if projectChanged {
@@ -391,18 +431,32 @@ struct WorkingTreeStatusView: View {
             trackingStatus = GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
             return
         }
+        let cancellation = GitProcessCancellation(forceKillAfter: 1)
+        statusCancellation = cancellation
 
-        // GitProcessRunner 是同步 CLI 调用；工作区状态属于后台刷新，使用
-        // utility 优先级可避免高优先级 Swift 任务等待运行器的 stderr 读取队列。
+        // LibGit2 读取是同步调用；工作区状态属于后台刷新，使用 utility
+        // 优先级避免它阻塞界面任务。
         Task.detached(priority: .utility) {
-            let statusResult = Result { try git.loadStatus(in: url) }
-            let tracking = git.remoteTrackingStatus(in: url)
+            let statusResult = Result { try git.loadStatus(in: url, cancellation: cancellation) }
+            let tracking: GitRefReader.RemoteTrackingStatus
+            if case .success = statusResult,
+               !cancellation.isCancelled {
+                tracking = git.remoteTrackingStatus(in: url, cancellation: cancellation)
+            } else {
+                tracking = GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            }
             await MainActor.run {
+                guard token == loadToken, loadedProjectURL == url else { return }
+                statusCancellation = nil
                 isLoading = false
-                if case .success(let loaded) = statusResult {
+                switch statusResult {
+                case .success(let loaded):
                     isClean = loaded.isClean
                     changeCount = loaded.changeCount
                     branch = loaded.branch
+                    loadError = nil
+                case .failure(let error):
+                    loadError = error.localizedDescription
                 }
                 trackingStatus = tracking
             }

@@ -11,6 +11,8 @@ import ProviderRailView
 public enum RootWorkspaceState: Equatable, Sendable {
     case noProject
     case projectMissing(path: String)
+    case notGitRepository(path: String)
+    case cloning
     case ready
 
     /// 用于 macOS 原生分栏层级变化时生成稳定的布局 identity。
@@ -20,6 +22,10 @@ public enum RootWorkspaceState: Equatable, Sendable {
             return "no-project"
         case let .projectMissing(path):
             return "project-missing:\(path)"
+        case let .notGitRepository(path):
+            return "not-git-repository:\(path)"
+        case .cloning:
+            return "cloning"
         case .ready:
             return "ready"
         }
