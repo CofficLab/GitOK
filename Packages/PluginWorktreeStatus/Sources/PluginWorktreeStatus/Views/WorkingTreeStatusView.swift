@@ -204,6 +204,9 @@ struct WorkingTreeStatusView: View {
     }
 
     private var statusTitle: String {
+        if isLoading {
+            return loc("Loading")
+        }
         if let activityStatus {
             return activityStatus
         }
@@ -218,6 +221,9 @@ struct WorkingTreeStatusView: View {
     }
 
     private var statusSubtitle: String {
+        if isLoading {
+            return ""
+        }
         if let loadError {
             return loadError
         }
@@ -398,6 +404,18 @@ struct WorkingTreeStatusView: View {
         statusCancellation = nil
         loadedProjectURL = project.url
         loadError = nil
+        if projectChanged {
+            // Never present the previous project's snapshot while the new
+            // project's first read is in flight.
+            isClean = true
+            changeCount = 0
+            branch = nil
+            trackingStatus = GitRefReader.RemoteTrackingStatus(
+                ahead: 0,
+                behind: 0,
+                hasUpstream: false
+            )
+        }
         // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
         // 保留当前按钮内容，避免每次文件事件都闪成 loading 动画。
         if projectChanged {
@@ -421,8 +439,9 @@ struct WorkingTreeStatusView: View {
         Task.detached(priority: .utility) {
             let statusResult = Result { try git.loadStatus(in: url, cancellation: cancellation) }
             let tracking: GitRefReader.RemoteTrackingStatus
-            if case .success = statusResult {
-                tracking = git.remoteTrackingStatus(in: url)
+            if case .success = statusResult,
+               !cancellation.isCancelled {
+                tracking = git.remoteTrackingStatus(in: url, cancellation: cancellation)
             } else {
                 tracking = GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
             }
