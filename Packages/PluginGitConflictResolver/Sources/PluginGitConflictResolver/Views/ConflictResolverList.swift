@@ -55,20 +55,35 @@ public struct ConflictResolverList: View {
                             )
                         }
                     } else if viewModel.isOperationInProgress {
-                        AppStatusBanner(
-                            kind: .success,
-                            title: LumiPluginLocalization.string(
-                                viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge ready to complete",
-                                bundle: .module
-                            ),
-                            message: LumiPluginLocalization.string(
-                                viewModel.isCherryPicking
-                                    ? "All conflicts are resolved. Continue the cherry-pick to finish it."
-                                    : "All conflicts are resolved. Continue the merge to create the merge commit.",
-                                bundle: .module
+                        VStack(spacing: DesignTokens.Spacing.md) {
+                            AppStatusBanner(
+                                kind: .success,
+                                title: LumiPluginLocalization.string(
+                                    viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge ready to complete",
+                                    bundle: .module
+                                ),
+                                message: LumiPluginLocalization.string(
+                                    viewModel.isCherryPicking
+                                        ? "All conflicts are resolved. Continue the cherry-pick to finish it."
+                                        : "All conflicts are resolved. Continue the merge to create the merge commit.",
+                                    bundle: .module
+                                )
                             )
-                        )
-                        .frame(maxWidth: .infinity, minHeight: 120)
+                            .frame(maxWidth: .infinity, minHeight: 120)
+
+                            AppButton(
+                                LumiPluginLocalization.string(
+                                    viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
+                                    bundle: .module
+                                ),
+                                systemImage: "arrow.right.circle",
+                                style: .primary,
+                                size: .small,
+                                action: continueMerge
+                            )
+                            .disabled(!viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning)
+                        }
+                        .frame(maxWidth: .infinity)
                     } else if viewModel.conflictedFiles.isEmpty {
                         AppEmptyState(
                             icon: "checkmark.circle",
@@ -188,18 +203,6 @@ public struct ConflictResolverList: View {
                 )
                 .disabled(isActionRunning)
             }
-
-            AppButton(
-                LumiPluginLocalization.string(
-                    viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
-                    bundle: .module
-                ),
-                systemImage: "arrow.right.circle",
-                style: pendingStageFiles.isEmpty ? .primary : .secondary,
-                size: .small,
-                action: continueMerge
-            )
-            .disabled(!viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning)
 
             if isActionRunning {
                 ProgressView()
