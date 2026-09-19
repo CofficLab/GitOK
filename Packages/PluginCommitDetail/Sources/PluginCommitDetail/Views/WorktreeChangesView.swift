@@ -77,6 +77,7 @@ struct WorktreeChangesView: View {
     @State private var hasLoadedSnapshot = false
     @State private var loadToken = 0
     @State private var activeReadCancellation: GitProcessCancellation?
+    @State private var reloadRequestedWhileReading = false
     @State private var activeDiscardPreparationCancellation: GitProcessCancellation?
     @State private var discardPreparationToken = 0
     @State private var pendingWriteOperations: [UUID: WorktreeChangesWriteGate] = [:]
@@ -150,6 +151,9 @@ struct WorktreeChangesView: View {
             resetProjectScopedActionState()
         }
         .onReceive(viewModel.$worktreeRevision) { _ in
+            if let url = viewModel.selectedProjectURL {
+                git.invalidateWorktreeSnapshot(in: url)
+            }
             reloadIfNeeded(force: true)
         }
         .alert(
@@ -483,7 +487,7 @@ struct WorktreeChangesView: View {
         actionError = nil
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try git.loadEntries(in: url, cancellation: cancellation)
+                try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).entries
             }
             await MainActor.run {
                 guard token == discardPreparationToken,
@@ -518,7 +522,7 @@ struct WorktreeChangesView: View {
                 stagingPath = nil
                 switch result {
                 case .success:
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -543,7 +547,7 @@ struct WorktreeChangesView: View {
                 unstagingPath = nil
                 switch result {
                 case .success:
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -570,7 +574,7 @@ struct WorktreeChangesView: View {
                 switch result {
                 case .success:
                     selectedPaths.subtract(paths)
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -599,7 +603,7 @@ struct WorktreeChangesView: View {
                 case .success:
                     entries.removeAll()
                     selectedPaths.removeAll()
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -639,7 +643,7 @@ struct WorktreeChangesView: View {
                 switch result {
                 case .success:
                     selectedPaths.removeAll()
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -661,6 +665,7 @@ struct WorktreeChangesView: View {
             hasLoadedSnapshot = false
             entries = []
             isLoading = false
+            reloadRequestedWhileReading = false
             actionError = nil
             stagingPath = nil
             unstagingPath = nil
@@ -674,19 +679,30 @@ struct WorktreeChangesView: View {
             return
         }
         let isProjectSwitch = loadedProjectURL != projectURL
+        let cachedSnapshot = isProjectSwitch
+            ? git.cachedWorktreeSnapshot(in: projectURL)
+            : nil
         if !isProjectSwitch && !force && (hasLoadedSnapshot || activeReadCancellation != nil) { return }
+        if !isProjectSwitch && force && activeReadCancellation != nil {
+            // Do not starve the current read when file-system events keep
+            // arriving. One follow-up refresh is enough to observe changes
+            // that happened while this snapshot was being collected.
+            reloadRequestedWhileReading = true
+            return
+        }
 
         activeReadCancellation?.cancel()
         loadToken &+= 1
         let token = loadToken
         loadedProjectURL = projectURL
-        isLoading = true
+        isLoading = cachedSnapshot == nil
         if isProjectSwitch {
+            reloadRequestedWhileReading = false
             cancelDiscardPreparation()
             cancelUnstartedWriteOperations()
             resetProjectScopedActionState()
-            hasLoadedSnapshot = false
-            entries = []
+            hasLoadedSnapshot = cachedSnapshot != nil
+            entries = cachedSnapshot?.entries ?? []
             selectedPaths.removeAll()
             batchAction = nil
             discardCandidates.removeAll()
@@ -708,10 +724,12 @@ struct WorktreeChangesView: View {
         // 工作区变更是后台快照读取，不应以 userInitiated 优先级占用并发线程。
         Task.detached(priority: .utility) {
             let result = Result {
-                try git.loadEntries(in: url, cancellation: cancellation)
+                try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).entries
             }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                let shouldReload = reloadRequestedWhileReading
+                reloadRequestedWhileReading = false
                 activeReadCancellation = nil
                 isLoading = false
                 switch result {
@@ -725,6 +743,9 @@ struct WorktreeChangesView: View {
                 case .failure(let error):
                     loadError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
+                if shouldReload {
+                    reloadIfNeeded(force: true)
+                }
             }
         }
     }
@@ -734,6 +755,14 @@ struct WorktreeChangesView: View {
         activeReadCancellation = nil
         loadToken &+= 1
         isLoading = false
+        reloadRequestedWhileReading = false
+    }
+
+    private func notifyDataChanged() {
+        if let url = viewModel.selectedProjectURL {
+            git.invalidateWorktreeSnapshot(in: url)
+        }
+        onDataChanged()
     }
 
     private func cancelDiscardPreparation() {

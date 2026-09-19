@@ -103,6 +103,7 @@ struct WorkingTreeStatusView: View {
     @State private var loadError: String?
     @State private var loadToken = 0
     @State private var statusCancellation: GitProcessCancellation?
+    @State private var reloadRequestedWhileLoading = false
 
     init(
         projects: any ProjectProviding,
@@ -129,6 +130,9 @@ struct WorkingTreeStatusView: View {
         }
         .onReceive(projectObservation.$lastEvent) { event in
             guard let event else { return }
+            if let url = projects.currentProject?.url {
+                git.invalidateWorktreeSnapshot(in: url)
+            }
             if case .dataChanged = event {
                 reloadIfNeeded(force: true)
             } else {
@@ -137,6 +141,9 @@ struct WorkingTreeStatusView: View {
         }
         .onReceive(gitWatchObservation.$lastEvent) { event in
             guard event != nil else { return }
+            if let url = projects.currentProject?.url {
+                git.invalidateWorktreeSnapshot(in: url)
+            }
             // 仓库或工作区变化 → 强制刷新工作区状态；后台刷新不切换 loading UI。
             reloadIfNeeded(force: true)
         }
@@ -204,6 +211,9 @@ struct WorkingTreeStatusView: View {
     }
 
     private var statusTitle: String {
+        if isLoading {
+            return loc("Loading")
+        }
         if let activityStatus {
             return activityStatus
         }
@@ -218,6 +228,9 @@ struct WorkingTreeStatusView: View {
     }
 
     private var statusSubtitle: String {
+        if isLoading {
+            return ""
+        }
         if let loadError {
             return loadError
         }
@@ -381,6 +394,7 @@ struct WorkingTreeStatusView: View {
             loadToken &+= 1
             statusCancellation?.cancel()
             statusCancellation = nil
+            reloadRequestedWhileLoading = false
             loadedProjectURL = nil
             isClean = true
             changeCount = 0
@@ -391,6 +405,12 @@ struct WorkingTreeStatusView: View {
         }
         let projectChanged = loadedProjectURL != project.url
         if !projectChanged, !force { return }
+        if !projectChanged, force, statusCancellation != nil {
+            // Coalesce watcher events instead of repeatedly cancelling the
+            // same-project read and starving it under continuous file writes.
+            reloadRequestedWhileLoading = true
+            return
+        }
 
         loadToken &+= 1
         let token = loadToken
@@ -398,10 +418,32 @@ struct WorkingTreeStatusView: View {
         statusCancellation = nil
         loadedProjectURL = project.url
         loadError = nil
+        let cachedSnapshot = projectChanged
+            ? git.cachedWorktreeSnapshot(in: project.url)
+            : nil
+        if projectChanged {
+            reloadRequestedWhileLoading = false
+            // Never present the previous project's snapshot while the new
+            // project's first read is in flight.
+            if let cachedSnapshot {
+                isClean = cachedSnapshot.status.isClean
+                changeCount = cachedSnapshot.status.changeCount
+                branch = cachedSnapshot.status.branch
+            } else {
+                isClean = true
+                changeCount = 0
+                branch = nil
+            }
+            trackingStatus = GitRefReader.RemoteTrackingStatus(
+                ahead: 0,
+                behind: 0,
+                hasUpstream: false
+            )
+        }
         // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
         // 保留当前按钮内容，避免每次文件事件都闪成 loading 动画。
         if projectChanged {
-            isLoading = true
+            isLoading = cachedSnapshot == nil
         }
 
         let url = project.url
@@ -419,15 +461,20 @@ struct WorkingTreeStatusView: View {
         // LibGit2 读取是同步调用；工作区状态属于后台刷新，使用 utility
         // 优先级避免它阻塞界面任务。
         Task.detached(priority: .utility) {
-            let statusResult = Result { try git.loadStatus(in: url, cancellation: cancellation) }
+            let statusResult = Result {
+                try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).status
+            }
             let tracking: GitRefReader.RemoteTrackingStatus
-            if case .success = statusResult {
-                tracking = git.remoteTrackingStatus(in: url)
+            if case .success = statusResult,
+               !cancellation.isCancelled {
+                tracking = git.remoteTrackingStatus(in: url, cancellation: cancellation)
             } else {
                 tracking = GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
             }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
+                let shouldReload = reloadRequestedWhileLoading
+                reloadRequestedWhileLoading = false
                 statusCancellation = nil
                 isLoading = false
                 switch statusResult {
@@ -440,6 +487,9 @@ struct WorkingTreeStatusView: View {
                     loadError = error.localizedDescription
                 }
                 trackingStatus = tracking
+                if shouldReload {
+                    reloadIfNeeded(force: true)
+                }
             }
         }
     }

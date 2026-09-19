@@ -124,6 +124,13 @@ public protocol GitOperationProviding: AnyObject, Sendable {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> [GitStatusEntry]
+    func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot
+    func loadWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot
+    func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot?
+    func invalidateWorktreeSnapshot(in repository: URL)
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int
     func countCommitChanges(
@@ -174,6 +181,10 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func hasRemotes(in repository: URL) -> Bool
     func unpulledCount(in repository: URL) -> Int?
     func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus
 
     func listBranches(in repository: URL) throws -> [GitBranchSummary]
     func createBranch(named name: String, in repository: URL) throws
@@ -264,6 +275,26 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 }
 
 public extension GitOperationProviding {
+    func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
+        let entries = try loadEntries(in: repository)
+        let status = try loadStatus(in: repository)
+        return GitWorktreeSnapshot(entries: entries, branch: status.branch)
+    }
+
+    func loadWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let entries = try loadEntries(in: repository, cancellation: cancellation)
+        let status = try loadStatus(in: repository, cancellation: cancellation)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return GitWorktreeSnapshot(entries: entries, branch: status.branch)
+    }
+
+    func invalidateWorktreeSnapshot(in repository: URL) {}
+    func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot? { nil }
+
     func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry] {
         guard cancellation?.isCancelled != true else { return [] }
         let stashes = listStashes(in: repository)
@@ -301,6 +332,19 @@ public extension GitOperationProviding {
         guard cancellation?.isCancelled != true else { return nil }
         let date = firstCommitDate(in: repository)
         return cancellation?.isCancelled == true ? nil : date
+    }
+
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        let status = remoteTrackingStatus(in: repository)
+        return cancellation?.isCancelled == true
+            ? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            : status
     }
 
     func loadAllCommits(

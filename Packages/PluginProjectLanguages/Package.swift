@@ -18,7 +18,7 @@ let package = Package(
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
-            revision: "123de167c2c88dec083015b2d9ebb07f7b7fc86c"
+            revision: "3d6aca124991b9f4282c589991bcdb0264d29777"
         ),
     ],
     targets: [

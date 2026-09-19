@@ -217,6 +217,43 @@ final class WorktreeCleanPluginTests: XCTestCase {
         XCTAssertNil(RepositoryDiskUsage.calculate(at: missingDirectory))
     }
 
+    func testRepositoryDiskUsageCacheStoresAndLoadsValue() throws {
+        let cacheDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageCache-\(UUID().uuidString)")
+        let repository = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageRepository-\(UUID().uuidString)")
+        defer {
+            try? FileManager.default.removeItem(at: cacheDirectory)
+            try? FileManager.default.removeItem(at: repository)
+        }
+
+        let cache = RepositoryDiskUsageCache(directoryURL: cacheDirectory)
+        let measuredAt = Date(timeIntervalSince1970: 1_000)
+        cache.store(4_096, at: repository, measuredAt: measuredAt)
+
+        let value = try XCTUnwrap(cache.load(at: repository))
+        XCTAssertEqual(value.repositoryPath, repository.standardizedFileURL.path)
+        XCTAssertEqual(value.byteCount, 4_096)
+        XCTAssertEqual(value.measuredAt, measuredAt)
+    }
+
+    func testRepositoryDiskUsageCacheSeparatesRepositories() throws {
+        let cacheDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageCache-\(UUID().uuidString)")
+        let firstRepository = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageRepository-\(UUID().uuidString)")
+        let secondRepository = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RepositoryDiskUsageRepository-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: cacheDirectory) }
+
+        let cache = RepositoryDiskUsageCache(directoryURL: cacheDirectory)
+        cache.store(1, at: firstRepository)
+        cache.store(2, at: secondRepository)
+
+        XCTAssertEqual(cache.load(at: firstRepository)?.byteCount, 1)
+        XCTAssertEqual(cache.load(at: secondRepository)?.byteCount, 2)
+    }
+
     /// 回归：选中 commit 后，后续 dataChanged（提交 / 推送 / 分支切换 / 外部编辑）
     /// 不应重新点亮「工作区干净」视图——即使工作区实际是干净的。
     func testDataChangedDoesNotResurrectCleanViewAfterCommitSelected() async throws {

@@ -4,6 +4,31 @@ import Testing
 
 @Suite("GitProcessRunner")
 struct GitProcessRunnerTests {
+    private final class Counter: @unchecked Sendable {
+        var value = 0
+    }
+
+    @Test("cancellation handlers bridge non-process backends")
+    func cancellationHandlersRunExactlyOnce() {
+        let cancellation = GitProcessCancellation()
+        let counter = Counter()
+        let handlerID = cancellation.addCancellationHandler {
+            counter.value += 1
+        }
+
+        cancellation.cancel()
+        cancellation.cancel()
+        cancellation.removeCancellationHandler(handlerID)
+
+        #expect(counter.value == 1)
+
+        let lateCounter = Counter()
+        _ = cancellation.addCancellationHandler {
+            lateCounter.value += 1
+        }
+        #expect(lateCounter.value == 1)
+    }
+
     @Test("cancellation terminates the git process")
     func cancellationStopsProcess() {
         let cancellation = GitProcessCancellation()

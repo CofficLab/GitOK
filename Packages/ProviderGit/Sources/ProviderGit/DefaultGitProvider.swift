@@ -9,6 +9,7 @@ import KitGit
 public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
     private let lock = NSLock()
     private var backends: [String: any GitBackendProviding] = [:]
+    private let worktreeSnapshots = WorktreeSnapshotStore()
 
     public init() {}
 
@@ -165,29 +166,50 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
     }
 
     public func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
-        try execute("loadStatus") { try $0.loadStatus(in: repository) }
+        try loadWorktreeSnapshot(in: repository).status
     }
 
     public func loadStatus(
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeStatus {
-        try execute("loadStatus") {
-            try $0.loadStatus(in: repository, cancellation: cancellation)
-        }
+        try loadWorktreeSnapshot(in: repository, cancellation: cancellation).status
     }
 
     public func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
-        try execute("loadEntries") { try $0.loadEntries(in: repository) }
+        try loadWorktreeSnapshot(in: repository).entries
     }
 
     public func loadEntries(
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> [GitStatusEntry] {
-        try execute("loadEntries") {
-            try $0.loadEntries(in: repository, cancellation: cancellation)
+        try loadWorktreeSnapshot(in: repository, cancellation: cancellation).entries
+    }
+
+    public func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
+        try worktreeSnapshots.load(repository: repository) {
+            try execute("loadWorktreeSnapshot") { try $0.loadWorktreeSnapshot(in: repository) }
         }
+    }
+
+    public func loadWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot {
+        try worktreeSnapshots.load(repository: repository, cancellation: cancellation) {
+            try execute("loadWorktreeSnapshot") {
+                try $0.loadWorktreeSnapshot(in: repository, cancellation: cancellation)
+            }
+        }
+    }
+
+    public func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot? {
+        worktreeSnapshots.cached(repository: repository)
+    }
+
+    public func invalidateWorktreeSnapshot(in repository: URL) {
+        worktreeSnapshots.invalidate(repository: repository)
     }
 
     public func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
@@ -317,6 +339,22 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
     public func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus {
         primaryBackendOrNil()?.remoteTrackingStatus(in: repository)
             ?? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+    }
+
+    public func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        let status = primaryBackendOrNil()?.remoteTrackingStatus(
+            in: repository,
+            cancellation: cancellation
+        ) ?? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        return cancellation?.isCancelled == true
+            ? GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+            : status
     }
 
     public func listBranches(in repository: URL) throws -> [GitBranchSummary] {

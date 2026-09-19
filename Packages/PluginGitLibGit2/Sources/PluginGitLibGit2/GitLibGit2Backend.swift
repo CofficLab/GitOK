@@ -149,14 +149,47 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
     }
 
+    func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
+        let entries = try loadEntries(in: repository)
+        return GitWorktreeSnapshot(
+            entries: entries,
+            branch: branchName(for: repository)
+        )
+    }
+
+    func loadWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot {
+        try checkCancellation(cancellation)
+        let entries = try loadEntries(in: repository, cancellation: cancellation)
+        try checkCancellation(cancellation)
+        return GitWorktreeSnapshot(entries: entries, branch: branchName(for: repository))
+    }
+
+    private func branchName(for repository: URL) -> String? {
+        if let branch = currentBranch(in: repository) {
+            return branch
+        }
+        return (try? LibGit2.isHEADDetached(at: repository.path)) == true ? "HEAD" : nil
+    }
+
     func loadStatus(
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeStatus {
-        try checkCancellation(cancellation)
-        let status = try LibGit2.getRepositoryStatus(at: repository.path)
-        try checkCancellation(cancellation)
-        return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
+        try withLibGit2Cancellation(cancellation) { libCancellation in
+            let status = try LibGit2.getRepositoryStatus(
+                at: repository.path,
+                cancellation: libCancellation
+            )
+            try checkCancellation(cancellation)
+            return GitWorktreeStatus(
+                isClean: status.isClean,
+                changeCount: status.changeCount,
+                branch: status.branch
+            )
+        }
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
@@ -167,10 +200,12 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> [GitStatusEntry] {
-        try checkCancellation(cancellation)
-        let entries = try LibGit2.getStatusEntries(at: repository.path)
-        try checkCancellation(cancellation)
-        return entries.map(Self.mapStatusEntry)
+        try withLibGit2Cancellation(cancellation) { libCancellation in
+            try LibGit2.getStatusEntries(
+                at: repository.path,
+                cancellation: libCancellation
+            ).map(Self.mapStatusEntry)
+        }
     }
 
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] {
@@ -315,6 +350,28 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
 
     func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus {
         guard let status = try? LibGit2.aheadBehind(at: repository.path), status.hasUpstream else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        return GitRefReader.RemoteTrackingStatus(
+            ahead: status.ahead,
+            behind: status.behind,
+            hasUpstream: true
+        )
+    }
+
+    func remoteTrackingStatus(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> GitRefReader.RemoteTrackingStatus {
+        guard cancellation?.isCancelled != true else {
+            return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+        }
+        let status = try? withLibGit2Cancellation(cancellation) { libCancellation in
+            try LibGit2.aheadBehind(at: repository.path, cancellation: libCancellation)
+        }
+        guard cancellation?.isCancelled != true,
+              let status,
+              status.hasUpstream else {
             return GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
         }
         return GitRefReader.RemoteTrackingStatus(
@@ -695,11 +752,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func discardFileChanges(_ filePath: String, in repository: URL) throws {
-        try LibGit2.checkoutFile(filePath, at: repository.path)
+        try LibGit2.discardFileChanges(filePath, at: repository.path)
     }
 
     func discardFiles(_ filePaths: [String], in repository: URL) throws {
-        try LibGit2.checkoutFiles(filePaths, at: repository.path)
+        try LibGit2.discardFiles(filePaths, at: repository.path)
     }
 
     func discardAllChanges(in repository: URL) throws {
@@ -897,6 +954,27 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
 
     private func checkCancellation(_ cancellation: GitProcessCancellation?) throws {
         if cancellation?.isCancelled == true { throw CancellationError() }
+    }
+
+    /// Bridges the app-level cancellation handle to LibGit2Swift's native
+    /// callback-aware token. Unlike the old before/after checks, cancellation
+    /// now reaches an in-flight status traversal through the C callback.
+    private func withLibGit2Cancellation<T>(
+        _ cancellation: GitProcessCancellation?,
+        _ operation: (GitCancellationToken?) throws -> T
+    ) throws -> T {
+        try checkCancellation(cancellation)
+        guard let cancellation else {
+            return try operation(nil)
+        }
+
+        let libCancellation = GitCancellationToken()
+        let handlerID = cancellation.addCancellationHandler {
+            libCancellation.cancel()
+        }
+        defer { cancellation.removeCancellationHandler(handlerID) }
+        try checkCancellation(cancellation)
+        return try operation(libCancellation)
     }
 
     private static func mapCommit(_ value: LibGit2.Commit) -> KitGit.GitCommit {
