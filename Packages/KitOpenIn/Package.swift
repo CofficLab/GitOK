@@ -22,7 +22,7 @@ let package = Package(
         .package(path: "../ProviderToolbar"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
-            revision: "a8c193e89755659a2c4042e4302f2659f342befe"
+            revision: "a35aa9f42dc97c0ad0945521de23e9de6cbe2520"
         ),
     ],
     targets: [
