@@ -204,6 +204,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         }
     }
 
+    public func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot? {
+        worktreeSnapshots.cached(repository: repository)
+    }
+
     public func invalidateWorktreeSnapshot(in repository: URL) {
         worktreeSnapshots.invalidate(repository: repository)
     }

@@ -129,6 +129,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeSnapshot
+    func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot?
     func invalidateWorktreeSnapshot(in repository: URL)
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int
@@ -292,6 +293,7 @@ public extension GitOperationProviding {
     }
 
     func invalidateWorktreeSnapshot(in repository: URL) {}
+    func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot? { nil }
 
     func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry] {
         guard cancellation?.isCancelled != true else { return [] }

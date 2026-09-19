@@ -418,13 +418,22 @@ struct WorkingTreeStatusView: View {
         statusCancellation = nil
         loadedProjectURL = project.url
         loadError = nil
+        let cachedSnapshot = projectChanged
+            ? git.cachedWorktreeSnapshot(in: project.url)
+            : nil
         if projectChanged {
             reloadRequestedWhileLoading = false
             // Never present the previous project's snapshot while the new
             // project's first read is in flight.
-            isClean = true
-            changeCount = 0
-            branch = nil
+            if let cachedSnapshot {
+                isClean = cachedSnapshot.status.isClean
+                changeCount = cachedSnapshot.status.changeCount
+                branch = cachedSnapshot.status.branch
+            } else {
+                isClean = true
+                changeCount = 0
+                branch = nil
+            }
             trackingStatus = GitRefReader.RemoteTrackingStatus(
                 ahead: 0,
                 behind: 0,
@@ -434,7 +443,7 @@ struct WorkingTreeStatusView: View {
         // 只有首次加载或切换项目时才显示 loading。监听器触发的后台刷新
         // 保留当前按钮内容，避免每次文件事件都闪成 loading 动画。
         if projectChanged {
-            isLoading = true
+            isLoading = cachedSnapshot == nil
         }
 
         let url = project.url

@@ -96,4 +96,17 @@ final class WorktreeSnapshotStore: @unchecked Sendable {
         cached.removeValue(forKey: key)
         lock.unlock()
     }
+
+    func cached(repository: URL) -> GitWorktreeSnapshot? {
+        let key = repository.standardizedFileURL.path
+        lock.lock()
+        defer { lock.unlock() }
+        let generation = generations[key, default: 0]
+        guard let value = cached[key],
+              value.generation == generation,
+              Date().timeIntervalSince(value.date) < freshness else {
+            return nil
+        }
+        return value.snapshot
+    }
 }

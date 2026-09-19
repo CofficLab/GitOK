@@ -679,6 +679,9 @@ struct WorktreeChangesView: View {
             return
         }
         let isProjectSwitch = loadedProjectURL != projectURL
+        let cachedSnapshot = isProjectSwitch
+            ? git.cachedWorktreeSnapshot(in: projectURL)
+            : nil
         if !isProjectSwitch && !force && (hasLoadedSnapshot || activeReadCancellation != nil) { return }
         if !isProjectSwitch && force && activeReadCancellation != nil {
             // Do not starve the current read when file-system events keep
@@ -692,14 +695,14 @@ struct WorktreeChangesView: View {
         loadToken &+= 1
         let token = loadToken
         loadedProjectURL = projectURL
-        isLoading = true
+        isLoading = cachedSnapshot == nil
         if isProjectSwitch {
             reloadRequestedWhileReading = false
             cancelDiscardPreparation()
             cancelUnstartedWriteOperations()
             resetProjectScopedActionState()
-            hasLoadedSnapshot = false
-            entries = []
+            hasLoadedSnapshot = cachedSnapshot != nil
+            entries = cachedSnapshot?.entries ?? []
             selectedPaths.removeAll()
             batchAction = nil
             discardCandidates.removeAll()
