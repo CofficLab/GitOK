@@ -124,6 +124,12 @@ public protocol GitOperationProviding: AnyObject, Sendable {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> [GitStatusEntry]
+    func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot
+    func loadWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot
+    func invalidateWorktreeSnapshot(in repository: URL)
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int
     func countCommitChanges(
@@ -268,6 +274,25 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 }
 
 public extension GitOperationProviding {
+    func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
+        let entries = try loadEntries(in: repository)
+        let status = try loadStatus(in: repository)
+        return GitWorktreeSnapshot(entries: entries, branch: status.branch)
+    }
+
+    func loadWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let entries = try loadEntries(in: repository, cancellation: cancellation)
+        let status = try loadStatus(in: repository, cancellation: cancellation)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return GitWorktreeSnapshot(entries: entries, branch: status.branch)
+    }
+
+    func invalidateWorktreeSnapshot(in repository: URL) {}
+
     func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry] {
         guard cancellation?.isCancelled != true else { return [] }
         let stashes = listStashes(in: repository)

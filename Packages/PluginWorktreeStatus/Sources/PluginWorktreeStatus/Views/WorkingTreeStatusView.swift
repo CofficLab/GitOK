@@ -130,6 +130,9 @@ struct WorkingTreeStatusView: View {
         }
         .onReceive(projectObservation.$lastEvent) { event in
             guard let event else { return }
+            if let url = projects.currentProject?.url {
+                git.invalidateWorktreeSnapshot(in: url)
+            }
             if case .dataChanged = event {
                 reloadIfNeeded(force: true)
             } else {
@@ -138,6 +141,9 @@ struct WorkingTreeStatusView: View {
         }
         .onReceive(gitWatchObservation.$lastEvent) { event in
             guard event != nil else { return }
+            if let url = projects.currentProject?.url {
+                git.invalidateWorktreeSnapshot(in: url)
+            }
             // 仓库或工作区变化 → 强制刷新工作区状态；后台刷新不切换 loading UI。
             reloadIfNeeded(force: true)
         }
@@ -446,7 +452,9 @@ struct WorkingTreeStatusView: View {
         // LibGit2 读取是同步调用；工作区状态属于后台刷新，使用 utility
         // 优先级避免它阻塞界面任务。
         Task.detached(priority: .utility) {
-            let statusResult = Result { try git.loadStatus(in: url, cancellation: cancellation) }
+            let statusResult = Result {
+                try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).status
+            }
             let tracking: GitRefReader.RemoteTrackingStatus
             if case .success = statusResult,
                !cancellation.isCancelled {

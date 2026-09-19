@@ -151,6 +151,9 @@ struct WorktreeChangesView: View {
             resetProjectScopedActionState()
         }
         .onReceive(viewModel.$worktreeRevision) { _ in
+            if let url = viewModel.selectedProjectURL {
+                git.invalidateWorktreeSnapshot(in: url)
+            }
             reloadIfNeeded(force: true)
         }
         .alert(
@@ -484,7 +487,7 @@ struct WorktreeChangesView: View {
         actionError = nil
         Task.detached(priority: .userInitiated) {
             let result = Result {
-                try git.loadEntries(in: url, cancellation: cancellation)
+                try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).entries
             }
             await MainActor.run {
                 guard token == discardPreparationToken,
@@ -519,7 +522,7 @@ struct WorktreeChangesView: View {
                 stagingPath = nil
                 switch result {
                 case .success:
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -544,7 +547,7 @@ struct WorktreeChangesView: View {
                 unstagingPath = nil
                 switch result {
                 case .success:
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -571,7 +574,7 @@ struct WorktreeChangesView: View {
                 switch result {
                 case .success:
                     selectedPaths.subtract(paths)
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -600,7 +603,7 @@ struct WorktreeChangesView: View {
                 case .success:
                     entries.removeAll()
                     selectedPaths.removeAll()
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -640,7 +643,7 @@ struct WorktreeChangesView: View {
                 switch result {
                 case .success:
                     selectedPaths.removeAll()
-                    onDataChanged()
+                    notifyDataChanged()
                 case .failure(let error):
                     actionError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 }
@@ -718,7 +721,7 @@ struct WorktreeChangesView: View {
         // 工作区变更是后台快照读取，不应以 userInitiated 优先级占用并发线程。
         Task.detached(priority: .utility) {
             let result = Result {
-                try git.loadEntries(in: url, cancellation: cancellation)
+                try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).entries
             }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
@@ -750,6 +753,13 @@ struct WorktreeChangesView: View {
         loadToken &+= 1
         isLoading = false
         reloadRequestedWhileReading = false
+    }
+
+    private func notifyDataChanged() {
+        if let url = viewModel.selectedProjectURL {
+            git.invalidateWorktreeSnapshot(in: url)
+        }
+        onDataChanged()
     }
 
     private func cancelDiscardPreparation() {

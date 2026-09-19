@@ -16,6 +16,28 @@ public struct GitWorktreeStatus: Equatable, Sendable {
     }
 }
 
+/// 一次工作区扫描得到的完整快照。
+///
+/// 摘要和文件列表必须来自同一次扫描，否则左侧数量与右侧文件列表
+/// 可能短暂不一致，也会让同一个仓库被重复遍历。
+public struct GitWorktreeSnapshot: Equatable, Sendable {
+    public let entries: [GitStatusEntry]
+    public let branch: String?
+
+    public var status: GitWorktreeStatus {
+        GitWorktreeStatus(
+            isClean: entries.isEmpty,
+            changeCount: entries.count,
+            branch: branch
+        )
+    }
+
+    public init(entries: [GitStatusEntry], branch: String?) {
+        self.entries = entries
+        self.branch = branch
+    }
+}
+
 /// 工作区变动文件条目（由 `git status --porcelain` 解析）。
 public struct GitStatusEntry: Equatable, Sendable, Identifiable {
     /// 文件路径（相对仓库根）。
