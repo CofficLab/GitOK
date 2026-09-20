@@ -14,9 +14,10 @@ let package = Package(
         .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderGit"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
-        // 本地开发期指向已修复的 LibGit2Swift（SSH config 端口改写）。
-        // 发布前：先推送 LibGit2Swift 的 fix 提交，再改回 git URL 并更新 revision。
-        .package(path: "../../../LibGit2Swift"),
+        .package(
+            url: "https://github.com/nookery/LibGit2Swift.git",
+            revision: "7c7cbfb062c78c664c6a6d46d37bc71d12abc913"
+        ),
     ],
     targets: [
         .target(
