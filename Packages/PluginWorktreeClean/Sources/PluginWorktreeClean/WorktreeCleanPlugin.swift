@@ -11,6 +11,7 @@ import ProviderProjects
 import ProviderProjectLanguages
 import ProviderSettingView
 import ProviderWorkspaceScene
+import ProviderProjectReadme
 import SwiftUI
 import ProviderDocsView
 
@@ -85,6 +86,9 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)WorkspaceSceneProviding not registered; skip scene wiring")
             return
         }
+
+        // README 渲染为可选能力；该插件只依赖共享 Provider 契约，不依赖实现它的插件。
+        let projectReadmeProvider = kernel.resolveProvider((any ProjectReadmeProviding).self)
 
         // GitRepositoryWatching 可选依赖：感知外部工作区文件变化
         // （如其他编辑器把文件改干净 / 改脏后，干净视图据此刷新）。
@@ -189,6 +193,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
                         activityHeatmapViewModel: activityViewModel,
                         projectLanguagesViewModel: projectLanguagesViewModel,
                         git: git,
+                        projectReadmeProvider: projectReadmeProvider,
                         openUserSettings: openUserSettings
                     )
                 }

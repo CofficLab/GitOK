@@ -71,17 +71,15 @@ public struct ConflictResolverList: View {
                             )
                             .frame(maxWidth: .infinity, minHeight: 120)
 
-                            AppButton(
-                                LumiPluginLocalization.string(
+                            ContinueMergeCardButton(
+                                title: LumiPluginLocalization.string(
                                     viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
                                     bundle: .module
                                 ),
-                                systemImage: "arrow.right.circle",
-                                style: .primary,
-                                size: .small,
+                                systemImage: "arrow.right.circle.fill",
+                                isDisabled: !viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning,
                                 action: continueMerge
                             )
-                            .disabled(!viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning)
                         }
                         .frame(maxWidth: .infinity)
                     } else if viewModel.conflictedFiles.isEmpty {
@@ -575,5 +573,70 @@ private struct ConflictFileActionButton: View {
         case .secondary:
             isHovered ? theme.appListRowHoverBackground : theme.appStatusMutedFill
         }
+    }
+}
+
+/// 垂直卡片样式的「继续合并」按钮：上方图标 + 下方文字，比普通按钮更醒目。
+/// 仅用于冲突弹窗正文中的继续合并入口；顶部操作栏（终止合并一行）保持原样式。
+private struct ContinueMergeCardButton: View {
+    let title: String
+    let systemImage: String
+    let isDisabled: Bool
+    let action: () -> Void
+
+    @LumiTheme private var theme: LumiUITheme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: DesignTokens.Spacing.xs) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 26, weight: .medium))
+                Text(title)
+                    .font(DesignTokens.Typography.callout)
+            }
+            .foregroundStyle(foregroundColor)
+            .frame(minWidth: 168)
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            .padding(.vertical, DesignTokens.Spacing.md)
+            .background(backgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md, style: .continuous))
+            .shadow(
+                color: isDisabled ? .clear : Color.black.opacity(0.16),
+                radius: 10,
+                x: 0,
+                y: 4
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .scaleEffect(
+            isEffectivelyHovered && motionPreference.allowsMotion
+                ? LumiMotion.hoverScale
+                : 1
+        )
+        .onHover { hovering in
+            LumiMotion.animate(
+                LumiMotion.enabled(LumiMotion.hover, preference: motionPreference)
+            ) {
+                isHovered = hovering && !isDisabled
+            }
+        }
+    }
+
+    private var isEffectivelyHovered: Bool {
+        isHovered && !isDisabled
+    }
+
+    private var foregroundColor: Color {
+        isDisabled ? theme.primary.opacity(0.72) : .white
+    }
+
+    private var backgroundColor: Color {
+        if isDisabled {
+            return theme.primary.opacity(0.14)
+        }
+        return isEffectivelyHovered ? theme.primary.opacity(0.9) : theme.primary
     }
 }

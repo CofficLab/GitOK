@@ -61,6 +61,7 @@ import PluginToast
 import PluginThemePack
 import PluginWorktreeClean
 import PluginWorktreeStatus
+import PluginProjectReadme
 #endif
 
 /// GitOK 的专用插件目录。
@@ -90,6 +91,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CommitFormPlugin(),
             GitDiffPlugin(),
             GitUserSettingsPlugin(),
+            ProjectReadmePlugin(),
             WorktreeCleanPlugin(),
             GitNetworkSettingsPlugin(),
             GitRepositorySettingsPlugin(),
