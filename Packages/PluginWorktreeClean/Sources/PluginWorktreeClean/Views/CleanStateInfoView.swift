@@ -35,6 +35,8 @@ struct CleanStateInfoView: View {
     @State private var infoCancellation: GitProcessCancellation?
     @State private var diskUsageCancellation: GitProcessCancellation?
 
+    private let diskUsageCache = RepositoryDiskUsageCache()
+
     var body: some View {
         VStack(spacing: 16) {
             // 仓库信息
@@ -320,7 +322,13 @@ struct CleanStateInfoView: View {
         commitCount = nil
         firstCommitDate = nil
         isLoadingInfo = true
-        isLoadingDiskUsage = true
+        let cachedDiskUsage = diskUsageCache.load(at: repositoryURL)
+        repositoryDiskUsage = cachedDiskUsage?.byteCount
+        let cacheAge = cachedDiskUsage.map { Date().timeIntervalSince($0.measuredAt) }
+        let hasFreshDiskUsage = cacheAge.map {
+            $0 >= 0 && $0 <= RepositoryDiskUsageCache.maximumAge
+        } ?? false
+        isLoadingDiskUsage = cachedDiskUsage == nil
 
         let infoCancellation = GitProcessCancellation(forceKillAfter: 1)
         self.infoCancellation = infoCancellation
@@ -363,23 +371,31 @@ struct CleanStateInfoView: View {
             }
         }
 
-        let diskUsageCancellation = GitProcessCancellation()
-        self.diskUsageCancellation = diskUsageCancellation
-        diskUsageTask = Task.detached(priority: .utility) {
-            // 统计仓库目录实际分配的文件空间（包含隐藏的 .git）
-            let loadedRepositoryDiskUsage = RepositoryDiskUsage.calculate(
-                at: repositoryURL,
-                cancellation: diskUsageCancellation
-            )
-            guard !diskUsageCancellation.isCancelled else { return }
+        if hasFreshDiskUsage {
+            diskUsageTask = nil
+            diskUsageCancellation = nil
+        } else {
+            let diskUsageCancellation = GitProcessCancellation()
+            self.diskUsageCancellation = diskUsageCancellation
+            diskUsageTask = Task.detached(priority: .utility) {
+                // 统计仓库目录实际分配的文件空间（包含隐藏的 .git）
+                let loadedRepositoryDiskUsage = RepositoryDiskUsage.calculate(
+                    at: repositoryURL,
+                    cancellation: diskUsageCancellation
+                )
+                guard !diskUsageCancellation.isCancelled else { return }
 
-            await MainActor.run {
-                guard token == loadToken,
-                      project.url.standardizedFileURL == repositoryURL else { return }
-                repositoryDiskUsage = loadedRepositoryDiskUsage
-                isLoadingDiskUsage = false
-                diskUsageTask = nil
-                self.diskUsageCancellation = nil
+                await MainActor.run {
+                    guard token == loadToken,
+                          project.url.standardizedFileURL == repositoryURL else { return }
+                    if let loadedRepositoryDiskUsage {
+                        repositoryDiskUsage = loadedRepositoryDiskUsage
+                        diskUsageCache.store(loadedRepositoryDiskUsage, at: repositoryURL)
+                    }
+                    isLoadingDiskUsage = false
+                    diskUsageTask = nil
+                    self.diskUsageCancellation = nil
+                }
             }
         }
     }

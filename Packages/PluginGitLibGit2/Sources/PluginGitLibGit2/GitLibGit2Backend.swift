@@ -149,6 +149,31 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
     }
 
+    func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
+        let entries = try loadEntries(in: repository)
+        return GitWorktreeSnapshot(
+            entries: entries,
+            branch: branchName(for: repository)
+        )
+    }
+
+    func loadWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot {
+        try checkCancellation(cancellation)
+        let entries = try loadEntries(in: repository, cancellation: cancellation)
+        try checkCancellation(cancellation)
+        return GitWorktreeSnapshot(entries: entries, branch: branchName(for: repository))
+    }
+
+    private func branchName(for repository: URL) -> String? {
+        if let branch = currentBranch(in: repository) {
+            return branch
+        }
+        return (try? LibGit2.isHEADDetached(at: repository.path)) == true ? "HEAD" : nil
+    }
+
     func loadStatus(
         in repository: URL,
         cancellation: GitProcessCancellation?
