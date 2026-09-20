@@ -1,6 +1,6 @@
 # PluginWorktreeClean
 
-工作区状态插件：`WorktreeCleanView` 在顶部同一行展示工作区干净提示与本地 Git 提交活跃度热力图，下面按整行展示仓库信息、Git 用户配置与用户预设。`WorktreeCleanViewModel` / `WorktreeCleanObserver` 驱动工作区状态，热力图通过 `ProviderActivityHeatmap` 消费 `PluginActivityHeatmap` 提供的数据。
+工作区状态插件：`WorktreeCleanView` 在顶部同一行展示工作区干净提示与本地 Git 提交活跃度热力图，下面展示仓库信息、Git 用户配置与用户预设；最底部由独立的 `PluginProjectReadme` 包渲染项目根目录的 README Markdown（没有 README 时不显示）。`WorktreeCleanViewModel` / `WorktreeCleanObserver` 驱动工作区状态，热力图通过 `ProviderActivityHeatmap` 消费 `PluginActivityHeatmap` 提供的数据。
 
 ## 本 Package 的位置
 
@@ -8,7 +8,7 @@
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitGit`、`KitLocalization`、`KitSuperLog`、`ProviderActivityHeatmap`、`ProviderContentView`、`ProviderGitUser`、`ProviderGitRepositoryWatch`、`ProviderProjects`、`ProviderSettingView`；https://github.com/CofficLab/LumiUI.git |
+| **上游依赖** | `KernelCore`、`KitGit`、`KitLocalization`、`KitSuperLog`、`ProviderActivityHeatmap`、`ProviderContentView`、`ProviderGitUser`、`ProviderGitRepositoryWatch`、`ProviderProjectReadme`、`ProviderProjects`、`ProviderSettingView`；https://github.com/CofficLab/LumiUI.git |
 | **平台** | macOS 14+ |
 
 ## 目录结构

@@ -3,6 +3,7 @@ import LumiUI
 import ProviderActivityHeatmap
 import ProviderGit
 import ProviderProjects
+import ProviderProjectReadme
 import SwiftUI
 
 /// 工作区干净视图。
@@ -17,6 +18,7 @@ struct WorktreeCleanView: View {
     @ObservedObject var activityHeatmapViewModel: WorktreeCleanActivityHeatmapViewModel
     @ObservedObject var projectLanguagesViewModel: WorktreeCleanProjectLanguagesViewModel
     let git: any GitProviding
+    let projectReadmeProvider: (any ProjectReadmeProviding)?
     let openUserSettings: (() -> Void)?
     @LumiTheme private var theme
 
@@ -25,12 +27,14 @@ struct WorktreeCleanView: View {
         activityHeatmapViewModel: WorktreeCleanActivityHeatmapViewModel,
         projectLanguagesViewModel: WorktreeCleanProjectLanguagesViewModel,
         git: any GitProviding,
+        projectReadmeProvider: (any ProjectReadmeProviding)? = nil,
         openUserSettings: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self._activityHeatmapViewModel = ObservedObject(wrappedValue: activityHeatmapViewModel)
         self._projectLanguagesViewModel = ObservedObject(wrappedValue: projectLanguagesViewModel)
         self.git = git
+        self.projectReadmeProvider = projectReadmeProvider
         self.openUserSettings = openUserSettings
     }
 
@@ -63,6 +67,10 @@ struct WorktreeCleanView: View {
                     git: git,
                     openUserSettings: openUserSettings
                 )
+
+                if let projectReadmeProvider {
+                    projectReadmeProvider.makeReadmeView(for: project.url)
+                }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
