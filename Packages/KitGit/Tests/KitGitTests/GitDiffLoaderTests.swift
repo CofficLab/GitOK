@@ -64,6 +64,46 @@ final class GitDiffLoaderTests: XCTestCase {
                 cancellation: cancellation
             )
         ) { XCTAssertTrue($0 is CancellationError) }
+        XCTAssertThrowsError(
+            try GitDiffLoader.loadBlobData(
+                commit: "HEAD",
+                filePath: "file.pdf",
+                in: repository,
+                cancellation: cancellation
+            )
+        ) { XCTAssertTrue($0 is CancellationError) }
+    }
+
+    func testLoadBlobDataPreservesBinaryBytes() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-pdf-blob-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+
+        func run(_ args: [String]) throws {
+            _ = try GitProcessRunner.run(args, in: repo)
+        }
+
+        try run(["init", "-q"])
+        try run(["config", "user.email", "t@t.com"])
+        try run(["config", "user.name", "t"])
+        let expected = Data([0x25, 0x50, 0x44, 0x46, 0x2D, 0x31, 0x2E, 0x37, 0x0A, 0x00, 0xFF, 0x25, 0x25, 0x45, 0x4F, 0x46])
+        try expected.write(to: repo.appendingPathComponent("document.pdf"))
+        try run(["add", "document.pdf"])
+        try run(["commit", "-qm", "add pdf"])
+        let commit = try GitProcessRunner.run(["rev-parse", "HEAD"], in: repo)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let blob = try GitDiffLoader.loadBlobData(
+            commit: commit,
+            filePath: "document.pdf",
+            in: repo
+        )
+        XCTAssertEqual(blob, expected)
+        XCTAssertEqual(
+            try GitDiffLoader.loadWorktreeFileData(filePath: "document.pdf", in: repo),
+            expected
+        )
     }
 
     func testLoadChangesPageMatchesEagerCompatibilityAPI() throws {
