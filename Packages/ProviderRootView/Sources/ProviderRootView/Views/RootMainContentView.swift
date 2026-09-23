@@ -326,28 +326,28 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
 ///
 /// 面板宽度和 resize handle 在 AppKit 中直接变化，拖拽过程中不回写 SwiftUI
 /// 状态，也不改变下层 content 的 layout。拖拽结束后只提交一次最终宽度。
-private struct TrailingPaneOverlayHost<Content: View>: NSViewRepresentable {
+private struct TrailingPaneOverlayHost: NSViewRepresentable {
     let initialWidth: CGFloat
     let minWidth: CGFloat
     let maxWidth: CGFloat
     let onResize: @MainActor (CGFloat) -> Void
-    let content: Content
+    let content: AnyView
 
     init(
         initialWidth: CGFloat,
         minWidth: CGFloat,
         maxWidth: CGFloat,
         onResize: @escaping @MainActor (CGFloat) -> Void,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> some View
     ) {
         self.initialWidth = initialWidth
         self.minWidth = minWidth
         self.maxWidth = maxWidth
         self.onResize = onResize
-        self.content = content()
+        self.content = AnyView(content())
     }
 
-    func makeNSView(context: Context) -> TrailingPaneOverlayContainer<Content> {
+    func makeNSView(context: Context) -> TrailingPaneOverlayContainer {
         TrailingPaneOverlayContainer(
             rootView: content,
             initialWidth: initialWidth,
@@ -358,7 +358,7 @@ private struct TrailingPaneOverlayHost<Content: View>: NSViewRepresentable {
     }
 
     func updateNSView(
-        _ nsView: TrailingPaneOverlayContainer<Content>,
+        _ nsView: TrailingPaneOverlayContainer,
         context: Context
     ) {
         nsView.update(
@@ -372,8 +372,8 @@ private struct TrailingPaneOverlayHost<Content: View>: NSViewRepresentable {
 }
 
 @MainActor
-private final class TrailingPaneOverlayContainer<Content: View>: NSView {
-    private let hostingView: NSHostingView<Content>
+private final class TrailingPaneOverlayContainer: NSView {
+    private let hostingView: NSHostingView<AnyView>
     private let resizeHandle = TrailingPaneResizeHandle()
     private var panelWidth: CGFloat
     private var minWidth: CGFloat
@@ -382,10 +382,10 @@ private final class TrailingPaneOverlayContainer<Content: View>: NSView {
     private var isDragging = false
     private var dragStartX: CGFloat = 0
     private var dragStartWidth: CGFloat = 0
-    private var pendingRootView: Content?
+    private var pendingRootView: AnyView?
 
     init(
-        rootView: Content,
+        rootView: AnyView,
         initialWidth: CGFloat,
         minWidth: CGFloat,
         maxWidth: CGFloat,
@@ -439,7 +439,7 @@ private final class TrailingPaneOverlayContainer<Content: View>: NSView {
     }
 
     func update(
-        rootView: Content,
+        rootView: AnyView,
         initialWidth: CGFloat,
         minWidth: CGFloat,
         maxWidth: CGFloat,
