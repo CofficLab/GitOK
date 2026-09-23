@@ -21,6 +21,8 @@ final class GitConflictResolverObserver {
     private var repositoryHandle: (any GitRepositoryWatchingObserverHandle)?
     private var reloadGeneration = 0
     private var presentationRequested = false
+    private var snapshotTask: Task<Void, Never>?
+    private var reloadRequestedWhileReading = false
 
     init(
         capability: any GitConflictResolverCapability,
@@ -52,6 +54,9 @@ final class GitConflictResolverObserver {
 
     func cancel() {
         reloadGeneration += 1
+        snapshotTask?.cancel()
+        snapshotTask = nil
+        reloadRequestedWhileReading = false
         projectHandle?.cancel()
         projectHandle = nil
         repositoryHandle?.cancel()
@@ -69,6 +74,13 @@ final class GitConflictResolverObserver {
     private func reload() {
         reloadGeneration += 1
         let generation = reloadGeneration
+        if snapshotTask != nil {
+            // A working-tree event does not need another concurrent status
+            // walk. Keep the newest generation and perform one follow-up read
+            // after the current snapshot has completed.
+            reloadRequestedWhileReading = true
+            return
+        }
         guard let url = capability.currentProject?.url else {
             viewModel?.update(
                 projectURL: nil,
@@ -82,33 +94,42 @@ final class GitConflictResolverObserver {
 
         viewModel?.beginLoading(projectURL: url)
         let git = self.git
-        let snapshotTask = Task.detached(priority: .utility) {
-            let conflictedFiles = git.conflictFiles(in: url)
-            return GitConflictResolverSnapshot(
-                conflictedFiles: conflictedFiles,
-                resolvedFiles: conflictedFiles.filter {
-                    !Self.containsConflictMarkers(path: $0, in: url)
-                },
-                isOperationInProgress: git.isMerging(in: url),
-                isCherryPicking: git.cherryPickStatus(in: url).isCherryPicking
-            )
-        }
-        Task { @MainActor [weak self] in
-            let snapshot = await snapshotTask.value
-            guard let self, self.reloadGeneration == generation else { return }
-            let operationInProgress = snapshot.isOperationInProgress || snapshot.isCherryPicking
-            self.viewModel?.update(
-                projectURL: url,
-                conflictedFiles: snapshot.conflictedFiles,
-                isOperationInProgress: operationInProgress,
-                isCherryPicking: snapshot.isCherryPicking,
-                resolvedFiles: snapshot.resolvedFiles
-            )
-            if self.presentationRequested {
-                self.presentationRequested = false
-                if operationInProgress {
-                    self.viewModel?.present()
+        snapshotTask = Task { @MainActor [weak self] in
+            let snapshot = await Task.detached(priority: .utility) {
+                let conflictedFiles = git.conflictFiles(in: url)
+                return GitConflictResolverSnapshot(
+                    conflictedFiles: conflictedFiles,
+                    resolvedFiles: conflictedFiles.filter {
+                        !Self.containsConflictMarkers(path: $0, in: url)
+                    },
+                    isOperationInProgress: git.isMerging(in: url),
+                    isCherryPicking: git.cherryPickStatus(in: url).isCherryPicking
+                )
+            }.value
+
+            guard let self else { return }
+            let shouldApply = self.reloadGeneration == generation
+            if shouldApply {
+                let operationInProgress = snapshot.isOperationInProgress || snapshot.isCherryPicking
+                self.viewModel?.update(
+                    projectURL: url,
+                    conflictedFiles: snapshot.conflictedFiles,
+                    isOperationInProgress: operationInProgress,
+                    isCherryPicking: snapshot.isCherryPicking,
+                    resolvedFiles: snapshot.resolvedFiles
+                )
+                if self.presentationRequested {
+                    self.presentationRequested = false
+                    if operationInProgress {
+                        self.viewModel?.present()
+                    }
                 }
+            }
+
+            self.snapshotTask = nil
+            if self.reloadRequestedWhileReading {
+                self.reloadRequestedWhileReading = false
+                self.reload()
             }
         }
     }

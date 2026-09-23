@@ -166,6 +166,12 @@ final class PluginGitRepositoryWatchTests: XCTestCase {
                 "/tmp/GitOK-filter-test/.git",
                 "/tmp/GitOK-filter-test/.build",
                 "/tmp/GitOK-filter-test/DerivedData",
+                "/tmp/GitOK-filter-test/node_modules",
+                "/tmp/GitOK-filter-test/dist",
+                "/tmp/GitOK-filter-test/.astro",
+                "/tmp/GitOK-filter-test/.edgeone",
+                "/tmp/GitOK-filter-test/.cache",
+                "/tmp/GitOK-filter-test/coverage",
             ]
         )
     }

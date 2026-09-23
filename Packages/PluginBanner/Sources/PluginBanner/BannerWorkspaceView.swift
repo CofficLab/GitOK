@@ -40,6 +40,7 @@ public struct BannerWorkspaceView: View {
 
             if model.banners.isEmpty {
                 ContentUnavailableView(BannerLocalization.string("No Banners", bundle: .module), systemImage: "rectangle.on.rectangle", description: Text(BannerLocalization.string("Create a banner to get started.", bundle: .module)))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(model.banners, selection: Binding(
                     get: { model.selectedBannerID },
@@ -51,6 +52,7 @@ public struct BannerWorkspaceView: View {
                 .listStyle(.sidebar)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     private var editor: some View {
