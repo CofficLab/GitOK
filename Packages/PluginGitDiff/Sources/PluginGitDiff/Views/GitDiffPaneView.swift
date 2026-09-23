@@ -4,6 +4,14 @@ import MagicDiffView
 import ProviderGit
 import SwiftUI
 
+private enum GitDiffLoadedContent {
+    case text(String)
+    case binary(kind: GitDiffContentKind, data: Data)
+    case pdfComparison(current: Data?, previous: Data?)
+}
+
+private let gitDiffMaxInlinePreviewBytes = 50 * 1024 * 1024
+
 /// Git Diff 右侧面板视图。
 ///
 /// 绑定插件自有的 `GitDiffViewModel`：以「当前文件」为唯一驱动（由
@@ -25,7 +33,7 @@ struct GitDiffPaneView: View {
     let git: any GitProviding
     @LumiTheme private var theme
 
-    @State private var diffText: String?
+    @State private var loadedContent: GitDiffLoadedContent?
     @State private var isLoading = false
     @State private var loadError: String?
     @State private var loadedKey: String?
@@ -51,7 +59,7 @@ struct GitDiffPaneView: View {
 
     private var header: some View {
         HStack(spacing: 6) {
-            Image(systemName: "text.alignleft")
+            Image(systemName: GitDiffContentDetector.kind(forPath: filePath ?? "")?.systemImage ?? "text.alignleft")
                 .font(.appCaptionEmphasized)
             Text(filePath ?? GitDiffLocalization.string("Diff", bundle: .module))
                 .font(.system(size: 11, weight: .medium, design: .monospaced))
@@ -81,7 +89,7 @@ struct GitDiffPaneView: View {
                 description: GitDiffLocalization.string("Choose a changed file to see its diff.", bundle: .module)
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if isLoading && diffText == nil {
+        } else if isLoading && loadedContent == nil {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let loadError {
@@ -91,17 +99,27 @@ struct GitDiffPaneView: View {
                 description: loadError
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let diffText, !diffText.isEmpty {
-            // 与旧版一致：MagicDiffView 直接渲染 git unified diff 文本。
-            MagicDiffView(diffOutput: diffText)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            AppEmptyState(
-                icon: "text.alignleft",
-                title: GitDiffLocalization.string("No Text Diff", bundle: .module),
-                description: GitDiffLocalization.string("This file has no parseable text diff.", bundle: .module)
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            switch loadedContent {
+            case let .text(diffText) where !diffText.isEmpty:
+                MagicDiffView(diffOutput: diffText)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case let .binary(kind, data):
+                GitBinaryPreviewView(kind: kind, data: data, path: filePath ?? "")
+            case let .pdfComparison(current, previous):
+                GitPDFComparisonPreview(
+                    currentData: current,
+                    previousData: previous,
+                    path: filePath ?? ""
+                )
+            default:
+                AppEmptyState(
+                    icon: "text.alignleft",
+                    title: GitDiffLocalization.string("No Text Diff", bundle: .module),
+                    description: GitDiffLocalization.string("This file has no parseable text diff.", bundle: .module)
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
     }
 
@@ -128,37 +146,93 @@ struct GitDiffPaneView: View {
         let token = loadToken
         loadedKey = key
         isLoading = true
-        diffText = nil
+        loadedContent = nil
         loadError = nil
 
         let url = projectURL
         Task.detached(priority: .userInitiated) {
-            let result: Result<String, Error>
-            if let commit {
-                result = Result {
-                    try git.loadDiff(
+            let result: Result<GitDiffLoadedContent, Error> = Result {
+                if let previewKind = GitDiffContentDetector.kind(forPath: path) {
+                    if previewKind == .pdf, let commit {
+                        func loadOptionalBlob(_ hash: String) throws -> Data? {
+                            do {
+                                return try git.loadBlobData(
+                                    commit: hash,
+                                    filePath: path,
+                                    in: url,
+                                    cancellation: cancellation
+                                )
+                            } catch {
+                                if cancellation.isCancelled { throw error }
+                                return nil
+                            }
+                        }
+
+                        let currentData = try loadOptionalBlob(commit.hash)
+                        let previousData: Data?
+                        if let parentHash = commit.parentHashes.first {
+                            previousData = try loadOptionalBlob(parentHash)
+                        } else {
+                            previousData = nil
+                        }
+                        if let currentData, currentData.count > gitDiffMaxInlinePreviewBytes {
+                            throw GitDiffPreviewError.fileTooLarge(currentData.count)
+                        }
+                        if let previousData, previousData.count > gitDiffMaxInlinePreviewBytes {
+                            throw GitDiffPreviewError.fileTooLarge(previousData.count)
+                        }
+                        guard currentData != nil || previousData != nil else {
+                            throw GitDiffLoaderError.invalidFilePath(path)
+                        }
+                        return .pdfComparison(current: currentData, previous: previousData)
+                    }
+
+                    let data: Data
+                    if let commit {
+                        data = try git.loadBlobData(
+                            commit: commit.hash,
+                            filePath: path,
+                            in: url,
+                            cancellation: cancellation
+                        )
+                    } else {
+                        data = try git.loadWorktreeFileData(
+                            filePath: path,
+                            in: url,
+                            cancellation: cancellation
+                        )
+                    }
+                    guard data.count <= gitDiffMaxInlinePreviewBytes else {
+                        throw GitDiffPreviewError.fileTooLarge(data.count)
+                    }
+                    let detectedKind = GitDiffContentDetector.kind(forPath: path, data: data) ?? previewKind
+                    return .binary(kind: detectedKind, data: data)
+                }
+
+                let text: String
+                if let commit {
+                    text = try git.loadDiff(
                         commit: commit.hash,
                         filePath: path,
                         in: url,
                         cancellation: cancellation
                     )
-                }
-            } else {
-                result = Result {
-                    try git.loadWorktreeDiff(
+                } else {
+                    text = try git.loadWorktreeDiff(
                         filePath: path,
                         in: url,
                         cancellation: cancellation
                     )
                 }
+                return .text(text)
             }
             await MainActor.run {
                 guard token == loadToken, loadedKey == key else { return }
                 activeReadCancellation = nil
                 isLoading = false
                 switch result {
-                case .success(let text):
-                    diffText = text
+                case .success(let content):
+                    loadedContent = content
                 case .failure(let error):
                     loadError = (error as? LocalizedError)?.errorDescription
                         ?? error.localizedDescription
@@ -172,7 +246,7 @@ struct GitDiffPaneView: View {
         activeReadCancellation = nil
         loadToken &+= 1
         loadedKey = nil
-        diffText = nil
+        loadedContent = nil
         isLoading = false
         loadError = nil
     }
