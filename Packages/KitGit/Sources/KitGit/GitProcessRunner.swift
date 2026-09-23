@@ -166,6 +166,25 @@ public enum GitProcessRunner {
         cancellation: GitProcessCancellation? = nil,
         timeout: TimeInterval? = nil
     ) throws -> String {
+        Self.decode(
+            try runData(
+                arguments,
+                in: repository,
+                successExitCodes: successExitCodes,
+                cancellation: cancellation,
+                timeout: timeout
+            )
+        )
+    }
+
+    /// 执行 git 并返回未经文本解码的标准输出字节。
+    public static func runData(
+        _ arguments: [String],
+        in repository: URL,
+        successExitCodes: Set<Int32> = [0],
+        cancellation: GitProcessCancellation? = nil,
+        timeout: TimeInterval? = nil
+    ) throws -> Data {
         var outputData = Data()
         try stream(
             arguments,
@@ -177,7 +196,7 @@ public enum GitProcessRunner {
             outputData.append(data)
             return true
         }
-        return Self.decode(outputData)
+        return outputData
     }
 
     /// 流式读取标准输出。回调返回 `false` 时会尽早停止子进程，适合只需要

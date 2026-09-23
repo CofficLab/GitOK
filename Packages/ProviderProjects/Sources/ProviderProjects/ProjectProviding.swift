@@ -22,6 +22,29 @@ public enum ProjectProvidingEvent {
     case currentFileChanged
 }
 
+// MARK: - Rename
+
+/// 项目重命名错误。
+public enum ProjectRenameError: LocalizedError, Equatable {
+    /// 名称无效（空 / 仅空白，或包含路径分隔符等非法字符）。
+    case invalidName
+    /// 目标文件夹已存在。
+    case targetExists
+    /// 磁盘重命名失败（携带底层原因）。
+    case moveFailed(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .invalidName:
+            return "Project name must be non-empty and must not contain \"/\"."
+        case .targetExists:
+            return "A folder with this name already exists."
+        case .moveFailed(let reason):
+            return "Failed to rename the project folder: \(reason)"
+        }
+    }
+}
+
 // MARK: - Observer Handle
 
 @MainActor
@@ -108,6 +131,12 @@ public protocol ProjectProviding: AnyObject {
 
     /// 按 id 移除项目；若移除的是当前项目则同时清空当前项目。
     func removeProject(id: UUID)
+
+    /// 重命名项目：同时把磁盘上的项目文件夹改名为 `newName`。
+    ///
+    /// 成功时更新项目的 `url` 与 `title`，持久化并广播 `projectsChanged`；
+    /// 失败抛出 `ProjectRenameError`，项目记录与磁盘内容均不变化。
+    func renameProject(id: UUID, newName: String) throws
 
     /// 置顶 / 取消置顶指定项目。
     func pinProject(id: UUID, isPinned: Bool)

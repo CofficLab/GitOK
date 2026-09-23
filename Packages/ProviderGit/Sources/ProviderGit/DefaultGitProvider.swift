@@ -288,6 +288,44 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         }
     }
 
+    public func loadBlobData(commit: String, filePath: String, in repository: URL) throws -> Data {
+        try execute("loadBlobData") { try $0.loadBlobData(commit: commit, filePath: filePath, in: repository) }
+    }
+
+    public func loadBlobData(
+        commit: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Data {
+        try execute("loadBlobData") {
+            try $0.loadBlobData(
+                commit: commit,
+                filePath: filePath,
+                in: repository,
+                cancellation: cancellation
+            )
+        }
+    }
+
+    public func loadWorktreeFileData(filePath: String, in repository: URL) throws -> Data {
+        try execute("loadWorktreeFileData") { try $0.loadWorktreeFileData(filePath: filePath, in: repository) }
+    }
+
+    public func loadWorktreeFileData(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Data {
+        try execute("loadWorktreeFileData") {
+            try $0.loadWorktreeFileData(
+                filePath: filePath,
+                in: repository,
+                cancellation: cancellation
+            )
+        }
+    }
+
     public func currentBranch(in repository: URL) -> String? {
         primaryBackendOrNil()?.currentBranch(in: repository)
     }

@@ -140,6 +140,38 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         }
     }
 
+    public func renameProject(id: UUID, newName: String) throws {
+        guard let index = projects.firstIndex(where: { $0.id == id }) else { return }
+        let name = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, !name.contains("/") else {
+            throw ProjectRenameError.invalidName
+        }
+
+        let oldURL = projects[index].url
+        let newURL = oldURL.deletingLastPathComponent().appendingPathComponent(name)
+        guard newURL.standardizedFileURL != oldURL.standardizedFileURL else { return }
+        guard !FileManager.default.fileExists(atPath: newURL.path) else {
+            throw ProjectRenameError.targetExists
+        }
+
+        // 磁盘上重命名项目文件夹；失败时项目记录保持不变。
+        do {
+            try FileManager.default.moveItem(at: oldURL, to: newURL)
+        } catch {
+            throw ProjectRenameError.moveFailed(error.localizedDescription)
+        }
+
+        var project = projects[index]
+        project.url = newURL
+        project.title = name
+        projects[index] = project
+        if currentProject?.id == project.id {
+            currentProject = project
+        }
+        persist()
+        notify(.projectsChanged)
+    }
+
     public func pinProject(id: UUID, isPinned: Bool) {
         guard let index = projects.firstIndex(where: { $0.id == id }) else { return }
         var project = projects[index]

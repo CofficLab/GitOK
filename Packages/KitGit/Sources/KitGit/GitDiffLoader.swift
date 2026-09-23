@@ -1,5 +1,16 @@
 import Foundation
 
+public enum GitDiffLoaderError: Error, LocalizedError, Equatable, Sendable {
+    case invalidFilePath(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case let .invalidFilePath(path):
+            return "Invalid repository file path: \(path)"
+        }
+    }
+}
+
 /// 某个 commit 中单个文件的一次变更。
 public struct GitFileChange: Identifiable, Equatable, Sendable {
     public enum Status: String, Sendable {
@@ -59,6 +70,44 @@ public enum GitDiffLoader {
     /// Diff enumeration can traverse large trees or invoke clean filters; bound
     /// each CLI stage so a stale detail request cannot keep loading forever.
     public static let commandTimeout: TimeInterval = 15
+
+    public static func loadBlobData(
+        commit: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> Data {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let data = try GitProcessRunner.runData(
+            ["cat-file", "blob", "\(commit):\(filePath)"],
+            in: repository,
+            cancellation: cancellation,
+            timeout: commandTimeout
+        )
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return data
+    }
+
+    public static func loadWorktreeFileData(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation? = nil
+    ) throws -> Data {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+
+        let repositoryURL = repository.standardizedFileURL
+        let fileURL = repositoryURL.appendingPathComponent(filePath).standardizedFileURL
+        let repositoryPrefix = repositoryURL.path.hasSuffix("/")
+            ? repositoryURL.path
+            : repositoryURL.path + "/"
+        guard fileURL.path.hasPrefix(repositoryPrefix) else {
+            throw GitDiffLoaderError.invalidFilePath(filePath)
+        }
+
+        let data = try Data(contentsOf: fileURL)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return data
+    }
 
     private struct NulTokenParser {
         private var buffer = Data()

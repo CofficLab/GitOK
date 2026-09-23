@@ -39,6 +39,7 @@ public struct IconWorkspaceView: View {
 
             if model.icons.isEmpty {
                 ContentUnavailableView(IconLocalization.string("No Icons", bundle: .module), systemImage: "app.dashed", description: Text(IconLocalization.string("Create an icon to get started.", bundle: .module)))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(model.icons, selection: Binding(
                     get: { model.selectedIconID },
@@ -49,6 +50,7 @@ public struct IconWorkspaceView: View {
                 .listStyle(.sidebar)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     private var editor: some View {

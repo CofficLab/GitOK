@@ -164,6 +164,19 @@ public protocol GitOperationProviding: AnyObject, Sendable {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> String
+    func loadBlobData(commit: String, filePath: String, in repository: URL) throws -> Data
+    func loadBlobData(
+        commit: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Data
+    func loadWorktreeFileData(filePath: String, in repository: URL) throws -> Data
+    func loadWorktreeFileData(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Data
 
     func currentBranch(in repository: URL) -> String?
     func latestTag(in repository: URL) -> String?
@@ -453,6 +466,37 @@ public extension GitOperationProviding {
         let diff = try loadWorktreeDiff(filePath: filePath, in: repository)
         if cancellation?.isCancelled == true { throw CancellationError() }
         return diff
+    }
+
+    func loadBlobData(commit: String, filePath: String, in repository: URL) throws -> Data {
+        try GitDiffLoader.loadBlobData(commit: commit, filePath: filePath, in: repository)
+    }
+
+    func loadBlobData(
+        commit: String,
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Data {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let data = try loadBlobData(commit: commit, filePath: filePath, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return data
+    }
+
+    func loadWorktreeFileData(filePath: String, in repository: URL) throws -> Data {
+        try GitDiffLoader.loadWorktreeFileData(filePath: filePath, in: repository)
+    }
+
+    func loadWorktreeFileData(
+        filePath: String,
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Data {
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        let data = try loadWorktreeFileData(filePath: filePath, in: repository)
+        if cancellation?.isCancelled == true { throw CancellationError() }
+        return data
     }
 
     /// 默认兼容实现：没有原生进度支持的后端仍提供开始 / 完成状态。

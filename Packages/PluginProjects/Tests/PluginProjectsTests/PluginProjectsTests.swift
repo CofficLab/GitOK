@@ -182,4 +182,87 @@ final class PluginProjectsTests: XCTestCase {
 
         XCTAssertEqual(count, 0, "cancel 后不应再收到事件")
     }
+
+    // MARK: - Rename
+
+    func testRenameProjectRenamesFolderAndUpdatesRecord() throws {
+        let manager = ProjectManager(storeURL: storeURL)
+        let folder = tempDir.appendingPathComponent("OldName", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        manager.addProject(at: folder)
+
+        try manager.renameProject(id: manager.projects[0].id, newName: "NewName")
+
+        let renamed = manager.projects[0]
+        XCTAssertEqual(renamed.title, "NewName")
+        XCTAssertEqual(renamed.url.lastPathComponent, "NewName")
+        XCTAssertFalse(FileManager.default.fileExists(atPath: folder.path), "旧文件夹应已被改名")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: tempDir.appendingPathComponent("NewName").path), "新文件夹应存在")
+
+        // 持久化后重载仍保持新名称与新路径。
+        let reloaded = ProjectManager(storeURL: storeURL)
+        XCTAssertEqual(reloaded.projects[0].title, "NewName")
+        XCTAssertEqual(reloaded.projects[0].url.lastPathComponent, "NewName")
+    }
+
+    func testRenameProjectRejectsInvalidName() throws {
+        let manager = ProjectManager(storeURL: storeURL)
+        let folder = tempDir.appendingPathComponent("RepoA", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        manager.addProject(at: folder)
+
+        XCTAssertThrowsError(try manager.renameProject(id: manager.projects[0].id, newName: "   ")) { error in
+            XCTAssertEqual(error as? ProjectRenameError, .invalidName)
+        }
+        XCTAssertThrowsError(try manager.renameProject(id: manager.projects[0].id, newName: "a/b")) { error in
+            XCTAssertEqual(error as? ProjectRenameError, .invalidName)
+        }
+        XCTAssertEqual(manager.projects[0].title, "RepoA", "失败时记录不变")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: folder.path), "失败时磁盘文件夹不变")
+    }
+
+    func testRenameProjectRejectsExistingTarget() throws {
+        let manager = ProjectManager(storeURL: storeURL)
+        let a = tempDir.appendingPathComponent("RepoA", isDirectory: true)
+        let b = tempDir.appendingPathComponent("RepoB", isDirectory: true)
+        try FileManager.default.createDirectory(at: a, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: b, withIntermediateDirectories: true)
+        manager.addProject(at: a)
+
+        XCTAssertThrowsError(try manager.renameProject(id: manager.projects[0].id, newName: "RepoB")) { error in
+            XCTAssertEqual(error as? ProjectRenameError, .targetExists)
+        }
+        XCTAssertEqual(manager.projects[0].title, "RepoA")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: b.path), "已存在的目标文件夹不受影响")
+    }
+
+    func testRenameProjectUpdatesCurrentProjectAndNotifies() throws {
+        let manager = ProjectManager(storeURL: storeURL)
+        let folder = tempDir.appendingPathComponent("RepoA", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        manager.openProject(at: folder)
+
+        var events: [ProjectProvidingEvent] = []
+        let handle = manager.addObserver { events.append($0) }
+
+        try manager.renameProject(id: manager.projects[0].id, newName: "RepoB")
+
+        XCTAssertEqual(manager.currentProject?.title, "RepoB", "重命名当前项目应同步 currentProject")
+        XCTAssertEqual(manager.currentProject?.url.lastPathComponent, "RepoB")
+        XCTAssertTrue(events.contains { if case .projectsChanged = $0 { return true }; return false },
+                      "重命名应通知 projectsChanged，驱动侧边栏刷新")
+        handle.cancel()
+    }
+
+    func testRenameProjectSameNameIsNoOp() throws {
+        let manager = ProjectManager(storeURL: storeURL)
+        let folder = tempDir.appendingPathComponent("RepoA", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        manager.addProject(at: folder)
+
+        try manager.renameProject(id: manager.projects[0].id, newName: "RepoA")
+
+        XCTAssertEqual(manager.projects[0].title, "RepoA")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: folder.path))
+    }
 }
