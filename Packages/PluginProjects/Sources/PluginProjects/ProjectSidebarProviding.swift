@@ -72,6 +72,11 @@ private struct ProjectSidebarView: View {
     @StateObject private var observation: ProjectObservationModel
     @State private var searchText = ""
     @State private var isPresentingClone = false
+    /// 待重命名的项目（非 nil 时弹出重命名输入框）。
+    @State private var projectPendingRename: Project?
+    @State private var renameText = ""
+    @State private var renameErrorMessage: String?
+    @State private var isPresentingRenameError = false
 
     init(
         projects: any ProjectProviding,
@@ -156,6 +161,37 @@ private struct ProjectSidebarView: View {
                 )
             }
         }
+        // 重命名输入：预填当前名称，确认后执行磁盘重命名。
+        .alert(
+            LumiPluginLocalization.string("Rename Project", bundle: .module),
+            isPresented: renameAlertPresented,
+            presenting: projectPendingRename
+        ) { _ in
+            TextField(LumiPluginLocalization.string("Project Name", bundle: .module), text: $renameText)
+            Button(LumiPluginLocalization.string("Rename", bundle: .module)) {
+                performRename()
+            }
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
+        } message: { project in
+            Text(project.url.path)
+        }
+        // 重命名失败（非法名称 / 目标已存在 / 磁盘错误）提示。
+        .alert(
+            LumiPluginLocalization.string("Rename Failed", bundle: .module),
+            isPresented: $isPresentingRenameError
+        ) {
+            Button(LumiPluginLocalization.string("OK", bundle: .module), role: .cancel) {}
+        } message: {
+            Text(renameErrorMessage ?? "")
+        }
+    }
+
+    /// 重命名输入框的展示绑定：`projectPendingRename` 非 nil 时弹出。
+    private var renameAlertPresented: Binding<Bool> {
+        Binding(
+            get: { projectPendingRename != nil },
+            set: { if !$0 { projectPendingRename = nil } }
+        )
     }
 
     /// 置顶项目与未置顶项目的分界索引（用于插入分隔线）。
@@ -185,6 +221,16 @@ private struct ProjectSidebarView: View {
                 Label(
                     LumiPluginLocalization.string(project.isPinned ? "Unpin" : "Pin to Top", bundle: .module),
                     systemImage: project.isPinned ? "pin.slash" : "pin"
+                )
+            }
+
+            Button {
+                renameText = project.title
+                projectPendingRename = project
+            } label: {
+                Label(
+                    LumiPluginLocalization.string("Rename Project", bundle: .module),
+                    systemImage: "pencil"
                 )
             }
 
@@ -230,6 +276,18 @@ private struct ProjectSidebarView: View {
 
     private func openProjectInFinder(_ project: Project) {
         NSWorkspace.shared.activateFileViewerSelecting([project.url])
+    }
+
+    /// 执行重命名：调用 `ProjectProviding.renameProject`，失败时展示错误弹窗。
+    @MainActor
+    private func performRename() {
+        guard let project = projectPendingRename else { return }
+        do {
+            try projects.renameProject(id: project.id, newName: renameText)
+        } catch {
+            renameErrorMessage = error.localizedDescription
+            isPresentingRenameError = true
+        }
     }
 
     private func addExistingProject() {

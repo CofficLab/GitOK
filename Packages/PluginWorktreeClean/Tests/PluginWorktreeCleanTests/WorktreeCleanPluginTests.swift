@@ -51,6 +51,7 @@ final class WorktreeCleanPluginTests: XCTestCase {
         func closeCurrentProject() {}
         func addProject(at url: URL) {}
         func removeProject(id: UUID) {}
+        func renameProject(id: UUID, newName: String) throws {}
         func pinProject(id: UUID, isPinned: Bool) {}
         func setCurrentProject(id: UUID?) {}
         func refresh() {}
