@@ -145,7 +145,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
-        let status = try LibGit2.getRepositoryStatus(at: repository.path)
+        let status = try LibGit2.getRepositoryStatus(
+            at: repository.path,
+            detectRenames: false
+        )
         return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
     }
 
@@ -181,7 +184,8 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try withLibGit2Cancellation(cancellation) { libCancellation in
             let status = try LibGit2.getRepositoryStatus(
                 at: repository.path,
-                cancellation: libCancellation
+                cancellation: libCancellation,
+                detectRenames: false
             )
             try checkCancellation(cancellation)
             return GitWorktreeStatus(
@@ -193,7 +197,10 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
-        try LibGit2.getStatusEntries(at: repository.path).map(Self.mapStatusEntry)
+        try LibGit2.getStatusEntries(
+            at: repository.path,
+            detectRenames: false
+        ).map(Self.mapStatusEntry)
     }
 
     func loadEntries(
@@ -203,7 +210,8 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try withLibGit2Cancellation(cancellation) { libCancellation in
             try LibGit2.getStatusEntries(
                 at: repository.path,
-                cancellation: libCancellation
+                cancellation: libCancellation,
+                detectRenames: false
             ).map(Self.mapStatusEntry)
         }
     }

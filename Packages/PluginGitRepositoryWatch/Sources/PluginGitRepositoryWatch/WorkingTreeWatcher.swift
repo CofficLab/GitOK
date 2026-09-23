@@ -11,7 +11,7 @@ import Foundation
 /// - `WorkingTreeWatcher` 监听项目根目录，检测工作区文件变化。
 ///
 /// 注意事项：
-/// - 自动忽略 `.git`、`.build` 和 DerivedData 等仓库内部生成目录；
+    /// - 自动忽略 Git / SwiftPM / 前端构建工具维护的生成目录；
 /// - 0.5 秒延迟窗口合并突发事件；
 /// - 派发到 `utility` 队列，避免阻塞主线程；
 /// - `onChange` 在 MainActor 上执行。
@@ -101,6 +101,12 @@ final class WorkingTreeWatcher: @unchecked Sendable {
             repository.appendingPathComponent(".git").path,
             repository.appendingPathComponent(".build").path,
             repository.appendingPathComponent("DerivedData").path,
+            repository.appendingPathComponent("node_modules").path,
+            repository.appendingPathComponent("dist").path,
+            repository.appendingPathComponent(".astro").path,
+            repository.appendingPathComponent(".edgeone").path,
+            repository.appendingPathComponent(".cache").path,
+            repository.appendingPathComponent("coverage").path,
         ]
     }
 }

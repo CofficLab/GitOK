@@ -16,7 +16,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
-            revision: "7c7cbfb062c78c664c6a6d46d37bc71d12abc913"
+            revision: "8472b0a5e25eef70e02cb577c9771e26f5d7d916"
         ),
     ],
     targets: [

@@ -630,7 +630,13 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
     }
 
     public func conflictFiles(in repository: URL) -> [String] {
-        primaryBackendOrNil()?.conflictFiles(in: repository) ?? []
+        // Conflict state is derived from the same worktree status snapshot
+        // consumed by the status rail and changes list. Reusing the provider
+        // cache avoids a second full status walk when the conflict resolver
+        // is presented at the same time as the worktree UI.
+        (try? loadWorktreeSnapshot(in: repository).entries.compactMap { entry in
+            entry.stagedStatus == "U" || entry.worktreeStatus == "U" ? entry.path : nil
+        }) ?? []
     }
 
     public func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String {
