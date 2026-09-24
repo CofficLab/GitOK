@@ -18,4 +18,30 @@ final class GitDiffContentTests: XCTestCase {
             .pdf
         )
     }
+
+    func testTypeScriptExtensionUsesContentDetection() {
+        let source = Data("export const language = 'en'\n".utf8)
+
+        XCTAssertTrue(GitDiffContentDetector.needsContentInspection(forPath: "src/language.ts"))
+        XCTAssertNil(GitDiffContentDetector.kind(forPath: "src/language.ts"))
+        XCTAssertNil(GitDiffContentDetector.kind(forPath: "src/language.ts", data: source))
+        XCTAssertTrue(GitDiffContentDetector.isLikelyText(source))
+    }
+
+    func testMPEGTransportStreamWithTypeScriptExtensionRemainsVideo() {
+        let packetSize = 188
+        var transportStream = Data()
+        for _ in 0..<5 {
+            var packet = Data(repeating: 0, count: packetSize)
+            packet[0] = 0x47
+            packet[3] = 0x10 // payload-only adaptation field control
+            transportStream.append(packet)
+        }
+
+        XCTAssertEqual(
+            GitDiffContentDetector.kind(forPath: "recordings/video.ts", data: transportStream),
+            .video
+        )
+        XCTAssertFalse(GitDiffContentDetector.isLikelyText(transportStream))
+    }
 }
