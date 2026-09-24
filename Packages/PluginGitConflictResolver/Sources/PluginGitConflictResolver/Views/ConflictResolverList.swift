@@ -576,7 +576,7 @@ private struct ConflictFileActionButton: View {
     }
 }
 
-/// 垂直卡片样式的「继续合并」按钮：上方图标 + 下方文字，比普通按钮更醒目。
+/// 圆形「继续合并」按钮：绿色圆形按钮（内含箭头图标）+ 下方文字标签。
 /// 仅用于冲突弹窗正文中的继续合并入口；顶部操作栏（终止合并一行）保持原样式。
 private struct ContinueMergeCardButton: View {
     let title: String
@@ -590,24 +590,29 @@ private struct ContinueMergeCardButton: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: DesignTokens.Spacing.xs) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 26, weight: .medium))
+            VStack(spacing: DesignTokens.Spacing.sm) {
+                ZStack {
+                    Circle()
+                        .fill(backgroundColor)
+                        .frame(width: 64, height: 64)
+                        .shadow(
+                            color: isDisabled ? .clear : Color.black.opacity(0.16),
+                            radius: 10,
+                            x: 0,
+                            y: 4
+                        )
+
+                    Image(systemName: systemImage)
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundStyle(foregroundColor)
+                }
+
                 Text(title)
-                    .font(DesignTokens.Typography.callout)
+                    .font(DesignTokens.Typography.callout.weight(.medium))
+                    .foregroundStyle(titleColor)
             }
-            .foregroundStyle(foregroundColor)
-            .frame(minWidth: 168)
             .padding(.horizontal, DesignTokens.Spacing.lg)
-            .padding(.vertical, DesignTokens.Spacing.md)
-            .background(backgroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md, style: .continuous))
-            .shadow(
-                color: isDisabled ? .clear : Color.black.opacity(0.16),
-                radius: 10,
-                x: 0,
-                y: 4
-            )
+            .padding(.vertical, DesignTokens.Spacing.sm)
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
@@ -638,5 +643,9 @@ private struct ContinueMergeCardButton: View {
             return theme.primary.opacity(0.14)
         }
         return isEffectivelyHovered ? theme.primary.opacity(0.9) : theme.primary
+    }
+
+    private var titleColor: Color {
+        isDisabled ? theme.primary.opacity(0.5) : theme.primary
     }
 }
