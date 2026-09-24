@@ -226,6 +226,8 @@ private struct ThemePreviewPane: View {
     let containerBackground: Color
     let onApply: () -> Void
 
+    @LumiUI.LumiTheme private var currentUITheme: any LumiUI.LumiUITheme
+
     private var palette: LumiThemePalette { item.palette }
     private var primary: Color { palette.accentPrimary.color() }
     private var secondary: Color { palette.accentSecondary.color() }
@@ -257,14 +259,14 @@ private struct ThemePreviewPane: View {
             VStack(alignment: .leading, spacing: 7) {
                 Text(item.displayName)
                     .font(.title2.weight(.semibold))
-                    .foregroundStyle(textPrimary)
+                    .foregroundStyle(currentUITheme.textPrimary)
                 Text(item.description)
                     .font(.appCaption)
-                    .foregroundStyle(textSecondary)
+                    .foregroundStyle(currentUITheme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(appearanceLabel(for: item))
                     .font(.appMicro)
-                    .foregroundStyle(textSecondary.opacity(0.8))
+                    .foregroundStyle(currentUITheme.textSecondary.opacity(0.8))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
