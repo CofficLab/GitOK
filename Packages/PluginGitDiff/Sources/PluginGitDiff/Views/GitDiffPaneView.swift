@@ -152,7 +152,26 @@ struct GitDiffPaneView: View {
         let url = projectURL
         Task.detached(priority: .userInitiated) {
             let result: Result<GitDiffLoadedContent, Error> = Result {
-                if let previewKind = GitDiffContentDetector.kind(forPath: path) {
+                let previewKind = GitDiffContentDetector.kind(forPath: path)
+                let needsContentInspection = GitDiffContentDetector.needsContentInspection(forPath: path)
+
+                func loadTextDiff() throws -> String {
+                    if let commit {
+                        return try git.loadDiff(
+                            commit: commit.hash,
+                            filePath: path,
+                            in: url,
+                            cancellation: cancellation
+                        )
+                    }
+                    return try git.loadWorktreeDiff(
+                        filePath: path,
+                        in: url,
+                        cancellation: cancellation
+                    )
+                }
+
+                if previewKind != nil || needsContentInspection {
                     if previewKind == .pdf, let commit {
                         func loadOptionalBlob(_ hash: String) throws -> Data? {
                             do {
@@ -205,26 +224,17 @@ struct GitDiffPaneView: View {
                     guard data.count <= gitDiffMaxInlinePreviewBytes else {
                         throw GitDiffPreviewError.fileTooLarge(data.count)
                     }
-                    let detectedKind = GitDiffContentDetector.kind(forPath: path, data: data) ?? previewKind
-                    return .binary(kind: detectedKind, data: data)
+
+                    if let detectedKind = GitDiffContentDetector.kind(forPath: path, data: data) {
+                        return .binary(kind: detectedKind, data: data)
+                    }
+                    if needsContentInspection && GitDiffContentDetector.isLikelyText(data) {
+                        return .text(try loadTextDiff())
+                    }
+                    return .binary(kind: .binary, data: data)
                 }
 
-                let text: String
-                if let commit {
-                    text = try git.loadDiff(
-                        commit: commit.hash,
-                        filePath: path,
-                        in: url,
-                        cancellation: cancellation
-                    )
-                } else {
-                    text = try git.loadWorktreeDiff(
-                        filePath: path,
-                        in: url,
-                        cancellation: cancellation
-                    )
-                }
-                return .text(text)
+                return .text(try loadTextDiff())
             }
             await MainActor.run {
                 guard token == loadToken, loadedKey == key else { return }
