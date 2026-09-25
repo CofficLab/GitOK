@@ -137,7 +137,7 @@ private struct SubmoduleContentView: View {
             }
             Divider()
             if isLoading {
-                ProgressView()
+                SubmoduleListSkeletonView()
                     .frame(maxWidth: .infinity, minHeight: 80)
             } else if submodules.isEmpty {
                 VStack(spacing: 6) {
