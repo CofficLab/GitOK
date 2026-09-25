@@ -129,6 +129,9 @@ public protocol GitOperationProviding: AnyObject, Sendable {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeSnapshot
+    /// Returns the latest in-memory snapshot for immediate display. The value
+    /// may be stale after a repository event; callers should refresh it through
+    /// `loadWorktreeSnapshot` before treating it as current.
     func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot?
     func invalidateWorktreeSnapshot(in repository: URL)
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
