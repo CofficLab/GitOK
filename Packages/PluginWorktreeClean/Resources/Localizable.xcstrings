@@ -189,6 +189,7 @@
       }
     },
     "Analyzing recent Git history..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -200,6 +201,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在分析最近一年的提交记录…"
+          }
+        }
+      }
+    },
+    "Analyzing tracked source files..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzing tracked source files..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在分析已跟踪源文件…"
           }
         }
       }
@@ -234,6 +252,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "套用"
+          }
+        }
+      }
+    },
+    "Applying collaborator..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applying collaborator..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在应用协作者…"
+          }
+        }
+      }
+    },
+    "Applying Git user..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applying Git user..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在应用 Git 用户…"
           }
         }
       }
@@ -422,22 +472,6 @@
         }
       }
     },
-    "Disk Usage" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Usage"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "磁盘占用"
-          }
-        }
-      }
-    },
     "Confirm, and the clutter is removed." : {
       "localizations" : {
         "en" : {
@@ -536,6 +570,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "目前分支"
+          }
+        }
+      }
+    },
+    "Disk Usage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Usage"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "磁盘占用"
           }
         }
       }
@@ -862,6 +912,22 @@
         }
       }
     },
+    "Languages" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Languages"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编程语言"
+          }
+        }
+      }
+    },
     "Latest Tag" : {
       "localizations" : {
         "en" : {
@@ -913,6 +979,7 @@
       }
     },
     "Loading commit activity..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -928,23 +995,93 @@
         }
       }
     },
-    "Languages" : {
+    "Loading commit count..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Languages"
+            "value" : "Loading commit count..."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "编程语言"
+            "value" : "正在加载提交数量…"
+          }
+        }
+      }
+    },
+    "Loading disk usage..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading disk usage..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在加载磁盘占用…"
+          }
+        }
+      }
+    },
+    "Loading first commit..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading first commit..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在加载首次提交…"
+          }
+        }
+      }
+    },
+    "Loading Git user..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading Git user..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在加载 Git 用户…"
+          }
+        }
+      }
+    },
+    "Loading latest tag..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading latest tag..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在加载最新标签…"
           }
         }
       }
     },
     "Loading project languages..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -956,38 +1093,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在加载项目语言…"
-          }
-        }
-      }
-    },
-    "Analyzing tracked source files..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Analyzing tracked source files..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在分析已跟踪源文件…"
-          }
-        }
-      }
-    },
-    "Other" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Other"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "其他"
           }
         }
       }
@@ -1309,6 +1414,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未設定"
+          }
+        }
+      }
+    },
+    "Other" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
           }
         }
       }
@@ -1920,118 +2041,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你在試運行中審閱確切清單。"
-          }
-        }
-      }
-    },
-    "Loading latest tag..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading latest tag..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载最新标签…"
-          }
-        }
-      }
-    },
-    "Loading commit count..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading commit count..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载提交数量…"
-          }
-        }
-      }
-    },
-    "Loading disk usage..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading disk usage..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载磁盘占用…"
-          }
-        }
-      }
-    },
-    "Loading first commit..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading first commit..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载首次提交…"
-          }
-        }
-      }
-    },
-    "Loading Git user..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading Git user..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载 Git 用户…"
-          }
-        }
-      }
-    },
-    "Applying Git user..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Applying Git user..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在应用 Git 用户…"
-          }
-        }
-      }
-    },
-    "Applying collaborator..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Applying collaborator..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在应用协作者…"
           }
         }
       }
