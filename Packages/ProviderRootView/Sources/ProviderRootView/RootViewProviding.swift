@@ -248,6 +248,10 @@ public final class RootTrailingPane: ObservableObject {
     public let content: AnyView
 
     @Published public var isVisible: Bool
+    /// Whether the pane should occupy the whole workbench content area.
+    @Published public var isFullScreen = false
+    /// Whether this pane exposes the full-screen toggle in its toolbar.
+    public let supportsFullScreen: Bool
     /// Called when the user dismisses the pane from its own toolbar.
     /// Consumers can use this callback to clear the selection that caused
     /// the pane to be shown.
@@ -263,6 +267,7 @@ public final class RootTrailingPane: ObservableObject {
         maxWidth: CGFloat = .infinity,
         width: ChatSectionWidth? = nil,
         isVisible: Bool = true,
+        supportsFullScreen: Bool = false,
         onDismiss: (@MainActor () -> Void)? = nil,
         content: AnyView
     ) {
@@ -273,6 +278,7 @@ public final class RootTrailingPane: ObservableObject {
             maxWidth: maxWidth
         )
         self.isVisible = isVisible
+        self.supportsFullScreen = supportsFullScreen
         self.onDismiss = onDismiss
         self.content = content
     }

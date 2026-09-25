@@ -179,6 +179,22 @@ struct ProviderRootViewTests {
         #expect(!provider.hasActiveContent)
     }
 
+    @Test("Trailing pane supports toggling full-screen mode")
+    func trailingPaneSupportsFullScreenMode() {
+        let pane = RootTrailingPane(
+            id: "diff",
+            supportsFullScreen: true,
+            content: AnyView(Text("diff"))
+        )
+
+        #expect(pane.supportsFullScreen)
+        #expect(!pane.isFullScreen)
+        pane.isFullScreen = true
+        #expect(pane.isFullScreen)
+        pane.isFullScreen = false
+        #expect(!pane.isFullScreen)
+    }
+
     @Test("注入工具栏后返回根视图")
     func defaultProviderReturnsRootViewWithToolbar() {
         let provider = DefaultRootViewProvider()
