@@ -573,7 +573,10 @@ private struct WorktreeActionButton: View {
             buttonContent
             .foregroundStyle(actionColor)
             .padding(.horizontal, 10)
-            .frame(width: buttonWidth, height: 34)
+            // Keep the compact minimum width, but let the badge grow for
+            // multi-digit ahead/behind counts instead of clipping its text.
+            .frame(minWidth: buttonWidth)
+            .frame(height: 34)
             .background(buttonBackground)
             .overlay(buttonBorder)
             .clipShape(Capsule())
@@ -642,7 +645,9 @@ private struct WorktreeActionButton: View {
                     .transition(contentTransition)
             }
         }
-        .frame(width: 20, height: 20)
+        // The loader and action glyphs remain compact, while a badge such as
+        // `↑100` must be allowed to use its intrinsic width.
+        .frame(minWidth: 20, minHeight: 20)
     }
 
     private var contentTransition: AnyTransition {
@@ -673,16 +678,19 @@ private struct WorktreeActionButton: View {
                     Text(String(badge.dropFirst()))
                 }
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .fixedSize(horizontal: true, vertical: false)
             } else if badge.hasPrefix("↓"), !badge.contains(" ") {
                 HStack(spacing: 3) {
                     Image(systemName: "arrow.down")
                     Text(String(badge.dropFirst()))
                 }
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .fixedSize(horizontal: true, vertical: false)
             } else {
                 Text(badge)
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
             }
         }
     }
