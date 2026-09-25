@@ -18,6 +18,7 @@ let package = Package(
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderCoAuthor"),
+        .package(path: "../ProviderStorage"),
     ],
     targets: [
         .target(
@@ -27,6 +28,7 @@ let package = Package(
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderCoAuthor", package: "ProviderCoAuthor"),
+                .product(name: "ProviderStorage", package: "ProviderStorage"),
             ],
             path: "Sources/ProviderCommitForm",
             resources: [
@@ -35,7 +37,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ProviderCommitFormTests",
-            dependencies: ["ProviderCommitForm"],
+            dependencies: [
+                "ProviderCommitForm",
+                .product(name: "ProviderStorage", package: "ProviderStorage"),
+            ],
             path: "Tests/ProviderCommitFormTests"
         ),
     ]

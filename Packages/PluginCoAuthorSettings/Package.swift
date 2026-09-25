@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitSuperLog"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderCoAuthor"),
@@ -28,7 +28,7 @@ let package = Package(
         .target(
             name: "PluginCoAuthorSettings",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderCoAuthor", package: "ProviderCoAuthor"),

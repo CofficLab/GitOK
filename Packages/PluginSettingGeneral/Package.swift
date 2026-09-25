@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitSuperLog"),
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderCommand"),
@@ -29,7 +29,7 @@ let package = Package(
             name: "PluginSettingGeneral",
             dependencies: [
                 "KitSuperLog",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "ProviderCommand", package: "ProviderCommand"),

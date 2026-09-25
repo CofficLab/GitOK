@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "FactoryGitOK", targets: ["FactoryGitOK"]),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../PluginActivityStatus"),
@@ -42,6 +42,7 @@ let package = Package(
         .package(path: "../PluginGitLFS"),
         .package(path: "../PluginGitSubmodule"),
         .package(path: "../PluginGitRepositoryWatch"),
+        .package(path: "../PluginGitWorktreePreheat"),
         .package(path: "../ProviderAutoPush"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderGitConflictResolver"),
@@ -104,7 +105,7 @@ let package = Package(
         .target(
             name: "FactoryGitOK",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderContentView", package: "ProviderContentView"),
@@ -157,6 +158,7 @@ let package = Package(
                 .product(name: "PluginGitLFS", package: "PluginGitLFS"),
                 .product(name: "PluginGitSubmodule", package: "PluginGitSubmodule"),
                 .product(name: "PluginGitRepositoryWatch", package: "PluginGitRepositoryWatch"),
+                .product(name: "PluginGitWorktreePreheat", package: "PluginGitWorktreePreheat"),
                 .product(name: "ProviderAutoPush", package: "ProviderAutoPush"),
                 .product(name: "PluginGitLibGit2", package: "PluginGitLibGit2"),
                 .product(name: "PluginLogoCoffic", package: "PluginLogoCoffic"),
@@ -206,7 +208,7 @@ let package = Package(
             name: "FactoryGitOKTests",
             dependencies: [
                 "FactoryGitOK",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderTheme", package: "ProviderTheme"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),

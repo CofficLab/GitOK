@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
         .package(path: "../ProviderSettingView"),
         .package(path: "../ProviderStorage"),
@@ -26,7 +26,7 @@ let package = Package(
         .target(
             name: "PluginSettingView",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "ProviderStorage", package: "ProviderStorage"),

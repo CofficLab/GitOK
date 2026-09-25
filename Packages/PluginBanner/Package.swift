@@ -10,7 +10,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../BannerCoreKit"),
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGitOKSupport"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProjectRulesKit"),
@@ -25,7 +25,7 @@ let package = Package(
             name: "PluginBanner",
             dependencies: [
                 .product(name: "BannerCoreKit", package: "BannerCoreKit"),
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGitOKSupport", package: "KitGitOKSupport"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),

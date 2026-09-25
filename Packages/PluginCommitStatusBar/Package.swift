@@ -7,7 +7,7 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [.library(name: "PluginCommitStatusBar", targets: ["PluginCommitStatusBar"])],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(path: "../KitLocalization"),
@@ -21,7 +21,7 @@ let package = Package(
         .target(
             name: "PluginCommitStatusBar",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 "KitSuperLog",
                 .product(name: "KitLocalization", package: "KitLocalization"),
@@ -40,7 +40,7 @@ let package = Package(
             name: "PluginCommitStatusBarTests",
             dependencies: [
                 "PluginCommitStatusBar",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
             ],

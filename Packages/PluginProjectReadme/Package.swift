@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginProjectReadme", targets: ["PluginProjectReadme"]),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderProjectReadme"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.0.2"),
@@ -18,7 +18,7 @@ let package = Package(
         .target(
             name: "PluginProjectReadme",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "ProviderProjectReadme", package: "ProviderProjectReadme"),

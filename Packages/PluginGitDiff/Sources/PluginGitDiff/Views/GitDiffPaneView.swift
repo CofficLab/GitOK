@@ -90,7 +90,7 @@ struct GitDiffPaneView: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if isLoading && loadedContent == nil {
-            ProgressView()
+            GitDiffSkeletonView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let loadError {
             AppEmptyState(

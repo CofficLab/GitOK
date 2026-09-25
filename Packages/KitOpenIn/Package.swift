@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderDocsView"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
@@ -29,7 +29,7 @@ let package = Package(
         .target(
             name: "KitOpenIn",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "LumiUI", package: "LumiUI"),

@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderLogo"),
         .package(path: "../KitSuperLog"),
@@ -25,7 +25,7 @@ let package = Package(
         .target(
             name: "PluginLogoCoffic",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderLogo", package: "ProviderLogo"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),

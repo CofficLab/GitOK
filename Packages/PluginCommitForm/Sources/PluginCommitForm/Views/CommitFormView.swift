@@ -48,7 +48,11 @@ public struct CommitFormView: View {
 
     @State private var subject: String = ""
     @State private var category: CommitCategory = .Chore
-    @State private var style: CommitStyle = CommitStyleStore.current
+    /// UI 镜像值；权威来源是 `CommitFormProviding`（按项目持久化）。
+    ///
+    /// 项目切换 / 首次出现时通过 `form.loadStyle(for:)` 装载，再经
+    /// `syncFromForm()` 同步到本地，因此这里的初值不参与决策。
+    @State private var style: CommitStyle = .emoji
     @State private var coAuthors: [CoAuthor] = []
     @State private var user: (name: String?, email: String?)?
     @State private var showCoAuthorSheet = false
@@ -143,10 +147,14 @@ public struct CommitFormView: View {
         }
         .onReceive(formObservation.$revision) { _ in syncFromForm() }
         .onAppear {
+            // 首次出现时装载当前项目的风格（权威来源在 Provider）。
+            form.loadStyle(for: projects.currentProject?.url)
             syncFromForm()
             loadUserIfNeeded()
         }
-        .onChange(of: projects.currentProject?.url) { _, _ in
+        .onChange(of: projects.currentProject?.url) { _, newURL in
+            // 切换项目：装载该项目的风格，再同步本地镜像值。
+            form.loadStyle(for: newURL)
             syncFromForm()
             loadUserIfNeeded()
         }

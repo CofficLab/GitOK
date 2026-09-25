@@ -135,7 +135,7 @@ struct BranchPickerPopoverView: View {
     @ViewBuilder
     private var listContent: some View {
         if isLoading && branches.isEmpty {
-            ProgressView()
+            BranchPickerSkeletonView()
                 .frame(maxWidth: .infinity, minHeight: 80)
         } else if branches.isEmpty {
             emptyState(title: LumiPluginLocalization.string("No Branches", bundle: .module), icon: "arrow.triangle.branch")

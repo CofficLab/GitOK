@@ -38,8 +38,6 @@ packages:
     path: Packages/KitGitOKUpdate
   FactoryCore:
     path: Packages/FactoryCore
-  KernelCore:
-    path: Packages/KernelCore
   KitGitCore:
     path: Packages/KitGitCore
   Sparkle:
@@ -74,7 +72,6 @@ targets:
       - package: GitOKAppCore
       - package: KitGitOKUpdate
       - package: FactoryCore
-      - package: KernelCore
       - package: KitGitCore
       - package: Sparkle
     settings:

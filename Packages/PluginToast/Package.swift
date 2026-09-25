@@ -8,7 +8,7 @@ let package = Package(
     products: [.library(name: "PluginToast", targets: ["PluginToast"])],
     dependencies: [
         .package(path: "../KitSuperLog"),
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitLocalization"),
         .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderToast"),
@@ -20,7 +20,7 @@ let package = Package(
             name: "PluginToast",
             dependencies: [
                 "KitSuperLog",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitLocalization", package: "KitLocalization"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
@@ -36,7 +36,7 @@ let package = Package(
             name: "PluginToastTests",
             dependencies: [
                 "PluginToast",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
             ],
             path: "Tests/PluginToastTests"

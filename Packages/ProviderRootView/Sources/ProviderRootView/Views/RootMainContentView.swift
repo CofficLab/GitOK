@@ -227,6 +227,11 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
                 Spacer(minLength: 0)
                 minimizeButton
                 maximizeButton(containerWidth: containerWidth)
+                #if os(macOS)
+                if trailingPane.supportsFullScreen {
+                    fullScreenButton
+                }
+                #endif
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -268,6 +273,15 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
             setPaneWidth(min(containerWidth, trailingPane.maxWidth))
         }
         .help(LumiPluginLocalization.string("Maximize Right Panel", bundle: .module))
+    }
+
+    private var fullScreenButton: some View {
+        AppIconButton(systemImage: "arrow.up.left.and.arrow.down.right", size: .regular) {
+            trailingPane.onFullScreen?()
+        }
+        .help(
+            LumiPluginLocalization.string("View Diff Full Screen", bundle: .module)
+        )
     }
 
     #if !os(macOS)

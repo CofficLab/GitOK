@@ -7,7 +7,7 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [.library(name: "PluginCommitToast", targets: ["PluginCommitToast"])],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(path: "../KitLocalization"),
@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "PluginCommitToast",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 "KitSuperLog",
                 .product(name: "KitLocalization", package: "KitLocalization"),
@@ -38,7 +38,7 @@ let package = Package(
             name: "PluginCommitToastTests",
             dependencies: [
                 "PluginCommitToast",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
             ],
