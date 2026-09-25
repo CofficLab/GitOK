@@ -77,7 +77,7 @@ public struct RemoteRepositoryView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 6) {
                     if isLoading {
-                        ProgressView()
+                        RemoteRepositorySkeletonView()
                             .frame(maxWidth: .infinity, minHeight: 120)
                     } else if remotes.isEmpty {
                         VStack(spacing: 6) {
