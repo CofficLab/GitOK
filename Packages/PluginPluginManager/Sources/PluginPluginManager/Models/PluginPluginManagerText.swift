@@ -56,7 +56,7 @@ extension PluginCategory {
     /// 展示顺序（用于分类筛选标签栏；`allCases` 缺失时作为排序依据）。
     static var displayOrder: [PluginCategory] {
         [
-            .core, .chat, .llm, .system, .project, .editor,
+            .core, .chat, .llm, .system, .project, .feature, .editor,
             .integration, .design, .general,
         ]
     }
@@ -68,6 +68,7 @@ extension PluginCategory {
         case .llm: LumiPluginLocalization.string("Model", bundle: .module)
         case .editor: LumiPluginLocalization.string("Editor", bundle: .module)
         case .project: LumiPluginLocalization.string("Project", bundle: .module)
+        case .feature: LumiPluginLocalization.string("Feature", bundle: .module)
         case .system: LumiPluginLocalization.string("System", bundle: .module)
         case .design: LumiPluginLocalization.string("Design", bundle: .module)
         case .integration: LumiPluginLocalization.string("Integration", bundle: .module)
@@ -82,6 +83,7 @@ extension PluginCategory {
         case .llm: "cpu"
         case .editor: "chevron.left.forwardslash.chevron.right"
         case .project: "folder"
+        case .feature: "square.grid.2x2"
         case .system: "desktopcomputer"
         case .design: "paintbrush"
         case .integration: "arrow.up.right.square"
@@ -96,6 +98,7 @@ extension PluginCategory {
         case .llm: 20
         case .system: 25
         case .project: 30
+        case .feature: 32
         case .editor: 35
         case .integration: 40
         case .design: 45
