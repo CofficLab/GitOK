@@ -50,11 +50,13 @@ struct CollaboratorSectionView: View {
             description: collaborator.email,
             icon: "person.2"
         ) {
-            if isLoadingUserConfiguration || (isApplying && !isCurrent) {
+            if isApplying && !isCurrent {
                 ContentLoadingIndicator(
-                    isApplying ? collaboratorLoc("Applying collaborator...") : collaboratorLoc("Loading Git user..."),
+                    collaboratorLoc("Applying collaborator..."),
                     controlSize: .small
                 )
+            } else if isLoadingUserConfiguration {
+                CollaboratorSkeletonBar()
             } else if isCurrent {
                 Image(systemName: "checkmark")
                     .foregroundStyle(.tint)
@@ -69,5 +71,35 @@ struct CollaboratorSectionView: View {
                 }
             }
         }
+    }
+}
+
+private struct CollaboratorSkeletonBar: View {
+    @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isBreathing = false
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 4, style: .continuous)
+            .fill(theme.textSecondary.opacity(0.13))
+            .frame(width: 72, height: 12)
+            .opacity(
+                motionPreference.allowsMotion
+                    ? (isBreathing ? 0.58 : 0.86)
+                    : 0.72
+            )
+            .animation(
+                motionPreference.allowsMotion
+                    ? .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+                    : nil,
+                value: isBreathing
+            )
+            .onAppear {
+                isBreathing = motionPreference.allowsMotion
+            }
+            .onChange(of: motionPreference.allowsMotion) { _, allowsMotion in
+                isBreathing = allowsMotion
+            }
+            .accessibilityHidden(true)
     }
 }
