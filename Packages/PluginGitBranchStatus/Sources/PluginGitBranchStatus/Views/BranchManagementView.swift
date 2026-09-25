@@ -133,7 +133,7 @@ public struct BranchManagementView: View {
             Text(LumiPluginLocalization.string("Switch Branch", bundle: .module))
                 .font(.headline)
             if isLoading {
-                ProgressView(LumiPluginLocalization.string("Loading branches...", bundle: .module))
+                BranchManagementSkeletonView()
                     .frame(maxWidth: .infinity, minHeight: 60)
             } else if filteredBranches.isEmpty {
                 ContentUnavailableView(
