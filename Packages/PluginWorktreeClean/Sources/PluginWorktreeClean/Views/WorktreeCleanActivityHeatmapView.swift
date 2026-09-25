@@ -50,16 +50,8 @@ struct WorktreeCleanActivityHeatmapView: View {
                 Text(loc("Commit Activity"))
                     .font(.headline)
 
-                VStack(spacing: 6) {
-                    ContentLoadingIndicator(loc("Loading commit activity..."), controlSize: .small)
-                        .tint(theme.primary)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(loc("Analyzing recent Git history..."))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .frame(maxWidth: .infinity, minHeight: 105)
+                ActivityHeatmapSkeletonView()
+                    .frame(maxWidth: .infinity, minHeight: 105)
             }
         }
     }
@@ -403,5 +395,64 @@ struct WorktreeCleanActivityHeatmapView: View {
             let average = Double(totalCommits) / Double(max(1, weekCount))
             return String(format: "%.1f", average)
         }
+    }
+}
+
+private struct ActivityHeatmapSkeletonView: View {
+    private let weekCount: Int
+
+    @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isBreathing = false
+
+    init(weekCount: Int = 26) {
+        self.weekCount = weekCount
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 3) {
+                ForEach(0..<7, id: \.self) { row in
+                    HStack(spacing: 3) {
+                        ForEach(0..<weekCount, id: \.self) { column in
+                            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                                .fill(theme.textSecondary.opacity(0.13))
+                                .frame(width: 10, height: 10)
+                                .opacity((row + column).isMultiple(of: 5) ? 0.72 : 1)
+                        }
+                    }
+                }
+            }
+
+            HStack(spacing: 4) {
+                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                    .fill(theme.textSecondary.opacity(0.13))
+                    .frame(width: 28, height: 8)
+                ForEach(0..<4, id: \.self) { _ in
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .fill(theme.textSecondary.opacity(0.13))
+                        .frame(width: 10, height: 10)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .opacity(
+            motionPreference.allowsMotion
+                ? (isBreathing ? 0.58 : 0.86)
+                : 0.72
+        )
+        .animation(
+            motionPreference.allowsMotion
+                ? .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+                : nil,
+            value: isBreathing
+        )
+        .onAppear {
+            isBreathing = motionPreference.allowsMotion
+        }
+        .onChange(of: motionPreference.allowsMotion) { _, allowsMotion in
+            isBreathing = allowsMotion
+        }
+        .accessibilityHidden(true)
     }
 }
