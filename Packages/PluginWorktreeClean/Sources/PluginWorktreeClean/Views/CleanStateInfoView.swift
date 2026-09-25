@@ -1,7 +1,6 @@
 import Foundation
 import KitGit
 import LumiUI
-import ProviderContentView
 import ProviderGit
 import ProviderProjects
 import SwiftUI
@@ -119,7 +118,7 @@ struct CleanStateInfoView: View {
             icon: "internaldrive"
         ) {
             if isLoadingDiskUsage {
-                ContentLoadingIndicator(loc("Loading disk usage..."), controlSize: .small)
+                CleanStateInfoSkeletonBar(width: 72)
             }
         }
     }
@@ -174,7 +173,7 @@ struct CleanStateInfoView: View {
             icon: "tag"
         ) {
             if isLoadingInfo {
-                ContentLoadingIndicator(loc("Loading latest tag..."), controlSize: .small)
+                CleanStateInfoSkeletonBar(width: 84)
             } else if let latestTag, !latestTag.isEmpty {
                 Group {
                     if isLatestTagCopied {
@@ -203,7 +202,7 @@ struct CleanStateInfoView: View {
             icon: "number"
         ) {
             if isLoadingInfo {
-                ContentLoadingIndicator(loc("Loading commit count..."), controlSize: .small)
+                CleanStateInfoSkeletonBar(width: 72)
             }
         }
     }
@@ -218,7 +217,7 @@ struct CleanStateInfoView: View {
             icon: "calendar"
         ) {
             if isLoadingInfo {
-                ContentLoadingIndicator(loc("Loading first commit..."), controlSize: .small)
+                CleanStateInfoSkeletonBar(width: 84)
             }
         }
     }
@@ -282,7 +281,7 @@ struct CleanStateInfoView: View {
             icon: "person"
         ) {
             if viewModel.isLoadingUserConfiguration {
-                ContentLoadingIndicator(loc("Loading Git user..."), controlSize: .small)
+                CleanStateInfoSkeletonBar(width: 72)
             }
         }
     }
@@ -296,7 +295,7 @@ struct CleanStateInfoView: View {
             icon: "envelope"
         ) {
             if viewModel.isLoadingUserConfiguration {
-                ContentLoadingIndicator(loc("Loading Git user..."), controlSize: .small)
+                CleanStateInfoSkeletonBar(width: 72)
             }
         }
     }
@@ -460,4 +459,36 @@ struct CleanStateInfoView: View {
         formatter.isAdaptive = true
         return formatter
     }()
+}
+
+private struct CleanStateInfoSkeletonBar: View {
+    let width: CGFloat
+
+    @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isBreathing = false
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 4, style: .continuous)
+            .fill(theme.textSecondary.opacity(0.13))
+            .frame(width: width, height: 12)
+            .opacity(
+                motionPreference.allowsMotion
+                    ? (isBreathing ? 0.58 : 0.86)
+                    : 0.72
+            )
+            .animation(
+                motionPreference.allowsMotion
+                    ? .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+                    : nil,
+                value: isBreathing
+            )
+            .onAppear {
+                isBreathing = motionPreference.allowsMotion
+            }
+            .onChange(of: motionPreference.allowsMotion) { _, allowsMotion in
+                isBreathing = allowsMotion
+            }
+            .accessibilityHidden(true)
+    }
 }
