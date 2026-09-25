@@ -6,9 +6,15 @@ import SwiftUI
 
 /// 通用设置详情视图 —— 设置窗口「通用」标签页。
 ///
-/// 从 Lumi 复刻并删减：移除新手引导 / 网站分组，保留更新入口、
+/// 从 Lumi 复刻并删减：移除新手引导，保留网站入口、更新入口、
 /// 说明书（依赖 `DocsViewProviding`，无手册时自动隐藏）与应用信息。
 struct GeneralSettingsDetailView: View {
+    /// 官网地址（展示文本与打开目标共用）。
+    static let websiteURLString = "coffic.cn/gitok"
+
+    /// 官网可点击链接。
+    private static let websiteURL = URL(string: "https://\(websiteURLString)")
+
     let docsProvider: (any DocsViewProviding)?
     let gitBackends: [GitBackendDescriptor]
 
@@ -32,6 +38,7 @@ struct GeneralSettingsDetailView: View {
                 if !gitBackends.isEmpty {
                     GitBackendSectionView(backends: gitBackends)
                 }
+                websiteSection
                 updatesSection
                 if !manuals.isEmpty {
                     manualsSection
@@ -43,6 +50,31 @@ struct GeneralSettingsDetailView: View {
         .sheet(isPresented: $isPresentingManuals) {
             if !manuals.isEmpty {
                 ManualsBrowserView(manuals: manuals)
+            }
+        }
+    }
+
+    // MARK: - 网站
+
+    /// 官网链接；点击「访问」使用系统默认浏览器打开。
+    private var websiteSection: some View {
+        AppSettingSection(
+            title: LumiPluginLocalization.string("Website", bundle: .module),
+            titleAlignment: .leading
+        ) {
+            AppSettingRow(
+                title: LumiPluginLocalization.string("Official Website", bundle: .module),
+                description: Self.websiteURLString,
+                icon: "globe"
+            ) {
+                AppButton(
+                    LumiPluginLocalization.string("Visit", bundle: .module),
+                    systemImage: "arrow.up.forward.square",
+                    style: .secondary,
+                    size: .small
+                ) {
+                    openWebsite()
+                }
             }
         }
     }
@@ -155,6 +187,14 @@ struct GeneralSettingsDetailView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Actions
+
+    /// 用系统默认浏览器打开官网。
+    private func openWebsite() {
+        guard let url = Self.websiteURL else { return }
+        NSWorkspace.shared.open(url)
     }
 
     // MARK: - Debug Helpers
