@@ -8,7 +8,7 @@ let package = Package(
     products: [.library(name: "PluginRootView", targets: ["PluginRootView"])],
     dependencies: [
         .package(path: "../KitSuperLog"),
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderCloneRepository"),
@@ -21,7 +21,7 @@ let package = Package(
             name: "PluginRootView",
             dependencies: [
                 "KitSuperLog",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
@@ -36,7 +36,7 @@ let package = Package(
             name: "PluginRootViewTests",
             dependencies: [
                 "PluginRootView",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),

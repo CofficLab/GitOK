@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(path: "../KitLocalization"),
@@ -28,7 +28,7 @@ let package = Package(
         .target(
             name: "PluginGitRepositorySettings",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "KitLocalization", package: "KitLocalization"),

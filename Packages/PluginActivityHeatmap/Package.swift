@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginActivityHeatmap", targets: ["PluginActivityHeatmap"]),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
         .package(path: "../KitSuperLog"),
         .package(path: "../ProviderActivityHeatmap"),
@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "PluginActivityHeatmap",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "KitSuperLog", package: "KitSuperLog"),
                 .product(name: "ProviderActivityHeatmap", package: "ProviderActivityHeatmap"),

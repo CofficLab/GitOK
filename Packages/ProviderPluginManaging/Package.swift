@@ -13,14 +13,14 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../ProviderPluginControl"),
     ],
     targets: [
         .target(
             name: "ProviderPluginManaging",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderPluginControl", package: "ProviderPluginControl"),
             ],
             path: "Sources/ProviderPluginManaging"
