@@ -98,6 +98,9 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
                     .debugPluginBadge(metadata.name)
             )
         )
+        pane.onFullScreen = { [weak pane] in
+            pane?.presentFullScreen()
+        }
         rootView.setTrailingPane(pane)
 
         // 选中文件是 diff 面板的唯一驱动：选中文件时显示面板，

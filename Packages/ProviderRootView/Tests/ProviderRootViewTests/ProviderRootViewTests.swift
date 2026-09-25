@@ -179,8 +179,8 @@ struct ProviderRootViewTests {
         #expect(!provider.hasActiveContent)
     }
 
-    @Test("Trailing pane supports toggling full-screen mode")
-    func trailingPaneSupportsFullScreenMode() {
+    @Test("Trailing pane can expose native window full-screen mode")
+    func trailingPaneCanExposeNativeWindowFullScreenMode() {
         let pane = RootTrailingPane(
             id: "diff",
             supportsFullScreen: true,
@@ -188,11 +188,6 @@ struct ProviderRootViewTests {
         )
 
         #expect(pane.supportsFullScreen)
-        #expect(!pane.isFullScreen)
-        pane.isFullScreen = true
-        #expect(pane.isFullScreen)
-        pane.isFullScreen = false
-        #expect(!pane.isFullScreen)
     }
 
     @Test("注入工具栏后返回根视图")

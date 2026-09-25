@@ -181,24 +181,18 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
 
     var body: some View {
         GeometryReader { proxy in
-            if trailingPane.isVisible && trailingPane.isFullScreen {
-                panelSurface(containerWidth: proxy.size.width)
-                    .transition(.move(edge: .trailing).combined(with: .opacity))
-            } else {
-                ZStack(alignment: .trailing) {
-                    content
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ZStack(alignment: .trailing) {
+                content
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    if trailingPane.isVisible {
-                        floatingPane(containerWidth: proxy.size.width)
-                            .transition(.move(edge: .trailing).combined(with: .opacity))
-                            .zIndex(1)
-                    }
+                if trailingPane.isVisible {
+                    floatingPane(containerWidth: proxy.size.width)
+                        .transition(.move(edge: .trailing).combined(with: .opacity))
+                        .zIndex(1)
                 }
             }
         }
         .animation(.easeInOut(duration: 0.22), value: trailingPane.isVisible)
-        .animation(.easeInOut(duration: 0.22), value: trailingPane.isFullScreen)
     }
 
     private func floatingPane(containerWidth: CGFloat) -> some View {
@@ -231,13 +225,13 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
             HStack {
                 dismissButton
                 Spacer(minLength: 0)
-                if !trailingPane.isFullScreen {
-                    minimizeButton
-                    maximizeButton(containerWidth: containerWidth)
-                }
+                minimizeButton
+                maximizeButton(containerWidth: containerWidth)
+                #if os(macOS)
                 if trailingPane.supportsFullScreen {
                     fullScreenButton
                 }
+                #endif
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -282,19 +276,11 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
     }
 
     private var fullScreenButton: some View {
-        AppIconButton(
-            systemImage: trailingPane.isFullScreen
-                ? "arrow.down.right.and.arrow.up.left"
-                : "arrow.up.left.and.arrow.down.right",
-            size: .regular
-        ) {
-            trailingPane.isFullScreen.toggle()
+        AppIconButton(systemImage: "arrow.up.left.and.arrow.down.right", size: .regular) {
+            trailingPane.onFullScreen?()
         }
         .help(
-            LumiPluginLocalization.string(
-                trailingPane.isFullScreen ? "Exit Full Screen Diff" : "View Diff Full Screen",
-                bundle: .module
-            )
+            LumiPluginLocalization.string("View Diff Full Screen", bundle: .module)
         )
     }
 
@@ -341,7 +327,6 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
     private var dismissButton: some View {
         AppIconButton(systemImage: "chevron.left", size: .regular) {
             trailingPane.onDismiss?()
-            trailingPane.isFullScreen = false
             withAnimation(.easeInOut(duration: 0.22)) {
                 trailingPane.isVisible = false
             }
