@@ -659,6 +659,7 @@
       }
     },
     "Loading changed files..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
