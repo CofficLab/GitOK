@@ -842,9 +842,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func conflictFiles(in repository: URL) -> [String] {
-        (try? loadEntries(in: repository))?.compactMap { entry in
-            entry.stagedStatus == "U" || entry.worktreeStatus == "U" ? entry.path : nil
-        } ?? []
+        // The index is the authoritative source for unmerged entries. The
+        // status walk's XY mapping is only a view on top of it and previously
+        // mapped GIT_STATUS_CONFLICTED to two spaces, hiding every conflicted
+        // file from the conflict resolver.
+        (try? LibGit2.getConflictedPaths(at: repository.path)) ?? []
     }
 
     func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String {
