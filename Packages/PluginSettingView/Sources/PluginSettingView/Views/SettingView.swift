@@ -50,6 +50,7 @@ struct SettingView<Provider: SettingViewProviding & ObservableObject>: View {
                             ) {
                                 provider.selectEntry(id: entry.id)
                             }
+                            .accessibilityIdentifier("settings.entry.\(entry.id)")
                         }
                     }
                     .padding(.leading)
@@ -68,6 +69,7 @@ struct SettingView<Provider: SettingViewProviding & ObservableObject>: View {
                 if let selected = provider.entries.first(where: { $0.id == provider.selectedEntryID }) {
                     selected.makeDetailView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .accessibilityIdentifier("settings.detail.\(selected.id)")
                 } else {
                     AppEmptyState(
                         icon: "gearshape",

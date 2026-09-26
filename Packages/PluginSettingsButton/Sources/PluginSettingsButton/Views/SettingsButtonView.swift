@@ -16,5 +16,6 @@ struct SettingsButtonView: View {
             )
         }
         .help("Open Settings")
+        .accessibilityIdentifier("gitok.settings.button")
     }
 }

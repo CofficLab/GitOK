@@ -283,6 +283,7 @@ public struct WorkspaceScenePickerView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("gitok.workspace.scene.switcher")
         .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
             WorkspaceScenePickerPopoverView(model: model, isPresented: $isPopoverPresented)
         }

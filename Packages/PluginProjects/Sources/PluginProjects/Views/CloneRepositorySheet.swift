@@ -63,6 +63,7 @@ struct CloneRepositorySheet: View {
         }
         .padding(24)
         .frame(width: 540)
+        .accessibilityIdentifier("gitok.clone.sheet")
         .onChange(of: remoteURL) { _, newValue in
             guard !didManuallyEditName else { return }
             repositoryName = git.defaultRepositoryName(from: newValue) ?? ""

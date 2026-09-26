@@ -111,11 +111,13 @@ private struct ProjectSidebarView: View {
                         isPresentingClone = true
                     }
                     .help(LumiPluginLocalization.string("Clone Repository", bundle: .module))
+                    .accessibilityIdentifier("gitok.projects.clone")
                 }
                 AppIconButton(systemImage: "plus", size: .compact) {
                     addExistingProject()
                 }
                 .help(LumiPluginLocalization.string("Add Project", bundle: .module))
+                .accessibilityIdentifier("gitok.projects.add")
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
