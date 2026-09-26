@@ -188,4 +188,18 @@ struct ProviderStorageTests {
         #expect(store.enabledState(pluginID: "com.example.plugin") == nil)
     }
 
+    @Test("默认数据根目录可被计算并创建")
+    func defaultDataRootDirectoryComputed() {
+        let root = DefaultStorageProvider.makeDefaultDataRootDirectory()
+        #expect(FileManager.default.fileExists(atPath: root.path))
+        #expect(root.path.contains("db_"))
+    }
+
+    @Test("无参 init 使用默认数据根目录")
+    func noArgInitUsesDefaultRoot() {
+        let provider = DefaultStorageProvider()
+        #expect(FileManager.default.fileExists(atPath: provider.dataRootDirectory.path))
+        _ = provider.pluginDataDirectory(for: "coverage.smoke")
+        _ = provider.coreDataDirectory()
+    }
 }

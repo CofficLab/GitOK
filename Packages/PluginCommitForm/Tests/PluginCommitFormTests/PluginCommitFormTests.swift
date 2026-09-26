@@ -112,4 +112,26 @@ struct PluginCommitFormTests {
         let model = GitRepositoryWatchObservationModel(gitWatch: nil)
         #expect(model.revision == 0)
     }
+
+    @Test("CommitFormErrorCenter presents and dismisses errors")
+    func errorCenterPresentDismiss() {
+        let center = CommitFormErrorCenter()
+        #expect(center.error == nil)
+
+        center.present(operation: "commit", message: "boom")
+        #expect(center.error?.operation == "commit")
+        #expect(center.error?.message == "boom")
+
+        center.dismiss()
+        #expect(center.error == nil)
+    }
+
+    @Test("CommitFormErrorCenter overwrites previous error on present")
+    func errorCenterOverwrites() {
+        let center = CommitFormErrorCenter()
+        center.present(operation: "first", message: "one")
+        center.present(operation: "second", message: "two")
+        #expect(center.error?.operation == "second")
+        #expect(center.error?.message == "two")
+    }
 }

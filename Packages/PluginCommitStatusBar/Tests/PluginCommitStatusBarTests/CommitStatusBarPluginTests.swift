@@ -3,6 +3,7 @@ import KernelCore
 import KitGit
 import ProviderProjects
 import ProviderStatusBar
+import ProviderWorkspaceScene
 import XCTest
 @testable import PluginCommitStatusBar
 
@@ -63,43 +64,46 @@ final class CommitStatusBarPluginTests: XCTestCase {
         GitCommit(hash: hash, shortHash: String(hash.prefix(7)), message: "msg", author: "a", date: Date())
     }
 
-    func testOnBootAddsStatusBarItem() throws {
+    private func makeKernel() throws -> KernelCoreContainer {
         let kernel = KernelCoreContainer()
         let statusBar = DefaultStatusBarProviding()
         try kernel.registerProvider((any StatusBarProviding).self, statusBar)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        try kernel.registerProvider((any WorkspaceSceneProviding).self, DefaultWorkspaceSceneProvider())
+        return kernel
+    }
+
+    func testOnBootAddsStatusBarItem() throws {
+        let kernel = try makeKernel()
 
         let plugin = CommitStatusBarPlugin()
         try plugin.onBoot(kernel: kernel)
 
+        let statusBar = try XCTUnwrap(kernel.resolveProvider((any StatusBarProviding).self) as? DefaultStatusBarProviding)
         XCTAssertTrue(statusBar.statusBarItems.contains { $0.id == CommitStatusBarPlugin.itemID })
     }
 
     func testOnShutdownRemovesStatusBarItem() throws {
-        let kernel = KernelCoreContainer()
-        let statusBar = DefaultStatusBarProviding()
-        try kernel.registerProvider((any StatusBarProviding).self, statusBar)
-        try kernel.registerProvider((any ProjectProviding).self, MockProjects())
+        let kernel = try makeKernel()
 
         let plugin = CommitStatusBarPlugin()
         try plugin.onBoot(kernel: kernel)
         try plugin.onShutdown(kernel: kernel)
 
+        let statusBar = try XCTUnwrap(kernel.resolveProvider((any StatusBarProviding).self) as? DefaultStatusBarProviding)
         XCTAssertFalse(statusBar.statusBarItems.contains { $0.id == CommitStatusBarPlugin.itemID })
     }
 
     func testStatusBarItemRendersSelectedCommitShortHash() throws {
-        let kernel = KernelCoreContainer()
-        let statusBar = DefaultStatusBarProviding()
-        try kernel.registerProvider((any StatusBarProviding).self, statusBar)
-        let projects = MockProjects()
-        try kernel.registerProvider((any ProjectProviding).self, projects)
+        let kernel = try makeKernel()
+        let projects = try XCTUnwrap(kernel.resolveProvider((any ProjectProviding).self) as? MockProjects)
 
         let plugin = CommitStatusBarPlugin()
         try plugin.onBoot(kernel: kernel)
 
         // 选择 commit 后，item 视图以 Provider（ProjectProviding）为权威来源渲染。
         projects.selectCommit(commit("abcdef1234567890"))
+        let statusBar = try XCTUnwrap(kernel.resolveProvider((any StatusBarProviding).self) as? DefaultStatusBarProviding)
         let item = statusBar.statusBarItems.first { $0.id == CommitStatusBarPlugin.itemID }
         XCTAssertNotNil(item)
         XCTAssertEqual(item?.placement, .leading)

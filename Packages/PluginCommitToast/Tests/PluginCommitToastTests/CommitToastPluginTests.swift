@@ -1,8 +1,10 @@
 import Foundation
+import Combine
 import KernelCore
 import KitGit
 import ProviderProjects
 import ProviderToast
+import ProviderDocsView
 import XCTest
 @testable import PluginCommitToast
 
@@ -145,5 +147,32 @@ final class CommitToastPluginTests: XCTestCase {
         projects.selectCommit(commit("abc"))
 
         XCTAssertTrue(toast.received.isEmpty, "after shutdown no commit-change toast should fire")
+    }
+}
+
+// MARK: - missing-provider paths
+
+@MainActor
+extension CommitToastPluginTests {
+
+    func testOnBootWithoutProjectsProviderDoesNotCrash() throws {
+        let kernel = KernelCoreContainer()
+        // 不注册 ProjectProviding：onBoot 走 error 分支并提前返回。
+        let plugin = CommitToastPlugin()
+        try plugin.onBoot(kernel: kernel)
+        // shutdown 也应安全处理。
+        try plugin.onShutdown(kernel: kernel)
+    }
+
+    func testOnBootWithoutToastProviderStillSubscribes() throws {
+        let kernel = KernelCoreContainer()
+        let projects = MockProjects()
+        try kernel.registerProvider((any ProjectProviding).self, projects)
+        // 不注册 ToastProviding：onBoot 记录 error 但仍订阅项目事件。
+
+        let plugin = CommitToastPlugin()
+        try plugin.onBoot(kernel: kernel)
+        projects.selectCommit(commit("abc"))  // toast 为 nil，不应崩溃。
+        try plugin.onShutdown(kernel: kernel)
     }
 }

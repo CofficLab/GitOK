@@ -1,0 +1,163 @@
+ M GitOK.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+ M GitOK.xcodeproj/xcshareddata/xcschemes/GitOK.xcscheme
+ M Packages/FactoryGitOK/Package.swift
+ M Packages/KitGitOKUpdate/Tests/KitGitOKUpdateTests/KitGitOKUpdateTests.swift
+ M Packages/KitOpenIn/Package.swift
+ M Packages/PluginAboutSettings/Package.swift
+ M Packages/PluginAboutSettings/Tests/PluginAboutSettingsTests/PluginAboutSettingsTests.swift
+ M Packages/PluginActivityHeatmap/Package.swift
+ M Packages/PluginActivityStatus/Package.swift
+ M Packages/PluginActivityStatus/Tests/PluginActivityStatusTests/PluginActivityStatusTests.swift
+ M Packages/PluginBanner/Package.swift
+ M Packages/PluginCloneRepository/Package.swift
+ M Packages/PluginCloneRepository/Sources/PluginCloneRepository/CloneRepositoryPlugin.swift
+ M Packages/PluginCloneRepository/Tests/PluginCloneRepositoryTests/PluginCloneRepositoryTests.swift
+ M Packages/PluginCoAuthorSettings/Package.swift
+ M Packages/PluginCommand/Package.swift
+ M Packages/PluginCommitDetail/Package.swift
+ M Packages/PluginCommitForm/Package.swift
+ M Packages/PluginCommitForm/Tests/PluginCommitFormTests/PluginCommitFormTests.swift
+ M Packages/PluginCommitList/Package.swift
+ M Packages/PluginCommitStatusBar/Package.swift
+ M Packages/PluginCommitStatusBar/Tests/PluginCommitStatusBarTests/CommitStatusBarPluginTests.swift
+ M Packages/PluginCommitToast/Package.swift
+ M Packages/PluginCommitToast/Tests/PluginCommitToastTests/CommitToastPluginTests.swift
+ M Packages/PluginDiagnosticsSettings/Package.swift
+ M Packages/PluginDiagnosticsSettings/Tests/PluginDiagnosticsSettingsTests/PluginDiagnosticsSettingsTests.swift
+ M Packages/PluginFileInfo/Package.swift
+ M Packages/PluginFileInfo/Tests/PluginFileInfoTests/PluginFileInfoTests.swift
+ M Packages/PluginGitAutoPush/Package.swift
+ M Packages/PluginGitAutoPush/Tests/PluginGitAutoPushTests/PluginGitAutoPushTests.swift
+ M Packages/PluginGitBranchStatus/Package.swift
+ M Packages/PluginGitCLI/Package.swift
+ M Packages/PluginGitCLI/Tests/PluginGitCLITests/PluginGitCLITests.swift
+ M Packages/PluginGitCommitStyleSettings/Package.swift
+ M Packages/PluginGitConflictResolver/Package.swift
+ M Packages/PluginGitConflictResolver/Tests/PluginGitConflictResolverTests/PluginGitConflictResolverTests.swift
+ M Packages/PluginGitDiff/Package.swift
+ M Packages/PluginGitDiff/Tests/PluginGitDiffTests/GitDiffContentTests.swift
+ M Packages/PluginGitIgnore/Package.swift
+ M Packages/PluginGitIgnore/Tests/PluginGitIgnoreTests/PluginGitIgnoreTests.swift
+ M Packages/PluginGitLFS/Package.swift
+ M Packages/PluginGitLibGit2/Package.swift
+ M Packages/PluginGitLibGit2/Tests/PluginGitLibGit2Tests/PluginGitLibGit2Tests.swift
+ M Packages/PluginGitNetworkSettings/Package.swift
+ M Packages/PluginGitNetworkSettings/Tests/PluginGitNetworkSettingsTests/PluginGitNetworkSettingsTests.swift
+ M Packages/PluginGitRemoteRepository/Package.swift
+ M Packages/PluginGitRemoteRepository/Tests/PluginGitRemoteRepositoryTests/PluginGitRemoteRepositoryTests.swift
+ M Packages/PluginGitRepositorySettings/Package.swift
+ M Packages/PluginGitRepositorySettings/Tests/PluginGitRepositorySettingsTests/PluginGitRepositorySettingsTests.swift
+ M Packages/PluginGitRepositoryWatch/Package.swift
+ M Packages/PluginGitRepositoryWatch/Tests/PluginGitRepositoryWatchTests/PluginGitRepositoryWatchTests.swift
+ M Packages/PluginGitSmartMerge/Package.swift
+ M Packages/PluginGitSmartMerge/Tests/PluginGitSmartMergeTests/MergeSelectionStoreTests.swift
+ M Packages/PluginGitStash/Package.swift
+ M Packages/PluginGitSubmodule/Package.swift
+ M Packages/PluginGitUnpushedStatus/Package.swift
+ M Packages/PluginGitUnpushedStatus/Tests/PluginGitUnpushedStatusTests/PluginGitUnpushedStatusTests.swift
+ M Packages/PluginGitUserSettings/Package.swift
+ M Packages/PluginGitWorktreePreheat/Tests/PluginGitWorktreePreheatTests/WorktreeSnapshotPreheaterTests.swift
+ M Packages/PluginIcon/Package.swift
+ M Packages/PluginLicense/Package.swift
+ M Packages/PluginLicense/Tests/PluginLicenseTests/PluginLicenseTests.swift
+ M Packages/PluginLogoCoffic/Package.swift
+ M Packages/PluginLogoManager/Package.swift
+ M Packages/PluginLogoManager/Tests/PluginLogoManagerTests/LogoManagerTests.swift
+ M Packages/PluginOpenAntigravity/Package.swift
+ M Packages/PluginOpenCursor/Package.swift
+ M Packages/PluginOpenFinder/Package.swift
+ M Packages/PluginOpenGitHubDesktop/Package.swift
+ M Packages/PluginOpenKiro/Package.swift
+ M Packages/PluginOpenLumi/Package.swift
+ M Packages/PluginOpenRemote/Package.swift
+ M Packages/PluginOpenTerminal/Package.swift
+ M Packages/PluginOpenTrae/Package.swift
+ M Packages/PluginOpenVSCode/Package.swift
+ M Packages/PluginOpenXcode/Package.swift
+ M Packages/PluginPluginManager/Package.swift
+ M Packages/PluginPluginManager/Tests/PluginPluginManagerTests/PluginPluginManagerTests.swift
+ M Packages/PluginProjectReadme/Package.swift
+ M Packages/PluginProjects/Package.swift
+ M Packages/PluginRailView/Package.swift
+ M Packages/PluginRailView/Tests/PluginRailViewTests/RailViewPluginTests.swift
+ M Packages/PluginRootView/Package.swift
+ M Packages/PluginSettingGeneral/Package.swift
+ M Packages/PluginSettingView/Package.swift
+ M Packages/PluginSettingView/Tests/PluginSettingViewTests/SettingViewManagerTests.swift
+ M Packages/PluginSettingsButton/Package.swift
+ M Packages/PluginSidebarToggle/Package.swift
+ M Packages/PluginSidebarToggle/Tests/PluginSidebarToggleTests/SidebarTogglePluginTests.swift
+ M Packages/PluginStatusBar/Package.swift
+ M Packages/PluginStorage/Package.swift
+ M Packages/PluginThemePack/Package.swift
+ M Packages/PluginToast/Package.swift
+ M Packages/PluginWorktreeClean/Package.swift
+ M Packages/PluginWorktreeStatus/Package.swift
+ M Packages/ProviderChatSection/Package.swift
+ M Packages/ProviderChatSection/Tests/ProviderChatSectionTests/ProviderChatSectionTests.swift
+ M Packages/ProviderCommitForm/Tests/ProviderCommitFormTests/ProviderCommitFormTests.swift
+ M Packages/ProviderContentView/Package.swift
+ M Packages/ProviderGit/Tests/ProviderGitTests/WorktreeSnapshotStoreTests.swift
+ M Packages/ProviderGitConflictResolver/Package.swift
+ M Packages/ProviderLogo/Tests/ProviderLogoTests/ProviderLogoTests.swift
+ M Packages/ProviderProjectReadme/Package.swift
+ M Packages/ProviderRailView/Package.swift
+ M Packages/ProviderRootView/Package.swift
+ M Packages/ProviderSettingView/Package.swift
+ M Packages/ProviderSettingView/Tests/ProviderSettingViewTests/ProviderSettingViewTests.swift
+ M Packages/ProviderSidebar/Package.swift
+ M Packages/ProviderStatusBar/Package.swift
+ M Packages/ProviderStorage/Tests/ProviderStorageTests/ProviderStorageTests.swift
+ M Packages/ProviderToolbar/Package.swift
+ M Scripts/measure-coverage.sh
+ M docs/architecture/gitok-app-shell.md
+ M project.yml
+?? Packages/FactoryGitOK/Tests/FactoryGitOKTests/FactoryGitOKCoverageTests.swift
+?? Packages/KitGit/Tests/KitGitTests/GitKitGapsTests.swift
+?? Packages/KitLocalization/Tests/KitLocalizationTests/LumiLocalizationAdditionalTests.swift
+?? Packages/KitOpenIn/Tests/KitOpenInTests/KitOpenInCoverageTests.swift
+?? Packages/KitSuperLog/Tests/KitSuperLogLocalizationTests.swift
+?? Packages/PluginActivityHeatmap/Tests/PluginActivityHeatmapTests/LocalActivityHeatmapProviderAdditionalTests.swift
+?? Packages/PluginBanner/Tests/PluginBannerTests/BannerWorkspaceModelTests.swift
+?? Packages/PluginCoAuthorSettings/Tests/PluginCoAuthorSettingsTests/CoAuthorSettingsAdditionalTests.swift
+?? Packages/PluginCommand/Tests/PluginCommandTests/CommandManagerTests.swift
+?? Packages/PluginCommitDetail/Tests/PluginCommitDetailTests/CommitDetailChangeColorsTests.swift
+?? Packages/PluginCommitList/Tests/PluginCommitListTests/CommitAvatarServiceTests.swift
+?? Packages/PluginFileInfo/Tests/PluginFileInfoTests/FileInfoAdditionalTests.swift
+?? Packages/PluginGitCommitStyleSettings/Tests/PluginGitCommitStyleSettingsTests/GitCommitStyleSettingsLifecycleTests.swift
+?? Packages/PluginGitLFS/Tests/PluginGitLFSTests/GitLFSPluginLifecycleTests.swift
+?? Packages/PluginGitRepositorySettings/Tests/PluginGitRepositorySettingsTests/GitRepositorySettingsLifecycleTests.swift
+?? Packages/PluginGitSubmodule/Tests/PluginGitSubmoduleTests/GitSubmoduleLifecycleTests.swift
+?? Packages/PluginIcon/Tests/PluginIconTests/IconPluginLifecycleTests.swift
+?? Packages/PluginOpenAntigravity/Tests/
+?? Packages/PluginOpenCursor/Tests/
+?? Packages/PluginOpenFinder/Tests/
+?? Packages/PluginOpenGitHubDesktop/Tests/
+?? Packages/PluginOpenKiro/Tests/
+?? Packages/PluginOpenLumi/Tests/
+?? Packages/PluginOpenRemote/Tests/
+?? Packages/PluginOpenTerminal/Tests/
+?? Packages/PluginOpenTrae/Tests/
+?? Packages/PluginOpenVSCode/Tests/
+?? Packages/PluginOpenXcode/Tests/
+?? Packages/PluginProjectLanguages/Tests/PluginProjectLanguagesTests/ProjectLanguagesPluginLifecycleTests.swift
+?? Packages/PluginProjectReadme/Tests/
+?? Packages/PluginSidebarToggle/Tests/PluginSidebarToggleTests/SidebarTogglePluginLifecycleTests.swift
+?? Packages/PluginStorage/Tests/
+?? Packages/PluginToast/Tests/PluginToastTests/ToastCenterAdditionalTests.swift
+?? Packages/PluginWorktreeClean/Tests/PluginWorktreeCleanTests/RepositoryDiskUsageTests.swift
+?? Packages/ProviderCloneRepository/Tests/ProviderCloneRepositoryTests/ProviderCloneRepositoryAdditionalTests.swift
+?? Packages/ProviderCoAuthor/Tests/ProviderCoAuthorTests/CoAuthorFormattingTests.swift
+?? Packages/ProviderContentView/Tests/ProviderContentViewTests/ContentLoadingIndicatorTests.swift
+?? Packages/ProviderConversation/Tests/ProviderConversationTests/ConversationEnumTests.swift
+?? Packages/ProviderGitConflictResolver/Tests/
+?? Packages/ProviderGitUser/Tests/ProviderGitUserTests/CollaboratorProviderTests.swift
+?? Packages/ProviderPluginControl/Tests/ProviderPluginControlTests/DefaultPluginControllingAdditionalTests.swift
+?? Packages/ProviderPluginManaging/Tests/ProviderPluginManagingTests/PluginManagingErrorTests.swift
+?? Packages/ProviderProjectReadme/Tests/
+?? Packages/ProviderProjects/Tests/ProviderProjectsTests/ProjectRenameErrorTests.swift
+?? Packages/ProviderRailView/Tests/ProviderRailViewTests/ProviderRailViewSectionsTests.swift
+?? Packages/ProviderSidebar/Tests/ProviderSidebarTests/DefaultSidebarProviderAdditionalTests.swift
+?? Packages/ProviderToast/Tests/ProviderToastTests/DefaultToastProvidingAdditionalTests.swift
+?? Packages/ProviderToolbar/Tests/ProviderToolbarTests/ProviderToolbarVisibilityTests.swift
+?? coverage-reports/

@@ -143,3 +143,24 @@ struct SettingViewManagerTests {
         #expect(manager2.selectedEntryID == "new-a")
     }
 }
+
+extension SettingViewManagerTests {
+    @Test("selectEntry(nil) clears selection and persists")
+    func selectNilClears() {
+        let tempDir = makeTempDirectory()
+        defer { cleanupTempDirectory(tempDir) }
+
+        let manager = SettingViewManager(storageDirectory: tempDir)
+        manager.registerEntries([makeEntry(id: "a", order: 100)])
+        manager.selectEntry(id: nil)
+        #expect(manager.selectedEntryID == nil)
+    }
+
+    @Test("selectEntry same id is a no-op")
+    func selectSameIdNoOp() {
+        let manager = SettingViewManager()
+        manager.registerEntries([makeEntry(id: "a", order: 100)])
+        manager.selectEntry(id: "a")
+        #expect(manager.selectedEntryID == "a")
+    }
+}

@@ -11,7 +11,9 @@ struct PluginGitUnpushedStatusTests {
     func pluginMetadata() {
         let plugin = GitUnpushedStatusPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-unpushed-status")
+        #expect(plugin.metadata.id == plugin.id)
         #expect(plugin.metadata.category == .project)
         #expect(plugin.metadata.policy == .disabled)
+        #expect(plugin.metadata.stage == .stable)
     }
 }

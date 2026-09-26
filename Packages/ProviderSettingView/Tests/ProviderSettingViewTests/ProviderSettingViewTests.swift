@@ -112,3 +112,45 @@ struct ProviderSettingViewTests {
         #expect(type(of: provider.makeSettingView()) == AnyView.self)
     }
 }
+
+extension ProviderSettingViewTests {
+    @Test("project detail sections are added, deduped, sorted and removed")
+    func projectDetailSectionsAddDedupeSortRemove() {
+        let provider = DefaultSettingViewProviding()
+        let s1 = ProjectDetailSectionItem(id: "a", order: 200) { _ in Text("A") }
+        let s2 = ProjectDetailSectionItem(id: "b", order: 100) { _ in Text("B") }
+
+        provider.addProjectDetailSections([s1, s2, s1])
+        #expect(provider.projectDetailSections.map(\.id) == ["b", "a"])
+
+        provider.removeProjectDetailSections(ids: ["b"])
+        #expect(provider.projectDetailSections.map(\.id) == ["a"])
+    }
+
+    @Test("registerEntries preserves current selection when still valid")
+    func registerEntriesPreservesCurrentSelection() {
+        let provider = DefaultSettingViewProviding()
+        provider.registerEntries([
+            SettingEntryItem(id: "a", title: "A", systemImage: "a", order: 100) { Text("A") },
+            SettingEntryItem(id: "b", title: "B", systemImage: "b", order: 200) { Text("B") },
+        ])
+        #expect(provider.selectedEntryID == "a")
+
+        // Re-register with same entries but different order — selection should stay on "a"
+        provider.registerEntries([
+            SettingEntryItem(id: "b", title: "B", systemImage: "b", order: 100) { Text("B") },
+            SettingEntryItem(id: "a", title: "A", systemImage: "a", order: 200) { Text("A") },
+        ])
+        #expect(provider.selectedEntryID == "a")
+    }
+
+    @Test("selectEntry(nil) clears selection")
+    func selectNilClears() {
+        let provider = DefaultSettingViewProviding()
+        provider.registerEntries([
+            SettingEntryItem(id: "a", title: "A", systemImage: "a") { Text("A") },
+        ])
+        provider.selectEntry(id: nil)
+        #expect(provider.selectedEntryID == nil)
+    }
+}

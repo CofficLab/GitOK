@@ -562,7 +562,7 @@ private struct CloneRepositoryDetailView: View {
     }
 }
 
-private extension CloneTaskStatus {
+extension CloneTaskStatus {
     var title: String {
         switch self {
         case .queued: cloneLocalized("Queued")

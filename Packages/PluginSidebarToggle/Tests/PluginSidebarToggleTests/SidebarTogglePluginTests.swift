@@ -2,6 +2,7 @@ import XCTest
 
 @testable import PluginSidebarToggle
 
+@MainActor
 final class SidebarTogglePluginTests: XCTestCase {
     func testPluginMetadata() {
         let plugin = SidebarTogglePlugin()

@@ -199,3 +199,46 @@ private final class StubStorageProvider: StorageProviding {
         directory.appendingPathComponent("Core", isDirectory: true)
     }
 }
+
+extension ProviderCommitFormTests {
+    @Test("CoAuthor computed properties format correctly")
+    func coAuthorComputedProperties() {
+        let author = CoAuthor(name: "Jane", email: "jane@t.com")
+        #expect(author.coAuthoredByLine == "Co-authored-by: Jane <jane@t.com>")
+        #expect(author.displayText == "Jane <jane@t.com>")
+    }
+
+    @Test("CoAuthorStore add/remove/update round-trip")
+    func coAuthorStoreRoundTrip() {
+        let defaults = UserDefaults(suiteName: "ProviderCommitFormTests-\(UUID().uuidString)")!
+        let store = CoAuthorStore(userDefaults: defaults, userDefaultsKey: "test-key")
+
+        let a = CoAuthor(name: "Alice", email: "alice@t.com")
+        let b = CoAuthor(name: "Bob", email: "bob@t.com")
+        store.addCoAuthor(a)
+        store.addCoAuthor(b)
+        #expect(store.loadCoAuthors().count == 2)
+
+        // Duplicate email is ignored
+        store.addCoAuthor(CoAuthor(name: "Alice2", email: "alice@t.com"))
+        #expect(store.loadCoAuthors().count == 2)
+
+        // Update
+        var updated = a
+        updated.name = "Alice Updated"
+        store.updateCoAuthor(updated)
+        let loaded = store.loadCoAuthors()
+        #expect(loaded.first(where: { $0.id == a.id })?.name == "Alice Updated")
+
+        // Remove
+        store.removeCoAuthor(b)
+        #expect(store.loadCoAuthors().count == 1)
+    }
+
+    @Test("CoAuthorStore empty when no data")
+    func coAuthorStoreEmpty() {
+        let defaults = UserDefaults(suiteName: "ProviderCommitFormTests-empty-\(UUID().uuidString)")!
+        let store = CoAuthorStore(userDefaults: defaults, userDefaultsKey: "missing-key")
+        #expect(store.loadCoAuthors().isEmpty)
+    }
+}

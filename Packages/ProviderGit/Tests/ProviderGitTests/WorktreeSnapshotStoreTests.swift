@@ -38,3 +38,42 @@ struct WorktreeSnapshotStoreTests {
         #expect(store.cached(repository: repository) == current)
     }
 }
+
+extension WorktreeSnapshotStoreTests {
+    @Test("Cancellation before load throws CancellationError")
+    func cancellationBeforeLoadThrows() {
+        let store = WorktreeSnapshotStore()
+        let repository = URL(fileURLWithPath: "/tmp/provider-git-cancel")
+        let cancellation = GitProcessCancellation()
+        cancellation.cancel()
+
+        #expect(throws: CancellationError.self) {
+            try store.load(repository: repository, cancellation: cancellation) {
+                GitWorktreeSnapshot(entries: [], branch: "main")
+            }
+        }
+    }
+
+    @Test("Cached returns nil for unknown repository")
+    func cachedUnknownReturnsNil() {
+        let store = WorktreeSnapshotStore()
+        #expect(store.cached(repository: URL(fileURLWithPath: "/tmp/never-loaded")) == nil)
+    }
+
+    @Test("Loader error propagates and pending is cleared")
+    func loaderErrorPropagates() {
+        let store = WorktreeSnapshotStore()
+        let repository = URL(fileURLWithPath: "/tmp/provider-git-error")
+
+        enum TestError: Error { case boom }
+        #expect(throws: TestError.self) {
+            try store.load(repository: repository) { throw TestError.boom }
+        }
+
+        // After error, pending is cleared; next call starts fresh
+        let snapshot = try? store.load(repository: repository) {
+            GitWorktreeSnapshot(entries: [], branch: "main")
+        }
+        #expect(snapshot?.branch == "main")
+    }
+}

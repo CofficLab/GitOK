@@ -15,7 +15,7 @@ echo "=== $pkgname ==="
 (cd "$pkg" && swift test --enable-code-coverage) >"/tmp/coverage-$pkgname.log" 2>&1
 
 codecov_dir=$(find "$pkg/.build" -type d -name codecov 2>/dev/null | head -1)
-test_bin=$(find "$pkg/.build" -path "*/debug/*PackageTests.xctest/Contents/MacOS/*" -type f ! -path "*dSYM*" 2>/dev/null | head -1)
+test_bin=$(find "$pkg/.build" -path "*.xctest/Contents/MacOS/*" -type f ! -path "*dSYM*" ! -name "*.plist" 2>/dev/null | head -1)
 
 if [ -z "$codecov_dir" ] || [ -z "$test_bin" ]; then
     echo "WARN: no coverage data or test binary found"; tail -5 "/tmp/coverage-$pkgname.log"; exit 0

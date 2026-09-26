@@ -97,3 +97,36 @@ final class PluginPluginManagerTests: XCTestCase {
         XCTAssertEqual(PluginStage.stable.displayName, "稳定")
     }
 }
+
+extension PluginPluginManagerTests {
+    func testCategorySortOrderCoversAllCases() {
+        XCTAssertEqual(PluginCategory.core.sortOrder, 10)
+        XCTAssertEqual(PluginCategory.chat.sortOrder, 15)
+        XCTAssertEqual(PluginCategory.llm.sortOrder, 20)
+        XCTAssertEqual(PluginCategory.system.sortOrder, 25)
+        XCTAssertEqual(PluginCategory.project.sortOrder, 30)
+        XCTAssertEqual(PluginCategory.feature.sortOrder, 32)
+        XCTAssertEqual(PluginCategory.editor.sortOrder, 35)
+        XCTAssertEqual(PluginCategory.integration.sortOrder, 40)
+        XCTAssertEqual(PluginCategory.design.sortOrder, 45)
+        XCTAssertEqual(PluginCategory.general.sortOrder, 50)
+    }
+
+    func testCategorySystemImageCoversAllCases() {
+        XCTAssertEqual(PluginCategory.core.systemImage, "cube")
+        XCTAssertEqual(PluginCategory.chat.systemImage, "bubble.left.and.bubble.right")
+        XCTAssertEqual(PluginCategory.llm.systemImage, "cpu")
+        XCTAssertEqual(PluginCategory.editor.systemImage, "chevron.left.forwardslash.chevron.right")
+        XCTAssertEqual(PluginCategory.project.systemImage, "folder")
+        XCTAssertEqual(PluginCategory.feature.systemImage, "square.grid.2x2")
+        XCTAssertEqual(PluginCategory.system.systemImage, "desktopcomputer")
+        XCTAssertEqual(PluginCategory.design.systemImage, "paintbrush")
+        XCTAssertEqual(PluginCategory.integration.systemImage, "arrow.up.right.square")
+        XCTAssertEqual(PluginCategory.general.systemImage, "puzzlepiece.extension")
+    }
+
+    func testStageDisplayNameCoversAllCases() {
+        XCTAssertFalse(PluginStage.experimental.displayName.isEmpty)
+        XCTAssertFalse(PluginStage.deprecated.displayName.isEmpty)
+    }
+}

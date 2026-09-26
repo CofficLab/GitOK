@@ -67,4 +67,33 @@ struct PluginGitLibGit2Tests {
         #expect(!FileManager.default.fileExists(atPath: newFile.path))
         #expect(try GitStatusLoader.loadStatus(in: repository).isClean)
     }
+
+    @Test("defaultRepositoryName parses https / scp / bare paths")
+    func defaultRepositoryNameParsing() {
+        let backend = GitLibGit2Backend()
+        #expect(backend.defaultRepositoryName(from: "https://github.com/owner/repo.git") == "repo")
+        #expect(backend.defaultRepositoryName(from: "https://github.com/owner/repo") == "repo")
+        #expect(backend.defaultRepositoryName(from: "git@github.com:owner/repo.git") == "repo")
+        #expect(backend.defaultRepositoryName(from: "ssh://git@github.com/owner/repo.git") == "repo")
+        #expect(backend.defaultRepositoryName(from: "  ") == nil)
+        #expect(backend.defaultRepositoryName(from: "") == nil)
+    }
+
+    @Test("webLink converts scp and https remote URLs")
+    func webLinkParsing() {
+        let backend = GitLibGit2Backend()
+        #expect(backend.webLink(for: "git@github.com:owner/repo.git")?.absoluteString == "https://github.com/owner/repo")
+        #expect(backend.webLink(for: "https://github.com/owner/repo.git")?.absoluteString == "https://github.com/owner/repo")
+        #expect(backend.webLink(for: "not-a-url") == nil)
+    }
+
+    @Test("cherryPickStatus inactive for clean repository")
+    func cherryPickStatusInactive() throws {
+        let repository = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-libgit2-cp-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repository) }
+        try FileManager.default.createDirectory(at: repository, withIntermediateDirectories: true)
+        _ = try GitProcessRunner.run(["init", "-q"], in: repository)
+        #expect(GitLibGit2Backend().cherryPickStatus(in: repository).isCherryPicking == false)
+    }
 }

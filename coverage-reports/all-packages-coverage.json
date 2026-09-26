@@ -1,0 +1,1531 @@
+[
+  {
+    "package": "BannerCoreKit",
+    "before_lines": 98.5,
+    "before_regions": 95.8,
+    "after_lines": 98.5,
+    "after_regions": 95.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [],
+    "notes": "Already 98.5% covered; single uncovered line is JSONEncoder-failure guard (unreachable for simple Codable). No changes needed."
+  },
+  {
+    "package": "FactoryGitOK",
+    "before_lines": 35.7,
+    "before_regions": 29.7,
+    "after_lines": 49.2,
+    "after_regions": 44.3,
+    "delta_lines": 13.5,
+    "delta_regions": 14.6,
+    "test_status": "passed",
+    "tests_count": 26,
+    "changed_files": [
+      "Tests/FactoryGitOKTests/FactoryGitOKCoverageTests.swift"
+    ],
+    "notes": "Added tests for FactoryGitOK entry wrappers, KernelFactory no-arg view entries, DefaultViewFactory assembly branches (empty kernel placeholders + real kernel), syncLumiTheme. AppCommands.swift (323 lines, AppKit menu installer) remains 0% - requires running NSApplication main menu."
+  },
+  {
+    "package": "KitGit",
+    "before_lines": 74.9,
+    "before_regions": 63.7,
+    "after_lines": 78.6,
+    "after_regions": 67.2,
+    "delta_lines": 3.7,
+    "delta_regions": 3.5,
+    "test_status": "passed",
+    "tests_count": 35,
+    "changed_files": [
+      "Tests/KitGitTests/GitKitGapsTests.swift"
+    ],
+    "notes": "Added submodule list parsing tests (real submodule), GitNetworkConfig.Configuration struct + read-only loadGlobal, GitConfigReader.globalValue unique key, GitTagOperation error branches (invalidCommit/invalidRemote/deleteFailed). GitNetworkConfig and GitSubmoduleOperation now near-covered; off-by-one in submodule path parsing left as-is per no-runtime-behavior-change rule."
+  },
+  {
+    "package": "KitGitOKSupport",
+    "before_lines": 81.2,
+    "before_regions": 77.8,
+    "after_lines": 81.2,
+    "after_regions": 77.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [],
+    "notes": "已高于 80% 目标；MagicBackgroundGroup 纯函数与 Picker body 已有冒烟测试覆盖。UI 为主，逻辑已抽取。"
+  },
+  {
+    "package": "KitGitOKUpdate",
+    "before_lines": 20.7,
+    "before_regions": 17.4,
+    "after_lines": 43.3,
+    "after_regions": 37.6,
+    "delta_lines": 22.6,
+    "delta_regions": 20.2,
+    "test_status": "passed",
+    "tests_count": 15,
+    "changed_files": [
+      "Tests/KitGitOKUpdateTests/KitGitOKUpdateTests.swift"
+    ],
+    "notes": "Added tests for state machine edge cases (markError/reset/finishCheckingIfNeeded), FeedURLDetector caching & forceRedetect, notification posting, UpdateRequestObserver dispatch/cancel, runtime env default. UpdateService.swift (128 lines) remains 0%: it is a Sparkle-coupled @MainActor singleton whose delegate methods require SUAppcastItem/SPUUpdater instances; refactoring for testability would risk changing runtime behavior. AppUpdateBootstrap also depends on the singleton."
+  },
+  {
+    "package": "KitLocalization",
+    "before_lines": 93.0,
+    "before_regions": 86.4,
+    "after_lines": 95.7,
+    "after_regions": 92.0,
+    "delta_lines": 2.7,
+    "delta_regions": 5.6,
+    "test_status": "passed",
+    "tests_count": 14,
+    "changed_files": [
+      "Tests/KitLocalizationTests/LumiLocalizationAdditionalTests.swift"
+    ],
+    "notes": "Already at 93%. Added zh-HK/zh-Hant fallback, bare zh normalization, English, missing localizations skip tests."
+  },
+  {
+    "package": "KitOpenIn",
+    "before_lines": 15.3,
+    "before_regions": 24.8,
+    "after_lines": 24.4,
+    "after_regions": 46.5,
+    "delta_lines": 9.1,
+    "delta_regions": 21.7,
+    "test_status": "passed",
+    "tests_count": 12,
+    "changed_files": [
+      "Tests/KitOpenInTests/KitOpenInCoverageTests.swift"
+    ],
+    "notes": "UI 为主：Views (OpenInPluginBase) require KernelCore container and stay uncovered. Added OpenTarget all-case switch coverage (systemImage/displayName/toolbarOrder/bundleIdentifier/fallbackPaths) and AppLauncher.webURL edge cases (scp/https no .git, trimmed, empty). Logic extracted via pure enum switches."
+  },
+  {
+    "package": "KitSuperLog",
+    "before_lines": 97.0,
+    "before_regions": 83.8,
+    "after_lines": 98.3,
+    "after_regions": 84.8,
+    "delta_lines": 1.3,
+    "delta_regions": 1.0,
+    "test_status": "passed",
+    "tests_count": 25,
+    "changed_files": [
+      "Tests/KitSuperLogLocalizationTests.swift"
+    ],
+    "notes": "补充 LumiLocalization 薄包装测试；其余逻辑（日志级别/格式化/文件管理）已由既有测试覆盖。"
+  },
+  {
+    "package": "PluginAboutSettings",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 5.8,
+    "after_regions": 18.2,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "test_failed_before_fix",
+    "tests_count": 3,
+    "changed_files": [
+      "Tests/PluginAboutSettingsTests/PluginAboutSettingsTests.swift"
+    ],
+    "notes": "Baseline failed: pre-existing test expected metadata.policy == .alwaysOn but code has .disabled. Fixed test to match .disabled and added metadata/localization smoke tests. Package is UI-heavy: AboutView.body is 222 lines of SwiftUI DSL that does not execute in unit tests; only computed properties (Bundle.main lookups) and plugin metadata are testable. UI为主，逻辑已抽取（Bundle 读取）。"
+  },
+  {
+    "package": "PluginActivityHeatmap",
+    "before_lines": 56.6,
+    "before_regions": 47.1,
+    "after_lines": 79.6,
+    "after_regions": 74.8,
+    "delta_lines": 23.0,
+    "delta_regions": 27.7,
+    "test_status": "passed",
+    "tests_count": 14,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginActivityHeatmapTests/LocalActivityHeatmapProviderAdditionalTests.swift"
+    ],
+    "notes": "Added tests for nil repo, error path, observer events/cancel, same-value guards, empty snapshot, pagination, plugin onBoot missing providers. Added ProviderActivityHeatmap test dependency."
+  },
+  {
+    "package": "PluginActivityStatus",
+    "before_lines": 5.9,
+    "before_regions": 12.9,
+    "after_lines": 5.9,
+    "after_regions": 12.9,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [
+      "Tests/PluginActivityStatusTests/PluginActivityStatusTests.swift"
+    ],
+    "notes": "Fixed pre-existing failing test: source policy is .disabled, test expected .alwaysOn. Added metadata assertions. UI + plugin lifecycle requiring KernelCore container; no extractable pure logic beyond metadata."
+  },
+  {
+    "package": "PluginBanner",
+    "before_lines": 28.5,
+    "before_regions": 31.9,
+    "after_lines": 46.9,
+    "after_regions": 61.6,
+    "delta_lines": 18.4,
+    "delta_regions": 29.7,
+    "test_status": "passed",
+    "tests_count": 12,
+    "changed_files": [
+      "Tests/PluginBannerTests/BannerWorkspaceModelTests.swift"
+    ],
+    "notes": "新增 BannerWorkspaceModel 全生命周期测试（create/select/delete/save/export/draft reload）、导出设备枚举、错误描述、repository imageID/imageURL 边界、localization。剩余未覆盖为 BannerWorkspaceView(300行)/BannerAboutView(99行)/BannerPlugin 等纯 SwiftUI 视图与内核胶水，需 KernelCore 容器渲染，ROI 低。"
+  },
+  {
+    "package": "PluginCloneRepository",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 5.9,
+    "after_regions": 13.9,
+    "delta_lines": 5.9,
+    "delta_regions": 13.9,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Sources/PluginCloneRepository/CloneRepositoryPlugin.swift",
+      "Tests/PluginCloneRepositoryTests/PluginCloneRepositoryTests.swift"
+    ],
+    "notes": "Baseline 0%. Changed private extension CloneTaskStatus{title,icon,color} to internal for testability (no behavior change). Tested metadata, status display switch branches, isActive, error descriptions, CloneTask Codable round-trip. The private CloneRepositoryService (500+ lines of stateful clone lifecycle) remains untested: it requires a full GitProviding mock (~50 protocol methods) which is disproportionately expensive; UI view also untested."
+  },
+  {
+    "package": "PluginCoAuthorSettings",
+    "before_lines": 1.7,
+    "before_regions": 3.5,
+    "after_lines": 8.8,
+    "after_regions": 16.5,
+    "delta_lines": 7.1,
+    "delta_regions": 13.0,
+    "test_status": "passed",
+    "tests_count": 7,
+    "changed_files": [
+      "Tests/PluginCoAuthorSettingsTests/CoAuthorSettingsAdditionalTests.swift"
+    ],
+    "notes": "UI 为主，逻辑已抽取. 535 lines of SwiftUI views remain 0% (requires running app host). Localization parser and plugin empty-kernel paths covered."
+  },
+  {
+    "package": "PluginCommand",
+    "before_lines": 30.5,
+    "before_regions": 30.4,
+    "after_lines": 44.1,
+    "after_regions": 62.5,
+    "delta_lines": 13.6,
+    "delta_regions": 32.1,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Tests/PluginCommandTests/CommandManagerTests.swift"
+    ],
+    "notes": "Added CommandManager tests: register/replace/unregister/unknown no-op/observer lifecycle/cancel-stops-notify. Observer weak-reference handle must be retained in tests."
+  },
+  {
+    "package": "PluginCommitDetail",
+    "before_lines": 17.8,
+    "before_regions": 21.8,
+    "after_lines": 19.0,
+    "after_regions": 25.0,
+    "delta_lines": 1.2,
+    "delta_regions": 3.2,
+    "test_status": "passed",
+    "tests_count": 14,
+    "changed_files": [
+      "Tests/PluginCommitDetailTests/CommitDetailChangeColorsTests.swift"
+    ],
+    "notes": "CommitDetailViewModel 100%、CommitFilePageStore 92.5% 已由既有测试覆盖；新增 CommitDetailChangeColors 全部 7 个 status 分支与 worktree/staged 矩阵、localization 包装。剩余为 WorktreeChangesView(1545行)/Layout(858行) 纯 SwiftUI 视图，UI 为主，逻辑已抽取。"
+  },
+  {
+    "package": "PluginCommitForm",
+    "before_lines": 7.7,
+    "before_regions": 9.4,
+    "after_lines": 8.1,
+    "after_regions": 10.1,
+    "delta_lines": 0.4,
+    "delta_regions": 0.7,
+    "test_status": "passed",
+    "tests_count": 10,
+    "changed_files": [
+      "Tests/PluginCommitFormTests/PluginCommitFormTests.swift"
+    ],
+    "notes": "Added CommitFormErrorCenter present/dismiss/overwrite tests (now 100%). Package is UI-heavy: CommitFormView is 1215 lines of SwiftUI DSL, plus Overlay/About/ToolbarStylePicker views (500+ lines). Non-UI logic (plugin lifecycle, scene observer, error center) already covered. UI为主，逻辑已抽取."
+  },
+  {
+    "package": "PluginCommitList",
+    "before_lines": 2.0,
+    "before_regions": 2.9,
+    "after_lines": 3.1,
+    "after_regions": 5.2,
+    "delta_lines": 1.1,
+    "delta_regions": 2.3,
+    "test_status": "passed",
+    "tests_count": 7,
+    "changed_files": [
+      "Tests/PluginCommitListTests/CommitAvatarServiceTests.swift"
+    ],
+    "notes": "UI 为主，逻辑已抽取. 4493 lines of SwiftUI views (CommitRailView 4061 lines) remain 0%. Avatar service cache/normalization paths covered."
+  },
+  {
+    "package": "PluginCommitStatusBar",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 34.7,
+    "after_regions": 42.9,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 3,
+    "changed_files": [
+      "Tests/PluginCommitStatusBarTests/CommitStatusBarPluginTests.swift"
+    ],
+    "notes": "Pre-existing test was failing: onBoot now requires WorkspaceSceneProviding registered in kernel; test kernel lacked it. Registered DefaultWorkspaceSceneProvider. After fix tests pass. UI-heavy plugin wiring."
+  },
+  {
+    "package": "PluginCommitToast",
+    "before_lines": 32.5,
+    "before_regions": 50.0,
+    "after_lines": 36.1,
+    "after_regions": 65.4,
+    "delta_lines": 3.6,
+    "delta_regions": 15.4,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Tests/PluginCommitToastTests/CommitToastPluginTests.swift"
+    ],
+    "notes": "新增 onBoot 缺少 ProjectProviding / 缺少 ToastProviding 两条 error 分支测试。onRegister/onUnregister 需 DocsViewProviding（ObservableObject @MainActor 协议）Mock，隔离冲突未强行覆盖；AboutView 为纯 UI。"
+  },
+  {
+    "package": "PluginDiagnosticsSettings",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 3.6,
+    "after_regions": 9.5,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "test_failed_before_fix",
+    "tests_count": 1,
+    "changed_files": [
+      "Tests/PluginDiagnosticsSettingsTests/PluginDiagnosticsSettingsTests.swift"
+    ],
+    "notes": "Baseline failed: pre-existing test expected policy .alwaysOn but code has .disabled. Fixed to .disabled. UI-heavy: DiagnosticsSettingView (163 lines) and AboutView (99 lines) are SwiftUI. Only plugin metadata tested. UI为主."
+  },
+  {
+    "package": "PluginFileInfo",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 8.8,
+    "after_regions": 14.9,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/PluginFileInfoTests/PluginFileInfoTests.swift",
+      "Tests/PluginFileInfoTests/FileInfoAdditionalTests.swift"
+    ],
+    "notes": "Fixed pre-existing failing test (expected .alwaysOn, source has .disabled). Added empty-kernel lifecycle tests and localization passthrough."
+  },
+  {
+    "package": "PluginGitAutoPush",
+    "before_lines": 2.4,
+    "before_regions": null,
+    "after_lines": 2.4,
+    "after_regions": null,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [
+      "Tests/PluginGitAutoPushTests/PluginGitAutoPushTests.swift"
+    ],
+    "notes": "UI 为主，逻辑已抽取。Metadata assertions already covered; added order/itemID checks. Provider wiring + SwiftUI views dominate."
+  },
+  {
+    "package": "PluginGitBranchStatus",
+    "before_lines": 0.8,
+    "before_regions": 1.4,
+    "after_lines": 0.8,
+    "after_regions": 1.4,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [],
+    "notes": "GitBranchStatusViewModel 已 100% 覆盖；包内 3049 行中 BranchManagementView(1699行)/BranchPickerPopoverView(646行) 为纯 SwiftUI。Observer 需 Mock 大型 GitProviding/GitRepositoryWatching 协议，ROI 低。UI 为主，逻辑已抽取。"
+  },
+  {
+    "package": "PluginGitCLI",
+    "before_lines": 2.6,
+    "before_regions": 3.0,
+    "after_lines": 3.2,
+    "after_regions": 3.4,
+    "delta_lines": 0.6,
+    "delta_regions": 0.4,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [
+      "Tests/PluginGitCLITests/PluginGitCLITests.swift"
+    ],
+    "notes": "GitCLIBackend is 352 lines of pure delegation to KitGit static git operations; each method would need a real on-disk git repo to exercise. Only descriptor/isAvailable tested. UI AboutView also untested."
+  },
+  {
+    "package": "PluginGitCommitStyleSettings",
+    "before_lines": 2.8,
+    "before_regions": 11.4,
+    "after_lines": 7.5,
+    "after_regions": 28.6,
+    "delta_lines": 4.7,
+    "delta_regions": 17.2,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/PluginGitCommitStyleSettingsTests/GitCommitStyleSettingsLifecycleTests.swift"
+    ],
+    "notes": "UI 为主，逻辑已抽取. Added empty-kernel lifecycle tests for onBoot/onRegister/onUnregister/onShutdown."
+  },
+  {
+    "package": "PluginGitConflictResolver",
+    "before_lines": 4.3,
+    "before_regions": null,
+    "after_lines": 4.8,
+    "after_regions": null,
+    "delta_lines": 0.5,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/PluginGitConflictResolverTests/PluginGitConflictResolverTests.swift"
+    ],
+    "notes": "ViewModel reached 100% via present() no-op/reset-on-project-change/cherry-pick flag/resolvedFiles cleared. Remaining gap is large SwiftUI Views (ConflictResolverList ~1280 lines)."
+  },
+  {
+    "package": "PluginGitDiff",
+    "before_lines": 17.9,
+    "before_regions": 21.9,
+    "after_lines": 20.1,
+    "after_regions": 29.6,
+    "delta_lines": 2.2,
+    "delta_regions": 7.7,
+    "test_status": "passed",
+    "tests_count": 18,
+    "changed_files": [
+      "Tests/PluginGitDiffTests/GitDiffContentTests.swift"
+    ],
+    "notes": "GitDiffContentDetector 提升至 99.2%：新增 video/office 扩展识别、isLikelyText 边界、MPEG-TS 192/204 包长与坏同步/保留 adaptation 拒绝、preview 错误描述、ContentKind systemImage/title 全分支。剩余为 DiffView(1151行) 纯 UI。"
+  },
+  {
+    "package": "PluginGitIgnore",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 2.3,
+    "after_regions": 4.1,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "test_failed_before_fix",
+    "tests_count": 1,
+    "changed_files": [
+      "Tests/PluginGitIgnoreTests/PluginGitIgnoreTests.swift"
+    ],
+    "notes": "Baseline failed: pre-existing test expected .alwaysOn but code has .disabled. Fixed. UI-heavy: Viewer/StatusIcon/Skeleton/About views (390 lines SwiftUI). Only metadata tested. UI为主."
+  },
+  {
+    "package": "PluginGitLFS",
+    "before_lines": 7.3,
+    "before_regions": 14.3,
+    "after_lines": 8.5,
+    "after_regions": 17.1,
+    "delta_lines": 1.2,
+    "delta_regions": 2.8,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/PluginGitLFSTests/GitLFSPluginLifecycleTests.swift"
+    ],
+    "notes": "Added empty-kernel lifecycle tests. Scanner coverage varies between runs due to test discovery ordering."
+  },
+  {
+    "package": "PluginGitLibGit2",
+    "before_lines": 3.5,
+    "before_regions": null,
+    "after_lines": 6.2,
+    "after_regions": null,
+    "delta_lines": 2.7,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 4,
+    "changed_files": [
+      "Tests/PluginGitLibGit2Tests/PluginGitLibGit2Tests.swift"
+    ],
+    "notes": "Added defaultRepositoryName parsing (https/scp/bare), webURL conversion, cherryPickStatus inactive on clean repo."
+  },
+  {
+    "package": "PluginGitNetworkSettings",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 2.0,
+    "after_regions": 5.4,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Tests/PluginGitNetworkSettingsTests/PluginGitNetworkSettingsTests.swift"
+    ],
+    "notes": "基线测试失败（断言 metadata.policy == .alwaysOn，但源文件声明 .disabled），导致脚本非零退出无覆盖率数据。已修正测试断言为 .disabled 使其通过。包内 544 行中 GitNetworkSettingView(398行) 为纯设置 UI。"
+  },
+  {
+    "package": "PluginGitRemoteRepository",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 1.4,
+    "after_regions": 3.1,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "test_failed_before_fix",
+    "tests_count": 1,
+    "changed_files": [
+      "Tests/PluginGitRemoteRepositoryTests/PluginGitRemoteRepositoryTests.swift"
+    ],
+    "notes": "Baseline failed: pre-existing test expected .alwaysOn but code has .disabled. Fixed. UI-heavy: RemoteRepositoryView is 473 lines SwiftUI. Only metadata tested. UI为主."
+  },
+  {
+    "package": "PluginGitRepositorySettings",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 3.9,
+    "after_regions": 8.8,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/PluginGitRepositorySettingsTests/PluginGitRepositorySettingsTests.swift",
+      "Tests/PluginGitRepositorySettingsTests/GitRepositorySettingsLifecycleTests.swift"
+    ],
+    "notes": "Fixed pre-existing failing test (expected .alwaysOn, source has .disabled). Added empty-kernel lifecycle tests."
+  },
+  {
+    "package": "PluginGitRepositoryWatch",
+    "before_lines": 55.2,
+    "before_regions": null,
+    "after_lines": 55.2,
+    "after_regions": null,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [
+      "Tests/PluginGitRepositoryWatchTests/PluginGitRepositoryWatchTests.swift"
+    ],
+    "notes": "Added resolver edge tests: missing dir throws, worktree .git file resolution, detached HEAD nil ref, ref-pointer HEAD hash. Baseline captured after first test run; coverage stable at 55.2%."
+  },
+  {
+    "package": "PluginGitSmartMerge",
+    "before_lines": 5.9,
+    "before_regions": 12.4,
+    "after_lines": 7.3,
+    "after_regions": 14.7,
+    "delta_lines": 1.4,
+    "delta_regions": 2.3,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [
+      "Tests/PluginGitSmartMergeTests/MergeSelectionStoreTests.swift"
+    ],
+    "notes": "MergeSelectionStore 提升至 95.5%（新增 no-arg 默认目录计算路径冒烟测试）。剩余为 MergeStatusTile(466行) 纯 UI 与 observer 胶水。"
+  },
+  {
+    "package": "PluginGitStash",
+    "before_lines": 1.3,
+    "before_regions": 2.5,
+    "after_lines": 1.3,
+    "after_regions": 2.5,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [],
+    "notes": "UI-heavy: StashListView (428 lines), StatusTile (137), Skeleton (109), About (99). Existing metadata test already correct (.disabled). No cheap logic to extract; views do not execute in unit tests. UI为主."
+  },
+  {
+    "package": "PluginGitSubmodule",
+    "before_lines": 1.7,
+    "before_regions": 3.3,
+    "after_lines": 4.9,
+    "after_regions": 8.3,
+    "delta_lines": 3.2,
+    "delta_regions": 5.0,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/PluginGitSubmoduleTests/GitSubmoduleLifecycleTests.swift"
+    ],
+    "notes": "UI 为主，逻辑已抽取. Added empty-kernel lifecycle tests."
+  },
+  {
+    "package": "PluginGitUnpushedStatus",
+    "before_lines": 3.5,
+    "before_regions": null,
+    "after_lines": 3.5,
+    "after_regions": null,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [
+      "Tests/PluginGitUnpushedStatusTests/PluginGitUnpushedStatusTests.swift"
+    ],
+    "notes": "UI 为主，逻辑已抽取. Metadata assertions already covered; added stage check."
+  },
+  {
+    "package": "PluginGitUserSettings",
+    "before_lines": 2.1,
+    "before_regions": 4.5,
+    "after_lines": 2.1,
+    "after_regions": 4.5,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [],
+    "notes": "GitUserInfoSettingView(332行) 为主的纯设置 UI 包；plugin 仅元数据冒烟。UI 为主，无可抽取纯逻辑。"
+  },
+  {
+    "package": "PluginGitWorktreePreheat",
+    "before_lines": 54.8,
+    "before_regions": 36.5,
+    "after_lines": 54.8,
+    "after_regions": 38.1,
+    "delta_lines": 0.0,
+    "delta_regions": 1.6,
+    "test_status": "passed",
+    "tests_count": 4,
+    "changed_files": [
+      "Tests/PluginGitWorktreePreheatTests/WorktreeSnapshotPreheaterTests.swift"
+    ],
+    "notes": "Pure WorktreeSnapshotPreheatPlan already 100%. Preheater 68% (worker detached task + cancellation paths hard to cover deterministically). Plugin file 0% (needs KernelCoreContainer wiring). Added skip-nonexistent-directory test."
+  },
+  {
+    "package": "PluginIcon",
+    "before_lines": 31.1,
+    "before_regions": 33.5,
+    "after_lines": 32.9,
+    "after_regions": 35.2,
+    "delta_lines": 1.8,
+    "delta_regions": 1.7,
+    "test_status": "passed",
+    "tests_count": 7,
+    "changed_files": [
+      "Tests/PluginIconTests/IconPluginLifecycleTests.swift"
+    ],
+    "notes": "Workspace model (322 lines) and view (618 lines) remain 0% - UI/view-model heavy. Logic files already at 78-98%."
+  },
+  {
+    "package": "PluginLicense",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 2.3,
+    "after_regions": 4.2,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Tests/PluginLicenseTests/PluginLicenseTests.swift"
+    ],
+    "notes": "Pre-existing test failed: source policy .disabled vs test .alwaysOn. Fixed. UI-heavy plugin; remainder is SwiftUI Views."
+  },
+  {
+    "package": "PluginLogoCoffic",
+    "before_lines": 5.9,
+    "before_regions": 19.6,
+    "after_lines": 5.9,
+    "after_regions": 19.6,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [],
+    "notes": "纯 Logo 绘制/About 视图包（CofficLogoView/CofficMonochromeLogoView），无业务逻辑。UI 为主，逻辑已抽取。"
+  },
+  {
+    "package": "PluginLogoManager",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 19.5,
+    "after_regions": 37.9,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "build_fixed",
+    "tests_count": 5,
+    "changed_files": [
+      "Tests/PluginLogoManagerTests/LogoManagerTests.swift"
+    ],
+    "notes": "Baseline failed to build: test used EmptyView without import SwiftUI. Fixed by adding import SwiftUI. LogoManager core class now 75.9% covered (register/sort/overwrite/unregister/clear/highlight). Plugin wiring and AboutView remain untested."
+  },
+  {
+    "package": "PluginOpenAntigravity",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenAntigravityTests/OpenAntigravityPluginTests.swift"
+    ],
+    "notes": "Created new testTarget. Package is a thin OpenInPluginBase extension (.antigravity target). 15 lines total."
+  },
+  {
+    "package": "PluginOpenCursor",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenCursorTests/PluginOpenCursorTests.swift"
+    ],
+    "notes": "No Tests dir existed; added testTarget to Package.swift and smoke test for plugin identity/policy. Trivial plugin wrapping OpenInPluginBase(target: .cursor)."
+  },
+  {
+    "package": "PluginOpenFinder",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenFinderTests/OpenFinderPluginTests.swift"
+    ],
+    "notes": "原无 Tests 目录；新增 testTarget 与插件身份/策略冒烟测试。OpenFinderPlugin 为 OpenInPluginBase 的薄子类。"
+  },
+  {
+    "package": "PluginOpenGitHubDesktop",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenGitHubDesktopTests/PluginOpenGitHubDesktopTests.swift"
+    ],
+    "notes": "New testTarget created (no Tests dir existed). Tiny 4-line plugin subclassing OpenInPluginBase. First build attempt hit transient MagicLog manifest cache error; retry succeeded. Tests cover plugin identity and OpenTarget.githubDesktop display values."
+  },
+  {
+    "package": "PluginOpenKiro",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenKiroTests/OpenKiroPluginTests.swift"
+    ],
+    "notes": "Created new testTarget. Package is a thin OpenInPluginBase extension (.kiro target). 15 lines total."
+  },
+  {
+    "package": "PluginOpenLumi",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenLumiTests/PluginOpenLumiTests.swift"
+    ],
+    "notes": "No Tests dir existed; added testTarget and smoke test. Trivial plugin wrapping OpenInPluginBase(target: .lumi)."
+  },
+  {
+    "package": "PluginOpenRemote",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenRemoteTests/OpenRemotePluginTests.swift"
+    ],
+    "notes": "原无 Tests 目录；新增 testTarget 与插件身份/策略冒烟测试。"
+  },
+  {
+    "package": "PluginOpenTerminal",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenTerminalTests/PluginOpenTerminalTests.swift"
+    ],
+    "notes": "New testTarget created (no Tests dir existed). Tiny 4-line plugin subclassing OpenInPluginBase. Tests cover plugin identity and OpenTarget.terminal display values."
+  },
+  {
+    "package": "PluginOpenTrae",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenTraeTests/OpenTraePluginTests.swift"
+    ],
+    "notes": "Created new testTarget. Package is a thin OpenInPluginBase extension (.trae target). 15 lines total."
+  },
+  {
+    "package": "PluginOpenVSCode",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenVSCodeTests/PluginOpenVSCodeTests.swift"
+    ],
+    "notes": "No Tests dir existed; added testTarget and smoke test. Trivial plugin wrapping OpenInPluginBase(target: .vscode)."
+  },
+  {
+    "package": "PluginOpenXcode",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 100.0,
+    "delta_regions": 100.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginOpenXcodeTests/OpenXcodePluginTests.swift"
+    ],
+    "notes": "原无 Tests 目录；新增 testTarget 与插件身份/策略冒烟测试。"
+  },
+  {
+    "package": "PluginPluginManager",
+    "before_lines": 8.7,
+    "before_regions": 14.5,
+    "after_lines": 9.8,
+    "after_regions": 25.0,
+    "delta_lines": 1.1,
+    "delta_regions": 10.5,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Tests/PluginPluginManagerTests/PluginPluginManagerTests.swift"
+    ],
+    "notes": "Added tests for all PluginCategory sortOrder/systemImage cases and PluginStage experimental/deprecated displayName. Models file now 100%. Remaining uncovered are SwiftUI views (1100+ lines) and ViewModel (needs PluginManaging mock)."
+  },
+  {
+    "package": "PluginProjectLanguages",
+    "before_lines": 63.1,
+    "before_regions": 55.5,
+    "after_lines": 69.2,
+    "after_regions": 59.3,
+    "delta_lines": 6.1,
+    "delta_regions": 3.8,
+    "test_status": "passed",
+    "tests_count": 12,
+    "changed_files": [
+      "Tests/PluginProjectLanguagesTests/ProjectLanguagesPluginLifecycleTests.swift"
+    ],
+    "notes": "Added onBoot missing ProjectProviding early-return and onShutdown no-op tests."
+  },
+  {
+    "package": "PluginProjectReadme",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 6.7,
+    "after_regions": 9.3,
+    "delta_lines": 6.7,
+    "delta_regions": 9.3,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/PluginProjectReadmeTests/PluginProjectReadmeTests.swift"
+    ],
+    "notes": "No Tests dir existed; added testTarget and smoke test for metadata. Remainder is SwiftUI ProjectReadmeView (113 lines)."
+  },
+  {
+    "package": "PluginProjects",
+    "before_lines": 8.6,
+    "before_regions": 19.0,
+    "after_lines": 8.6,
+    "after_regions": 19.0,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 12,
+    "changed_files": [],
+    "notes": "ProjectManager(386行) 与 ProjectSidebarProviding(355行) 核心逻辑已由既有测试充分覆盖；2694 行中 ProjectsSettingsDetailView(1059行)/ProjectToolbarPopoverView(171行) 为纯 SwiftUI。UI 为主，逻辑已抽取。"
+  },
+  {
+    "package": "PluginRailView",
+    "before_lines": 14.5,
+    "before_regions": 18.6,
+    "after_lines": 32.3,
+    "after_regions": 43.1,
+    "delta_lines": 17.8,
+    "delta_regions": 24.5,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Tests/PluginRailViewTests/RailViewPluginTests.swift"
+    ],
+    "notes": "Added tests for tab sorting/activation, activateTab validation, addSections dedup, setVisibleTabID filtering. Provider now 65.4%. Remaining uncovered: width profile management (needs RailViewWidthStoring mock) and RailView SwiftUI view."
+  },
+  {
+    "package": "PluginRootView",
+    "before_lines": 18.1,
+    "before_regions": 40.8,
+    "after_lines": 18.1,
+    "after_regions": 40.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 14,
+    "changed_files": [],
+    "notes": "Already has comprehensive tests covering all workspace state transitions, overlay operations, and delegation. 783 lines of SwiftUI views remain 0%."
+  },
+  {
+    "package": "PluginSettingGeneral",
+    "before_lines": 9.6,
+    "before_regions": 12.8,
+    "after_lines": 9.6,
+    "after_regions": 12.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [],
+    "notes": "UI 为主，逻辑已抽取. AppVersion at 80%; large SwiftUI Views (GeneralSettingsDetailView 379 lines) dominate and are not unit-testable."
+  },
+  {
+    "package": "PluginSettingView",
+    "before_lines": 11.6,
+    "before_regions": 30.2,
+    "after_lines": 11.6,
+    "after_regions": 30.2,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 10,
+    "changed_files": [
+      "Tests/PluginSettingViewTests/SettingViewManagerTests.swift"
+    ],
+    "notes": "Manager already well-tested (64.4%); remaining uncovered lines are verbose logging branches (Self.verbose=false) and SwiftUI views (SettingView 192 lines, HeaderView 54, About 99). Added selectNil/selectSameId no-op tests."
+  },
+  {
+    "package": "PluginSettingsButton",
+    "before_lines": 22.3,
+    "before_regions": 45.8,
+    "after_lines": 22.3,
+    "after_regions": 45.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [],
+    "notes": "166 行的小按钮插件；localization 100%，其余为 AboutView/SettingsButtonView 纯 UI。"
+  },
+  {
+    "package": "PluginSidebarToggle",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 14.9,
+    "after_regions": 31.2,
+    "delta_lines": null,
+    "delta_regions": null,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [
+      "Tests/PluginSidebarToggleTests/SidebarTogglePluginTests.swift",
+      "Tests/PluginSidebarToggleTests/SidebarTogglePluginLifecycleTests.swift"
+    ],
+    "notes": "Fixed pre-existing compile error (test class missing @MainActor for @MainActor static property access). Added empty-kernel lifecycle tests."
+  },
+  {
+    "package": "PluginStatusBar",
+    "before_lines": 10.1,
+    "before_regions": 14.8,
+    "after_lines": 10.1,
+    "after_regions": 14.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [],
+    "notes": "UI 为主，逻辑已抽取. Existing tests cover onBoot graceful degradation and onShutdown removal. Remainder is SwiftUI views."
+  },
+  {
+    "package": "PluginStorage",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 36.8,
+    "after_regions": 60.0,
+    "delta_lines": 36.8,
+    "delta_regions": 60.0,
+    "test_status": "passed",
+    "tests_count": 3,
+    "changed_files": [
+      "Tests/PluginStorageTests/PluginStorageTests.swift"
+    ],
+    "notes": "Package.swift 已声明 testTarget 但 Tests 目录缺失；补建后新增 StorageService 目录创建与 StorageSuperPlugin init 测试。onBoot/onRegister 需 KernelCore 容器，AboutView 为 UI。"
+  },
+  {
+    "package": "PluginThemePack",
+    "before_lines": 1.6,
+    "before_regions": 3.5,
+    "after_lines": 1.6,
+    "after_regions": 3.5,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [],
+    "notes": "UI-heavy: ThemeSettingsDetailView is 984 lines of SwiftUI. LegacyThemeCatalog data already tested (19 themes, IDs, metadata). No cheap logic to extract."
+  },
+  {
+    "package": "PluginToast",
+    "before_lines": 14.3,
+    "before_regions": 26.2,
+    "after_lines": 16.5,
+    "after_regions": 30.8,
+    "delta_lines": 2.2,
+    "delta_regions": 4.6,
+    "test_status": "passed",
+    "tests_count": 9,
+    "changed_files": [
+      "Tests/PluginToastTests/ToastCenterAdditionalTests.swift"
+    ],
+    "notes": "ToastSuperPlugin went from 74.5% to 91.5%. 338 lines of SwiftUI views remain 0%."
+  },
+  {
+    "package": "PluginWorktreeClean",
+    "before_lines": 17.5,
+    "before_regions": 20.9,
+    "after_lines": 17.6,
+    "after_regions": 21.2,
+    "delta_lines": 0.1,
+    "delta_regions": 0.3,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Tests/PluginWorktreeCleanTests/RepositoryDiskUsageTests.swift"
+    ],
+    "notes": "Added RepositoryDiskUsage tests: non-directory nil, sums files, pre-cancelled nil, cache round-trip, negative rejection. Remainder is large SwiftUI views (CleanStateInfoView 877 lines)."
+  },
+  {
+    "package": "PluginWorktreeStatus",
+    "before_lines": 2.3,
+    "before_regions": 6.1,
+    "after_lines": 2.3,
+    "after_regions": 6.1,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [],
+    "notes": "WorkingTreeStatusView(936行) 为主的纯 UI 包；plugin/observer 需 KernelCore + GitProviding Mock，ROI 低。UI 为主。"
+  },
+  {
+    "package": "ProjectRulesKit",
+    "before_lines": 100.0,
+    "before_regions": 100.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 9,
+    "changed_files": [],
+    "notes": "Pure logic kit already at 100% lines/regions (52 lines across 3 rule enums). No changes needed."
+  },
+  {
+    "package": "ProviderActivity",
+    "before_lines": 100.0,
+    "before_regions": 90.9,
+    "after_lines": 100.0,
+    "after_regions": 90.9,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 4,
+    "changed_files": [],
+    "notes": "Already at 100% lines coverage. No changes needed."
+  },
+  {
+    "package": "ProviderActivityHeatmap",
+    "before_lines": 98.4,
+    "before_regions": 87.9,
+    "after_lines": 98.4,
+    "after_regions": 87.9,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 3,
+    "changed_files": [],
+    "notes": "Already near-complete (98.4%). No additional tests needed; pure model + observer provider already covered."
+  },
+  {
+    "package": "ProviderAutoPush",
+    "before_lines": 100.0,
+    "before_regions": 88.9,
+    "after_lines": 100.0,
+    "after_regions": 88.9,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 3,
+    "changed_files": [],
+    "notes": "已 100% 行覆盖，无需改动。"
+  },
+  {
+    "package": "ProviderChatSection",
+    "before_lines": 37.9,
+    "before_regions": 46.9,
+    "after_lines": 39.8,
+    "after_regions": 51.3,
+    "delta_lines": 1.9,
+    "delta_regions": 4.4,
+    "test_status": "passed",
+    "tests_count": 16,
+    "changed_files": [
+      "Tests/ProviderChatSectionTests/ProviderChatSectionTests.swift"
+    ],
+    "notes": "Added removeItem/removeBarItem/empty-ownerID no-op tests. Manager logic well-covered; remaining 69% uncovered in DefaultChatSectionProviding is SwiftUI view body (ChatSectionHostView, ChatStackView, ChatBottomFixedView, ChatHeaderRow, ChatToolbarRow, ChatActionBarView ~300 lines)."
+  },
+  {
+    "package": "ProviderCloneRepository",
+    "before_lines": 70.6,
+    "before_regions": 53.8,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 29.4,
+    "delta_regions": 46.2,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [
+      "Tests/ProviderCloneRepositoryTests/ProviderCloneRepositoryAdditionalTests.swift"
+    ],
+    "notes": "Added tests for all CloneTaskStatus.isActive cases, CloneRepositoryError descriptions, init defaults, and Codable round-trip with optional fields."
+  },
+  {
+    "package": "ProviderCoAuthor",
+    "before_lines": 69.0,
+    "before_regions": 65.6,
+    "after_lines": 75.9,
+    "after_regions": 71.9,
+    "delta_lines": 6.9,
+    "delta_regions": 6.3,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [
+      "Tests/ProviderCoAuthorTests/CoAuthorFormattingTests.swift"
+    ],
+    "notes": "Added CoAuthor formatting tests: coAuthoredByLine, displayText, init fields."
+  },
+  {
+    "package": "ProviderCommand",
+    "before_lines": 98.8,
+    "before_regions": 90.9,
+    "after_lines": 98.8,
+    "after_regions": 90.9,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 4,
+    "changed_files": [],
+    "notes": "已 98.8% 行覆盖，无需改动。"
+  },
+  {
+    "package": "ProviderCommitForm",
+    "before_lines": 63.8,
+    "before_regions": 44.9,
+    "after_lines": 74.3,
+    "after_regions": 53.1,
+    "delta_lines": 10.5,
+    "delta_regions": 8.2,
+    "test_status": "passed",
+    "tests_count": 15,
+    "changed_files": [
+      "Tests/ProviderCommitFormTests/ProviderCommitFormTests.swift"
+    ],
+    "notes": "Added CoAuthor computed property and CoAuthorStore add/remove/update/duplicate-email/empty tests. CoAuthor.swift now 100%. Remaining uncovered: CommitFormProviding.swift (60.8%, ~60 lines of provider state machine) and CommitCategory.swift (79.8%)."
+  },
+  {
+    "package": "ProviderContentView",
+    "before_lines": 26.5,
+    "before_regions": 56.2,
+    "after_lines": 29.9,
+    "after_regions": 59.4,
+    "delta_lines": 3.4,
+    "delta_regions": 3.2,
+    "test_status": "passed",
+    "tests_count": 12,
+    "changed_files": [
+      "Tests/ProviderContentViewTests/ContentLoadingIndicatorTests.swift"
+    ],
+    "notes": "Added ContentLoadingIndicator init smoke tests. DefaultContentViewProviding already comprehensively tested."
+  },
+  {
+    "package": "ProviderConversation",
+    "before_lines": 55.4,
+    "before_regions": 42.5,
+    "after_lines": 59.3,
+    "after_regions": 48.0,
+    "delta_lines": 3.9,
+    "delta_regions": 5.5,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/ProviderConversationTests/ConversationEnumTests.swift"
+    ],
+    "notes": "Added enum round-trip tests: ResponseVerbosity (raw/init/aliases/default), AutomationLevel (raw/allowsTools), ReasoningEffort (raw/init/default)."
+  },
+  {
+    "package": "ProviderDocsView",
+    "before_lines": 83.8,
+    "before_regions": 83.3,
+    "after_lines": 83.8,
+    "after_regions": 83.3,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [],
+    "notes": "DefaultDocsViewProviding 100%；协议默认 addAbout/addManual/removeEntries 已由既有测试覆盖。"
+  },
+  {
+    "package": "ProviderGit",
+    "before_lines": 7.1,
+    "before_regions": 4.4,
+    "after_lines": 8.1,
+    "after_regions": 5.2,
+    "delta_lines": 1.0,
+    "delta_regions": 0.8,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [
+      "Tests/ProviderGitTests/WorktreeSnapshotStoreTests.swift"
+    ],
+    "notes": "Added cancellation/unknown-cache/error-propagation tests. WorktreeSnapshotStore now 90.5%. DefaultGitProvider (681 lines) is pure delegation to KitGit static ops; GitProviding (175 lines) is a protocol with default implementations requiring a full Git mock to test. Single-flight concurrent test removed due to Swift 6 Sendable closure capture rules."
+  },
+  {
+    "package": "ProviderGitConflictResolver",
+    "before_lines": 0.0,
+    "before_regions": 0.0,
+    "after_lines": 0.0,
+    "after_regions": 0.0,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/ProviderGitConflictResolverTests/GitConflictResolutionProvidingTests.swift"
+    ],
+    "notes": "Created new testTarget. Package is a protocol-only declaration (11 lines, no executable code lines). Mock conforms and responds to requestPresentation."
+  },
+  {
+    "package": "ProviderGitRepositoryWatch",
+    "before_lines": 100.0,
+    "before_regions": 100.0,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 0,
+    "changed_files": [],
+    "notes": "Already 100%. No additional tests needed."
+  },
+  {
+    "package": "ProviderGitUser",
+    "before_lines": 45.6,
+    "before_regions": 41.2,
+    "after_lines": 93.6,
+    "after_regions": 91.2,
+    "delta_lines": 48.0,
+    "delta_regions": 50.0,
+    "test_status": "passed",
+    "tests_count": 19,
+    "changed_files": [
+      "Tests/ProviderGitUserTests/CollaboratorProviderTests.swift"
+    ],
+    "notes": "DefaultCollaboratorProvider 原 0/115 行；新增完整 CRUD/默认交接/持久化/观察者/取消测试，并覆盖 Collaborator.title 与 GitUserPreset.title。"
+  },
+  {
+    "package": "ProviderLogo",
+    "before_lines": 81.1,
+    "before_regions": 76.0,
+    "after_lines": 92.5,
+    "after_regions": 80.0,
+    "delta_lines": 11.4,
+    "delta_regions": 4.0,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Tests/ProviderLogoTests/ProviderLogoTests.swift"
+    ],
+    "notes": "Added overlay-init test. DefaultLogoProviding already 100%. LogoItem now 80% (remaining 3 lines are the makeOverlay closure body)."
+  },
+  {
+    "package": "ProviderPluginControl",
+    "before_lines": 28.9,
+    "before_regions": 25.0,
+    "after_lines": 89.5,
+    "after_regions": 87.5,
+    "delta_lines": 60.6,
+    "delta_regions": 62.5,
+    "test_status": "passed",
+    "tests_count": 7,
+    "changed_files": [
+      "Tests/ProviderPluginControlTests/DefaultPluginControllingAdditionalTests.swift"
+    ],
+    "notes": "Added tests for attach(), enable/disable without kernel, isEnabled without kernel. Kernel must be running for enable/disable success paths; tests verify no-crash and error handling."
+  },
+  {
+    "package": "ProviderPluginManaging",
+    "before_lines": 73.0,
+    "before_regions": 62.5,
+    "after_lines": 81.1,
+    "after_regions": 70.3,
+    "delta_lines": 8.1,
+    "delta_regions": 7.8,
+    "test_status": "passed",
+    "tests_count": 2,
+    "changed_files": [
+      "Tests/ProviderPluginManagingTests/PluginManagingErrorTests.swift"
+    ],
+    "notes": "Added PluginManagingError tests: error descriptions for all cases, equality."
+  },
+  {
+    "package": "ProviderProjectLanguages",
+    "before_lines": 97.5,
+    "before_regions": 81.6,
+    "after_lines": 97.5,
+    "after_regions": 81.6,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 5,
+    "changed_files": [],
+    "notes": "ProjectLanguagesSnapshot 排序/百分比/过滤已覆盖；已 97.5%。"
+  },
+  {
+    "package": "ProviderProjectReadme",
+    "before_lines": null,
+    "before_regions": null,
+    "after_lines": 0.0,
+    "after_regions": 0.0,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 1,
+    "changed_files": [
+      "Package.swift",
+      "Tests/ProviderProjectReadmeTests/ProviderProjectReadmeTests.swift"
+    ],
+    "notes": "NEW testTarget created. Source is a 4-line protocol (ProjectReadmeProviding) with no executable code. Coverage is 0% because protocol declarations have no lines to cover. Added mock conformance smoke test."
+  },
+  {
+    "package": "ProviderProjects",
+    "before_lines": 44.4,
+    "before_regions": 28.6,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 55.6,
+    "delta_regions": 71.4,
+    "test_status": "passed",
+    "tests_count": 4,
+    "changed_files": [
+      "Tests/ProviderProjectsTests/ProjectRenameErrorTests.swift"
+    ],
+    "notes": "Added tests for ProjectRenameError descriptions and equality across all cases."
+  },
+  {
+    "package": "ProviderRailView",
+    "before_lines": 55.6,
+    "before_regions": 59.4,
+    "after_lines": 55.6,
+    "after_regions": 59.4,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 4,
+    "changed_files": [
+      "Tests/ProviderRailViewTests/ProviderRailViewSectionsTests.swift"
+    ],
+    "notes": "Added section tests: registerSections sorting, addSections dedup, removeSections filter, setVisibleTabID filter. Coverage unchanged (lines already covered by existing tests)."
+  },
+  {
+    "package": "ProviderRootView",
+    "before_lines": 20.5,
+    "before_regions": 28.8,
+    "after_lines": 20.5,
+    "after_regions": 28.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 20,
+    "changed_files": [],
+    "notes": "DefaultRootViewProvider/SidebarWidth/ContentFooterHeight 等逻辑已由 20 个测试充分覆盖；剩余 RootMainContentView(502行)/RootWelcomeView(125行)/WorkbenchSplitView(123行) 为纯 SwiftUI 布局。UI 为主，逻辑已抽取。"
+  },
+  {
+    "package": "ProviderSettingView",
+    "before_lines": 11.7,
+    "before_regions": 19.6,
+    "after_lines": 20.3,
+    "after_regions": 37.5,
+    "delta_lines": 8.6,
+    "delta_regions": 17.9,
+    "test_status": "passed",
+    "tests_count": 12,
+    "changed_files": [
+      "Tests/ProviderSettingViewTests/ProviderSettingViewTests.swift"
+    ],
+    "notes": "Added project detail section add/dedupe/sort/remove, selection-preservation-on-reregister, and selectNil tests. DefaultSettingViewProviding now 100%. Remaining uncovered: SettingView.swift (168 lines SwiftUI) and SettingViewProviding protocol (17 lines)."
+  },
+  {
+    "package": "ProviderSidebar",
+    "before_lines": 39.6,
+    "before_regions": 68.8,
+    "after_lines": 39.6,
+    "after_regions": 68.8,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 6,
+    "changed_files": [
+      "Tests/ProviderSidebarTests/DefaultSidebarProviderAdditionalTests.swift"
+    ],
+    "notes": "Added activation callback tests and nil-clear selection test. DefaultSidebarProvider already at 96.4%. 106 lines of SwiftUI views remain 0%."
+  },
+  {
+    "package": "ProviderStatusBar",
+    "before_lines": 6.5,
+    "before_regions": 9.1,
+    "after_lines": 6.5,
+    "after_regions": 9.1,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 0,
+    "changed_files": [],
+    "notes": "UI 为主，逻辑已抽取. DefaultStatusBarProviding is a thin passthrough; remainder is SwiftUI AppStatusBarTile."
+  },
+  {
+    "package": "ProviderStorage",
+    "before_lines": 60.2,
+    "before_regions": 51.7,
+    "after_lines": 75.8,
+    "after_regions": 60.0,
+    "delta_lines": 15.6,
+    "delta_regions": 8.3,
+    "test_status": "passed",
+    "tests_count": 15,
+    "changed_files": [
+      "Tests/ProviderStorageTests/ProviderStorageTests.swift"
+    ],
+    "notes": "新增 makeDefaultDataRootDirectory 与无参 init 的冒烟测试，覆盖 DefaultStorageProvider 默认根路径计算。剩余未覆盖为 verbose 日志分支（verbose=false，不可达）。"
+  },
+  {
+    "package": "ProviderTheme",
+    "before_lines": 88.0,
+    "before_regions": 89.3,
+    "after_lines": 88.0,
+    "after_regions": 89.3,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 28,
+    "changed_files": [],
+    "notes": "Already well-tested at 88% lines / 89.3% regions (above 80% target). DefaultThemeProviding 93%, LumiTheme 76.7%. No changes needed."
+  },
+  {
+    "package": "ProviderToast",
+    "before_lines": 75.0,
+    "before_regions": 71.4,
+    "after_lines": 100.0,
+    "after_regions": 100.0,
+    "delta_lines": 25.0,
+    "delta_regions": 28.6,
+    "test_status": "passed",
+    "tests_count": 8,
+    "changed_files": [
+      "Tests/ProviderToastTests/DefaultToastProvidingAdditionalTests.swift"
+    ],
+    "notes": "Added tests for presentError/dismissError no-ops, LumiErrorNotice equality, LumiToastStyle raw values."
+  },
+  {
+    "package": "ProviderToolbar",
+    "before_lines": 24.1,
+    "before_regions": 34.2,
+    "after_lines": 24.1,
+    "after_regions": 34.2,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 4,
+    "changed_files": [
+      "Tests/ProviderToolbarTests/ProviderToolbarVisibilityTests.swift"
+    ],
+    "notes": "Added category visibility tests: visibleToolbarItems filter, setHiddenCategories, clearing restores, setVisibleCategories. Coverage unchanged (logic already exercised by existing tests)."
+  },
+  {
+    "package": "ProviderWorkspaceScene",
+    "before_lines": 27.0,
+    "before_regions": 37.6,
+    "after_lines": 27.0,
+    "after_regions": 37.6,
+    "delta_lines": 0.0,
+    "delta_regions": 0.0,
+    "test_status": "passed",
+    "tests_count": 7,
+    "changed_files": [],
+    "notes": "DefaultWorkspaceSceneProvider/PickerModel/VisibilityViewModel 逻辑已由既有测试覆盖；剩余 WorkspaceScenePickerView 与 Popover 为纯 SwiftUI。UI 为主，逻辑已抽取。"
+  }
+]

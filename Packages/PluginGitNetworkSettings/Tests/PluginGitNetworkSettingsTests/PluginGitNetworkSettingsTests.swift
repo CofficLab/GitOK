@@ -12,6 +12,7 @@ struct PluginGitNetworkSettingsTests {
         let plugin = GitNetworkSettingsPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-network-settings")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        // 源文件声明 policy 为 .disabled（由宿主按需启用设置项）。
+        #expect(plugin.metadata.policy == .disabled)
     }
 }
