@@ -62,6 +62,7 @@ public struct BranchPickerView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("gitok.git.branch.switcher")
         .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
             BranchPickerPopoverView(
                 projects: projects,

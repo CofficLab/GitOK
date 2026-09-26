@@ -270,6 +270,7 @@ struct WorktreeChangesView: View {
                             .font(DesignTokens.Typography.caption2)
                             .foregroundStyle(theme.textTertiary)
                             .lineLimit(1)
+                            .accessibilityIdentifier("gitok.worktree.status.\(entry.path)")
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -289,6 +290,7 @@ struct WorktreeChangesView: View {
                             unstage(entry)
                         }
                         .disabled(isActionInProgress)
+                        .accessibilityIdentifier("gitok.worktree.unstage.\(entry.path)")
                     }
                 } else if entry.isUntracked || entry.isWorktreeModified {
                     if stagingPath == entry.path {
@@ -303,6 +305,7 @@ struct WorktreeChangesView: View {
                             stage(entry)
                         }
                         .disabled(isActionInProgress)
+                        .accessibilityIdentifier("gitok.worktree.stage.\(entry.path)")
                     }
                 }
 
@@ -327,6 +330,7 @@ struct WorktreeChangesView: View {
                 .frame(width: 3)
                 .allowsHitTesting(false)
         }
+        .accessibilityIdentifier("gitok.worktree.file.\(entry.path)")
     }
 
     // MARK: - Status Helpers

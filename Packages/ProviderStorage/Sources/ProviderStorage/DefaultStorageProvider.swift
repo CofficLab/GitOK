@@ -65,6 +65,19 @@ public final class DefaultStorageProvider: StorageProviding, SuperLog {
     /// - 环境名：DEBUG 构建 `db_debug_*`，Release 构建 `db_production_*`；
     /// - 主版本号：取 `CFBundleShortVersionString` 第一段，回退 4。
     public static func makeDefaultDataRootDirectory() -> URL {
+#if DEBUG
+        // UI tests seed an isolated repository and project store before launch.
+        // Keep the override explicit so ordinary debug launches use the normal
+        // Application Support location and never inherit test data by accident.
+        if ProcessInfo.processInfo.arguments.contains("--ui-testing"),
+           let path = ProcessInfo.processInfo.environment["GITOK_UI_TEST_DATA_ROOT"],
+           !path.isEmpty {
+            let root = URL(fileURLWithPath: path, isDirectory: true).standardizedFileURL
+            Self.ensureDirectory(root)
+            return root
+        }
+#endif
+
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
         let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.gitok"

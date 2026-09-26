@@ -92,6 +92,7 @@ struct BranchPickerPopoverView: View {
         HStack(spacing: 8) {
             TextField(LumiPluginLocalization.string("Search", bundle: .module), text: $searchText)
                 .textFieldStyle(.roundedBorder)
+                .accessibilityIdentifier("gitok.git.branch.search")
 
             Button {
                 if isCreatingNew {
@@ -108,6 +109,7 @@ struct BranchPickerPopoverView: View {
             .buttonStyle(.bordered)
             .help(isCreatingNew ? LumiPluginLocalization.string("Cancel", bundle: .module) : LumiPluginLocalization.string("New Branch", bundle: .module))
             .disabled(isLoading)
+            .accessibilityIdentifier("gitok.git.branch.create.toggle")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
@@ -119,12 +121,14 @@ struct BranchPickerPopoverView: View {
                 .textFieldStyle(.roundedBorder)
                 .focused($isNewBranchFieldFocused)
                 .onSubmit { createBranch() }
+                .accessibilityIdentifier("gitok.git.branch.new-name")
 
             Button("Create") {
                 createBranch()
             }
             .buttonStyle(.borderedProminent)
             .disabled(newBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
+            .accessibilityIdentifier("gitok.git.branch.create")
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 10)
