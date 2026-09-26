@@ -129,6 +129,9 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             onDataChanged: { [weak viewModel] in
                 viewModel?.handleDataChanged()
             },
+            onRepositoryInfoChanged: { [weak viewModel] in
+                viewModel?.handleRepositoryInfoChanged()
+            },
             onUserPresetsChanged: { [weak viewModel] presets in
                 viewModel?.handleUserPresetsChanged(presets)
             },

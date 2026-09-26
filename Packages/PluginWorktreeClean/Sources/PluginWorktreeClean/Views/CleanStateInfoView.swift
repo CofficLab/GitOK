@@ -105,6 +105,7 @@ struct CleanStateInfoView: View {
         }
         .onAppear(perform: loadInfo)
         .onChange(of: project.url) { _, _ in loadInfo() }
+        .onChange(of: viewModel.repositoryInfoRevision) { _, _ in loadInfo() }
         .onDisappear(perform: cancelLoads)
     }
 
@@ -162,6 +163,8 @@ struct CleanStateInfoView: View {
         ) {
             EmptyView()
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("gitok.repository.info.branch")
     }
 
     // MARK: - Latest Tag Row
