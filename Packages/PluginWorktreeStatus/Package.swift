@@ -19,7 +19,7 @@ let package = Package(
         .package(path: "../ProviderGit"),
         .package(path: "../KitLocalization"),
         .package(path: "../KitSuperLog"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRailView"),
         .package(path: "../ProviderGitRepositoryWatch"),

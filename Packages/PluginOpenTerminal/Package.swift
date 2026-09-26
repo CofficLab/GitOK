@@ -23,5 +23,10 @@ let package = Package(
             ],
             path: "Sources/PluginOpenTerminal"
         ),
+        .testTarget(
+            name: "PluginOpenTerminalTests",
+            dependencies: ["PluginOpenTerminal"],
+            path: "Tests/PluginOpenTerminalTests"
+        ),
     ]
 )

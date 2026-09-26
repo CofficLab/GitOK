@@ -9,5 +9,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "ProviderProjectReadme"),
+        .testTarget(
+            name: "ProviderProjectReadmeTests",
+            dependencies: ["ProviderProjectReadme"],
+            path: "Tests/ProviderProjectReadmeTests"
+        ),
     ]
 )

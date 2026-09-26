@@ -23,5 +23,10 @@ let package = Package(
             ],
             path: "Sources/PluginOpenLumi"
         ),
+        .testTarget(
+            name: "PluginOpenLumiTests",
+            dependencies: ["PluginOpenLumi"],
+            path: "Tests/PluginOpenLumiTests"
+        ),
     ]
 )

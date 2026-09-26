@@ -38,6 +38,7 @@ let package = Package(
             dependencies: [
                 "PluginActivityHeatmap",
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderActivityHeatmap", package: "ProviderActivityHeatmap"),
             ],
             path: "Tests/PluginActivityHeatmapTests"
         ),

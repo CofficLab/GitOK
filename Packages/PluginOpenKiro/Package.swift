@@ -23,5 +23,10 @@ let package = Package(
             ],
             path: "Sources/PluginOpenKiro"
         ),
+        .testTarget(
+            name: "PluginOpenKiroTests",
+            dependencies: ["PluginOpenKiro"],
+            path: "Tests/PluginOpenKiroTests"
+        ),
     ]
 )

@@ -23,5 +23,10 @@ let package = Package(
             ],
             path: "Sources/PluginOpenXcode"
         ),
+        .testTarget(
+            name: "PluginOpenXcodeTests",
+            dependencies: ["PluginOpenXcode"],
+            path: "Tests/PluginOpenXcodeTests"
+        ),
     ]
 )

@@ -23,5 +23,10 @@ let package = Package(
             ],
             path: "Sources/PluginOpenRemote"
         ),
+        .testTarget(
+            name: "PluginOpenRemoteTests",
+            dependencies: ["PluginOpenRemote"],
+            path: "Tests/PluginOpenRemoteTests"
+        ),
     ]
 )

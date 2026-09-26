@@ -24,5 +24,10 @@ let package = Package(
                 .product(name: "ProviderProjectReadme", package: "ProviderProjectReadme"),
             ]
         ),
+        .testTarget(
+            name: "PluginProjectReadmeTests",
+            dependencies: ["PluginProjectReadme"],
+            path: "Tests/PluginProjectReadmeTests"
+        ),
     ]
 )
