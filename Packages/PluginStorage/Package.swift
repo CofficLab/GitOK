@@ -7,7 +7,7 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [.library(name: "PluginStorage", targets: ["PluginStorage"])],
     dependencies: [
-        .package(path: "../KitSuperLog"),
+        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderDocsView"),
@@ -18,7 +18,7 @@ let package = Package(
         .target(
             name: "PluginStorage",
             dependencies: [
-                "KitSuperLog",
+                .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),

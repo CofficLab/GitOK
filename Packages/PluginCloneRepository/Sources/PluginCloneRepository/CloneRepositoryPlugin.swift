@@ -2,7 +2,7 @@ import Foundation
 import KernelCore
 import KitGit
 import LumiLocalizationKit
-import KitSuperLog
+import LumiLoggingKit
 import LumiUI
 import os
 import ProviderActivity

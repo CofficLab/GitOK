@@ -1,7 +1,7 @@
 import Foundation
 import KernelCore
 import KitGit
-import KitSuperLog
+import LumiLoggingKit
 import os
 import ProviderGit
 import ProviderProjects

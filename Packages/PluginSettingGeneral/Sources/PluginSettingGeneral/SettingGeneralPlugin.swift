@@ -5,7 +5,7 @@ import ProviderDocsView
 import ProviderGit
 import ProviderSettingView
 import SwiftUI
-import KitSuperLog
+import LumiLoggingKit
 import os
 
 /// 设置 - 通用 插件

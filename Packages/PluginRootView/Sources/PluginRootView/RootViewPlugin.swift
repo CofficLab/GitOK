@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 import KernelCore
-import KitSuperLog
+import LumiLoggingKit
 import os
 import ProviderCloneRepository
 import ProviderProjects

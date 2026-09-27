@@ -1,7 +1,7 @@
 import Foundation
 import os
 import ProviderSettingView
-import KitSuperLog
+import LumiLoggingKit
 import SwiftUI
 
 /// `SettingViewProviding` 的自研实现：持有设置入口项和选中状态。

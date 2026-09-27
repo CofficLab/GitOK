@@ -8,7 +8,7 @@ Git Stash 插件：`StashListView` 管理暂存列表，`StashStatusTile` 展示
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitGit`、`KitSuperLog`、`ProviderProjects`、`ProviderStatusBar`；https://github.com/CofficLab/LumiUI.git |
+| **上游依赖** | `KernelCore`、`KitGit`、`LumiLoggingKit`、`ProviderProjects`、`ProviderStatusBar`；https://github.com/CofficLab/LumiUI.git |
 | **平台** | macOS 14+ |
 
 ## 目录结构

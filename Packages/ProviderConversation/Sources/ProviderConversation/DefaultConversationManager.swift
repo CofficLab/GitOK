@@ -1,8 +1,7 @@
 import Combine
 import Foundation
 import os
-import KitSuperLog
-
+import LumiLoggingKit
 /// `ConversationManaging` 的内存默认实现。
 ///
 /// 复刻自旧版 ConversationManagerPlugin 的 `ConversationManager` 核心逻辑，
