@@ -15,7 +15,10 @@ struct SettingsButtonView: View {
                 object: nil
             )
         }
-        .help("Open Settings")
+        .help(SettingsButtonLocalization.string("Open Settings", bundle: .module))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(SettingsButtonLocalization.string("Open Settings", bundle: .module))
+        .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("gitok.settings.button")
     }
 }

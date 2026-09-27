@@ -125,7 +125,7 @@ struct BranchPickerPopoverView: View {
                 .onSubmit { createBranch() }
                 .accessibilityIdentifier("gitok.git.branch.new-name")
 
-            Button("Create") {
+            Button(LumiPluginLocalization.string("Create", bundle: .module)) {
                 createBranch()
             }
             .buttonStyle(.borderedProminent)

@@ -49,9 +49,9 @@ struct CloneRepositorySheet: View {
     }
 
     private var validationMessage: String? {
-        if trimmedRemoteURL.isEmpty { return "Enter a remote repository URL." }
-        if trimmedName.isEmpty { return "Enter a repository name." }
-        guard let destination = destinationURL else { return "Invalid destination path." }
+        if trimmedRemoteURL.isEmpty { return LumiPluginLocalization.string("Enter a remote repository URL.", bundle: .module) }
+        if trimmedName.isEmpty { return LumiPluginLocalization.string("Enter a repository name.", bundle: .module) }
+        guard let destination = destinationURL else { return LumiPluginLocalization.string("Invalid destination path.", bundle: .module) }
         do {
             try git.validateCloneDestination(destination)
         } catch {
@@ -73,6 +73,13 @@ struct CloneRepositorySheet: View {
         }
         .padding(24)
         .frame(width: 540)
+        .overlay(alignment: .topLeading) {
+            Color.clear
+                .frame(width: 1, height: 1)
+                .accessibilityElement()
+                .accessibilityLabel(LumiPluginLocalization.string("Clone Repository", bundle: .module))
+                .accessibilityIdentifier("gitok.clone.sheet")
+        }
         .onChange(of: remoteURL) { _, newValue in
             guard !didManuallyEditName else { return }
             repositoryName = GitCloneOperation.defaultRepositoryName(from: newValue) ?? ""
@@ -90,10 +97,9 @@ struct CloneRepositorySheet: View {
                 .font(.system(size: 18))
                 .foregroundStyle(theme.primary)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Clone Repository")
+                Text(LumiPluginLocalization.string("Clone Repository", bundle: .module))
                     .font(.headline)
-                    .accessibilityIdentifier("gitok.clone.sheet")
-                Text("Clone a remote repository and add it to your projects.")
+                Text(LumiPluginLocalization.string("Clone a remote repository and add it to your projects.", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
@@ -103,7 +109,7 @@ struct CloneRepositorySheet: View {
 
     private var remoteSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Remote URL")
+            Text(LumiPluginLocalization.string("Remote URL", bundle: .module))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             AppInputField("https://github.com/owner/repo.git", text: $remoteURL)
@@ -113,7 +119,7 @@ struct CloneRepositorySheet: View {
 
     private var destinationSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Destination")
+            Text(LumiPluginLocalization.string("Destination", bundle: .module))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             HStack(spacing: 8) {
@@ -128,17 +134,20 @@ struct CloneRepositorySheet: View {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .fill(theme.textSecondary.opacity(0.08))
                     )
-                AppButton("Choose...", systemImage: "folder", style: .secondary, size: .small) {
+                AppButton(LumiPluginLocalization.string("Choose...", bundle: .module), systemImage: "folder", style: .secondary, size: .small) {
                     chooseDestinationFolder()
                 }
                 .accessibilityIdentifier("gitok.clone.destination.choose")
             }
             HStack(spacing: 6) {
-                Text("Name")
+                Text(LumiPluginLocalization.string("Name", bundle: .module))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
-                    .frame(width: 44, alignment: .leading)
-                AppInputField("repository-name", text: $repositoryName)
+                .frame(width: 44, alignment: .leading)
+                AppInputField(
+                    LocalizedStringKey(LumiPluginLocalization.string("Repository name", bundle: .module)),
+                    text: $repositoryName
+                )
                     .accessibilityIdentifier("gitok.clone.repository-name")
             }
             if let destination = destinationURL {
@@ -160,9 +169,9 @@ struct CloneRepositorySheet: View {
                     .lineLimit(2)
             }
             Spacer()
-            AppButton("Cancel", style: .secondary, action: { dismiss() })
+            AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, action: { dismiss() })
                 .keyboardShortcut(.cancelAction)
-            AppButton("Clone", systemImage: "arrow.down.circle", style: .primary, action: enqueueClone)
+            AppButton(LumiPluginLocalization.string("Clone", bundle: .module), systemImage: "arrow.down.circle", style: .primary, action: enqueueClone)
                 .disabled(validationMessage != nil)
                 .keyboardShortcut(.defaultAction)
         }
@@ -174,7 +183,7 @@ struct CloneRepositorySheet: View {
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
         panel.directoryURL = destinationFolder
-        panel.prompt = "Choose"
+        panel.prompt = LumiPluginLocalization.string("Choose", bundle: .module)
         if panel.runModal() == .OK, let url = panel.url {
             destinationFolder = url
         }
