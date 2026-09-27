@@ -1,4 +1,5 @@
 import AppKit
+import KitGit
 import LumiUI
 import ProviderCloneRepository
 import ProviderGit
@@ -20,10 +21,19 @@ struct CloneRepositorySheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var remoteURL = ""
-    @State private var destinationFolder = FileManager.default.homeDirectoryForCurrentUser
+    @State private var destinationFolder = Self.initialDestinationFolder
     @State private var repositoryName = ""
     @State private var errorMessage: String?
     @State private var didManuallyEditName = false
+
+    private static var initialDestinationFolder: URL {
+        let process = ProcessInfo.processInfo
+        if process.arguments.contains("--ui-testing"),
+           let path = process.environment["GITOK_UI_TEST_CLONE_DESTINATION"] {
+            return URL(fileURLWithPath: path, isDirectory: true)
+        }
+        return FileManager.default.homeDirectoryForCurrentUser
+    }
 
     private var trimmedRemoteURL: String {
         remoteURL.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -63,14 +73,13 @@ struct CloneRepositorySheet: View {
         }
         .padding(24)
         .frame(width: 540)
-        .accessibilityIdentifier("gitok.clone.sheet")
         .onChange(of: remoteURL) { _, newValue in
             guard !didManuallyEditName else { return }
-            repositoryName = git.defaultRepositoryName(from: newValue) ?? ""
+            repositoryName = GitCloneOperation.defaultRepositoryName(from: newValue) ?? ""
         }
         .onChange(of: repositoryName) { _, newValue in
             let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            let autoName = git.defaultRepositoryName(from: remoteURL)
+            let autoName = GitCloneOperation.defaultRepositoryName(from: remoteURL)
             didManuallyEditName = (autoName != trimmed)
         }
     }
@@ -83,6 +92,7 @@ struct CloneRepositorySheet: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Clone Repository")
                     .font(.headline)
+                    .accessibilityIdentifier("gitok.clone.sheet")
                 Text("Clone a remote repository and add it to your projects.")
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
@@ -97,6 +107,7 @@ struct CloneRepositorySheet: View {
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             AppInputField("https://github.com/owner/repo.git", text: $remoteURL)
+                .accessibilityIdentifier("gitok.clone.remote-url")
         }
     }
 
@@ -120,6 +131,7 @@ struct CloneRepositorySheet: View {
                 AppButton("Choose...", systemImage: "folder", style: .secondary, size: .small) {
                     chooseDestinationFolder()
                 }
+                .accessibilityIdentifier("gitok.clone.destination.choose")
             }
             HStack(spacing: 6) {
                 Text("Name")
@@ -127,6 +139,7 @@ struct CloneRepositorySheet: View {
                     .foregroundStyle(theme.textSecondary)
                     .frame(width: 44, alignment: .leading)
                 AppInputField("repository-name", text: $repositoryName)
+                    .accessibilityIdentifier("gitok.clone.repository-name")
             }
             if let destination = destinationURL {
                 Text(destination.path)

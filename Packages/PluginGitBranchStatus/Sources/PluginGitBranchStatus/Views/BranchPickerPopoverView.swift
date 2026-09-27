@@ -22,6 +22,7 @@ struct BranchPickerPopoverView: View {
     @State private var isCreatingNew = false
     @State private var newBranchName = ""
     @State private var isLoading = false
+    @State private var isPerformingAction = false
     @State private var errorMessage: String?
     @State private var loadGeneration = 0
     @State private var projectGeneration = 0
@@ -76,6 +77,7 @@ struct BranchPickerPopoverView: View {
                 branches = []
                 errorMessage = nil
                 isLoading = false
+                isPerformingAction = false
                 load()
             case .dataChanged:
                 load()
@@ -108,7 +110,7 @@ struct BranchPickerPopoverView: View {
             }
             .buttonStyle(.bordered)
             .help(isCreatingNew ? LumiPluginLocalization.string("Cancel", bundle: .module) : LumiPluginLocalization.string("New Branch", bundle: .module))
-            .disabled(isLoading)
+            .disabled(isPerformingAction)
             .accessibilityIdentifier("gitok.git.branch.create.toggle")
         }
         .padding(.horizontal, 12)
@@ -127,7 +129,7 @@ struct BranchPickerPopoverView: View {
                 createBranch()
             }
             .buttonStyle(.borderedProminent)
-            .disabled(newBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
+            .disabled(newBranchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isPerformingAction)
             .accessibilityIdentifier("gitok.git.branch.create")
         }
         .padding(.horizontal, 12)
@@ -187,7 +189,7 @@ struct BranchPickerPopoverView: View {
                     .padding(.vertical, 6)
                 }
                 .buttonStyle(.plain)
-                .disabled(isLoading)
+                .disabled(isPerformingAction)
                 .help(LumiPluginLocalization.string("Checkout locally", bundle: .module))
             }
         }
@@ -231,6 +233,7 @@ struct BranchPickerPopoverView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("gitok.git.branch.option.\(branch.name)")
     }
 
     // MARK: - Actions
@@ -289,7 +292,7 @@ struct BranchPickerPopoverView: View {
         let repositoryURL = url.standardizedFileURL
         let requestProjectGeneration = projectGeneration
         errorMessage = nil
-        isLoading = true
+        isPerformingAction = true
         Task { @MainActor in
             let result = await Task.detached(priority: .userInitiated) {
                 Result { try git.checkoutBranch(named: branch.name, in: repositoryURL) }
@@ -300,7 +303,7 @@ struct BranchPickerPopoverView: View {
             }
             guard projectGeneration == requestProjectGeneration,
                   projects.currentProject?.url.standardizedFileURL == repositoryURL else { return }
-            isLoading = false
+            isPerformingAction = false
             switch result {
             case .success:
                 isPresented.wrappedValue = false
@@ -316,7 +319,7 @@ struct BranchPickerPopoverView: View {
         let repositoryURL = url.standardizedFileURL
         let requestProjectGeneration = projectGeneration
         errorMessage = nil
-        isLoading = true
+        isPerformingAction = true
         Task { @MainActor in
             let result = await Task.detached(priority: .userInitiated) {
                 Result { try git.checkoutRemoteBranch(named: branch.name, as: nil, in: repositoryURL) }
@@ -327,7 +330,7 @@ struct BranchPickerPopoverView: View {
             }
             guard projectGeneration == requestProjectGeneration,
                   projects.currentProject?.url.standardizedFileURL == repositoryURL else { return }
-            isLoading = false
+            isPerformingAction = false
             switch result {
             case .success:
                 isPresented.wrappedValue = false
@@ -345,7 +348,7 @@ struct BranchPickerPopoverView: View {
         let name = newBranchName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { return }
         errorMessage = nil
-        isLoading = true
+        isPerformingAction = true
         Task { @MainActor in
             let result = await Task.detached(priority: .userInitiated) {
                 Result {
@@ -359,7 +362,7 @@ struct BranchPickerPopoverView: View {
             }
             guard projectGeneration == requestProjectGeneration,
                   projects.currentProject?.url.standardizedFileURL == repositoryURL else { return }
-            isLoading = false
+            isPerformingAction = false
             switch result {
             case .success:
                 isCreatingNew = false

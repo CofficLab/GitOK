@@ -50,7 +50,13 @@ struct GitDiffPaneView: View {
         .background {
             theme.surface
         }
-        .accessibilityIdentifier("gitok.git.diff.panel")
+        .overlay(alignment: .topLeading) {
+            Color.clear
+                .frame(width: 1, height: 1)
+                .accessibilityElement()
+                .accessibilityLabel("Git diff panel")
+                .accessibilityIdentifier("gitok.git.diff.panel")
+        }
         .onReceive(viewModel.$revision) { _ in loadIfNeeded() }
         .onAppear { loadIfNeeded() }
         .onDisappear { invalidateLoad() }

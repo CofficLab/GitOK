@@ -1,10 +1,13 @@
+import AppKit
 import XCTest
 
 /// Shared app launch and accessibility lookup for GitOK's macOS UI tests.
 class GitOKUITestCase: XCTestCase {
     var app: XCUIApplication!
     private var fixtureRoot: URL!
+    var fixtureRootURL: URL { fixtureRoot }
     var repositoryURL: URL!
+    var hasWorkingTreeChanges: Bool { true }
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -19,6 +22,7 @@ class GitOKUITestCase: XCTestCase {
         app.launchArguments += ["--ui-testing", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launchEnvironment["GITOK_UI_TEST_DATA_ROOT"] = fixtureRoot
             .appendingPathComponent("Data", isDirectory: true).path
+        app.launchEnvironment["GITOK_UI_TEST_CLONE_DESTINATION"] = fixtureRoot.path
         app.launch()
 
         XCTAssertTrue(
@@ -30,8 +34,13 @@ class GitOKUITestCase: XCTestCase {
             "GitOK displayed its startup error view"
         )
         XCTAssertTrue(
+            app.buttons.matching(NSPredicate(format: "label == %@", "GitOK UI Fixture"))
+                .firstMatch.waitForExistence(timeout: 20),
+            "The isolated fixture project was not restored into the project list"
+        )
+        XCTAssertTrue(
             element(identifier: "gitok.git.branch.switcher").waitForExistence(timeout: 20),
-            "The isolated fixture project was not restored into the Git workspace"
+            "The Git toolbar did not expose its branch switcher"
         )
     }
 
@@ -49,6 +58,31 @@ class GitOKUITestCase: XCTestCase {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
 
+    func replaceText(in element: XCUIElement, with value: String) {
+        element.click()
+        element.typeKey("a", modifierFlags: .command)
+        let pasteboard = NSPasteboard.general
+        let previousContents = pasteboard.pasteboardItems?.map { item in
+            item.types.compactMap { type in
+                item.data(forType: type).map { (type, $0) }
+            }
+        } ?? []
+        defer {
+            pasteboard.clearContents()
+            let restoredItems = previousContents.map { contents in
+                let item = NSPasteboardItem()
+                contents.forEach { item.setData($0.1, forType: $0.0) }
+                return item
+            }
+            if !restoredItems.isEmpty {
+                pasteboard.writeObjects(restoredItems)
+            }
+        }
+        pasteboard.clearContents()
+        pasteboard.setString(value, forType: .string)
+        app.typeKey("v", modifierFlags: .command)
+    }
+
     @discardableResult
     func openSettings() -> XCUIElement {
         let button = element(identifier: "gitok.settings.button")
@@ -61,7 +95,7 @@ class GitOKUITestCase: XCTestCase {
     }
 
     func waitForLabel(_ element: XCUIElement, toEqual label: String, timeout: TimeInterval = 10) -> Bool {
-        waitForPredicate(NSPredicate(format: "label == %@", label), on: element, timeout: timeout)
+        waitForPredicate(NSPredicate(format: "value == %@", label), on: element, timeout: timeout)
     }
 
     func waitUntilEnabled(_ element: XCUIElement, timeout: TimeInterval = 10) -> Bool {
@@ -73,10 +107,10 @@ class GitOKUITestCase: XCTestCase {
         return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
     }
 
-    func gitOutput(_ arguments: [String]) throws -> String {
+    func gitOutput(_ arguments: [String], in repository: URL? = nil) throws -> String {
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.arguments = ["-C", repositoryURL.path] + arguments
+        process.executableURL = gitExecutableURL
+        process.arguments = ["-C", (repository ?? repositoryURL).path] + arguments
         let output = Pipe()
         let error = Pipe()
         process.standardOutput = output
@@ -101,9 +135,11 @@ class GitOKUITestCase: XCTestCase {
         try runGit(["add", "tracked.txt"])
         try runGit(["commit", "--quiet", "-m", "Initial fixture commit"])
 
-        try Data("modified by the UI test\n".utf8).write(to: trackedFile)
-        try Data("untracked fixture file\n".utf8)
-            .write(to: repositoryURL.appendingPathComponent("untracked.txt"))
+        if hasWorkingTreeChanges {
+            try Data("modified by the UI test\n".utf8).write(to: trackedFile)
+            try Data("untracked fixture file\n".utf8)
+                .write(to: repositoryURL.appendingPathComponent("untracked.txt"))
+        }
     }
 
     private func seedProjectStore() throws {
@@ -124,7 +160,7 @@ class GitOKUITestCase: XCTestCase {
 
     private func runGit(_ arguments: [String]) throws {
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        process.executableURL = gitExecutableURL
         process.arguments = arguments.first == "init"
             ? arguments
             : ["-C", repositoryURL.path] + arguments
@@ -136,6 +172,17 @@ class GitOKUITestCase: XCTestCase {
             let message = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "git failed"
             throw NSError(domain: "GitOKUITests.GitFixture", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: message])
         }
+    }
+
+    private var gitExecutableURL: URL {
+        let developerDirectory = ProcessInfo.processInfo.environment["DEVELOPER_DIR"]
+            ?? "/Applications/Xcode.app/Contents/Developer"
+        let xcodeGit = URL(fileURLWithPath: developerDirectory)
+            .appendingPathComponent("usr/bin/git")
+        if FileManager.default.isExecutableFile(atPath: xcodeGit.path) {
+            return xcodeGit
+        }
+        return URL(fileURLWithPath: "/usr/bin/git")
     }
 }
 
@@ -156,6 +203,8 @@ final class GitOKLaunchUITests: GitOKUITestCase {
     func testLaunchShowsMainWindowAndReadyRoot() {
         XCTAssertTrue(app.windows["GitOK"].exists, "GitOK's main window is not visible")
         XCTAssertTrue(element(identifier: "gitok.main.ready").exists)
+        XCTAssertTrue(element(identifier: "gitok.git.branch.switcher").exists)
+        XCTAssertTrue(element(identifier: "gitok.settings.button").exists)
     }
 
     func testLaunchShowsSettingsAndSceneControls() {
@@ -193,24 +242,74 @@ final class GitOKCloneRepositoryUITests: GitOKUITestCase {
         XCTAssertTrue(submit.waitForExistence(timeout: 5))
         XCTAssertFalse(submit.isEnabled, "Clone should stay disabled until required values are valid")
 
-        let remoteField = app.textFields["https://github.com/owner/repo.git"]
+        let remoteField = element(identifier: "gitok.clone.remote-url")
         XCTAssertTrue(remoteField.waitForExistence(timeout: 5), "Remote URL field is missing")
-        remoteField.click()
-        remoteField.typeText("https://github.com/example/sample-repo.git")
+        replaceText(in: remoteField, with: "https://github.com/example/sample-repo.git")
 
+        let nameField = element(identifier: "gitok.clone.repository-name")
         XCTAssertTrue(
-            app.textFields.matching(NSPredicate(format: "value == %@", "sample-repo")).firstMatch.exists,
+            waitForPredicate(NSPredicate(format: "value == %@", "sample-repo"), on: nameField, timeout: 5),
             "Repository name was not derived from the remote URL"
         )
 
-        let nameField = app.textFields.matching(NSPredicate(format: "value == %@", "sample-repo")).firstMatch
-        nameField.click()
-        nameField.typeKey("a", modifierFlags: .command)
-        nameField.typeText("sample-repo-ui-\(UUID().uuidString)")
+        replaceText(in: nameField, with: "sample-repo-ui-\(UUID().uuidString)")
         XCTAssertTrue(submit.isEnabled, "A unique valid destination should enable Clone")
 
         app.buttons["Cancel"].click()
         XCTAssertFalse(element(identifier: "gitok.clone.sheet").exists, "Cancel should dismiss the clone form")
+    }
+
+    func testCloneSheetClonesLocalRepositoryIntoProjects() throws {
+        let remoteURL = fixtureRootURL.appendingPathComponent("remote.git", isDirectory: true)
+        _ = try gitOutput(["clone", "--bare", ".", remoteURL.path])
+
+        let repositoryName = "gitok-ui-clone-\(UUID().uuidString)"
+        let destinationURL = fixtureRootURL
+            .appendingPathComponent(repositoryName, isDirectory: true)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: destinationURL.path))
+
+        element(identifier: "gitok.projects.clone").click()
+        let remoteField = element(identifier: "gitok.clone.remote-url")
+        XCTAssertTrue(remoteField.waitForExistence(timeout: 5))
+        replaceText(in: remoteField, with: remoteURL.absoluteString)
+        let nameField = element(identifier: "gitok.clone.repository-name")
+        XCTAssertTrue(nameField.waitForExistence(timeout: 5), "The clone destination name field is missing")
+        replaceText(in: nameField, with: repositoryName)
+
+        let clone = app.buttons.matching(NSPredicate(format: "label == %@", "Clone")).firstMatch
+        XCTAssertTrue(waitUntilEnabled(clone), "A valid local repository clone should be allowed")
+        clone.click()
+        XCTAssertFalse(element(identifier: "gitok.clone.sheet").waitForExistence(timeout: 2))
+
+        let deadline = Date().addingTimeInterval(30)
+        var clonedRoot: String?
+        while Date() < deadline {
+            clonedRoot = try? gitOutput(["rev-parse", "--show-toplevel"], in: destinationURL)
+            if clonedRoot != nil { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        }
+
+        XCTAssertEqual(clonedRoot, destinationURL.path, "The clone task did not create a working repository")
+        XCTAssertEqual(try gitOutput(["branch", "--show-current"], in: destinationURL), "main")
+        XCTAssertEqual(try gitOutput(["remote", "get-url", "origin"], in: destinationURL), remoteURL.absoluteString)
+    }
+
+    func testCloneDestinationPickerCanBeCancelled() {
+        element(identifier: "gitok.projects.clone").click()
+        let chooseDestination = element(identifier: "gitok.clone.destination.choose")
+        XCTAssertTrue(chooseDestination.waitForExistence(timeout: 5))
+        chooseDestination.click()
+
+        let folderPicker = app.dialogs.firstMatch
+        XCTAssertTrue(folderPicker.waitForExistence(timeout: 10), "Destination folder picker did not open")
+        let cancel = folderPicker.buttons["Cancel"]
+        XCTAssertTrue(cancel.waitForExistence(timeout: 5), "Destination folder picker has no Cancel action")
+        cancel.click()
+
+        XCTAssertTrue(
+            element(identifier: "gitok.clone.sheet").waitForExistence(timeout: 5),
+            "Cancelling the folder picker should keep the clone form open"
+        )
     }
 }
 
@@ -265,7 +364,7 @@ final class GitOKGitWorkflowUITests: GitOKUITestCase {
 
         let diffFile = element(identifier: "gitok.git.diff.file")
         XCTAssertTrue(diffFile.waitForExistence(timeout: 15), "Selecting the changed file did not open its diff")
-        XCTAssertEqual(diffFile.label, "tracked.txt")
+        XCTAssertEqual(diffFile.value as? String, "tracked.txt")
         XCTAssertTrue(element(identifier: "gitok.git.diff.panel").exists)
     }
 
@@ -285,7 +384,159 @@ final class GitOKGitWorkflowUITests: GitOKUITestCase {
         XCTAssertTrue(waitForLabel(status, toEqual: "Not Staged"), "Unstaging did not restore the worktree state")
     }
 
+    func testUntrackedFileCanBeStagedAndCommitted() throws {
+        let status = element(identifier: "gitok.worktree.status.untracked.txt")
+        XCTAssertTrue(status.waitForExistence(timeout: 15), "The untracked fixture file is missing from Changes")
+        XCTAssertTrue(waitForLabel(status, toEqual: "Untracked"), "The fixture file should start untracked")
+
+        let stage = element(identifier: "gitok.worktree.stage.untracked.txt")
+        XCTAssertTrue(stage.waitForExistence(timeout: 5), "The untracked file has no Stage action")
+        stage.click()
+        XCTAssertTrue(
+            waitForLabel(status, toEqual: "Staged", timeout: 10),
+            "Staging the new file did not update its status"
+        )
+        XCTAssertTrue(try gitOutput(["diff", "--cached", "--name-only"]).contains("untracked.txt"))
+
+        let subject = element(identifier: "gitok.commit.subject")
+        XCTAssertTrue(subject.waitForExistence(timeout: 10))
+        let marker = "ui-untracked-\(UUID().uuidString)"
+        replaceText(in: subject, with: "Add \(marker)")
+        let commit = element(identifier: "gitok.commit.submit")
+        XCTAssertTrue(waitUntilEnabled(commit), "A staged new file should be committable")
+        commit.click()
+
+        let deadline = Date().addingTimeInterval(15)
+        var latestSubject = ""
+        while Date() < deadline {
+            latestSubject = try gitOutput(["log", "-1", "--format=%s"])
+            if latestSubject.contains(marker) { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        XCTAssertTrue(latestSubject.contains(marker), "The staged new file was not committed")
+        XCTAssertEqual(try gitOutput(["ls-tree", "--name-only", "HEAD", "--", "untracked.txt"]), "untracked.txt")
+    }
+
+    func testBatchStageAndUnstageSelectedFiles() throws {
+        let trackedSelection = element(identifier: "gitok.worktree.select.tracked.txt")
+        let untrackedSelection = element(identifier: "gitok.worktree.select.untracked.txt")
+        XCTAssertTrue(trackedSelection.waitForExistence(timeout: 15))
+        XCTAssertTrue(untrackedSelection.waitForExistence(timeout: 5))
+        trackedSelection.click()
+        untrackedSelection.click()
+
+        let stage = element(identifier: "gitok.worktree.batch.stage")
+        XCTAssertTrue(waitUntilEnabled(stage), "Selecting changed files should enable batch Stage")
+        stage.click()
+        let trackedStatus = element(identifier: "gitok.worktree.status.tracked.txt")
+        let untrackedStatus = element(identifier: "gitok.worktree.status.untracked.txt")
+        XCTAssertTrue(waitForLabel(trackedStatus, toEqual: "Staged"))
+        XCTAssertTrue(waitForLabel(untrackedStatus, toEqual: "Staged"))
+        XCTAssertEqual(
+            try gitOutput(["diff", "--cached", "--name-only"]).split(separator: "\n").sorted(),
+            ["tracked.txt", "untracked.txt"]
+        )
+        XCTAssertEqual(
+            try gitOutput(["show", ":untracked.txt"]),
+            try String(contentsOf: repositoryURL.appendingPathComponent("untracked.txt"), encoding: .utf8)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+            "Batch Stage should capture the current contents of the new file"
+        )
+
+        element(identifier: "gitok.worktree.select.tracked.txt").click()
+        element(identifier: "gitok.worktree.select.untracked.txt").click()
+        let unstage = element(identifier: "gitok.worktree.batch.unstage")
+        XCTAssertTrue(waitUntilEnabled(unstage), "Selecting staged files should enable batch Unstage")
+        unstage.click()
+        XCTAssertTrue(waitForLabel(trackedStatus, toEqual: "Not Staged"))
+        XCTAssertTrue(
+            waitForLabel(untrackedStatus, toEqual: "Untracked"),
+            "Untracked file status did not return after batch unstage"
+        )
+        XCTAssertEqual(try gitOutput(["diff", "--cached", "--name-only"]), "")
+    }
+
+    func testDiscardAllChangesRequiresConfirmation() throws {
+        let discardAll = element(identifier: "gitok.worktree.discard-all")
+        XCTAssertTrue(discardAll.waitForExistence(timeout: 15), "Discard All is missing from Changes")
+        discardAll.click()
+
+        let alert = app.sheets.firstMatch
+        XCTAssertTrue(alert.waitForExistence(timeout: 10), "Discard All did not ask for confirmation")
+        let confirm = alert.buttons["Discard All Changes"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5), "The confirmation has no destructive action")
+        confirm.click()
+
+        let deadline = Date().addingTimeInterval(15)
+        var status = ""
+        while Date() < deadline {
+            status = try gitOutput(["status", "--porcelain"])
+            if status.isEmpty { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        XCTAssertTrue(status.isEmpty, "Discard All left repository changes behind: \(status)")
+        XCTAssertEqual(
+            try String(contentsOf: repositoryURL.appendingPathComponent("tracked.txt"), encoding: .utf8),
+            "initial content\n"
+        )
+        XCTAssertFalse(FileManager.default.fileExists(atPath: repositoryURL.appendingPathComponent("untracked.txt").path))
+    }
+
+    func testCancellingDiscardAllKeepsWorkingTreeChanges() throws {
+        let discardAll = element(identifier: "gitok.worktree.discard-all")
+        XCTAssertTrue(discardAll.waitForExistence(timeout: 15), "Discard All is missing from Changes")
+        discardAll.click()
+
+        let alert = app.sheets.firstMatch
+        XCTAssertTrue(alert.waitForExistence(timeout: 10), "Discard All did not ask for confirmation")
+        let cancel = alert.buttons["Cancel"]
+        XCTAssertTrue(cancel.waitForExistence(timeout: 5), "Discard All confirmation has no Cancel action")
+        cancel.click()
+
+        XCTAssertFalse(alert.waitForExistence(timeout: 1), "Cancelling should close the confirmation")
+        XCTAssertEqual(
+            try gitOutput(["status", "--porcelain"]).split(separator: "\n").count,
+            2,
+            "Cancelling Discard All must leave both fixture changes intact"
+        )
+        XCTAssertEqual(
+            try String(contentsOf: repositoryURL.appendingPathComponent("tracked.txt"), encoding: .utf8),
+            "modified by the UI test\n"
+        )
+        XCTAssertTrue(FileManager.default.fileExists(atPath: repositoryURL.appendingPathComponent("untracked.txt").path))
+    }
+
+    func testDiscardingOneFileLeavesOtherChangesUntouched() throws {
+        let discardTracked = element(identifier: "gitok.worktree.discard.tracked.txt")
+        XCTAssertTrue(discardTracked.waitForExistence(timeout: 15), "The modified fixture file has no Discard action")
+        discardTracked.click()
+
+        let alert = app.sheets.firstMatch
+        XCTAssertTrue(alert.waitForExistence(timeout: 10), "Discarding one file did not ask for confirmation")
+        let confirm = alert.buttons["Discard"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5), "The confirmation has no single-file Discard action")
+        confirm.click()
+
+        let deadline = Date().addingTimeInterval(15)
+        var status = ""
+        while Date() < deadline {
+            status = try gitOutput(["status", "--porcelain"])
+            if status == "?? untracked.txt" { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        XCTAssertEqual(status, "?? untracked.txt", "Discarding the tracked file should preserve the unrelated untracked file")
+        XCTAssertEqual(
+            try String(contentsOf: repositoryURL.appendingPathComponent("tracked.txt"), encoding: .utf8),
+            "initial content\n"
+        )
+        XCTAssertTrue(FileManager.default.fileExists(atPath: repositoryURL.appendingPathComponent("untracked.txt").path))
+    }
+
     func testCommitButtonCreatesCommitFromStagedChange() throws {
+        let commit = element(identifier: "gitok.commit.submit")
+        XCTAssertTrue(commit.waitForExistence(timeout: 10), "The Commit action is missing")
+        XCTAssertTrue(commit.isEnabled, "The Commit action should be available for the active project")
+
         let stage = element(identifier: "gitok.worktree.stage.tracked.txt")
         XCTAssertTrue(stage.waitForExistence(timeout: 15), "The fixture change is missing from Changes")
         stage.click()
@@ -297,10 +548,8 @@ final class GitOKGitWorkflowUITests: GitOKUITestCase {
         let subject = element(identifier: "gitok.commit.subject")
         XCTAssertTrue(subject.waitForExistence(timeout: 10), "The commit subject field is missing")
         let marker = "ui-\(UUID().uuidString)"
-        subject.click()
-        subject.typeText("Commit \(marker)")
+        replaceText(in: subject, with: "Commit \(marker)")
 
-        let commit = element(identifier: "gitok.commit.submit")
         XCTAssertTrue(commit.waitForExistence(timeout: 5), "The Commit action is missing")
         XCTAssertTrue(commit.isEnabled, "Commit should be enabled after entering a message")
         commit.click()
@@ -329,7 +578,11 @@ final class GitOKGitWorkflowUITests: GitOKUITestCase {
         let name = "ui-\(UUID().uuidString.prefix(8))"
         let nameField = element(identifier: "gitok.git.branch.new-name")
         XCTAssertTrue(nameField.waitForExistence(timeout: 5), "The branch-name field is missing")
-        nameField.typeText(name)
+        replaceText(in: nameField, with: name)
+        XCTAssertTrue(
+            waitForPredicate(NSPredicate(format: "value == %@", name), on: nameField, timeout: 5),
+            "The branch-name field did not retain the entered name"
+        )
 
         let create = element(identifier: "gitok.git.branch.create")
         XCTAssertTrue(waitUntilEnabled(create), "A non-empty branch name should enable Create")
@@ -341,12 +594,49 @@ final class GitOKGitWorkflowUITests: GitOKUITestCase {
             "Creating the branch did not update the toolbar"
         )
         XCTAssertEqual(try gitOutput(["branch", "--show-current"]), name)
+
+        switcher.click()
+        let mainBranch = element(identifier: "gitok.git.branch.option.main")
+        XCTAssertTrue(mainBranch.waitForExistence(timeout: 5), "The existing main branch is missing from the picker")
+        mainBranch.click()
+        XCTAssertTrue(
+            waitForPredicate(NSPredicate(format: "label CONTAINS %@", "main"), on: currentBranch, timeout: 15),
+            "Selecting an existing branch did not update the toolbar"
+        )
+        XCTAssertEqual(try gitOutput(["branch", "--show-current"]), "main")
     }
+
+    func testBranchPickerSearchFiltersLocalBranches() throws {
+        let branchName = "ui-search-\(UUID().uuidString.prefix(8))"
+        _ = try gitOutput(["branch", branchName])
+
+        let switcher = element(identifier: "gitok.git.branch.switcher")
+        XCTAssertTrue(switcher.waitForExistence(timeout: 15), "The branch picker is missing")
+        XCTAssertTrue(waitUntilEnabled(switcher), "The branch list did not finish loading")
+        switcher.click()
+
+        let matchingBranch = element(identifier: "gitok.git.branch.option.\(branchName)")
+        XCTAssertTrue(matchingBranch.waitForExistence(timeout: 10), "The new local branch was not listed")
+        let mainBranch = element(identifier: "gitok.git.branch.option.main")
+        XCTAssertTrue(mainBranch.exists, "The unfiltered list should initially include main")
+
+        let search = element(identifier: "gitok.git.branch.search")
+        XCTAssertTrue(search.waitForExistence(timeout: 5), "The branch search field is missing")
+        replaceText(in: search, with: String(branchName.suffix(8)))
+
+        XCTAssertTrue(matchingBranch.waitForExistence(timeout: 5), "Searching should retain the matching branch")
+        XCTAssertFalse(mainBranch.exists, "Searching should filter out branches that do not match")
+    }
+
+}
+
+final class GitOKCleanRepositoryUITests: GitOKUITestCase {
+    override var hasWorkingTreeChanges: Bool { false }
 
     func testCreatingBranchRefreshesRepositoryInfo() {
         let branchInfo = element(identifier: "gitok.repository.info.branch")
         XCTAssertTrue(branchInfo.waitForExistence(timeout: 15), "Repository branch information is missing")
-        XCTAssertTrue(branchInfo.label.contains("main"), "The fixture should initially report main")
+        XCTAssertTrue((branchInfo.value as? String)?.contains("main") == true, "The fixture should initially report main")
 
         let switcher = element(identifier: "gitok.git.branch.switcher")
         XCTAssertTrue(switcher.waitForExistence(timeout: 10))
@@ -358,14 +648,14 @@ final class GitOKGitWorkflowUITests: GitOKUITestCase {
         let name = "ui-info-\(UUID().uuidString.prefix(8))"
         let nameField = element(identifier: "gitok.git.branch.new-name")
         XCTAssertTrue(nameField.waitForExistence(timeout: 5))
-        nameField.typeText(name)
+        replaceText(in: nameField, with: name)
 
         let create = element(identifier: "gitok.git.branch.create")
         XCTAssertTrue(waitUntilEnabled(create))
         create.click()
 
         XCTAssertTrue(
-            waitForPredicate(NSPredicate(format: "label CONTAINS %@", name), on: branchInfo, timeout: 15),
+            waitForPredicate(NSPredicate(format: "value CONTAINS %@", name), on: branchInfo, timeout: 15),
             "Repository information kept showing the previous branch after checkout"
         )
     }
@@ -389,13 +679,11 @@ final class GitOKProjectsUITests: GitOKUITestCase {
 final class GitOKSettingsUITests: GitOKUITestCase {
     private let settingsEntryIDs = [
         "general",
+        "projects",
+        "appearance",
         "plugin-manager",
-        "repository",
         "userInfo",
         "commitStyle",
-        "network",
-        "diagnostics",
-        "about",
     ]
 
     private func selectSettingsEntry(_ entryID: String) {
@@ -441,11 +729,16 @@ final class GitOKSettingsUITests: GitOKUITestCase {
         }
     }
 
-    func testSettingsKeyboardShortcutOpensSettingsWindow() {
-        app.typeKey(",", modifierFlags: .command)
+    func testSettingsCommandOpensSettingsWindow() {
+        let appMenu = app.menuBars.menuBarItems["GitOK"]
+        XCTAssertTrue(appMenu.waitForExistence(timeout: 5), "GitOK application menu is missing")
+        appMenu.click()
+        let settingsCommand = app.menuItems["Settings..."]
+        XCTAssertTrue(settingsCommand.waitForExistence(timeout: 5), "Settings command is missing from the app menu")
+        settingsCommand.click()
         XCTAssertTrue(
             element(identifier: "gitok.settings.ready").waitForExistence(timeout: 10),
-            "Command-comma did not open the settings window"
+            "The Settings command did not open the settings window"
         )
     }
 }
