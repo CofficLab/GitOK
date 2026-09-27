@@ -1,7 +1,7 @@
 import Foundation
 import KernelCore
 import KitGit
-import KitLocalization
+import LumiLocalizationKit
 import KitSuperLog
 import LumiUI
 import os

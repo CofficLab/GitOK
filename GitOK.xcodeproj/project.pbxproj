@@ -152,7 +152,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */,
-				LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */,
 				GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */,
 				GK2APL0000000000000000002 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */,
 			);
@@ -308,10 +307,6 @@
 		LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/KitSuperLog;
-		};
-		LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/KitLocalization;
 		};
 /* End XCLocalSwiftPackageReference section */
 

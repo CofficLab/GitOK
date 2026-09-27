@@ -8,7 +8,7 @@
 |------|-----|
 | **类型** | 能力协议包（Provider 层） |
 | **宿主** | 由宿主内核 / `FactoryGitOK` 装配 |
-| **上游依赖** | `KitLocalization`、`KitSuperLog`、`ProviderChatSection`、`ProviderRailView`；https://github.com/CofficLab/LumiUI.git |
+| **上游依赖** | `LumiLocalizationKit`、`KitSuperLog`、`ProviderChatSection`、`ProviderRailView`；https://github.com/CofficLab/LumiUI.git |
 | **平台** | macOS 14+ |
 
 ## 目录结构
