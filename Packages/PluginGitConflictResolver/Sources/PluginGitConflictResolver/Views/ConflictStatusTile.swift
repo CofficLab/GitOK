@@ -1,5 +1,6 @@
 import LumiUI
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 冲突/合并状态 tile：显示待解决冲突，或提示一个已解决冲突但尚未
@@ -14,18 +15,13 @@ public struct ConflictStatusTile: View {
     public var body: some View {
         Group {
             if viewModel.currentProjectURL != nil && viewModel.isOperationInProgress {
-                HStack(spacing: 4) {
-                    Image(systemName: viewModel.conflictedFiles.isEmpty ? "arrow.triangle.2.circlepath" : "exclamationmark.triangle.fill")
-                        .font(.system(size: 10))
-                        .foregroundStyle(viewModel.conflictedFiles.isEmpty ? theme.primary : theme.warning)
+                AppStatusBarTile(
+                    systemImage: viewModel.conflictedFiles.isEmpty ? "arrow.triangle.2.circlepath" : "exclamationmark.triangle.fill",
+                    tint: viewModel.conflictedFiles.isEmpty ? theme.primary : theme.warning,
+                    action: { viewModel.present() }
+                ) {
                     Text(statusTitle)
-                        .font(.appCaption)
-                        .foregroundStyle(viewModel.conflictedFiles.isEmpty ? theme.primary : theme.warning)
                         .lineLimit(1)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.present()
                 }
                 .help(statusHelp)
             }

@@ -1,5 +1,6 @@
 import LumiUI
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// .gitignore 状态图标：存在时点击查看内容（对齐旧版 GitIgnoreStatusIcon）。
@@ -17,14 +18,11 @@ public struct GitIgnoreStatusIcon: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Image(systemName: "doc.text.fill")
-                    .font(.system(size: 10))
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if hasGitIgnore {
-                            isSheetPresented.toggle()
-                        }
+                AppStatusBarTile(systemImage: "doc.text.fill", action: {
+                    if hasGitIgnore {
+                        isSheetPresented.toggle()
                     }
+                })
                     .help(hasGitIgnore
                         ? GitIgnoreLocalization.string("View .gitignore file", bundle: .module)
                         : GitIgnoreLocalization.string("No .gitignore file found", bundle: .module))

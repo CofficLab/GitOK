@@ -1,6 +1,7 @@
 import KitGit
 import LumiUI
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// Git LFS 状态图标：检测 git-lfs 可用性，扫描 >50MB 大文件并推荐纳入 LFS
@@ -27,13 +28,11 @@ public struct GitLFSStatusTile: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Image(systemName: largeFiles.isEmpty ? "externaldrive" : "externaldrive.badge.exclamationmark")
-                    .font(.system(size: 10))
-                    .foregroundStyle(largeFiles.isEmpty ? theme.textSecondary : theme.warning)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isPresented = true
-                    }
+                AppStatusBarTile(
+                    systemImage: largeFiles.isEmpty ? "externaldrive" : "externaldrive.badge.exclamationmark",
+                    tint: largeFiles.isEmpty ? theme.textSecondary : theme.warning,
+                    action: { isPresented = true }
+                )
                     .help(largeFiles.isEmpty
                         ? GitLFSLocalization.string("LFS status normal", bundle: .module)
                         : String(format: GitLFSLocalization.string("Found %ld large file(s) to track with Git LFS", bundle: .module), largeFiles.count))

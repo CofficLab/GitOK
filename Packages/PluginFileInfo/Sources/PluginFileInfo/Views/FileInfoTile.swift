@@ -1,6 +1,7 @@
 import AppKit
 import LumiUI
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 文件信息 tile：显示当前选中文件路径，点击弹出文件操作
@@ -18,15 +19,8 @@ public struct FileInfoTile: View {
     public var body: some View {
         Group {
             if let file = projects.currentFile, !file.isEmpty {
-                HStack(spacing: 4) {
-                    Image(systemName: "doc.text")
-                        .font(.system(size: 10))
+                AppStatusBarTile(systemImage: "doc.text", action: { isPopoverPresented.toggle() }) {
                     pathComponentsView(file)
-                }
-                .frame(maxHeight: .infinity)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    isPopoverPresented.toggle()
                 }
                 .help(file)
                 .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
@@ -42,13 +36,11 @@ public struct FileInfoTile: View {
             let components = path.split(separator: "/").map(String.init)
             ForEach(Array(components.enumerated()), id: \.offset) { index, component in
                 Text(component)
-                    .font(.appCaption)
                     .fontWeight(index == components.count - 1 ? .semibold : .regular)
                     .foregroundStyle(index == components.count - 1 ? theme.textPrimary : theme.textSecondary)
                     .lineLimit(1)
                 if index < components.count - 1 {
                     Text(">")
-                        .font(.appCaption)
                         .foregroundStyle(theme.textTertiary)
                 }
             }

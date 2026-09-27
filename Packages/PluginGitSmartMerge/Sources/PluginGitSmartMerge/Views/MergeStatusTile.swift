@@ -33,7 +33,7 @@ public struct MergeStatusTile: View {
                 AppStatusBarTile(
                     systemImage: "arrow.trianglehead.merge",
                     tint: theme.info,
-                    iconSize: 13,
+                    iconSize: 11,
                     hoverScale: LumiMotion.hoverScale,
                     action: { isPresented.toggle() }
                 )

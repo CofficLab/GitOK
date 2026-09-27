@@ -1,6 +1,7 @@
 import LumiUI
 import ProviderAutoPush
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 自动推送状态图标：绿=启用，灰=关闭；点击弹配置（对齐旧版 AutoPushStatusIcon）。
@@ -24,13 +25,13 @@ public struct AutoPushStatusIcon: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Image(systemName: isEnabled ? "arrow.up.circle.fill" : "arrow.up.circle")
-                    .font(.system(size: 10))
-                    .foregroundStyle(isEnabled ? theme.success : theme.textTertiary)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
+                AppStatusBarTile(
+                    systemImage: isEnabled ? "arrow.up.circle.fill" : "arrow.up.circle",
+                    tint: isEnabled ? theme.success : theme.textTertiary,
+                    action: {
                         isSheetPresented.toggle()
                     }
+                )
                     .help(isEnabled
                         ? LumiPluginLocalization.string("Auto-push is enabled - Click to manage", bundle: .module)
                         : LumiPluginLocalization.string("Auto-push is disabled - Click to configure", bundle: .module))
