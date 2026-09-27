@@ -1,4 +1,5 @@
 import KernelCore
+import LumiThemePack
 import KitSuperLog
 import os
 import ProviderCommand
@@ -12,7 +13,7 @@ import ProviderDocsView
 /// 复刻自 LumiApp 的 17 个 `Theme*Plugin`（KernelLumi → KernelCore 适配）：
 /// 精简内核（SuperPlugin）没有声明式贡献点，因此本插件在
 /// `onBoot(kernel:)` 中主动解析 `ThemeProviding` 与 `SettingViewProviding`：
-/// - 批量注册 `LegacyThemeCatalog.all`（19 个 `LumiTheme`，id 与旧版一致）；
+/// - 批量注册 `LumiThemeCatalog.all`（19 个 `LumiTheme`，id 与旧版一致）；
 /// - 注册「外观」设置入口，详情视图列出全部主题供切换。
 ///
 /// 消费方（设置项、主窗口）通过 `ThemeProviding.themes` 读取全部主题
@@ -51,9 +52,7 @@ public final class ThemePackPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(Self.t)Failed to resolve ThemeProviding from kernel")
             return
         }
-        for legacy in LegacyThemeCatalog.all {
-            theme.registerTheme(legacy)
-        }
+        LumiThemeRegistration.register(in: theme)
 
         if let commands = kernel.resolveProvider((any CommandProviding).self) {
             commands.registerCommandGroup(Self.makeCommandGroup(theme: theme))
@@ -78,9 +77,7 @@ public final class ThemePackPlugin: SuperPlugin, SuperLog {
         kernel.resolveProvider((any CommandProviding).self)?
             .unregisterCommandGroup(id: Self.commandGroupID)
         if let theme = kernel.resolveProvider((any ThemeProviding).self) {
-            for legacy in LegacyThemeCatalog.all {
-                theme.unregisterTheme(id: legacy.id)
-            }
+            LumiThemeRegistration.unregister(from: theme)
         }
         kernel.resolveProvider((any SettingViewProviding).self)?
             .removeEntries(ids: ["appearance"])
