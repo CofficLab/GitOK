@@ -22,8 +22,9 @@ packages:
     path: Packages/ProviderProject
   ProviderGit:
     path: Packages/ProviderGit
-  ProviderTheme:
-    path: Packages/ProviderTheme
+  LumiProviders:
+    url: https://github.com/CofficLab/LumiProviders.git
+    from: 1.0.2
   ProviderNavigation:
     path: Packages/ProviderNavigation
   KitGitOKCore:
@@ -61,7 +62,8 @@ targets:
       - package: KitProjectSupport
       - package: ProviderProject
       - package: ProviderGit
-      - package: ProviderTheme
+      - package: LumiProviders
+        product: ProviderTheme
       - package: ProviderNavigation
       - package: KitGitOKCore
       - package: FactoryGitOK
