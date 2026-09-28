@@ -215,6 +215,9 @@
         }
       }
     },
+    "Git diff panel" : {
+
+    },
     "Git's diff output is split into structured hunks." : {
       "localizations" : {
         "en" : {
