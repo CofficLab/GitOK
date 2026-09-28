@@ -88,6 +88,7 @@ final class PluginRootViewTests: XCTestCase {
     @MainActor
     private final class MockCloneRepository: CloneRepositoryProviding {
         var activeDestinations: Set<URL> = []
+        var failedDestinations: Set<URL> = []
         private var observers: [(id: UUID, callback: (CloneRepositoryEvent) -> Void)] = []
 
         var tasks: [CloneTask] {
@@ -97,6 +98,14 @@ final class PluginRootViewTests: XCTestCase {
                     destination: $0,
                     repositoryName: "repository",
                     status: .cloning
+                )
+            } + failedDestinations.map {
+                CloneTask(
+                    remoteURL: "https://example.com/repository.git",
+                    destination: $0,
+                    repositoryName: "repository",
+                    status: .failed,
+                    errorMessage: "remote authentication required"
                 )
             }
         }
@@ -367,6 +376,31 @@ final class PluginRootViewTests: XCTestCase {
         try plugin.onBoot(kernel: kernel)
 
         XCTAssertEqual(plugin.provider.workspaceState, .ready)
+    }
+
+    /// 复现问题：目标目录已经留下 `.git`，但对应 clone 任务失败时，当前根门控
+    /// 只判断“是否正在克隆”，仍然会把工作区错误地判为 ready。
+    func testFailedCloneWithGitDirectoryCurrentlyLeaksReadyWorkspace() throws {
+        let kernel = KernelCoreContainer()
+        let mockProjects = MockProjects()
+        let project = Project(url: try makeTempGitRepository(), title: "Failed clone")
+        mockProjects.projects = [project]
+        mockProjects.currentProject = project
+        let mockCloneRepository = MockCloneRepository()
+        mockCloneRepository.failedDestinations = [project.url]
+
+        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any ProjectProviding).self, mockProjects)
+        try kernel.registerProvider((any CloneRepositoryProviding).self, mockCloneRepository)
+
+        let plugin = RootViewPlugin()
+        try plugin.onBoot(kernel: kernel)
+
+        XCTAssertEqual(
+            plugin.provider.workspaceState,
+            .ready,
+            "This documents the current bug: a failed clone with a .git directory leaks the ready workbench"
+        )
     }
 
     /// 当前项目目录存在但不是 Git 仓库 → 根布局进入 notGitRepository 状态。

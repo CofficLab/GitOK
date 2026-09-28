@@ -11,6 +11,7 @@ class GitOKUITestCase: XCTestCase {
     var fixtureProjectTitle: String { "GitOK UI Fixture" }
     var uiTestLanguage: String { "en" }
     var uiTestLocale: String { "en_US" }
+    var expectsReadyGitWorkbench: Bool { true }
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -46,10 +47,12 @@ class GitOKUITestCase: XCTestCase {
                 .firstMatch.waitForExistence(timeout: 20),
             "The isolated fixture project was not restored into the project list"
         )
-        XCTAssertTrue(
-            element(identifier: "gitok.git.branch.switcher").waitForExistence(timeout: 20),
-            "The Git toolbar did not expose its branch switcher"
-        )
+        if expectsReadyGitWorkbench {
+            XCTAssertTrue(
+                element(identifier: "gitok.git.branch.switcher").waitForExistence(timeout: 20),
+                "The Git toolbar did not expose its branch switcher"
+            )
+        }
     }
 
     override func tearDownWithError() throws {
@@ -501,6 +504,8 @@ class GitOKCloneFailureFixtureTestCase: GitOKUITestCase {
     let kuzeeRemoteURL = "https://github.com/CofficLab/Kuzee.git"
     var shouldSeedExternalClone: Bool { false }
 
+    override var expectsReadyGitWorkbench: Bool { false }
+
     override var fixtureProjectTitle: String { "Kuzee" }
 
     override func additionalProjectFixtures() throws -> [UITestProject] {
@@ -551,6 +556,30 @@ class GitOKCloneFailureFixtureTestCase: GitOKUITestCase {
 }
 
 final class GitOKCloneFailureIsolationUITests: GitOKCloneFailureFixtureTestCase {
+    func testFailedCloneHidesGitWorkbenchAndRail() {
+        XCTAssertTrue(
+            app.staticTexts[kuzeeRemoteURL].waitForExistence(timeout: 15),
+            "The seeded Kuzee clone failure was not displayed"
+        )
+
+        let railVisible = element(identifier: "gitok.workspace.rail").waitForExistence(timeout: 2)
+        let branchSwitcherVisible = element(identifier: "gitok.git.branch.switcher").waitForExistence(timeout: 2)
+        let commitFormVisible = element(identifier: "gitok.commit.subject").waitForExistence(timeout: 2)
+
+        XCTAssertFalse(
+            railVisible,
+            "The RailView is visible even though the current project clone failed"
+        )
+        XCTAssertFalse(
+            branchSwitcherVisible,
+            "The Git branch UI is visible even though the current project clone failed"
+        )
+        XCTAssertFalse(
+            commitFormVisible,
+            "The commit form is visible even though the current project clone failed"
+        )
+    }
+
     func testFailedCloneDetailsDoNotLeakAfterSwitchingProjects() {
         XCTAssertTrue(
             app.staticTexts[kuzeeRemoteURL].waitForExistence(timeout: 15),
