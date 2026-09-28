@@ -14,23 +14,23 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
-        .package(path: "../KitLocalization"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderDocsView"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderToolbar"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
-            revision: "8472b0a5e25eef70e02cb577c9771e26f5d7d916"
+            revision: "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
         ),
     ],
     targets: [
         .target(
             name: "KitOpenIn",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),

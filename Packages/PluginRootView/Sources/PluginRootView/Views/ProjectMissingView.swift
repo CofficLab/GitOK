@@ -161,6 +161,12 @@ struct RootWorkspaceUnavailableView: View {
                 } else {
                     NoProjectGuideView(projects: projects)
                 }
+            case .cloneFailed:
+                if let project = model.project, let cloneRepository {
+                    CloneFailedView(project: project, cloneRepository: cloneRepository)
+                } else {
+                    NoProjectGuideView(projects: projects)
+                }
             case .ready:
                 EmptyView()
             }

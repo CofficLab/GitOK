@@ -18,6 +18,8 @@ public enum StatusBarPlacement: Sendable {
 ///
 /// 外部通过 `StatusBarProviding.addStatusBarItems(_:)` 注入，
 /// 由实现按 `placement` 渲染到状态栏视图（leading / center / trailing）。
+/// 插件应在内容可见时用 `AppStatusBarTile` 包裹贡献视图，统一尺寸、间距和悬停样式；
+/// 若内容可能隐藏，应在可见分支内创建 tile，避免留下空项。
 @MainActor
 public struct StatusBarItem: Identifiable {
     public let id: String

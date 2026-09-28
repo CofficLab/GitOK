@@ -12,17 +12,20 @@ struct GitOKApp: App {
     @Environment(\.openWindow) private var openWindow
 
     init() {
+        // Ignore a previously persisted no-window state so launching GitOK
+        // always presents its main WindowGroup, including after UI test runs.
+        UserDefaults.standard.set(true, forKey: "ApplePersistenceIgnoreState")
         AppUpdateBootstrap.start()
         if let assembledKernel = try? FactoryGitOK.makeKernel() {
             kernel = assembledKernel
             mainView = (try? FactoryGitOK.makeMainView(kernel: assembledKernel))
-                ?? AnyView(Text("Failed to assemble main view"))
+                ?? AnyView(Text("Failed to assemble main view").accessibilityIdentifier("gitok.startup-error"))
             settingsView = (try? FactoryGitOK.makeSettingsView(kernel: assembledKernel))
                 ?? AnyView(Text("Failed to assemble settings view"))
         } else {
             let fallbackKernel = KernelCoreContainer()
             kernel = fallbackKernel
-            mainView = AnyView(Text("Failed to assemble main view"))
+            mainView = AnyView(Text("Failed to assemble main view").accessibilityIdentifier("gitok.startup-error"))
             settingsView = AnyView(Text("Failed to assemble settings view"))
         }
     }
@@ -30,6 +33,16 @@ struct GitOKApp: App {
     var body: some Scene {
         WindowGroup("GitOK", id: "gitok.main") {
             mainView
+                // Do not put an accessibility identifier on the root view:
+                // SwiftUI propagates it to toolbar and content descendants,
+                // masking their own stable identifiers from UI automation.
+                .overlay(alignment: .topLeading) {
+                    Color.clear
+                        .frame(width: 1, height: 1)
+                        .accessibilityElement()
+                        .accessibilityLabel("GitOK main window ready")
+                        .accessibilityIdentifier("gitok.main.ready")
+                }
                 .onReceive(NotificationCenter.default.publisher(
                     for: SettingViewNavigation.openSettingsNotification
                 )) { notification in
@@ -54,6 +67,13 @@ struct GitOKApp: App {
         // 额外注入边距/安全区域，导致共享设置视图被裁切。
         Window("设置", id: "gitok.settings") {
             settingsView
+                .overlay(alignment: .topLeading) {
+                    Color.clear
+                        .frame(width: 1, height: 1)
+                        .accessibilityElement()
+                        .accessibilityLabel("GitOK settings window ready")
+                        .accessibilityIdentifier("gitok.settings.ready")
+                }
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified(showsTitle: false))

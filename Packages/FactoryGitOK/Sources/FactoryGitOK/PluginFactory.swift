@@ -36,6 +36,7 @@ import PluginGitSmartMerge
 import PluginGitLFS
 import PluginGitSubmodule
 import PluginGitRepositoryWatch
+import PluginGitWorktreePreheat
 import PluginLogoCoffic
 import PluginLogoManager
 import PluginOpenAntigravity
@@ -83,6 +84,7 @@ public struct DefaultPluginFactory: PluginFactory {
             RailViewPlugin(),
             CommandPlugin(),
             ProjectsPlugin(),
+            GitWorktreePreheatPlugin(),
             WorktreeStatusPlugin(),
             CommitListPlugin(),
             ActivityHeatmapPlugin(),

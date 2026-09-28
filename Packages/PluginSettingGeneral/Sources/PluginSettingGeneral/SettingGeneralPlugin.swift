@@ -5,7 +5,7 @@ import ProviderDocsView
 import ProviderGit
 import ProviderSettingView
 import SwiftUI
-import KitSuperLog
+import LumiLoggingKit
 import os
 
 /// 设置 - 通用 插件
@@ -25,7 +25,7 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.setting-general",
         name: "General Settings",
-        description: "Registers the General entry in the settings view with app info and user manual.",
+        description: "Registers the General entry in the settings view with app info, official website, and user manual.",
         category: .system,
         stage: .stable,
         policy: .required

@@ -2,6 +2,7 @@ import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// Stash 状态 tile：显示 stash 数，点击弹出管理面板（对齐旧版 StashStatusTile）。
@@ -24,18 +25,10 @@ public struct StashStatusTile: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                HStack(spacing: 4) {
-                    Image(systemName: "archivebox")
-                        .font(.system(size: 10))
+                AppStatusBarTile(systemImage: "archivebox", action: { isPresented.toggle() }) {
                     if stashCount > 0 {
-                        Text("\(stashCount)")
-                            .font(.appCaption)
-                            .lineLimit(1)
+                        Text("\(stashCount)").lineLimit(1)
                     }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    isPresented.toggle()
                 }
                 .help(GitStashLocalization.string("Manage Stash", bundle: .module))
                 .popover(isPresented: $isPresented, arrowEdge: .bottom) {

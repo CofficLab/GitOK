@@ -84,3 +84,18 @@ struct ProviderLogoTests {
         #expect(logo.highestPriorityLogoItem == nil)
     }
 }
+
+extension ProviderLogoTests {
+    @Test("LogoItem with overlay uses second init and preserves overlay")
+    func logoItemWithOverlay() {
+        let item = LogoItem(id: "overlayed", order: 100) { _ in
+            Image(systemName: "circle")
+        } makeOverlay: { _ in
+            Text("badge")
+        }
+
+        #expect(item.id == "overlayed")
+        #expect(item.order == 100)
+        #expect(item.makeOverlay != nil)
+    }
+}

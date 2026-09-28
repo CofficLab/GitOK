@@ -2,7 +2,7 @@ import Foundation
 import KernelCore
 import ProviderDocsView
 import ProviderStorage
-import KitSuperLog
+import LumiLoggingKit
 import os
 
 // MARK: - Storage SuperPlugin

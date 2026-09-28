@@ -1,6 +1,6 @@
 import Foundation
 import KitGit
-import KitSuperLog
+import LumiLoggingKit
 import ProviderGit
 import os
 import ProviderProjects

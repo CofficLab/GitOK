@@ -13,20 +13,20 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
-        .package(path: "../KitLocalization"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderDocsView"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderGit"),
     ],
     targets: [
         .target(
             name: "PluginGitCLI",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderGit", package: "ProviderGit"),

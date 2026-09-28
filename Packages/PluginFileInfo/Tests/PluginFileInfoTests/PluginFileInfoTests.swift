@@ -12,6 +12,6 @@ struct PluginFileInfoTests {
         let plugin = FileInfoPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.file-info")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
     }
 }

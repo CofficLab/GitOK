@@ -21,6 +21,7 @@ struct WorkbenchSplitView: View {
                             idealWidth: provider.railWidth.idealWidth,
                             maxWidth: provider.railWidth.maxWidth
                         )
+                        .accessibilityIdentifier("gitok.workspace.rail")
                         .appSplitDivider(
                             .trailing,
                             initialPosition: provider.railWidth.idealWidth,
@@ -35,6 +36,7 @@ struct WorkbenchSplitView: View {
                 #else
                 HStack(spacing: 0) {
                     provider.railView!
+                        .accessibilityIdentifier("gitok.workspace.rail")
                         .debugBlockBadge("Rail")
                     Divider()
                     provider.hasActiveContent ? AnyView(mainContent) : AnyView(RootWelcomeView())

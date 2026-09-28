@@ -28,6 +28,7 @@ final class WorktreeCleanObserver {
         collaborators: (any CollaboratorProviding)?,
         onProjectChanged: @escaping () -> Void,
         onDataChanged: @escaping () -> Void,
+        onRepositoryInfoChanged: @escaping () -> Void,
         onUserPresetsChanged: @escaping ([GitUserPreset]) -> Void,
         onCollaboratorsChanged: @escaping ([Collaborator]) -> Void
     ) {
@@ -37,6 +38,7 @@ final class WorktreeCleanObserver {
                 onProjectChanged()
             case .dataChanged:
                 onDataChanged()
+                onRepositoryInfoChanged()
             default:
                 break
             }
@@ -44,9 +46,12 @@ final class WorktreeCleanObserver {
 
         gitWatchHandle = gitWatch?.addObserver { event in
             switch event {
-            case .headChanged, .indexChanged, .refsChanged, .workingTreeChanged:
+            case .headChanged, .refsChanged:
                 // 外部提交可能只产生 .git/HEAD/index 事件，仍需重新判断
                 // 工作区是否已经从 dirty 变为 clean。
+                onDataChanged()
+                onRepositoryInfoChanged()
+            case .indexChanged, .workingTreeChanged:
                 onDataChanged()
             default:
                 break
@@ -92,6 +97,7 @@ final class WorktreeCleanObserver {
             collaborators: nil,
             onProjectChanged: onProjectChanged,
             onDataChanged: onDataChanged,
+            onRepositoryInfoChanged: {},
             onUserPresetsChanged: { _ in },
             onCollaboratorsChanged: { _ in }
         )

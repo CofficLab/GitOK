@@ -331,6 +331,9 @@ final class WorktreeCleanPluginTests: XCTestCase {
             onDataChanged: { [weak viewModel] in
                 viewModel?.handleDataChanged()
             },
+            onRepositoryInfoChanged: { [weak viewModel] in
+                viewModel?.handleRepositoryInfoChanged()
+            },
             onUserPresetsChanged: { _ in },
             onCollaboratorsChanged: { _ in }
         )
@@ -342,6 +345,12 @@ final class WorktreeCleanPluginTests: XCTestCase {
 
         try FileManager.default.removeItem(at: dir.appendingPathComponent("dirty.txt"))
         watch.broadcast(.indexChanged)
+
+        XCTAssertEqual(viewModel.repositoryInfoRevision, 0, "Index-only changes should not reload repository metadata")
+        watch.broadcast(.refsChanged)
+        XCTAssertEqual(viewModel.repositoryInfoRevision, 1)
+        projects.notifyDataChanged()
+        XCTAssertEqual(viewModel.repositoryInfoRevision, 2, "Project data changes should refresh repository metadata")
 
         await waitUntilClean(viewModel, expecting: true)
         XCTAssertTrue(viewModel.isClean)

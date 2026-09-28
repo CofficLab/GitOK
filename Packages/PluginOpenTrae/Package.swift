@@ -23,5 +23,10 @@ let package = Package(
             ],
             path: "Sources/PluginOpenTrae"
         ),
+        .testTarget(
+            name: "PluginOpenTraeTests",
+            dependencies: ["PluginOpenTrae"],
+            path: "Tests/PluginOpenTraeTests"
+        ),
     ]
 )

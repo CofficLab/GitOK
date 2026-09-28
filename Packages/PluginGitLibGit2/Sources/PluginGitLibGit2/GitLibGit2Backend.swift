@@ -753,7 +753,18 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func unstageFiles(_ filePaths: [String], in repository: URL) throws {
+        let stagedAdditions = Set(
+            try GitStatusLoader.loadEntries(in: repository)
+                .filter { $0.stagedStatus == "A" }
+                .map(\.path)
+        )
         for filePath in filePaths {
+            if stagedAdditions.contains(filePath) {
+                // Reversing an added-file patch leaves an empty blob staged in the index.
+                // Git's path reset removes the index entry and preserves the working file.
+                _ = try GitProcessRunner.run(["reset", "--", filePath], in: repository)
+                continue
+            }
             let patch = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: true)
             if !patch.isEmpty { try LibGit2.applyPatch(patch, mode: .unstage, at: repository.path) }
         }
@@ -842,9 +853,11 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func conflictFiles(in repository: URL) -> [String] {
-        (try? loadEntries(in: repository))?.compactMap { entry in
-            entry.stagedStatus == "U" || entry.worktreeStatus == "U" ? entry.path : nil
-        } ?? []
+        // The index is the authoritative source for unmerged entries. The
+        // status walk's XY mapping is only a view on top of it and previously
+        // mapped GIT_STATUS_CONFLICTED to two spaces, hiding every conflicted
+        // file from the conflict resolver.
+        (try? LibGit2.getConflictedPaths(at: repository.path)) ?? []
     }
 
     func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String {

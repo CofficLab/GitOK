@@ -1,3 +1,4 @@
+import Foundation
 import KernelCore
 import ProviderContentView
 import ProviderDocsView
@@ -27,7 +28,15 @@ public struct DefaultProviderFactory: ProviderFactory {
     public init() {}
 
     public func makeStorageProvider() -> any StorageProviding {
-        DefaultStorageProvider()
+        #if DEBUG
+        let testDataRoot = ProcessInfo.processInfo.environment["GITOK_UI_TEST_DATA_ROOT"]
+            .flatMap { path in
+                path.isEmpty ? nil : URL(fileURLWithPath: path, isDirectory: true)
+            }
+        #else
+        let testDataRoot: URL? = nil
+        #endif
+        return DefaultStorageProvider(dataRootDirectory: testDataRoot)
     }
 
     public func makeWorkspaceSceneProvider() -> any WorkspaceSceneProviding {
@@ -123,7 +132,8 @@ public struct DefaultProviderFactory: ProviderFactory {
             (any CommitFormProviding).self,
             makeCommitFormProvider(
                 activity: kernel.resolveProvider((any ActivityProviding).self),
-                git: git
+                git: git,
+                storage: storage
             )
         )
         try kernel.registerProvider((any ToastProviding).self, makeToastProvider())
@@ -159,11 +169,14 @@ extension DefaultProviderFactory {
     }
 
     /// 提交表单 Provider：把提交 / 推送阶段上报到 Activity 提供者（状态栏活动指示）。
+    ///
+    /// - Parameter storage: 存储能力；提交风格按项目持久化到该目录下的 JSON。
     public func makeCommitFormProvider(
         activity: (any ActivityProviding)?,
-        git: (any GitProviding)? = nil
+        git: (any GitProviding)? = nil,
+        storage: (any StorageProviding)? = nil
     ) -> any CommitFormProviding {
-        let form = DefaultCommitFormProvider(git: git)
+        let form = DefaultCommitFormProvider(git: git, storage: storage)
         if let activity {
             form.activityReporter = { [weak activity] message in
                 if let message {

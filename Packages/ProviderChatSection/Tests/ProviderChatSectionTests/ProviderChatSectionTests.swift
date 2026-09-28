@@ -264,3 +264,35 @@ private final class MockConversationManaging: ConversationManaging {
     func language(for conversationID: UUID?) -> ConversationLanguage { globalLanguage }
     func setLanguage(_ language: ConversationLanguage, for conversationID: UUID?) {}
 }
+
+extension ProviderChatSectionTests {
+    @Test("removeItem removes by id and notifies")
+    func removeItemWorks() {
+        let provider = DefaultChatSectionProviding()
+        provider.addItems([
+            ChatSectionItem(id: "a", order: 10) { Text("A") },
+            ChatSectionItem(id: "b", order: 20) { Text("B") },
+        ])
+        provider.removeItem(id: "a")
+        #expect(provider.items.map(\.id) == ["b"])
+    }
+
+    @Test("removeBarItem removes by id and notifies")
+    func removeBarItemWorks() {
+        let provider = DefaultChatSectionProviding()
+        provider.addBarItems([
+            ChatSectionBarItem(id: "a", placement: .header) { Text("A") },
+            ChatSectionBarItem(id: "b", placement: .header) { Text("B") },
+        ])
+        provider.removeBarItem(id: "a")
+        #expect(provider.barItems.map(\.id) == ["b"])
+    }
+
+    @Test("activateWidthProfile with empty ownerID is a no-op")
+    func activateEmptyOwnerNoOp() {
+        let provider = DefaultChatSectionProviding()
+        let before = provider.chatSectionWidth
+        provider.activateWidthProfile(ownerID: "", recommended: ChatSectionWidth(minWidth: 280, idealWidth: 360, maxWidth: 520))
+        #expect(provider.chatSectionWidth == before)
+    }
+}

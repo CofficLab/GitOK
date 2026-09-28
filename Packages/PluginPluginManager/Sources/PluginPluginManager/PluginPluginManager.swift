@@ -3,7 +3,7 @@ import ProviderDocsView
 import ProviderPluginManaging
 import ProviderSettingView
 import SwiftUI
-import KitSuperLog
+import LumiLoggingKit
 import os
 
 /// 插件管理插件（完美复刻 Lumi）。

@@ -1,6 +1,5 @@
 import KitGit
 import LumiUI
-import ProviderContentView
 import SwiftUI
 
 private func loc(_ key: String) -> String {
@@ -73,8 +72,8 @@ struct CommitDetailLayout: View {
         if filePageStore.totalCount == nil,
            filePageStore.provisionalCount == nil,
            filePageStore.isLoadingCount {
-            // 首次加载（尚无任何历史数据）：展示明确的加载状态。
-            ContentLoadingIndicator(loc("Loading changed files..."))
+            // 首次加载（尚无任何历史数据）：展示与文件列表一致的占位行。
+            CommitDetailSkeletonView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if filePageStore.totalCount == nil,
                   filePageStore.provisionalCount == nil,
@@ -330,5 +329,44 @@ private struct FileChangePlaceholderRow: View {
         }
         .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
+    }
+}
+
+private struct CommitDetailSkeletonView: View {
+    private let rowCount: Int
+
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isBreathing = false
+
+    init(rowCount: Int = 8) {
+        self.rowCount = rowCount
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(0..<rowCount, id: \.self) { _ in
+                FileChangePlaceholderRow()
+                AppDivider()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .opacity(
+            motionPreference.allowsMotion
+                ? (isBreathing ? 0.58 : 0.86)
+                : 0.72
+        )
+        .animation(
+            motionPreference.allowsMotion
+                ? .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+                : nil,
+            value: isBreathing
+        )
+        .onAppear {
+            isBreathing = motionPreference.allowsMotion
+        }
+        .onChange(of: motionPreference.allowsMotion) { _, allowsMotion in
+            isBreathing = allowsMotion
+        }
+        .accessibilityHidden(true)
     }
 }

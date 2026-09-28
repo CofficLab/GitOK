@@ -42,7 +42,7 @@ public struct StashListView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     if isLoading {
-                        ProgressView(GitStashLocalization.string("Loading stash list…", bundle: .module))
+                        StashListSkeletonView()
                             .frame(maxWidth: .infinity, minHeight: 120)
                     } else if stashes.isEmpty {
                         VStack(spacing: 6) {

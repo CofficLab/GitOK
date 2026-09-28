@@ -15,6 +15,7 @@
 		7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Project-Debug.xcconfig"; path = "GitOKApp/Config/Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		AE205FD720E849E1FFA4D49C /* Project-Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Project-Release.xcconfig"; path = "GitOKApp/Config/Project-Release.xcconfig"; sourceTree = "<group>"; };
 		GK0000000000000000000002 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		GK0000000000000000000010 /* GitOKUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitOKUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		GKD3D14E57A1B2C3D4E5F6071 /* GitOK.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = GitOK.xcconfig; path = GitOKApp/GitOK.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -35,6 +36,12 @@
 				GK0000000000000000000003 /* Exceptions for "GitOKApp" folder in "GitOK" target */,
 			);
 			path = GitOKApp;
+			sourceTree = "<group>";
+		};
+		GK0000000000000000000011 /* GitOKUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = ();
+			path = GitOKUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -64,6 +71,8 @@
 			children = (
 				GK0000000000000000000004 /* GitOKApp */,
 				GK0000000000000000000002 /* GitOK.app */,
+				GK0000000000000000000010 /* GitOKUITests.xctest */,
+				GK0000000000000000000011 /* GitOKUITests */,
 				0BBD822C30067A13005CCD05 /* Frameworks */,
 				7BACB91084647EBF2FC35695 /* Project-Debug.xcconfig */,
 				AE205FD720E849E1FFA4D49C /* Project-Release.xcconfig */,
@@ -98,6 +107,22 @@
 			productReference = GK0000000000000000000002 /* GitOK.app */;
 			productType = "com.apple.product-type.application";
 		};
+		GK0000000000000000000012 /* GitOKUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = GK0000000000000000000018 /* Build configuration list for PBXNativeTarget "GitOKUITests" */;
+			buildPhases = (
+				GK0000000000000000000013 /* Sources */,
+				GK0000000000000000000014 /* Frameworks */,
+				GK0000000000000000000015 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = (GK0000000000000000000021 /* PBXTargetDependency */);
+			fileSystemSynchronizedGroups = (GK0000000000000000000011 /* GitOKUITests */,);
+			name = GitOKUITests;
+			productName = GitOKUITests;
+			productReference = GK0000000000000000000010 /* GitOKUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -126,8 +151,7 @@
 			mainGroup = F54F8C752F1A3B6500AABB2A;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */,
-				LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */,
+				LF000000000000000017 /* XCRemoteSwiftPackageReference "LumiLogging" */,
 				GK2APL0000000000000000001 /* XCLocalSwiftPackageReference "Packages/FactoryGitOK" */,
 				GK2APL0000000000000000002 /* XCLocalSwiftPackageReference "Packages/KitGitOKUpdate" */,
 			);
@@ -137,6 +161,7 @@
 			projectRoot = "";
 			targets = (
 				GK0000000000000000000009 /* GitOK */,
+				GK0000000000000000000012 /* GitOKUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -158,6 +183,54 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		GK0000000000000000000013 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		GK0000000000000000000014 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		GK0000000000000000000015 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		GK0000000000000000000017 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.coffic.GitOKUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = GitOK;
+			};
+			name = Debug;
+		};
+		GK0000000000000000000019 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.coffic.GitOKUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = GitOK;
+			};
+			name = Release;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -211,6 +284,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		GK0000000000000000000018 /* Build configuration list for PBXNativeTarget "GitOKUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				GK0000000000000000000017 /* Debug */,
+				GK0000000000000000000019 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -222,13 +304,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/KitGitOKUpdate;
 		};
-		LF000000000000000017 /* XCLocalSwiftPackageReference "Packages/KitSuperLog" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/KitSuperLog;
-		};
-		LF000000000000000018 /* XCLocalSwiftPackageReference "Packages/KitLocalization" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/KitLocalization;
+		LF000000000000000017 /* XCRemoteSwiftPackageReference "LumiLogging" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/LumiLogging.git";
+			requirement = { kind = upToNextMajorVersion; minimumVersion = 1.0.1; };
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -245,5 +324,17 @@
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
+		GK0000000000000000000020 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F54F8C762F1A3B6500AABB2A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = GK0000000000000000000009;
+			remoteInfo = GitOK;
+		};
+		GK0000000000000000000021 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = GK0000000000000000000009 /* GitOK */;
+			targetProxy = GK0000000000000000000020 /* PBXContainerItemProxy */;
+		};
 	rootObject = F54F8C762F1A3B6500AABB2A /* Project object */;
 }

@@ -57,3 +57,10 @@ struct MergeSelectionStoreTests {
         return directory
     }
 }
+
+    @Test("no-arg init uses default storage directory and is non-nil")
+    func defaultStorageDirectorySmoke() {
+        let store = MergeSelectionStore()
+        // 仅触发默认目录计算路径；不写入真实数据。
+        #expect(store.selection(for: URL(fileURLWithPath: "/tmp/any-repo")) == nil)
+    }

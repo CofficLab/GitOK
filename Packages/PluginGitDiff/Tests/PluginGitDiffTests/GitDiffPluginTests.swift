@@ -103,6 +103,7 @@ final class GitDiffPluginTests: XCTestCase {
 
         // RootViewProviding 已注入 trailing pane（id 为插件面板 id）。
         XCTAssertEqual(rootView.trailingPane?.id, "\(plugin.id).trailing")
+        XCTAssertTrue(rootView.trailingPane?.supportsFullScreen == true)
     }
 
     func testOnShutdownClearsTrailingPane() throws {

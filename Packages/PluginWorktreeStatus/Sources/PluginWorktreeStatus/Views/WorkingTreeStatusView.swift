@@ -82,6 +82,7 @@ struct WorkingTreeStatusView: View {
     let toast: (any ToastProviding)?
     let requestConflictResolution: @MainActor () -> Void
     @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
     @StateObject private var projectObservation: ProjectObservationModel
     @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
 
@@ -97,6 +98,8 @@ struct WorkingTreeStatusView: View {
     @State private var activityStatus: String?
     @State private var isSynchronizing = false
     @State private var isPushing = false
+    @State private var actionFeedback: WorktreeActionFeedback = .idle
+    @State private var reservedActionButtonWidth: CGFloat?
 
     @State private var loadedProjectURL: URL?
     @State private var isLoading = false
@@ -201,11 +204,19 @@ struct WorkingTreeStatusView: View {
                 .font(DesignTokens.Typography.body.weight(.semibold))
                 .foregroundStyle(theme.textPrimary)
                 .lineLimit(1)
+                .animation(
+                    LumiMotion.enabled(.easeInOut(duration: 0.22), preference: motionPreference),
+                    value: statusTitle
+                )
 
             Text(statusSubtitle)
                 .font(DesignTokens.Typography.caption1.weight(.medium))
                 .foregroundStyle(theme.textSecondary)
                 .lineLimit(1)
+                .animation(
+                    LumiMotion.enabled(.easeInOut(duration: 0.22), preference: motionPreference),
+                    value: statusSubtitle
+                )
         }
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
     }
@@ -252,9 +263,11 @@ struct WorkingTreeStatusView: View {
             badge: syncBadgeText,
             isLoading: isLoading,
             activity: activityStatus,
+            showsSuccess: actionFeedback == .success,
+            reservedWidth: reservedActionButtonWidth,
             action: performPrimaryAction
         )
-        .disabled(isSynchronizing || isPushing || isLoading)
+        .disabled(isSynchronizing || isPushing || isLoading || actionFeedback == .success)
         .help(primaryActionHelp)
     }
 
@@ -294,6 +307,7 @@ struct WorkingTreeStatusView: View {
 
     private func performSynchronize() {
         guard let project = projects.currentProject else { return }
+        beginRemoteAction()
         isSynchronizing = true
         activityStatus = loc("Synchronizing")
         let url = project.url
@@ -304,8 +318,10 @@ struct WorkingTreeStatusView: View {
                 activityStatus = nil
                 switch result {
                 case .success:
+                    showActionSuccess()
                     reloadIfNeeded(force: true)
                 case let .failure(error):
+                    reservedActionButtonWidth = nil
                     presentSyncFailure(error: error, repository: url)
                 }
             }
@@ -316,6 +332,7 @@ struct WorkingTreeStatusView: View {
     /// 这里通过稳定的 Git Provider 发布当前分支，并同时设置 upstream。
     private func performPublish() {
         guard let project = projects.currentProject else { return }
+        beginRemoteAction()
         isPushing = true
         activityStatus = loc("Pushing")
         let url = project.url
@@ -345,14 +362,30 @@ struct WorkingTreeStatusView: View {
                 activityStatus = nil
                 switch result {
                 case .success:
+                    showActionSuccess()
                     reloadIfNeeded(force: true)
                 case let .failure(error):
+                    reservedActionButtonWidth = nil
                     presentSyncFailure(
                         operation: loc("Push failed"),
                         message: error.localizedDescription
                     )
                 }
             }
+        }
+    }
+
+    private func beginRemoteAction() {
+        actionFeedback = .idle
+        reservedActionButtonWidth = WorktreeActionButton.width(for: syncBadgeText)
+    }
+
+    private func showActionSuccess() {
+        actionFeedback = .success
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 450_000_000)
+            actionFeedback = .idle
+            reservedActionButtonWidth = nil
         }
     }
 
@@ -497,6 +530,11 @@ struct WorkingTreeStatusView: View {
 
 // MARK: - Branch Pulse Button
 
+private enum WorktreeActionFeedback: Equatable {
+    case idle
+    case success
+}
+
 /// A compact, theme-aware primary action control for the worktree rail.
 ///
 /// The button stays icon-only to fit the narrow rail. It expands only when a
@@ -507,6 +545,8 @@ private struct WorktreeActionButton: View {
     let badge: String?
     let isLoading: Bool
     let activity: String?
+    let showsSuccess: Bool
+    let reservedWidth: CGFloat?
     let action: () -> Void
 
     @LumiTheme private var theme
@@ -515,12 +555,28 @@ private struct WorktreeActionButton: View {
 
     private var isBusy: Bool { activity != nil }
 
+    private var contentState: WorktreeActionButtonContentState {
+        if showsSuccess {
+            return .success
+        }
+        if isLoading || isBusy {
+            return .loading
+        }
+        if let badge {
+            return .badge(badge)
+        }
+        return .action(mode)
+    }
+
     var body: some View {
         Button(action: action) {
             buttonContent
             .foregroundStyle(actionColor)
             .padding(.horizontal, 10)
-            .frame(width: buttonWidth, height: 34)
+            // Keep the compact minimum width, but let the badge grow for
+            // multi-digit ahead/behind counts instead of clipping its text.
+            .frame(minWidth: buttonWidth)
+            .frame(height: 34)
             .background(buttonBackground)
             .overlay(buttonBorder)
             .clipShape(Capsule())
@@ -532,6 +588,14 @@ private struct WorktreeActionButton: View {
             .scaleEffect(isHovered && motionPreference.allowsMotion ? 1.015 : 1)
         }
         .buttonStyle(.plain)
+        .animation(
+            LumiMotion.enabled(.easeInOut(duration: 0.22), preference: motionPreference),
+            value: contentState
+        )
+        .animation(
+            LumiMotion.enabled(.easeInOut(duration: 0.22), preference: motionPreference),
+            value: buttonWidth
+        )
         .onHover { hovering in
             LumiMotion.animate(
                 LumiMotion.enabled(LumiMotion.hover, preference: motionPreference)
@@ -544,7 +608,13 @@ private struct WorktreeActionButton: View {
     }
 
     private var buttonWidth: CGFloat {
-        if isLoading || isBusy { return 36 }
+        if isLoading || isBusy || showsSuccess {
+            return reservedWidth ?? max(36, Self.width(for: badge))
+        }
+        return Self.width(for: badge)
+    }
+
+    static func width(for badge: String?) -> CGFloat {
         guard let badge else { return 36 }
         return badge.contains(" ") ? 82 : 58
     }
@@ -558,16 +628,38 @@ private struct WorktreeActionButton: View {
 
     @ViewBuilder
     private var buttonContent: some View {
-        if isLoading || isBusy {
-            WorktreeOrbitLoader()
-        } else if badge != nil {
-            badgeView
-        } else {
-            WorktreePrimaryActionIcon(mode: mode)
+        ZStack {
+            switch contentState {
+            case .success:
+                Image(systemName: "checkmark")
+                    .font(.system(size: 14, weight: .bold))
+                    .transition(contentTransition)
+            case .loading:
+                WorktreeOrbitLoader()
+                    .transition(contentTransition)
+            case .badge:
+                badgeView
+                    .transition(contentTransition)
+            case .action:
+                WorktreePrimaryActionIcon(mode: mode)
+                    .transition(contentTransition)
+            }
         }
+        // The loader and action glyphs remain compact, while a badge such as
+        // `↑100` must be allowed to use its intrinsic width.
+        .frame(minWidth: 20, minHeight: 20)
+    }
+
+    private var contentTransition: AnyTransition {
+        motionPreference.allowsMotion
+            ? .opacity.combined(with: .scale(scale: 0.86))
+            : .opacity
     }
 
     private var accessibilityTitle: String {
+        if showsSuccess {
+            return loc("Sync completed")
+        }
         if isLoading && !isBusy {
             return loc("Loading")
         }
@@ -586,16 +678,19 @@ private struct WorktreeActionButton: View {
                     Text(String(badge.dropFirst()))
                 }
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .fixedSize(horizontal: true, vertical: false)
             } else if badge.hasPrefix("↓"), !badge.contains(" ") {
                 HStack(spacing: 3) {
                     Image(systemName: "arrow.down")
                     Text(String(badge.dropFirst()))
                 }
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .fixedSize(horizontal: true, vertical: false)
             } else {
                 Text(badge)
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
             }
         }
     }
@@ -609,6 +704,13 @@ private struct WorktreeActionButton: View {
         Capsule(style: .continuous)
             .stroke(actionColor.opacity(isHovered ? 0.34 : 0.18), lineWidth: 0.75)
     }
+}
+
+private enum WorktreeActionButtonContentState: Equatable {
+    case loading
+    case success
+    case badge(String)
+    case action(WorktreeStatusActionMode)
 }
 
 /// Large, immediately recognizable action glyph. Remote counts remain a

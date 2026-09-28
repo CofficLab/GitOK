@@ -159,4 +159,51 @@ struct PluginGitConflictResolverTests {
         #expect(plugin.metadata.category == .project)
         #expect(plugin.metadata.policy == .alwaysOn)
     }
+
+    @Test("present 在操作未进行中时不打开弹层")
+    func presentNoOpWhenOperationNotInProgress() {
+        let viewModel = GitConflictResolverViewModel()
+        viewModel.present()
+        #expect(!viewModel.isPresented)
+    }
+
+    @Test("切换项目时清空旧冲突状态")
+    func projectChangeResetsState() {
+        let viewModel = GitConflictResolverViewModel()
+        let a = URL(fileURLWithPath: "/tmp/project-a")
+        let b = URL(fileURLWithPath: "/tmp/project-b")
+
+        viewModel.update(projectURL: a, conflictedFiles: ["X.swift"], isOperationInProgress: true, isCherryPicking: false)
+        #expect(viewModel.isPresented)
+
+        viewModel.beginLoading(projectURL: b)
+        #expect(viewModel.conflictedFiles.isEmpty)
+        #expect(viewModel.resolvedConflictFiles.isEmpty)
+        #expect(!viewModel.isOperationInProgress)
+        #expect(!viewModel.isCherryPicking)
+        #expect(!viewModel.hasLoadedSnapshot)
+        #expect(viewModel.isLoading)
+    }
+
+    @Test("cherry-pick 操作标记 isCherryPicking")
+    func cherryPickingFlagPropagates() {
+        let viewModel = GitConflictResolverViewModel()
+        viewModel.update(
+            projectURL: URL(fileURLWithPath: "/tmp/p"),
+            conflictedFiles: ["F"],
+            isOperationInProgress: true,
+            isCherryPicking: true
+        )
+        #expect(viewModel.isCherryPicking)
+    }
+
+    @Test("操作结束时清空 resolved 文件列表")
+    func resolvedFilesClearedWhenOperationEnds() {
+        let viewModel = GitConflictResolverViewModel()
+        let p = URL(fileURLWithPath: "/tmp/p")
+        viewModel.update(projectURL: p, conflictedFiles: ["A"], isOperationInProgress: true, isCherryPicking: false, resolvedFiles: ["A"])
+        #expect(viewModel.resolvedConflictFiles == ["A"])
+        viewModel.update(projectURL: p, conflictedFiles: [], isOperationInProgress: false, isCherryPicking: false)
+        #expect(viewModel.resolvedConflictFiles.isEmpty)
+    }
 }

@@ -228,7 +228,7 @@ private struct MediaFilePreview: View {
                 VideoPlayer(player: AVPlayer(url: mediaURL))
                     .padding(20)
             } else {
-                ProgressView()
+                MediaPreviewSkeletonView(kind: kind)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -249,5 +249,51 @@ private struct MediaFilePreview: View {
                 try? FileManager.default.removeItem(at: mediaURL)
             }
         }
+    }
+}
+
+private struct MediaPreviewSkeletonView: View {
+    let kind: GitDiffContentKind
+
+    @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isBreathing = false
+
+    var body: some View {
+        VStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(theme.textSecondary.opacity(0.08))
+                    .frame(maxWidth: .infinity, minHeight: 180)
+
+                Image(systemName: kind.systemImage)
+                    .font(.system(size: 30, weight: .medium))
+                    .foregroundStyle(theme.textSecondary.opacity(0.35))
+            }
+
+            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                .fill(theme.textSecondary.opacity(0.13))
+                .frame(width: 156, height: 12)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .opacity(
+            motionPreference.allowsMotion
+                ? (isBreathing ? 0.58 : 0.86)
+                : 0.72
+        )
+        .animation(
+            motionPreference.allowsMotion
+                ? .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+                : nil,
+            value: isBreathing
+        )
+        .onAppear {
+            isBreathing = motionPreference.allowsMotion
+        }
+        .onChange(of: motionPreference.allowsMotion) { _, allowsMotion in
+            isBreathing = allowsMotion
+        }
+        .accessibilityHidden(true)
     }
 }

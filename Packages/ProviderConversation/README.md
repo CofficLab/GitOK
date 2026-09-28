@@ -8,7 +8,7 @@
 |------|-----|
 | **类型** | 能力协议包（Provider 层） |
 | **宿主** | 由宿主内核 / `FactoryGitOK` 装配 |
-| **上游依赖** | `KitSuperLog` |
+| **上游依赖** | `LumiLoggingKit` |
 | **平台** | macOS 14+ |
 
 ## 目录结构

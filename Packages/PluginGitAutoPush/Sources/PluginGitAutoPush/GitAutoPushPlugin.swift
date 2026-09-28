@@ -1,7 +1,7 @@
 import Foundation
 import KernelCore
 import KitGit
-import KitSuperLog
+import LumiLoggingKit
 import os
 import ProviderAutoPush
 import ProviderCommitForm
@@ -31,7 +31,7 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         description: "Automatically push after each commit",
         category: .project,
         stage: .stable,
-        policy: .disabled
+        policy: .alwaysOn
     )
 
     static let itemID = "com.coffic.gitok.plugin.git-auto-push.id"

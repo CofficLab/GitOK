@@ -14,8 +14,6 @@ settings:
     SWIFT_VERSION: "5.0"
 
 packages:
-  GitOKUI:
-    path: Packages/GitOKUI
   KitGitOKSupport:
     path: Packages/KitGitOKSupport
   KitProjectSupport:
@@ -24,8 +22,9 @@ packages:
     path: Packages/ProviderProject
   ProviderGit:
     path: Packages/ProviderGit
-  ProviderTheme:
-    path: Packages/ProviderTheme
+  LumiProviders:
+    url: https://github.com/CofficLab/LumiProviders.git
+    from: 1.0.2
   ProviderNavigation:
     path: Packages/ProviderNavigation
   KitGitOKCore:
@@ -38,8 +37,6 @@ packages:
     path: Packages/KitGitOKUpdate
   FactoryCore:
     path: Packages/FactoryCore
-  KernelCore:
-    path: Packages/KernelCore
   KitGitCore:
     path: Packages/KitGitCore
   Sparkle:
@@ -61,20 +58,18 @@ targets:
       - path: GitOKApp/Assets.xcassets
       - path: GitOKApp/Localizable.xcstrings
     dependencies:
-      - target: GitOperationService
-      - package: GitOKUI
       - package: KitGitOKSupport
       - package: KitProjectSupport
       - package: ProviderProject
       - package: ProviderGit
-      - package: ProviderTheme
+      - package: LumiProviders
+        product: ProviderTheme
       - package: ProviderNavigation
       - package: KitGitOKCore
       - package: FactoryGitOK
       - package: GitOKAppCore
       - package: KitGitOKUpdate
       - package: FactoryCore
-      - package: KernelCore
       - package: KitGitCore
       - package: Sparkle
     settings:
@@ -101,25 +96,3 @@ targets:
         SWIFT_VERSION: "5.0"
     scheme:
       shared: true
-
-  GitOperationService:
-    type: xpc-service
-    platform: macOS
-    sources:
-      - path: GitOperationService
-        excludes:
-          - Info.plist
-    dependencies:
-      - package: KitGitCore
-    settings:
-      base:
-        CODE_SIGN_IDENTITY: "-"
-        CODE_SIGN_STYLE: Automatic
-        ENABLE_HARDENED_RUNTIME: YES
-        GENERATE_INFOPLIST_FILE: NO
-        INFOPLIST_FILE: GitOperationService/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.yueyi.GitOK.GitOperationService
-        PRODUCT_NAME: "$(TARGET_NAME)"
-        SKIP_INSTALL: YES
-        SWIFT_EMIT_LOC_STRINGS: YES
-        SWIFT_VERSION: "5.0"

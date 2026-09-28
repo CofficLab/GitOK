@@ -1,5 +1,4 @@
 import LumiUI
-import ProviderContentView
 import ProviderProjectLanguages
 import SwiftUI
 
@@ -69,14 +68,7 @@ struct WorktreeCleanProjectLanguagesView: View {
 
     private var loadingSection: some View {
         AppSettingSection(title: loc("Languages"), titleAlignment: .leading) {
-            HStack(spacing: 8) {
-                ContentLoadingIndicator(loc("Loading project languages..."), controlSize: .small)
-                    .tint(theme.primary)
-                Text(loc("Analyzing tracked source files..."))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            ProjectLanguagesSkeletonView()
         }
     }
 
@@ -139,5 +131,69 @@ struct WorktreeCleanProjectLanguagesView: View {
             self.name = name
             self.source = source ?? ProjectLanguage(id: id, name: name, byteCount: byteCount)
         }
+    }
+}
+
+private struct ProjectLanguagesSkeletonView: View {
+    private let segmentRatios: [CGFloat] = [0.42, 0.27, 0.18, 0.13]
+
+    @LumiTheme private var theme
+    @LumiMotionPreferenceReader private var motionPreference
+    @State private var isBreathing = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            GeometryReader { proxy in
+                HStack(spacing: 0) {
+                    ForEach(Array(segmentRatios.enumerated()), id: \.offset) { _, ratio in
+                        Rectangle()
+                            .fill(theme.textSecondary.opacity(0.13))
+                            .frame(width: proxy.size.width * ratio)
+                    }
+                }
+            }
+            .frame(height: 10)
+            .clipShape(Capsule())
+
+            LazyVGrid(
+                columns: [GridItem(.flexible()), GridItem(.flexible())],
+                alignment: .leading,
+                spacing: 8
+            ) {
+                ForEach(0..<6, id: \.self) { index in
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(theme.textSecondary.opacity(0.13))
+                            .frame(width: 8, height: 8)
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(theme.textSecondary.opacity(0.13))
+                            .frame(width: index.isMultiple(of: 2) ? 86 : 112, height: 10)
+                        Spacer(minLength: 4)
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(theme.textSecondary.opacity(0.13))
+                            .frame(width: 34, height: 10)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+        .opacity(
+            motionPreference.allowsMotion
+                ? (isBreathing ? 0.58 : 0.86)
+                : 0.72
+        )
+        .animation(
+            motionPreference.allowsMotion
+                ? .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+                : nil,
+            value: isBreathing
+        )
+        .onAppear {
+            isBreathing = motionPreference.allowsMotion
+        }
+        .onChange(of: motionPreference.allowsMotion) { _, allowsMotion in
+            isBreathing = allowsMotion
+        }
+        .accessibilityHidden(true)
     }
 }

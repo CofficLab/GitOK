@@ -1,3 +1,4 @@
+import LumiThemePack
 import AppKit
 import SwiftUI
 import XCTest
@@ -111,7 +112,7 @@ final class KernelFactoryTests: XCTestCase {
     }
 }
 
-// MARK: - PaletteChromeTheme 适配器
+// MARK: - LumiPaletteChromeTheme 适配器
 
 @MainActor
 final class PaletteChromeThemeTests: XCTestCase {
@@ -119,8 +120,8 @@ final class PaletteChromeThemeTests: XCTestCase {
     private func makeChromeTheme(
         source: ProviderTheme.LumiTheme = BuiltinThemes.system,
         colorScheme: ColorScheme = ColorScheme.light
-    ) -> PaletteChromeTheme {
-        PaletteChromeTheme(theme: source, colorScheme: colorScheme)
+    ) -> LumiPaletteChromeTheme {
+        LumiPaletteChromeTheme(theme: source, colorScheme: colorScheme)
     }
 
     func testIdentityFieldsMapThrough() {

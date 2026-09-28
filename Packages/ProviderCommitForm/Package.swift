@@ -14,8 +14,9 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.1.0"),
         .package(path: "../KitGit"),
-        .package(path: "../KitLocalization"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderCoAuthor"),
     ],
@@ -24,9 +25,10 @@ let package = Package(
             name: "ProviderCommitForm",
             dependencies: [
                 .product(name: "KitGit", package: "KitGit"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderCoAuthor", package: "ProviderCoAuthor"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
             ],
             path: "Sources/ProviderCommitForm",
             resources: [
@@ -35,7 +37,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ProviderCommitFormTests",
-            dependencies: ["ProviderCommitForm"],
+            dependencies: [
+                "ProviderCommitForm",
+                .product(name: "ProviderStorage", package: "LumiProviders"),
+            ],
             path: "Tests/ProviderCommitFormTests"
         ),
     ]

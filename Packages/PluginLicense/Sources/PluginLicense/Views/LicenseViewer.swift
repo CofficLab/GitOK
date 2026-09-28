@@ -21,7 +21,7 @@ public struct LicenseViewer: View {
             Divider()
             ScrollView([.vertical, .horizontal]) {
                 if isLoading {
-                    ProgressView()
+                    LicenseSkeletonView()
                         .frame(maxWidth: .infinity, minHeight: 200)
                 } else {
                     Text(content)

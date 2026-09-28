@@ -11,7 +11,7 @@ Toast 插件：`ToastOverlay` 提供全局 Toast 浮层，`ToastSuperPlugin` 装
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitSuperLog`、`ProviderRootView`、`ProviderToast`；https://github.com/CofficLab/LumiUI.git |
+| **上游依赖** | `KernelCore`、`LumiLoggingKit`、`ProviderRootView`、`ProviderToast`；https://github.com/CofficLab/LumiUI.git |
 | **平台** | macOS 14+ |
 
 ## 目录结构

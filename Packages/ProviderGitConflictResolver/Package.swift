@@ -17,5 +17,10 @@ let package = Package(
             name: "ProviderGitConflictResolver",
             path: "Sources/ProviderGitConflictResolver"
         ),
+        .testTarget(
+            name: "ProviderGitConflictResolverTests",
+            dependencies: ["ProviderGitConflictResolver"],
+            path: "Tests/ProviderGitConflictResolverTests"
+        ),
     ]
 )

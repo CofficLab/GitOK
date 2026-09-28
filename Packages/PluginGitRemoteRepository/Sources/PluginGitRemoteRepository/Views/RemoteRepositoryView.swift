@@ -3,6 +3,7 @@ import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 远程仓库状态按钮：network 图标，点击打开远程管理面板
@@ -22,12 +23,7 @@ public struct RemoteRepositoryStatusButton: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Image(systemName: "network")
-                    .font(.system(size: 10))
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isPresented = true
-                    }
+                AppStatusBarTile(systemImage: "network", action: { isPresented = true })
                     .help(GitRemoteRepositoryLocalization.string("Manage Remote Repositories", bundle: .module))
                     .sheet(isPresented: $isPresented) {
                         RemoteRepositoryView(projects: projects, git: git)
@@ -77,7 +73,7 @@ public struct RemoteRepositoryView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 6) {
                     if isLoading {
-                        ProgressView()
+                        RemoteRepositorySkeletonView()
                             .frame(maxWidth: .infinity, minHeight: 120)
                     } else if remotes.isEmpty {
                         VStack(spacing: 6) {

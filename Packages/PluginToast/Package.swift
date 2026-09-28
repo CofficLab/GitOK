@@ -7,21 +7,21 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [.library(name: "PluginToast", targets: ["PluginToast"])],
     dependencies: [
-        .package(path: "../KitSuperLog"),
-        .package(path: "../KernelCore"),
-        .package(path: "../KitLocalization"),
+        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderToast"),
         .package(path: "../ProviderRootView"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
     ],
     targets: [
         .target(
             name: "PluginToast",
             dependencies: [
-                "KitSuperLog",
-                .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "LumiLoggingKit", package: "LumiLogging"),
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
@@ -36,7 +36,7 @@ let package = Package(
             name: "PluginToastTests",
             dependencies: [
                 "PluginToast",
-                .product(name: "KernelCore", package: "KernelCore"),
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderToast", package: "ProviderToast"),
             ],
             path: "Tests/PluginToastTests"

@@ -56,5 +56,6 @@ struct WorkspaceScenePickerPopoverView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("gitok.workspace.scene.option.\(scene.rawValue)")
     }
 }

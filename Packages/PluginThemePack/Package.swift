@@ -15,26 +15,27 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
-        .package(path: "../KitSuperLog"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
-        .package(path: "../ProviderCommand"),
-        .package(path: "../ProviderSettingView"),
-        .package(path: "../ProviderTheme"),
-        .package(path: "../KitLocalization"),
+        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.0.2"),
+        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
             name: "PluginThemePack",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "LumiThemePack", package: "LumiThemePack"),
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "ProviderCommand", package: "ProviderCommand"),
-                .product(name: "ProviderSettingView", package: "ProviderSettingView"),
-                .product(name: "ProviderTheme", package: "ProviderTheme"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "ProviderCommand", package: "LumiProviders"),
+                .product(name: "ProviderSettingView", package: "LumiSettings"),
+                .product(name: "ProviderTheme", package: "LumiProviders"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderDocsView", package: "ProviderDocsView"),
             ],
             path: "Sources/PluginThemePack",
@@ -42,7 +43,7 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginThemePackTests",
-            dependencies: ["PluginThemePack"]
+            dependencies: ["PluginThemePack", .product(name: "LumiThemePack", package: "LumiThemePack")]
         )
     ]
 )

@@ -21,7 +21,7 @@ public struct GitIgnoreViewer: View {
             Divider()
             ScrollView([.vertical, .horizontal]) {
                 if isLoading {
-                    ProgressView()
+                    GitIgnoreSkeletonView()
                         .frame(maxWidth: .infinity, minHeight: 200)
                 } else {
                     Text(content)

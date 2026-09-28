@@ -2,6 +2,7 @@ import Foundation
 import KitGit
 import ProviderCoAuthor
 import ProviderGit
+import ProviderStorage
 
 // MARK: - Events
 
@@ -42,7 +43,7 @@ public protocol CommitFormProviding: AnyObject {
     /// 当前提交类别。
     var category: CommitCategory { get }
 
-    /// 当前提交风格。
+    /// 当前生效的提交风格。跟随 `loadStyle(for:)` 选择的项目切换。
     var style: CommitStyle { get }
 
     /// 当前选中的共同作者。
@@ -64,8 +65,23 @@ public protocol CommitFormProviding: AnyObject {
     /// 更新类别（自动重置 subject 为默认信息，对齐旧版交互）。
     func setCategory(_ category: CommitCategory)
 
-    /// 更新风格（自动重置 subject 为默认信息，对齐旧版交互）。
+    /// 更新**当前项目**的风格（无当前项目时仅更新内存状态）。
+    ///
+    /// 风格按项目持久化，因此这是「用户在表单里换风格」的入口：
+    /// 写入当前已加载的项目；尚未选择项目时只影响内存。
     func setStyle(_ style: CommitStyle)
+
+    /// 读取指定项目的提交风格；该项目无记录时回退全局默认风格。
+    func style(for projectURL: URL) -> CommitStyle
+
+    /// 写入指定项目的提交风格并持久化。
+    func setStyle(_ style: CommitStyle, for projectURL: URL)
+
+    /// 切换当前项目：加载该项目的风格，并把它记为后续 `setStyle(_:)` 的写入目标。
+    ///
+    /// 传 `nil` 表示没有当前项目，风格回退全局默认值。
+    /// 只同步风格，不改动 subject（不打断用户已输入的提交信息）。
+    func loadStyle(for projectURL: URL?)
 
     /// 更新共同作者。
     func setCoAuthors(_ coAuthors: [CoAuthor])
@@ -99,20 +115,31 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
     public var activityReporter: (@MainActor (String?) -> Void)?
     private let git: (any GitProviding)?
 
+    /// 按项目持久化的风格存储。
+    private let styleStore: CommitStylePerProjectStore
+
+    /// 当前已加载风格的项目；`setStyle(_:)` 写入它的记录。
+    private var loadedProjectURL: URL?
+
     private var observers: [WeakCommitFormObserver] = []
 
+    /// - Parameter storage: 存储能力；传 `nil` 时风格退化为纯内存（测试 / 预览）。
     public init(
         subject: String = "",
         category: CommitCategory = .Chore,
         style: CommitStyle = .emoji,
         coAuthors: [CoAuthor] = [],
-        git: (any GitProviding)? = nil
+        git: (any GitProviding)? = nil,
+        storage: (any StorageProviding)? = nil
     ) {
         self.subject = subject
         self.category = category
         self.style = style
         self.coAuthors = coAuthors
         self.git = git
+        self.styleStore = CommitStylePerProjectStore(
+            directory: storage?.pluginDataDirectory(for: "com.coffic.gitok.plugin.commit-form")
+        )
     }
 
     public func setSubject(_ newSubject: String) {
@@ -129,12 +156,56 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
         notifyObservers(.stateChanged)
     }
 
+    /// 更新当前项目的风格；尚未选择项目时只更新内存状态。
     public func setStyle(_ newStyle: CommitStyle) {
         guard style != newStyle else { return }
         style = newStyle
         // 对齐旧版：切换风格后重置 subject 为默认信息。
         subject = CommitMessageRules.subjectAfterStyleChange(category: category, style: newStyle)
+        // 写入当前项目的记录，使该项目的选择在下次切换回来时保持。
+        if let loadedProjectURL {
+            styleStore.setStyle(newStyle, for: loadedProjectURL)
+        }
         notifyObservers(.stateChanged)
+    }
+
+    public func style(for projectURL: URL) -> CommitStyle {
+        styleStore.style(for: projectURL) ?? CommitStyleStore.current
+    }
+
+    public func setStyle(_ newStyle: CommitStyle, for projectURL: URL) {
+        styleStore.setStyle(newStyle, for: projectURL)
+        // 正在展示该项目时同步内存状态，避免 UI 与落盘值不一致。
+        guard isCurrentProject(projectURL) else { return }
+        loadedProjectURL = projectURL
+        applyLoadedStyle(newStyle)
+    }
+
+    public func loadStyle(for projectURL: URL?) {
+        loadedProjectURL = projectURL
+        guard let projectURL else {
+            // 没有当前项目：回退全局默认风格。
+            applyLoadedStyle(CommitStyleStore.current)
+            return
+        }
+        applyLoadedStyle(style(for: projectURL))
+    }
+
+    /// 同步当前风格到 `newStyle`，并重置 subject 为对应的默认信息。
+    ///
+    /// 切换项目时 subject 本就该按新项目的风格重置；`setStyle(_:for:)` 复用
+    /// 同一路径，保证两条入口的行为一致。
+    private func applyLoadedStyle(_ newStyle: CommitStyle) {
+        guard style != newStyle else { return }
+        style = newStyle
+        subject = CommitMessageRules.subjectAfterStyleChange(category: category, style: newStyle)
+        notifyObservers(.stateChanged)
+    }
+
+    /// 判断给定 URL 是否为当前已加载风格的项目。
+    private func isCurrentProject(_ projectURL: URL) -> Bool {
+        guard let loadedProjectURL else { return false }
+        return loadedProjectURL.standardizedFileURL == projectURL.standardizedFileURL
     }
 
     public func setCoAuthors(_ newCoAuthors: [CoAuthor]) {

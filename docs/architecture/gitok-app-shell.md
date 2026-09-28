@@ -14,7 +14,7 @@ Packages/
                       UpdateManager + UpdateCommand, injected at app layer
   KitGitOKCore/       GitOK domain contracts and legacy plugin SDK bridge
   KitGitCore/         Git engine (git CLI wrapper)
-  GitOKUI/            Design system (Lumi LumiUI equivalent)
+  LumiUI              Shared design system, consumed by feature and provider packages
   …                   Domain kits
 Plugins/           Feature SPM packages (one plugin per directory)
 FactoryGitOK/  Compile-time plugin catalog + GitOKFactory facade
@@ -28,10 +28,10 @@ FactoryGitOK/  Compile-time plugin catalog + GitOKFactory facade
 |-------|------------|
 | GitOKApp | FactoryCore, FactoryGitOK, KernelCore, domain kits |
 | KernelCore | Foundation only; no GitOK or feature imports |
-| FactoryCore | KernelCore, GitOKAppCore, KitGitOKCore, GitOKUI, domain kits — **no plugins** |
+| FactoryCore | KernelCore, GitOKAppCore, KitGitOKCore, LumiUI, domain kits — **no plugins** |
 | FactoryGitOK | FactoryCore + all plugins (composition layer) |
 | Plugins | KitGitOKCore, domain kits |
-| KitGitOKCore | Foundation, GitOKUI, KitGitCore (no Plugins) |
+| KitGitOKCore | Foundation, LumiUI, KitGitCore (no Plugins) |
 | Plugins | **Must not** import GitOKApp or FactoryCore |
 
 ## Provider layer (Lumi-compatible)

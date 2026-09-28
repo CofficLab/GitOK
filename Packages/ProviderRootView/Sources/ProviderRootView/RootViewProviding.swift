@@ -13,6 +13,7 @@ public enum RootWorkspaceState: Equatable, Sendable {
     case projectMissing(path: String)
     case notGitRepository(path: String)
     case cloning
+    case cloneFailed
     case ready
 
     /// 用于 macOS 原生分栏层级变化时生成稳定的布局 identity。
@@ -26,6 +27,8 @@ public enum RootWorkspaceState: Equatable, Sendable {
             return "not-git-repository:\(path)"
         case .cloning:
             return "cloning"
+        case .cloneFailed:
+            return "clone-failed"
         case .ready:
             return "ready"
         }
@@ -248,6 +251,10 @@ public final class RootTrailingPane: ObservableObject {
     public let content: AnyView
 
     @Published public var isVisible: Bool
+    /// Whether this pane exposes the native window full-screen toggle in its toolbar.
+    public let supportsFullScreen: Bool
+    /// Called when the pane should be presented in a dedicated full-screen window.
+    public var onFullScreen: (@MainActor () -> Void)?
     /// Called when the user dismisses the pane from its own toolbar.
     /// Consumers can use this callback to clear the selection that caused
     /// the pane to be shown.
@@ -263,6 +270,7 @@ public final class RootTrailingPane: ObservableObject {
         maxWidth: CGFloat = .infinity,
         width: ChatSectionWidth? = nil,
         isVisible: Bool = true,
+        supportsFullScreen: Bool = false,
         onDismiss: (@MainActor () -> Void)? = nil,
         content: AnyView
     ) {
@@ -273,9 +281,35 @@ public final class RootTrailingPane: ObservableObject {
             maxWidth: maxWidth
         )
         self.isVisible = isVisible
+        self.supportsFullScreen = supportsFullScreen
+        self.onFullScreen = nil
         self.onDismiss = onDismiss
         self.content = content
     }
+
+    /// Presents this pane's content in a dedicated macOS window and enters native
+    /// full-screen mode. The original trailing pane remains unchanged underneath.
+    public func presentFullScreen() {
+        #if os(macOS)
+        if let fullScreenWindowController {
+            fullScreenWindowController.present()
+        } else {
+            createFullScreenWindowController().present()
+        }
+        #endif
+    }
+
+    #if os(macOS)
+    private var fullScreenWindowController: TrailingPaneFullScreenWindowController?
+
+    private func createFullScreenWindowController() -> TrailingPaneFullScreenWindowController {
+        let controller = TrailingPaneFullScreenWindowController(content: content) { [weak self] in
+            self?.fullScreenWindowController = nil
+        }
+        fullScreenWindowController = controller
+        return controller
+    }
+    #endif
 
     public var minWidth: CGFloat { width.minWidth }
     public var idealWidth: CGFloat { width.idealWidth }

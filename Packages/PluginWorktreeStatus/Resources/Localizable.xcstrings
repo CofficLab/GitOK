@@ -772,6 +772,16 @@
         }
       }
     },
+    "Sync completed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步完成"
+          }
+        }
+      }
+    },
     "Synchronize with remote" : {
       "localizations" : {
         "zh-Hans" : {

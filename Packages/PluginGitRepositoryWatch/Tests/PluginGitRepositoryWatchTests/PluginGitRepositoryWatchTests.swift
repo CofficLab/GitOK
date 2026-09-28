@@ -154,6 +154,69 @@ final class PluginGitRepositoryWatchTests: XCTestCase {
         XCTAssertNil(missing)
     }
 
+    // MARK: - Resolver edge cases
+
+    func testResolveGitDirectoryMissingThrows() {
+        let missing = URL(fileURLWithPath: "/tmp/gitok-missing-\(UUID().uuidString)")
+        do {
+            _ = try GitDirectoryResolver.resolveGitDirectory(for: missing)
+            XCTFail("expected throw")
+        } catch GitDirectoryResolver.ResolverError.gitDirectoryNotFound {
+            // expected
+        } catch {
+            XCTFail("unexpected error \(error)")
+        }
+    }
+
+    func testResolveGitDirectoryWorktreeFile() throws {
+        let projectRoot = URL(fileURLWithPath: "/tmp/gitok-wt-\(UUID().uuidString)")
+        let gitDir = projectRoot.appendingPathComponent(".git")
+        try FileManager.default.createDirectory(at: gitDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: projectRoot) }
+
+        // Worktree: .git is a file pointing elsewhere.
+        try FileManager.default.removeItem(at: gitDir)
+        let externalGitDir = URL(fileURLWithPath: "/tmp/gitok-external-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: externalGitDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: externalGitDir) }
+        try "gitdir: \(externalGitDir.path)\n".write(to: gitDir, atomically: true, encoding: .utf8)
+
+        let resolved = try GitDirectoryResolver.resolveGitDirectory(for: projectRoot)
+        XCTAssertEqual(resolved.standardizedFileURL.path, externalGitDir.standardizedFileURL.path)
+    }
+
+    func testReadHeadRefDetachedReturnsNil() throws {
+        let gitDir = URL(fileURLWithPath: "/tmp/gitok-head-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: gitDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: gitDir) }
+        try "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef".write(
+            to: gitDir.appendingPathComponent("HEAD"),
+            atomically: true, encoding: .utf8
+        )
+        XCTAssertNil(GitDirectoryResolver.readHeadRef(gitDirectory: gitDir))
+        XCTAssertEqual(
+            GitDirectoryResolver.readHeadHash(gitDirectory: gitDir),
+            "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+        )
+    }
+
+    func testReadHeadHashResolvesRefPointer() throws {
+        let gitDir = URL(fileURLWithPath: "/tmp/gitok-ref-\(UUID().uuidString)")
+        let heads = gitDir.appendingPathComponent("refs/heads")
+        try FileManager.default.createDirectory(at: heads, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: gitDir) }
+        try "ref: refs/heads/main\n".write(
+            to: gitDir.appendingPathComponent("HEAD"),
+            atomically: true, encoding: .utf8
+        )
+        try "abc1234abc1234abc1234abc1234abc1234abc1234".write(
+            to: heads.appendingPathComponent("main"),
+            atomically: true, encoding: .utf8
+        )
+        XCTAssertEqual(GitDirectoryResolver.readHeadRef(gitDirectory: gitDir), "refs/heads/main")
+        XCTAssertEqual(GitDirectoryResolver.readHeadHash(gitDirectory: gitDir), "abc1234abc1234abc1234abc1234abc1234abc1234")
+    }
+
     // MARK: - Working tree path filtering
 
     func testWorkingTreeWatcherExcludesInternalGeneratedDirectories() {

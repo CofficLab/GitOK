@@ -12,6 +12,7 @@ struct PluginGitIgnoreTests {
         let plugin = GitIgnorePlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-ignore")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
+        #expect(plugin.order == 38)
     }
 }

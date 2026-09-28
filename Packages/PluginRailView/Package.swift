@@ -11,10 +11,10 @@ let package = Package(
         .library(name: "PluginRailView", targets: ["PluginRailView"]),
     ],
     dependencies: [
-        .package(path: "../KernelCore"),
-        .package(path: "../KitLocalization"),
-        .package(path: "../KitSuperLog"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderRailView"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderWorkspaceScene"),
@@ -24,9 +24,9 @@ let package = Package(
         .target(
             name: "PluginRailView",
             dependencies: [
-                .product(name: "KernelCore", package: "KernelCore"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
-                .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
+                .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderRailView", package: "ProviderRailView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),

@@ -54,6 +54,9 @@ final class WorktreeCleanViewModel: ObservableObject {
     @Published private(set) var isLoadingUserConfiguration = false
     @Published private(set) var isApplyingUserPreset = false
 
+    /// 仓库 HEAD 或 refs 变化时递增，供仓库信息视图刷新分支、标签和提交元数据。
+    @Published private(set) var repositoryInfoRevision = 0
+
     /// 已检查过工作区状态的项目 URL（用于避免对同一项目重复加载）。
     private var checkedProjectURL: URL?
 
@@ -121,6 +124,11 @@ final class WorktreeCleanViewModel: ObservableObject {
         // 工作区变化不会改变仓库级 Git 用户身份。不要在每次文件事件
         // 中重新读取配置并切换 isLoadingUserConfiguration，否则用户名、
         // 预设和协作者区域会随着文件监听事件反复闪烁。
+    }
+
+    /// 仓库元数据发生变化时通知仍在显示的仓库信息视图重新读取。
+    func handleRepositoryInfoChanged() {
+        repositoryInfoRevision &+= 1
     }
 
     /// 外部预设 Provider 发生变化后，由插件级 Observer 推送最新快照。

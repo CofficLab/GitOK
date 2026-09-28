@@ -8,7 +8,7 @@
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitGit`、`KitSuperLog`、`ProviderProjects`、`ProviderStatusBar` |
+| **上游依赖** | `KernelCore`、`KitGit`、`LumiLoggingKit`、`ProviderProjects`、`ProviderStatusBar` |
 | **平台** | macOS 14+ |
 
 ## 目录结构

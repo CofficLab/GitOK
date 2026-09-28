@@ -1,6 +1,6 @@
 import Foundation
 import KernelCore
-import KitSuperLog
+import LumiLoggingKit
 import os
 import ProviderSettingView
 import SwiftUI
@@ -24,7 +24,7 @@ public final class GitCommitStyleSettingsPlugin: SuperPlugin, SuperLog {
         description: "Choose the global default commit message style",
         category: .project,
         stage: .stable,
-        policy: .disabled
+        policy: .alwaysOn
     )
 
     public init() {}

@@ -12,6 +12,8 @@ struct PluginDiagnosticsSettingsTests {
         let plugin = DiagnosticsSettingsPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.diagnostics-settings")
         #expect(plugin.metadata.category == .system)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
+        #expect(plugin.metadata.stage == .stable)
+        #expect(plugin.order == 47)
     }
 }

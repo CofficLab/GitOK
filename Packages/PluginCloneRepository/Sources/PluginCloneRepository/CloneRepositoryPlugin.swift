@@ -1,8 +1,8 @@
 import Foundation
 import KernelCore
 import KitGit
-import KitLocalization
-import KitSuperLog
+import LumiLocalizationKit
+import LumiLoggingKit
 import LumiUI
 import os
 import ProviderActivity
@@ -172,6 +172,9 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
 
     func task(for destination: URL) -> CloneTask? {
         let standardized = destination.standardizedFileURL
+        if reconcileExternallyCompletedTask(at: standardized) {
+            persist()
+        }
         return tasks.first { $0.destination.standardizedFileURL == standardized }
     }
 
@@ -411,6 +414,43 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
         persist()
     }
 
+    @discardableResult
+    private func reconcileExternallyCompletedTask(at destination: URL) -> Bool {
+        guard let task = taskStore.values.first(where: {
+            $0.destination.standardizedFileURL == destination && $0.status == .failed
+        }) else { return false }
+
+        let expectedRemote = normalizedRemoteURL(task.remoteURL)
+        let hasMatchingRemote = git.listRemotes(in: destination).contains { remote in
+            [remote.url, remote.fetchURL, remote.pushURL]
+                .compactMap { $0 }
+                .contains { normalizedRemoteURL($0) == expectedRemote }
+        }
+        guard hasMatchingRemote else { return false }
+
+        var completedTask = task
+        completedTask.status = .completed
+        completedTask.phase = .completed
+        completedTask.fractionCompleted = 1
+        completedTask.detail = cloneLocalized("Completed")
+        completedTask.errorMessage = nil
+        completedTask.updatedAt = Date()
+        completedTask.finishedAt = completedTask.finishedAt ?? Date()
+        taskStore[task.id] = completedTask
+        return true
+    }
+
+    private func normalizedRemoteURL(_ value: String) -> String {
+        var normalized = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        while normalized.hasSuffix("/") {
+            normalized.removeLast()
+        }
+        if normalized.lowercased().hasSuffix(".git") {
+            normalized.removeLast(4)
+        }
+        return normalized.lowercased()
+    }
+
     private func persist() {
         let store = Store(tasks: tasks)
         guard let data = try? JSONEncoder().encode(store) else { return }
@@ -441,10 +481,24 @@ private final class CloneRepositoryObservationModel: ObservableObject {
     }
 }
 
+@MainActor
+private final class CloneRepositoryProjectObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    private var handle: (any ProjectProvidingObserverHandle)?
+
+    init(projects: any ProjectProviding) {
+        handle = projects.addObserver { [weak self] event in
+            guard case .selectionChanged = event else { return }
+            self?.revision += 1
+        }
+    }
+}
+
 private struct CloneRepositoryDetailView: View {
     let projects: any ProjectProviding
     let cloneRepository: any CloneRepositoryProviding
     @StateObject private var observation: CloneRepositoryObservationModel
+    @StateObject private var projectObservation: CloneRepositoryProjectObservationModel
     @State private var retryError: String?
     @LumiTheme private var theme
 
@@ -452,10 +506,12 @@ private struct CloneRepositoryDetailView: View {
         self.projects = projects
         self.cloneRepository = cloneRepository
         _observation = StateObject(wrappedValue: CloneRepositoryObservationModel(cloneRepository: cloneRepository))
+        _projectObservation = StateObject(wrappedValue: CloneRepositoryProjectObservationModel(projects: projects))
     }
 
     private var task: CloneTask? {
         _ = observation.revision
+        _ = projectObservation.revision
         guard let project = projects.currentProject else { return nil }
         return cloneRepository.task(for: project.url)
     }
@@ -478,63 +534,136 @@ private struct CloneRepositoryDetailView: View {
     }
 
     private func detail(_ task: CloneTask) -> some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(spacing: 12) {
-                Image(systemName: task.status.icon)
-                    .font(.system(size: 24))
-                    .foregroundStyle(task.status.color)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(task.status.title)
-                        .font(.title3.weight(.semibold))
-                    Text(task.repositoryName)
-                        .font(.caption)
-                        .foregroundStyle(theme.textSecondary)
-                }
-                Spacer()
-                if task.status.isActive {
-                    ProgressView().controlSize(.small)
+        VStack(alignment: .leading, spacing: AppUI.Spacing.md) {
+            AppCard(
+                style: .subtle,
+                cornerRadius: DesignTokens.Radius.md,
+                showShadow: false
+            ) {
+                HStack(spacing: AppUI.Spacing.sm) {
+                    Image(systemName: task.status.icon)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(task.status.color)
+                        .frame(width: 34, height: 34)
+                        .background(task.status.color.opacity(0.12), in: Circle())
+
+                    VStack(alignment: .leading, spacing: AppUI.Spacing.xs) {
+                        Text(task.status.title)
+                            .font(.appTitle)
+                            .foregroundStyle(theme.textPrimary)
+                        Text(task.repositoryName)
+                            .font(.appCaption)
+                            .foregroundStyle(theme.textSecondary)
+                    }
+
+                    Spacer(minLength: AppUI.Spacing.sm)
+                    AppTag(task.status.title, systemImage: task.status.icon)
                 }
             }
 
             if let fraction = task.fractionCompleted {
-                ProgressView(value: fraction)
-                Text("\(Int(fraction * 100))%")
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(theme.textSecondary)
+                AppCard(
+                    style: .subtle,
+                    cornerRadius: DesignTokens.Radius.sm,
+                    padding: DesignTokens.Spacing.compactPadding,
+                    showShadow: false
+                ) {
+                    VStack(alignment: .leading, spacing: AppUI.Spacing.sm) {
+                        HStack {
+                            Text(cloneLocalized("Current operation"))
+                                .font(.appCaption)
+                                .foregroundStyle(theme.textSecondary)
+                            Spacer()
+                            Text("\(Int(fraction * 100))%")
+                                .font(.appMonoCaption)
+                                .foregroundStyle(theme.textSecondary)
+                        }
+                        ProgressView(value: fraction)
+                            .tint(theme.primary)
+                    }
+                }
             } else if task.status.isActive {
                 ProgressView()
+                    .tint(theme.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            if let detail = task.detail, !detail.isEmpty {
-                infoRow(cloneLocalized("Current operation"), detail)
-            }
-            infoRow(cloneLocalized("Remote"), task.remoteURL)
-            infoRow(cloneLocalized("Destination"), task.destination.path)
-            if let startedAt = task.startedAt {
-                infoRow(cloneLocalized("Started"), startedAt.formatted(date: .abbreviated, time: .standard))
-            }
-            if let updatedAt = Optional(task.updatedAt) {
-                infoRow(cloneLocalized("Last update"), updatedAt.formatted(date: .abbreviated, time: .standard))
+            AppMetadataCard {
+                if let detail = task.detail, !detail.isEmpty {
+                    AppMetadataRow(title: cloneLocalized("Current operation"), systemImage: "gearshape") {
+                        Text(detail)
+                            .font(.appBody)
+                            .foregroundStyle(theme.textPrimary)
+                    }
+                    AppDivider()
+                }
+                AppMetadataRow(title: cloneLocalized("Remote"), systemImage: "link") {
+                    Text(task.remoteURL)
+                        .font(.appMonoCaption)
+                        .foregroundStyle(theme.textPrimary)
+                        .textSelection(.enabled)
+                }
+                AppDivider()
+                AppMetadataRow(title: cloneLocalized("Destination"), systemImage: "folder") {
+                    Text(task.destination.path)
+                        .font(.appMonoCaption)
+                        .foregroundStyle(theme.textPrimary)
+                        .textSelection(.enabled)
+                }
+                if let startedAt = task.startedAt {
+                    AppDivider()
+                    AppMetadataRow(title: cloneLocalized("Started"), systemImage: "play.circle") {
+                        Text(startedAt.formatted(date: .abbreviated, time: .standard))
+                            .font(.appBody)
+                            .foregroundStyle(theme.textPrimary)
+                    }
+                }
+                AppDivider()
+                AppMetadataRow(title: cloneLocalized("Last update"), systemImage: "clock") {
+                    Text(task.updatedAt.formatted(date: .abbreviated, time: .standard))
+                        .font(.appBody)
+                        .foregroundStyle(theme.textPrimary)
+                }
             }
 
             if let error = task.errorMessage {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(Color.red)
-                    .textSelection(.enabled)
+                AppCard(
+                    style: .subtle,
+                    cornerRadius: DesignTokens.Radius.sm,
+                    showShadow: false
+                ) {
+                    VStack(alignment: .leading, spacing: AppUI.Spacing.sm) {
+                        Label(cloneLocalized("Clone failed"), systemImage: "exclamationmark.triangle.fill")
+                            .font(.appBodyEmphasized)
+                            .foregroundStyle(theme.error)
+                        Text(error)
+                            .font(.appMonoCaption)
+                            .foregroundStyle(theme.textPrimary)
+                            .textSelection(.enabled)
+                    }
+                }
             }
             if let retryError {
-                Text(retryError)
-                    .font(.caption)
-                    .foregroundStyle(Color.red)
+                AppErrorBanner(message: LocalizedStringKey(retryError))
             }
 
-            HStack {
+            HStack(spacing: AppUI.Spacing.sm) {
                 if task.status.isActive {
-                    Button(cloneLocalized("Cancel")) { cloneRepository.cancel(taskID: task.id) }
-                        .buttonStyle(.bordered)
+                    AppButton(
+                        cloneLocalized("Cancel"),
+                        systemImage: "xmark",
+                        style: .secondary,
+                        size: .small
+                    ) {
+                        cloneRepository.cancel(taskID: task.id)
+                    }
                 } else if task.status == .failed || task.status == .cancelled {
-                    Button(cloneLocalized("Retry")) {
+                    AppButton(
+                        cloneLocalized("Retry"),
+                        systemImage: "arrow.clockwise",
+                        style: .primary,
+                        size: .small
+                    ) {
                         do {
                             _ = try cloneRepository.retry(taskID: task.id)
                             retryError = nil
@@ -542,27 +671,14 @@ private struct CloneRepositoryDetailView: View {
                             retryError = error.localizedDescription
                         }
                     }
-                    .buttonStyle(.borderedProminent)
                 }
                 Spacer()
             }
         }
     }
-
-    private func infoRow(_ title: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(theme.textSecondary)
-            Text(value)
-                .font(.callout)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
 }
 
-private extension CloneTaskStatus {
+extension CloneTaskStatus {
     var title: String {
         switch self {
         case .queued: cloneLocalized("Queued")
