@@ -16,12 +16,11 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
-        .package(path: "../ProviderContentView"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderWorkspaceScene"),
-        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2")
     ],
     targets: [
         .target(
@@ -32,12 +31,12 @@ let package = Package(
                 .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "ProviderContentView", package: "ProviderContentView"),
+                .product(name: "ProviderContentView", package: "LumiProviders"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Sources/PluginCommitDetail",
             resources: [

@@ -20,8 +20,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderStatusBar"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.0.2"),
-        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2"),
     ],
     targets: [
         .target(
@@ -34,7 +33,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
                 .product(name: "ProviderTheme", package: "LumiProviders"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Sources/PluginStatusBar",
             resources: [

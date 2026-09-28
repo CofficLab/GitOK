@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.1.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
@@ -23,8 +23,6 @@ let package = Package(
         .package(path: "../ProviderGitUser"),
         .package(path: "../ProviderProjects"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
-        .package(path: "../ProviderToast"),
-        .package(path: "../ProviderDocsView"),
     ],
     targets: [
         .target(
@@ -39,8 +37,8 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
                 .product(name: "ProviderStorage", package: "LumiProviders"),
-                .product(name: "ProviderToast", package: "ProviderToast"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderToast", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Sources/PluginGitUserSettings",
             resources: [

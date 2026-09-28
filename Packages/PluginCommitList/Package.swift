@@ -22,10 +22,9 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
-        .package(path: "../ProviderRailView"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
-        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2")
     ],
     targets: [
         .target(
@@ -39,10 +38,10 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
-                .product(name: "ProviderRailView", package: "ProviderRailView"),
+                .product(name: "ProviderRailView", package: "LumiProviders"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Sources/PluginCommitList",
             resources: [

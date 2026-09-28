@@ -14,11 +14,10 @@ let package = Package(
         .package(path: "../KitGitOKSupport"),
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProjectRulesKit"),
-        .package(path: "../ProviderContentView"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderWorkspaceScene"),
-        .package(path: "../ProviderDocsView"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2")
     ],
     targets: [
         .target(
@@ -29,10 +28,10 @@ let package = Package(
                 .product(name: "KitGitOKSupport", package: "KitGitOKSupport"),
                 .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProjectRulesKit", package: "ProjectRulesKit"),
-                .product(name: "ProviderContentView", package: "ProviderContentView"),
+                .product(name: "ProviderContentView", package: "LumiProviders"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "LumiUI", package: "LumiUI"),
             ],
             path: "Sources/PluginBanner",
