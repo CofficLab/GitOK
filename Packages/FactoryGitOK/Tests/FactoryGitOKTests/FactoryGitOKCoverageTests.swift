@@ -34,6 +34,14 @@ final class FactoryGitOKEntryTests: XCTestCase {
         let view = try FactoryGitOK.makeSettingsView(kernel: kernel)
         XCTAssertNotNil(view)
     }
+
+    func testRemoteThemeCatalogHasCanonicalCount() throws {
+        let kernel = try FactoryGitOK.makeKernel()
+        let theme = try XCTUnwrap(kernel.resolveProvider((any ThemeProviding).self))
+
+        XCTAssertEqual(theme.themes.count, 22)
+        XCTAssertEqual(Set(theme.themes.map(\.id)).count, 22)
+    }
 }
 
 // MARK: - KernelFactory 无参视图入口
