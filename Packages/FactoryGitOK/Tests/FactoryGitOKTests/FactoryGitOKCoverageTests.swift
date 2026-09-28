@@ -5,7 +5,7 @@ import XCTest
 import KernelCore
 import ProviderTheme
 import ProviderStorage
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderToolbar
 import ProviderStatusBar
 import ProviderContentView

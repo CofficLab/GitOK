@@ -60,10 +60,11 @@ import PluginStatusBar
 import PluginStorage
 import PluginToast
 import PluginThemePack
+import PluginToolbar
 import PluginWorktreeClean
 import PluginWorktreeStatus
 import PluginProjectReadme
-import ProviderRootView
+import GitOKProviderRootView
 #endif
 
 /// GitOK 的专用插件目录。
@@ -102,6 +103,7 @@ public struct DefaultPluginFactory: PluginFactory {
             CloneRepositoryPlugin(),
             RootViewPlugin(),
             RailViewPlugin(),
+            PluginToolbar(),
             CommandPlugin(),
             ProjectsPlugin(),
             GitWorktreePreheatPlugin(),

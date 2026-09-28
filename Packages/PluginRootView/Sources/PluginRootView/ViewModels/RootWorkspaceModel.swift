@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 import ProviderProjects
-import ProviderRootView
+import GitOKProviderRootView
 
 /// 根工作区状态模型。
 ///

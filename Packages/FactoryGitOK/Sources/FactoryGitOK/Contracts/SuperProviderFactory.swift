@@ -3,7 +3,7 @@ import ProviderWorkspaceScene
 import ProviderContentView
 import ProviderDocsView
 import ProviderRailView
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderSettingView
 import ProviderStorage
 import ProviderStatusBar
