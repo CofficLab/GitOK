@@ -561,6 +561,10 @@ final class GitOKCloneFailureIsolationUITests: GitOKCloneFailureFixtureTestCase 
             app.staticTexts[kuzeeRemoteURL].waitForExistence(timeout: 15),
             "The seeded Kuzee clone failure was not displayed"
         )
+        XCTAssertTrue(
+            element(identifier: "gitok.clone.failure").waitForExistence(timeout: 5),
+            "The clone failure page was not mounted as the unavailable workspace"
+        )
 
         let railVisible = element(identifier: "gitok.workspace.rail").waitForExistence(timeout: 2)
         let branchSwitcherVisible = element(identifier: "gitok.git.branch.switcher").waitForExistence(timeout: 2)

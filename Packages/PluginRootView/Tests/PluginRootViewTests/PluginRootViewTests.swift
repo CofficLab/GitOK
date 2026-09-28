@@ -378,9 +378,8 @@ final class PluginRootViewTests: XCTestCase {
         XCTAssertEqual(plugin.provider.workspaceState, .ready)
     }
 
-    /// 复现问题：目标目录已经留下 `.git`，但对应 clone 任务失败时，当前根门控
-    /// 只判断“是否正在克隆”，仍然会把工作区错误地判为 ready。
-    func testFailedCloneWithGitDirectoryCurrentlyLeaksReadyWorkspace() throws {
+    /// 失败任务即使留下 `.git` 目录，也必须阻止 Git 工作区挂载。
+    func testFailedCloneWithGitDirectoryUsesCloneFailedWorkspaceState() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
         let project = Project(url: try makeTempGitRepository(), title: "Failed clone")
@@ -398,8 +397,7 @@ final class PluginRootViewTests: XCTestCase {
 
         XCTAssertEqual(
             plugin.provider.workspaceState,
-            .ready,
-            "This documents the current bug: a failed clone with a .git directory leaks the ready workbench"
+            .cloneFailed
         )
     }
 

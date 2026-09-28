@@ -7,6 +7,7 @@ import ProviderCloneRepository
 import ProviderProjects
 import ProviderRailView
 import ProviderRootView
+import ProviderToolbar
 import SwiftUI
 import ProviderDocsView
 
@@ -49,6 +50,7 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
 
     /// 项目监听者：装配阶段创建，卸载时取消。
     private var observer: RootViewProjectObserver?
+    private var toolbarProvider: (any ToolbarProviding)?
 
     private let workspaceModel = RootWorkspaceModel()
 
@@ -79,6 +81,7 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)ProjectProviding not registered; skip no-project guide")
             return
         }
+        toolbarProvider = kernel.resolveProvider((any ToolbarProviding).self)
 
         provider.setWorkspaceUnavailableView(
             AnyView(
@@ -111,6 +114,8 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
     public func onShutdown(kernel: KernelCoreContainer) throws {
         observer?.cancel()
         observer = nil
+        toolbarProvider?.setHiddenCategories([], for: id)
+        toolbarProvider = nil
         provider.setWorkspaceUnavailableView(nil)
         workspaceModel.reset()
 
@@ -128,17 +133,17 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
     ) {
         let state: RootWorkspaceState
         if let project = projects.currentProject {
-            if cloneRepository?.isCloning(for: project.url) == true {
-                state = .cloning
-            } else if FileManager.default.fileExists(atPath: project.url.path) {
-                // 目录存在但缺少 `.git`（目录或 worktree 指针文件）→ 不是 Git 项目。
-                if FileManager.default.fileExists(
-                    atPath: project.url.appendingPathComponent(".git").path
-                ) {
-                    state = .ready
-                } else {
-                    state = .notGitRepository(path: project.url.path)
+            if let cloneTask = cloneRepository?.task(for: project.url) {
+                switch cloneTask.status {
+                case .queued, .cloning, .cancelling:
+                    state = .cloning
+                case .failed, .cancelled:
+                    state = .cloneFailed
+                case .completed:
+                    state = repositoryWorkspaceState(for: project)
                 }
+            } else if FileManager.default.fileExists(atPath: project.url.path) {
+                state = repositoryWorkspaceState(for: project)
             } else {
                 state = .projectMissing(path: project.url.path)
             }
@@ -147,6 +152,21 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         }
         workspaceModel.update(state: state, project: projects.currentProject)
         provider.setWorkspaceState(state)
+        toolbarProvider?.setHiddenCategories(
+            state == .cloning || state == .cloneFailed ? [.project] : [],
+            for: id
+        )
+    }
+
+    private func repositoryWorkspaceState(for project: Project) -> RootWorkspaceState {
+        guard FileManager.default.fileExists(atPath: project.url.path) else {
+            return .projectMissing(path: project.url.path)
+        }
+
+        // 目录存在但缺少 `.git`（目录或 worktree 指针文件）→ 不是 Git 项目。
+        return FileManager.default.fileExists(
+            atPath: project.url.appendingPathComponent(".git").path
+        ) ? .ready : .notGitRepository(path: project.url.path)
     }
 }
 
