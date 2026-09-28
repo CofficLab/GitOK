@@ -63,6 +63,7 @@ import PluginThemePack
 import PluginWorktreeClean
 import PluginWorktreeStatus
 import PluginProjectReadme
+import ProviderRootView
 #endif
 
 /// GitOK 的专用插件目录。
@@ -73,6 +74,25 @@ import PluginProjectReadme
 @MainActor
 public struct DefaultPluginFactory: PluginFactory {
     public init() {}
+
+    private func makeToastPlugin() -> ToastSuperPlugin {
+        ToastSuperPlugin(
+            overlayInstaller: { kernel, center in
+                guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
+                    return
+                }
+                rootView.addOverlays([
+                    RootOverlayItem(id: ToastSuperPlugin.overlayID, order: 10_000) { content in
+                        ToastOverlay(content: content, center: center)
+                    },
+                ])
+            },
+            overlayUninstaller: { kernel in
+                kernel.resolveProvider((any RootViewProviding).self)?
+                    .removeOverlays(ids: [ToastSuperPlugin.overlayID])
+            }
+        )
+    }
 
     public func makePlugins() -> [any SuperPlugin] {
         [
@@ -119,7 +139,7 @@ public struct DefaultPluginFactory: PluginFactory {
             ActivityStatusPlugin(),
             GitBranchStatusPlugin(),
             GitUnpushedStatusPlugin(),
-            ToastSuperPlugin(),
+            makeToastPlugin(),
             CommitToastPlugin(),
             CommitStatusBarPlugin(),
             OpenFinderPlugin(),

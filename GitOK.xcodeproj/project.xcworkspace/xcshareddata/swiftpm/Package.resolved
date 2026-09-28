@@ -15,7 +15,7 @@
       "location": "https://github.com/CofficLab/LumiKernel.git",
       "state": {
         "branch": "main",
-        "revision": "d48f2cf8696dfa0dc3653b79d6e8013d71d7a71a"
+        "revision": "4a30c5f4d6e3b24be61e87a036b14720ef0f1654"
       }
     },
     {
@@ -33,6 +33,15 @@
       "location": "https://github.com/CofficLab/LumiLogging.git",
       "state": {
         "revision": "8c00bb13b76a21f88bee186a68ca20568550f65e",
+        "version": "1.0.1"
+      }
+    },
+    {
+      "identity": "lumiplugintoast",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/CofficLab/LumiPluginToast.git",
+      "state": {
+        "revision": "0dcd45a9866bffda3147d6fae4d2edd6c46de5a8",
         "version": "1.0.1"
       }
     },
