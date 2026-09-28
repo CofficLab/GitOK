@@ -497,8 +497,9 @@ final class GitOKCloneRepositoryUITests: GitOKUITestCase {
     }
 }
 
-final class GitOKCloneFailureIsolationUITests: GitOKUITestCase {
-    private let kuzeeRemoteURL = "https://github.com/CofficLab/Kuzee.git"
+class GitOKCloneFailureFixtureTestCase: GitOKUITestCase {
+    let kuzeeRemoteURL = "https://github.com/CofficLab/Kuzee.git"
+    var shouldSeedExternalClone: Bool { false }
 
     override var fixtureProjectTitle: String { "Kuzee" }
 
@@ -516,6 +517,10 @@ final class GitOKCloneFailureIsolationUITests: GitOKUITestCase {
     }
 
     override func seedAdditionalUIState() throws {
+        if shouldSeedExternalClone {
+            _ = try gitOutput(["remote", "add", "origin", kuzeeRemoteURL], in: repositoryURL)
+        }
+
         let cloneDirectory = fixtureRootURL
             .appendingPathComponent("Data", isDirectory: true)
             .appendingPathComponent("com.coffic.gitok.plugin.clone-repository", isDirectory: true)
@@ -543,7 +548,9 @@ final class GitOKCloneFailureIsolationUITests: GitOKUITestCase {
             options: .atomic
         )
     }
+}
 
+final class GitOKCloneFailureIsolationUITests: GitOKCloneFailureFixtureTestCase {
     func testFailedCloneDetailsDoNotLeakAfterSwitchingProjects() {
         XCTAssertTrue(
             app.staticTexts[kuzeeRemoteURL].waitForExistence(timeout: 15),
@@ -559,6 +566,10 @@ final class GitOKCloneFailureIsolationUITests: GitOKUITestCase {
             "Kuzee clone details leaked into the Lumi project"
         )
     }
+}
+
+final class GitOKExternalCloneReconciliationUITests: GitOKCloneFailureFixtureTestCase {
+    override var shouldSeedExternalClone: Bool { true }
 
     func testExternalCloneShouldClearStaleFailedCloneTask() throws {
         XCTAssertEqual(

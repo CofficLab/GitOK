@@ -172,6 +172,9 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
 
     func task(for destination: URL) -> CloneTask? {
         let standardized = destination.standardizedFileURL
+        if reconcileExternallyCompletedTask(at: standardized) {
+            persist()
+        }
         return tasks.first { $0.destination.standardizedFileURL == standardized }
     }
 
@@ -409,6 +412,43 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
             taskStore[task.id] = task
         }
         persist()
+    }
+
+    @discardableResult
+    private func reconcileExternallyCompletedTask(at destination: URL) -> Bool {
+        guard let task = taskStore.values.first(where: {
+            $0.destination.standardizedFileURL == destination && $0.status == .failed
+        }) else { return false }
+
+        let expectedRemote = normalizedRemoteURL(task.remoteURL)
+        let hasMatchingRemote = git.listRemotes(in: destination).contains { remote in
+            [remote.url, remote.fetchURL, remote.pushURL]
+                .compactMap { $0 }
+                .contains { normalizedRemoteURL($0) == expectedRemote }
+        }
+        guard hasMatchingRemote else { return false }
+
+        var completedTask = task
+        completedTask.status = .completed
+        completedTask.phase = .completed
+        completedTask.fractionCompleted = 1
+        completedTask.detail = cloneLocalized("Completed")
+        completedTask.errorMessage = nil
+        completedTask.updatedAt = Date()
+        completedTask.finishedAt = completedTask.finishedAt ?? Date()
+        taskStore[task.id] = completedTask
+        return true
+    }
+
+    private func normalizedRemoteURL(_ value: String) -> String {
+        var normalized = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        while normalized.hasSuffix("/") {
+            normalized.removeLast()
+        }
+        if normalized.lowercased().hasSuffix(".git") {
+            normalized.removeLast(4)
+        }
+        return normalized.lowercased()
     }
 
     private func persist() {
