@@ -8,6 +8,7 @@ class GitOKUITestCase: XCTestCase {
     var fixtureRootURL: URL { fixtureRoot }
     var repositoryURL: URL!
     var hasWorkingTreeChanges: Bool { true }
+    var fixtureProjectTitle: String { "GitOK UI Fixture" }
     var uiTestLanguage: String { "en" }
     var uiTestLocale: String { "en_US" }
 
@@ -19,6 +20,7 @@ class GitOKUITestCase: XCTestCase {
         try FileManager.default.createDirectory(at: repositoryURL, withIntermediateDirectories: true)
         try createRepositoryFixture()
         try seedProjectStore()
+        try seedAdditionalUIState()
 
         app = XCUIApplication()
         app.launchArguments += [
@@ -40,7 +42,7 @@ class GitOKUITestCase: XCTestCase {
             "GitOK displayed its startup error view"
         )
         XCTAssertTrue(
-            app.buttons.matching(NSPredicate(format: "label == %@", "GitOK UI Fixture"))
+            app.buttons.matching(NSPredicate(format: "label == %@", fixtureProjectTitle))
                 .firstMatch.waitForExistence(timeout: 20),
             "The isolated fixture project was not restored into the project list"
         )
@@ -148,15 +150,21 @@ class GitOKUITestCase: XCTestCase {
         }
     }
 
+    func additionalProjectFixtures() throws -> [UITestProject] { [] }
+
+    func seedAdditionalUIState() throws {}
+
     private func seedProjectStore() throws {
         let projectID = UUID()
         let storeDirectory = fixtureRoot
             .appendingPathComponent("Data", isDirectory: true)
             .appendingPathComponent("com.coffic.gitok.plugin.projects", isDirectory: true)
         try FileManager.default.createDirectory(at: storeDirectory, withIntermediateDirectories: true)
+        let additionalProjects = try additionalProjectFixtures()
 
         let store = UITestProjectStore(
-            projects: [UITestProject(id: projectID, url: repositoryURL, title: "GitOK UI Fixture", isPinned: false)],
+            projects: [UITestProject(id: projectID, url: repositoryURL, title: fixtureProjectTitle, isPinned: false)]
+                + additionalProjects,
             currentProjectID: projectID
         )
         let encoder = JSONEncoder()
@@ -165,11 +173,25 @@ class GitOKUITestCase: XCTestCase {
     }
 
     private func runGit(_ arguments: [String]) throws {
+        try runGit(arguments, in: repositoryURL)
+    }
+
+    func createCleanRepository(at url: URL) throws {
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        try runGit(["init", "--quiet", "--initial-branch=main", url.path], in: url)
+        try runGit(["config", "user.name", "GitOK UI Test"], in: url)
+        try runGit(["config", "user.email", "gitok-ui-tests@example.invalid"], in: url)
+        try Data("initial content\n".utf8).write(to: url.appendingPathComponent("tracked.txt"))
+        try runGit(["add", "tracked.txt"], in: url)
+        try runGit(["commit", "--quiet", "-m", "Initial fixture commit"], in: url)
+    }
+
+    private func runGit(_ arguments: [String], in repository: URL) throws {
         let process = Process()
         process.executableURL = gitExecutableURL
         process.arguments = arguments.first == "init"
             ? arguments
-            : ["-C", repositoryURL.path] + arguments
+            : ["-C", repository.path] + arguments
         let error = Pipe()
         process.standardError = error
         try process.run()
@@ -192,17 +214,37 @@ class GitOKUITestCase: XCTestCase {
     }
 }
 
-private struct UITestProjectStore: Encodable {
+struct UITestProjectStore: Encodable {
     let projects: [UITestProject]
     let currentProjectID: UUID?
 }
 
-private struct UITestProject: Encodable {
+struct UITestProject: Encodable {
     let id: UUID
     let url: URL
     let title: String
     let isPinned: Bool
     let lastOpenedAt: Date? = nil
+}
+
+struct UITestCloneTaskStore: Encodable {
+    let tasks: [UITestCloneTask]
+}
+
+struct UITestCloneTask: Encodable {
+    let id: UUID
+    let remoteURL: String
+    let destination: URL
+    let repositoryName: String
+    let status: String
+    let phase: String?
+    let fractionCompleted: Double?
+    let detail: String?
+    let errorMessage: String?
+    let createdAt: Date
+    let updatedAt: Date
+    let startedAt: Date?
+    let finishedAt: Date?
 }
 
 final class GitOKLaunchUITests: GitOKUITestCase {
@@ -451,6 +493,70 @@ final class GitOKCloneRepositoryUITests: GitOKUITestCase {
         XCTAssertTrue(
             element(identifier: "gitok.clone.sheet").waitForExistence(timeout: 5),
             "Cancelling the folder picker should keep the clone form open"
+        )
+    }
+}
+
+final class GitOKCloneFailureIsolationUITests: GitOKUITestCase {
+    private let kuzeeRemoteURL = "https://github.com/CofficLab/Kuzee.git"
+
+    override var fixtureProjectTitle: String { "Kuzee" }
+
+    override func additionalProjectFixtures() throws -> [UITestProject] {
+        let lumiURL = fixtureRootURL.appendingPathComponent("Lumi", isDirectory: true)
+        try createCleanRepository(at: lumiURL)
+        return [
+            UITestProject(
+                id: UUID(),
+                url: lumiURL,
+                title: "Lumi",
+                isPinned: false
+            ),
+        ]
+    }
+
+    override func seedAdditionalUIState() throws {
+        let cloneDirectory = fixtureRootURL
+            .appendingPathComponent("Data", isDirectory: true)
+            .appendingPathComponent("com.coffic.gitok.plugin.clone-repository", isDirectory: true)
+        try FileManager.default.createDirectory(at: cloneDirectory, withIntermediateDirectories: true)
+
+        let now = Date()
+        let task = UITestCloneTask(
+            id: UUID(),
+            remoteURL: kuzeeRemoteURL,
+            destination: repositoryURL,
+            repositoryName: "Kuzee",
+            status: "failed",
+            phase: "checkingOut",
+            fractionCompleted: 0.92,
+            detail: "Clone failed",
+            errorMessage: "remote authentication required but no callback set",
+            createdAt: now,
+            updatedAt: now,
+            startedAt: now,
+            finishedAt: now
+        )
+        let store = UITestCloneTaskStore(tasks: [task])
+        try JSONEncoder().encode(store).write(
+            to: cloneDirectory.appendingPathComponent("clone-tasks.json"),
+            options: .atomic
+        )
+    }
+
+    func testFailedCloneDetailsDoNotLeakAfterSwitchingProjects() {
+        XCTAssertTrue(
+            app.staticTexts[kuzeeRemoteURL].waitForExistence(timeout: 15),
+            "The seeded Kuzee clone failure was not displayed"
+        )
+
+        let lumi = app.buttons.matching(NSPredicate(format: "label == %@", "Lumi")).firstMatch
+        XCTAssertTrue(lumi.waitForExistence(timeout: 10), "The Lumi project row is missing")
+        lumi.click()
+
+        XCTAssertFalse(
+            app.staticTexts[kuzeeRemoteURL].waitForExistence(timeout: 2),
+            "Kuzee clone details leaked into the Lumi project"
         )
     }
 }

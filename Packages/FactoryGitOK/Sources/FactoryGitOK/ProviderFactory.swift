@@ -1,3 +1,4 @@
+import Foundation
 import KernelCore
 import ProviderContentView
 import ProviderDocsView
@@ -27,7 +28,15 @@ public struct DefaultProviderFactory: ProviderFactory {
     public init() {}
 
     public func makeStorageProvider() -> any StorageProviding {
-        DefaultStorageProvider()
+        #if DEBUG
+        let testDataRoot = ProcessInfo.processInfo.environment["GITOK_UI_TEST_DATA_ROOT"]
+            .flatMap { path in
+                path.isEmpty ? nil : URL(fileURLWithPath: path, isDirectory: true)
+            }
+        #else
+        let testDataRoot: URL? = nil
+        #endif
+        return DefaultStorageProvider(dataRootDirectory: testDataRoot)
     }
 
     public func makeWorkspaceSceneProvider() -> any WorkspaceSceneProviding {
