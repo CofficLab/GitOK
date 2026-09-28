@@ -9,6 +9,7 @@ import ProviderProjects
 import ProviderSidebar
 import ProviderToast
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// `SidebarProviding` 的项目列表实现。
 ///
@@ -77,6 +78,7 @@ private struct ProjectSidebarView: View {
     @State private var renameText = ""
     @State private var renameErrorMessage: String?
     @State private var isPresentingRenameError = false
+    @State private var draggedProjectID: UUID?
 
     init(
         projects: any ProjectProviding,
@@ -140,6 +142,21 @@ private struct ProjectSidebarView: View {
                             ForEach(Array(filteredProjects.enumerated()), id: \.element.id) { index, project in
                                 projectRow(project, isLastPinned: index == (pinnedDividerIndex ?? Int.max) - 1)
                             }
+
+                            // 允许把项目拖到分组末尾；项目管理器会根据项目的置顶状态
+                            // 将其插入对应分组末尾，不会破坏置顶区边界。
+                            Color.clear
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 16)
+                                .contentShape(Rectangle())
+                                .onDrop(
+                                    of: [.text],
+                                    delegate: ProjectDropDelegate(
+                                        draggedProjectID: draggedProjectID,
+                                        targetProjectID: nil,
+                                        onMove: moveProject
+                                    )
+                                )
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 8)
@@ -266,11 +283,27 @@ private struct ProjectSidebarView: View {
                 Label(LumiPluginLocalization.string("Remove Project", bundle: .module), systemImage: "trash")
             }
         }
+        .onDrag {
+            draggedProjectID = project.id
+            return NSItemProvider(object: NSString(string: project.id.uuidString))
+        }
+        .onDrop(
+            of: [.text],
+            delegate: ProjectDropDelegate(
+                draggedProjectID: draggedProjectID,
+                targetProjectID: project.id,
+                onMove: moveProject
+            )
+        )
         .overlay(alignment: .bottom) {
             if isLastPinned {
                 AppDivider().padding(.vertical, 2)
             }
         }
+    }
+
+    private func moveProject(_ draggedID: UUID, before targetID: UUID?) {
+        projects.moveProject(id: draggedID, beforeID: targetID)
     }
 
     private func copyProjectPath(_ project: Project) {
@@ -305,6 +338,26 @@ private struct ProjectSidebarView: View {
             projects.addProject(at: url)
             projects.openProject(at: url)
         }
+    }
+}
+
+/// 将拖放目标转换为项目 ID 移动操作。
+private struct ProjectDropDelegate: DropDelegate {
+    let draggedProjectID: UUID?
+    let targetProjectID: UUID?
+    let onMove: (UUID, UUID?) -> Void
+
+    func dropEntered(info: DropInfo) {
+        guard let draggedProjectID, draggedProjectID != targetProjectID else { return }
+        onMove(draggedProjectID, targetProjectID)
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        true
     }
 }
 
