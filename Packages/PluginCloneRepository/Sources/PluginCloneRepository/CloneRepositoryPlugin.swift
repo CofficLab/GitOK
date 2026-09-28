@@ -441,10 +441,24 @@ private final class CloneRepositoryObservationModel: ObservableObject {
     }
 }
 
+@MainActor
+private final class CloneRepositoryProjectObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    private var handle: (any ProjectProvidingObserverHandle)?
+
+    init(projects: any ProjectProviding) {
+        handle = projects.addObserver { [weak self] event in
+            guard case .selectionChanged = event else { return }
+            self?.revision += 1
+        }
+    }
+}
+
 private struct CloneRepositoryDetailView: View {
     let projects: any ProjectProviding
     let cloneRepository: any CloneRepositoryProviding
     @StateObject private var observation: CloneRepositoryObservationModel
+    @StateObject private var projectObservation: CloneRepositoryProjectObservationModel
     @State private var retryError: String?
     @LumiTheme private var theme
 
@@ -452,10 +466,12 @@ private struct CloneRepositoryDetailView: View {
         self.projects = projects
         self.cloneRepository = cloneRepository
         _observation = StateObject(wrappedValue: CloneRepositoryObservationModel(cloneRepository: cloneRepository))
+        _projectObservation = StateObject(wrappedValue: CloneRepositoryProjectObservationModel(projects: projects))
     }
 
     private var task: CloneTask? {
         _ = observation.revision
+        _ = projectObservation.revision
         guard let project = projects.currentProject else { return nil }
         return cloneRepository.task(for: project.url)
     }
