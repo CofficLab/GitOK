@@ -559,6 +559,19 @@ final class GitOKCloneFailureIsolationUITests: GitOKUITestCase {
             "Kuzee clone details leaked into the Lumi project"
         )
     }
+
+    func testExternalCloneShouldClearStaleFailedCloneTask() throws {
+        XCTAssertEqual(
+            try gitOutput(["rev-parse", "--is-inside-work-tree"], in: repositoryURL),
+            "true",
+            "The fixture destination should represent a repository cloned outside GitOK"
+        )
+
+        XCTAssertFalse(
+            app.staticTexts[kuzeeRemoteURL].waitForExistence(timeout: 2),
+            "GitOK still shows the stale clone failure after the destination became a valid repository"
+        )
+    }
 }
 
 final class GitOKWorkspaceUITests: GitOKUITestCase {
