@@ -3,7 +3,7 @@ import KernelCore
 import ProviderContentView
 import ProviderDocsView
 import ProviderGit
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderSettingView
 import ProviderStatusBar
 import ProviderStorage

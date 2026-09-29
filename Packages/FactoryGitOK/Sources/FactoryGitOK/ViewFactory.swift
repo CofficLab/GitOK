@@ -3,7 +3,7 @@ import Foundation
 import KernelCore
 import LumiUI
 import ProviderContentView
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderSettingView
 import ProviderStatusBar
 import ProviderTheme

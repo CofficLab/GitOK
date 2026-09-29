@@ -11,7 +11,7 @@ let package = Package(
     products: [
         .library(
             name: "ProviderRootView",
-            targets: ["ProviderRootView"]
+            targets: ["GitOKProviderRootView"]
         ),
     ],
     dependencies: [
@@ -23,7 +23,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "ProviderRootView",
+            name: "GitOKProviderRootView",
             dependencies: [
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
@@ -37,7 +37,7 @@ let package = Package(
         .testTarget(
             name: "ProviderRootViewTests",
             dependencies: [
-                "ProviderRootView",
+                "GitOKProviderRootView",
                 .product(name: "ProviderChatSection", package: "ProviderChatSection"),
                 .product(name: "ProviderRailView", package: "LumiProviders"),
             ]

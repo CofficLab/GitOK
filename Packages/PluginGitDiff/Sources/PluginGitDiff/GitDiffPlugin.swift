@@ -4,7 +4,7 @@ import LumiLoggingKit
 import os
 import ProviderProjects
 import ProviderGit
-import ProviderRootView
+import GitOKProviderRootView
 import SwiftUI
 import ProviderDocsView
 

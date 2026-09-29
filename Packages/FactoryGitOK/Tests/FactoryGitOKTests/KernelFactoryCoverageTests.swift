@@ -17,7 +17,7 @@ import ProviderContentView
 import ProviderDocsView
 import ProviderToolbar
 import ProviderStatusBar
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderToast
 import ProviderWorkspaceScene
 

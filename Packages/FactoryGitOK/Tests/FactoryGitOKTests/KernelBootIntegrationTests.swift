@@ -4,7 +4,7 @@ import KitGit
 import ProviderProjects
 import ProviderGit
 import ProviderGitConflictResolver
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderStorage
 import ProviderToast
 import ProviderToolbar
