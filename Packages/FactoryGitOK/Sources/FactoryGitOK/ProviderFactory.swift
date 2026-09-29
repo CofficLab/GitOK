@@ -137,11 +137,13 @@ public struct DefaultProviderFactory: ProviderFactory {
             )
         )
         try kernel.registerProvider((any ToastProviding).self, makeToastProvider())
-        let pluginManaging = makePluginManagingProvider()
-        if let concrete = pluginManaging as? DefaultPluginManager {
-            concrete.attach(kernel: kernel)
-        }
-        try kernel.registerProvider((any PluginManaging).self, pluginManaging)
+        // 必须带 kernel 构造：manager 的 isEnabled 委托给内部 controlling，
+        // controlling 只在 init 时拿到 kernel；无参构造会让 isEnabled 恒为
+        // false，PluginToolbar 状态同步据此把所有插件贡献误判为已禁用。
+        try kernel.registerProvider(
+            (any PluginManaging).self,
+            makePluginManagingProvider(kernel: kernel)
+        )
         #endif
     }
 }
@@ -194,8 +196,8 @@ extension DefaultProviderFactory {
         DefaultToastProviding()
     }
 
-    public func makePluginManagingProvider() -> any PluginManaging {
-        DefaultPluginManager()
+    public func makePluginManagingProvider(kernel: KernelCoreContainer) -> any PluginManaging {
+        DefaultPluginManager(kernel: kernel)
     }
 }
 #endif

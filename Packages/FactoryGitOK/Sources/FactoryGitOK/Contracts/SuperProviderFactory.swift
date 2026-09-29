@@ -39,7 +39,12 @@ public protocol ProviderFactory {
     func makeRailViewProvider() -> any RailViewProviding
     func makeCommandProvider() -> any CommandProviding
     func makeToastProvider() -> any ToastProviding
-    func makePluginManagingProvider() -> any PluginManaging
+    /// 产出 `PluginManaging` 实现。
+    ///
+    /// 必须用传入的 `kernel` 完成装配：manager 的启停委托给内部 controlling，
+    /// controlling 只在构造时拿到 kernel；若构造后再 `attach`，历史上存在
+    /// controlling 未同步 kernel 的缺陷，会导致 `isEnabled` 恒为 false。
+    func makePluginManagingProvider(kernel: KernelCoreContainer) -> any PluginManaging
     #endif
 
     func makeSettingViewProvider() -> any SettingViewProviding
