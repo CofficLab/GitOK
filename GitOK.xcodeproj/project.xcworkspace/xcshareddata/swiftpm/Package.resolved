@@ -1,5 +1,4 @@
 {
-  "originHash": "b34921436e3f5e4576c44bb3af5d652482e54b96a90a59d729361d1fa01b8adb",
   "pins": [
     {
       "identity": "libgit2swift",
@@ -34,6 +33,15 @@
       "state": {
         "revision": "8c00bb13b76a21f88bee186a68ca20568550f65e",
         "version": "1.0.1"
+      }
+    },
+    {
+      "identity": "lumipluginstorage",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/CofficLab/LumiPluginStorage.git",
+      "state": {
+        "revision": "521d3ed40f374a03cd2aea5b9bfd5ed13375ee12",
+        "version": "1.1.1"
       }
     },
     {
