@@ -92,7 +92,7 @@ style(commit-detail): unify theme tokens and tighten commit rows
 
 refactor(open-in): split into one plugin per target
 
-chore: update Package.resolved and bump project.yml
+chore: update Package.resolved and bump LumiProviders to 1.3.5
 
 docs(commit): add commit convention
 ```
