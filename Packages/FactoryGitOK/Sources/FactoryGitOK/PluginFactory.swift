@@ -158,7 +158,7 @@ public struct DefaultPluginFactory: PluginFactory {
             PluginSettingView(),
             PluginLogoManager(),
             LogoCofficPlugin(),
-            ThemePackPlugin(),
+            ThemePackPlugin(id: "com.coffic.gitok.plugin.theme-pack"),
             SettingGeneralPlugin(),
             PluginPluginManager(),
         ]
