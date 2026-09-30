@@ -155,7 +155,7 @@ public struct DefaultPluginFactory: PluginFactory {
             OpenKiroPlugin(),
             OpenLumiPlugin(),
             OpenRemotePlugin(),
-            PluginSettingView(),
+            PluginSettingView(id: "com.coffic.gitok.plugin.setting-view"),
             PluginLogoManager(),
             LogoCofficPlugin(),
             ThemePackPlugin(id: "com.coffic.gitok.plugin.theme-pack"),

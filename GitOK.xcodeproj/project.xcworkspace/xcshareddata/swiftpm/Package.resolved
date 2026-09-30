@@ -1,158 +1,167 @@
 {
-  "originHash": "71d8b7bbd26dbfacce9b3ffc4801de3e8720791323c8961d0737b4e57a60e053",
-  "pins": [
+  "originHash" : "b34921436e3f5e4576c44bb3af5d652482e54b96a90a59d729361d1fa01b8adb",
+  "pins" : [
     {
-      "identity": "libgit2swift",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/nookery/LibGit2Swift.git",
-      "state": {
-        "revision": "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
+      "identity" : "libgit2swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/LibGit2Swift.git",
+      "state" : {
+        "revision" : "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
       }
     },
     {
-      "identity": "lumikernel",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiKernel.git",
-      "state": {
-        "branch": "main",
-        "revision": "4a30c5f4d6e3b24be61e87a036b14720ef0f1654"
+      "identity" : "lumikernel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiKernel.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "4a30c5f4d6e3b24be61e87a036b14720ef0f1654"
       }
     },
     {
-      "identity": "lumilocalization",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiLocalization.git",
-      "state": {
-        "revision": "2a65f2ea3626936a559458352b8ae694f2f6f74a",
-        "version": "1.0.0"
+      "identity" : "lumilocalization",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiLocalization.git",
+      "state" : {
+        "revision" : "2a65f2ea3626936a559458352b8ae694f2f6f74a",
+        "version" : "1.0.0"
       }
     },
     {
-      "identity": "lumilogging",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiLogging.git",
-      "state": {
-        "revision": "8c00bb13b76a21f88bee186a68ca20568550f65e",
-        "version": "1.0.1"
+      "identity" : "lumilogging",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiLogging.git",
+      "state" : {
+        "revision" : "8c00bb13b76a21f88bee186a68ca20568550f65e",
+        "version" : "1.0.1"
       }
     },
     {
-      "identity": "lumipluginstorage",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiPluginStorage.git",
-      "state": {
-        "revision": "521d3ed40f374a03cd2aea5b9bfd5ed13375ee12",
-        "version": "1.1.1"
+      "identity" : "lumipluginsettingview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiPluginSettingView.git",
+      "state" : {
+        "revision" : "a722ad47a768145169ddc54c4a7bad7fd4b3b0b2",
+        "version" : "1.0.2"
       }
     },
     {
-      "identity": "lumipluginthemepack",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiPluginThemePack.git",
-      "state": {
-        "revision": "fd4d91c866cea4c5ed5bebc3aa985a90709cff8e",
-        "version": "1.1.0"
+      "identity" : "lumipluginstorage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiPluginStorage.git",
+      "state" : {
+        "revision" : "521d3ed40f374a03cd2aea5b9bfd5ed13375ee12",
+        "version" : "1.1.1"
       }
     },
     {
-      "identity": "lumiplugintoast",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiPluginToast.git",
-      "state": {
-        "revision": "0dcd45a9866bffda3147d6fae4d2edd6c46de5a8",
-        "version": "1.0.1"
+      "identity" : "lumipluginthemepack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiPluginThemePack.git",
+      "state" : {
+        "revision" : "fd4d91c866cea4c5ed5bebc3aa985a90709cff8e",
+        "version" : "1.1.0"
       }
     },
     {
-      "identity": "lumiproviders",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiProviders.git",
-      "state": {
-        "revision": "026c95c447fde70a67ba33f80d6a940342ed68e0",
-        "version": "1.3.6"
+      "identity" : "lumiplugintoast",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiPluginToast.git",
+      "state" : {
+        "revision" : "0dcd45a9866bffda3147d6fae4d2edd6c46de5a8",
+        "version" : "1.0.1"
       }
     },
     {
-      "identity": "lumisettings",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiSettings.git",
-      "state": {
-        "revision": "59af093194b98154bba8e9ac61669b253d66e2ba",
-        "version": "1.0.1"
+      "identity" : "lumiproviders",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiProviders.git",
+      "state" : {
+        "revision" : "3c2141e57614479471f15970adbe273a69ee3a9e",
+        "version" : "1.3.7"
       }
     },
     {
-      "identity": "lumithemepack",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiThemePack.git",
-      "state": {
-        "revision": "6fc7265e927d2a35106c48dec71e83a688f2e303",
-        "version": "1.0.4"
+      "identity" : "lumisettings",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiSettings.git",
+      "state" : {
+        "revision" : "59af093194b98154bba8e9ac61669b253d66e2ba",
+        "version" : "1.0.1"
       }
     },
     {
-      "identity": "lumiui",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/CofficLab/LumiUI.git",
-      "state": {
-        "revision": "e54783a431c018a6f4b64797274dbe0118f490d4",
-        "version": "1.7.0"
+      "identity" : "lumithemepack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiThemePack.git",
+      "state" : {
+        "revision" : "6fc7265e927d2a35106c48dec71e83a688f2e303",
+        "version" : "1.0.4"
       }
     },
     {
-      "identity": "magicdiffview",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/nookery/MagicDiffView",
-      "state": {
-        "branch": "main",
-        "revision": "b97553a3cb8d877981ec787f5f94e5fd0301c9cd"
+      "identity" : "lumiui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiUI.git",
+      "state" : {
+        "revision" : "e54783a431c018a6f4b64797274dbe0118f490d4",
+        "version" : "1.7.0"
       }
     },
     {
-      "identity": "magiclog",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/nookery/MagicLog.git",
-      "state": {
-        "branch": "main",
-        "revision": "f3680135b72e6c2158d21fba5769f17ba77798e5"
+      "identity" : "magicdiffview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicDiffView",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b97553a3cb8d877981ec787f5f94e5fd0301c9cd"
       }
     },
     {
-      "identity": "networkimage",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/gonzalezreal/NetworkImage",
-      "state": {
-        "revision": "2849f5323265386e200484b0d0f896e73c3411b9",
-        "version": "6.0.1"
+      "identity" : "magiclog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicLog.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5"
       }
     },
     {
-      "identity": "sparkle",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/sparkle-project/Sparkle",
-      "state": {
-        "revision": "ac2def288cbff5cfc7df3ffef6abdf45b72bcb0a",
-        "version": "2.9.6"
+      "identity" : "networkimage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/NetworkImage",
+      "state" : {
+        "revision" : "2849f5323265386e200484b0d0f896e73c3411b9",
+        "version" : "6.0.1"
       }
     },
     {
-      "identity": "swift-cmark",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/swiftlang/swift-cmark",
-      "state": {
-        "revision": "924936d0427cb25a61169739a7660230bffa6ea6",
-        "version": "0.8.0"
+      "identity" : "sparkle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparkle-project/Sparkle",
+      "state" : {
+        "revision" : "ac2def288cbff5cfc7df3ffef6abdf45b72bcb0a",
+        "version" : "2.9.6"
       }
     },
     {
-      "identity": "swift-markdown-ui",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/gonzalezreal/swift-markdown-ui",
-      "state": {
-        "revision": "5f613358148239d0292c0cef674a3c2314737f9e",
-        "version": "2.4.1"
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-cmark",
+      "state" : {
+        "revision" : "924936d0427cb25a61169739a7660230bffa6ea6",
+        "version" : "0.8.0"
+      }
+    },
+    {
+      "identity" : "swift-markdown-ui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/swift-markdown-ui",
+      "state" : {
+        "revision" : "5f613358148239d0292c0cef674a3c2314737f9e",
+        "version" : "2.4.1"
       }
     }
   ],
-  "version": 3
+  "version" : 3
 }
