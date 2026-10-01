@@ -16,12 +16,9 @@ struct ProjectMissingView: View {
 
             AppEmptyState(
                 icon: "folder.badge.questionmark",
-                title: LumiPluginLocalization.string("Project Not Found", bundle: .module),
-                description: LumiPluginLocalization.string(
-                    "The project directory no longer exists on disk.",
-                    bundle: .module
-                ),
-                actionTitle: LumiPluginLocalization.string("Remove from Project List", bundle: .module),
+                title: pluginLocalization.string("Project Not Found"),
+                description: pluginLocalization.string("The project directory no longer exists on disk."),
+                actionTitle: pluginLocalization.string("Remove from Project List"),
                 action: onRemoveProject
             )
             .frame(maxWidth: 500)
@@ -29,7 +26,7 @@ struct ProjectMissingView: View {
             AppCard(style: .subtle) {
                 VStack(alignment: .leading, spacing: 8) {
                     Label(
-                        LumiPluginLocalization.string("Project Path", bundle: .module),
+                        pluginLocalization.string("Project Path"),
                         systemImage: "folder"
                     )
                     .font(.caption.weight(.medium))
@@ -46,10 +43,7 @@ struct ProjectMissingView: View {
             }
             .frame(maxWidth: 500)
 
-            Text(LumiPluginLocalization.string(
-                "You can remove this project from the project list, or move the directory back to the original location.",
-                bundle: .module
-            ))
+            Text(pluginLocalization.string("You can remove this project from the project list, or move the directory back to the original location."))
             .font(.callout)
             .foregroundStyle(theme.textTertiary)
             .multilineTextAlignment(.center)
@@ -77,12 +71,9 @@ struct NotGitRepositoryView: View {
 
             AppEmptyState(
                 icon: "folder.badge.minus",
-                title: LumiPluginLocalization.string("Not a Git Repository", bundle: .module),
-                description: LumiPluginLocalization.string(
-                    "The selected folder is not a Git repository.",
-                    bundle: .module
-                ),
-                actionTitle: LumiPluginLocalization.string("Remove from Project List", bundle: .module),
+                title: pluginLocalization.string("Not a Git Repository"),
+                description: pluginLocalization.string("The selected folder is not a Git repository."),
+                actionTitle: pluginLocalization.string("Remove from Project List"),
                 action: onRemoveProject
             )
             .frame(maxWidth: 500)
@@ -90,7 +81,7 @@ struct NotGitRepositoryView: View {
             AppCard(style: .subtle) {
                 VStack(alignment: .leading, spacing: 8) {
                     Label(
-                        LumiPluginLocalization.string("Project Path", bundle: .module),
+                        pluginLocalization.string("Project Path"),
                         systemImage: "folder"
                     )
                     .font(.caption.weight(.medium))
@@ -107,10 +98,7 @@ struct NotGitRepositoryView: View {
             }
             .frame(maxWidth: 500)
 
-            Text(LumiPluginLocalization.string(
-                "Switch to a Git project from the sidebar, or remove this folder from the project list.",
-                bundle: .module
-            ))
+            Text(pluginLocalization.string("Switch to a Git project from the sidebar, or remove this folder from the project list."))
             .font(.callout)
             .foregroundStyle(theme.textTertiary)
             .multilineTextAlignment(.center)

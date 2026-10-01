@@ -27,7 +27,7 @@ public struct DefaultViewFactory: ViewFactory {
     /// 使用已装配的内核组装完整主视图（工具栏 + 侧边栏 + Rail + 内容区）。
     public func makeMainView(kernel: KernelCoreContainer) throws -> AnyView {
         guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
-            return AnyView(Text(LumiPluginLocalization.string("RootViewProviding not registered", bundle: .module)))
+            return AnyView(Text(pluginLocalization.string("RootViewProviding not registered")))
         }
 
         // ProviderTheme and LumiUI are separate layers. Resolve the selected
@@ -67,7 +67,7 @@ public struct DefaultViewFactory: ViewFactory {
     /// 使用已装配的内核返回设置视图（共享内核时使用）。
     public func makeSettingsView(kernel: KernelCoreContainer) throws -> AnyView {
         guard let settings = kernel.resolveProvider((any SettingViewProviding).self) else {
-            return AnyView(Text(LumiPluginLocalization.string("SettingViewProviding not registered", bundle: .module)))
+            return AnyView(Text(pluginLocalization.string("SettingViewProviding not registered")))
         }
 
         // 先把选中主题桥接到 LumiUI 主题体系，避免首帧渲染时 LumiUI 组件

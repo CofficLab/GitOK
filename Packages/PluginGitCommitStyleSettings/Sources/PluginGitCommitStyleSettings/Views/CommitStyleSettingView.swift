@@ -14,10 +14,10 @@ public struct CommitStyleSettingView: View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
             VStack(alignment: .leading, spacing: 16) {
                 styleExamplesSection
-                AppSettingSection(title: LumiPluginLocalization.string("Global Default Style", bundle: .module), titleAlignment: .leading) {
+                AppSettingSection(title: pluginLocalization.string("Global Default Style"), titleAlignment: .leading) {
                     AppSettingRow(
-                        title: LumiPluginLocalization.string("Global Default Style", bundle: .module),
-                        description: LumiPluginLocalization.string("Default commit message display style for new projects", bundle: .module),
+                        title: pluginLocalization.string("Global Default Style"),
+                        description: pluginLocalization.string("Default commit message display style for new projects"),
                         icon: "arrow.up.arrow.down"
                     ) {
                         Picker("", selection: $globalCommitStyle) {
@@ -34,29 +34,29 @@ public struct CommitStyleSettingView: View {
                 }
             }
         }
-        .navigationTitle(Text(LumiPluginLocalization.string("Commit Style", bundle: .module)))
+        .navigationTitle(Text(pluginLocalization.string("Commit Style")))
     }
 
     private var styleExamplesSection: some View {
-        AppSettingSection(title: LumiPluginLocalization.string("Style Examples", bundle: .module), titleAlignment: .leading) {
+        AppSettingSection(title: pluginLocalization.string("Style Examples"), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 12) {
-                Text(LumiPluginLocalization.string("Choosing a different style changes how commit messages are displayed:", bundle: .module))
+                Text(pluginLocalization.string("Choosing a different style changes how commit messages are displayed:"))
                     .font(.subheadline)
                     .foregroundStyle(theme.textSecondary)
 
-                exampleCard(title: LumiPluginLocalization.string("Emoji Style", bundle: .module), examples: [
+                exampleCard(title: pluginLocalization.string("Emoji Style"), examples: [
                     "✨ Feature: Add periodic remote status check",
                     "🐛 Fix: Plugin still shows when disabled",
                     "♻️ Refactor: Move logic to PluginProvider",
                 ])
 
-                exampleCard(title: LumiPluginLocalization.string("Plain Text Style", bundle: .module), examples: [
+                exampleCard(title: pluginLocalization.string("Plain Text Style"), examples: [
                     "Feature: Add periodic remote status check",
                     "Fix: Plugin still shows when disabled",
                     "Refactor: Move logic to PluginProvider",
                 ])
 
-                exampleCard(title: LumiPluginLocalization.string("Plain Text Lowercase", bundle: .module), examples: [
+                exampleCard(title: pluginLocalization.string("Plain Text Lowercase"), examples: [
                     "feature: Add periodic remote status check",
                     "fix: Plugin still shows when disabled",
                     "refactor: Move logic to PluginProvider",

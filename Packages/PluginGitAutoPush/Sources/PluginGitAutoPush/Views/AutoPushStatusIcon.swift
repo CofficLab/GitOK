@@ -33,8 +33,8 @@ public struct AutoPushStatusIcon: View {
                     }
                 )
                     .help(isEnabled
-                        ? LumiPluginLocalization.string("Auto-push is enabled - Click to manage", bundle: .module)
-                        : LumiPluginLocalization.string("Auto-push is disabled - Click to configure", bundle: .module))
+                        ? pluginLocalization.string("Auto-push is enabled - Click to manage")
+                        : pluginLocalization.string("Auto-push is disabled - Click to configure"))
                     .sheet(isPresented: $isSheetPresented) {
                         AutoPushConfigView(projects: projects, autoPush: autoPush)
                             .frame(minWidth: 460, minHeight: 260)
@@ -66,34 +66,34 @@ public struct AutoPushConfigView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(LumiPluginLocalization.string("Auto Push", bundle: .module))
+            Text(pluginLocalization.string("Auto Push"))
                 .font(.headline)
 
             if let project = projects.currentProject {
                 AppSettingRow(
-                    title: LumiPluginLocalization.string("Auto-push after commit", bundle: .module),
+                    title: pluginLocalization.string("Auto-push after commit"),
                     description: project.title,
                     icon: "arrow.up.circle"
                 ) {
                     Toggle("", isOn: $isEnabled)
                         .labelsHidden()
                 }
-                Text(LumiPluginLocalization.string("When enabled, GitOK pushes the current branch after every successful commit.", bundle: .module))
+                Text(pluginLocalization.string("When enabled, GitOK pushes the current branch after every successful commit."))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             } else {
-                Text(LumiPluginLocalization.string("Please select a project first", bundle: .module))
+                Text(pluginLocalization.string("Please select a project first"))
                     .font(.system(size: 13))
                     .foregroundStyle(theme.textSecondary)
             }
 
             HStack {
                 Spacer()
-                AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
+                AppButton(pluginLocalization.string("Cancel"), style: .secondary, size: .small) {
                     dismiss()
                 }
                 AppButton(
-                    LumiPluginLocalization.string("Save", bundle: .module),
+                    pluginLocalization.string("Save"),
                     systemImage: "square.and.arrow.down",
                     style: .primary,
                     size: .small

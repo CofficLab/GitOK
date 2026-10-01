@@ -79,7 +79,7 @@ struct ProjectsSettingsDetailView: View {
         HStack(spacing: 10) {
             Label(
                 String(
-                    format: LumiPluginLocalization.string("%lld Projects", bundle: .module),
+                    format: pluginLocalization.string("%lld Projects"),
                     projects.projects.count
                 ),
                 systemImage: "folder"
@@ -87,14 +87,14 @@ struct ProjectsSettingsDetailView: View {
             if let current = projects.currentProject {
                 Text(
                     String(
-                        format: LumiPluginLocalization.string("Current: %@", bundle: .module),
+                        format: pluginLocalization.string("Current: %@"),
                         current.title
                     )
                 )
             }
             Spacer()
             AppButton(
-                LumiPluginLocalization.string("Add Project", bundle: .module),
+                pluginLocalization.string("Add Project"),
                 systemImage: "plus",
                 style: .primary,
                 size: .small
@@ -103,7 +103,7 @@ struct ProjectsSettingsDetailView: View {
             }
 #if DEBUG
             AppButton(
-                LumiPluginLocalization.string("Open Data Directory", bundle: .module),
+                pluginLocalization.string("Open Data Directory"),
                 systemImage: "folder",
                 style: .warning,
                 size: .small
@@ -123,7 +123,7 @@ struct ProjectsSettingsDetailView: View {
             VStack(spacing: 10) {
                 AppSearchBar(
                     text: $searchText,
-                    placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search Projects", bundle: .module))
+                    placeholder: LocalizedStringKey(pluginLocalization.string("Search Projects"))
                 )
             }
             .padding(12)
@@ -136,13 +136,13 @@ struct ProjectsSettingsDetailView: View {
                         if projects.projects.isEmpty {
                             AppEmptyState(
                                 icon: "folder.badge.plus",
-                                title: LumiPluginLocalization.string("No Projects", bundle: .module)
+                                title: pluginLocalization.string("No Projects")
                             )
                             .padding(.vertical, 32)
                         } else {
                             AppEmptyState(
                                 icon: "magnifyingglass",
-                                title: LumiPluginLocalization.string("No Results", bundle: .module)
+                                title: pluginLocalization.string("No Results")
                             )
                             .padding(.vertical, 32)
                         }
@@ -219,7 +219,7 @@ struct ProjectsSettingsDetailView: View {
         } else {
             AppEmptyState(
                 icon: "folder",
-                title: LumiPluginLocalization.string("Select a Project", bundle: .module)
+                title: pluginLocalization.string("Select a Project")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -232,8 +232,8 @@ struct ProjectsSettingsDetailView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.message = LumiPluginLocalization.string("Choose a project folder to add", bundle: .module)
-        panel.prompt = LumiPluginLocalization.string("Add", bundle: .module)
+        panel.message = pluginLocalization.string("Choose a project folder to add")
+        panel.prompt = pluginLocalization.string("Add")
         guard panel.runModal() == .OK, let url = panel.url else { return }
         projects.addProject(at: url)
     }
@@ -304,13 +304,13 @@ private struct ProjectPreviewPane: View {
                 HStack(spacing: 6) {
                     if isCurrent {
                         AppTag(
-                            LumiPluginLocalization.string("Currently Open", bundle: .module),
+                            pluginLocalization.string("Currently Open"),
                             style: .accent
                         )
                     }
                     if project.isPinned {
                         AppTag(
-                            LumiPluginLocalization.string("Pinned", bundle: .module),
+                            pluginLocalization.string("Pinned"),
                             systemImage: "pin.fill",
                             style: .subtle
                         )
@@ -329,7 +329,7 @@ private struct ProjectPreviewPane: View {
                 Image(systemName: "info.circle")
                     .font(.appCaptionEmphasized)
                     .foregroundStyle(uiTheme.primary)
-                Text(LumiPluginLocalization.string("Project Information", bundle: .module))
+                Text(pluginLocalization.string("Project Information"))
                     .font(.appCaptionEmphasized)
                     .foregroundStyle(uiTheme.textPrimary)
             }
@@ -337,29 +337,29 @@ private struct ProjectPreviewPane: View {
             VStack(spacing: 0) {
                 infoRow(
                     icon: "folder",
-                    title: LumiPluginLocalization.string("Name", bundle: .module),
+                    title: pluginLocalization.string("Name"),
                     value: project.title
                 )
                 Divider().padding(.vertical, 8)
                 infoRow(
                     icon: "link",
-                    title: LumiPluginLocalization.string("Path", bundle: .module),
+                    title: pluginLocalization.string("Path"),
                     value: project.url.path,
                     monospaced: true
                 )
                 Divider().padding(.vertical, 8)
                 infoRow(
                     icon: "pin",
-                    title: LumiPluginLocalization.string("Pinned", bundle: .module),
+                    title: pluginLocalization.string("Pinned"),
                     value: project.isPinned
-                        ? LumiPluginLocalization.string("Yes", bundle: .module)
-                        : LumiPluginLocalization.string("No", bundle: .module)
+                        ? pluginLocalization.string("Yes")
+                        : pluginLocalization.string("No")
                 )
                 if let lastOpened = project.lastOpenedAt {
                     Divider().padding(.vertical, 8)
                     infoRow(
                         icon: "clock",
-                        title: LumiPluginLocalization.string("Last Opened", bundle: .module),
+                        title: pluginLocalization.string("Last Opened"),
                         value: Self.dateFormatter.string(from: lastOpened)
                     )
                 }
@@ -402,7 +402,7 @@ private struct ProjectPreviewPane: View {
                 Image(systemName: "lightbulb")
                     .font(.appCaptionEmphasized)
                     .foregroundStyle(uiTheme.primary)
-                Text(LumiPluginLocalization.string("Actions", bundle: .module))
+                Text(pluginLocalization.string("Actions"))
                     .font(.appCaptionEmphasized)
                     .foregroundStyle(uiTheme.textPrimary)
             }
@@ -416,15 +416,15 @@ private struct ProjectPreviewPane: View {
             ) {
                 actionCard(
                     title: isCurrent
-                        ? LumiPluginLocalization.string("Reopen Project", bundle: .module)
-                        : LumiPluginLocalization.string("Open Project", bundle: .module),
+                        ? pluginLocalization.string("Reopen Project")
+                        : pluginLocalization.string("Open Project"),
                     systemImage: "arrow.up.forward.app",
                     color: uiTheme.success
                 ) {
                     onOpen()
                 }
                 actionCard(
-                    title: LumiPluginLocalization.string("Open in Finder", bundle: .module),
+                    title: pluginLocalization.string("Open in Finder"),
                     systemImage: "folder",
                     color: uiTheme.info
                 ) {
@@ -432,15 +432,15 @@ private struct ProjectPreviewPane: View {
                 }
                 actionCard(
                     title: project.isPinned
-                        ? LumiPluginLocalization.string("Unpin", bundle: .module)
-                        : LumiPluginLocalization.string("Pin to Top", bundle: .module),
+                        ? pluginLocalization.string("Unpin")
+                        : pluginLocalization.string("Pin to Top"),
                     systemImage: project.isPinned ? "pin.slash" : "pin",
                     color: uiTheme.warning
                 ) {
                     onTogglePin()
                 }
                 actionCard(
-                    title: LumiPluginLocalization.string("Copy Path", bundle: .module),
+                    title: pluginLocalization.string("Copy Path"),
                     systemImage: "doc.on.doc",
                     color: uiTheme.textSecondary
                 ) {
@@ -451,7 +451,7 @@ private struct ProjectPreviewPane: View {
             AppDivider().padding(.vertical, 4)
 
             AppButton(
-                LumiPluginLocalization.string("Remove Project", bundle: .module),
+                pluginLocalization.string("Remove Project"),
                 systemImage: "trash",
                 style: .destructive,
                 size: .small,

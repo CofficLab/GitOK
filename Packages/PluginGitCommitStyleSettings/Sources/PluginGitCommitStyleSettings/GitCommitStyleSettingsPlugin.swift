@@ -47,7 +47,7 @@ public final class GitCommitStyleSettingsPlugin: SuperPlugin, SuperLog {
         settings.addEntries([
             SettingEntryItem(
                 id: "commitStyle",
-                title: LumiPluginLocalization.string("Commit Style", bundle: .module),
+                title: pluginLocalization.string("Commit Style"),
                 systemImage: "text.alignleft",
                 order: 30
             ) {

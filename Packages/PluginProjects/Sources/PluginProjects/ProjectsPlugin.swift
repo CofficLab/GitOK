@@ -110,7 +110,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
         if let settings = kernel.resolveProvider((any SettingViewProviding).self) {
             let entry = SettingEntryItem(
                 id: "projects",
-                title: LumiPluginLocalization.string("Projects", bundle: .module),
+                title: pluginLocalization.string("Projects"),
                 systemImage: "folder",
                 order: 2
             ) { [projects] in
@@ -124,7 +124,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
             toolbar.addToolbarItems([
                 ToolbarItem(
                     id: "\(id).toolbar",
-                    title: LumiPluginLocalization.string("Project", bundle: .module),
+                    title: pluginLocalization.string("Project"),
                     placement: .center,
                     category: .project,
                     order: 5

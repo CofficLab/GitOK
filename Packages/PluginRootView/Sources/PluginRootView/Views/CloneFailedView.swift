@@ -4,7 +4,7 @@ import ProviderProjects
 import SwiftUI
 
 private func cloneFailureLocalized(_ key: String) -> String {
-    LumiPluginLocalization.string(key, bundle: .module)
+    pluginLocalization.string(key)
 }
 
 /// 当前项目的 clone 任务失败或被取消时显示的唯一工作区内容。

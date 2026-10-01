@@ -15,14 +15,14 @@ public struct DiagnosticsSettingView: View {
                 actionsSection
             }
         }
-        .navigationTitle(Text(LumiPluginLocalization.string("Diagnostics", bundle: .module)))
+        .navigationTitle(Text(pluginLocalization.string("Diagnostics")))
     }
 
     private var statusSection: some View {
-        AppSettingSection(title: LumiPluginLocalization.string("Status", bundle: .module), titleAlignment: .leading) {
+        AppSettingSection(title: pluginLocalization.string("Status"), titleAlignment: .leading) {
             AppSettingRow(
-                title: LumiPluginLocalization.string("Last launch", bundle: .module),
-                description: LumiPluginLocalization.string("Normal", bundle: .module),
+                title: pluginLocalization.string("Last launch"),
+                description: pluginLocalization.string("Normal"),
                 icon: "checkmark.circle"
             ) {
                 EmptyView()
@@ -31,11 +31,11 @@ public struct DiagnosticsSettingView: View {
     }
 
     private var actionsSection: some View {
-        AppSettingSection(title: LumiPluginLocalization.string("Diagnostic information", bundle: .module), titleAlignment: .leading) {
+        AppSettingSection(title: pluginLocalization.string("Diagnostic information"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 AppSettingRow(
-                    title: LumiPluginLocalization.string("Copy diagnostic information", bundle: .module),
-                    description: copiedReport ? LumiPluginLocalization.string("Copied to clipboard", bundle: .module) : LumiPluginLocalization.string("Copy app, git and system info to the clipboard", bundle: .module),
+                    title: pluginLocalization.string("Copy diagnostic information"),
+                    description: copiedReport ? pluginLocalization.string("Copied to clipboard") : pluginLocalization.string("Copy app, git and system info to the clipboard"),
                     icon: "doc.on.doc"
                 ) {
                     EmptyView()
@@ -46,8 +46,8 @@ public struct DiagnosticsSettingView: View {
                 }
                 Divider()
                 AppSettingRow(
-                    title: LumiPluginLocalization.string("Open Application Support", bundle: .module),
-                    description: LumiPluginLocalization.string("Reveal the GitOK data directory in Finder", bundle: .module),
+                    title: pluginLocalization.string("Open Application Support"),
+                    description: pluginLocalization.string("Reveal the GitOK data directory in Finder"),
                     icon: "folder"
                 ) {
                     EmptyView()

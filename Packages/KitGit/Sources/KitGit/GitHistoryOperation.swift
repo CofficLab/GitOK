@@ -17,19 +17,19 @@ public enum GitHistoryOperation {
         public var errorDescription: String? {
             switch self {
             case .invalidCommit:
-                LumiPluginLocalization.string("A commit is required to revert.", bundle: .module)
+                pluginLocalization.string("A commit is required to revert.")
             case .revertFailed(let message):
-                String(format: LumiPluginLocalization.string("Revert failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Revert failed: %@"), message)
             case .undoFailed(let message):
-                String(format: LumiPluginLocalization.string("Undo failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Undo failed: %@"), message)
             case .softResetFailed(let message):
-                String(format: LumiPluginLocalization.string("Soft reset failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Soft reset failed: %@"), message)
             case .mixedResetFailed(let message):
-                String(format: LumiPluginLocalization.string("Mixed reset failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Mixed reset failed: %@"), message)
             case .hardResetFailed(let message):
-                String(format: LumiPluginLocalization.string("Hard reset failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Hard reset failed: %@"), message)
             case .squashFailed(let message):
-                String(format: LumiPluginLocalization.string("Squash failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Squash failed: %@"), message)
             }
         }
     }
@@ -53,7 +53,7 @@ public enum GitHistoryOperation {
         do {
             guard try GitStatusLoader.loadStatus(in: repository).isClean else {
                 throw Error.undoFailed(
-                    LumiPluginLocalization.string("The working tree must be clean before undoing a commit.", bundle: .module)
+                    pluginLocalization.string("The working tree must be clean before undoing a commit.")
                 )
             }
 
@@ -61,7 +61,7 @@ public enum GitHistoryOperation {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             guard head == trimmedHash else {
                 throw Error.undoFailed(
-                    LumiPluginLocalization.string("The selected commit is no longer the current HEAD.", bundle: .module)
+                    pluginLocalization.string("The selected commit is no longer the current HEAD.")
                 )
             }
 
@@ -96,7 +96,7 @@ public enum GitHistoryOperation {
         do {
             guard try GitStatusLoader.loadStatus(in: repository).isClean else {
                 throw Error.softResetFailed(
-                    LumiPluginLocalization.string("The working tree must be clean before resetting history.", bundle: .module)
+                    pluginLocalization.string("The working tree must be clean before resetting history.")
                 )
             }
 
@@ -104,7 +104,7 @@ public enum GitHistoryOperation {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             guard head == trimmedExpectedHead else {
                 throw Error.softResetFailed(
-                    LumiPluginLocalization.string("The current HEAD changed before the reset could start.", bundle: .module)
+                    pluginLocalization.string("The current HEAD changed before the reset could start.")
                 )
             }
 
@@ -136,7 +136,7 @@ public enum GitHistoryOperation {
         do {
             guard try GitStatusLoader.loadStatus(in: repository).isClean else {
                 throw Error.mixedResetFailed(
-                    LumiPluginLocalization.string("The working tree must be clean before resetting history.", bundle: .module)
+                    pluginLocalization.string("The working tree must be clean before resetting history.")
                 )
             }
 
@@ -144,7 +144,7 @@ public enum GitHistoryOperation {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             guard head == trimmedExpectedHead else {
                 throw Error.mixedResetFailed(
-                    LumiPluginLocalization.string("The current HEAD changed before the reset could start.", bundle: .module)
+                    pluginLocalization.string("The current HEAD changed before the reset could start.")
                 )
             }
 
@@ -181,7 +181,7 @@ public enum GitHistoryOperation {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             guard head == trimmedExpectedHead else {
                 throw Error.hardResetFailed(
-                    LumiPluginLocalization.string("The current HEAD changed before the reset could start.", bundle: .module)
+                    pluginLocalization.string("The current HEAD changed before the reset could start.")
                 )
             }
 
@@ -224,7 +224,7 @@ public enum GitHistoryOperation {
         do {
             guard try GitStatusLoader.loadStatus(in: repository).isClean else {
                 throw Error.squashFailed(
-                    LumiPluginLocalization.string("The working tree must be clean before squashing commits.", bundle: .module)
+                    pluginLocalization.string("The working tree must be clean before squashing commits.")
                 )
             }
 
@@ -232,7 +232,7 @@ public enum GitHistoryOperation {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             guard head == trimmedExpectedHead else {
                 throw Error.squashFailed(
-                    LumiPluginLocalization.string("The current HEAD changed before the squash could start.", bundle: .module)
+                    pluginLocalization.string("The current HEAD changed before the squash could start.")
                 )
             }
 

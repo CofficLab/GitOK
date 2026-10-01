@@ -41,7 +41,7 @@ public struct BranchManagementView: View {
             VStack(alignment: .leading, spacing: 16) {
                 newBranchSection
                 Divider()
-                AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search branches", bundle: .module)))
+                AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(pluginLocalization.string("Search branches")))
                 branchListSection
                 if branches.count >= 2 {
                     Divider()
@@ -72,7 +72,7 @@ public struct BranchManagementView: View {
             upstreamSheet(branch)
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Delete Remote Branch?", bundle: .module),
+            pluginLocalization.string("Confirm Delete Remote Branch?"),
             isPresented: Binding(
                 get: { pendingRemoteBranchDeletion != nil },
                 set: { isPresented in
@@ -80,20 +80,17 @@ public struct BranchManagementView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingRemoteBranchDeletion = nil
             }
-            Button(LumiPluginLocalization.string("Delete Remote Branch", bundle: .module), role: .destructive) {
+            Button(pluginLocalization.string("Delete Remote Branch"), role: .destructive) {
                 guard let branch = pendingRemoteBranchDeletion else { return }
                 pendingRemoteBranchDeletion = nil
                 deleteRemoteBranch(branch)
             }
         } message: {
             if let branch = pendingRemoteBranchDeletion {
-                Text(String(format: LumiPluginLocalization.string(
-                    "Delete remote branch \"%@\"?",
-                    bundle: .module
-                ), branch))
+                Text(String(format: pluginLocalization.string("Delete remote branch \"%@\"?"), branch))
             }
         }
     }
@@ -112,13 +109,13 @@ public struct BranchManagementView: View {
 
     private var newBranchSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(LumiPluginLocalization.string("New Branch", bundle: .module))
+            Text(pluginLocalization.string("New Branch"))
                 .font(.headline)
             HStack(spacing: 8) {
-                AppInputField(LocalizedStringKey(LumiPluginLocalization.string("Branch name", bundle: .module)), text: $newBranchName)
+                AppInputField(LocalizedStringKey(pluginLocalization.string("Branch name")), text: $newBranchName)
                 AppIconButton(
                     systemImage: "plus",
-                    label: LumiPluginLocalization.string("New Branch", bundle: .module),
+                    label: pluginLocalization.string("New Branch"),
                     tint: theme.primary
                 ) {
                     createBranch()
@@ -130,14 +127,14 @@ public struct BranchManagementView: View {
 
     private var branchListSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(LumiPluginLocalization.string("Switch Branch", bundle: .module))
+            Text(pluginLocalization.string("Switch Branch"))
                 .font(.headline)
             if isLoading {
                 BranchManagementSkeletonView()
                     .frame(maxWidth: .infinity, minHeight: 60)
             } else if filteredBranches.isEmpty {
                 ContentUnavailableView(
-                    LumiPluginLocalization.string("No branches yet", bundle: .module),
+                    pluginLocalization.string("No branches yet"),
                     systemImage: "arrow.triangle.branch"
                 )
                 .frame(maxWidth: .infinity, minHeight: 60)
@@ -161,7 +158,7 @@ public struct BranchManagementView: View {
 
     private var remoteBranchesSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(LumiPluginLocalization.string("Remote Branches", bundle: .module))
+            Text(pluginLocalization.string("Remote Branches"))
                 .font(.headline)
             ForEach(filteredRemoteBranches) { branch in
                 HStack(spacing: 8) {
@@ -173,7 +170,7 @@ public struct BranchManagementView: View {
                     Spacer()
                     AppIconButton(
                         systemImage: "arrow.down.to.line",
-                        label: LumiPluginLocalization.string("Checkout locally", bundle: .module),
+                        label: pluginLocalization.string("Checkout locally"),
                         tint: theme.primary
                     ) {
                         checkoutRemoteBranch(branch)
@@ -181,7 +178,7 @@ public struct BranchManagementView: View {
                     .disabled(isLoading)
                     AppIconButton(
                         systemImage: "trash",
-                        label: LumiPluginLocalization.string("Delete Remote Branch", bundle: .module),
+                        label: pluginLocalization.string("Delete Remote Branch"),
                         tint: theme.warning
                     ) {
                         pendingRemoteBranchDeletion = branch.name
@@ -194,11 +191,11 @@ public struct BranchManagementView: View {
 
     private var compareSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(LumiPluginLocalization.string("Branch Compare", bundle: .module))
+            Text(pluginLocalization.string("Branch Compare"))
                 .font(.headline)
 
             Picker(
-                LumiPluginLocalization.string("Base", bundle: .module),
+                pluginLocalization.string("Base"),
                 selection: $compareBaseBranch
             ) {
                 ForEach(branches) { branch in
@@ -207,7 +204,7 @@ public struct BranchManagementView: View {
             }
 
             Picker(
-                LumiPluginLocalization.string("Head", bundle: .module),
+                pluginLocalization.string("Head"),
                 selection: $compareHeadBranch
             ) {
                 ForEach(branches) { branch in
@@ -219,7 +216,7 @@ public struct BranchManagementView: View {
                 loadCompare()
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Compare", bundle: .module),
+                    pluginLocalization.string("Compare"),
                     systemImage: "arrow.left.arrow.right"
                 )
             }
@@ -232,7 +229,7 @@ public struct BranchManagementView: View {
             )
 
             if isComparing {
-                ProgressView(LumiPluginLocalization.string("Comparing branches...", bundle: .module))
+                ProgressView(pluginLocalization.string("Comparing branches..."))
             } else if let compareError {
                 Text(compareError)
                     .font(.caption)
@@ -240,10 +237,7 @@ public struct BranchManagementView: View {
             } else if let branchCompare {
                 compareResultView(branchCompare)
             } else {
-                Text(LumiPluginLocalization.string(
-                    "Select base and head branches to compare commits and files.",
-                    bundle: .module
-                ))
+                Text(pluginLocalization.string("Select base and head branches to compare commits and files."))
                 .font(.caption)
                 .foregroundStyle(theme.textSecondary)
             }
@@ -253,19 +247,19 @@ public struct BranchManagementView: View {
     private func compareResultView(_ compare: GitBranchCompare) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
-                Text(String(format: LumiPluginLocalization.string("Ahead %d", bundle: .module), compare.ahead))
+                Text(String(format: pluginLocalization.string("Ahead %d"), compare.ahead))
                     .font(.caption)
                     .foregroundStyle(theme.success)
-                Text(String(format: LumiPluginLocalization.string("Behind %d", bundle: .module), compare.behind))
+                Text(String(format: pluginLocalization.string("Behind %d"), compare.behind))
                     .font(.caption)
                     .foregroundStyle(theme.warning)
-                Text(String(format: LumiPluginLocalization.string("%d files", bundle: .module), compare.files.count))
+                Text(String(format: pluginLocalization.string("%d files"), compare.files.count))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
 
             if !compare.commits.isEmpty {
-                Text(LumiPluginLocalization.string("Commits", bundle: .module))
+                Text(pluginLocalization.string("Commits"))
                     .font(.caption.weight(.semibold))
                 ForEach(compare.commits.prefix(5)) { commit in
                     HStack(spacing: 6) {
@@ -280,7 +274,7 @@ public struct BranchManagementView: View {
             }
 
             if !compare.files.isEmpty {
-                Text(LumiPluginLocalization.string("Files", bundle: .module))
+                Text(pluginLocalization.string("Files"))
                     .font(.caption.weight(.semibold))
                 ForEach(compare.files.prefix(6)) { file in
                     HStack(spacing: 6) {
@@ -296,7 +290,7 @@ public struct BranchManagementView: View {
             }
 
             if compare.commits.isEmpty && compare.files.isEmpty {
-                Text(LumiPluginLocalization.string("No differences", bundle: .module))
+                Text(pluginLocalization.string("No differences"))
                     .font(.caption)
                     .foregroundStyle(theme.textSecondary)
             }
@@ -306,7 +300,7 @@ public struct BranchManagementView: View {
                     mergeComparedBranches()
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Merge Head into Base", bundle: .module),
+                        pluginLocalization.string("Merge Head into Base"),
                         systemImage: "arrow.triangle.merge"
                     )
                 }
@@ -641,19 +635,19 @@ public struct BranchManagementView: View {
 
     private func renameSheet(_ branch: GitBranchSummary) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(LumiPluginLocalization.string("Rename Branch", bundle: .module))
+            Text(pluginLocalization.string("Rename Branch"))
                 .font(.headline)
             TextField(
-                LumiPluginLocalization.string("New branch name", bundle: .module),
+                pluginLocalization.string("New branch name"),
                 text: $renameBranchName
             )
             .textFieldStyle(.roundedBorder)
             HStack {
                 Spacer()
-                Button(LumiPluginLocalization.string("Cancel", bundle: .module)) {
+                Button(pluginLocalization.string("Cancel")) {
                     branchToRename = nil
                 }
-                Button(LumiPluginLocalization.string("Rename", bundle: .module)) {
+                Button(pluginLocalization.string("Rename")) {
                     renameBranch(branch)
                 }
                 .buttonStyle(.borderedProminent)
@@ -666,14 +660,14 @@ public struct BranchManagementView: View {
 
     private func upstreamSheet(_ branch: GitBranchSummary) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(LumiPluginLocalization.string("Set Upstream", bundle: .module))
+            Text(pluginLocalization.string("Set Upstream"))
                 .font(.headline)
             if remoteBranches.isEmpty {
-                Text(LumiPluginLocalization.string("No remote branches available.", bundle: .module))
+                Text(pluginLocalization.string("No remote branches available."))
                     .foregroundStyle(theme.textSecondary)
             } else {
                 Picker(
-                    LumiPluginLocalization.string("Upstream branch", bundle: .module),
+                    pluginLocalization.string("Upstream branch"),
                     selection: $selectedUpstreamBranch
                 ) {
                     ForEach(remoteBranches) { remote in
@@ -683,10 +677,10 @@ public struct BranchManagementView: View {
             }
             HStack {
                 Spacer()
-                Button(LumiPluginLocalization.string("Cancel", bundle: .module)) {
+                Button(pluginLocalization.string("Cancel")) {
                     branchToSetUpstream = nil
                 }
-                Button(LumiPluginLocalization.string("Set Upstream", bundle: .module)) {
+                Button(pluginLocalization.string("Set Upstream")) {
                     setUpstream(branch)
                 }
                 .buttonStyle(.borderedProminent)
@@ -759,16 +753,16 @@ public struct BranchRowView: View {
                 }
             }
             Menu {
-                Button(LumiPluginLocalization.string("Rename Branch", bundle: .module), systemImage: "pencil", action: onRename)
-                Button(LumiPluginLocalization.string("Set Upstream", bundle: .module), systemImage: "link", action: onSetUpstream)
-                Button(LumiPluginLocalization.string("Publish Branch", bundle: .module), systemImage: "icloud.and.arrow.up", action: onPublish)
-                Button(LumiPluginLocalization.string("Unset Upstream", bundle: .module), systemImage: "link.badge.minus", action: onUnsetUpstream)
+                Button(pluginLocalization.string("Rename Branch"), systemImage: "pencil", action: onRename)
+                Button(pluginLocalization.string("Set Upstream"), systemImage: "link", action: onSetUpstream)
+                Button(pluginLocalization.string("Publish Branch"), systemImage: "icloud.and.arrow.up", action: onPublish)
+                Button(pluginLocalization.string("Unset Upstream"), systemImage: "link.badge.minus", action: onUnsetUpstream)
                 if !branch.isCurrent {
                     Divider()
                     Button(role: .destructive) {
                         showDeleteAlert = true
                     } label: {
-                        Label(LumiPluginLocalization.string("Delete Local Branch", bundle: .module), systemImage: "trash")
+                        Label(pluginLocalization.string("Delete Local Branch"), systemImage: "trash")
                     }
                 }
             } label: {
@@ -781,16 +775,13 @@ public struct BranchRowView: View {
         .background(branch.isCurrent ? theme.surface : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .alert(
-            LumiPluginLocalization.string("Confirm Delete Branch", bundle: .module),
+            pluginLocalization.string("Confirm Delete Branch"),
             isPresented: $showDeleteAlert
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
-            Button(LumiPluginLocalization.string("Delete", bundle: .module), role: .destructive, action: onDelete)
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {}
+            Button(pluginLocalization.string("Delete"), role: .destructive, action: onDelete)
         } message: {
-            Text(String(format: LumiPluginLocalization.string(
-                "Delete local branch \"%@\"? Git will prevent deleting unmerged branches.",
-                bundle: .module
-            ), branch.name))
+            Text(String(format: pluginLocalization.string("Delete local branch \"%@\"? Git will prevent deleting unmerged branches."), branch.name))
         }
     }
 }

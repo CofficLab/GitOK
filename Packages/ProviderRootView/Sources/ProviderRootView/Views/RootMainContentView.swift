@@ -51,13 +51,13 @@ struct RootMainContentView: View {
 
     private var mainContent: some View {
         (contentView ?? AnyView(ContentPlaceholderView()))
-            .debugBlockBadge(LumiPluginLocalization.string("Content Area", bundle: .module), alignment: .bottomTrailing)
+            .debugBlockBadge(pluginLocalization.string("Content Area"), alignment: .bottomTrailing)
     }
 
     /// 右侧面板（trailing pane）内容，右下角叠加区块名 badge。
     private var trailingPaneContent: some View {
         trailingPane.content
-            .debugBlockBadge(LumiPluginLocalization.string("Right Panel", bundle: .module), alignment: .bottomTrailing)
+            .debugBlockBadge(pluginLocalization.string("Right Panel"), alignment: .bottomTrailing)
     }
 
     @ViewBuilder
@@ -243,7 +243,7 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
 
             // 正式视图内容
             trailingPane.content
-                .debugBlockBadge(LumiPluginLocalization.string("Right Panel", bundle: .module), alignment: .bottomTrailing)
+                .debugBlockBadge(pluginLocalization.string("Right Panel"), alignment: .bottomTrailing)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -265,14 +265,14 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
         AppIconButton(systemImage: "arrow.right.to.line", size: .regular) {
             setPaneWidth(trailingPane.minWidth)
         }
-        .help(LumiPluginLocalization.string("Minimize Right Panel", bundle: .module))
+        .help(pluginLocalization.string("Minimize Right Panel"))
     }
 
     private func maximizeButton(containerWidth: CGFloat) -> some View {
         AppIconButton(systemImage: "arrow.left.to.line", size: .regular) {
             setPaneWidth(min(containerWidth, trailingPane.maxWidth))
         }
-        .help(LumiPluginLocalization.string("Maximize Right Panel", bundle: .module))
+        .help(pluginLocalization.string("Maximize Right Panel"))
     }
 
     private var fullScreenButton: some View {
@@ -280,7 +280,7 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
             trailingPane.onFullScreen?()
         }
         .help(
-            LumiPluginLocalization.string("View Diff Full Screen", bundle: .module)
+            pluginLocalization.string("View Diff Full Screen")
         )
     }
 
@@ -331,7 +331,7 @@ private struct ContentWithTrailingPaneOverlay<Content: View>: View {
                 trailingPane.isVisible = false
             }
         }
-        .help(LumiPluginLocalization.string("Collapse Right Panel", bundle: .module))
+        .help(pluginLocalization.string("Collapse Right Panel"))
     }
 }
 

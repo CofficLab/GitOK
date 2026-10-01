@@ -114,20 +114,20 @@ private struct ProjectSidebarView: View {
         VStack(spacing: 0) {
             // 搜索框 + 克隆项目 + 添加项目
             HStack(spacing: 4) {
-                AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(LumiPluginLocalization.string("Search", bundle: .module)))
+                AppSearchBar(text: $searchText, placeholder: LocalizedStringKey(pluginLocalization.string("Search")))
                 if git != nil, cloneRepository != nil {
                     AppIconButton(systemImage: "arrow.down.circle", size: .compact) {
                         isPresentingClone = true
                     }
-                    .help(LumiPluginLocalization.string("Clone Repository", bundle: .module))
-                    .accessibilityLabel(LumiPluginLocalization.string("Clone Repository", bundle: .module))
+                    .help(pluginLocalization.string("Clone Repository"))
+                    .accessibilityLabel(pluginLocalization.string("Clone Repository"))
                     .accessibilityIdentifier("gitok.projects.clone")
                 }
                 AppIconButton(systemImage: "plus", size: .compact) {
                     addExistingProject()
                 }
-                .help(LumiPluginLocalization.string("Add Project", bundle: .module))
-                .accessibilityLabel(LumiPluginLocalization.string("Add Project", bundle: .module))
+                .help(pluginLocalization.string("Add Project"))
+                .accessibilityLabel(pluginLocalization.string("Add Project"))
                 .accessibilityIdentifier("gitok.projects.add")
             }
             .padding(.horizontal, 8)
@@ -139,8 +139,8 @@ private struct ProjectSidebarView: View {
                     } else {
                         AppEmptyState(
                             icon: "magnifyingglass",
-                            title: LumiPluginLocalization.string("No Results", bundle: .module),
-                            description: String(format: LumiPluginLocalization.string("No projects match \"%@\".", bundle: .module), searchText)
+                            title: pluginLocalization.string("No Results"),
+                            description: String(format: pluginLocalization.string("No projects match \"%@\"."), searchText)
                         )
                     }
                 } else {
@@ -195,53 +195,50 @@ private struct ProjectSidebarView: View {
         }
         // 重命名输入：预填当前名称，确认后执行磁盘重命名。
         .alert(
-            LumiPluginLocalization.string("Rename Project", bundle: .module),
+            pluginLocalization.string("Rename Project"),
             isPresented: renameAlertPresented,
             presenting: projectPendingRename
         ) { _ in
-            TextField(LumiPluginLocalization.string("Project Name", bundle: .module), text: $renameText)
-            Button(LumiPluginLocalization.string("Rename", bundle: .module)) {
+            TextField(pluginLocalization.string("Project Name"), text: $renameText)
+            Button(pluginLocalization.string("Rename")) {
                 performRename()
             }
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {}
         } message: { project in
             Text(project.url.path)
         }
         // 重命名失败（非法名称 / 目标已存在 / 磁盘错误）提示。
         .alert(
-            LumiPluginLocalization.string("Rename Failed", bundle: .module),
+            pluginLocalization.string("Rename Failed"),
             isPresented: $isPresentingRenameError
         ) {
-            Button(LumiPluginLocalization.string("OK", bundle: .module), role: .cancel) {}
+            Button(pluginLocalization.string("OK"), role: .cancel) {}
         } message: {
             Text(renameErrorMessage ?? "")
         }
         .alert(
-            LumiPluginLocalization.string("Re-clone Project", bundle: .module),
+            pluginLocalization.string("Re-clone Project"),
             isPresented: recloneAlertPresented,
             presenting: projectPendingReclone
         ) { project in
-            Button(LumiPluginLocalization.string("Re-clone", bundle: .module), role: .destructive) {
+            Button(pluginLocalization.string("Re-clone"), role: .destructive) {
                 beginReclone(project)
             }
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {}
         } message: { project in
             Text(
                 String(
-                    format: LumiPluginLocalization.string(
-                        "This will delete the local project at \"%@\" and replace it with a fresh clone from \"%@\". Uncommitted changes will be lost.",
-                        bundle: .module
-                    ),
+                    format: pluginLocalization.string("This will delete the local project at \"%@\" and replace it with a fresh clone from \"%@\". Uncommitted changes will be lost."),
                     project.url.path,
                     recloneRemoteURL ?? ""
                 )
             )
         }
         .alert(
-            LumiPluginLocalization.string("Re-clone Failed", bundle: .module),
+            pluginLocalization.string("Re-clone Failed"),
             isPresented: $isPresentingRecloneError
         ) {
-            Button(LumiPluginLocalization.string("OK", bundle: .module), role: .cancel) {}
+            Button(pluginLocalization.string("OK"), role: .cancel) {}
         } message: {
             Text(recloneErrorMessage ?? "")
         }
@@ -292,7 +289,7 @@ private struct ProjectSidebarView: View {
                 projects.pinProject(id: project.id, isPinned: !project.isPinned)
             } label: {
                 Label(
-                    LumiPluginLocalization.string(project.isPinned ? "Unpin" : "Pin to Top", bundle: .module),
+                    pluginLocalization.string(project.isPinned ? "Unpin" : "Pin to Top"),
                     systemImage: project.isPinned ? "pin.slash" : "pin"
                 )
             }
@@ -304,7 +301,7 @@ private struct ProjectSidebarView: View {
                     prepareReclone(project)
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Re-clone Project", bundle: .module),
+                        pluginLocalization.string("Re-clone Project"),
                         systemImage: "arrow.clockwise"
                     )
                 }
@@ -316,7 +313,7 @@ private struct ProjectSidebarView: View {
                 projectPendingRename = project
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Rename Project", bundle: .module),
+                    pluginLocalization.string("Rename Project"),
                     systemImage: "pencil"
                 )
             }
@@ -327,7 +324,7 @@ private struct ProjectSidebarView: View {
                 copyProjectPath(project)
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Copy Project Path", bundle: .module),
+                    pluginLocalization.string("Copy Project Path"),
                     systemImage: "doc.on.doc"
                 )
             }
@@ -336,7 +333,7 @@ private struct ProjectSidebarView: View {
                 openProjectInFinder(project)
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Open in Finder", bundle: .module),
+                    pluginLocalization.string("Open in Finder"),
                     systemImage: "folder"
                 )
             }
@@ -346,7 +343,7 @@ private struct ProjectSidebarView: View {
             Button {
                 projects.removeProject(id: project.id)
             } label: {
-                Label(LumiPluginLocalization.string("Remove Project", bundle: .module), systemImage: "trash")
+                Label(pluginLocalization.string("Remove Project"), systemImage: "trash")
             }
         }
         .onDrag {
@@ -387,7 +384,7 @@ private struct ProjectSidebarView: View {
         guard let remote = remotes.first(where: { $0.name == "origin" }) ?? remotes.first,
               !(remote.fetchURL ?? remote.url).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             presentRecloneError(
-                LumiPluginLocalization.string("No remote repository found.", bundle: .module)
+                pluginLocalization.string("No remote repository found.")
             )
             return
         }
@@ -436,7 +433,7 @@ private struct ProjectSidebarView: View {
                 finishFailedReclone(
                     taskID: taskID,
                     message: task.errorMessage
-                        ?? LumiPluginLocalization.string("Re-clone Failed", bundle: .module)
+                        ?? pluginLocalization.string("Re-clone Failed")
                 )
                 return
             case .queued, .cloning, .cancelling:
@@ -556,8 +553,8 @@ private struct ProjectSidebarView: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = LumiPluginLocalization.string("Add", bundle: .module)
-        panel.message = LumiPluginLocalization.string("Choose a repository folder to add to GitOK", bundle: .module)
+        panel.prompt = pluginLocalization.string("Add")
+        panel.message = pluginLocalization.string("Choose a repository folder to add to GitOK")
         if panel.runModal() == .OK, let url = panel.url {
             projects.addProject(at: url)
             projects.openProject(at: url)
@@ -600,16 +597,16 @@ private struct EmptyProjectsPlaceholder: View {
                 .font(.system(size: 40))
                 .foregroundStyle(.secondary)
             VStack(spacing: 4) {
-                Text(LumiPluginLocalization.string("Get Started with GitOK", bundle: .module))
+                Text(pluginLocalization.string("Get Started with GitOK"))
                     .font(.callout.weight(.semibold))
-                Text(LumiPluginLocalization.string("Add an existing repository, or clone a new one.", bundle: .module))
+                Text(pluginLocalization.string("Add an existing repository, or clone a new one."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 170)
             }
             AppButton(
-                LumiPluginLocalization.string("Add Project", bundle: .module),
+                pluginLocalization.string("Add Project"),
                 systemImage: "folder",
                 style: .primary,
                 size: .small
@@ -626,8 +623,8 @@ private struct EmptyProjectsPlaceholder: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = LumiPluginLocalization.string("Add", bundle: .module)
-        panel.message = LumiPluginLocalization.string("Choose a repository folder to add to GitOK", bundle: .module)
+        panel.prompt = pluginLocalization.string("Add")
+        panel.message = pluginLocalization.string("Choose a repository folder to add to GitOK")
         if panel.runModal() == .OK, let url = panel.url {
             projects.addProject(at: url)
             projects.openProject(at: url)

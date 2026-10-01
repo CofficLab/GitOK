@@ -24,13 +24,13 @@ public enum GitCherryPickOperation {
         public var errorDescription: String? {
             switch self {
             case .invalidCommits:
-                LumiPluginLocalization.string("At least one commit is required for cherry-pick.", bundle: .module)
+                pluginLocalization.string("At least one commit is required for cherry-pick.")
             case .notCherryPicking:
-                LumiPluginLocalization.string("No cherry-pick is currently in progress.", bundle: .module)
+                pluginLocalization.string("No cherry-pick is currently in progress.")
             case .unresolvedConflicts:
-                LumiPluginLocalization.string("Resolve all conflicts before continuing the cherry-pick.", bundle: .module)
+                pluginLocalization.string("Resolve all conflicts before continuing the cherry-pick.")
             case .operationFailed(let message):
-                String(format: LumiPluginLocalization.string("Cherry-pick operation failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Cherry-pick operation failed: %@"), message)
             }
         }
     }
