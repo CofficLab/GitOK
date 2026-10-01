@@ -1,5 +1,6 @@
 import LumiUI
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// LICENSE 状态图标：存在时点击查看内容（对齐旧版 LicenseStatusIcon）。
@@ -17,12 +18,7 @@ public struct LicenseStatusIcon: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Image(systemName: "doc.plaintext")
-                    .font(.system(size: 10))
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isSheetPresented.toggle()
-                    }
+                AppStatusBarTile(systemImage: "doc.plaintext", action: { isSheetPresented.toggle() })
                     .help(hasLicense ? "View LICENSE" : "LICENSE not found, click to create")
                     .sheet(isPresented: $isSheetPresented) {
                         LicenseViewer(projects: projects)

@@ -12,6 +12,6 @@ struct PluginGitRepositorySettingsTests {
         let plugin = GitRepositorySettingsPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-repository-settings")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
     }
 }

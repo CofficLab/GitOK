@@ -2,6 +2,7 @@ import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 未推送状态 tile：显示当前分支相对上游未推送的提交数。
@@ -23,12 +24,8 @@ public struct UnpushedStatusTile: View {
     public var body: some View {
         Group {
             if let count = unpushedCount, count > 0 {
-                HStack(spacing: 4) {
-                    Image(systemName: "arrow.up.circle")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.orange)
+                AppStatusBarTile(systemImage: "arrow.up.circle") {
                     Text(String(format: GitUnpushedStatusLocalization.string("%ld unpushed", bundle: .module), count))
-                        .font(.appCaption)
                         .lineLimit(1)
                 }
                 .help(String(format: GitUnpushedStatusLocalization.string("%ld unpushed commit(s)", bundle: .module), count))

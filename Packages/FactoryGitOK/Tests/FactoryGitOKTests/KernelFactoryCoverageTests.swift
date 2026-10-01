@@ -1,3 +1,4 @@
+import LumiThemePack
 import AppKit
 import SwiftUI
 import XCTest
@@ -16,7 +17,7 @@ import ProviderContentView
 import ProviderDocsView
 import ProviderToolbar
 import ProviderStatusBar
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderToast
 import ProviderWorkspaceScene
 
@@ -70,7 +71,9 @@ final class KernelFactoryTests: XCTestCase {
             func makeRailViewProvider() -> any RailViewProviding { inner.makeRailViewProvider() }
             func makeCommandProvider() -> any CommandProviding { inner.makeCommandProvider() }
             func makeToastProvider() -> any ToastProviding { inner.makeToastProvider() }
-            func makePluginManagingProvider() -> any PluginManaging { inner.makePluginManagingProvider() }
+            func makePluginManagingProvider(kernel: KernelCoreContainer) -> any PluginManaging {
+                inner.makePluginManagingProvider(kernel: kernel)
+            }
             func makeSettingViewProvider() -> any SettingViewProviding { inner.makeSettingViewProvider() }
 
             func registerProviders(into kernel: KernelCoreContainer) throws {
@@ -111,7 +114,7 @@ final class KernelFactoryTests: XCTestCase {
     }
 }
 
-// MARK: - PaletteChromeTheme 适配器
+// MARK: - LumiPaletteChromeTheme 适配器
 
 @MainActor
 final class PaletteChromeThemeTests: XCTestCase {
@@ -119,8 +122,8 @@ final class PaletteChromeThemeTests: XCTestCase {
     private func makeChromeTheme(
         source: ProviderTheme.LumiTheme = BuiltinThemes.system,
         colorScheme: ColorScheme = ColorScheme.light
-    ) -> PaletteChromeTheme {
-        PaletteChromeTheme(theme: source, colorScheme: colorScheme)
+    ) -> LumiPaletteChromeTheme {
+        LumiPaletteChromeTheme(theme: source, colorScheme: colorScheme)
     }
 
     func testIdentityFieldsMapThrough() {

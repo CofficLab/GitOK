@@ -12,6 +12,7 @@ struct PluginGitRemoteRepositoryTests {
         let plugin = GitRemoteRepositoryPlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.git-remote-repository")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
+        #expect(plugin.order == 46)
     }
 }

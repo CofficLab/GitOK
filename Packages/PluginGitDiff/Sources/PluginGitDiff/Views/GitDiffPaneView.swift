@@ -50,6 +50,13 @@ struct GitDiffPaneView: View {
         .background {
             theme.surface
         }
+        .overlay(alignment: .topLeading) {
+            Color.clear
+                .frame(width: 1, height: 1)
+                .accessibilityElement()
+                .accessibilityLabel("Git diff panel")
+                .accessibilityIdentifier("gitok.git.diff.panel")
+        }
         .onReceive(viewModel.$revision) { _ in loadIfNeeded() }
         .onAppear { loadIfNeeded() }
         .onDisappear { invalidateLoad() }
@@ -65,6 +72,7 @@ struct GitDiffPaneView: View {
                 .font(.system(size: 11, weight: .medium, design: .monospaced))
                 .lineLimit(1)
                 .truncationMode(.middle)
+                .accessibilityIdentifier("gitok.git.diff.file")
             Spacer(minLength: 8)
             if let hash = viewModel.selectedCommit?.shortHash {
                 Text(hash)

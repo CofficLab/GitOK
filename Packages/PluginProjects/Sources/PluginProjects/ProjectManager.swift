@@ -1,6 +1,6 @@
 import Foundation
 import KitGit
-import KitSuperLog
+import LumiLoggingKit
 import ProviderGit
 import os
 import ProviderProjects
@@ -15,9 +15,9 @@ import ProviderProjects
 /// commit 列表写入选择，commit 详情按页读取文件列表。切换项目时自动清空
 /// 选择，保证选择永远属于当前项目。
 ///
-/// 排序规则（与旧版一致）：
+/// 排序规则：
 /// - 置顶（pinned）项目在最上方；
-/// - 其余按最近打开时间降序（未打开过的排最后）。
+/// - 置顶区与普通区内部均按用户最后调整的顺序排列。
 ///
 /// 状态变化通过观察者体系通知（`addObserver` / `ProjectProvidingObserverHandle`），
 /// 与 Lumi 其他 Provider（如 `ThemeProviding`）保持一致，不依赖 Combine。
@@ -179,6 +179,38 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         project.isPinned = isPinned
         projects[index] = project
         resortPinned()
+        persist()
+        notify(.projectsChanged)
+    }
+
+    public func moveProject(id: UUID, beforeID: UUID?) {
+        guard let sourceIndex = projects.firstIndex(where: { $0.id == id }) else { return }
+        let source = projects[sourceIndex]
+
+        if let beforeID {
+            guard beforeID != id,
+                  let target = projects.first(where: { $0.id == beforeID }),
+                  target.isPinned == source.isPinned else { return }
+        }
+
+        var reordered = projects
+        reordered.remove(at: sourceIndex)
+
+        if let beforeID,
+           let targetIndex = reordered.firstIndex(where: { $0.id == beforeID }) {
+            reordered.insert(source, at: targetIndex)
+        } else {
+            let insertionIndex: Int
+            if source.isPinned {
+                insertionIndex = reordered.lastIndex(where: \.isPinned).map { $0 + 1 } ?? 0
+            } else {
+                insertionIndex = reordered.lastIndex(where: { !$0.isPinned }).map { $0 + 1 } ?? reordered.count
+            }
+            reordered.insert(source, at: insertionIndex)
+        }
+
+        guard reordered != projects else { return }
+        projects = reordered
         persist()
         notify(.projectsChanged)
     }

@@ -1,5 +1,6 @@
 import LumiUI
 import ProviderActivity
+import ProviderStatusBar
 import SwiftUI
 
 /// 活动状态 tile：有活动时显示 spinner + 描述（对齐旧版 ActivityStatusTile）。
@@ -14,13 +15,14 @@ public struct ActivityStatusTile: View {
 
     public var body: some View {
         if let status = activity.currentActivity, !status.isEmpty {
-            HStack(spacing: 5) {
-                ProgressView()
-                    .controlSize(.small)
-                    .scaleEffect(0.7)
-                Text(status)
-                    .font(.appCaption)
-                    .lineLimit(1)
+            AppStatusBarTile {
+                HStack(spacing: 5) {
+                    ProgressView()
+                        .controlSize(.small)
+                        .scaleEffect(0.7)
+                    Text(status)
+                        .lineLimit(1)
+                }
             }
             .help(ActivityStatusLocalization.string("Current activity", bundle: .module))
         }

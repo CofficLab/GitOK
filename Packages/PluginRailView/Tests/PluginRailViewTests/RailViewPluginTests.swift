@@ -56,3 +56,54 @@ struct RailViewPluginTests {
         cancellable.cancel()
     }
 }
+
+extension RailViewPluginTests {
+    @Test("registerTabs sorts by order and activates first visible tab")
+    func registerTabsSortsAndActivates() {
+        let provider = GitOKRailViewProvider()
+        provider.registerTabs([
+            RailTabItem(id: "beta", category: .project, title: "B", systemImage: "b", order: 20) { Text("b") },
+            RailTabItem(id: "alpha", category: .project, title: "A", systemImage: "a", order: 10) { Text("a") },
+        ])
+        #expect(provider.tabs.map(\.id) == ["alpha", "beta"])
+        #expect(provider.activeTabID == "alpha")
+        #expect(provider.hasVisibleTabs)
+    }
+
+    @Test("activateTab only activates known visible tabs")
+    func activateTabValidates() {
+        let provider = GitOKRailViewProvider()
+        provider.registerTabs([
+            RailTabItem(id: "a", category: .project, title: "A", systemImage: "a", order: 10) { Text("a") },
+        ])
+        provider.activateTab(id: "a")
+        #expect(provider.activeTabID == "a")
+        provider.activateTab(id: "nonexistent")
+        #expect(provider.activeTabID == "a")
+        provider.activateTab(id: nil)
+        #expect(provider.activeTabID == nil)
+    }
+
+    @Test("addSections dedupes by id")
+    func addSectionsDedupes() {
+        let provider = GitOKRailViewProvider()
+        provider.registerSections([RailSectionItem(id: "s1", order: 10) { Text("1") }])
+        provider.addSections([
+            RailSectionItem(id: "s1", order: 10) { Text("1") },
+            RailSectionItem(id: "s2", order: 20) { Text("2") },
+        ])
+        #expect(provider.sections.count == 2)
+    }
+
+    @Test("setVisibleTabID filters visible tabs")
+    func setVisibleTabIDFilters() {
+        let provider = GitOKRailViewProvider()
+        provider.registerTabs([
+            RailTabItem(id: "a", category: .project, title: "A", systemImage: "a", order: 10) { Text("a") },
+            RailTabItem(id: "b", category: .chat, title: "B", systemImage: "b", order: 20) { Text("b") },
+        ])
+        provider.setVisibleTabID("a")
+        #expect(provider.visibleTabs.map(\.id) == ["a"])
+        #expect(provider.activeTabID == "a")
+    }
+}

@@ -1,8 +1,8 @@
 import Foundation
 import KernelCore
-import KitSuperLog
+import LumiLoggingKit
 import os
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderToolbar
 import SwiftUI
 import ProviderDocsView

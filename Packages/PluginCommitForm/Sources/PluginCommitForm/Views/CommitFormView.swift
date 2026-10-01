@@ -204,6 +204,7 @@ public struct CommitFormView: View {
                 }
             ))
             .frame(maxWidth: .infinity)
+            .accessibilityIdentifier("gitok.commit.subject")
 
             if form.isSubmitting {
                 ContentLoadingIndicator(loc("Submitting..."), controlSize: .small)
@@ -212,6 +213,7 @@ public struct CommitFormView: View {
                     submit(commitOnly: true)
                 })
                 .disabled(!canSubmit)
+                .accessibilityIdentifier("gitok.commit.submit")
 
                 AppButton(loc("Commit & Push"), systemImage: "arrow.up.circle", style: .primary, size: .small, action: {
                     submit(commitOnly: false)

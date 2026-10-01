@@ -15,23 +15,22 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
-        .package(path: "../KitSuperLog"),
-        .package(path: "../KitLocalization"),
+        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderActivity"),
-        .package(path: "../ProviderStatusBar"),
-        .package(path: "../ProviderDocsView"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.3.7")
     ],
     targets: [
         .target(
             name: "PluginActivityStatus",
             dependencies: [
                 .product(name: "KernelCore", package: "LumiKernel"),
-                .product(name: "KitSuperLog", package: "KitSuperLog"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "LumiLoggingKit", package: "LumiLogging"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderActivity", package: "ProviderActivity"),
-                .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "LumiUI", package: "LumiUI"),
             ],
             path: "Sources/PluginActivityStatus",

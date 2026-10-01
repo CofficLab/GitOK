@@ -13,6 +13,7 @@ public enum RootWorkspaceState: Equatable, Sendable {
     case projectMissing(path: String)
     case notGitRepository(path: String)
     case cloning
+    case cloneFailed
     case ready
 
     /// 用于 macOS 原生分栏层级变化时生成稳定的布局 identity。
@@ -26,6 +27,8 @@ public enum RootWorkspaceState: Equatable, Sendable {
             return "not-git-repository:\(path)"
         case .cloning:
             return "cloning"
+        case .cloneFailed:
+            return "clone-failed"
         case .ready:
             return "ready"
         }

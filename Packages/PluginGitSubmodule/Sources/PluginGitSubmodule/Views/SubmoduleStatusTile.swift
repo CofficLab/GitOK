@@ -2,6 +2,7 @@ import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
+import ProviderStatusBar
 import SwiftUI
 
 /// 子模块状态图标：显示子模块数量，点击列出并可更新
@@ -26,12 +27,7 @@ public struct SubmoduleStatusTile: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                Image(systemName: "shippingbox")
-                    .font(.system(size: 10))
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isPresented = true
-                    }
+                AppStatusBarTile(systemImage: "shippingbox", action: { isPresented = true })
                     .help(submodules.isEmpty
                         ? GitSubmoduleLocalization.string("No submodules", bundle: .module)
                         : String(format: GitSubmoduleLocalization.string("%ld submodule(s)", bundle: .module), submodules.count))

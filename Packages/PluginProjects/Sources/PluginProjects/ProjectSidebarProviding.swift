@@ -9,6 +9,7 @@ import ProviderProjects
 import ProviderSidebar
 import ProviderToast
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// `SidebarProviding` 的项目列表实现。
 ///
@@ -77,6 +78,14 @@ private struct ProjectSidebarView: View {
     @State private var renameText = ""
     @State private var renameErrorMessage: String?
     @State private var isPresentingRenameError = false
+    @State private var draggedProjectID: UUID?
+    @State private var projectPendingReclone: Project?
+    @State private var recloneRemoteURL: String?
+    @State private var recloneTaskID: UUID?
+    @State private var recloneProject: Project?
+    @State private var recloneDestination: URL?
+    @State private var recloneErrorMessage: String?
+    @State private var isPresentingRecloneError = false
 
     init(
         projects: any ProjectProviding,
@@ -111,11 +120,15 @@ private struct ProjectSidebarView: View {
                         isPresentingClone = true
                     }
                     .help(LumiPluginLocalization.string("Clone Repository", bundle: .module))
+                    .accessibilityLabel(LumiPluginLocalization.string("Clone Repository", bundle: .module))
+                    .accessibilityIdentifier("gitok.projects.clone")
                 }
                 AppIconButton(systemImage: "plus", size: .compact) {
                     addExistingProject()
                 }
                 .help(LumiPluginLocalization.string("Add Project", bundle: .module))
+                .accessibilityLabel(LumiPluginLocalization.string("Add Project", bundle: .module))
+                .accessibilityIdentifier("gitok.projects.add")
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
@@ -136,6 +149,21 @@ private struct ProjectSidebarView: View {
                             ForEach(Array(filteredProjects.enumerated()), id: \.element.id) { index, project in
                                 projectRow(project, isLastPinned: index == (pinnedDividerIndex ?? Int.max) - 1)
                             }
+
+                            // 允许把项目拖到分组末尾；项目管理器会根据项目的置顶状态
+                            // 将其插入对应分组末尾，不会破坏置顶区边界。
+                            Color.clear
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 16)
+                                .contentShape(Rectangle())
+                                .onDrop(
+                                    of: [.text],
+                                    delegate: ProjectDropDelegate(
+                                        draggedProjectID: draggedProjectID,
+                                        targetProjectID: nil,
+                                        onMove: moveProject
+                                    )
+                                )
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 8)
@@ -150,6 +178,10 @@ private struct ProjectSidebarView: View {
         .frame(maxHeight: .infinity)
         .onReceive(observation.$revision) { _ in
             // 项目状态变化时重算 body，读取最新项目列表。
+        }
+        .task(id: recloneTaskID) {
+            guard let recloneTaskID else { return }
+            await monitorReclone(taskID: recloneTaskID)
         }
         .sheet(isPresented: $isPresentingClone) {
             if let git, let cloneRepository {
@@ -184,6 +216,35 @@ private struct ProjectSidebarView: View {
         } message: {
             Text(renameErrorMessage ?? "")
         }
+        .alert(
+            LumiPluginLocalization.string("Re-clone Project", bundle: .module),
+            isPresented: recloneAlertPresented,
+            presenting: projectPendingReclone
+        ) { project in
+            Button(LumiPluginLocalization.string("Re-clone", bundle: .module), role: .destructive) {
+                beginReclone(project)
+            }
+            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
+        } message: { project in
+            Text(
+                String(
+                    format: LumiPluginLocalization.string(
+                        "This will delete the local project at \"%@\" and replace it with a fresh clone from \"%@\". Uncommitted changes will be lost.",
+                        bundle: .module
+                    ),
+                    project.url.path,
+                    recloneRemoteURL ?? ""
+                )
+            )
+        }
+        .alert(
+            LumiPluginLocalization.string("Re-clone Failed", bundle: .module),
+            isPresented: $isPresentingRecloneError
+        ) {
+            Button(LumiPluginLocalization.string("OK", bundle: .module), role: .cancel) {}
+        } message: {
+            Text(recloneErrorMessage ?? "")
+        }
     }
 
     /// 重命名输入框的展示绑定：`projectPendingRename` 非 nil 时弹出。
@@ -191,6 +252,18 @@ private struct ProjectSidebarView: View {
         Binding(
             get: { projectPendingRename != nil },
             set: { if !$0 { projectPendingRename = nil } }
+        )
+    }
+
+    private var recloneAlertPresented: Binding<Bool> {
+        Binding(
+            get: { projectPendingReclone != nil },
+            set: {
+                if !$0 {
+                    projectPendingReclone = nil
+                    recloneRemoteURL = nil
+                }
+            }
         )
     }
 
@@ -222,6 +295,20 @@ private struct ProjectSidebarView: View {
                     LumiPluginLocalization.string(project.isPinned ? "Unpin" : "Pin to Top", bundle: .module),
                     systemImage: project.isPinned ? "pin.slash" : "pin"
                 )
+            }
+
+            if git != nil, cloneRepository != nil {
+                Divider()
+
+                Button(role: .destructive) {
+                    prepareReclone(project)
+                } label: {
+                    Label(
+                        LumiPluginLocalization.string("Re-clone Project", bundle: .module),
+                        systemImage: "arrow.clockwise"
+                    )
+                }
+                .disabled(recloneTaskID != nil)
             }
 
             Button {
@@ -262,10 +349,184 @@ private struct ProjectSidebarView: View {
                 Label(LumiPluginLocalization.string("Remove Project", bundle: .module), systemImage: "trash")
             }
         }
+        .onDrag {
+            draggedProjectID = project.id
+            return NSItemProvider(object: NSString(string: project.id.uuidString))
+        }
+        .onDrop(
+            of: [.text],
+            delegate: ProjectDropDelegate(
+                draggedProjectID: draggedProjectID,
+                targetProjectID: project.id,
+                onMove: moveProject
+            )
+        )
         .overlay(alignment: .bottom) {
             if isLastPinned {
                 AppDivider().padding(.vertical, 2)
             }
+        }
+    }
+
+    private func moveProject(_ draggedID: UUID, before targetID: UUID?) {
+        projects.moveProject(id: draggedID, beforeID: targetID)
+    }
+
+    private func prepareReclone(_ project: Project) {
+        guard recloneTaskID == nil else { return }
+        guard let git else { return }
+
+        let projectURL = project.url.standardizedFileURL
+        let homeURL = FileManager.default.homeDirectoryForCurrentUser.standardizedFileURL
+        guard projectURL.path != "/", projectURL != homeURL else {
+            presentRecloneError("Refusing to replace a system or home directory.")
+            return
+        }
+
+        let remotes = git.listRemotes(in: projectURL)
+        guard let remote = remotes.first(where: { $0.name == "origin" }) ?? remotes.first,
+              !(remote.fetchURL ?? remote.url).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            presentRecloneError(
+                LumiPluginLocalization.string("No remote repository found.", bundle: .module)
+            )
+            return
+        }
+        let remoteURL = remote.fetchURL ?? remote.url
+
+        recloneRemoteURL = remoteURL
+        projectPendingReclone = project
+    }
+
+    private func beginReclone(_ project: Project) {
+        guard let git, let cloneRepository, let remoteURL = recloneRemoteURL else { return }
+        projectPendingReclone = nil
+
+        let projectURL = project.url.standardizedFileURL
+        let temporaryDestination = projectURL
+            .deletingLastPathComponent()
+            .appendingPathComponent(".gitok-reclone-\(UUID().uuidString)", isDirectory: true)
+
+        do {
+            try git.validateCloneDestination(temporaryDestination)
+            let task = try cloneRepository.enqueue(
+                remoteURL: remoteURL,
+                destination: temporaryDestination,
+                repositoryName: project.title
+            )
+            recloneProject = project
+            recloneDestination = temporaryDestination
+            recloneTaskID = task.id
+        } catch {
+            presentRecloneError(error.localizedDescription)
+        }
+    }
+
+    @MainActor
+    private func monitorReclone(taskID: UUID) async {
+        while !Task.isCancelled {
+            guard recloneTaskID == taskID,
+                  let cloneRepository,
+                  let task = cloneRepository.tasks.first(where: { $0.id == taskID }) else { return }
+
+            switch task.status {
+            case .completed:
+                await finishReclone(taskID: taskID)
+                return
+            case .failed, .cancelled:
+                finishFailedReclone(
+                    taskID: taskID,
+                    message: task.errorMessage
+                        ?? LumiPluginLocalization.string("Re-clone Failed", bundle: .module)
+                )
+                return
+            case .queued, .cloning, .cancelling:
+                break
+            }
+
+            do {
+                try await Task.sleep(for: .milliseconds(250))
+            } catch {
+                return
+            }
+        }
+    }
+
+    @MainActor
+    private func finishReclone(taskID: UUID) async {
+        guard recloneTaskID == taskID,
+              let project = recloneProject,
+              let temporaryDestination = recloneDestination else { return }
+
+        let replacementError: String? = await Task.detached(priority: .userInitiated) { () -> String? in
+            do {
+                try Self.replaceProjectDirectory(
+                    with: temporaryDestination,
+                    at: project.url.standardizedFileURL
+                )
+                return nil
+            } catch {
+                return error.localizedDescription
+            }
+        }.value
+
+        guard recloneTaskID == taskID else { return }
+        if let replacementError {
+            finishFailedReclone(taskID: taskID, message: replacementError)
+            return
+        }
+
+        resetRecloneState()
+        projects.notifyDataChanged()
+    }
+
+    private func finishFailedReclone(taskID: UUID, message: String) {
+        guard recloneTaskID == taskID else { return }
+        if let recloneDestination {
+            try? FileManager.default.removeItem(at: recloneDestination)
+        }
+        resetRecloneState()
+        presentRecloneError(message)
+    }
+
+    private func presentRecloneError(_ message: String) {
+        recloneErrorMessage = message
+        isPresentingRecloneError = true
+    }
+
+    private func resetRecloneState() {
+        recloneTaskID = nil
+        recloneProject = nil
+        recloneDestination = nil
+        recloneRemoteURL = nil
+        projectPendingReclone = nil
+    }
+
+    nonisolated private static func replaceProjectDirectory(with clonedURL: URL, at projectURL: URL) throws {
+        let fileManager = FileManager.default
+        let parentURL = projectURL.deletingLastPathComponent()
+        let backupURL = parentURL
+            .appendingPathComponent(".gitok-reclone-backup-\(UUID().uuidString)", isDirectory: true)
+        var originalWasMoved = false
+
+        do {
+            if fileManager.fileExists(atPath: projectURL.path) {
+                try fileManager.moveItem(at: projectURL, to: backupURL)
+                originalWasMoved = true
+            }
+            try fileManager.moveItem(at: clonedURL, to: projectURL)
+            if originalWasMoved {
+                try fileManager.removeItem(at: backupURL)
+            }
+        } catch {
+            if originalWasMoved {
+                if fileManager.fileExists(atPath: projectURL.path) {
+                    try? fileManager.removeItem(at: projectURL)
+                }
+                if fileManager.fileExists(atPath: backupURL.path) {
+                    try? fileManager.moveItem(at: backupURL, to: projectURL)
+                }
+            }
+            throw error
         }
     }
 
@@ -301,6 +562,26 @@ private struct ProjectSidebarView: View {
             projects.addProject(at: url)
             projects.openProject(at: url)
         }
+    }
+}
+
+/// 将拖放目标转换为项目 ID 移动操作。
+private struct ProjectDropDelegate: DropDelegate {
+    let draggedProjectID: UUID?
+    let targetProjectID: UUID?
+    let onMove: (UUID, UUID?) -> Void
+
+    func dropEntered(info: DropInfo) {
+        guard let draggedProjectID, draggedProjectID != targetProjectID else { return }
+        onMove(draggedProjectID, targetProjectID)
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        true
     }
 }
 

@@ -16,7 +16,7 @@ Git Diff 插件：`GitDiffPaneView` 提供统一的差异与文件预览面板�
 |------|-----|
 | **类型** | 应用插件（SwiftPM 包） |
 | **宿主** | `KernelCore`（`SuperPlugin` 生命周期） |
-| **上游依赖** | `KernelCore`、`KitGit`、`KitSuperLog`、`ProviderProjects`、`ProviderRootView`；https://github.com/CofficLab/LumiUI.git、https://github.com/nookery/MagicDiffView |
+| **上游依赖** | `KernelCore`、`KitGit`、`LumiLoggingKit`、`ProviderProjects`、`ProviderRootView`；https://github.com/CofficLab/LumiUI.git、https://github.com/nookery/MagicDiffView |
 | **平台** | macOS 14+ |
 
 ## 目录结构

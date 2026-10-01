@@ -3,8 +3,7 @@ import KernelCore
 import os
 import ProviderDocsView
 import ProviderLogo
-import KitSuperLog
-
+import LumiLoggingKit
 /// Logo 管理器插件（KernelCore 生态）。
 ///
 /// 复刻旧版 `LogoPlugin`（KernelLumi → KernelCore 适配）：

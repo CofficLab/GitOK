@@ -99,3 +99,36 @@ struct WorktreeSnapshotPreheaterTests {
         func cancel() {}
     }
 }
+
+extension WorktreeSnapshotPreheaterTests {
+    @Test("跳过不存在的项目目录")
+    func skipsNonexistentDirectories() async throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-preheat-missing-(UUID().uuidString)", isDirectory: true)
+        let existing = root.appendingPathComponent("Exists", isDirectory: true)
+        let missing = root.appendingPathComponent("Missing", isDirectory: true)
+        try FileManager.default.createDirectory(at: existing, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let projects = MockProjects(
+            projects: [Project(url: existing), Project(url: missing)],
+            currentProject: Project(url: existing)
+        )
+
+        let recorder = LoadRecorder()
+        let preheater = WorktreeSnapshotPreheater(
+            projects: projects,
+            loadSnapshot: { url, _ in recorder.append(url) },
+            invalidateSnapshot: { _ in },
+            gitWatch: nil
+        )
+        preheater.start()
+        defer { preheater.stop() }
+
+        for _ in 0..<100 where recorder.urls.count < 1 {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+
+        #expect(recorder.urls == [existing.standardizedFileURL])
+    }
+}

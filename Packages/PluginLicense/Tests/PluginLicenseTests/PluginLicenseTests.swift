@@ -12,6 +12,6 @@ struct PluginLicenseTests {
         let plugin = LicensePlugin()
         #expect(plugin.id == "com.coffic.gitok.plugin.license")
         #expect(plugin.metadata.category == .project)
-        #expect(plugin.metadata.policy == .alwaysOn)
+        #expect(plugin.metadata.policy == .disabled)
     }
 }

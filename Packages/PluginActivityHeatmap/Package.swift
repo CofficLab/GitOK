@@ -9,14 +9,14 @@ let package = Package(
         .library(name: "PluginActivityHeatmap", targets: ["PluginActivityHeatmap"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
-        .package(path: "../KitSuperLog"),
+        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
         .package(path: "../ProviderActivityHeatmap"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
-        .package(path: "../ProviderStorage"),
     ],
     targets: [
         .target(
@@ -24,12 +24,12 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
-                .product(name: "KitSuperLog", package: "KitSuperLog"),
+                .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "ProviderActivityHeatmap", package: "ProviderActivityHeatmap"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
-                .product(name: "ProviderStorage", package: "ProviderStorage"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
             ],
             path: "Sources/PluginActivityHeatmap"
         ),
@@ -38,6 +38,7 @@ let package = Package(
             dependencies: [
                 "PluginActivityHeatmap",
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderActivityHeatmap", package: "ProviderActivityHeatmap"),
             ],
             path: "Tests/PluginActivityHeatmapTests"
         ),

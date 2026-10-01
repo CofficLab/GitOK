@@ -232,6 +232,7 @@ struct WorktreeChangesView: View {
                         prepareDiscardAll()
                     }
                     .disabled(isActionInProgress)
+                    .accessibilityIdentifier("gitok.worktree.discard-all")
                 }
             }
         }
@@ -240,7 +241,7 @@ struct WorktreeChangesView: View {
 
     private func fileRow(_ entry: GitStatusEntry) -> some View {
         let isSelected = viewModel.selectedFile == entry.path
-        return AppListRow(isSelected: isSelected, action: { onSelectFile(entry.path) }) {
+        return HStack(spacing: 8) {
             HStack(spacing: 8) {
                 Button {
                     toggleBatchSelection(for: entry)
@@ -252,6 +253,7 @@ struct WorktreeChangesView: View {
                 .buttonStyle(.plain)
                 .disabled(isActionInProgress)
                 .help(selectedPaths.contains(entry.path) ? loc("Clear Selection") : loc("Select File"))
+                .accessibilityIdentifier("gitok.worktree.select.\(entry.path)")
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.path)
@@ -259,6 +261,7 @@ struct WorktreeChangesView: View {
                         .foregroundStyle(theme.textPrimary)
                         .lineLimit(1)
                         .truncationMode(.middle)
+                        .accessibilityIdentifier("gitok.worktree.file.\(entry.path)")
 
                     HStack(spacing: 5) {
                         Image(systemName: statusIcon(entry))
@@ -270,9 +273,12 @@ struct WorktreeChangesView: View {
                             .font(DesignTokens.Typography.caption2)
                             .foregroundStyle(theme.textTertiary)
                             .lineLimit(1)
+                            .accessibilityIdentifier("gitok.worktree.status.\(entry.path)")
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+                .onTapGesture { onSelectFile(entry.path) }
 
                 Spacer(minLength: 8)
 
@@ -289,6 +295,7 @@ struct WorktreeChangesView: View {
                             unstage(entry)
                         }
                         .disabled(isActionInProgress)
+                        .accessibilityIdentifier("gitok.worktree.unstage.\(entry.path)")
                     }
                 } else if entry.isUntracked || entry.isWorktreeModified {
                     if stagingPath == entry.path {
@@ -303,6 +310,7 @@ struct WorktreeChangesView: View {
                             stage(entry)
                         }
                         .disabled(isActionInProgress)
+                        .accessibilityIdentifier("gitok.worktree.stage.\(entry.path)")
                     }
                 }
 
@@ -318,7 +326,17 @@ struct WorktreeChangesView: View {
                         requestDiscard(entry)
                     }
                     .disabled(isActionInProgress)
+                    .accessibilityIdentifier("gitok.worktree.discard.\(entry.path)")
                 }
+            }
+            .padding(.horizontal, AppUI.Spacing.md)
+            .padding(.vertical, AppUI.Spacing.sm)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(isSelected ? theme.appListRowSelectedBackground : theme.appListRowBackground)
+        .overlay {
+            if isSelected {
+                Rectangle().stroke(theme.primary.opacity(0.3), lineWidth: 1)
             }
         }
         .overlay(alignment: .leading) {
@@ -406,6 +424,7 @@ struct WorktreeChangesView: View {
                 performBatch(.stage)
             }
             .disabled(stageableSelectedPaths.isEmpty || isActionInProgress)
+            .accessibilityIdentifier("gitok.worktree.batch.stage")
 
             AppButton(
                 loc("Unstage"),
@@ -416,6 +435,7 @@ struct WorktreeChangesView: View {
                 performBatch(.unstage)
             }
             .disabled(unstageableSelectedPaths.isEmpty || isActionInProgress)
+            .accessibilityIdentifier("gitok.worktree.batch.unstage")
 
             AppButton(
                 loc("Discard"),

@@ -10,9 +10,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
-        .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderProjectReadme"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.0.2"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2")
     ],
     targets: [
         .target(
@@ -20,9 +20,14 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "ProviderProjectReadme", package: "ProviderProjectReadme"),
             ]
+        ),
+        .testTarget(
+            name: "PluginProjectReadmeTests",
+            dependencies: ["PluginProjectReadme"],
+            path: "Tests/PluginProjectReadmeTests"
         ),
     ]
 )

@@ -4,7 +4,7 @@ import KitGit
 import ProviderProjects
 import ProviderGit
 import ProviderGitConflictResolver
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderStorage
 import ProviderToast
 import ProviderToolbar
@@ -65,7 +65,7 @@ final class KernelBootIntegrationTests: XCTestCase {
 
         XCTAssertTrue(
             kernel.resolveProvider((any RootViewProviding).self)?.overlays.contains {
-                $0.id == "toast"
+                $0.id == ToastSuperPlugin.overlayID
             } == true,
             "toast and persistent error notices should share the toast root overlay"
         )

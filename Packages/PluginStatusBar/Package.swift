@@ -15,26 +15,24 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
-        .package(path: "../KitSuperLog"),
-        .package(path: "../KitLocalization"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderProjects"),
-        .package(path: "../ProviderStatusBar"),
-        .package(path: "../ProviderTheme"),
-        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.3.7"),
     ],
     targets: [
         .target(
             name: "PluginStatusBar",
             dependencies: [
                 .product(name: "KernelCore", package: "LumiKernel"),
-                .product(name: "KitSuperLog", package: "KitSuperLog"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
+                .product(name: "LumiLoggingKit", package: "LumiLogging"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
-                .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
-                .product(name: "ProviderTheme", package: "ProviderTheme"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderTheme", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Sources/PluginStatusBar",
             resources: [
@@ -45,7 +43,7 @@ let package = Package(
             name: "PluginStatusBarTests",
             dependencies: [
                 "PluginStatusBar",
-                .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
             ],
             path: "Tests/PluginStatusBarTests"
         ),

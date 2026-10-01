@@ -23,5 +23,10 @@ let package = Package(
             ],
             path: "Sources/PluginOpenVSCode"
         ),
+        .testTarget(
+            name: "PluginOpenVSCodeTests",
+            dependencies: ["PluginOpenVSCode"],
+            path: "Tests/PluginOpenVSCodeTests"
+        ),
     ]
 )

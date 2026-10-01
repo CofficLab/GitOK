@@ -1,12 +1,12 @@
 import Foundation
 import KernelCore
-import KitSuperLog
+import LumiLoggingKit
 import os
 import ProviderGitRepositoryWatch
 import ProviderGit
 import ProviderGitConflictResolver
 import ProviderProjects
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI

@@ -753,7 +753,18 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func unstageFiles(_ filePaths: [String], in repository: URL) throws {
+        let stagedAdditions = Set(
+            try GitStatusLoader.loadEntries(in: repository)
+                .filter { $0.stagedStatus == "A" }
+                .map(\.path)
+        )
         for filePath in filePaths {
+            if stagedAdditions.contains(filePath) {
+                // Reversing an added-file patch leaves an empty blob staged in the index.
+                // Git's path reset removes the index entry and preserves the working file.
+                _ = try GitProcessRunner.run(["reset", "--", filePath], in: repository)
+                continue
+            }
             let patch = try LibGit2.getFileDiff(for: filePath, at: repository.path, staged: true)
             if !patch.isEmpty { try LibGit2.applyPatch(patch, mode: .unstage, at: repository.path) }
         }

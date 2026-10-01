@@ -10,14 +10,14 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
-        .package(path: "../KitLocalization"),
-        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
         .package(path: "../ProviderGit"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
             revision: "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
         ),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2")
     ],
     targets: [
         .target(
@@ -25,8 +25,8 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
-                .product(name: "KitLocalization", package: "KitLocalization"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "LibGit2Swift", package: "libgit2swift"),
