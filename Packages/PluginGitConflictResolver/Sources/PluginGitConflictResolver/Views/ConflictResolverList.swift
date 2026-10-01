@@ -55,6 +55,8 @@ public struct ConflictResolverList: View {
                             )
                         }
                     } else if viewModel.isOperationInProgress {
+                        // 正文区没有文件行可展示时才使用这里的圆形「继续」按钮；
+                        // 正文区有文件行（含已解决/已暂存的文件）时，该入口位于顶部操作栏。
                         VStack(spacing: DesignTokens.Spacing.md) {
                             AppStatusBanner(
                                 kind: .success,
@@ -208,6 +210,22 @@ public struct ConflictResolverList: View {
             }
 
             Spacer(minLength: DesignTokens.Spacing.xl)
+
+            if viewModel.showsToolbarContinueAction {
+                AppButton(
+                    LumiPluginLocalization.string(
+                        viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
+                        bundle: .module
+                    ),
+                    systemImage: "arrow.right.circle.fill",
+                    // 还有文件待暂存时，「暂存已解决文件」是当前主操作，
+                    // 继续入口退为次要样式，避免两个主按钮争夺注意力。
+                    style: pendingStageFiles.isEmpty ? .primary : .secondary,
+                    size: .small,
+                    action: continueMerge
+                )
+                .disabled(!viewModel.conflictedFiles.isEmpty || isActionRunning)
+            }
 
             AppButton(
                 LumiPluginLocalization.string(
@@ -577,7 +595,8 @@ private struct ConflictFileActionButton: View {
 }
 
 /// 圆形「继续合并」按钮：绿色圆形按钮（内含箭头图标）+ 下方文字标签。
-/// 仅用于冲突弹窗正文中的继续合并入口；顶部操作栏（终止合并一行）保持原样式。
+/// 只在弹层正文区没有文件行可展示时使用；正文区有文件行时改由顶部
+/// 操作栏的「继续」按钮提供入口，避免同一屏出现两个相同入口。
 private struct ContinueMergeCardButton: View {
     let title: String
     let systemImage: String

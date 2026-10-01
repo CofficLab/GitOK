@@ -206,4 +206,49 @@ struct PluginGitConflictResolverTests {
         viewModel.update(projectURL: p, conflictedFiles: [], isOperationInProgress: false, isCherryPicking: false)
         #expect(viewModel.resolvedConflictFiles.isEmpty)
     }
+
+    @Test("正文区有文件行时继续入口移到顶部操作栏")
+    func toolbarContinueActionAppearsWhenContentRowsExist() {
+        let viewModel = GitConflictResolverViewModel()
+        let p = URL(fileURLWithPath: "/tmp/p")
+
+        // 还有未解决文件：正文区有内容，但还不能继续。
+        viewModel.update(projectURL: p, conflictedFiles: ["A"], isOperationInProgress: true, isCherryPicking: false)
+        #expect(viewModel.hasContentRows)
+        #expect(viewModel.showsToolbarContinueAction)
+
+        // 已解决但尚未暂存：仍然是正文区的文件行，继续入口留在操作栏。
+        viewModel.update(
+            projectURL: p,
+            conflictedFiles: ["A"],
+            isOperationInProgress: true,
+            isCherryPicking: false,
+            resolvedFiles: ["A"]
+        )
+        #expect(viewModel.hasContentRows)
+        #expect(viewModel.showsToolbarContinueAction)
+    }
+
+    @Test("全部暂存后正文区为空，改由圆形按钮提供继续入口")
+    func circularContinueButtonOnlyWhenContentRowsAreEmpty() {
+        let viewModel = GitConflictResolverViewModel()
+        let p = URL(fileURLWithPath: "/tmp/p")
+
+        viewModel.update(projectURL: p, conflictedFiles: ["A"], isOperationInProgress: true, isCherryPicking: false)
+        viewModel.update(projectURL: p, conflictedFiles: [], isOperationInProgress: true, isCherryPicking: false)
+
+        // 上一轮的 resolved 文件仍作为「已暂存」行留在正文区。
+        #expect(viewModel.displayedConflictFiles == ["A"])
+        #expect(viewModel.showsToolbarContinueAction)
+
+        // 新一轮快照不再报告该文件时，正文区清空，圆形按钮接管。
+        let fresh = GitConflictResolverViewModel()
+        fresh.update(projectURL: p, conflictedFiles: [], isOperationInProgress: true, isCherryPicking: false)
+        #expect(!fresh.hasContentRows)
+        #expect(!fresh.showsToolbarContinueAction)
+
+        // 操作结束后不再提供继续入口。
+        fresh.update(projectURL: p, conflictedFiles: [], isOperationInProgress: false, isCherryPicking: false)
+        #expect(!fresh.showsToolbarContinueAction)
+    }
 }
