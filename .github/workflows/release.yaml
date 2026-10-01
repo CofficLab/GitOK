@@ -29,7 +29,9 @@ env:
 jobs:
   build_with_signing:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: macos-26
+    # GitOK.xcodeproj 已迁移到 Xcode JSON 工程格式（project.xcproj），
+    # 该格式仅 Xcode 27 及以上可读，因此必须使用 xcode-27 镜像。
+    runs-on: xcode-27
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -56,7 +58,22 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.3"
+          xcode-version: "27.0"
+
+      - name: 校验工程格式与 Xcode 版本
+        run: |
+          set -euo pipefail
+          project_file="${SCHEME}.xcodeproj/project.xcproj"
+          if [ ! -f "$project_file" ]; then
+            echo "❌ 未找到 $project_file"
+            echo "当前仓库使用 Xcode 27 JSON 工程格式，请确认 checkout 的 commit 正确。"
+            ls -la "${SCHEME}.xcodeproj" || true
+            exit 1
+          fi
+          echo "Xcode 版本: $(xcodebuild -version | head -1)"
+          # 用 -list 验证工程确实可被当前 Xcode 读取（版本过低会报 project.pbxproj 缺失）
+          xcodebuild -project "${SCHEME}.xcodeproj" -list >/dev/null
+          echo "✅ 工程格式与 Xcode 版本匹配"
 
       - name: 获取最新 tag
         run: |
