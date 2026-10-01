@@ -161,9 +161,18 @@ execute_command() {
 # 自动检测 SCHEME
 detect_scheme() {
     if [ -z "$SCHEME" ]; then
-        if [ -f "GitOK.xcodeproj/project.pbxproj" ]; then
+        # Xcode 27 起工程配置迁移为 JSON 格式（project.xcproj），旧格式为 project.pbxproj
+        local project_file=""
+        if [ -f "GitOK.xcodeproj/project.xcproj" ]; then
+            project_file="GitOK.xcodeproj/project.xcproj"
+        elif [ -f "GitOK.xcodeproj/project.pbxproj" ]; then
+            project_file="GitOK.xcodeproj/project.pbxproj"
+        fi
+
+        if [ -n "$project_file" ]; then
             # 从 Xcode 项目文件中提取 scheme
-            SCHEME=$(grep -o '"[^"]*\.app"' GitOK.xcodeproj/project.pbxproj | head -1 | sed 's/\.app"//g' | sed 's/"//g')
+            # JSON 格式的产物路径形如 "<PRODUCTS>/GitOK.app"，需去掉 <PRODUCTS>/ 前缀
+            SCHEME=$(grep -o '"[^"]*\.app"' "$project_file" | head -1 | sed 's/\.app"//g; s/"//g; s|<PRODUCTS>/||g')
             if [ -n "$SCHEME" ]; then
                 print_info "自动检测到方案" "$SCHEME"
             fi
