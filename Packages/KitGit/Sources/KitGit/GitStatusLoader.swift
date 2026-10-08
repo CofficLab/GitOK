@@ -74,10 +74,7 @@ public enum GitStatusLoader {
         public var errorDescription: String? {
             switch self {
             case .notARepository(let url):
-                String(format: LumiPluginLocalization.string(
-                    "This directory is not a Git repository: %@",
-                    bundle: .module
-                ), url.lastPathComponent)
+                String(format: pluginLocalization.string("This directory is not a Git repository: %@"), url.lastPathComponent)
             }
         }
     }

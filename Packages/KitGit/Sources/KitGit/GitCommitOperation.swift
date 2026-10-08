@@ -15,11 +15,11 @@ public enum GitCommitOperation {
         public var errorDescription: String? {
             switch self {
             case .nothingToCommit:
-                LumiPluginLocalization.string("There are no changes to commit in the current workspace.", bundle: .module)
+                pluginLocalization.string("There are no changes to commit in the current workspace.")
             case .commitFailed(let message):
-                String(format: LumiPluginLocalization.string("Commit failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Commit failed: %@"), message)
             case .pushFailed(let message):
-                String(format: LumiPluginLocalization.string("Push failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Push failed: %@"), message)
             }
         }
     }

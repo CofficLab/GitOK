@@ -231,14 +231,14 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
                 commitOnly: commitOnly
             )
 
-            activityReporter?(LumiPluginLocalization.string("Committing...", bundle: .module))
+            activityReporter?(pluginLocalization.string("Committing..."))
             guard let git else {
                 throw GitProviderError.noBackendAvailable
             }
             try git.addAll(in: repository)
             _ = try git.commit(message: plan.message, in: repository)
             if plan.pushesAfterCommit {
-                activityReporter?(LumiPluginLocalization.string("Synchronizing...", bundle: .module))
+                activityReporter?(pluginLocalization.string("Synchronizing..."))
                 let trackingStatus = git.remoteTrackingStatus(in: repository)
                 if trackingStatus.hasUpstream {
                     _ = try git.synchronize(in: repository)

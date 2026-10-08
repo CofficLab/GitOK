@@ -92,7 +92,7 @@ struct BranchPickerPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
-            TextField(LumiPluginLocalization.string("Search", bundle: .module), text: $searchText)
+            TextField(pluginLocalization.string("Search"), text: $searchText)
                 .textFieldStyle(.roundedBorder)
                 .accessibilityIdentifier("gitok.git.branch.search")
 
@@ -109,7 +109,7 @@ struct BranchPickerPopoverView: View {
                 Image(systemName: isCreatingNew ? "xmark" : "plus")
             }
             .buttonStyle(.bordered)
-            .help(isCreatingNew ? LumiPluginLocalization.string("Cancel", bundle: .module) : LumiPluginLocalization.string("New Branch", bundle: .module))
+            .help(isCreatingNew ? pluginLocalization.string("Cancel") : pluginLocalization.string("New Branch"))
             .disabled(isPerformingAction)
             .accessibilityIdentifier("gitok.git.branch.create.toggle")
         }
@@ -119,13 +119,13 @@ struct BranchPickerPopoverView: View {
 
     private var newBranchInput: some View {
         HStack(spacing: 8) {
-            TextField(LumiPluginLocalization.string("New branch name", bundle: .module), text: $newBranchName)
+            TextField(pluginLocalization.string("New branch name"), text: $newBranchName)
                 .textFieldStyle(.roundedBorder)
                 .focused($isNewBranchFieldFocused)
                 .onSubmit { createBranch() }
                 .accessibilityIdentifier("gitok.git.branch.new-name")
 
-            Button(LumiPluginLocalization.string("Create", bundle: .module)) {
+            Button(pluginLocalization.string("Create")) {
                 createBranch()
             }
             .buttonStyle(.borderedProminent)
@@ -144,9 +144,9 @@ struct BranchPickerPopoverView: View {
             BranchPickerSkeletonView()
                 .frame(maxWidth: .infinity, minHeight: 80)
         } else if branches.isEmpty {
-            emptyState(title: LumiPluginLocalization.string("No Branches", bundle: .module), icon: "arrow.triangle.branch")
+            emptyState(title: pluginLocalization.string("No Branches"), icon: "arrow.triangle.branch")
         } else if localBranches.isEmpty && remoteBranches.isEmpty {
-            emptyState(title: LumiPluginLocalization.string("No Results", bundle: .module), icon: "magnifyingglass")
+            emptyState(title: pluginLocalization.string("No Results"), icon: "magnifyingglass")
         } else {
             ScrollView {
                 VStack(spacing: 2) {
@@ -190,7 +190,7 @@ struct BranchPickerPopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isPerformingAction)
-                .help(LumiPluginLocalization.string("Checkout locally", bundle: .module))
+                .help(pluginLocalization.string("Checkout locally"))
             }
         }
     }

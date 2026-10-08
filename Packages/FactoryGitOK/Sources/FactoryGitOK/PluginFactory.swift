@@ -104,7 +104,7 @@ public struct DefaultPluginFactory: PluginFactory {
             RootViewPlugin(),
             RailViewPlugin(),
             PluginToolbar(),
-            CommandPlugin(),
+            CommandPlugin(bundleID: "com.coffic.gitok.plugin.command"),
             ProjectsPlugin(),
             GitWorktreePreheatPlugin(),
             WorktreeStatusPlugin(),

@@ -33,7 +33,7 @@ struct ProjectToolbarPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
-            TextField(LumiPluginLocalization.string("Search", bundle: .module), text: $searchText)
+            TextField(pluginLocalization.string("Search"), text: $searchText)
                 .textFieldStyle(.roundedBorder)
 
             Button {
@@ -69,7 +69,7 @@ struct ProjectToolbarPopoverView: View {
             Image(systemName: projects.projects.isEmpty ? "folder.badge.plus" : "magnifyingglass")
                 .font(.system(size: 24))
                 .foregroundStyle(.secondary)
-            Text(projects.projects.isEmpty ? LumiPluginLocalization.string("No Projects", bundle: .module) : LumiPluginLocalization.string("No Results", bundle: .module))
+            Text(projects.projects.isEmpty ? pluginLocalization.string("No Projects") : pluginLocalization.string("No Results"))
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }

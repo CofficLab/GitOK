@@ -25,13 +25,13 @@ public enum GitMergeOperation {
         public var errorDescription: String? {
             switch self {
             case .invalidPath:
-                LumiPluginLocalization.string("A conflicted file path is required.", bundle: .module)
+                pluginLocalization.string("A conflicted file path is required.")
             case .notMerging:
-                LumiPluginLocalization.string("No merge is currently in progress.", bundle: .module)
+                pluginLocalization.string("No merge is currently in progress.")
             case .unresolvedConflicts:
-                LumiPluginLocalization.string("Resolve all conflicts before continuing the merge.", bundle: .module)
+                pluginLocalization.string("Resolve all conflicts before continuing the merge.")
             case .operationFailed(let message):
-                String(format: LumiPluginLocalization.string("Merge operation failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Merge operation failed: %@"), message)
             }
         }
     }

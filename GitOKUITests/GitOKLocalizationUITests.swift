@@ -70,10 +70,12 @@ class GitOKLocalizationUITestCase: GitOKUITestCase {
         _ = openSettings()
         let settingsButton = app.buttons.matching(identifier: "gitok.settings.button").firstMatch
         XCTAssertEqual(settingsButton.label, expected.openSettings)
-        let general = element(identifier: "settings.entry.general")
-        XCTAssertTrue(general.waitForExistence(timeout: 5))
+        // 侧边栏条目不带 accessibility identifier，按本地化标题定位。
+        let general = app.buttons.matching(
+            NSPredicate(format: "label == %@ OR value == %@", expected.general, expected.general)
+        ).firstMatch
         XCTAssertTrue(
-            general.label == expected.general || (general.value as? String) == expected.general,
+            general.waitForExistence(timeout: 5),
             "General settings section was not localized: label=\(general.label), value=\(general.value ?? "nil")"
         )
     }

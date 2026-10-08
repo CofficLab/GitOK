@@ -123,11 +123,11 @@ public enum GitProcessRunner {
         public var errorDescription: String? {
             switch self {
             case .gitUnavailable(let message):
-                String(format: LumiPluginLocalization.string("Git unavailable: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Git unavailable: %@"), message)
             case .gitFailed(let message):
                 message
             case .timedOut(let command):
-                String(format: LumiPluginLocalization.string("Git command timed out: %@", bundle: .module), command)
+                String(format: pluginLocalization.string("Git command timed out: %@"), command)
             }
         }
     }

@@ -158,7 +158,7 @@ struct CommitRailView: View {
             theme.surface
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Revert", bundle: .module),
+            pluginLocalization.string("Confirm Revert"),
             isPresented: Binding(
                 get: { pendingRevert != nil },
                 set: { isPresented in
@@ -166,10 +166,10 @@ struct CommitRailView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingRevert = nil
             }
-            Button(LumiPluginLocalization.string("Revert", bundle: .module), role: .destructive) {
+            Button(pluginLocalization.string("Revert"), role: .destructive) {
                 guard let commit = pendingRevert else { return }
                 pendingRevert = nil
                 performRevert(commit)
@@ -177,13 +177,13 @@ struct CommitRailView: View {
         } message: {
             if let commit = pendingRevert {
                 Text(String(
-                    format: LumiPluginLocalization.string("Revert commit \"%@\"? This creates a new commit.", bundle: .module),
+                    format: pluginLocalization.string("Revert commit \"%@\"? This creates a new commit."),
                     commit.message
                 ))
             }
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Undo Commit?", bundle: .module),
+            pluginLocalization.string("Confirm Undo Commit?"),
             isPresented: Binding(
                 get: { pendingUndo != nil },
                 set: { isPresented in
@@ -191,22 +191,19 @@ struct CommitRailView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingUndo = nil
             }
-            Button(LumiPluginLocalization.string("Undo", bundle: .module), role: .destructive) {
+            Button(pluginLocalization.string("Undo"), role: .destructive) {
                 guard let commit = pendingUndo else { return }
                 pendingUndo = nil
                 performUndo(commit)
             }
         } message: {
-            Text(LumiPluginLocalization.string(
-                "After undoing, this commit's changes will remain in the working tree.",
-                bundle: .module
-            ))
+            Text(pluginLocalization.string("After undoing, this commit's changes will remain in the working tree."))
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Soft Reset?", bundle: .module),
+            pluginLocalization.string("Confirm Soft Reset?"),
             isPresented: Binding(
                 get: { pendingSoftReset != nil },
                 set: { isPresented in
@@ -214,22 +211,19 @@ struct CommitRailView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingSoftReset = nil
             }
-            Button(LumiPluginLocalization.string("Soft Reset", bundle: .module)) {
+            Button(pluginLocalization.string("Soft Reset")) {
                 guard let commit = pendingSoftReset else { return }
                 pendingSoftReset = nil
                 performSoftReset(to: commit)
             }
         } message: {
-            Text(LumiPluginLocalization.string(
-                "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area.",
-                bundle: .module
-            ))
+            Text(pluginLocalization.string("HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area."))
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Mixed Reset?", bundle: .module),
+            pluginLocalization.string("Confirm Mixed Reset?"),
             isPresented: Binding(
                 get: { pendingMixedReset != nil },
                 set: { isPresented in
@@ -237,22 +231,19 @@ struct CommitRailView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingMixedReset = nil
             }
-            Button(LumiPluginLocalization.string("Mixed Reset", bundle: .module)) {
+            Button(pluginLocalization.string("Mixed Reset")) {
                 guard let commit = pendingMixedReset else { return }
                 pendingMixedReset = nil
                 performMixedReset(to: commit)
             }
         } message: {
-            Text(LumiPluginLocalization.string(
-                "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged.",
-                bundle: .module
-            ))
+            Text(pluginLocalization.string("HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged."))
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Hard Reset?", bundle: .module),
+            pluginLocalization.string("Confirm Hard Reset?"),
             isPresented: Binding(
                 get: { pendingHardReset != nil },
                 set: { isPresented in
@@ -260,22 +251,19 @@ struct CommitRailView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingHardReset = nil
             }
-            Button(LumiPluginLocalization.string("Hard Reset", bundle: .module), role: .destructive) {
+            Button(pluginLocalization.string("Hard Reset"), role: .destructive) {
                 guard let commit = pendingHardReset else { return }
                 pendingHardReset = nil
                 performHardReset(to: commit)
             }
         } message: {
-            Text(LumiPluginLocalization.string(
-                "HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone.",
-                bundle: .module
-            ))
+            Text(pluginLocalization.string("HEAD, the staging area, and tracked working files will be discarded back to this commit. This cannot be undone."))
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Squash Commits?", bundle: .module),
+            pluginLocalization.string("Confirm Squash Commits?"),
             isPresented: Binding(
                 get: { pendingSquash != nil },
                 set: { isPresented in
@@ -284,13 +272,13 @@ struct CommitRailView: View {
             )
         ) {
             TextField(
-                LumiPluginLocalization.string("Squash commit message", bundle: .module),
+                pluginLocalization.string("Squash commit message"),
                 text: $squashMessage
             )
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingSquash = nil
             }
-            Button(LumiPluginLocalization.string("Squash", bundle: .module)) {
+            Button(pluginLocalization.string("Squash")) {
                 guard let commit = pendingSquash else { return }
                 pendingSquash = nil
                 performSquash(to: commit)
@@ -299,14 +287,11 @@ struct CommitRailView: View {
         } message: {
             if let commit = pendingSquash,
                let index = commits.firstIndex(where: { $0.hash == commit.hash }) {
-                Text(String(format: LumiPluginLocalization.string(
-                    "This will combine %lld commits from HEAD to this commit into one.",
-                    bundle: .module
-                ), index + 1))
+                Text(String(format: pluginLocalization.string("This will combine %lld commits from HEAD to this commit into one."), index + 1))
             }
         }
         .alert(
-            LumiPluginLocalization.string("Create Tag", bundle: .module),
+            pluginLocalization.string("Create Tag"),
             isPresented: Binding(
                 get: { pendingCreateTag != nil },
                 set: { isPresented in
@@ -315,13 +300,13 @@ struct CommitRailView: View {
             )
         ) {
             TextField(
-                LumiPluginLocalization.string("Tag name", bundle: .module),
+                pluginLocalization.string("Tag name"),
                 text: $tagName
             )
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingCreateTag = nil
             }
-            Button(LumiPluginLocalization.string("Create", bundle: .module)) {
+            Button(pluginLocalization.string("Create")) {
                 guard let commit = pendingCreateTag else { return }
                 pendingCreateTag = nil
                 performCreateTag(at: commit)
@@ -333,7 +318,7 @@ struct CommitRailView: View {
             }
         }
         .alert(
-            LumiPluginLocalization.string("Create Annotated Tag", bundle: .module),
+            pluginLocalization.string("Create Annotated Tag"),
             isPresented: Binding(
                 get: { pendingCreateAnnotatedTag != nil },
                 set: { isPresented in
@@ -342,17 +327,17 @@ struct CommitRailView: View {
             )
         ) {
             TextField(
-                LumiPluginLocalization.string("Tag name", bundle: .module),
+                pluginLocalization.string("Tag name"),
                 text: $annotatedTagName
             )
             TextField(
-                LumiPluginLocalization.string("Tag message", bundle: .module),
+                pluginLocalization.string("Tag message"),
                 text: $annotatedTagMessage
             )
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingCreateAnnotatedTag = nil
             }
-            Button(LumiPluginLocalization.string("Create", bundle: .module)) {
+            Button(pluginLocalization.string("Create")) {
                 guard let commit = pendingCreateAnnotatedTag else { return }
                 pendingCreateAnnotatedTag = nil
                 performCreateAnnotatedTag(at: commit)
@@ -367,7 +352,7 @@ struct CommitRailView: View {
             }
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Delete Tag?", bundle: .module),
+            pluginLocalization.string("Confirm Delete Tag?"),
             isPresented: Binding(
                 get: { pendingDeleteTag != nil },
                 set: { isPresented in
@@ -375,24 +360,21 @@ struct CommitRailView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingDeleteTag = nil
             }
-            Button(LumiPluginLocalization.string("Delete Tag", bundle: .module), role: .destructive) {
+            Button(pluginLocalization.string("Delete Tag"), role: .destructive) {
                 guard let tag = pendingDeleteTag else { return }
                 pendingDeleteTag = nil
                 performDeleteTag(named: tag)
             }
         } message: {
             if let tag = pendingDeleteTag {
-                Text(String(format: LumiPluginLocalization.string(
-                    "Delete tag \"%@\"? This cannot be undone.",
-                    bundle: .module
-                ), tag))
+                Text(String(format: pluginLocalization.string("Delete tag \"%@\"? This cannot be undone."), tag))
             }
         }
         .alert(
-            LumiPluginLocalization.string("Confirm Delete Remote Tag?", bundle: .module),
+            pluginLocalization.string("Confirm Delete Remote Tag?"),
             isPresented: Binding(
                 get: { pendingDeleteRemoteTag != nil },
                 set: { isPresented in
@@ -400,20 +382,17 @@ struct CommitRailView: View {
                 }
             )
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {
                 pendingDeleteRemoteTag = nil
             }
-            Button(LumiPluginLocalization.string("Delete Remote Tag", bundle: .module), role: .destructive) {
+            Button(pluginLocalization.string("Delete Remote Tag"), role: .destructive) {
                 guard let tag = pendingDeleteRemoteTag else { return }
                 pendingDeleteRemoteTag = nil
                 performDeleteRemoteTag(named: tag)
             }
         } message: {
             if let tag = pendingDeleteRemoteTag {
-                Text(String(format: LumiPluginLocalization.string(
-                    "Delete remote tag \"%@\"?",
-                    bundle: .module
-                ), tag))
+                Text(String(format: pluginLocalization.string("Delete remote tag \"%@\"?"), tag))
             }
         }
         // 项目 / 选中 commit / 仓库数据变化 → 刷新列表或选中态高亮。
@@ -464,14 +443,14 @@ struct CommitRailView: View {
         } else if commits.isEmpty, let loadError {
             AppEmptyState(
                 icon: "exclamationmark.triangle",
-                title: LumiPluginLocalization.string("Unable to Load Commits", bundle: .module),
+                title: pluginLocalization.string("Unable to Load Commits"),
                 description: loadError
             )
         } else if commits.isEmpty {
             AppEmptyState(
                 icon: "clock",
-                title: LumiPluginLocalization.string("No Commits", bundle: .module),
-                description: LumiPluginLocalization.string("This repository has no commits yet.", bundle: .module)
+                title: pluginLocalization.string("No Commits"),
+                description: pluginLocalization.string("This repository has no commits yet.")
             )
         } else {
             VStack(spacing: 0) {
@@ -626,7 +605,7 @@ struct CommitRailView: View {
                 pendingCreateTag = commit
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Create Tag", bundle: .module),
+                    pluginLocalization.string("Create Tag"),
                     systemImage: "tag"
                 )
             }
@@ -639,7 +618,7 @@ struct CommitRailView: View {
                 pendingCreateAnnotatedTag = commit
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Create Annotated Tag", bundle: .module),
+                    pluginLocalization.string("Create Annotated Tag"),
                     systemImage: "tag.fill"
                 )
             }
@@ -653,7 +632,7 @@ struct CommitRailView: View {
                                 performPushTag(named: tag)
                             } label: {
                                 Label(
-                                    LumiPluginLocalization.string("Push Tag", bundle: .module),
+                                    pluginLocalization.string("Push Tag"),
                                     systemImage: "arrow.up.circle"
                                 )
                             }
@@ -662,7 +641,7 @@ struct CommitRailView: View {
                                 pendingDeleteRemoteTag = tag
                             } label: {
                                 Label(
-                                    LumiPluginLocalization.string("Delete Remote Tag", bundle: .module),
+                                    pluginLocalization.string("Delete Remote Tag"),
                                     systemImage: "icloud.slash"
                                 )
                             }
@@ -673,7 +652,7 @@ struct CommitRailView: View {
                                 pendingDeleteTag = tag
                             } label: {
                                 Label(
-                                    LumiPluginLocalization.string("Delete Tag", bundle: .module),
+                                    pluginLocalization.string("Delete Tag"),
                                     systemImage: "tag.slash"
                                 )
                             }
@@ -684,7 +663,7 @@ struct CommitRailView: View {
                     }
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Manage Tags", bundle: .module),
+                        pluginLocalization.string("Manage Tags"),
                         systemImage: "tag.fill"
                     )
                 }
@@ -698,7 +677,7 @@ struct CommitRailView: View {
                     pendingUndo = commit
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Undo Commit", bundle: .module),
+                        pluginLocalization.string("Undo Commit"),
                         systemImage: "arrow.uturn.backward"
                     )
                 }
@@ -720,7 +699,7 @@ struct CommitRailView: View {
                 pendingRevert = commit
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Revert This Commit", bundle: .module),
+                    pluginLocalization.string("Revert This Commit"),
                     systemImage: "arrow.counterclockwise"
                 )
             }
@@ -742,7 +721,7 @@ struct CommitRailView: View {
                     pendingSquash = commit
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Squash to Here", bundle: .module),
+                        pluginLocalization.string("Squash to Here"),
                         systemImage: "arrow.triangle.merge"
                     )
                 }
@@ -765,7 +744,7 @@ struct CommitRailView: View {
                     pendingSoftReset = commit
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Soft Reset", bundle: .module),
+                        pluginLocalization.string("Soft Reset"),
                         systemImage: "text.badge.checkmark"
                     )
                 }
@@ -774,7 +753,7 @@ struct CommitRailView: View {
                     pendingMixedReset = commit
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Mixed Reset", bundle: .module),
+                        pluginLocalization.string("Mixed Reset"),
                         systemImage: "list.bullet.rectangle"
                     )
                 }
@@ -783,13 +762,13 @@ struct CommitRailView: View {
                     pendingHardReset = commit
                 } label: {
                     Label(
-                        LumiPluginLocalization.string("Hard Reset", bundle: .module),
+                        pluginLocalization.string("Hard Reset"),
                         systemImage: "trash"
                     )
                 }
             } label: {
                 Label(
-                    LumiPluginLocalization.string("Reset to Here", bundle: .module),
+                    pluginLocalization.string("Reset to Here"),
                     systemImage: "arrow.down.to.line"
                 )
             }
@@ -812,7 +791,7 @@ struct CommitRailView: View {
             pushPopoverCommitHash = commit.hash
             pushError = nil
         }
-        .help(LumiPluginLocalization.string("Click to push to remote", bundle: .module))
+        .help(pluginLocalization.string("Click to push to remote"))
     }
 
     private func pushPopoverContent(for commit: GitCommit) -> some View {
@@ -820,7 +799,7 @@ struct CommitRailView: View {
             HStack {
                 Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.orange)
-                Text(LumiPluginLocalization.string("Push to Remote", bundle: .module))
+                Text(pluginLocalization.string("Push to Remote"))
                     .font(.headline)
                 Spacer()
             }
@@ -831,7 +810,7 @@ struct CommitRailView: View {
                 HStack(spacing: 8) {
                     ProgressView()
                         .controlSize(.small)
-                    Text(LumiPluginLocalization.string("Pushing...", bundle: .module))
+                    Text(pluginLocalization.string("Pushing..."))
                         .font(.body)
                         .foregroundStyle(theme.textSecondary)
                 }
@@ -841,7 +820,7 @@ struct CommitRailView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle.fill")
                             .foregroundColor(.orange)
-                        Text(LumiPluginLocalization.string("Current commit has not been pushed to remote", bundle: .module))
+                        Text(pluginLocalization.string("Current commit has not been pushed to remote"))
                             .font(.body)
                     }
 
@@ -849,14 +828,14 @@ struct CommitRailView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.red)
-                            Text(String(format: LumiPluginLocalization.string("Push failed: %@", bundle: .module), error))
+                            Text(String(format: pluginLocalization.string("Push failed: %@"), error))
                                 .font(.caption)
                                 .foregroundStyle(theme.textSecondary)
                         }
                     }
 
                     HStack(spacing: 12) {
-                        AppButton(LumiPluginLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
+                        AppButton(pluginLocalization.string("Cancel"), style: .secondary, size: .small) {
                             pushPopoverCommitHash = nil
                             pushError = nil
                         }
@@ -940,10 +919,7 @@ struct CommitRailView: View {
     private func performUndo(_ commit: GitCommit) {
         guard let project = projects.currentProject,
               let parentHash = commit.parentHashes.first else {
-            historyError = LumiPluginLocalization.string(
-                "Undoing the initial commit is not supported.",
-                bundle: .module
-            )
+            historyError = pluginLocalization.string("Undoing the initial commit is not supported.")
             return
         }
 
@@ -1276,7 +1252,7 @@ struct CommitRailView: View {
             Spacer(minLength: 0)
             AppIconButton(
                 systemImage: "arrow.up.to.line",
-                label: LumiPluginLocalization.string("Back to Latest Commit", bundle: .module),
+                label: pluginLocalization.string("Back to Latest Commit"),
                 size: .compact
             ) {
                 scrollToLatest(using: proxy)
@@ -1298,7 +1274,7 @@ struct CommitRailView: View {
             } else {
                 AppIconButton(
                     systemImage: "arrow.down.to.line",
-                    label: LumiPluginLocalization.string("Jump to First Commit", bundle: .module),
+                    label: pluginLocalization.string("Jump to First Commit"),
                     size: .compact
                 ) {
                     scrollToOldest(using: proxy)

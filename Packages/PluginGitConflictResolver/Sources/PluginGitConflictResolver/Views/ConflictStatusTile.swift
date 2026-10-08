@@ -32,23 +32,17 @@ public struct ConflictStatusTile: View {
 
     private var statusTitle: String {
         if viewModel.conflictedFiles.isEmpty {
-            return LumiPluginLocalization.string(
-                viewModel.isCherryPicking ? "Cherry-pick pending" : "Merge pending",
-                bundle: .module
-            )
+            return pluginLocalization.string(viewModel.isCherryPicking ? "Cherry-pick pending" : "Merge pending")
         }
-        return String(format: LumiPluginLocalization.string("Conflicts %lld", bundle: .module), viewModel.conflictedFiles.count)
+        return String(format: pluginLocalization.string("Conflicts %lld"), viewModel.conflictedFiles.count)
     }
 
     private var statusHelp: String {
         if viewModel.conflictedFiles.isEmpty {
-            return LumiPluginLocalization.string(
-                viewModel.isCherryPicking
+            return pluginLocalization.string(viewModel.isCherryPicking
                     ? "Cherry-pick is ready to continue. Click to finish it."
-                    : "All conflicts are resolved. Click to finish the merge.",
-                bundle: .module
-            )
+                    : "All conflicts are resolved. Click to finish the merge.")
         }
-        return String(format: LumiPluginLocalization.string("There are %lld conflicted files. Click to resolve them.", bundle: .module), viewModel.conflictedFiles.count)
+        return String(format: pluginLocalization.string("There are %lld conflicted files. Click to resolve them."), viewModel.conflictedFiles.count)
     }
 }

@@ -12,7 +12,7 @@ struct DefaultRootHostView: View {
         VStack(spacing: 0) {
             if let toolbarView = provider.toolbarView {
                 toolbarView
-                    .debugBlockBadge(LumiPluginLocalization.string("Toolbar", bundle: .module), alignment: .bottomLeading)
+                    .debugBlockBadge(pluginLocalization.string("Toolbar"), alignment: .bottomLeading)
                 // 与旧版 AppLayoutView 一致：工具栏下方使用主题分隔线。
                 AppDivider()
             }
@@ -27,7 +27,7 @@ struct DefaultRootHostView: View {
                                 idealWidth: provider.sidebarWidth.idealWidth,
                                 maxWidth: provider.sidebarWidth.maxWidth
                             )
-                            .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
+                            .debugBlockBadge(pluginLocalization.string("Sidebar"), alignment: .bottomLeading)
                             .transition(sidebarTransition)
                             .appSplitDivider(
                                 .trailing,
@@ -53,7 +53,7 @@ struct DefaultRootHostView: View {
                 HStack(spacing: 0) {
                     if let sidebarView = provider.sidebarView, !provider.isSidebarViewHidden {
                         sidebarView
-                            .debugBlockBadge(LumiPluginLocalization.string("Sidebar", bundle: .module), alignment: .bottomLeading)
+                            .debugBlockBadge(pluginLocalization.string("Sidebar"), alignment: .bottomLeading)
                             .transition(sidebarTransition)
                     }
 
@@ -72,7 +72,7 @@ struct DefaultRootHostView: View {
             // 窗口底部状态栏（工具栏的对称位置）。
             if let statusBarView = provider.statusBarView {
                 statusBarView
-                    .debugBlockBadge(LumiPluginLocalization.string("Status Bar", bundle: .module), alignment: .bottomLeading)
+                    .debugBlockBadge(pluginLocalization.string("Status Bar"), alignment: .bottomLeading)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

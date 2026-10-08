@@ -114,7 +114,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: LumiPluginLocalization.string("Conflict Resolver", bundle: .module),
+                title: pluginLocalization.string("Conflict Resolver"),
                 placement: .leading,
                 order: 18
             ) {

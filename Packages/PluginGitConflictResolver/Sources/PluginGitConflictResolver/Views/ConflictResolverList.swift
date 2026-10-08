@@ -43,8 +43,8 @@ public struct ConflictResolverList: View {
                     if viewModel.isLoading && !viewModel.hasLoadedSnapshot {
                         AppStatusBanner(
                             kind: .loading,
-                            title: LumiPluginLocalization.string("Checking conflicts…", bundle: .module),
-                            message: LumiPluginLocalization.string("Reading the current Git operation.", bundle: .module)
+                            title: pluginLocalization.string("Checking conflicts…"),
+                            message: pluginLocalization.string("Reading the current Git operation.")
                         )
                         .frame(maxWidth: .infinity, minHeight: 120)
                     } else if !viewModel.displayedConflictFiles.isEmpty {
@@ -55,27 +55,20 @@ public struct ConflictResolverList: View {
                             )
                         }
                     } else if viewModel.isOperationInProgress {
+                        // 正文区没有文件行可展示时才使用这里的圆形「继续」按钮；
+                        // 正文区有文件行（含已解决/已暂存的文件）时，该入口位于顶部操作栏。
                         VStack(spacing: DesignTokens.Spacing.md) {
                             AppStatusBanner(
                                 kind: .success,
-                                title: LumiPluginLocalization.string(
-                                    viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge ready to complete",
-                                    bundle: .module
-                                ),
-                                message: LumiPluginLocalization.string(
-                                    viewModel.isCherryPicking
+                                title: pluginLocalization.string(viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge ready to complete"),
+                                message: pluginLocalization.string(viewModel.isCherryPicking
                                         ? "All conflicts are resolved. Continue the cherry-pick to finish it."
-                                        : "All conflicts are resolved. Continue the merge to create the merge commit.",
-                                    bundle: .module
-                                )
+                                        : "All conflicts are resolved. Continue the merge to create the merge commit.")
                             )
                             .frame(maxWidth: .infinity, minHeight: 120)
 
                             ContinueMergeCardButton(
-                                title: LumiPluginLocalization.string(
-                                    viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge",
-                                    bundle: .module
-                                ),
+                                title: pluginLocalization.string(viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge"),
                                 systemImage: "arrow.right.circle.fill",
                                 isDisabled: !viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning,
                                 action: continueMerge
@@ -85,7 +78,7 @@ public struct ConflictResolverList: View {
                     } else if viewModel.conflictedFiles.isEmpty {
                         AppEmptyState(
                             icon: "checkmark.circle",
-                            title: LumiPluginLocalization.string("No merge conflicts", bundle: .module)
+                            title: pluginLocalization.string("No merge conflicts")
                         )
                         .frame(maxWidth: .infinity, minHeight: 120)
                     }
@@ -94,29 +87,20 @@ public struct ConflictResolverList: View {
         }
         .padding(DesignTokens.Spacing.md)
         .alert(
-            LumiPluginLocalization.string(
-                viewModel.isCherryPicking ? "Confirm Abort Cherry-pick?" : "Confirm Abort Merge?",
-                bundle: .module
-            ),
+            pluginLocalization.string(viewModel.isCherryPicking ? "Confirm Abort Cherry-pick?" : "Confirm Abort Merge?"),
             isPresented: $showAbortConfirmation
         ) {
-            Button(LumiPluginLocalization.string("Cancel", bundle: .module), role: .cancel) {}
+            Button(pluginLocalization.string("Cancel"), role: .cancel) {}
             Button(
-                LumiPluginLocalization.string(
-                    viewModel.isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
-                    bundle: .module
-                ),
+                pluginLocalization.string(viewModel.isCherryPicking ? "Abort Cherry-pick" : "Abort Merge"),
                 role: .destructive
             ) {
                 abortMerge()
             }
         } message: {
-            Text(LumiPluginLocalization.string(
-                viewModel.isCherryPicking
+            Text(pluginLocalization.string(viewModel.isCherryPicking
                     ? "This discards the in-progress cherry-pick and restores the pre-cherry-pick state."
-                    : "This discards the in-progress merge and restores the pre-merge state.",
-                bundle: .module
-            ))
+                    : "This discards the in-progress merge and restores the pre-merge state."))
         }
         .sheet(
             isPresented: Binding(
@@ -141,7 +125,7 @@ public struct ConflictResolverList: View {
         HStack(alignment: .top, spacing: 12) {
             GlassSectionHeader(
                 icon: "exclamationmark.triangle.fill",
-                title: LumiPluginLocalization.string("Conflict Resolution", bundle: .module),
+                title: pluginLocalization.string("Conflict Resolution"),
                 subtitle: headerSubtitle,
                 iconColor: theme.warning,
                 spacing: DesignTokens.Spacing.xs
@@ -150,11 +134,11 @@ public struct ConflictResolverList: View {
             if let onDismiss {
                 AppCircularIconButton(
                     systemImage: "xmark",
-                    accessibilityLabel: LumiPluginLocalization.string("Close", bundle: .module),
+                    accessibilityLabel: pluginLocalization.string("Close"),
                     size: 28,
                     action: onDismiss
                 )
-                .help(LumiPluginLocalization.string("Close", bundle: .module))
+                .help(pluginLocalization.string("Close"))
             }
         }
     }
@@ -163,37 +147,34 @@ public struct ConflictResolverList: View {
         if !viewModel.conflictedFiles.isEmpty {
             if !pendingStageFiles.isEmpty {
                 if pendingStageFiles.count == viewModel.conflictedFiles.count {
-                    return String(format: LumiPluginLocalization.string("%lld resolved; stage to continue", bundle: .module), pendingStageFiles.count)
+                    return String(format: pluginLocalization.string("%lld resolved; stage to continue"), pendingStageFiles.count)
                 }
-                let unresolved = String(format: LumiPluginLocalization.string("%lld conflicted file(s) remaining", bundle: .module), viewModel.conflictedFiles.count - pendingStageFiles.count)
-                return unresolved + " · " + String(format: LumiPluginLocalization.string("%lld resolved; stage to continue", bundle: .module), pendingStageFiles.count)
+                let unresolved = String(format: pluginLocalization.string("%lld conflicted file(s) remaining"), viewModel.conflictedFiles.count - pendingStageFiles.count)
+                return unresolved + " · " + String(format: pluginLocalization.string("%lld resolved; stage to continue"), pendingStageFiles.count)
             }
             if !stagedResolvedFiles.isEmpty {
-                let unresolved = String(format: LumiPluginLocalization.string("%lld conflicted file(s) remaining", bundle: .module), viewModel.conflictedFiles.count)
-                return unresolved + " · " + String(format: LumiPluginLocalization.string("%lld staged", bundle: .module), stagedResolvedFiles.count)
+                let unresolved = String(format: pluginLocalization.string("%lld conflicted file(s) remaining"), viewModel.conflictedFiles.count)
+                return unresolved + " · " + String(format: pluginLocalization.string("%lld staged"), stagedResolvedFiles.count)
             }
-            return String(format: LumiPluginLocalization.string("%lld conflicted file(s)", bundle: .module), viewModel.conflictedFiles.count)
+            return String(format: pluginLocalization.string("%lld conflicted file(s)"), viewModel.conflictedFiles.count)
         }
         if !pendingStageFiles.isEmpty {
-            return String(format: LumiPluginLocalization.string("%lld resolved; stage to continue", bundle: .module), viewModel.resolvedConflictFiles.count)
+            return String(format: pluginLocalization.string("%lld resolved; stage to continue"), viewModel.resolvedConflictFiles.count)
         }
         if !stagedResolvedFiles.isEmpty {
-            return String(format: LumiPluginLocalization.string("%lld resolved; ready to continue", bundle: .module), stagedResolvedFiles.count)
+            return String(format: pluginLocalization.string("%lld resolved; ready to continue"), stagedResolvedFiles.count)
         }
         if viewModel.isOperationInProgress {
-            return LumiPluginLocalization.string(
-                viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge is ready to continue",
-                bundle: .module
-            )
+            return pluginLocalization.string(viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge is ready to continue")
         }
-        return LumiPluginLocalization.string("No conflicted files", bundle: .module)
+        return pluginLocalization.string("No conflicted files")
     }
 
     private var actionBar: some View {
         HStack(spacing: 8) {
             if !pendingStageFiles.isEmpty {
                 AppButton(
-                    LumiPluginLocalization.string("Stage Resolved Files", bundle: .module),
+                    pluginLocalization.string("Stage Resolved Files"),
                     systemImage: "checkmark.circle",
                     style: .primary,
                     size: .small,
@@ -209,11 +190,21 @@ public struct ConflictResolverList: View {
 
             Spacer(minLength: DesignTokens.Spacing.xl)
 
+            if viewModel.showsToolbarContinueAction {
+                AppButton(
+                    pluginLocalization.string(viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge"),
+                    systemImage: "arrow.right.circle.fill",
+                    // 还有文件待暂存时，「暂存已解决文件」是当前主操作，
+                    // 继续入口退为次要样式，避免两个主按钮争夺注意力。
+                    style: pendingStageFiles.isEmpty ? .primary : .secondary,
+                    size: .small,
+                    action: continueMerge
+                )
+                .disabled(!viewModel.conflictedFiles.isEmpty || isActionRunning)
+            }
+
             AppButton(
-                LumiPluginLocalization.string(
-                    viewModel.isCherryPicking ? "Abort Cherry-pick" : "Abort Merge",
-                    bundle: .module
-                ),
+                pluginLocalization.string(viewModel.isCherryPicking ? "Abort Cherry-pick" : "Abort Merge"),
                 systemImage: "xmark.circle",
                 style: .destructive,
                 size: .small,
@@ -243,23 +234,23 @@ public struct ConflictResolverList: View {
             if isResolved {
                 AppTag(
                     viewModel.conflictedFiles.contains(file)
-                        ? LumiPluginLocalization.string("Resolved; stage to continue", bundle: .module)
-                        : LumiPluginLocalization.string("Staged", bundle: .module),
+                        ? pluginLocalization.string("Resolved; stage to continue")
+                        : pluginLocalization.string("Staged"),
                     systemImage: viewModel.conflictedFiles.contains(file) ? "checkmark" : "checkmark.circle.fill",
                     style: .accent
                 )
             }
-            AppIconButton(systemImage: "doc.on.doc", label: LumiPluginLocalization.string("Copy Path", bundle: .module), tint: theme.textSecondary) {
+            AppIconButton(systemImage: "doc.on.doc", label: pluginLocalization.string("Copy Path"), tint: theme.textSecondary) {
                 copyText(file)
             }
-            AppIconButton(systemImage: "folder", label: LumiPluginLocalization.string("Reveal in Finder", bundle: .module), tint: theme.textSecondary) {
+            AppIconButton(systemImage: "folder", label: pluginLocalization.string("Reveal in Finder"), tint: theme.textSecondary) {
                 reveal(file)
             }
             AppIconButton(systemImage: "ellipsis.circle", tint: theme.textSecondary) {
                 moreActionsFile = moreActionsFile == file ? nil : file
             }
-            .accessibilityLabel(LumiPluginLocalization.string("More Actions", bundle: .module))
-            .help(LumiPluginLocalization.string("More Actions", bundle: .module))
+            .accessibilityLabel(pluginLocalization.string("More Actions"))
+            .help(pluginLocalization.string("More Actions"))
             .disabled(isActionRunning)
             .popover(
                 isPresented: moreActionsBinding(for: file),
@@ -354,12 +345,9 @@ public struct ConflictResolverList: View {
     private func continueMerge() {
         guard let url = projects.currentProject?.url else { return }
         guard viewModel.conflictedFiles.isEmpty else {
-            actionError = LumiPluginLocalization.string(
-                viewModel.isCherryPicking
+            actionError = pluginLocalization.string(viewModel.isCherryPicking
                     ? "Resolve all conflicts before continuing the cherry-pick."
-                    : "Resolve all conflicts before continuing the merge.",
-                bundle: .module
-            )
+                    : "Resolve all conflicts before continuing the merge.")
             return
         }
         isActionRunning = true
@@ -470,32 +458,32 @@ private struct ConflictFileActionsPopover: View {
         ) {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 ConflictFileActionButton(
-                    title: LumiPluginLocalization.string("Use Ours", bundle: .module),
+                    title: pluginLocalization.string("Use Ours"),
                     systemImage: "arrow.left",
                     style: .ghost,
                     action: onUseOurs
                 )
                 ConflictFileActionButton(
-                    title: LumiPluginLocalization.string("Use Theirs", bundle: .module),
+                    title: pluginLocalization.string("Use Theirs"),
                     systemImage: "arrow.right",
                     style: .ghost,
                     action: onUseTheirs
                 )
                 ConflictFileActionButton(
-                    title: LumiPluginLocalization.string("Use Base", bundle: .module),
+                    title: pluginLocalization.string("Use Base"),
                     systemImage: "arrow.uturn.backward",
                     style: .ghost,
                     action: onUseBase
                 )
                 ConflictFileActionButton(
-                    title: LumiPluginLocalization.string("Open in VS Code", bundle: .module),
+                    title: pluginLocalization.string("Open in VS Code"),
                     systemImage: "chevron.left.forwardslash.chevron.right",
                     style: .ghost,
                     action: onOpenInVSCode
                 )
                 AppDivider()
                 ConflictFileActionButton(
-                    title: LumiPluginLocalization.string("View Conflict Diff", bundle: .module),
+                    title: pluginLocalization.string("View Conflict Diff"),
                     systemImage: "doc.text.magnifyingglass",
                     style: .secondary,
                     action: onViewDiff
@@ -577,7 +565,8 @@ private struct ConflictFileActionButton: View {
 }
 
 /// 圆形「继续合并」按钮：绿色圆形按钮（内含箭头图标）+ 下方文字标签。
-/// 仅用于冲突弹窗正文中的继续合并入口；顶部操作栏（终止合并一行）保持原样式。
+/// 只在弹层正文区没有文件行可展示时使用；正文区有文件行时改由顶部
+/// 操作栏的「继续」按钮提供入口，避免同一屏出现两个相同入口。
 private struct ContinueMergeCardButton: View {
     let title: String
     let systemImage: String

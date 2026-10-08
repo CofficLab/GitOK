@@ -6,45 +6,45 @@ import KernelCore
 /// 与新版本其它插件包（PluginSettingGeneral / PluginThemePack）一致，
 /// 通过 `LumiPluginLocalization` 走运行时本地化（`Resources/Localizable.xcstrings`）。
 enum PluginPluginManagerText {
-    static let plugins = LumiPluginLocalization.string("Plugin Management", bundle: .module)
-    static let pluginsHint = LumiPluginLocalization.string("Manage all registered plugins", bundle: .module)
-    static let aboutDescription = LumiPluginLocalization.string("List and display all registered plugins.", bundle: .module)
-    static let searchPlugins = LumiPluginLocalization.string("Search Plugins", bundle: .module)
-    static let noPluginsFound = LumiPluginLocalization.string("No Plugins Found", bundle: .module)
-    static let selectPlugin = LumiPluginLocalization.string("Select a Plugin", bundle: .module)
-    static let pluginsCount = LumiPluginLocalization.string("%lld Plugins", bundle: .module)
-    static let enabledCount = LumiPluginLocalization.string("%lld Enabled", bundle: .module)
-    static let allCategories = LumiPluginLocalization.string("All", bundle: .module)
-    static let alwaysOn = LumiPluginLocalization.string("Always On", bundle: .module)
-    static let disabled = LumiPluginLocalization.string("Disabled", bundle: .module)
-    static let disabledPermanently = LumiPluginLocalization.string("Deactivated", bundle: .module)
-    static let enabled = LumiPluginLocalization.string("Enabled", bundle: .module)
-    static let noDetailsProvided = LumiPluginLocalization.string("No Details Available", bundle: .module)
-    static let noDetailsHint = LumiPluginLocalization.string("The plugin author did not provide a detail view.", bundle: .module)
-    static let enable = LumiPluginLocalization.string("Enable", bundle: .module)
+    static let plugins = pluginLocalization.string("Plugin Management")
+    static let pluginsHint = pluginLocalization.string("Manage all registered plugins")
+    static let aboutDescription = pluginLocalization.string("List and display all registered plugins.")
+    static let searchPlugins = pluginLocalization.string("Search Plugins")
+    static let noPluginsFound = pluginLocalization.string("No Plugins Found")
+    static let selectPlugin = pluginLocalization.string("Select a Plugin")
+    static let pluginsCount = pluginLocalization.string("%lld Plugins")
+    static let enabledCount = pluginLocalization.string("%lld Enabled")
+    static let allCategories = pluginLocalization.string("All")
+    static let alwaysOn = pluginLocalization.string("Always On")
+    static let disabled = pluginLocalization.string("Disabled")
+    static let disabledPermanently = pluginLocalization.string("Deactivated")
+    static let enabled = pluginLocalization.string("Enabled")
+    static let noDetailsProvided = pluginLocalization.string("No Details Available")
+    static let noDetailsHint = pluginLocalization.string("The plugin author did not provide a detail view.")
+    static let enable = pluginLocalization.string("Enable")
 
     // 详情面板信息区
-    static let categoryLabel = LumiPluginLocalization.string("Category", bundle: .module)
-    static let versionLabel = LumiPluginLocalization.string("Version", bundle: .module)
-    static let policyLabel = LumiPluginLocalization.string("Policy", bundle: .module)
-    static let identifierLabel = LumiPluginLocalization.string("Identifier", bundle: .module)
-    static let permissionsTitle = LumiPluginLocalization.string("Permissions", bundle: .module)
+    static let categoryLabel = pluginLocalization.string("Category")
+    static let versionLabel = pluginLocalization.string("Version")
+    static let policyLabel = pluginLocalization.string("Policy")
+    static let identifierLabel = pluginLocalization.string("Identifier")
+    static let permissionsTitle = pluginLocalization.string("Permissions")
 
     // 关于视图
-    static let browsePlugins = LumiPluginLocalization.string("Browse Useful Plugins", bundle: .module)
-    static let coreCapabilities = LumiPluginLocalization.string("Core Capabilities", bundle: .module)
-    static let whereToFindIt = LumiPluginLocalization.string("Where to Find It", bundle: .module)
-    static let settingsEntry = LumiPluginLocalization.string("Settings → Plugin Management", bundle: .module)
-    static let capabilityCatalogTitle = LumiPluginLocalization.string("Plugin Catalog", bundle: .module)
-    static let capabilityCatalogDescription = LumiPluginLocalization.string("View all registered plugins at a glance.", bundle: .module)
-    static let capabilitySearchTitle = LumiPluginLocalization.string("Search", bundle: .module)
-    static let capabilitySearchDescription = LumiPluginLocalization.string("Find plugins instantly by name.", bundle: .module)
-    static let capabilityFilterTitle = LumiPluginLocalization.string("Category Filter", bundle: .module)
-    static let capabilityFilterDescription = LumiPluginLocalization.string("Filter by plugin category.", bundle: .module)
-    static let capabilityDetailTitle = LumiPluginLocalization.string("Plugin Details", bundle: .module)
-    static let capabilityDetailDescription = LumiPluginLocalization.string("View each plugin's description and stage.", bundle: .module)
-    static let capabilityOrderTitle = LumiPluginLocalization.string("Ordering", bundle: .module)
-    static let capabilityOrderDescription = LumiPluginLocalization.string("Plugins are shown in registration order.", bundle: .module)
+    static let browsePlugins = pluginLocalization.string("Browse Useful Plugins")
+    static let coreCapabilities = pluginLocalization.string("Core Capabilities")
+    static let whereToFindIt = pluginLocalization.string("Where to Find It")
+    static let settingsEntry = pluginLocalization.string("Settings → Plugin Management")
+    static let capabilityCatalogTitle = pluginLocalization.string("Plugin Catalog")
+    static let capabilityCatalogDescription = pluginLocalization.string("View all registered plugins at a glance.")
+    static let capabilitySearchTitle = pluginLocalization.string("Search")
+    static let capabilitySearchDescription = pluginLocalization.string("Find plugins instantly by name.")
+    static let capabilityFilterTitle = pluginLocalization.string("Category Filter")
+    static let capabilityFilterDescription = pluginLocalization.string("Filter by plugin category.")
+    static let capabilityDetailTitle = pluginLocalization.string("Plugin Details")
+    static let capabilityDetailDescription = pluginLocalization.string("View each plugin's description and stage.")
+    static let capabilityOrderTitle = pluginLocalization.string("Ordering")
+    static let capabilityOrderDescription = pluginLocalization.string("Plugins are shown in registration order.")
 }
 
 // MARK: - 新版枚举的展示映射（对齐旧版 LumiPluginCategory / Stage / Policy 语义）
@@ -63,16 +63,16 @@ extension PluginCategory {
 
     var displayName: String {
         switch self {
-        case .core: LumiPluginLocalization.string("Core", bundle: .module)
-        case .chat: LumiPluginLocalization.string("Chat", bundle: .module)
-        case .llm: LumiPluginLocalization.string("Model", bundle: .module)
-        case .editor: LumiPluginLocalization.string("Editor", bundle: .module)
-        case .project: LumiPluginLocalization.string("Project", bundle: .module)
-        case .feature: LumiPluginLocalization.string("Feature", bundle: .module)
-        case .system: LumiPluginLocalization.string("System", bundle: .module)
-        case .design: LumiPluginLocalization.string("Design", bundle: .module)
-        case .integration: LumiPluginLocalization.string("Integration", bundle: .module)
-        case .general: LumiPluginLocalization.string("General", bundle: .module)
+        case .core: pluginLocalization.string("Core")
+        case .chat: pluginLocalization.string("Chat")
+        case .llm: pluginLocalization.string("Model")
+        case .editor: pluginLocalization.string("Editor")
+        case .project: pluginLocalization.string("Project")
+        case .feature: pluginLocalization.string("Feature")
+        case .system: pluginLocalization.string("System")
+        case .design: pluginLocalization.string("Design")
+        case .integration: pluginLocalization.string("Integration")
+        case .general: pluginLocalization.string("General")
         }
     }
 
@@ -110,10 +110,10 @@ extension PluginCategory {
 extension PluginStage {
     var displayName: String {
         switch self {
-        case .experimental: LumiPluginLocalization.string("Experimental", bundle: .module)
-        case .preview: LumiPluginLocalization.string("Preview", bundle: .module)
-        case .stable: LumiPluginLocalization.string("Stable", bundle: .module)
-        case .deprecated: LumiPluginLocalization.string("Deprecated", bundle: .module)
+        case .experimental: pluginLocalization.string("Experimental")
+        case .preview: pluginLocalization.string("Preview")
+        case .stable: pluginLocalization.string("Stable")
+        case .deprecated: pluginLocalization.string("Deprecated")
         }
     }
 }

@@ -33,9 +33,9 @@ public enum ResponseVerbosity: CaseIterable, Codable, Identifiable, RawRepresent
 
     public var displayName: String {
         switch self {
-        case .brief: LumiPluginLocalization.string("Brief", bundle: .module)
-        case .standard: LumiPluginLocalization.string("Standard", bundle: .module)
-        case .detailed: LumiPluginLocalization.string("Detailed", bundle: .module)
+        case .brief: pluginLocalization.string("Brief")
+        case .standard: pluginLocalization.string("Standard")
+        case .detailed: pluginLocalization.string("Detailed")
         }
     }
 
@@ -49,9 +49,9 @@ public enum ResponseVerbosity: CaseIterable, Codable, Identifiable, RawRepresent
 
     public var description: String {
         switch self {
-        case .brief: LumiPluginLocalization.string("Return only core conclusions", bundle: .module)
-        case .standard: LumiPluginLocalization.string("Include necessary explanations and steps", bundle: .module)
-        case .detailed: LumiPluginLocalization.string("Include full reasoning and context", bundle: .module)
+        case .brief: pluginLocalization.string("Return only core conclusions")
+        case .standard: pluginLocalization.string("Include necessary explanations and steps")
+        case .detailed: pluginLocalization.string("Include full reasoning and context")
         }
     }
 }

@@ -36,7 +36,7 @@ struct ManualsBrowserView: View {
             HStack(spacing: 8) {
                 Image(systemName: "book")
                     .foregroundStyle(.secondary)
-                Text(LumiPluginLocalization.string("User Manual", bundle: .module))
+                Text(pluginLocalization.string("User Manual"))
                     .font(.headline)
             }
             .padding(.horizontal, 14)
@@ -110,7 +110,7 @@ struct ManualsBrowserView: View {
                     Image(systemName: "book")
                         .font(.system(size: 34))
                         .foregroundStyle(.secondary)
-                    Text(LumiPluginLocalization.string("No user manual yet.", bundle: .module))
+                    Text(pluginLocalization.string("No user manual yet."))
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }

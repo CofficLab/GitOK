@@ -26,6 +26,7 @@ class GitOKUITestCase: XCTestCase {
         app = XCUIApplication()
         app.launchArguments += [
             "--ui-testing",
+            "-ApplePersistenceIgnoreState", "YES",
             "-AppleLanguages", "(\(uiTestLanguage))",
             "-AppleLocale", uiTestLocale,
         ]
@@ -67,6 +68,14 @@ class GitOKUITestCase: XCTestCase {
 
     func element(identifier: String) -> XCUIElement {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+    }
+
+    /// 按可见文本（label/value）查找元素——LumiSettings 渲染的设置侧边栏
+    /// 条目不带 accessibility identifier，只能按标题定位。
+    func element(label: String) -> XCUIElement {
+        app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@ OR value == %@", label, label))
+            .firstMatch
     }
 
     func replaceText(in element: XCUIElement, with value: String) {

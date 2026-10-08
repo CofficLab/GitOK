@@ -34,7 +34,7 @@ struct CloneInProgressView: View {
                 .foregroundStyle(theme.primary)
 
             VStack(spacing: 8) {
-                Text(LumiPluginLocalization.string("Cloning repository", bundle: .module))
+                Text(pluginLocalization.string("Cloning repository"))
                     .font(.appTitle)
                     .foregroundStyle(theme.textPrimary)
 
@@ -42,10 +42,7 @@ struct CloneInProgressView: View {
                     .font(.appBody)
                     .foregroundStyle(theme.textSecondary)
 
-                Text(LumiPluginLocalization.string(
-                    "GitOK is cloning this repository in the background.",
-                    bundle: .module
-                ))
+                Text(pluginLocalization.string("GitOK is cloning this repository in the background."))
                 .font(.callout)
                 .foregroundStyle(theme.textTertiary)
                 .multilineTextAlignment(.center)

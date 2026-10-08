@@ -59,16 +59,16 @@ struct GeneralSettingsDetailView: View {
     /// 官网链接；点击「访问」使用系统默认浏览器打开。
     private var websiteSection: some View {
         AppSettingSection(
-            title: LumiPluginLocalization.string("Website", bundle: .module),
+            title: pluginLocalization.string("Website"),
             titleAlignment: .leading
         ) {
             AppSettingRow(
-                title: LumiPluginLocalization.string("Official Website", bundle: .module),
+                title: pluginLocalization.string("Official Website"),
                 description: Self.websiteURLString,
                 icon: "globe"
             ) {
                 AppButton(
-                    LumiPluginLocalization.string("Visit", bundle: .module),
+                    pluginLocalization.string("Visit"),
                     systemImage: "arrow.up.forward.square",
                     style: .secondary,
                     size: .small
@@ -83,15 +83,15 @@ struct GeneralSettingsDetailView: View {
 
     private var updatesSection: some View {
         AppSettingSection(
-            title: LumiPluginLocalization.string("Updates", bundle: .module),
+            title: pluginLocalization.string("Updates"),
             titleAlignment: .leading
         ) {
             AppSettingRow(
-                title: LumiPluginLocalization.string("Check for Updates", bundle: .module),
+                title: pluginLocalization.string("Check for Updates"),
                 icon: "arrow.triangle.2.circlepath"
             ) {
                 AppButton(
-                    LumiPluginLocalization.string("Check", bundle: .module),
+                    pluginLocalization.string("Check"),
                     systemImage: "arrow.clockwise",
                     style: .secondary,
                     size: .small
@@ -111,7 +111,7 @@ struct GeneralSettingsDetailView: View {
     private var debugHeader: some View {
         HStack(spacing: 10) {
             Spacer()
-            AppButton(LumiPluginLocalization.string("Open Data Directory", bundle: .module), systemImage: "folder", style: .warning, size: .small) {
+            AppButton(pluginLocalization.string("Open Data Directory"), systemImage: "folder", style: .warning, size: .small) {
                 openDataDirectory()
             }
         }
@@ -123,16 +123,16 @@ struct GeneralSettingsDetailView: View {
 
     private var manualsSection: some View {
         AppSettingSection(
-            title: LumiPluginLocalization.string("User Manual", bundle: .module),
+            title: pluginLocalization.string("User Manual"),
             titleAlignment: .leading
         ) {
             AppSettingRow(
-                title: LumiPluginLocalization.string("User Manual", bundle: .module),
-                description: LumiPluginLocalization.string("Guides for each feature.", bundle: .module),
+                title: pluginLocalization.string("User Manual"),
+                description: pluginLocalization.string("Guides for each feature."),
                 icon: "book"
             ) {
                 AppButton(
-                    LumiPluginLocalization.string("Open", bundle: .module),
+                    pluginLocalization.string("Open"),
                     systemImage: "book.pages",
                     style: .secondary,
                     size: .small
@@ -147,12 +147,12 @@ struct GeneralSettingsDetailView: View {
 
     private var appSection: some View {
         AppSettingSection(
-            title: LumiPluginLocalization.string("GitOK", bundle: .module),
+            title: pluginLocalization.string("GitOK"),
             titleAlignment: .leading
         ) {
             VStack(spacing: 0) {
                 AppSettingRow(
-                    title: LumiPluginLocalization.string("Name", bundle: .module),
+                    title: pluginLocalization.string("Name"),
                     description: bundleInfo.name,
                     icon: "app"
                 ) {
@@ -161,7 +161,7 @@ struct GeneralSettingsDetailView: View {
                 Divider()
                     .padding(.vertical, 8)
                 AppSettingRow(
-                    title: LumiPluginLocalization.string("Bundle ID", bundle: .module),
+                    title: pluginLocalization.string("Bundle ID"),
                     description: bundleInfo.bundleIdentifier,
                     icon: "number"
                 ) {
@@ -170,8 +170,8 @@ struct GeneralSettingsDetailView: View {
                 Divider()
                     .padding(.vertical, 8)
                 AppSettingRow(
-                    title: LumiPluginLocalization.string("Version", bundle: .module),
-                    description: bundleInfo.version ?? LumiPluginLocalization.string("Not Set", bundle: .module),
+                    title: pluginLocalization.string("Version"),
+                    description: bundleInfo.version ?? pluginLocalization.string("Not Set"),
                     icon: "info.circle"
                 ) {
                     EmptyView()
@@ -179,8 +179,8 @@ struct GeneralSettingsDetailView: View {
                 Divider()
                     .padding(.vertical, 8)
                 AppSettingRow(
-                    title: LumiPluginLocalization.string("Build", bundle: .module),
-                    description: bundleInfo.build ?? LumiPluginLocalization.string("Not Set", bundle: .module),
+                    title: pluginLocalization.string("Build"),
+                    description: bundleInfo.build ?? pluginLocalization.string("Not Set"),
                     icon: "hammer"
                 ) {
                     EmptyView()

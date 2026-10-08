@@ -38,7 +38,7 @@ struct PluginDefaultAboutView: View {
                     .init(
                         icon: "checkmark.seal",
                         tint: theme.success,
-                        title: LumiPluginLocalization.string("Stage", bundle: .module),
+                        title: pluginLocalization.string("Stage"),
                         description: metadata.stage.displayName
                     ),
                     .init(

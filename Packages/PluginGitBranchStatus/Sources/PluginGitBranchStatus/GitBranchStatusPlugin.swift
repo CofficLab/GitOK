@@ -83,7 +83,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
             toolbar.addToolbarItems([
                 ToolbarItem(
                     id: Self.toolbarItemID,
-                    title: LumiPluginLocalization.string("Current Branch", bundle: .module),
+                    title: pluginLocalization.string("Current Branch"),
                     placement: .trailing,
                     category: .project,
                     // 负 order 使其排在 trailing 组所有项（OpenIn 最小 10、
