@@ -1,3 +1,4 @@
+import AppKit
 import KitGit
 import LumiUI
 import SwiftUI
@@ -199,10 +200,16 @@ struct CommitDetailLayout: View {
 
 // MARK: - Commit Info Header
 
-/// commit 信息头：作者 + 时间 + 消息 + 短哈希。
+/// commit 信息头：作者 + 时间 + 消息 + 短哈希（点击复制完整 hash）。
 struct CommitInfoHeaderView: View {
     @LumiTheme private var theme
     let commit: GitCommit
+    /// 悬停状态（提升复制胶囊的可点击反馈）。
+    @State private var isHoveringCopy = false
+    /// 复制成功后的短暂反馈状态。
+    @State private var didCopy = false
+    /// 复制反馈的代次：连点时只让最后一次请求重置状态。
+    @State private var copyEpoch = 0
 
     var body: some View {
         HStack(spacing: 10) {
@@ -224,18 +231,66 @@ struct CommitInfoHeaderView: View {
                 }
             }
             Spacer()
-            Text(commit.shortHash)
-                .font(.system(size: 11, weight: .medium, design: .monospaced))
-                .foregroundStyle(theme.textSecondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(
-                    RoundedRectangle(cornerRadius: 5, style: .continuous)
-                        .fill(theme.textSecondary.opacity(0.1))
-                )
+            copyHashButton
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
+    }
+
+    // MARK: - Action
+
+    /// 复制完整 40 位 hash 到剪贴板，并给出短暂的成功反馈。
+    private func copyFullHash() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(commit.hash, forType: .string)
+        copyEpoch += 1
+        let epoch = copyEpoch
+        withAnimation(.easeOut(duration: 0.15)) {
+            didCopy = true
+        }
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            // 连点时旧任务不重置反馈，只有最后一次点击的计时生效。
+            guard epoch == copyEpoch else { return }
+            withAnimation(.easeOut(duration: 0.15)) {
+                didCopy = false
+            }
+        }
+    }
+
+    // MARK: - View
+
+    /// 短哈希胶囊：点击复制完整 hash，悬停高亮，复制后短暂显示对勾。
+    private var copyHashButton: some View {
+        Button(action: copyFullHash) {
+            HStack(spacing: 4) {
+                if didCopy {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(theme.success)
+                        .transition(.opacity.combined(with: .scale(scale: 0.6)))
+                        .accessibilityIdentifier("gitok.commit.detail.hash-copied")
+                }
+                Text(commit.shortHash)
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+            }
+            .foregroundStyle(didCopy ? theme.success : theme.textSecondary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(
+                RoundedRectangle(cornerRadius: 5, style: .continuous)
+                    .fill(
+                        theme.textSecondary.opacity(
+                            didCopy ? 0.16 : (isHoveringCopy ? 0.14 : 0.1)
+                        )
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { isHoveringCopy = $0 }
+        .help(didCopy ? loc("Copied") : loc("Copy full hash"))
+        .accessibilityLabel(didCopy ? loc("Copied") : loc("Copy full hash"))
+        .accessibilityIdentifier("gitok.commit.detail.hash-copy")
     }
 
     private static func relativeTime(_ date: Date) -> String {
