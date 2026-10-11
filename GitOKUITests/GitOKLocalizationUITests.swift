@@ -75,7 +75,7 @@ class GitOKLocalizationUITestCase: GitOKUITestCase {
             NSPredicate(format: "label == %@ OR value == %@", expected.general, expected.general)
         ).firstMatch
         XCTAssertTrue(
-            general.waitForExistence(timeout: 5),
+            general.waitForExistence(timeout: 10),
             "General settings section was not localized: label=\(general.label), value=\(general.value ?? "nil")"
         )
     }

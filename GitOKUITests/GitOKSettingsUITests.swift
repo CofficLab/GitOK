@@ -22,8 +22,13 @@ final class GitOKSettingsUITests: GitOKUITestCase {
 
     private func selectSettingsEntry(_ title: String) {
         let entry = settingsEntry(title)
-        XCTAssertTrue(entry.waitForExistence(timeout: 5), "Settings section \(title) is missing")
-        XCTAssertTrue(entry.isHittable, "Settings section \(title) is not reachable")
+        // 全量串跑时机器负载更高，设置窗口与侧边栏渲染更慢，
+        // 给足等待余量（2s/5s 在批量运行下偶发超时）。
+        XCTAssertTrue(entry.waitForExistence(timeout: 10), "Settings section \(title) is missing")
+        XCTAssertTrue(
+            waitForPredicate(NSPredicate(format: "isHittable == true"), on: entry, timeout: 10),
+            "Settings section \(title) is not reachable"
+        )
         entry.click()
         XCTAssertTrue(entry.exists, "Settings section \(title) disappeared after selection")
     }
@@ -38,7 +43,7 @@ final class GitOKSettingsUITests: GitOKUITestCase {
 
         for title in settingsEntryTitles {
             XCTAssertTrue(
-                settingsEntry(title).waitForExistence(timeout: 2),
+                settingsEntry(title).waitForExistence(timeout: 10),
                 "Settings sidebar is missing the \(title) section"
             )
         }
