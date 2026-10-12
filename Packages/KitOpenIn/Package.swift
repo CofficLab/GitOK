@@ -15,14 +15,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderProjects"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
             revision: "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
         ),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.2.2")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.6.0")
     ],
     targets: [
         .target(

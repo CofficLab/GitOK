@@ -8,7 +8,7 @@ let package = Package(
         .library(name: "KitGitOKUpdate", targets: ["KitGitOKUpdate"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.4"),
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.10.0"),
     ],
     targets: [
         .target(

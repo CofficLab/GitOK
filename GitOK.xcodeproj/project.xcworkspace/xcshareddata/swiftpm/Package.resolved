@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginToast.git",
       "state" : {
-        "revision" : "0dcd45a9866bffda3147d6fae4d2edd6c46de5a8",
-        "version" : "1.0.1"
+        "revision" : "6633a5cf2ade24d0044a54c149ffc2f43ae5f345",
+        "version" : "1.2.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiProviders.git",
       "state" : {
-        "revision" : "0703d74325475e7112a53dbf7717f702977c653c",
-        "version" : "1.5.0"
+        "revision" : "018b2b299b8c0d1197eeb15ed84fef91017a9e2b",
+        "version" : "1.6.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiThemePack.git",
       "state" : {
-        "revision" : "3157395d3ef65c4d15edd198aad20a1ee35772ae",
-        "version" : "1.0.5"
+        "revision" : "53b356c73565c2d5bcec3d83573236dc71e91f3f",
+        "version" : "1.0.6"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiUI.git",
       "state" : {
-        "revision" : "e54783a431c018a6f4b64797274dbe0118f490d4",
-        "version" : "1.7.0"
+        "revision" : "188ec1668846d4a3f840bcfd61b167d07d6c0a0b",
+        "version" : "1.8.0"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sparkle-project/Sparkle",
       "state" : {
-        "revision" : "ac2def288cbff5cfc7df3ffef6abdf45b72bcb0a",
-        "version" : "2.9.6"
+        "revision" : "eef1a539a373c1f1a320624b1130fc5de7b2e100",
+        "version" : "2.10.0"
       }
     },
     {
@@ -158,8 +158,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-cmark",
       "state" : {
-        "revision" : "924936d0427cb25a61169739a7660230bffa6ea6",
-        "version" : "0.8.0"
+        "revision" : "08ddb528923cc1a6527e02b7a1aee9e516ca749a",
+        "version" : "0.9.0"
       }
     },
     {
