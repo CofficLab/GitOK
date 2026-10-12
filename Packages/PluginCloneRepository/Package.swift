@@ -21,7 +21,7 @@ let package = Package(
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderProjects"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.8.0"),
     ],
     targets: [
         .target(
