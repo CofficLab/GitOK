@@ -147,7 +147,10 @@ private struct ProjectSidebarView: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         LazyVStack(spacing: 2) {
                             ForEach(Array(filteredProjects.enumerated()), id: \.element.id) { index, project in
-                                projectRow(project, isLastPinned: index == (pinnedDividerIndex ?? Int.max) - 1)
+                                projectRow(project)
+                                if index == (pinnedDividerIndex ?? Int.max) - 1 {
+                                    AppDivider().padding(.horizontal, 8)
+                                }
                             }
 
                             // 允许把项目拖到分组末尾；项目管理器会根据项目的置顶状态
@@ -275,7 +278,7 @@ private struct ProjectSidebarView: View {
         return list.firstIndex(where: { !$0.isPinned })
     }
 
-    private func projectRow(_ project: Project, isLastPinned: Bool = false) -> some View {
+    private func projectRow(_ project: Project) -> some View {
         AppSettingsSidebarItem(
             title: project.title,
             systemImage: project.isPinned ? "pin.fill" : "folder",
@@ -358,11 +361,6 @@ private struct ProjectSidebarView: View {
                 onMove: moveProject
             )
         )
-        .overlay(alignment: .bottom) {
-            if isLastPinned {
-                AppDivider().padding(.vertical, 2)
-            }
-        }
     }
 
     private func moveProject(_ draggedID: UUID, before targetID: UUID?) {

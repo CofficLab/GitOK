@@ -1,4 +1,5 @@
 import KernelCore
+import ProviderSettingView
 import SwiftUI
 
 /// KernelFactory — 内核工厂。
@@ -41,8 +42,23 @@ public enum KernelFactory {
         // 默认目录与宿主附加插件在同一个依赖图中统一校验、排序、原子启动。
         // 后续复刻插件只需由 App/专用 Factory 传入，不必继续修改内核工厂。
         try kernel.start(plugins: pluginFactory.makePlugins() + additionalPlugins)
+        resetSettingsSelectionToFirstEntry(in: kernel)
 
         return kernel
+    }
+
+    /// 设置窗口默认选中 order 最小的入口（回归修复）。
+    ///
+    /// `addEntries` 会走 `registerEntries`，其"选中为空则锁定为当时列表第一个"
+    /// 的语义会让**最先注册入口的插件**意外成为默认选中（如 projects），
+    /// 与"默认选中第一个（通用）"的设计意图相悖。全部入口就位后在此重置；
+    /// 本次运行内的用户选择不受影响（选中态在内存中保留，重启后回到第一个）。
+    private static func resetSettingsSelectionToFirstEntry(in kernel: KernelCoreContainer) {
+        guard let settings = kernel.resolveProvider((any SettingViewProviding).self),
+              let firstID = settings.entries.first?.id,
+              settings.selectedEntryID != firstID
+        else { return }
+        settings.selectEntry(id: firstID)
     }
 
     // MARK: - Main View Assembly
