@@ -31,7 +31,7 @@ struct CloneFailedView: View {
     }
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        VStack(spacing: 0) {
             if let task {
                 detail(task)
                     .frame(maxWidth: 620, alignment: .leading)
@@ -146,10 +146,14 @@ struct CloneFailedView: View {
                         .font(.appBodyEmphasized)
                         .foregroundStyle(theme.error)
 
-                        Text(error)
-                            .font(.appMonoCaption)
-                            .foregroundStyle(theme.textPrimary)
-                            .textSelection(.enabled)
+                        ScrollView(.vertical, showsIndicators: false) {
+                            Text(error)
+                                .font(.appMonoCaption)
+                                .foregroundStyle(theme.textPrimary)
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(maxHeight: 200)
                     }
                 }
             }
