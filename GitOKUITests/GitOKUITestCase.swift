@@ -246,6 +246,20 @@ class GitOKUITestCase: XCTestCase {
         try runGit(["commit", "--quiet", "-m", "Initial fixture commit"], in: url)
     }
 
+    /// 执行一次 git 命令但忽略退出码。
+    ///
+    /// 用于搭建夹具状态，例如 `git merge` 在制造冲突时必然以非零码退出，
+    /// 而测试真正关心的是它留下的工作区状态。
+    func runGitAllowingFailure(_ arguments: [String], in repository: URL? = nil) throws {
+        let process = Process()
+        process.executableURL = gitExecutableURL
+        process.arguments = ["-C", (repository ?? repositoryURL).path] + arguments
+        process.standardOutput = Pipe()
+        process.standardError = Pipe()
+        try process.run()
+        process.waitUntilExit()
+    }
+
     private func runGit(_ arguments: [String], in repository: URL) throws {
         let process = Process()
         process.executableURL = gitExecutableURL
@@ -262,7 +276,7 @@ class GitOKUITestCase: XCTestCase {
         }
     }
 
-    private var gitExecutableURL: URL {
+    var gitExecutableURL: URL {
         let developerDirectory = ProcessInfo.processInfo.environment["DEVELOPER_DIR"]
             ?? "/Applications/Xcode.app/Contents/Developer"
         let xcodeGit = URL(fileURLWithPath: developerDirectory)
