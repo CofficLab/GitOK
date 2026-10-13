@@ -1,5 +1,5 @@
 {
-  "originHash" : "3e1b706e695ac0c47a74f8b030fc867174b43a2b416912cf14b7d5f78a1a7d4b",
+  "originHash" : "71d8b7bbd26dbfacce9b3ffc4801de3e8720791323c8961d0737b4e57a60e053",
   "pins" : [
     {
       "identity" : "libgit2swift",
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginToast.git",
       "state" : {
-        "revision" : "72b6380e3076c077f162258935979bcc218ba6db",
-        "version" : "1.2.1"
+        "revision" : "6633a5cf2ade24d0044a54c149ffc2f43ae5f345",
+        "version" : "1.2.0"
       }
     },
     {

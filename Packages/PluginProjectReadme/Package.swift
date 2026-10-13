@@ -11,7 +11,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../ProviderProjectReadme"),
-        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
+        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.0.2"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.6.0")
     ],
     targets: [
