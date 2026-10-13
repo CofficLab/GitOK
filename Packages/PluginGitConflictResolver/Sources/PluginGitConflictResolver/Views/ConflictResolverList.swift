@@ -33,59 +33,18 @@ public struct ConflictResolverList: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
+                .padding(.horizontal, DesignTokens.Spacing.md)
             actionBar
+                .padding(.horizontal, DesignTokens.Spacing.md)
             if let actionError {
                 AppErrorBanner(message: LocalizedStringKey(actionError))
+                    .padding(.horizontal, DesignTokens.Spacing.md)
             }
             AppDivider()
-            ScrollView {
-                VStack(alignment: .leading, spacing: 4) {
-                    if viewModel.isLoading && !viewModel.hasLoadedSnapshot {
-                        AppStatusBanner(
-                            kind: .loading,
-                            title: pluginLocalization.string("Checking conflicts…"),
-                            message: pluginLocalization.string("Reading the current Git operation.")
-                        )
-                        .frame(maxWidth: .infinity, minHeight: 120)
-                    } else if !viewModel.displayedConflictFiles.isEmpty {
-                        ForEach(viewModel.displayedConflictFiles, id: \.self) { file in
-                            conflictRow(
-                                file,
-                                isResolved: viewModel.isConflictFileResolved(file)
-                            )
-                        }
-                    } else if viewModel.isOperationInProgress {
-                        // 正文区没有文件行可展示时才使用这里的圆形「继续」按钮；
-                        // 正文区有文件行（含已解决/已暂存的文件）时，该入口位于顶部操作栏。
-                        VStack(spacing: DesignTokens.Spacing.md) {
-                            AppStatusBanner(
-                                kind: .success,
-                                title: pluginLocalization.string(viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge ready to complete"),
-                                message: pluginLocalization.string(viewModel.isCherryPicking
-                                        ? "All conflicts are resolved. Continue the cherry-pick to finish it."
-                                        : "All conflicts are resolved. Continue the merge to create the merge commit.")
-                            )
-                            .frame(maxWidth: .infinity, minHeight: 120)
-
-                            ContinueMergeCardButton(
-                                title: pluginLocalization.string(viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge"),
-                                systemImage: "arrow.right.circle.fill",
-                                isDisabled: !viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning,
-                                action: continueMerge
-                            )
-                        }
-                        .frame(maxWidth: .infinity)
-                    } else if viewModel.conflictedFiles.isEmpty {
-                        AppEmptyState(
-                            icon: "checkmark.circle",
-                            title: pluginLocalization.string("No merge conflicts")
-                        )
-                        .frame(maxWidth: .infinity, minHeight: 120)
-                    }
-                }
-            }
+                .padding(.horizontal, DesignTokens.Spacing.md)
+            conflictList
         }
-        .padding(DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.md)
         .alert(
             pluginLocalization.string(viewModel.isCherryPicking ? "Confirm Abort Cherry-pick?" : "Confirm Abort Merge?"),
             isPresented: $showAbortConfirmation
@@ -118,6 +77,61 @@ public struct ConflictResolverList: View {
                     .padding(16)
             }
             .frame(minWidth: 640, minHeight: 420)
+        }
+    }
+
+    /// 冲突文件列表区域。
+    ///
+    /// 这个 ScrollView 刻意撑满弹层宽度（不参与外层的水平内边距），滚动条
+    /// 因此会绘制在面板的 trailing 边缘，而不是内缩一个 padding。滚动内容的
+    /// 水平内边距由内层 VStack 自行保留，所以文件行不会贴到面板圆角上。
+    private var conflictList: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 4) {
+                if viewModel.isLoading && !viewModel.hasLoadedSnapshot {
+                    AppStatusBanner(
+                        kind: .loading,
+                        title: pluginLocalization.string("Checking conflicts…"),
+                        message: pluginLocalization.string("Reading the current Git operation.")
+                    )
+                    .frame(maxWidth: .infinity, minHeight: 120)
+                } else if !viewModel.displayedConflictFiles.isEmpty {
+                    ForEach(viewModel.displayedConflictFiles, id: \.self) { file in
+                        conflictRow(
+                            file,
+                            isResolved: viewModel.isConflictFileResolved(file)
+                        )
+                    }
+                } else if viewModel.isOperationInProgress {
+                    // 正文区没有文件行可展示时才使用这里的圆形「继续」按钮；
+                    // 正文区有文件行（含已解决/已暂存的文件）时，该入口位于顶部操作栏。
+                    VStack(spacing: DesignTokens.Spacing.md) {
+                        AppStatusBanner(
+                            kind: .success,
+                            title: pluginLocalization.string(viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge ready to complete"),
+                            message: pluginLocalization.string(viewModel.isCherryPicking
+                                    ? "All conflicts are resolved. Continue the cherry-pick to finish it."
+                                    : "All conflicts are resolved. Continue the merge to create the merge commit.")
+                        )
+                        .frame(maxWidth: .infinity, minHeight: 120)
+
+                        ContinueMergeCardButton(
+                            title: pluginLocalization.string(viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge"),
+                            systemImage: "arrow.right.circle.fill",
+                            isDisabled: !viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning,
+                            action: continueMerge
+                        )
+                    }
+                    .frame(maxWidth: .infinity)
+                } else if viewModel.conflictedFiles.isEmpty {
+                    AppEmptyState(
+                        icon: "checkmark.circle",
+                        title: pluginLocalization.string("No merge conflicts")
+                    )
+                    .frame(maxWidth: .infinity, minHeight: 120)
+                }
+            }
+            .padding(.horizontal, DesignTokens.Spacing.md)
         }
     }
 

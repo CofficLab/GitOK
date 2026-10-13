@@ -48,6 +48,12 @@ struct ConflictResolverOverlayHost: View {
                 )
                 .transition(.scale(scale: 0.96).combined(with: .opacity))
                 .zIndex(1)
+                // Identity the whole panel surface for UI tests. Attaching the
+                // identifier to a leaf like the header text would make every
+                // descendant inherit it, so a lookup by identifier would match
+                // the first child instead of the panel geometry.
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("gitok.git.conflict.panel")
             }
         }
         .animation(.easeInOut(duration: 0.18), value: viewModel.isPresented)

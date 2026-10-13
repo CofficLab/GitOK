@@ -31,7 +31,9 @@ enum CommitDetailChangeColors {
     }
 
     static func worktreeStatus(_ entry: GitStatusEntry) -> Color {
-        if entry.isUntracked { return conflict }
+        // 未跟踪文件在 diff 中整体作为新增展示，配色与已暂存的新增保持一致；
+        // 橙色 `conflict` 只留给真正的合并冲突。
+        if entry.isUntracked { return added }
 
         // 工作区同时存在暂存和未暂存变更时，以最新的工作区状态为准。
         let status = entry.isWorktreeModified ? entry.worktreeStatus : entry.stagedStatus
