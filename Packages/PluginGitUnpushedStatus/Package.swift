@@ -22,7 +22,7 @@ let package = Package(
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderWorkspaceScene"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.6.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
     targets: [
         .target(

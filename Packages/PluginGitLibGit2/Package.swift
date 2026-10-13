@@ -17,7 +17,7 @@ let package = Package(
             url: "https://github.com/nookery/LibGit2Swift.git",
             revision: "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
         ),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.6.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
     targets: [
         .target(

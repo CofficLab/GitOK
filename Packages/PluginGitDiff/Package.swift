@@ -20,7 +20,7 @@ let package = Package(
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderRootView"),
         .package(url: "https://github.com/nookery/MagicDiffView", branch: "main"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.6.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
     targets: [
         .target(
