@@ -20,7 +20,7 @@ final class CommitDetailChangeColorsTests: XCTestCase {
     }
 
     func testWorktreeStatusBranches() {
-        // Untracked -> conflict
+        // Untracked -> added（与已暂存的新增保持同一配色）
         let untracked = GitStatusEntry(path: "x", stagedStatus: "?", worktreeStatus: "?")
         _ = CommitDetailChangeColors.worktreeStatus(untracked)
 

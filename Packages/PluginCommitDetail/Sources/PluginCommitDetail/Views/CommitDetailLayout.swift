@@ -331,10 +331,12 @@ struct FileChangeRow: View {
                             .frame(width: 16)
 
                         if change.addedLines > 0 || change.deletedLines > 0 {
+                            // 增删行数与同行的状态图标、行首色条共用同一套固定色，
+                            // 避免同一"新增/删除"概念出现两种绿 / 两种红。
                             Text("+\(change.addedLines)")
-                                .foregroundStyle(theme.success)
+                                .foregroundStyle(CommitDetailChangeColors.added)
                             Text("−\(change.deletedLines)")
-                                .foregroundStyle(theme.error)
+                                .foregroundStyle(CommitDetailChangeColors.deleted)
                         }
                     }
                     .font(.system(size: 10, weight: .medium, design: .monospaced))
