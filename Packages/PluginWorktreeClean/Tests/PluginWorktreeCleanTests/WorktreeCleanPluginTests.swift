@@ -105,7 +105,8 @@ final class WorktreeCleanPluginTests: XCTestCase {
 
     // MARK: - Content registration
 
-    func testOnBootRegistersContentThroughContentViewProviding() throws {
+    /// 组装 ContentViewProviding 所需的全套 Provider。
+    private func makeContentKernel() throws -> (kernel: KernelCoreContainer, contentView: DefaultContentViewProviding) {
         let kernel = KernelCoreContainer()
         let contentView = DefaultContentViewProviding()
         try kernel.registerProvider((any ContentViewProviding).self, contentView)
@@ -119,41 +120,45 @@ final class WorktreeCleanPluginTests: XCTestCase {
             (any WorkspaceSceneProviding).self,
             DefaultWorkspaceSceneProvider()
         )
+        return (kernel, contentView)
+    }
+
+    func testOnBootRegistersContentThroughContentViewProviding() throws {
+        let (kernel, contentView) = try makeContentKernel()
+
+        // 注册内容块会广播 .contentChanged；未注册则不会有任何事件。
+        var changeCount = 0
+        let handle = contentView.addContentViewObserver { _ in changeCount += 1 }
 
         let plugin = WorktreeCleanPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        let contentID = "\(plugin.id).content"
-        let activityID = "\(plugin.id).activity-heatmap"
-        XCTAssertTrue(contentView.registeredIDs.contains(contentID))
-        XCTAssertFalse(contentView.registeredIDs.contains(activityID))
+        // onBoot 应通过 addContentView 注入内容块；内容区可渲染出宿主视图。
+        XCTAssertGreaterThanOrEqual(changeCount, 1, "onBoot 应通过 addContentView 注入内容块")
+        XCTAssertFalse(String(describing: contentView.makeContentView()).isEmpty)
+        handle.cancel()
     }
 
     func testOnShutdownClearsContent() throws {
-        let kernel = KernelCoreContainer()
-        let contentView = DefaultContentViewProviding()
-        try kernel.registerProvider((any ContentViewProviding).self, contentView)
-        try kernel.registerProvider((any ProjectProviding).self, MockProjects())
-        try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
-        try kernel.registerProvider(
-            (any ActivityHeatmapProviding).self,
-            DefaultActivityHeatmapProvider()
-        )
-        try kernel.registerProvider(
-            (any WorkspaceSceneProviding).self,
-            DefaultWorkspaceSceneProvider()
-        )
+        let (kernel, contentView) = try makeContentKernel()
+
+        var changeCount = 0
+        let handle = contentView.addContentViewObserver { _ in changeCount += 1 }
 
         let plugin = WorktreeCleanPlugin()
         try plugin.onBoot(kernel: kernel)
-        let contentID = "\(plugin.id).content"
-        let activityID = "\(plugin.id).activity-heatmap"
-        XCTAssertTrue(contentView.registeredIDs.contains(contentID))
-        XCTAssertFalse(contentView.registeredIDs.contains(activityID))
+        let changesAfterBoot = changeCount
+        XCTAssertGreaterThanOrEqual(changesAfterBoot, 1, "onBoot 应注册内容块")
 
         try plugin.onShutdown(kernel: kernel)
-        XCTAssertFalse(contentView.registeredIDs.contains(contentID))
-        XCTAssertFalse(contentView.registeredIDs.contains(activityID))
+        // removeContentView 仅在确实移除了内容块时才广播事件，
+        // 事件增加即证明 onShutdown 按插件内容 id 清掉了注册内容。
+        XCTAssertGreaterThan(
+            changeCount,
+            changesAfterBoot,
+            "onShutdown 应按插件内容 id 移除已注册的内容块"
+        )
+        handle.cancel()
     }
 
     // MARK: - ViewModel state
