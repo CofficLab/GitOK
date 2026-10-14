@@ -1,6 +1,6 @@
 import ProviderWorkspaceScene
 
-/// Banner 插件的场景观察者：把 WorkspaceSceneProviding 事件转换为插件场景 ViewModel 状态。
+/// Banner 插件的场景观察者。
 @MainActor
 final class BannerSceneObserver {
     private weak var viewModel: WorkspaceSceneVisibilityViewModel?
