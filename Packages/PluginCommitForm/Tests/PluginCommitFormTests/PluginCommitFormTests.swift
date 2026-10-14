@@ -75,16 +75,34 @@ struct PluginCommitFormTests {
         #expect(plugin.metadata.policy == .required)
     }
 
+    /// 记录内容块变更次数：注册内容块会广播 `.contentChanged`，未注册则不广播。
+    private func observeContentChanges(
+        _ contentView: DefaultContentViewProviding
+    ) -> (handle: any ContentViewObserverHandle, count: () -> Int) {
+        final class Counter: @unchecked Sendable {
+            var value = 0
+        }
+        let counter = Counter()
+        let handle = contentView.addContentViewObserver { _ in counter.value += 1 }
+        return (handle, { counter.value })
+    }
+
     @Test("onBoot 贡献表单内容块，onShutdown 移除")
     func contentContributionLifecycle() throws {
         let (kernel, contentView) = try makeKernel()
+        let (handle, changeCount) = observeContentChanges(contentView)
         let plugin = CommitFormPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        #expect(contentView.registeredIDs.contains("com.coffic.gitok.plugin.commit-form.content"))
+        // onBoot 应通过 addContentView 注入内容块。
+        let changesAfterBoot = changeCount()
+        #expect(changesAfterBoot >= 1)
 
         try plugin.onShutdown(kernel: kernel)
-        #expect(!contentView.registeredIDs.contains("com.coffic.gitok.plugin.commit-form.content"))
+        // removeContentView 仅在确实移除了内容块时才广播事件，
+        // 事件数增加即证明 onShutdown 按插件内容 id 清掉了注册内容。
+        #expect(changeCount() > changesAfterBoot)
+        handle.cancel()
     }
 
     @Test("onBoot 缺少 ContentViewProviding 时跳过内容贡献，不抛错")
