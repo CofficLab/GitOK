@@ -2,7 +2,6 @@
 import AppKit
 #endif
 import LumiUI
-import ProviderProjects
 import SwiftUI
 
 /// 无项目时的全屏引导视图。
@@ -10,7 +9,7 @@ import SwiftUI
 /// 当根工作区没有当前项目时显示在工作区区域，引导用户添加或克隆仓库。
 @MainActor
 struct NoProjectGuideView: View {
-    let projects: any ProjectProviding
+    let projects: any RootViewProjectCapability
 
     @LumiTheme private var theme
 

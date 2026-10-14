@@ -11,13 +11,13 @@ private func cloneFailureLocalized(_ key: String) -> String {
 @MainActor
 struct CloneFailedView: View {
     let project: Project
-    let cloneRepository: any CloneRepositoryProviding
+    let cloneRepository: RootViewCloneCapability
 
     @StateObject private var observation: CloneFailureObservation
     @State private var retryError: String?
     @LumiTheme private var theme
 
-    init(project: Project, cloneRepository: any CloneRepositoryProviding) {
+    init(project: Project, cloneRepository: RootViewCloneCapability) {
         self.project = project
         self.cloneRepository = cloneRepository
         _observation = StateObject(
@@ -188,7 +188,7 @@ private final class CloneFailureObservation: ObservableObject {
     @Published private(set) var revision = 0
     private var handle: (any CloneRepositoryObserverHandle)?
 
-    init(cloneRepository: any CloneRepositoryProviding) {
+    init(cloneRepository: RootViewCloneCapability) {
         handle = cloneRepository.addObserver { [weak self] _ in
             self?.revision += 1
         }

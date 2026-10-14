@@ -117,8 +117,8 @@ struct NotGitRepositoryView: View {
 @MainActor
 struct RootWorkspaceUnavailableView: View {
     @ObservedObject var model: RootWorkspaceModel
-    let projects: any ProjectProviding
-    let cloneRepository: (any CloneRepositoryProviding)?
+    let projects: any RootViewProjectCapability
+    let cloneRepository: RootViewCloneCapability
 
     var body: some View {
         Group {
@@ -144,13 +144,13 @@ struct RootWorkspaceUnavailableView: View {
                     NoProjectGuideView(projects: projects)
                 }
             case .cloning:
-                if let project = model.project, let cloneRepository {
+                if let project = model.project {
                     CloneInProgressView(project: project, cloneRepository: cloneRepository)
                 } else {
                     NoProjectGuideView(projects: projects)
                 }
             case .cloneFailed:
-                if let project = model.project, let cloneRepository {
+                if let project = model.project {
                     CloneFailedView(project: project, cloneRepository: cloneRepository)
                 } else {
                     NoProjectGuideView(projects: projects)
