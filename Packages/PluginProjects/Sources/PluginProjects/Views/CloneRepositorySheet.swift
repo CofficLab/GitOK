@@ -1,9 +1,6 @@
 import AppKit
 import KitGit
 import LumiUI
-import ProviderCloneRepository
-import ProviderGit
-import ProviderProjects
 import ProviderToast
 import SwiftUI
 
@@ -13,10 +10,9 @@ import SwiftUI
 /// `CloneRepositoryProviding`，sheet 随即关闭；后台执行和进度展示由
 /// `PluginCloneRepository` 负责。
 struct CloneRepositorySheet: View {
-    let projects: any ProjectProviding
+    let projects: any ProjectSidebarCapability
     let toast: (any ToastProviding)?
-    let git: any GitProviding
-    let cloneRepository: any CloneRepositoryProviding
+    let clone: any ProjectCloneCapability
     @LumiTheme private var theme
 
     @Environment(\.dismiss) private var dismiss
@@ -53,7 +49,7 @@ struct CloneRepositorySheet: View {
         if trimmedName.isEmpty { return pluginLocalization.string("Enter a repository name.") }
         guard let destination = destinationURL else { return pluginLocalization.string("Invalid destination path.") }
         do {
-            try git.validateCloneDestination(destination)
+            try clone.validateDestination(destination)
         } catch {
             return error.localizedDescription
         }
@@ -192,7 +188,7 @@ struct CloneRepositorySheet: View {
     private func enqueueClone() {
         guard let destination = destinationURL, validationMessage == nil else { return }
         do {
-            _ = try cloneRepository.enqueue(
+            _ = try clone.enqueue(
                 remoteURL: trimmedRemoteURL,
                 destination: destination,
                 repositoryName: trimmedName
@@ -200,7 +196,11 @@ struct CloneRepositorySheet: View {
             // 先把目标路径登记到项目列表；目录由后台任务创建，用户随后
             // 点击这个项目即可进入克隆详情页。
             projects.addProject(at: destination)
-            toast?.show("Clone started", detail: trimmedName, style: .info)
+            toast?.show(
+                pluginLocalization.string("Clone Started"),
+                detail: trimmedName,
+                style: .info
+            )
             dismiss()
         } catch {
             errorMessage = error.localizedDescription

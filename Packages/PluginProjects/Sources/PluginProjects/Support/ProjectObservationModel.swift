@@ -7,7 +7,7 @@ final class ProjectObservationModel: ObservableObject {
     @Published private(set) var revision = 0
     private var handle: (any ProjectProvidingObserverHandle)?
 
-    init(projects: any ProjectProviding) {
+    init(projects: any ProjectSidebarCapability) {
         handle = projects.addObserver { [weak self] _ in
             self?.revision += 1
         }

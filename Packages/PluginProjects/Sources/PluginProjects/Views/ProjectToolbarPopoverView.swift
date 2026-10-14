@@ -3,12 +3,12 @@ import SwiftUI
 
 /// 工具栏项目弹层：搜索 + 添加 + 项目列表（Lumi 风格）。
 struct ProjectToolbarPopoverView: View {
-    let projects: any ProjectProviding
+    let projects: any ProjectSidebarCapability
     let requestImporter: () -> Void
     @StateObject private var observation: ProjectObservationModel
     @State private var searchText = ""
 
-    init(projects: any ProjectProviding, requestImporter: @escaping () -> Void) {
+    init(projects: any ProjectSidebarCapability, requestImporter: @escaping () -> Void) {
         self.projects = projects
         self.requestImporter = requestImporter
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))

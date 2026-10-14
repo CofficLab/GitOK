@@ -9,14 +9,14 @@ import SwiftUI
 /// 右侧详情面板展示选中项目的完整信息（路径、置顶状态、最近打开时间）和操作按钮。
 /// 数据变化时通过 `ProjectObservationModel` 触发重算。
 struct ProjectsSettingsDetailView: View {
-    let projects: any ProjectProviding
+    let projects: any ProjectSidebarCapability
     @StateObject private var observation: ProjectObservationModel
     @LumiUI.LumiTheme private var uiTheme: any LumiUI.LumiUITheme
 
     @State private var selectedID: UUID?
     @State private var searchText = ""
 
-    init(projects: any ProjectProviding) {
+    init(projects: any ProjectSidebarCapability) {
         self.projects = projects
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
