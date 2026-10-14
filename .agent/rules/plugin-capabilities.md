@@ -1,8 +1,8 @@
 # 插件 Capabilities 能力边界规范
 
 > 本规范定义 GitOK 插件如何声明自己**消费外部能力**的最小边界。
-> 参考兄弟项目 Lumi / Cisum 的同名机制，核心目的：让 View / ViewModel / Observer
-> 不再直接依赖 `any *Providing` 宽接口。
+> 与兄弟项目 Lumi / Cisum 的同名机制保持一致，核心目的：让
+> View / ViewModel / Service / Tool 不再直接依赖 `any *Providing` 宽接口。
 
 ---
 
@@ -12,7 +12,7 @@
 
 一个插件对外界（内核 Provider、其他插件的 Provider）的所有依赖，都应收敛到本插件
 `Capabilities/` 目录下的 `protocol XxxCapability` + `XxxCapabilityAdapter`。
-View / ViewModel / Observer 只面向该窄协议编程。
+View / ViewModel / Service / Tool 只面向该窄协议编程。
 
 > 外部能力进入插件的唯一入口是**能力协议 + Adapter**（依赖收窄），
 > 外部状态进入插件的唯一入口是**Observer**（状态收窄）。两者互补、不冲突：
@@ -22,13 +22,13 @@ View / ViewModel / Observer 只面向该窄协议编程。
 
 ## 1. 目录位置
 
-| 包结构 | 位置 |
-|--------|------|
-| 有包裹目录（`Sources/<PackageName>/`，GitOK 全部插件） | `Sources/<PackageName>/Capabilities/` |
+GitOK 的 SPM 包**统一使用包裹目录**，因此位置固定：
 
-每个能力一个文件，文件名 = 主类型名，例如 `GitDiffProjectCapability.swift`。
+```
+Sources/<PackageName>/Capabilities/<XxxCapability>.swift
+```
 
-目录与 `Observers/`、`ViewModels/`、`Views/` 平级。
+目录与 `Observers/`、`ViewModels/`、`Views/`、`Providers/` 平级。
 
 ---
 
@@ -38,8 +38,8 @@ GitOK 中两个目录方向**相反**：
 
 | 目录 | 方向 | 内容 | 例 |
 |------|------|------|------|
-| `Providers/` | **生产**：本插件向外**提供**能力 | 实现内核的 `*Providing` 协议 | `PluginStorage/Providers/StorageProvider.swift` |
-| `Capabilities/` | **消费**：本插件向**内**索取能力 | 声明本插件**需要的**窄接口 + Adapter | `PluginGitDiff/Capabilities/GitDiffProjectCapability.swift` |
+| `Providers/` | **生产**：本插件向外**提供**能力 | 实现内核的 `*Providing` 协议 | `PluginProjects/Providers/ProjectSidebarProviding.swift` |
+| `Capabilities/` | **消费**：本插件向**内**索取能力 | 声明本插件**需要的**窄接口 + Adapter | `PluginProjects/Capabilities/ProjectSidebarCapability.swift` |
 
 一句话：`Providers/` 是我给别人什么，`Capabilities/` 是我需要什么。
 
@@ -47,19 +47,24 @@ GitOK 中两个目录方向**相反**：
 
 ## 3. 标准写法
 
-以 `PluginGitDiff` 为参考实现：
+以 `PluginProjects` 的项目能力为参考实现：
 
 ```swift
 import Foundation
-import KitGit
 import ProviderProjects
 
-/// Git Diff 插件读取项目选择状态的最小能力。
+/// 项目列表侧边栏所需的最小能力。
+///
+/// 插件入口在装配阶段用 `ProjectProviding` 适配本协议；视图、Picker 与
+/// 协调器只依赖它，不再直接持有 24 个成员的项目 Provider。
 @MainActor
-protocol GitDiffProjectCapability: AnyObject {
-    var currentCommit: GitCommit? { get }
-    var currentProjectURL: URL? { get }
-    var currentFile: String? { get }
+protocol ProjectSidebarCapability: AnyObject {
+    var projects: [Project] { get }
+    var currentProject: Project? { get }
+
+    func addProject(at url: URL)
+    func openProject(at url: URL)
+    func setCurrentProject(id: UUID?)
 
     @discardableResult
     func addObserver(
@@ -67,24 +72,27 @@ protocol GitDiffProjectCapability: AnyObject {
     ) -> any ProjectProvidingObserverHandle
 }
 
-/// 将 ProjectProviding 收窄成 Git Diff 所需的能力。
+/// 将 `ProjectProviding` 收窄成侧边栏所需的能力。
 @MainActor
-final class GitDiffProjectCapabilityAdapter: GitDiffProjectCapability {
-    private let projects: any ProjectProviding
+final class ProjectSidebarCapabilityAdapter: ProjectSidebarCapability {
+    private let provider: any ProjectProviding
 
     init(projects: any ProjectProviding) {
-        self.projects = projects
+        self.provider = projects
     }
 
-    var currentCommit: GitCommit? { projects.currentCommit }
-    var currentProjectURL: URL? { projects.currentProject?.url }
-    var currentFile: String? { projects.currentFile }
+    var projects: [Project] { provider.projects }
+    var currentProject: Project? { provider.currentProject }
+
+    func addProject(at url: URL) { provider.addProject(at: url) }
+    func openProject(at url: URL) { provider.openProject(at: url) }
+    func setCurrentProject(id: UUID?) { provider.setCurrentProject(id: id) }
 
     @discardableResult
     func addObserver(
         _ callback: @escaping (ProjectProvidingEvent) -> Void
     ) -> any ProjectProvidingObserverHandle {
-        projects.addObserver(callback)
+        provider.addObserver(callback)
     }
 }
 ```
@@ -93,15 +101,14 @@ final class GitDiffProjectCapabilityAdapter: GitDiffProjectCapability {
 
 | 角色 | 命名 |
 |------|------|
-| 协议 | `<Plugin前缀><Domain>Capability`，如 `GitDiffProjectCapability`、`BannerSceneCapability` |
-| 适配器 | 协议名 + `Adapter`，如 `GitDiffProjectCapabilityAdapter` |
-| 事件枚举 | `<Domain>Event`，如 `PendingMessageSendingEvent` |
-| 观察句柄 | `<Domain>ObserverHandle`，如 `PendingMessageSendingObserverHandle` |
+| 协议 | `<插件前缀><Domain>Capability`，如 `ProjectSidebarCapability`、`BannerSceneCapability` |
+| 适配器 | 协议名 + `Adapter`，如 `ProjectSidebarCapabilityAdapter` |
+| 事件枚举 | `<Domain>Event`，如 `ProjectSidebarEvent` |
+| 观察句柄 | `<Domain>ObserverHandle`，如 `ProjectSidebarObserverHandle` |
 
 > 多个能力共用同一 Provider 时，前缀区分用途而非 Provider 本身
-> （GitOK 中的 `IconSceneCapability` 与 `IconProjectCapability` 是典型例子）。
-> 插件前缀可省略当包名已隐含唯一性时（如 `PluginBanner/Capabilities/BannerSceneCapability.swift`
-> 保留前缀是因为 `Scene` 域在多插件间复用）。
+> （如 `ProjectSidebarCapability` 与 `ProjectCloneCapability`）。
+> 插件前缀可省略当包名已隐含唯一性时（如 `Banner/Capabilities/BannerSceneCapability.swift`）。
 
 ### 可见性
 
@@ -111,29 +118,36 @@ final class GitDiffProjectCapabilityAdapter: GitDiffProjectCapability {
 | 能力需被本包 `Tests` 使用 | `public` |
 | 能力需被**其他插件**消费 | 不属于本机制 —— 应下沉为 `Provider*` / `Kit*` 包 |
 
+> GitOK 的插件包默认只被 `FactoryGitOK` 通过 `resolveProvider` / `registerProvider`
+> 使用，因此绝大多数能力保持 `internal` 即可。若 `public init` 暴露了能力参数，
+> 才需要把该能力提为 `public`。
+
 ---
 
 ## 4. 装配规则
 
-Adapter 一律在插件入口的 `onBoot(kernel:)` 中创建并注入 ViewModel / View / Observer。
+Adapter 一律在插件入口的 `onBoot(kernel:)` 中创建并注入 ViewModel / View / Service。
 
 ```swift
-public final class GitDiffPlugin: SuperPlugin {
-    /// 插件自有 ViewModel：由外部 Observer 驱动，视图只绑定它。
-    private var viewModel: GitDiffViewModel?
-    /// 插件级外部 Observer：装配阶段创建并持有，卸载时取消。
-    private var observer: GitDiffObserver?
+@MainActor
+public final class FooPlugin: SuperPlugin {
+    private var viewModel: FooViewModel?
+    private var capability: FooProjectCapability?
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
             Self.logger.error("\(self.t)ProjectProviding not registered")
             return
         }
-
-        let capability = GitDiffProjectCapabilityAdapter(projects: projects)
-        let viewModel = GitDiffViewModel()
+        let capability = FooProjectCapabilityAdapter(projects: projects)
+        self.capability = capability
+        let viewModel = FooViewModel(capability: capability)
         self.viewModel = viewModel
-        // ... 用 capability 的初始快照决定面板初始可见性等
+    }
+
+    public func onShutdown(kernel: KernelCoreContainer) throws {
+        viewModel = nil
+        capability = nil
     }
 }
 ```
@@ -147,28 +161,31 @@ Adapter 会随 `onBoot` 返回立即释放，消费方的 `weak` 全部落空（
 // ❌ 错误：Adapter 无人持有；如果注入方用 weak 接收，功能永远不生效
 let viewModel = MyViewModel(capability: MyCapabilityAdapter(projects: projects))
 
-// ✅ 正确：入口显式强持有 Adapter，并在 onUnregister / shutdown 释放
+// ✅ 正确：入口显式强持有 Adapter，并在 onShutdown 释放
 private var capability: MyProjectCapability?
 ...
-let capability = MyProjectCapabilityAdapter(projects: projects)
+let capability = MyCapabilityAdapter(projects: projects)
 self.capability = capability
 let viewModel = MyViewModel(capability: capability)
 ```
 
 判断标准：**如果消费方不持有 Adapter（或持有为 `weak`），入口必须持有。**
-若消费方以强引用存进 ViewModel 且 ViewModel 被入口持有，则 Adapter 随 ViewModel 存活，可不强持。
+若消费方以强引用存进 ViewModel 且 ViewModel 被入口持有，Adapter 随 ViewModel 存活，可不强持。
 
 ### 与 Observer 的分工
 
 | 层 | 职责 | 是否允许持有 Provider 协议 |
 |----|------|------|
-| 插件入口（`<Plugin>.swift`） | 解析 Provider、装配 Adapter/Observer/ViewModel | **允许** |
+| 插件入口（`XxxPlugin.swift`） | 解析 Provider、装配 Adapter/Observer/ViewModel | **允许** |
 | `Capabilities/` | 声明最小能力边界；Adapter 收窄 Provider | **允许**（仅 Adapter import Provider 包） |
-| `Observers/` | 订阅 Provider 事件 → 更新 ViewModel | 允许（Observer 需要完整事件面） |
+| `Providers/` | 本插件实现内核 `*Providing` 协议 | **允许**（实现层依赖） |
+| `Observers/` | 订阅 Provider 事件 → 更新 ViewModel | **允许**（Observer 需要完整事件面） |
 | ViewModel / View / Service / Tool | 只依赖能力协议 | **禁止直接持有 Provider 协议** |
 
 > **Observer 不迁移到能力协议**：Observer 需要订阅完整 Provider 事件面，
 > 保留 Provider 类型；能力协议只服务业务层（ViewModel / View / Service / Tool）。
+> 这是 GitOK 与 Cisum 规则的差异点：Cisum 的检查清单把 Observer 也列入禁止项，
+> 但其 `Observers/` 目录同样允许持有 Provider——以本表的分工为准。
 
 ### 时序要求
 
@@ -180,15 +197,11 @@ let viewModel = MyViewModel(capability: capability)
 ## 5. 规则清单
 
 1. **收窄优先**：能力协议只声明实际用到的成员，禁止把 Provider 整个协议照抄一遍。
-   对比 `ProjectProviding` 有 14 个成员，`GitDiffProjectCapability` 只收窄 3 个。
-2. **类型策略**：能力协议优先使用无 Provider 依赖的类型
-   （`URL`、`String`、`Bool`、插件自身模型）。
-   当 Provider 的领域模型（如 `ProjectInfo`、`GitCommit`）是跨包共享值类型时，
-   允许 Adapter 文件 import 并透传该模型；
-   ViewModel 可 import Provider 包但**只引用模型类型，不引用 Provider 协议**。
-3. **⚠️ 优先内联句柄类型**：Provider 的 `*ObserverHandle` 与 `*ProvidingEvent`
+   对比 `ProjectProviding` 有 24 个成员，`ProjectSidebarCapability` 只收窄 11 个。
+
+2. **⚠️ 不泄漏句柄类型（存量豁免）**：Provider 的 `*ObserverHandle` 与 `*ProvidingEvent`
    不应直接出现在能力协议里 —— 它们会把 Provider 包重新泄漏给消费方。
-   需在能力文件内**内联定义**自己的事件枚举与句柄协议：
+   理想写法是在能力文件内**内联定义**自己的事件枚举与句柄协议：
 
    ```swift
    @MainActor
@@ -205,14 +218,21 @@ let viewModel = MyViewModel(capability: capability)
    protocol ValueObserverHandle: AnyObject { func cancel() }
    ```
 
-   Adapter 内部负责把 `*ProvidingEvent` 映射为自有事件。
-   若 Provider 事件类型已足够通用（如 `ProjectProvidingEvent`）且消费方确实需要其完整面，
-   可暂时透传，但应在文件注释中说明理由，并在 Provider 事件面变化时同步检查。
+   **GitOK 现状**：28 个存量 Adapter 全部采用透传写法 ——
+   19 个场景能力透传 `WorkspaceSceneEvent` / `WorkspaceSceneObserverHandle`，
+   9 个项目能力透传 `ProjectProvidingEvent` / `ProjectProvidingObserverHandle`。
+   属于**已记录的存量豁免**，不算违规。
+   但**新建的能力不再豁免**：新增能力时若涉及事件订阅，应内联自有事件枚举；
+   若因 Provider 事件面过宽暂时透传，必须在文件注释中写明理由。
 
-4. **禁止循环**：Adapter 可依赖 `Provider*` 包；Provider 包**不得**反向依赖插件包。
-5. **`@MainActor`**：能力协议与 Adapter 默认标注 `@MainActor`（GitOK Provider 均为主线程语义）。
+3. **禁止循环**：Adapter 可依赖 `Provider*` 包；Provider 包**不得**反向依赖插件包。
+   Adapter 持有 Provider 时 GitOK 当前统一用**强引用**（`private let`）：
+   插件入口在 `onShutdown` 已显式注销并释放，Adapter 生命周期与插件一致。
+
+4. **`@MainActor`**：能力协议与 Adapter 默认标注 `@MainActor`（GitOK Provider 均为主线程语义）。
    若 ViewModel 在 `Task { @MainActor in }` 跨闭包使用能力，能力协议需精化 `Sendable`。
-6. **日志**：Adapter 构造失败 / Provider 缺失统一在插件入口用 `Self.logger.error` 记录，
+
+5. **日志**：Adapter 构造失败 / Provider 缺失统一在插件入口用 `Self.logger.error` 记录，
    Adapter 内部不重复打日志。
 
 ---
@@ -220,17 +240,18 @@ let viewModel = MyViewModel(capability: capability)
 ## 6. 是否该建 Capability（判断标准）
 
 **应当建**：
-- View / ViewModel / Observer 直接持有 `any XxxProviding`
+- View / ViewModel / Service / Tool 直接持有 `any XxxProviding`（**无论成员多少**——消费面小不等于可以绕过边界）
 - 同一 Provider 在插件内有 2 处以上消费点
+- 入口注入的多个闭包各自 `resolveProvider` 同一个 Provider（收敛为一个能力，解析与降级语义只留一份）
 - 单元测试需要 mock 掉某个外部能力
 
-**不必建**：
-- 只有插件入口（`<Plugin>.swift`）消费 Provider —— 入口本就是组装层，直接 `resolveProvider` 即可
-- 只有单个 Observer 消费、且仅转发一次事件
-
-**不适用**：
-- 插件本身是某个 Provider 的**实现者**（如 `PluginAgentLoop` 实现 `AgentLoopProviding`）。
-  持有其他 Provider 属于实现层依赖，收窄会限制实现能力，不适用本机制。
+**不必建**（豁免项必须在代码中写注释说明理由）：
+- 只有插件入口（`XxxPlugin.swift`）消费 Provider —— 入口本就是组装层，直接 `resolveProvider` 即可
+- `Providers/` 生产目录内的文件 —— 那是本插件**实现** Provider 的地方及其基础设施依赖
+- `Observers/` 下的文件 —— 见第 4 节分工表
+- 一次性同步读取的闭包、纯诊断快照 —— 不订阅、不持有、不重试
+- 组装层 View 中「`resolveProvider` 后立刻包成 Adapter」的调用 —— View 在此角色等同入口，
+  但必须在调用点注释说明组装层身份
 
 ---
 
@@ -258,23 +279,80 @@ public final class XxxCapabilityAdapter: XxxCapability {
 这样「仓库不可用」的判断也要跟着改 —— 原代码靠**闭包返回 nil** 判断，
 现在闭包被收进能力内部，应改判能力的 `isAvailable` / 空值语义。
 
-GitOK 现有的 Scene 能力（`BannerSceneCapability` 等）均由入口在 `onBoot` 中
-`guard` 到 `SceneProviding` 后构造，属于**快照式**；若调整 boot 顺序导致启动期
-拿不到 Scene，需改用本节的惰性解析写法。
+GitOK 现有的场景能力（`XxxSceneCapability`）由入口在 `onBoot` 中
+`guard` 到 `WorkspaceSceneProviding` 后构造，属于**快照式**；
+若调整 boot 顺序导致启动期拿不到 Scene，需改用本节的惰性解析写法。
 
 ---
 
-## 8. 渐进迁移
+## 8. 迁移状态与验证
 
-本规范**不要求**一次性改造全部插件。新增或重构插件时遵守；
-既有插件在触及相关文件时顺手迁移即可。
+### 已完成迁移（可作为参考实现）
 
-**已完成迁移**（可作为参考实现）：
+| 插件 | 参考点 |
+|------|---------|
+| `PluginRootView` | 双能力收窄（`RootViewProjectCapability` + `RootViewCloneCapability`），可选 Provider 在 Adapter 内降级 |
+| `PluginProjects` | 多能力拆分（`ProjectSidebarCapability` / `ProjectCloneCapability` / `GitRemoteCapability`）+ 状态机抽离可测 |
+| `PluginBanner`、`PluginIcon` | `XxxProjectCapability` 由 `public` ViewModel 暴露，故提为 `public` |
 
-`PluginGitDiff`、`PluginCommitList`、`PluginCommitDetail`、`PluginBanner`、
-`PluginIcon`、`PluginWorktreeClean`、`PluginGitConflictResolver`、`PluginGitBranchStatus`。
+### 存量豁免（已记录，不算违规）
 
-其余插件若仍存在「非入口文件直接依赖 `any *Providing`」，在触及时顺手迁移。
+扫描命令的输出需要按下列四类逐条判定，**只有第 1 类是真违规**：
+
+1. **待迁移的真实违规（26 个包，基线 2026-10-14）** —— View / ViewModel 直接持有
+   `any ProjectProviding` / `any GitProviding` 等，绝大多数是「status tile」形态
+   （`GitLFSStatusTile`、`SubmoduleStatusTile` 等），单个成员消费。
+   迁移优先级按聚集度：
+
+   | 插件 | 处数 | 说明 |
+   |------|------|------|
+   | `PluginGitBranchStatus` | 4 | `BranchStatusTile` / `BranchPickerView` 等 4 个视图同时吃 Project + Git |
+   | `PluginGitConflictResolver` | 3 | 同上形态 |
+   | `PluginWorktreeClean` | 3 | 额外吃 `ProjectReadmeProviding`、`CollaboratorProviding` |
+   | `PluginCommitDetail` | 4 | ViewModel 层持有 `GitProviding` |
+   | 其余 22 个包 | 各 1–2 | status tile / 单视图，模式高度一致，宜批量处理 |
+
+2. **28 个存量 Adapter 透传 `*ProvidingEvent` / `*ObserverHandle`** —— 见第 5 节第 2 条。
+   这些文件位于 `Capabilities/`，不属于本节统计范围。
+3. **`Observers/` 下的文件持有 Provider** —— 见第 4 节分工表，同样允许。
+4. **单成员 Provider 与实现层**：
+   - `ProjectManager.swift` 等 `*Manager.swift` 实现 `*Providing` 协议，属实现层依赖。
+   - **`ToastProviding` / `ThemeProviding` / `DocsViewProviding` 等在 View 层直接注入** ——
+     它们成员极少且无状态，收窄后与原接口等价，收益不抵改动成本。
+     存量保持现状，新增消费点时再考虑收窄。
+
+> 已完成的迁移：`PluginProjects`（`ProjectSidebarCapability` 等三件套）、
+> `PluginRootView`（`RootViewProjectCapability` + `RootViewCloneCapability`）。
+> 二者当前仍会被扫描命中，原因是 View 层保留 `ToastProviding`
+> （属第 4 类）与入口文件的 `resolveProvider`（属豁免）。
+
+### 验证扫描命令
+
+```bash
+cd Packages && for p in Plugin*/ Kit*/; do n=$(basename $p); [ -d "$p/Sources" ] || continue
+  files=$(grep -rlE "any [A-Z][A-Za-z]*Providing" "$p/Sources" --include="*.swift" 2>/dev/null \
+    | grep -vE "/\.build/" \
+    | grep -vE "/Capabilities/|/Observers/|/Providers/|/Services/" \
+    | grep -vE "Plugin\.swift$|Manager\.swift$")
+  c=$(echo "$files" | grep -c .)
+  [ "$c" != "0" ] && { echo "-- $n ($c)"; echo "$files" | sed "s|$p/Sources/||"; }
+done
+```
+
+> **两个容易踩的坑**：
+> 1. 必须排除 `/.build/` —— 各包的 checkout 目录含上游 Provider 源码，会产生大量假阳性。
+> 2. 用宽模式 `any XxxProviding`，不要用 `(any ...` —— 带括号的窄模式会漏掉
+>    `init(projects: any ProjectProviding)` 这类无括号签名。
+>
+> **当前基线（2026-10-14）**：按上述口径实测，业务层（Views / ViewModels /
+> Observers / Support / Tools）持有宽 Provider 的包共 **26 个**，即第 1 类。
+> `PluginProjects`、`PluginRootView` 已迁移完毕，其剩余命中全部落在第 3、4 类。
+
+### 回归
+
+```bash
+cd Packages/PluginProjects && swift test 2>&1 | grep -E "✘|error:|Test run with" | tail -3
+```
 
 ---
 
@@ -282,15 +360,18 @@ GitOK 现有的 Scene 能力（`BannerSceneCapability` 等）均由入口在 `on
 
 新增/改造插件时，确认：
 
-- [ ] View / ViewModel / Observer / Tool 不直接持有 `any *Providing`
+- [ ] View / ViewModel / Service / Tool 不直接持有 `any *Providing`
+- [ ] `Observers/`、`Providers/`、插件入口不属于本规范的管辖范围
 - [ ] 能力协议只声明用到的成员，未照抄 Provider 全量接口
+- [ ] 未泄漏 Provider 的 `*ObserverHandle` 与事件类型（存量透传已豁免，新代码不豁免）
 - [ ] 能力文件放在 `Capabilities/`（而非 `Providers/`）
 - [ ] Adapter 在插件入口 `onBoot` 中创建并注入
 - [ ] **Adapter 的生命周期有明确所有者**（入口持有，或被入口持有的 ViewModel 强引用）
-- [ ] 优先内联自有事件枚举与句柄协议，未泄漏 Provider 的 `*ProvidingEvent` / `*ObserverHandle`
-- [ ] 命名符合 `<Plugin前缀><Domain>Capability` / `Adapter`
+- [ ] 命名符合 `<插件前缀><Domain>Capability` / `Adapter`
 - [ ] 可见性正确（内部消费 `internal`，跨插件共享下沉为 `Provider*` / `Kit*`）
 - [ ] 能力协议与 Adapter 标注 `@MainActor`
+- [ ] 收窄后保留「Provider 缺失时的降级语义」—— 原代码靠 `provider == nil` 判断可用性时，
+      要在能力上以 `isAvailable` / 空值语义显式承载，避免 UI 在启动早期误闪
 
 ---
 
@@ -298,5 +379,5 @@ GitOK 现有的 Scene 能力（`BannerSceneCapability` 等）均由入口在 `on
 
 - [插件包目录结构规范](./plugin-package-structure.md) — `Sources/` 分层与包裹目录
 - [插件国际化规范](./plugin-i18n-rules.md) — xcstrings 文件管理
-- [日志记录规范](./logging-standards.md) — Swift 日志记录标准
+- [Lumi 插件日志记录规范](./logging-standards.md) — Swift 日志记录标准
 - [Commit 规范](./commit-convention.md) — Git 提交信息约定
