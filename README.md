@@ -12,7 +12,7 @@ GitOK is a comprehensive project management tool.
 
 ## Screenshot
 
-![GitOK App Screenshot](docs/hero.png)
+![GitOK App Screenshot](docs/hero.webp)
 
 ## Download
 
