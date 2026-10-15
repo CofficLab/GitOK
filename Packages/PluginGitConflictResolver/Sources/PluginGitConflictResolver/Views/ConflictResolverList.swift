@@ -158,35 +158,19 @@ public struct ConflictResolverList: View {
     }
 
     private var headerSubtitle: String {
-        if !viewModel.conflictedFiles.isEmpty {
-            if !pendingStageFiles.isEmpty {
-                if pendingStageFiles.count == viewModel.conflictedFiles.count {
-                    return String(format: pluginLocalization.string("%lld resolved; stage to continue"), pendingStageFiles.count)
-                }
-                let unresolved = String(format: pluginLocalization.string("%lld conflicted file(s) remaining"), viewModel.conflictedFiles.count - pendingStageFiles.count)
-                return unresolved + " · " + String(format: pluginLocalization.string("%lld resolved; stage to continue"), pendingStageFiles.count)
-            }
-            if !stagedResolvedFiles.isEmpty {
-                let unresolved = String(format: pluginLocalization.string("%lld conflicted file(s) remaining"), viewModel.conflictedFiles.count)
-                return unresolved + " · " + String(format: pluginLocalization.string("%lld staged"), stagedResolvedFiles.count)
-            }
-            return String(format: pluginLocalization.string("%lld conflicted file(s)"), viewModel.conflictedFiles.count)
-        }
-        if !pendingStageFiles.isEmpty {
-            return String(format: pluginLocalization.string("%lld resolved; stage to continue"), viewModel.resolvedConflictFiles.count)
-        }
-        if !stagedResolvedFiles.isEmpty {
-            return String(format: pluginLocalization.string("%lld resolved; ready to continue"), stagedResolvedFiles.count)
-        }
-        if viewModel.isOperationInProgress {
-            return pluginLocalization.string(viewModel.isCherryPicking ? "Cherry-pick is ready to continue" : "Merge is ready to continue")
-        }
-        return pluginLocalization.string("No conflicted files")
+        presentation.localizedSummary
+    }
+
+    /// 派生展示状态的单一来源。
+    private var presentation: ConflictResolverPresentation {
+        ConflictResolverPresentation(viewModel: viewModel, isActionRunning: isActionRunning)
     }
 
     private var actionBar: some View {
         HStack(spacing: 8) {
-            if !pendingStageFiles.isEmpty {
+            // 有待暂存文件就保留按钮，执行动作时置灰而非消失：
+            // 按钮在操作过程中忽隐忽现会让用户以为状态变了。
+            if !presentation.pendingStageFiles.isEmpty {
                 AppButton(
                     pluginLocalization.string("Stage Resolved Files"),
                     systemImage: "checkmark.circle",
@@ -210,11 +194,11 @@ public struct ConflictResolverList: View {
                     systemImage: "arrow.right.circle.fill",
                     // 还有文件待暂存时，「暂存已解决文件」是当前主操作，
                     // 继续入口退为次要样式，避免两个主按钮争夺注意力。
-                    style: pendingStageFiles.isEmpty ? .primary : .secondary,
+                    style: presentation.isContinuePrimaryAction ? .primary : .secondary,
                     size: .small,
                     action: continueMerge
                 )
-                .disabled(!viewModel.conflictedFiles.isEmpty || isActionRunning)
+                .disabled(!presentation.canContinue)
             }
 
             AppButton(
@@ -224,16 +208,8 @@ public struct ConflictResolverList: View {
                 size: .small,
                 action: { showAbortConfirmation = true }
             )
-            .disabled(!viewModel.isOperationInProgress || isActionRunning)
+            .disabled(!presentation.canAbort)
         }
-    }
-
-    private var pendingStageFiles: [String] {
-        viewModel.resolvedConflictFiles.filter { viewModel.conflictedFiles.contains($0) }
-    }
-
-    private var stagedResolvedFiles: [String] {
-        viewModel.resolvedConflictFiles.filter { !viewModel.conflictedFiles.contains($0) }
     }
 
     private func conflictRow(_ file: String, isResolved: Bool) -> some View {
@@ -335,11 +311,11 @@ public struct ConflictResolverList: View {
     }
 
     private func stageResolvedFiles() {
+        let files = presentation.pendingStageFiles
         guard let url = projects.currentProject?.url,
-              !pendingStageFiles.isEmpty else { return }
+              !files.isEmpty else { return }
         isActionRunning = true
         actionError = nil
-        let files = pendingStageFiles
         Task.detached(priority: .userInitiated) {
             do {
                 try git.stageFiles(files, in: url)
