@@ -4,12 +4,12 @@ import KitGit
 import ProviderProjects
 import ProviderGit
 import ProviderRailView
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
 import XCTest
 @testable import PluginCommitList
-@testable import ProviderRootView
+@testable import GitOKProviderRootView
 
 @MainActor
 final class CommitListPluginTests: XCTestCase {

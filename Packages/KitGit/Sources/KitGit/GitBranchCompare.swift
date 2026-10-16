@@ -68,9 +68,9 @@ public enum GitBranchCompareOperation {
         public var errorDescription: String? {
             switch self {
             case .invalidBranch:
-                LumiPluginLocalization.string("Two branches are required for comparison.", bundle: .module)
+                pluginLocalization.string("Two branches are required for comparison.")
             case .compareFailed(let message):
-                String(format: LumiPluginLocalization.string("Branch comparison failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Branch comparison failed: %@"), message)
             }
         }
     }

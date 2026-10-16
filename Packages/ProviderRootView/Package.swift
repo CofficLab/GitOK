@@ -11,24 +11,24 @@ let package = Package(
     products: [
         .library(
             name: "ProviderRootView",
-            targets: ["ProviderRootView"]
+            targets: ["GitOKProviderRootView"]
         ),
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(path: "../ProviderChatSection"),
-        .package(path: "../ProviderRailView"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
     targets: [
         .target(
-            name: "ProviderRootView",
+            name: "GitOKProviderRootView",
             dependencies: [
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderChatSection", package: "ProviderChatSection"),
-                .product(name: "ProviderRailView", package: "ProviderRailView"),
+                .product(name: "ProviderRailView", package: "LumiProviders"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
             ],
             path: "Sources/ProviderRootView",
@@ -37,9 +37,9 @@ let package = Package(
         .testTarget(
             name: "ProviderRootViewTests",
             dependencies: [
-                "ProviderRootView",
+                "GitOKProviderRootView",
                 .product(name: "ProviderChatSection", package: "ProviderChatSection"),
-                .product(name: "ProviderRailView", package: "ProviderRailView"),
+                .product(name: "ProviderRailView", package: "LumiProviders"),
             ]
         )
     ]

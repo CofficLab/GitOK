@@ -49,7 +49,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
     public let projectService: ProjectManager
 
     /// 侧边栏服务实例（注册进内核的 SidebarProviding 实现）。
-    public private(set) var sidebarService: ProjectSidebarProviding?
+    private(set) var sidebarService: ProjectSidebarProviding?
 
     public init(storeURL: URL? = nil) {
         if let storeURL {
@@ -95,12 +95,19 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
 
         // 2) 项目列表侧边栏：用 ProjectSidebarProviding 替换默认实现。
         let projects = kernel.resolveProvider((any ProjectProviding).self) ?? projectService
+        let git = kernel.resolveProvider((any GitProviding).self)
+        // 装配阶段收窄 Provider：侧边栏与所有视图只依赖插件自己的窄能力。
+        let projectCapability = ProjectSidebarCapabilityAdapter(projects: projects)
         let sidebar = ProjectSidebarProviding(
-            projects: projects,
-            git: kernel.resolveProvider((any GitProviding).self),
-            activity: kernel.resolveProvider((any ActivityProviding).self),
+            projects: projectCapability,
+            remoteCapability: git.map { GitRemoteCapabilityAdapter(git: $0) },
             toast: kernel.resolveProvider((any ToastProviding).self),
-            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+            clone: git.map {
+                ProjectCloneCapabilityAdapter(
+                    git: $0,
+                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+                )
+            }
         )
         self.sidebarService = sidebar
         kernel.unregisterProvider((any SidebarProviding).self)
@@ -110,11 +117,11 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
         if let settings = kernel.resolveProvider((any SettingViewProviding).self) {
             let entry = SettingEntryItem(
                 id: "projects",
-                title: LumiPluginLocalization.string("Projects", bundle: .module),
+                title: pluginLocalization.string("Projects"),
                 systemImage: "folder",
                 order: 2
-            ) { [projects] in
-                ProjectsSettingsDetailView(projects: projects)
+            ) {
+                ProjectsSettingsDetailView(projects: projectCapability)
             }
             settings.addEntries([entry])
         }
@@ -124,12 +131,12 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
             toolbar.addToolbarItems([
                 ToolbarItem(
                     id: "\(id).toolbar",
-                    title: LumiPluginLocalization.string("Project", bundle: .module),
+                    title: pluginLocalization.string("Project"),
                     placement: .center,
                     category: .project,
                     order: 5
                 ) {
-                    ProjectToolbarControlView(projects: projects)
+                    ProjectToolbarControlView(projects: projectCapability)
                 },
             ])
         }

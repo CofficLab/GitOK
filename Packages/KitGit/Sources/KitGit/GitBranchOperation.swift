@@ -30,21 +30,21 @@ public enum GitBranchOperation {
         public var errorDescription: String? {
             switch self {
             case .invalidBranchName:
-                LumiPluginLocalization.string("A valid branch name is required.", bundle: .module)
+                pluginLocalization.string("A valid branch name is required.")
             case .invalidRemoteName:
-                LumiPluginLocalization.string("A remote name is required.", bundle: .module)
+                pluginLocalization.string("A remote name is required.")
             case .cannotDeleteRemoteHead:
-                LumiPluginLocalization.string("The remote HEAD branch cannot be deleted.", bundle: .module)
+                pluginLocalization.string("The remote HEAD branch cannot be deleted.")
             case .renameFailed(let message):
-                String(format: LumiPluginLocalization.string("Branch rename failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Branch rename failed: %@"), message)
             case .upstreamFailed(let message):
-                String(format: LumiPluginLocalization.string("Upstream update failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Upstream update failed: %@"), message)
             case .publishFailed(let message):
-                String(format: LumiPluginLocalization.string("Branch publish failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Branch publish failed: %@"), message)
             case .remoteCheckoutFailed(let message):
-                String(format: LumiPluginLocalization.string("Remote branch checkout failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Remote branch checkout failed: %@"), message)
             case .deleteRemoteFailed(let message):
-                String(format: LumiPluginLocalization.string("Remote branch deletion failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Remote branch deletion failed: %@"), message)
             }
         }
     }
@@ -106,7 +106,7 @@ public enum GitBranchOperation {
         let remote = remoteBranch.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let separator = remote.firstIndex(of: "/"), separator != remote.startIndex else {
             throw Error.remoteCheckoutFailed(
-                LumiPluginLocalization.string("A remote branch must include a remote name.", bundle: .module)
+                pluginLocalization.string("A remote branch must include a remote name.")
             )
         }
 
@@ -114,7 +114,7 @@ public enum GitBranchOperation {
         let local = (localBranch ?? inferredLocal).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !local.isEmpty else {
             throw Error.remoteCheckoutFailed(
-                LumiPluginLocalization.string("A local branch name is required.", bundle: .module)
+                pluginLocalization.string("A local branch name is required.")
             )
         }
 

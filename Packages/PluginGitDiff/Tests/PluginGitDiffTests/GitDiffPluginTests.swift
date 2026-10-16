@@ -3,10 +3,10 @@ import KernelCore
 import KitGit
 import ProviderProjects
 import ProviderGit
-import ProviderRootView
+import GitOKProviderRootView
 import XCTest
 @testable import PluginGitDiff
-@testable import ProviderRootView
+@testable import GitOKProviderRootView
 
 @MainActor
 final class GitDiffPluginTests: XCTestCase {

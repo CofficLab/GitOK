@@ -1,4 +1,5 @@
 import AppKit
+import Carbon.HIToolbox
 import XCTest
 
 /// Shared app launch and accessibility lookup for GitOK's macOS UI tests.
@@ -12,9 +13,16 @@ class GitOKUITestCase: XCTestCase {
     var uiTestLanguage: String { "en" }
     var uiTestLocale: String { "en_US" }
     var expectsReadyGitWorkbench: Bool { true }
+    /// setUp 前的系统键盘输入源，tearDown 时恢复，避免测试污染用户输入法。
+    private var previousKeyboardInputSource: TISInputSource?
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+        // 中文输入法（如拼音）的候选/状态窗口会以 Dialog 角色挂进被测应用的
+        // AX 树；XCUITest 点击前的 interruption 检查会追踪它，而该窗口是瞬态的，
+        // 消失时机不同会造成 "Failed to get matching snapshot" 随机失败。
+        // 测试期间统一切到 ASCII 键盘布局，从源头消除该类窗口。
+        switchToASCIICapableInputSource()
         fixtureRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent("GitOKUITests-\(UUID().uuidString)", isDirectory: true)
         repositoryURL = fixtureRoot.appendingPathComponent("Repository", isDirectory: true)
@@ -26,6 +34,7 @@ class GitOKUITestCase: XCTestCase {
         app = XCUIApplication()
         app.launchArguments += [
             "--ui-testing",
+            "-ApplePersistenceIgnoreState", "YES",
             "-AppleLanguages", "(\(uiTestLanguage))",
             "-AppleLocale", uiTestLocale,
         ]
@@ -59,14 +68,62 @@ class GitOKUITestCase: XCTestCase {
         if let app, app.state != .notRunning {
             app.terminate()
         }
+        restorePreviousInputSource()
         if let fixtureRoot {
             try? FileManager.default.removeItem(at: fixtureRoot)
         }
         try super.tearDownWithError()
     }
 
+    // MARK: - Input Source
+
+    /// 切到 ASCII-capable 键盘布局（如 ABC / U.S.）。
+    ///
+    /// 中文拼音等输入法的候选窗会以 `Dialog` 角色挂进被测应用的 AX 树，
+    /// XCUITest 点击前的 interruption 检查会追踪这个瞬态窗口，其出现/消失
+    /// 时机不受控，导致 clone 等测试随机报 "Failed to get matching snapshot"。
+    /// 测试期间统一使用 ASCII 布局即可从源头消除该窗口。
+    private func switchToASCIICapableInputSource() {
+        previousKeyboardInputSource = TISCopyCurrentKeyboardInputSource()?.takeRetainedValue()
+
+        let filter: [String: Any] = [
+            kTISPropertyInputSourceCategory as String: kTISCategoryKeyboardInputSource as String,
+            kTISPropertyInputSourceIsASCIICapable as String: true,
+        ]
+        guard let candidates = TISCreateInputSourceList(filter as CFDictionary, false)?
+            .takeRetainedValue() as? [TISInputSource],
+            let target = candidates.first(where: { inputSourceID($0) == "com.apple.keylayout.ABC" })
+                ?? candidates.first(where: { inputSourceID($0) == "com.apple.keylayout.US" })
+                ?? candidates.first
+        else { return }
+
+        TISSelectInputSource(target)
+    }
+
+    /// 读取输入源的稳定标识符（如 `com.apple.keylayout.ABC`）。
+    private func inputSourceID(_ source: TISInputSource) -> String? {
+        guard let raw = TISGetInputSourceProperty(source, kTISPropertyInputSourceID) else { return nil }
+        return Unmanaged<CFString>.fromOpaque(raw).takeUnretainedValue() as String
+    }
+
+    /// 恢复测试前的输入源（在 tearDown 调用，避免测试改变用户输入法）。
+    private func restorePreviousInputSource() {
+        if let previous = previousKeyboardInputSource {
+            TISSelectInputSource(previous)
+            previousKeyboardInputSource = nil
+        }
+    }
+
     func element(identifier: String) -> XCUIElement {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+    }
+
+    /// 按可见文本（label/value）查找元素——LumiSettings 渲染的设置侧边栏
+    /// 条目不带 accessibility identifier，只能按标题定位。
+    func element(label: String) -> XCUIElement {
+        app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@ OR value == %@", label, label))
+            .firstMatch
     }
 
     func replaceText(in element: XCUIElement, with value: String) {
@@ -189,6 +246,20 @@ class GitOKUITestCase: XCTestCase {
         try runGit(["commit", "--quiet", "-m", "Initial fixture commit"], in: url)
     }
 
+    /// 执行一次 git 命令但忽略退出码。
+    ///
+    /// 用于搭建夹具状态，例如 `git merge` 在制造冲突时必然以非零码退出，
+    /// 而测试真正关心的是它留下的工作区状态。
+    func runGitAllowingFailure(_ arguments: [String], in repository: URL? = nil) throws {
+        let process = Process()
+        process.executableURL = gitExecutableURL
+        process.arguments = ["-C", (repository ?? repositoryURL).path] + arguments
+        process.standardOutput = Pipe()
+        process.standardError = Pipe()
+        try process.run()
+        process.waitUntilExit()
+    }
+
     private func runGit(_ arguments: [String], in repository: URL) throws {
         let process = Process()
         process.executableURL = gitExecutableURL
@@ -205,7 +276,7 @@ class GitOKUITestCase: XCTestCase {
         }
     }
 
-    private var gitExecutableURL: URL {
+    var gitExecutableURL: URL {
         let developerDirectory = ProcessInfo.processInfo.environment["DEVELOPER_DIR"]
             ?? "/Applications/Xcode.app/Contents/Developer"
         let xcodeGit = URL(fileURLWithPath: developerDirectory)

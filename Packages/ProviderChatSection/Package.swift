@@ -9,9 +9,9 @@ let package = Package(
         .library(name: "ProviderChatSection", targets: ["ProviderChatSection"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.8.0"),
         .package(path: "../ProviderConversation"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
     ],
     targets: [
         .target(

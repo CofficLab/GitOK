@@ -58,7 +58,7 @@ public final class GitRepositorySettingsPlugin: SuperPlugin, SuperLog {
         settings.addEntries([
             SettingEntryItem(
                 id: "repository",
-                title: LumiPluginLocalization.string("Repository Settings", bundle: .module),
+                title: pluginLocalization.string("Repository Settings"),
                 systemImage: "folder.badge.gearshape",
                 order: 10
             ) { [projects, git] in

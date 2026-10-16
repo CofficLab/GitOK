@@ -36,11 +36,11 @@ public enum ReasoningEffort: String, CaseIterable, Codable, Identifiable, Sendab
 
     public var displayName: String {
         switch self {
-        case .low: LumiPluginLocalization.string("Low", bundle: .module)
-        case .medium: LumiPluginLocalization.string("Medium", bundle: .module)
-        case .high: LumiPluginLocalization.string("High", bundle: .module)
-        case .xhigh: LumiPluginLocalization.string("Very High", bundle: .module)
-        case .max: LumiPluginLocalization.string("Maximum", bundle: .module)
+        case .low: pluginLocalization.string("Low")
+        case .medium: pluginLocalization.string("Medium")
+        case .high: pluginLocalization.string("High")
+        case .xhigh: pluginLocalization.string("Very High")
+        case .max: pluginLocalization.string("Maximum")
         }
     }
 
@@ -56,11 +56,11 @@ public enum ReasoningEffort: String, CaseIterable, Codable, Identifiable, Sendab
 
     public var description: String {
         switch self {
-        case .low: LumiPluginLocalization.string("Lightweight reasoning, best for simple Q&A", bundle: .module)
-        case .medium: LumiPluginLocalization.string("Standard reasoning, best for general tasks", bundle: .module)
-        case .high: LumiPluginLocalization.string("Deep reasoning, best for complex code and architecture", bundle: .module)
-        case .xhigh: LumiPluginLocalization.string("Higher reasoning budget for hard problems", bundle: .module)
-        case .max: LumiPluginLocalization.string("Maximum reasoning budget for extreme debugging", bundle: .module)
+        case .low: pluginLocalization.string("Lightweight reasoning, best for simple Q&A")
+        case .medium: pluginLocalization.string("Standard reasoning, best for general tasks")
+        case .high: pluginLocalization.string("Deep reasoning, best for complex code and architecture")
+        case .xhigh: pluginLocalization.string("Higher reasoning budget for hard problems")
+        case .max: pluginLocalization.string("Maximum reasoning budget for extreme debugging")
         }
     }
 }

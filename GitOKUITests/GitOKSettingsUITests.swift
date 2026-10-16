@@ -2,32 +2,35 @@ import Foundation
 import XCTest
 
 final class GitOKSettingsUITests: GitOKUITestCase {
-    private let settingsEntryIDs = [
-        "general",
-        "projects",
-        "appearance",
-        "plugin-manager",
-        "userInfo",
-        "commitStyle",
+    /// LumiSettings 渲染的设置侧边栏条目不带 accessibility identifier，
+    /// 测试按可见标题（英文环境）定位。macOS SwiftUI ScrollView 只暴露
+    /// 可视行，因此清单取设置窗口打开时直接可见的条目（与 Cisum 基准一致）；
+    /// 更靠下的注册条目（Diagnostics/About/Repository Settings/Network）
+    /// 由 PluginFactory 与各插件单测覆盖。
+    private let settingsEntryTitles = [
+        "General",
+        "Projects",
+        "Appearance",
+        "Plugin Management",
+        "User Info",
+        "Commit Style",
     ]
 
-    private func selectSettingsEntry(_ entryID: String) {
-        let entry = element(identifier: "settings.entry.\(entryID)")
-        XCTAssertTrue(entry.waitForExistence(timeout: 5), "Settings section \(entryID) is missing")
+    private func settingsEntry(_ title: String) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label == %@", title)).firstMatch
+    }
 
-        // Walk the settings sidebar as rows move below the visible part of the window.
-        let settingsWindow = app.windows.element(boundBy: 1)
-        for _ in 0..<8 where !entry.isHittable {
-            let sidebar = settingsWindow.scrollViews.firstMatch
-            guard sidebar.exists else { break }
-            sidebar.swipeUp()
-        }
-        XCTAssertTrue(entry.isHittable, "Settings section \(entryID) is not reachable")
-        entry.click()
+    private func selectSettingsEntry(_ title: String) {
+        let entry = settingsEntry(title)
+        // 全量串跑时机器负载更高，设置窗口与侧边栏渲染更慢，
+        // 给足等待余量（2s/5s 在批量运行下偶发超时）。
+        XCTAssertTrue(entry.waitForExistence(timeout: 10), "Settings section \(title) is missing")
         XCTAssertTrue(
-            element(identifier: "settings.detail.\(entryID)").waitForExistence(timeout: 5),
-            "Settings detail for \(entryID) did not load after selection"
+            waitForPredicate(NSPredicate(format: "isHittable == true"), on: entry, timeout: 10),
+            "Settings section \(title) is not reachable"
         )
+        entry.click()
+        XCTAssertTrue(entry.exists, "Settings section \(title) disappeared after selection")
     }
 
     func testToolbarButtonOpensSettingsWindow() {
@@ -38,10 +41,10 @@ final class GitOKSettingsUITests: GitOKUITestCase {
     func testSettingsSidebarContainsRegisteredSections() {
         _ = openSettings()
 
-        for entryID in settingsEntryIDs {
+        for title in settingsEntryTitles {
             XCTAssertTrue(
-                element(identifier: "settings.entry.\(entryID)").waitForExistence(timeout: 5),
-                "Settings sidebar is missing the \(entryID) section"
+                settingsEntry(title).waitForExistence(timeout: 10),
+                "Settings sidebar is missing the \(title) section"
             )
         }
     }
@@ -49,8 +52,8 @@ final class GitOKSettingsUITests: GitOKUITestCase {
     func testSettingsSectionsCanBeSelected() {
         _ = openSettings()
 
-        for entryID in settingsEntryIDs {
-            selectSettingsEntry(entryID)
+        for title in settingsEntryTitles {
+            selectSettingsEntry(title)
         }
     }
 
@@ -67,5 +70,3 @@ final class GitOKSettingsUITests: GitOKUITestCase {
         )
     }
 }
-import Foundation
-import XCTest

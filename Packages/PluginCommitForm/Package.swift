@@ -16,19 +16,18 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../KitGit"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.8.0"),
         .package(path: "../ProviderCommitForm"),
         .package(path: "../ProviderCoAuthor"),
         .package(path: "../ProviderGit"),
-        .package(path: "../ProviderContentView"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderGitUser"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
-        .package(path: "../ProviderDocsView"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
     targets: [
         .target(
@@ -42,13 +41,13 @@ let package = Package(
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
                 .product(name: "ProviderCoAuthor", package: "ProviderCoAuthor"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
-                .product(name: "ProviderContentView", package: "ProviderContentView"),
+                .product(name: "ProviderContentView", package: "LumiProviders"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderGitUser", package: "ProviderGitUser"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Sources/PluginCommitForm",
             resources: [

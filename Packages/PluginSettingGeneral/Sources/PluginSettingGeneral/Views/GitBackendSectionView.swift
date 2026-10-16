@@ -3,7 +3,7 @@ import ProviderGit
 import SwiftUI
 
 private func gitBackendLoc(_ key: String) -> String {
-    LumiPluginLocalization.string(key, bundle: .module)
+    pluginLocalization.string(key)
 }
 
 /// 通用设置中的 Git 后端实现列表。

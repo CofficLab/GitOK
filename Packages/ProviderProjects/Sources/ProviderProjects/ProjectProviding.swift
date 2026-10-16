@@ -60,7 +60,7 @@ public protocol ProjectProvidingObserverHandle: AnyObject {
 /// `ProjectProviding`，读写 GitOK 的项目列表（侧边栏项目列表的数据源）。
 ///
 /// 协议只声明逻辑能力，不关心 UI：
-/// - `projects`：全部已保存项目（含置顶、最近打开排序）；
+/// - `projects`：全部已保存项目（含置顶、用户自定义排序）；
 /// - `currentProject`：当前打开的项目；
 /// - 打开 / 添加 / 移除 / 置顶 / 排序 / 切换当前项目。
 ///
@@ -77,7 +77,7 @@ public protocol ProjectProvidingObserverHandle: AnyObject {
 /// 指向的插件数据目录内）。
 @MainActor
 public protocol ProjectProviding: AnyObject {
-    /// 全部已保存项目（已按置顶 + 最近打开排序）。
+    /// 全部已保存项目（已按置顶 + 用户自定义顺序排列）。
     var projects: [Project] { get }
 
     /// 当前打开的项目；未打开时为 nil。
@@ -141,6 +141,10 @@ public protocol ProjectProviding: AnyObject {
     /// 置顶 / 取消置顶指定项目。
     func pinProject(id: UUID, isPinned: Bool)
 
+    /// 将项目移动到同一置顶分组中的目标项目之前；目标为 nil 时移动到分组末尾。
+    /// 跨置顶 / 非置顶分组的移动会被忽略，应通过 `pinProject` 调整分组。
+    func moveProject(id: UUID, beforeID: UUID?)
+
     /// 手动设置当前项目。
     func setCurrentProject(id: UUID?)
 
@@ -171,4 +175,10 @@ public protocol ProjectProviding: AnyObject {
     /// 通常由实现内部在切换项目时调用；消费方也可显式调用（例如用户点击
     /// 工作区状态条回到工作区视图）。
     func clearCommitSelection()
+}
+
+/// 为不需要管理本地项目顺序的轻量实现提供兼容默认行为。
+/// 生产项目管理器会覆盖此方法并持久化实际顺序。
+public extension ProjectProviding {
+    func moveProject(id: UUID, beforeID: UUID?) {}
 }

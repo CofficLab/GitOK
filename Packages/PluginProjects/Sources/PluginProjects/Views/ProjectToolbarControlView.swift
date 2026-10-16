@@ -5,13 +5,13 @@ import UniformTypeIdentifiers
 
 /// 工具栏项目控件：显示当前项目名称，点击弹出项目列表（Lumi 风格）。
 public struct ProjectToolbarControlView: View {
-    let projects: any ProjectProviding
+    let projects: any ProjectSidebarCapability
     @StateObject private var observation: ProjectObservationModel
     @State private var isPopoverPresented = false
     @State private var isImporterPresented = false
     @State private var isHovering = false
 
-    public init(projects: any ProjectProviding) {
+    init(projects: any ProjectSidebarCapability) {
         self.projects = projects
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }

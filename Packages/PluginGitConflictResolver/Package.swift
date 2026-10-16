@@ -18,16 +18,15 @@ let package = Package(
         .package(path: "../KitGit"),
         .package(path: "../KitOpenIn"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRootView"),
-        .package(path: "../ProviderStatusBar"),
         .package(path: "../ProviderWorkspaceScene"),
-        .package(path: "../ProviderDocsView"),
         .package(path: "../ProviderGitConflictResolver"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
     targets: [
         .target(
@@ -43,9 +42,9 @@ let package = Package(
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
-                .product(name: "ProviderStatusBar", package: "ProviderStatusBar"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
-                .product(name: "ProviderDocsView", package: "ProviderDocsView"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "ProviderGitConflictResolver", package: "ProviderGitConflictResolver"),
             ],
             path: "Sources/PluginGitConflictResolver",
@@ -55,7 +54,13 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitConflictResolverTests",
-            dependencies: ["PluginGitConflictResolver"],
+            dependencies: [
+                "PluginGitConflictResolver",
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+            ],
             path: "Tests/PluginGitConflictResolverTests"
         ),
     ]

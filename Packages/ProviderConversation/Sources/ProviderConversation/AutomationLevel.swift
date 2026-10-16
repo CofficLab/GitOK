@@ -25,9 +25,9 @@ public enum AutomationLevel: CaseIterable, Codable, Identifiable, RawRepresentab
 
     public var displayName: String {
         switch self {
-        case .chat: LumiPluginLocalization.string("Chat", bundle: .module)
-        case .build: LumiPluginLocalization.string("Build", bundle: .module)
-        case .autonomous: LumiPluginLocalization.string("Autonomous", bundle: .module)
+        case .chat: pluginLocalization.string("Chat")
+        case .build: pluginLocalization.string("Build")
+        case .autonomous: pluginLocalization.string("Autonomous")
         }
     }
 
@@ -41,9 +41,9 @@ public enum AutomationLevel: CaseIterable, Codable, Identifiable, RawRepresentab
 
     public var description: String {
         switch self {
-        case .chat: LumiPluginLocalization.string("Conversation only, no tools executed", bundle: .module)
-        case .build: LumiPluginLocalization.string("Can execute tools, high-risk actions require confirmation", bundle: .module)
-        case .autonomous: LumiPluginLocalization.string("Can autonomously execute tools and keep progressing", bundle: .module)
+        case .chat: pluginLocalization.string("Conversation only, no tools executed")
+        case .build: pluginLocalization.string("Can execute tools, high-risk actions require confirmation")
+        case .autonomous: pluginLocalization.string("Can autonomously execute tools and keep progressing")
         }
     }
 

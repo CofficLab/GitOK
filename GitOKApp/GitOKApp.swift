@@ -1,3 +1,4 @@
+import AppKit
 import FactoryGitOK
 import KitGitOKUpdate
 import KernelCore
@@ -12,8 +13,14 @@ struct GitOKApp: App {
     @Environment(\.openWindow) private var openWindow
 
     init() {
+        // GitOK 是单窗口应用：关闭 macOS 的自动窗口标签页，
+        // 否则系统会在「显示」菜单里注入「显示标签页栏 / 合并所有窗口」，
+        // 并允许 ⌘T 把窗口合并成原生标签页。
+        // 必须早于任何窗口创建，因此放在 App init 中设置。
+        NSWindow.allowsAutomaticWindowTabbing = false
+
         // Ignore a previously persisted no-window state so launching GitOK
-        // always presents its main WindowGroup, including after UI test runs.
+        // always presents its main window, including after UI test runs.
         UserDefaults.standard.set(true, forKey: "ApplePersistenceIgnoreState")
         AppUpdateBootstrap.start()
         if let assembledKernel = try? FactoryGitOK.makeKernel() {
@@ -31,7 +38,10 @@ struct GitOKApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("GitOK", id: "gitok.main") {
+        // 使用 Window 而不是 WindowGroup：GitOK 只允许一个主窗口，
+        // 这样 ⌘N「新建窗口」不再出现在「文件」菜单中，
+        // 也无法通过菜单派生出可被合并成标签页的第二个主窗口。
+        Window("GitOK", id: "gitok.main") {
             mainView
                 // Do not put an accessibility identifier on the root view:
                 // SwiftUI propagates it to toolbar and content descendants,

@@ -52,7 +52,7 @@ public struct GitUserInfoSettingView: View {
     // MARK: - Existing Presets
 
     private var existingPresetsSection: some View {
-        AppSettingSection(title: LumiPluginLocalization.string("Existing Presets", bundle: .module), titleAlignment: .leading) {
+        AppSettingSection(title: pluginLocalization.string("Existing Presets"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(presets) { preset in
                     AppSettingRow(
@@ -61,7 +61,7 @@ public struct GitUserInfoSettingView: View {
                         icon: "person.crop.circle"
                     ) {
                         HStack(spacing: 8) {
-                            AppButton(LumiPluginLocalization.string("Apply", bundle: .module), systemImage: "checkmark.circle", style: .secondary, size: .small) {
+                            AppButton(pluginLocalization.string("Apply"), systemImage: "checkmark.circle", style: .secondary, size: .small) {
                                 apply(preset)
                             }
                             AppIconButton(
@@ -69,7 +69,7 @@ public struct GitUserInfoSettingView: View {
                                 tint: theme.error,
                                 action: { delete(preset) }
                             )
-                            .help(LumiPluginLocalization.string("Delete this preset", bundle: .module))
+                            .help(pluginLocalization.string("Delete this preset"))
                         }
                     }
                     if preset != presets.last {
@@ -83,16 +83,16 @@ public struct GitUserInfoSettingView: View {
     // MARK: - Add New Preset
 
     private var addNewPresetSection: some View {
-        AppSettingSection(title: LumiPluginLocalization.string(LumiPluginLocalization.string("Add New Preset", bundle: .module), bundle: .module), titleAlignment: .leading) {
+        AppSettingSection(title: pluginLocalization.string(pluginLocalization.string("Add New Preset")), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 12) {
-                userInput(title: LumiPluginLocalization.string("Username", bundle: .module), placeholder: LumiPluginLocalization.string("Enter username", bundle: .module), text: $userName)
+                userInput(title: pluginLocalization.string("Username"), placeholder: pluginLocalization.string("Enter username"), text: $userName)
                 Divider()
-                userInput(title: LumiPluginLocalization.string("Email", bundle: .module), placeholder: LumiPluginLocalization.string("Enter email", bundle: .module), text: $userEmail)
+                userInput(title: pluginLocalization.string("Email"), placeholder: pluginLocalization.string("Enter email"), text: $userEmail)
                 Divider()
                 HStack {
                     Spacer()
                     AppButton(
-                        LumiPluginLocalization.string("Add New Preset", bundle: .module),
+                        pluginLocalization.string("Add New Preset"),
                         systemImage: "plus",
                         style: .secondary,
                         size: .small
@@ -136,13 +136,13 @@ public struct GitUserInfoSettingView: View {
         userEmail = ""
         isSaving = false
 
-        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: LumiPluginLocalization.string("Saved User Preset", bundle: .module))
+        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: pluginLocalization.string("Saved User Preset"))
     }
 
     /// 应用某预设到当前项目 git 配置。
     private func apply(_ preset: GitUserPreset) {
         errorMessage = nil
-        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: LumiPluginLocalization.string("Applied User Info", bundle: .module))
+        writeToCurrentProject(name: preset.name, email: preset.email, successTitle: pluginLocalization.string("Applied User Info"))
     }
 
     private func delete(_ preset: GitUserPreset) {
@@ -153,7 +153,7 @@ public struct GitUserInfoSettingView: View {
     /// 将用户名 / 邮箱写入当前项目（仓库级 git config）。
     private func writeToCurrentProject(name: String, email: String, successTitle: String) {
         guard let project = projects.currentProject else {
-            toast?.show(LumiPluginLocalization.string("No Project", bundle: .module), detail: LumiPluginLocalization.string("Open a project to apply git user info.", bundle: .module), style: .info)
+            toast?.show(pluginLocalization.string("No Project"), detail: pluginLocalization.string("Open a project to apply git user info."), style: .info)
             return
         }
         let url = project.url
@@ -163,11 +163,11 @@ public struct GitUserInfoSettingView: View {
                 try GitConfigReader.setValue("user.email", email, in: url)
                 await MainActor.run {
                     projects.notifyDataChanged()
-                    toast?.show(successTitle, detail: String(format: LumiPluginLocalization.string("%@ <%@>", bundle: .module), name, email), style: .success)
+                    toast?.show(successTitle, detail: String(format: pluginLocalization.string("%@ <%@>"), name, email), style: .success)
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = String(format: LumiPluginLocalization.string("Save failed: %@", bundle: .module), error.localizedDescription)
+                    errorMessage = String(format: pluginLocalization.string("Save failed: %@"), error.localizedDescription)
                 }
             }
         }

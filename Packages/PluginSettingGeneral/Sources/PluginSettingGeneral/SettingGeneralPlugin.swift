@@ -56,7 +56,7 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
                 items: [
                     CommandItem(
                         id: "\(id).openSettings",
-                        title: LumiPluginLocalization.string("Settings...", bundle: .module),
+                        title: pluginLocalization.string("Settings..."),
                         shortcut: ",",
                         modifiers: .command
                     ) {
@@ -81,7 +81,7 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
 
         let entry = SettingEntryItem(
             id: "general",
-            title: LumiPluginLocalization.string("General", bundle: .module),
+            title: pluginLocalization.string("General"),
             systemImage: "gearshape",
             order: 1
         ) { [docsProvider] in

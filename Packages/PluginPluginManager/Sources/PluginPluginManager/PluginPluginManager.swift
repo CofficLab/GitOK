@@ -58,7 +58,7 @@ public final class PluginPluginManager: SuperPlugin, SuperLog {
 
         let entry = SettingEntryItem(
             id: Self.settingsEntryID,
-            title: LumiPluginLocalization.string("Plugin Management", bundle: .module),
+            title: pluginLocalization.string("Plugin Management"),
             systemImage: "puzzlepiece.extension",
             order: 3
         ) { [manager, docsProvider] in

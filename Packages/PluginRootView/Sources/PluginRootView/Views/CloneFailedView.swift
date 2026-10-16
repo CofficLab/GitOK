@@ -4,20 +4,20 @@ import ProviderProjects
 import SwiftUI
 
 private func cloneFailureLocalized(_ key: String) -> String {
-    LumiPluginLocalization.string(key, bundle: .module)
+    pluginLocalization.string(key)
 }
 
 /// 当前项目的 clone 任务失败或被取消时显示的唯一工作区内容。
 @MainActor
 struct CloneFailedView: View {
     let project: Project
-    let cloneRepository: any CloneRepositoryProviding
+    let cloneRepository: RootViewCloneCapability
 
     @StateObject private var observation: CloneFailureObservation
     @State private var retryError: String?
     @LumiTheme private var theme
 
-    init(project: Project, cloneRepository: any CloneRepositoryProviding) {
+    init(project: Project, cloneRepository: RootViewCloneCapability) {
         self.project = project
         self.cloneRepository = cloneRepository
         _observation = StateObject(
@@ -31,7 +31,7 @@ struct CloneFailedView: View {
     }
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        VStack(spacing: 0) {
             if let task {
                 detail(task)
                     .frame(maxWidth: 620, alignment: .leading)
@@ -146,10 +146,14 @@ struct CloneFailedView: View {
                         .font(.appBodyEmphasized)
                         .foregroundStyle(theme.error)
 
-                        Text(error)
-                            .font(.appMonoCaption)
-                            .foregroundStyle(theme.textPrimary)
-                            .textSelection(.enabled)
+                        ScrollView(.vertical, showsIndicators: false) {
+                            Text(error)
+                                .font(.appMonoCaption)
+                                .foregroundStyle(theme.textPrimary)
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(maxHeight: 200)
                     }
                 }
             }
@@ -184,7 +188,7 @@ private final class CloneFailureObservation: ObservableObject {
     @Published private(set) var revision = 0
     private var handle: (any CloneRepositoryObserverHandle)?
 
-    init(cloneRepository: any CloneRepositoryProviding) {
+    init(cloneRepository: RootViewCloneCapability) {
         handle = cloneRepository.addObserver { [weak self] _ in
             self?.revision += 1
         }

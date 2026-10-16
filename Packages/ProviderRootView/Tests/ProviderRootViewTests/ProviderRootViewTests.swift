@@ -3,7 +3,7 @@ import ProviderChatSection
 import ProviderRailView
 import SwiftUI
 import Testing
-@testable import ProviderRootView
+@testable import GitOKProviderRootView
 
 /// RootViewProviding 协议与默认实现的基础验证。
 @Suite("ProviderRootView")

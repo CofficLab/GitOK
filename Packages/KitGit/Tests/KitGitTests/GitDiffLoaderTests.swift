@@ -16,16 +16,26 @@ final class GitDiffLoaderTests: XCTestCase {
     /// 在当前仓库根（GitOK 自身）上做只读冒烟测试。
     func testLoadChangesOnSelf() throws {
         let repo = selfRepoURL
-        guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {
-            throw XCTSkip("not inside a GitOK git checkout: \(repo.path)")
-        }
-        let commits = try GitCommitLoader.loadCommits(in: repo, limit: 5)
-        guard let head = commits.first else {
-            throw XCTSkip("no commits in self repo")
+        guard let head = try firstCommitWithChanges(in: repo) else {
+            throw XCTSkip("no commit with file changes in self repo")
         }
         let changes = try GitDiffLoader.loadChanges(commit: head.hash, in: repo)
         XCTAssertFalse(changes.isEmpty)
         XCTAssertTrue(changes.allSatisfy { !$0.path.isEmpty })
+    }
+
+    /// 自仓库上最近一个「确实有文件变更」的 commit。
+    ///
+    /// 不能直接用 HEAD：`git diff-tree -r` 对 merge commit 输出空 diff，
+    /// 且只改 Markdown/文档的提交也可能没有值得断言的文本变更。
+    /// 这里向前回溯直到找到一个有变更的提交，保证冒烟测试稳定。
+    private func firstCommitWithChanges(in repo: URL) throws -> GitCommit? {
+        for commit in try GitCommitLoader.loadCommits(in: repo, limit: 50) {
+            if try GitDiffLoader.countChanges(commit: commit.hash, in: repo) > 0 {
+                return commit
+            }
+        }
+        return nil
     }
 
     func testCancellableDiffReadsHonorPreCancelledRequests() {
@@ -108,12 +118,8 @@ final class GitDiffLoaderTests: XCTestCase {
 
     func testLoadChangesPageMatchesEagerCompatibilityAPI() throws {
         let repo = selfRepoURL
-        guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {
-            throw XCTSkip("not inside a GitOK git checkout: \(repo.path)")
-        }
-        let commits = try GitCommitLoader.loadCommits(in: repo, limit: 5)
-        guard let head = commits.first else {
-            throw XCTSkip("no commits in self repo")
+        guard let head = try firstCommitWithChanges(in: repo) else {
+            throw XCTSkip("no commit with file changes in self repo")
         }
 
         let allChanges = try GitDiffLoader.loadChanges(commit: head.hash, in: repo)
@@ -215,12 +221,8 @@ final class GitDiffLoaderTests: XCTestCase {
 
     func testLoadDiffOnSelf() throws {
         let repo = selfRepoURL
-        guard FileManager.default.fileExists(atPath: repo.appendingPathComponent(".git").path) else {
-            throw XCTSkip("not inside a GitOK git checkout: \(repo.path)")
-        }
-        let commits = try GitCommitLoader.loadCommits(in: repo, limit: 5)
-        guard let head = commits.first else {
-            throw XCTSkip("no commits in self repo")
+        guard let head = try firstCommitWithChanges(in: repo) else {
+            throw XCTSkip("no commit with file changes in self repo")
         }
         let changes = try GitDiffLoader.loadChanges(commit: head.hash, in: repo)
         guard let textFile = changes.first(where: { $0.status != .unknown }) else {

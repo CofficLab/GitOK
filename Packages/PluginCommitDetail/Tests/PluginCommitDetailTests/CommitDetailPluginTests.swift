@@ -97,15 +97,19 @@ final class CommitDetailPluginTests: XCTestCase {
             DefaultWorkspaceSceneProvider()
         )
 
+        // 注册内容块会广播 .contentChanged；未注册则不会有任何事件。
+        var changeCount = 0
+        let handle = contentView.addContentViewObserver { _ in changeCount += 1 }
+
         let plugin = CommitDetailPlugin()
         try plugin.onBoot(kernel: kernel)
 
         // ContentViewProviding 已注入内容块（id 为插件内容 id）。
-        let contentID = "\(plugin.id).content"
-        XCTAssertTrue(contentView.registeredIDs.contains(contentID))
+        XCTAssertGreaterThanOrEqual(changeCount, 1, "onBoot 应通过 addContentView 注入内容块")
         // ContentViewProviding 已注入内容（CommitDetailView）。
         let host = contentView.makeContentView()
         XCTAssertFalse(String(describing: host).isEmpty)
+        handle.cancel()
     }
 
     func testOnShutdownClearsContent() throws {
@@ -119,13 +123,23 @@ final class CommitDetailPluginTests: XCTestCase {
             DefaultWorkspaceSceneProvider()
         )
 
+        var changeCount = 0
+        let handle = contentView.addContentViewObserver { _ in changeCount += 1 }
+
         let plugin = CommitDetailPlugin()
         try plugin.onBoot(kernel: kernel)
-        let contentID = "\(plugin.id).content"
-        XCTAssertTrue(contentView.registeredIDs.contains(contentID))
+        let changesAfterBoot = changeCount
+        XCTAssertGreaterThanOrEqual(changesAfterBoot, 1, "onBoot 应注册内容块")
 
         try plugin.onShutdown(kernel: kernel)
-        XCTAssertFalse(contentView.registeredIDs.contains(contentID))
+        // removeContentView 仅在移除了同 id 的内容块时才广播事件，
+        // 事件增加即证明 onShutdown 按插件内容 id 清掉了注册内容。
+        XCTAssertGreaterThan(
+            changeCount,
+            changesAfterBoot,
+            "onShutdown 应按插件内容 id 移除已注册的内容块"
+        )
+        handle.cancel()
     }
 
     // MARK: - Observer → ViewModel wiring

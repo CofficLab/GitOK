@@ -1,5 +1,5 @@
 import LumiUI
-import ProviderRootView
+import GitOKProviderRootView
 import SwiftUI
 
 /// Toolbar button that toggles the left sidebar visibility.

@@ -15,21 +15,21 @@ public enum GitTagOperation {
         public var errorDescription: String? {
             switch self {
             case .invalidName:
-                LumiPluginLocalization.string("A valid tag name is required.", bundle: .module)
+                pluginLocalization.string("A valid tag name is required.")
             case .invalidCommit:
-                LumiPluginLocalization.string("A commit is required for the tag.", bundle: .module)
+                pluginLocalization.string("A commit is required for the tag.")
             case .invalidMessage:
-                LumiPluginLocalization.string("An annotated tag message is required.", bundle: .module)
+                pluginLocalization.string("An annotated tag message is required.")
             case .invalidRemote:
-                LumiPluginLocalization.string("A remote name is required for the tag.", bundle: .module)
+                pluginLocalization.string("A remote name is required for the tag.")
             case .createFailed(let message):
-                String(format: LumiPluginLocalization.string("Tag creation failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Tag creation failed: %@"), message)
             case .deleteFailed(let message):
-                String(format: LumiPluginLocalization.string("Tag deletion failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Tag deletion failed: %@"), message)
             case .pushFailed(let message):
-                String(format: LumiPluginLocalization.string("Tag push failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Tag push failed: %@"), message)
             case .deleteRemoteFailed(let message):
-                String(format: LumiPluginLocalization.string("Remote tag deletion failed: %@", bundle: .module), message)
+                String(format: pluginLocalization.string("Remote tag deletion failed: %@"), message)
             }
         }
     }

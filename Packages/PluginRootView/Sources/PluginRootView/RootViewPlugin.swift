@@ -6,7 +6,7 @@ import os
 import ProviderCloneRepository
 import ProviderProjects
 import ProviderRailView
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderToolbar
 import SwiftUI
 import ProviderDocsView
@@ -52,6 +52,10 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
     private var observer: RootViewProjectObserver?
     private var toolbarProvider: (any ToolbarProviding)?
 
+    /// 装配阶段收窄得到的插件能力；视图与观察者只持有它们，不直接持有 Provider。
+    private var projectCapability: RootViewProjectCapability?
+    private var cloneCapability: RootViewCloneCapability?
+
     private let workspaceModel = RootWorkspaceModel()
 
     public init() {
@@ -83,37 +87,41 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         }
         toolbarProvider = kernel.resolveProvider((any ToolbarProviding).self)
 
+        // 装配阶段收窄 Provider：视图与观察者只依赖插件自己的窄能力。
+        let projectCapability = RootViewProjectCapabilityAdapter(projects: projects)
+        let cloneCapability = RootViewCloneCapabilityAdapter(
+            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+        )
+        self.projectCapability = projectCapability
+        self.cloneCapability = cloneCapability
+
         provider.setWorkspaceUnavailableView(
             AnyView(
                 RootWorkspaceUnavailableView(
                     model: workspaceModel,
-                    projects: projects,
-                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
+                    projects: projectCapability,
+                    cloneRepository: cloneCapability
                 )
             )
         )
 
         // 项目列表 / 当前选择发生变化时同步更新根布局门控。
         observer = RootViewProjectObserver(
-            projects: projects,
-            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self),
-            onWorkspaceChanged: { [weak self, weak projects] in
-                guard let self, let projects else { return }
-                self.updateWorkspaceState(
-                    projects: projects,
-                    cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
-                )
+            projects: projectCapability,
+            cloneRepository: cloneCapability,
+            onWorkspaceChanged: { [weak self] in
+                guard let self else { return }
+                self.updateWorkspaceState()
             }
         )
-        updateWorkspaceState(
-            projects: projects,
-            cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
-        )
+        updateWorkspaceState()
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
         observer?.cancel()
         observer = nil
+        projectCapability = nil
+        cloneCapability = nil
         toolbarProvider?.setHiddenCategories([], for: id)
         toolbarProvider = nil
         provider.setWorkspaceUnavailableView(nil)
@@ -127,13 +135,11 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         }
     }
 
-    private func updateWorkspaceState(
-        projects: any ProjectProviding,
-        cloneRepository: (any CloneRepositoryProviding)?
-    ) {
+    private func updateWorkspaceState() {
+        guard let projects = projectCapability, let cloneRepository = cloneCapability else { return }
         let state: RootWorkspaceState
         if let project = projects.currentProject {
-            if let cloneTask = cloneRepository?.task(for: project.url) {
+            if let cloneTask = cloneRepository.task(for: project.url) {
                 switch cloneTask.status {
                 case .queued, .cloning, .cancelling:
                     state = .cloning

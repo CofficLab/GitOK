@@ -1,6 +1,6 @@
 import ProviderWorkspaceScene
 
-/// Icon 插件的场景观察者：把 WorkspaceSceneProviding 事件转换为插件场景 ViewModel 状态。
+/// Icon 插件的场景观察者。
 @MainActor
 final class IconSceneObserver {
     private weak var viewModel: WorkspaceSceneVisibilityViewModel?

@@ -64,6 +64,33 @@ final class PluginProjectsTests: XCTestCase {
         XCTAssertEqual(manager.projects.map(\.title), ["A", "B"])
     }
 
+    func testMoveProjectPreservesManualOrderAndPersists() {
+        let manager = ProjectManager(storeURL: storeURL)
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/B"))
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/C"))
+
+        let aID = manager.projects.first(where: { $0.title == "A" })!.id
+        let cID = manager.projects.first(where: { $0.title == "C" })!.id
+        manager.moveProject(id: aID, beforeID: cID)
+
+        XCTAssertEqual(manager.projects.map(\.title), ["A", "C", "B"])
+        XCTAssertEqual(ProjectManager(storeURL: storeURL).projects.map(\.title), ["A", "C", "B"])
+    }
+
+    func testMoveProjectCannotCrossPinnedBoundary() {
+        let manager = ProjectManager(storeURL: storeURL)
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))
+        manager.addProject(at: URL(fileURLWithPath: "/tmp/B"))
+        let aID = manager.projects.first(where: { $0.title == "A" })!.id
+        let bID = manager.projects.first(where: { $0.title == "B" })!.id
+        manager.pinProject(id: bID, isPinned: true)
+
+        manager.moveProject(id: aID, beforeID: bID)
+
+        XCTAssertEqual(manager.projects.map(\.title), ["B", "A"])
+    }
+
     func testPersistenceRoundTrip() throws {
         let manager = ProjectManager(storeURL: storeURL)
         manager.addProject(at: URL(fileURLWithPath: "/tmp/A"))

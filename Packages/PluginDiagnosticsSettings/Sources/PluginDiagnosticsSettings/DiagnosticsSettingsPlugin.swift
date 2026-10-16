@@ -47,7 +47,7 @@ public final class DiagnosticsSettingsPlugin: SuperPlugin, SuperLog {
         settings.addEntries([
             SettingEntryItem(
                 id: "diagnostics",
-                title: LumiPluginLocalization.string("Diagnostics", bundle: .module),
+                title: pluginLocalization.string("Diagnostics"),
                 systemImage: "stethoscope",
                 order: 60
             ) {

@@ -94,4 +94,15 @@ public final class GitConflictResolverViewModel: ObservableObject {
     public func isConflictFileResolved(_ file: String) -> Bool {
         resolvedConflictFiles.contains(file)
     }
+
+    /// 弹层正文区是否存在可展示的文件行。
+    public var hasContentRows: Bool {
+        !displayedConflictFiles.isEmpty
+    }
+
+    /// 正文区有文件行时，继续操作入口位于顶部操作栏；正文区为空时才由
+    /// 正文里的圆形「继续」按钮提供入口，避免同一弹层出现两个相同入口。
+    public var showsToolbarContinueAction: Bool {
+        isOperationInProgress && hasContentRows
+    }
 }

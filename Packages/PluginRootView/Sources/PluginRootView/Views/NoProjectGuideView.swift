@@ -2,7 +2,6 @@
 import AppKit
 #endif
 import LumiUI
-import ProviderProjects
 import SwiftUI
 
 /// 无项目时的全屏引导视图。
@@ -10,7 +9,7 @@ import SwiftUI
 /// 当根工作区没有当前项目时显示在工作区区域，引导用户添加或克隆仓库。
 @MainActor
 struct NoProjectGuideView: View {
-    let projects: any ProjectProviding
+    let projects: any RootViewProjectCapability
 
     @LumiTheme private var theme
 
@@ -29,11 +28,11 @@ struct NoProjectGuideView: View {
                     .frame(maxHeight: 80)
 
                 VStack(spacing: DesignTokens.Spacing.sm) {
-                    Text(LumiPluginLocalization.string("Welcome to GitOK", bundle: .module))
+                    Text(pluginLocalization.string("Welcome to GitOK"))
                         .font(.appTitle)
                         .foregroundStyle(theme.textPrimary)
 
-                    Text(LumiPluginLocalization.string("Add an existing Git repository, or clone a new one to get started.", bundle: .module))
+                    Text(pluginLocalization.string("Add an existing Git repository, or clone a new one to get started."))
                         .font(.appBody)
                         .foregroundStyle(theme.textSecondary)
                         .multilineTextAlignment(.center)
@@ -42,7 +41,7 @@ struct NoProjectGuideView: View {
 
                 VStack(spacing: DesignTokens.Spacing.md) {
                     AppButton(
-                        LumiPluginLocalization.string("Add Project", bundle: .module),
+                        pluginLocalization.string("Add Project"),
                         systemImage: "folder",
                         style: .primary,
                         size: .medium
@@ -84,8 +83,8 @@ struct NoProjectGuideView: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = LumiPluginLocalization.string("Add", bundle: .module)
-        panel.message = LumiPluginLocalization.string("Choose a Git repository folder to add to GitOK", bundle: .module)
+        panel.prompt = pluginLocalization.string("Add")
+        panel.message = pluginLocalization.string("Choose a Git repository folder to add to GitOK")
         if panel.runModal() == .OK, let url = panel.url {
             projects.addProject(at: url)
             projects.openProject(at: url)

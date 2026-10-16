@@ -233,13 +233,13 @@ public enum GitCommitLoaderError: Error, Equatable, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notARepository(let url):
-            String(format: LumiPluginLocalization.string("This directory is not a Git repository: %@", bundle: .module), url.lastPathComponent)
+            String(format: pluginLocalization.string("This directory is not a Git repository: %@"), url.lastPathComponent)
         case .gitUnavailable:
-            LumiPluginLocalization.string("Git command not found. Please make sure git is installed.", bundle: .module)
+            pluginLocalization.string("Git command not found. Please make sure git is installed.")
         case .gitFailed(let message):
             message
         case .timedOut(let command):
-            String(format: LumiPluginLocalization.string("Git command timed out: %@", bundle: .module), command)
+            String(format: pluginLocalization.string("Git command timed out: %@"), command)
         }
     }
 }

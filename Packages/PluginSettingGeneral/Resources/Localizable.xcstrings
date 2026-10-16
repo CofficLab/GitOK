@@ -160,13 +160,13 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行為"
+            "value" : "行爲"
           }
         },
         "zh-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行為"
+            "value" : "行爲"
           }
         }
       }
@@ -268,7 +268,7 @@
         "zh-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "改動立即生效，無需重啟。"
+            "value" : "改動立即生效，無需重啓。"
           }
         }
       }
@@ -307,41 +307,6 @@
         }
       }
     },
-    "Check for a newer GitOK release and install it with Sparkle." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check for a newer GitOK release and install it with Sparkle."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "检查 GitOK 是否有新版本，并通过 Sparkle 安装。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "檢查 GitOK 是否有新版本，並透過 Sparkle 安裝。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "檢查 GitOK 是否有新版本，並透過 Sparkle 安裝。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "檢查 GitOK 是否有新版本，並透過 Sparkle 安裝。"
-          }
-        }
-      }
-    },
     "Check for Updates" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -373,6 +338,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "檢查更新"
+          }
+        }
+      }
+    },
+    "Check for a newer GitOK release and install it with Sparkle." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for a newer GitOK release and install it with Sparkle."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查 GitOK 是否有新版本，并通过 Sparkle 安装。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢查 GitOK 是否有新版本，並透過 Sparkle 安裝。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢查 GitOK 是否有新版本，並透過 Sparkle 安裝。"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢查 GitOK 是否有新版本，並透過 Sparkle 安裝。"
           }
         }
       }
@@ -510,40 +510,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通用選項"
-          }
-        }
-      }
-    },
-    "general page" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "general page"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通用页面"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通用頁面"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通用頁面"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通用頁面"
           }
         }
       }
@@ -741,13 +707,13 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "啓動行為、窗口與界面偏好。"
+            "value" : "啓動行爲、窗口與界面偏好。"
           }
         },
         "zh-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "啟動行為、窗口與界面偏好。"
+            "value" : "啓動行爲、窗口與界面偏好。"
           }
         }
       }
@@ -1026,40 +992,6 @@
         }
       }
     },
-    "options" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "options"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选项"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選項"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選項"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選項"
-          }
-        }
-      }
-    },
     "Plugin ID" : {
       "localizations" : {
         "en" : {
@@ -1253,13 +1185,13 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換應用級行為。"
+            "value" : "切換應用級行爲。"
           }
         },
         "zh-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換應用級行為。"
+            "value" : "切換應用級行爲。"
           }
         }
       }
@@ -1465,6 +1397,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "網站"
+          }
+        }
+      }
+    },
+    "general page" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "general page"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用页面"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用頁面"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用頁面"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用頁面"
+          }
+        }
+      }
+    },
+    "options" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "options"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选项"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選項"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選項"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選項"
           }
         }
       }

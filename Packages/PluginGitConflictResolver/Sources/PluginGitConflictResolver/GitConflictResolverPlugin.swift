@@ -6,7 +6,7 @@ import ProviderGitRepositoryWatch
 import ProviderGit
 import ProviderGitConflictResolver
 import ProviderProjects
-import ProviderRootView
+import GitOKProviderRootView
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI
@@ -114,7 +114,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
         statusBar.addStatusBarItems([
             StatusBarItem(
                 id: Self.itemID,
-                title: LumiPluginLocalization.string("Conflict Resolver", bundle: .module),
+                title: pluginLocalization.string("Conflict Resolver"),
                 placement: .leading,
                 order: 18
             ) {

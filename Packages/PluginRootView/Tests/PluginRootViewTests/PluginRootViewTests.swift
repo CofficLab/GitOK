@@ -3,7 +3,7 @@ import KernelCore
 import KitGit
 import ProviderCloneRepository
 import ProviderProjects
-import ProviderRootView
+import GitOKProviderRootView
 import SwiftUI
 import XCTest
 @testable import PluginRootView
