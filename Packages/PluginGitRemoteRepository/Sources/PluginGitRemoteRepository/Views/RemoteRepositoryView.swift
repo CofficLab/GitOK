@@ -183,14 +183,24 @@ private struct AddRemoteForm: View {
 }
 
 /// 项目观察模型：订阅 `ProjectProviding` 事件。
+///
+/// 只响应会改变**远程配置**的事件：切换项目会指向另一个仓库的远程列表，
+/// 仓库数据变化（提交 / 推送后）需要刷新。commit 选择与文件选择属于
+/// 会话级状态，与 `.git/config` 中的 remote 无关，忽略它们可避免每次
+/// 选文件都重新拉取远程列表。
 @MainActor
 final class ProjectObservationModel: ObservableObject {
     @Published private(set) var revision = 0
     private var handle: (any ProjectProvidingObserverHandle)?
 
     init(projects: any ProjectProviding) {
-        handle = projects.addObserver { [weak self] _ in
-            self?.revision += 1
+        handle = projects.addObserver { [weak self] event in
+            switch event {
+            case .selectionChanged, .dataChanged:
+                self?.revision += 1
+            default:
+                break
+            }
         }
     }
 }

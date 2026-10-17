@@ -424,25 +424,29 @@ struct ProjectObservationModelTests {
         _ = model
     }
 
-    @Test("任意事件都递增 revision")
-    func bumpsRevisionOnAnyEvent() {
+    @Test("selectionChanged 与 dataChanged 递增 revision")
+    func bumpsRevisionOnRemoteAffectingEvents() {
         let provider = ObservableProjectsProvider()
         let model = ProjectObservationModel(projects: provider)
 
         provider.emit(.selectionChanged(projectID: nil))
         #expect(model.revision == 1)
 
-        provider.emit(.projectsChanged)
-        #expect(model.revision == 2)
-
         provider.emit(.dataChanged)
-        #expect(model.revision == 3)
+        #expect(model.revision == 2)
+    }
 
-        provider.emit(.currentFileChanged)
-        #expect(model.revision == 4)
+    @Test("与远程配置无关的事件不递增 revision")
+    func ignoresIrrelevantEvents() {
+        let provider = ObservableProjectsProvider()
+        let model = ProjectObservationModel(projects: provider)
 
+        // commit 选择与文件选择属于会话级状态，不改变 .git/config 中的 remote，
+        // 忽略它们可避免每次选文件都重新拉取远程列表。
         provider.emit(.commitSelectionChanged)
-        #expect(model.revision == 5)
+        provider.emit(.currentFileChanged)
+
+        #expect(model.revision == 0)
     }
 
     @Test("初始 revision 为 0")
