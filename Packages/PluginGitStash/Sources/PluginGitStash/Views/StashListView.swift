@@ -11,40 +11,43 @@ public struct StashListView: View {
     let git: any GitProviding
     let onStashesChanged: () -> Void
 
-    @State private var stashes: [GitStashEntry] = []
-    @State private var isLoading = true
-    @State private var stashMessage = ""
-    @State private var isPerformingAction = false
-    @State private var message: String?
-    @State private var errorMessage: String?
+    @State private var model: StashListModel
 
     public init(projects: any ProjectProviding, git: any GitProviding, onStashesChanged: @escaping () -> Void) {
         self.projects = projects
         self.git = git
         self.onStashesChanged = onStashesChanged
+        let gitProvider = git
+        _model = State(initialValue: StashListModel(
+            git: StashGitCapabilityAdapter(git: gitProvider),
+            repositoryURL: { [projects] in projects.currentProject?.url },
+            onStashesChanged: onStashesChanged
+        ))
     }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
-            if let message {
-                Text(message)
-                    .font(.caption)
-                    .foregroundStyle(theme.success)
-            }
-            if let errorMessage {
-                Text(errorMessage)
-                    .font(.caption)
-                    .foregroundStyle(theme.warning)
-                    .textSelection(.enabled)
+            if let message = model.message {
+                switch message {
+                case .success(let text):
+                    Text(text)
+                        .font(.caption)
+                        .foregroundStyle(theme.success)
+                case .failure(let text):
+                    Text(text)
+                        .font(.caption)
+                        .foregroundStyle(theme.warning)
+                        .textSelection(.enabled)
+                }
             }
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
-                    if isLoading {
+                    if model.isLoading {
                         StashListSkeletonView()
                             .frame(maxWidth: .infinity, minHeight: 120)
-                    } else if stashes.isEmpty {
+                    } else if model.stashes.isEmpty {
                         VStack(spacing: 6) {
                             Image(systemName: "archivebox")
                                 .font(.system(size: 22))
@@ -54,13 +57,13 @@ public struct StashListView: View {
                         }
                         .frame(maxWidth: .infinity, minHeight: 120)
                     } else {
-                        ForEach(stashes) { stash in
+                        ForEach(model.stashes) { stash in
                             StashRow(
                                 stash: stash,
-                                isBusy: isPerformingAction,
-                                onApply: { perform(.apply(stash)) },
-                                onPop: { perform(.pop(stash)) },
-                                onDrop: { perform(.drop(stash)) }
+                                isBusy: model.isPerformingAction,
+                                onApply: { model.perform(.apply(stash)) },
+                                onPop: { model.perform(.pop(stash)) },
+                                onDrop: { model.perform(.drop(stash)) }
                             )
                         }
                     }
@@ -68,7 +71,7 @@ public struct StashListView: View {
             }
         }
         .padding(16)
-        .onAppear(perform: load)
+        .task { model.load() }
     }
 
     private var header: some View {
@@ -76,99 +79,14 @@ public struct StashListView: View {
             Text(GitStashLocalization.string("Stash", bundle: .module))
                 .font(.headline)
             HStack(spacing: 8) {
-                AppInputField(LocalizedStringKey(GitStashLocalization.string("Stash message (optional)", bundle: .module)), text: $stashMessage)
+                AppInputField(
+                    LocalizedStringKey(GitStashLocalization.string("Stash message (optional)", bundle: .module)),
+                    text: $model.stashMessage
+                )
                 AppButton(GitStashLocalization.string("Save", bundle: .module), systemImage: "plus", style: .primary, size: .small) {
-                    saveStash()
+                    model.save()
                 }
-                .disabled(isPerformingAction)
-            }
-        }
-    }
-
-    private var projectURL: URL? {
-        projects.currentProject?.url
-    }
-
-    private enum StashAction {
-        case apply(GitStashEntry)
-        case pop(GitStashEntry)
-        case drop(GitStashEntry)
-    }
-
-    @MainActor
-    private func load() {
-        guard let url = projectURL else {
-            stashes = []
-            isLoading = false
-            return
-        }
-        isLoading = true
-        errorMessage = nil
-        Task.detached(priority: .userInitiated) {
-            let loaded = git.listStashes(in: url)
-            await MainActor.run {
-                stashes = loaded
-                isLoading = false
-            }
-        }
-    }
-
-    @MainActor
-    private func saveStash() {
-        guard let url = projectURL else { return }
-        let text = stashMessage.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard git.hasChangesToStash(in: url) else {
-            errorMessage = GitStashLocalization.string("No changes to stash", bundle: .module)
-            return
-        }
-        isPerformingAction = true
-        errorMessage = nil
-        message = nil
-        Task.detached(priority: .userInitiated) {
-            do {
-                try git.saveStash(message: text.isEmpty ? nil : text, in: url)
-                await MainActor.run {
-                    stashMessage = ""
-                    isPerformingAction = false
-                    message = GitStashLocalization.string("Stash saved", bundle: .module)
-                    onStashesChanged()
-                    load()
-                }
-            } catch {
-                await MainActor.run {
-                    isPerformingAction = false
-                    errorMessage = error.localizedDescription
-                }
-            }
-        }
-    }
-
-    @MainActor
-    private func perform(_ action: StashAction) {
-        guard let url = projectURL else { return }
-        isPerformingAction = true
-        errorMessage = nil
-        message = nil
-        Task.detached(priority: .userInitiated) {
-            do {
-                switch action {
-                case .apply(let entry):
-                    try git.applyStash(entry, in: url)
-                case .pop(let entry):
-                    try git.popStash(entry, in: url)
-                case .drop(let entry):
-                    try git.dropStash(entry, in: url)
-                }
-                await MainActor.run {
-                    isPerformingAction = false
-                    onStashesChanged()
-                    load()
-                }
-            } catch {
-                await MainActor.run {
-                    isPerformingAction = false
-                    errorMessage = error.localizedDescription
-                }
+                .disabled(model.isPerformingAction)
             }
         }
     }

@@ -10,68 +10,38 @@ public struct StashStatusTile: View {
     let projects: any ProjectProviding
     let git: any GitProviding
     @StateObject private var observation: ProjectObservationModel
-    @State private var stashCount = 0
+    @State private var loader: StashCountLoader
     @State private var isPresented = false
-    @State private var loadTask: Task<Void, Never>?
-    @State private var loadCancellation: GitProcessCancellation?
-    @State private var loadGeneration = 0
 
     public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
         self.git = git
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+        let gitProvider = git
+        _loader = State(initialValue: StashCountLoader(
+            git: StashCountGitCapabilityAdapter(git: gitProvider),
+            repositoryURL: { [projects] in projects.currentProject?.url }
+        ))
     }
 
     public var body: some View {
         Group {
             if projects.currentProject != nil {
                 AppStatusBarTile(systemImage: "archivebox", action: { isPresented.toggle() }) {
-                    if stashCount > 0 {
-                        Text("\(stashCount)").lineLimit(1)
+                    if loader.count > 0 {
+                        Text("\(loader.count)").lineLimit(1)
                     }
                 }
                 .help(GitStashLocalization.string("Manage Stash", bundle: .module))
                 .popover(isPresented: $isPresented, arrowEdge: .bottom) {
-                    StashListView(projects: projects, git: git, onStashesChanged: { load() })
+                    StashListView(projects: projects, git: git, onStashesChanged: { loader.load() })
                         .frame(width: 460, height: 520)
                 }
             }
         }
-        .onReceive(observation.$revision) { _ in load() }
-        .onAppear { load() }
-        .onDisappear(perform: cancelLoad)
-    }
-
-    @MainActor
-    private func load() {
-        loadGeneration &+= 1
-        let generation = loadGeneration
-        cancelLoad()
-
-        guard let url = projects.currentProject?.url else {
-            stashCount = 0
-            return
-        }
-        stashCount = 0
-        let cancellation = GitProcessCancellation()
-        loadCancellation = cancellation
-        loadTask = Task.detached(priority: .utility) {
-            let count = git.listStashes(in: url, cancellation: cancellation).count
-            await MainActor.run {
-                guard generation == loadGeneration, !cancellation.isCancelled else { return }
-                stashCount = count
-                loadTask = nil
-                loadCancellation = nil
-            }
-        }
-    }
-
-    @MainActor
-    private func cancelLoad() {
-        loadTask?.cancel()
-        loadTask = nil
-        loadCancellation?.cancel()
-        loadCancellation = nil
+        .onReceive(observation.$revision) { _ in loader.load() }
+        .onAppear { loader.load() }
+        .onDisappear { loader.cancel() }
     }
 }
 
