@@ -53,12 +53,9 @@ final class ProjectObservationModel: ObservableObject {
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
-            switch event {
-            case .selectionChanged, .dataChanged:
-                self?.revision += 1
-            default:
-                break
-            }
+            // stash 属于仓库数据，只关心仓库级事件
+            guard event.isRepositoryScoped else { return }
+            self?.revision += 1
         }
     }
 }
