@@ -46,7 +46,11 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitRemoteRepositoryTests",
-            dependencies: ["PluginGitRemoteRepository"],
+            dependencies: [
+                "PluginGitRemoteRepository",
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+            ],
             path: "Tests/PluginGitRemoteRepositoryTests"
         ),
     ]

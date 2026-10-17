@@ -41,14 +41,17 @@ public struct RemoteRepositoryView: View {
     let git: any GitProviding
     @Environment(\.dismiss) private var dismiss
 
-    @State private var remotes: [GitRemoteSummary] = []
-    @State private var isLoading = true
+    @State private var model: RemoteRepositoryModel
     @State private var showAddRemote = false
-    @State private var errorMessage: String?
 
     public init(projects: any ProjectProviding, git: any GitProviding) {
         self.projects = projects
         self.git = git
+        let gitProvider = git
+        _model = State(initialValue: RemoteRepositoryModel(
+            git: RemoteRepositoryGitCapabilityAdapter(git: gitProvider),
+            repositoryURL: { [projects] in projects.currentProject?.url }
+        ))
     }
 
     public var body: some View {
@@ -60,11 +63,12 @@ public struct RemoteRepositoryView: View {
                 AppButton(GitRemoteRepositoryLocalization.string("Add", bundle: .module), systemImage: "plus", style: .secondary, size: .small) {
                     showAddRemote = true
                 }
+                .disabled(model.isPerformingAction)
                 AppButton(GitRemoteRepositoryLocalization.string("Close", bundle: .module), style: .secondary, size: .small) {
                     dismiss()
                 }
             }
-            if let errorMessage {
+            if let errorMessage = model.errorMessage {
                 Text(errorMessage)
                     .font(.caption)
                     .foregroundStyle(theme.warning)
@@ -72,10 +76,10 @@ public struct RemoteRepositoryView: View {
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 6) {
-                    if isLoading {
+                    if model.isLoading {
                         RemoteRepositorySkeletonView()
                             .frame(maxWidth: .infinity, minHeight: 120)
-                    } else if remotes.isEmpty {
+                    } else if model.remotes.isEmpty {
                         VStack(spacing: 6) {
                             Image(systemName: "network")
                                 .font(.system(size: 22))
@@ -85,7 +89,7 @@ public struct RemoteRepositoryView: View {
                         }
                         .frame(maxWidth: .infinity, minHeight: 120)
                     } else {
-                        ForEach(remotes) { remote in
+                        ForEach(model.remotes) { remote in
                             remoteRow(remote)
                         }
                     }
@@ -93,10 +97,10 @@ public struct RemoteRepositoryView: View {
             }
         }
         .padding(16)
-        .onAppear(perform: load)
+        .task { model.load() }
         .sheet(isPresented: $showAddRemote) {
             AddRemoteForm { name, url in
-                addRemote(name: name, url: url)
+                model.addRemote(name: name, url: url)
             }
         }
     }
@@ -124,68 +128,14 @@ public struct RemoteRepositoryView: View {
                 copyText(remote.url)
             }
             AppIconButton(systemImage: "trash", label: GitRemoteRepositoryLocalization.string("Delete", bundle: .module), tint: theme.warning) {
-                deleteRemote(remote)
+                model.deleteRemote(remote)
             }
+            .disabled(model.isPerformingAction)
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
         .background(theme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 6))
-    }
-
-    @MainActor
-    private func load() {
-        guard let url = projects.currentProject?.url else {
-            remotes = []
-            isLoading = false
-            return
-        }
-        isLoading = true
-        Task.detached(priority: .userInitiated) {
-            let loaded = git.listRemotes(in: url)
-            await MainActor.run {
-                remotes = loaded
-                isLoading = false
-            }
-        }
-    }
-
-    @MainActor
-    private func addRemote(name: String, url: String) {
-        guard let projectURL = projects.currentProject?.url else { return }
-        Task.detached(priority: .userInitiated) {
-            do {
-                try git.addRemote(name: name, url: url, in: projectURL)
-                let loaded = git.listRemotes(in: projectURL)
-                await MainActor.run {
-                    remotes = loaded
-                    errorMessage = nil
-                }
-            } catch {
-                await MainActor.run {
-                    errorMessage = error.localizedDescription
-                }
-            }
-        }
-    }
-
-    @MainActor
-    private func deleteRemote(_ remote: GitRemoteSummary) {
-        guard let projectURL = projects.currentProject?.url else { return }
-        Task.detached(priority: .userInitiated) {
-            do {
-                try git.removeRemote(name: remote.name, in: projectURL)
-                let loaded = git.listRemotes(in: projectURL)
-                await MainActor.run {
-                    remotes = loaded
-                    errorMessage = nil
-                }
-            } catch {
-                await MainActor.run {
-                    errorMessage = error.localizedDescription
-                }
-            }
-        }
     }
 
     private func copyText(_ text: String) {
@@ -200,28 +150,31 @@ public struct RemoteRepositoryView: View {
 private struct AddRemoteForm: View {
     let onAdd: (String, String) -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var name = "origin"
-    @State private var url = ""
+    @State private var draft = RemoteDraft()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(GitRemoteRepositoryLocalization.string("Add Remote Repository", bundle: .module))
                 .font(.headline)
-            AppInputField(LocalizedStringKey(GitRemoteRepositoryLocalization.string("Remote name (e.g. origin)", bundle: .module)), text: $name)
-            AppInputField(LocalizedStringKey(GitRemoteRepositoryLocalization.string("Repository URL", bundle: .module)), text: $url)
+            AppInputField(
+                LocalizedStringKey(GitRemoteRepositoryLocalization.string("Remote name (e.g. origin)", bundle: .module)),
+                text: Binding(get: { draft.name }, set: { draft.name = $0 })
+            )
+            AppInputField(
+                LocalizedStringKey(GitRemoteRepositoryLocalization.string("Repository URL", bundle: .module)),
+                text: Binding(get: { draft.url }, set: { draft.url = $0 })
+            )
             HStack {
                 Spacer()
                 AppButton(GitRemoteRepositoryLocalization.string("Cancel", bundle: .module), style: .secondary, size: .small) {
                     dismiss()
                 }
                 AppButton(GitRemoteRepositoryLocalization.string("Add", bundle: .module), systemImage: "plus", style: .primary, size: .small) {
-                    onAdd(
-                        name.trimmingCharacters(in: .whitespacesAndNewlines),
-                        url.trimmingCharacters(in: .whitespacesAndNewlines)
-                    )
+                    let submission = draft.submission
+                    onAdd(submission.name, submission.url)
                     dismiss()
                 }
-                .disabled(url.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(!draft.isValid)
             }
         }
         .padding(20)
