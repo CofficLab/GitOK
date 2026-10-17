@@ -42,12 +42,7 @@ public struct GitIgnoreStatusIcon: View {
     }
 
     private func check() {
-        guard let url = projects.currentProject?.url else {
-            hasGitIgnore = false
-            return
-        }
-        let gitignore = url.appendingPathComponent(".gitignore")
-        hasGitIgnore = FileManager.default.fileExists(atPath: gitignore.path)
+        hasGitIgnore = GitIgnoreFile(repositoryRoot: projects.currentProject?.url).exists
     }
 }
 

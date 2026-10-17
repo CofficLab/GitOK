@@ -8,11 +8,13 @@ public struct GitIgnoreViewer: View {
     let projects: any ProjectProviding
     @Environment(\.dismiss) private var dismiss
 
-    @State private var content = ""
-    @State private var isLoading = true
+    @State private var model: GitIgnoreViewerModel
 
     public init(projects: any ProjectProviding) {
         self.projects = projects
+        _model = State(initialValue: GitIgnoreViewerModel(
+            file: GitIgnoreFile(repositoryRoot: projects.currentProject?.url)
+        ))
     }
 
     public var body: some View {
@@ -20,11 +22,11 @@ public struct GitIgnoreViewer: View {
             header
             Divider()
             ScrollView([.vertical, .horizontal]) {
-                if isLoading {
+                if model.isLoading {
                     GitIgnoreSkeletonView()
                         .frame(maxWidth: .infinity, minHeight: 200)
                 } else {
-                    Text(content)
+                    Text(model.content)
                         .font(.system(.body, design: .monospaced))
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,7 +37,7 @@ public struct GitIgnoreViewer: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(minWidth: 600, minHeight: 400)
-        .onAppear(perform: load)
+        .task { await model.load() }
     }
 
     private var header: some View {
@@ -59,22 +61,6 @@ public struct GitIgnoreViewer: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-    }
-
-    private func load() {
-        guard let url = projects.currentProject?.url else {
-            content = ""
-            isLoading = false
-            return
-        }
-        let gitignore = url.appendingPathComponent(".gitignore")
-        Task.detached(priority: .userInitiated) {
-            let text = (try? String(contentsOf: gitignore, encoding: .utf8)) ?? ""
-            await MainActor.run {
-                content = text
-                isLoading = false
-            }
-        }
     }
 
     @LumiTheme private var theme: LumiUITheme
