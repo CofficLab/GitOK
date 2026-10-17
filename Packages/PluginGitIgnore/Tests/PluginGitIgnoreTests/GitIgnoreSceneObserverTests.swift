@@ -245,22 +245,36 @@ struct ProjectObservationModelTests {
         _ = model
     }
 
-    @Test("收到事件时记录事件并递增 revision")
-    func recordsEventAndBumpsRevision() {
+    @Test("仓库级事件被记录")
+    func recordsRepositoryScopedEvents() {
         let provider = MockProjectsProvider()
         let model = ProjectObservationModel(projects: provider)
 
-        provider.emit(.dataChanged)
+        // 切换项目：新的仓库可能有不同的 .gitignore
+        provider.emit(.selectionChanged(projectID: nil))
         #expect(model.revision == 1)
-        if case .dataChanged = model.lastEvent {} else {
-            Issue.record("lastEvent 应为 dataChanged，实际为 \(String(describing: model.lastEvent))")
+        if case .selectionChanged = model.lastEvent {} else {
+            Issue.record("lastEvent 应为 selectionChanged")
         }
 
-        provider.emit(.projectsChanged)
+        provider.emit(.dataChanged)
         #expect(model.revision == 2)
-        if case .projectsChanged = model.lastEvent {} else {
-            Issue.record("lastEvent 应为 projectsChanged，实际为 \(String(describing: model.lastEvent))")
+        if case .dataChanged = model.lastEvent {} else {
+            Issue.record("lastEvent 应为 dataChanged")
         }
+    }
+
+    @Test("会话级选择事件被忽略，避免无谓的文件存在性检查")
+    func ignoresSessionScopedEvents() {
+        let provider = MockProjectsProvider()
+        let model = ProjectObservationModel(projects: provider)
+
+        provider.emit(.commitSelectionChanged)
+        provider.emit(.currentFileChanged)
+        provider.emit(.projectsChanged)
+
+        #expect(model.revision == 0)
+        #expect(model.lastEvent == nil)
     }
 
     @Test("无事件时 revision 与 lastEvent 保持初始值")
