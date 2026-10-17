@@ -19,20 +19,17 @@ final class GitOKConflictResolverUITests: GitOKUITestCase {
     override func seedAdditionalUIState() throws {
         try runGitAllowingFailure(["checkout", "--", "."])
 
-        // 必须先提交 base 版本：若两个分支各自「新增」同名文件，git 视为两个
-        // 独立新增（fast-forward），不会产生真正的内容冲突，MERGE_HEAD 也不会留下。
-        try Data("base side\n".utf8).write(to: repositoryURL.appendingPathComponent(conflictedFile))
-        try runGitAllowingFailure(["add", conflictedFile])
-        try runGitAllowingFailure(["commit", "--quiet", "-m", "Base side"])
-
-        // 从 base 分叉，两侧各自改写同一文件，形成真正的内容冲突。
+        // 一个与 main 分叉的分支，各自新增同名文件。
+        // git 会判定为 add/add 冲突（非 fast-forward），留下 UU 与 MERGE_HEAD。
         try runGitAllowingFailure(["checkout", "-b", "conflict-source"])
         try Data("source side\n".utf8).write(to: repositoryURL.appendingPathComponent(conflictedFile))
-        try runGitAllowingFailure(["commit", "--quiet", "-am", "Source side"])
+        try runGitAllowingFailure(["add", "."])
+        try runGitAllowingFailure(["commit", "--quiet", "-m", "Source side"])
 
         try runGitAllowingFailure(["checkout", "main"])
         try Data("target side\n".utf8).write(to: repositoryURL.appendingPathComponent(conflictedFile))
-        try runGitAllowingFailure(["commit", "--quiet", "-am", "Target side"])
+        try runGitAllowingFailure(["add", "."])
+        try runGitAllowingFailure(["commit", "--quiet", "-m", "Target side"])
 
         // 预期以非零码退出；测试真正关心的是它留下的 UU 冲突与 MERGE_HEAD。
         try runGitAllowingFailure(["merge", "conflict-source"])
