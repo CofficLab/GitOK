@@ -22,6 +22,43 @@ public enum ProjectProvidingEvent {
     case currentFileChanged
 }
 
+// MARK: - Event Scope
+
+public extension ProjectProvidingEvent {
+    /// 该事件是否属于「仓库级数据变化」。
+    ///
+    /// 仓库级数据指由 `.git` 目录内容决定、与会话级选择无关的状态：
+    /// 当前打开的是哪个仓库（`selectionChanged`）、以及该仓库的提交 /
+    /// 推送等数据是否变化（`dataChanged`）。
+    ///
+    /// 状态栏与侧边栏中的仓库级 tile（分支、stash、远程、子模块、
+    /// 文件信息等）只需关心这类事件；订阅全部事件会在每次切换 commit
+    /// 或文件时触发无谓的 git 子进程调用。
+    ///
+    /// 会话级选择（`commitSelectionChanged` / `currentFileChanged`）
+    /// 不属于此类，它们不改变仓库数据。
+    var isRepositoryScoped: Bool {
+        switch self {
+        case .selectionChanged, .dataChanged:
+            true
+        case .projectsChanged, .commitSelectionChanged, .currentFileChanged:
+            false
+        }
+    }
+
+    /// 该事件是否属于「项目列表变化」。
+    ///
+    /// 项目被添加、移除、重命名或重新排序时为 `true`。
+    var isProjectListScoped: Bool {
+        switch self {
+        case .projectsChanged:
+            true
+        case .selectionChanged, .dataChanged, .commitSelectionChanged, .currentFileChanged:
+            false
+        }
+    }
+}
+
 // MARK: - Rename
 
 /// 项目重命名错误。
