@@ -40,7 +40,11 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginActivityStatusTests",
-            dependencies: ["PluginActivityStatus"],
+            dependencies: [
+                "PluginActivityStatus",
+                .product(name: "ProviderActivity", package: "ProviderActivity"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+            ],
             path: "Tests/PluginActivityStatusTests"
         ),
     ]

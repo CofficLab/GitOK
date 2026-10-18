@@ -46,7 +46,14 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitUnpushedStatusTests",
-            dependencies: ["PluginGitUnpushedStatus"],
+            dependencies: [
+                "PluginGitUnpushedStatus",
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+            ],
             path: "Tests/PluginGitUnpushedStatusTests"
         ),
     ]
