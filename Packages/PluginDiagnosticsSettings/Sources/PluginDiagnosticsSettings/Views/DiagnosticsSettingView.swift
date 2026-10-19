@@ -61,12 +61,7 @@ public struct DiagnosticsSettingView: View {
     }
 
     private func copyDiagnosticReport() {
-        let report = """
-        GitOK Diagnostics
-        App Version: \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "-")
-        Build: \(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-")
-        macOS: \(ProcessInfo.processInfo.operatingSystemVersionString)
-        """
+        let report = DiagnosticReport.text()
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(report, forType: .string)
         copiedReport = true
@@ -77,9 +72,7 @@ public struct DiagnosticsSettingView: View {
 
     private func openApplicationSupport() {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-        let url = base?.appendingPathComponent("GitOK", isDirectory: true) ?? base
-        if let url {
-            NSWorkspace.shared.activateFileViewerSelecting([url])
-        }
+        guard let url = DiagnosticReport.applicationSupportURL(base: base) else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([url])
     }
 }

@@ -126,6 +126,8 @@ final class ProjectObservationModel: ObservableObject {
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
+            // 自动推送状态只依赖仓库数据；会话级选择（commit / 文件）不改变 .git。
+            guard event.isRepositoryScoped else { return }
             self?.lastEvent = event
             self?.revision += 1
         }

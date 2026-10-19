@@ -62,21 +62,15 @@ public struct AboutView: View {
         .navigationTitle(Text(loc("About")))
     }
 
-    private var appName: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "GitOK"
-    }
+    private var info: AppInfo { AppInfo(bundle: .main) }
 
-    private var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "-"
-    }
+    private var appName: String { info.name }
 
-    private var appBuild: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-"
-    }
+    private var appVersion: String { info.version }
 
-    private var bundleIdentifier: String {
-        Bundle.main.bundleIdentifier ?? "-"
-    }
+    private var appBuild: String { info.build }
+
+    private var bundleIdentifier: String { info.bundleIdentifier }
 
     private func infoRow(title: String, value: String, icon: String) -> some View {
         AppSettingRow(title: title, description: value, icon: icon) {

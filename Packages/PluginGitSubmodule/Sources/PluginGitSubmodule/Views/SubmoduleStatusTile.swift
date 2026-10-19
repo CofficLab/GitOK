@@ -178,12 +178,9 @@ final class ProjectObservationModel: ObservableObject {
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
-            switch event {
-            case .selectionChanged, .dataChanged:
-                self?.revision += 1
-            default:
-                break
-            }
+            // 只关心仓库级事件：会话级选择变化不改变 .git 数据
+            guard event.isRepositoryScoped else { return }
+            self?.revision += 1
         }
     }
 }

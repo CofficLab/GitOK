@@ -54,6 +54,8 @@ final class ProjectObservationModel: ObservableObject {
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
+            // License 按项目目录判断，只依赖仓库数据。
+            guard event.isRepositoryScoped else { return }
             self?.lastEvent = event
             self?.revision += 1
         }

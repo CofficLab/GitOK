@@ -260,6 +260,32 @@ class GitOKUITestCase: XCTestCase {
         process.waitUntilExit()
     }
 
+    /// 读取 git 命令输出，非零退出码时返回 `nil` 而不是抛错。
+    ///
+    /// `git rev-parse --verify -q MERGE_HEAD` 在没有 MERGE_HEAD 时正是以非零码退出，
+    /// 需要用这种方式探测某个 ref 是否存在。
+    func gitOutput(_ arguments: [String], allowFailure: Bool, in repository: URL? = nil) throws -> String {
+        let process = Process()
+        process.executableURL = gitExecutableURL
+        process.arguments = ["-C", (repository ?? repositoryURL).path] + arguments
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = Pipe()
+        try process.run()
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+        guard process.terminationStatus == 0 else {
+            if allowFailure { return "" }
+            throw NSError(
+                domain: "GitOKUITests.GitFixture",
+                code: Int(process.terminationStatus),
+                userInfo: [NSLocalizedDescriptionKey: "git \(arguments.joined(separator: " ")) failed"]
+            )
+        }
+        return String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
+
     private func runGit(_ arguments: [String], in repository: URL) throws {
         let process = Process()
         process.executableURL = gitExecutableURL

@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginProjectReadme", targets: ["PluginProjectReadme"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../ProviderProjectReadme"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")

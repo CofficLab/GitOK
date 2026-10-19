@@ -32,8 +32,9 @@ public struct GitIgnoreStatusIcon: View {
                     }
             }
         }
-        .onReceive(observation.$revision) { _ in check() }
         .onReceive(observation.$lastEvent) { event in
+            // .gitignore 只在仓库数据变化时才可能增删；会话级选择
+            // （commit / 文件）不影响它，跳过可省去无谓的文件存在性检查。
             if case .dataChanged = event {
                 check()
             }
@@ -42,12 +43,7 @@ public struct GitIgnoreStatusIcon: View {
     }
 
     private func check() {
-        guard let url = projects.currentProject?.url else {
-            hasGitIgnore = false
-            return
-        }
-        let gitignore = url.appendingPathComponent(".gitignore")
-        hasGitIgnore = FileManager.default.fileExists(atPath: gitignore.path)
+        hasGitIgnore = GitIgnoreFile(repositoryRoot: projects.currentProject?.url).exists
     }
 }
 
@@ -60,6 +56,9 @@ final class ProjectObservationModel: ObservableObject {
 
     init(projects: any ProjectProviding) {
         handle = projects.addObserver { [weak self] event in
+            // 仓库数据变化才会影响 .gitignore 的存在性；项目列表与会话级
+            // 选择（切换项目 / commit / 文件）不影响 gitignore 文件本身。
+            guard event.isRepositoryScoped else { return }
             self?.lastEvent = event
             self?.revision += 1
         }

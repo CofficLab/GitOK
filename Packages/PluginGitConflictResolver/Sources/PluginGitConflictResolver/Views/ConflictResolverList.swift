@@ -118,7 +118,7 @@ public struct ConflictResolverList: View {
                         ContinueMergeCardButton(
                             title: pluginLocalization.string(viewModel.isCherryPicking ? "Continue Cherry-pick" : "Continue Merge"),
                             systemImage: "arrow.right.circle.fill",
-                            isDisabled: !viewModel.isOperationInProgress || !viewModel.conflictedFiles.isEmpty || isActionRunning,
+                            isDisabled: !presentation.canContinue,
                             action: continueMerge
                         )
                     }
@@ -153,6 +153,7 @@ public struct ConflictResolverList: View {
                     action: onDismiss
                 )
                 .help(pluginLocalization.string("Close"))
+                .accessibilityIdentifier("gitok.git.conflict.close")
             }
         }
     }
@@ -179,6 +180,7 @@ public struct ConflictResolverList: View {
                     action: stageResolvedFiles
                 )
                 .disabled(isActionRunning)
+                .accessibilityIdentifier("gitok.git.conflict.stage")
             }
 
             if isActionRunning {
@@ -199,6 +201,7 @@ public struct ConflictResolverList: View {
                     action: continueMerge
                 )
                 .disabled(!presentation.canContinue)
+                .accessibilityIdentifier("gitok.git.conflict.continue")
             }
 
             AppButton(
@@ -209,6 +212,7 @@ public struct ConflictResolverList: View {
                 action: { showAbortConfirmation = true }
             )
             .disabled(!presentation.canAbort)
+            .accessibilityIdentifier("gitok.git.conflict.abort")
         }
     }
 
@@ -242,6 +246,7 @@ public struct ConflictResolverList: View {
             .accessibilityLabel(pluginLocalization.string("More Actions"))
             .help(pluginLocalization.string("More Actions"))
             .disabled(isActionRunning)
+            .accessibilityIdentifier("gitok.git.conflict.more.\(file)")
             .popover(
                 isPresented: moreActionsBinding(for: file),
                 arrowEdge: .bottom
@@ -451,24 +456,28 @@ private struct ConflictFileActionsPopover: View {
                     title: pluginLocalization.string("Use Ours"),
                     systemImage: "arrow.left",
                     style: .ghost,
+                    identifier: "gitok.git.conflict.use-ours",
                     action: onUseOurs
                 )
                 ConflictFileActionButton(
                     title: pluginLocalization.string("Use Theirs"),
                     systemImage: "arrow.right",
                     style: .ghost,
+                    identifier: "gitok.git.conflict.use-theirs",
                     action: onUseTheirs
                 )
                 ConflictFileActionButton(
                     title: pluginLocalization.string("Use Base"),
                     systemImage: "arrow.uturn.backward",
                     style: .ghost,
+                    identifier: "gitok.git.conflict.use-base",
                     action: onUseBase
                 )
                 ConflictFileActionButton(
                     title: pluginLocalization.string("Open in VS Code"),
                     systemImage: "chevron.left.forwardslash.chevron.right",
                     style: .ghost,
+                    identifier: "gitok.git.conflict.open-editor",
                     action: onOpenInVSCode
                 )
                 AppDivider()
@@ -476,6 +485,7 @@ private struct ConflictFileActionsPopover: View {
                     title: pluginLocalization.string("View Conflict Diff"),
                     systemImage: "doc.text.magnifyingglass",
                     style: .secondary,
+                    identifier: "gitok.git.conflict.view-diff",
                     action: onViewDiff
                 )
             }
@@ -493,6 +503,7 @@ private struct ConflictFileActionButton: View {
     let title: String
     let systemImage: String
     let style: Style
+    let identifier: String
     let action: () -> Void
 
     @LumiTheme private var theme: LumiUITheme
@@ -526,6 +537,7 @@ private struct ConflictFileActionButton: View {
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
+        .accessibilityIdentifier(identifier)
         .onHover { hovering in
             LumiMotion.animate(
                 LumiMotion.enabled(LumiMotion.hover, preference: motionPreference)
@@ -595,6 +607,7 @@ private struct ContinueMergeCardButton: View {
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
+        .accessibilityIdentifier("gitok.git.conflict.continue-card")
         .scaleEffect(
             isEffectivelyHovered && motionPreference.allowsMotion
                 ? LumiMotion.hoverScale

@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
@@ -46,7 +46,14 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitUnpushedStatusTests",
-            dependencies: ["PluginGitUnpushedStatus"],
+            dependencies: [
+                "PluginGitUnpushedStatus",
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+            ],
             path: "Tests/PluginGitUnpushedStatusTests"
         ),
     ]
