@@ -38,7 +38,14 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginProjectLanguagesTests",
-            dependencies: ["PluginProjectLanguages"],
+            dependencies: [
+                "PluginProjectLanguages",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderProjectLanguages", package: "ProviderProjectLanguages"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+            ],
             path: "Tests/PluginProjectLanguagesTests"
         ),
     ]
