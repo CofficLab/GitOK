@@ -18,6 +18,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderProjects"),
+        .package(path: "../KitGit"),
         .package(
             url: "https://github.com/nookery/LibGit2Swift.git",
             revision: "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
@@ -43,7 +44,14 @@ let package = Package(
         ),
         .testTarget(
             name: "KitOpenInTests",
-            dependencies: ["KitOpenIn"],
+            dependencies: [
+                "KitOpenIn",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderToolbar", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
+            ],
             path: "Tests/KitOpenInTests"
         ),
     ]
