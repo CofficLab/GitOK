@@ -65,7 +65,7 @@ struct GitDiffContentLoader: Sendable {
         }
 
         guard previewKind != nil || needsContentInspection else {
-            return .text(try loadTextDiff())
+            return textDiffContent(try loadTextDiff())
         }
 
         if previewKind == .pdf, let commit {
@@ -91,9 +91,22 @@ struct GitDiffContentLoader: Sendable {
             return .binary(kind: detectedKind, data: data)
         }
         if needsContentInspection && GitDiffContentDetector.isLikelyText(data) {
-            return .text(try loadTextDiff())
+            return textDiffContent(try loadTextDiff())
         }
         return .binary(kind: .binary, data: data)
+    }
+
+    /// 把 unified diff 文本包装成加载结果。
+    ///
+    /// git 对「文件被删除且原文件为空」只输出 `deleted file mode` 而没有 `@@`
+    /// hunk。`MagicDiffView` 的解析器要求 hunk 存在，否则产出空的 diffItems，
+    /// 面板会渲染成一块什么都没有的空白区域。此时应返回 `noTextDiff`，
+    /// 让视图显示明确的空状态，而不是一个看起来像加载失败的面板。
+    private func textDiffContent(_ diffText: String) -> GitDiffLoadedContent {
+        guard diffText.contains("@@") else {
+            return .noTextDiff
+        }
+        return .text(diffText)
     }
 
     /// 加载 PDF 的「当前版本 vs 父提交版本」两份数据。
