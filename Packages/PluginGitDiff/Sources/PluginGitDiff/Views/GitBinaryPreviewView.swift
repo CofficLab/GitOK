@@ -166,9 +166,14 @@ struct GitPDFComparisonPreview: View {
                 }
                 Spacer()
             if state.showsVersionSwitcher {
+                    // 删除场景下当前版本不存在，"New" 不可选。
                     Picker("Version", selection: $showingPrevious) {
-                        Text("New").tag(false)
-                        Text("Previous").tag(true)
+                        if currentData != nil {
+                            Text("New").tag(false)
+                        }
+                        if previousData != nil {
+                            Text("Previous").tag(true)
+                        }
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 150)

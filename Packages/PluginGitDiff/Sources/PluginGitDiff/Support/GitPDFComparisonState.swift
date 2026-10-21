@@ -17,11 +17,13 @@ struct GitPDFComparisonState: Equatable {
 
     /// 默认是否展示父提交版本。
     ///
-    /// 当前实现恒为 `false`（总是优先展示新版本）。
-    var showsPreviousByDefault: Bool { false }
+    /// 只有「删除前」一个版本时必须展示它，否则正文恒为
+    /// 「PDF Preview Unavailable」；两个版本都在时仍优先展示新版本。
+    var showsPreviousByDefault: Bool { current == nil && previous != nil }
 
     /// 是否渲染版本切换控件。
     ///
-    /// 当前实现要求两个版本同时存在才提供切换。
-    var showsVersionSwitcher: Bool { current != nil && previous != nil }
+    /// 只要存在可展示的版本就提供切换：删除场景下只有一个版本时，
+    /// 控件同样可用，避免用户以为预览无法显示。
+    var showsVersionSwitcher: Bool { current != nil || previous != nil }
 }
