@@ -1,27 +1,18 @@
 import KitGit
 import LumiUI
 import MagicDiffView
-import ProviderGit
 import SwiftUI
-
-private enum GitDiffLoadedContent {
-    case text(String)
-    case binary(kind: GitDiffContentKind, data: Data)
-    case pdfComparison(current: Data?, previous: Data?)
-}
-
-private let gitDiffMaxInlinePreviewBytes = 50 * 1024 * 1024
 
 /// Git Diff 右侧面板视图。
 ///
 /// 绑定插件自有的 `GitDiffViewModel`：以「当前文件」为唯一驱动（由
 /// `GitDiffObserver` 从 `ProjectProviding` 翻译进 ViewModel），commit 只作为
 /// 可选上下文决定 diff 来源：
-/// - 已选中 commit + 文件：加载该文件在该 commit 中的 diff
-///   （`GitProviding.loadDiff`）；
-/// - 未选中 commit + 文件（工作区变动）：加载该文件相对工作区的 diff
-///   （`GitProviding.loadWorktreeDiff`）。
-/// 用旧版同款组件 `MagicDiffView` 渲染（git 原生 unified diff 文本）。
+/// - 已选中 commit + 文件：加载该文件在该 commit 中的 diff；
+/// - 未选中 commit + 文件（工作区变动）：加载该文件相对工作区的 diff。
+/// 加载逻辑由 `GitDiffContentLoader` 承担（只依赖 `GitDiffContentCapability`
+/// 窄能力），本视图只负责把加载结果映射成 UI 状态。
+/// 用旧版同款组件 `MagicDiffView` 渲染（git 原生 diff 文本）。
 /// 无选中文件时右侧面板整体隐藏（由 `GitDiffPlugin` 通过 observer 监听
 /// 当前文件变化控制 `RootTrailingPane.isVisible`，不渲染本视图），
 /// 因此本视图内不再需要空占位状态。
@@ -30,7 +21,7 @@ private let gitDiffMaxInlinePreviewBytes = 50 * 1024 * 1024
 /// （commit / 文件 / 仓库数据变化由 `GitDiffObserver` 负责翻译进 ViewModel）。
 struct GitDiffPaneView: View {
     @ObservedObject var viewModel: GitDiffViewModel
-    let git: any GitProviding
+    let contentLoader: GitDiffContentLoader
     @LumiTheme private var theme
 
     @State private var loadedContent: GitDiffLoadedContent?
@@ -109,18 +100,18 @@ struct GitDiffPaneView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             switch loadedContent {
-            case let .text(diffText) where !diffText.isEmpty:
+            case let .text(diffText)?:
                 MagicDiffView(diffOutput: diffText)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            case let .binary(kind, data):
+            case let .binary(kind, data)?:
                 GitBinaryPreviewView(kind: kind, data: data, path: filePath ?? "")
-            case let .pdfComparison(current, previous):
+            case let .pdfComparison(current, previous)?:
                 GitPDFComparisonPreview(
                     currentData: current,
                     previousData: previous,
                     path: filePath ?? ""
                 )
-            default:
+            case .noTextDiff?, nil:
                 AppEmptyState(
                     icon: "text.alignleft",
                     title: GitDiffLocalization.string("No Text Diff", bundle: .module),
@@ -158,91 +149,15 @@ struct GitDiffPaneView: View {
         loadError = nil
 
         let url = projectURL
+        let loader = contentLoader
         Task.detached(priority: .userInitiated) {
             let result: Result<GitDiffLoadedContent, Error> = Result {
-                let previewKind = GitDiffContentDetector.kind(forPath: path)
-                let needsContentInspection = GitDiffContentDetector.needsContentInspection(forPath: path)
-
-                func loadTextDiff() throws -> String {
-                    if let commit {
-                        return try git.loadDiff(
-                            commit: commit.hash,
-                            filePath: path,
-                            in: url,
-                            cancellation: cancellation
-                        )
-                    }
-                    return try git.loadWorktreeDiff(
-                        filePath: path,
-                        in: url,
-                        cancellation: cancellation
-                    )
-                }
-
-                if previewKind != nil || needsContentInspection {
-                    if previewKind == .pdf, let commit {
-                        func loadOptionalBlob(_ hash: String) throws -> Data? {
-                            do {
-                                return try git.loadBlobData(
-                                    commit: hash,
-                                    filePath: path,
-                                    in: url,
-                                    cancellation: cancellation
-                                )
-                            } catch {
-                                if cancellation.isCancelled { throw error }
-                                return nil
-                            }
-                        }
-
-                        let currentData = try loadOptionalBlob(commit.hash)
-                        let previousData: Data?
-                        if let parentHash = commit.parentHashes.first {
-                            previousData = try loadOptionalBlob(parentHash)
-                        } else {
-                            previousData = nil
-                        }
-                        if let currentData, currentData.count > gitDiffMaxInlinePreviewBytes {
-                            throw GitDiffPreviewError.fileTooLarge(currentData.count)
-                        }
-                        if let previousData, previousData.count > gitDiffMaxInlinePreviewBytes {
-                            throw GitDiffPreviewError.fileTooLarge(previousData.count)
-                        }
-                        guard currentData != nil || previousData != nil else {
-                            throw GitDiffLoaderError.invalidFilePath(path)
-                        }
-                        return .pdfComparison(current: currentData, previous: previousData)
-                    }
-
-                    let data: Data
-                    if let commit {
-                        data = try git.loadBlobData(
-                            commit: commit.hash,
-                            filePath: path,
-                            in: url,
-                            cancellation: cancellation
-                        )
-                    } else {
-                        data = try git.loadWorktreeFileData(
-                            filePath: path,
-                            in: url,
-                            cancellation: cancellation
-                        )
-                    }
-                    guard data.count <= gitDiffMaxInlinePreviewBytes else {
-                        throw GitDiffPreviewError.fileTooLarge(data.count)
-                    }
-
-                    if let detectedKind = GitDiffContentDetector.kind(forPath: path, data: data) {
-                        return .binary(kind: detectedKind, data: data)
-                    }
-                    if needsContentInspection && GitDiffContentDetector.isLikelyText(data) {
-                        return .text(try loadTextDiff())
-                    }
-                    return .binary(kind: .binary, data: data)
-                }
-
-                return .text(try loadTextDiff())
+                try loader.load(
+                    path: path,
+                    commit: commit,
+                    repository: url,
+                    cancellation: cancellation
+                )
             }
             await MainActor.run {
                 guard token == loadToken, loadedKey == key else { return }
