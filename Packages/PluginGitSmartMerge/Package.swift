@@ -47,7 +47,17 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitSmartMergeTests",
-            dependencies: ["PluginGitSmartMerge"],
+            dependencies: [
+                "PluginGitSmartMerge",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
+            ],
             path: "Tests/PluginGitSmartMergeTests"
         ),
     ]

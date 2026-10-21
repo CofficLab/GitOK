@@ -49,7 +49,17 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitBranchStatusTests",
-            dependencies: ["PluginGitBranchStatus"],
+            dependencies: [
+                "PluginGitBranchStatus",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderToolbar", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
+            ],
             path: "Tests/PluginGitBranchStatusTests"
         ),
     ]

@@ -41,6 +41,9 @@ let package = Package(
             name: "PluginRailViewTests",
             dependencies: [
                 "PluginRailView",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "ProviderRailView", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Tests/PluginRailViewTests"
         ),

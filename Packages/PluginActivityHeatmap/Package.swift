@@ -37,8 +37,13 @@ let package = Package(
             name: "PluginActivityHeatmapTests",
             dependencies: [
                 "PluginActivityHeatmap",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "ProviderActivityHeatmap", package: "ProviderActivityHeatmap"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
             ],
             path: "Tests/PluginActivityHeatmapTests"
         ),

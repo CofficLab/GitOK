@@ -45,7 +45,12 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginLogoCofficTests",
-            dependencies: ["PluginLogoCoffic"]
+            dependencies: [
+                "PluginLogoCoffic",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "ProviderLogo", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
+            ]
         )
     ]
 )

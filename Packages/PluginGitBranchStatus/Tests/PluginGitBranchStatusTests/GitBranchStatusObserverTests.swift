@@ -6,309 +6,69 @@ import ProviderProjects
 import Testing
 @testable import PluginGitBranchStatus
 
-// MARK: - Test doubles
-
-/// 记录每次 `currentBranch` 读取所使用的取消句柄，用于断言「旧任务被取消」。
-private final class BranchReadRecord: @unchecked Sendable {
-    let lock = NSLock()
-    private var cancellations: [GitProcessCancellation] = []
-    private var startedCount = 0
-
-    /// 读取在取消发生前保持阻塞，用于让「在途读取」状态可被断言。
-    var blocksUntilCancelled = false
-
-    /// 每次读取登记的取消句柄（按读取顺序）。
-    var recordedCancellations: [GitProcessCancellation] {
-        lock.lock()
-        defer { lock.unlock() }
-        return cancellations
-    }
-
-    var readCount: Int {
-        lock.lock()
-        defer { lock.unlock() }
-        return startedCount
-    }
-
-    /// 记录一次读取；若要求阻塞，则等到该读取被取消后再返回。
-    func record(_ cancellation: GitProcessCancellation?) {
-        let shouldBlock: Bool = {
-            lock.lock()
-            defer { lock.unlock() }
-            startedCount += 1
-            if let cancellation { cancellations.append(cancellation) }
-            return blocksUntilCancelled
-        }()
-
-        guard shouldBlock, let cancellation else { return }
-        // 模拟一个真正卡住的 git 子进程：只有被取消才会结束。
-        let deadline = Date().addingTimeInterval(5)
-        while !cancellation.isCancelled, Date() < deadline {
-            usleep(1_000)
-        }
-    }
-}
-
-/// `GitProviding` 测试替身：只实现分支读取，其余操作返回空值。
-private final class StubGit: GitProviding, @unchecked Sendable {
-    private let lock = NSLock()
-    private var storage: [String: any GitBackendProviding] = [:]
-    let records = BranchReadRecord()
-
-    /// 分支读取结果。
-    var branchValue: String?
-
-    /// 读取被取消时返回 `true`。
-    var respectsCancellation = false
-
-    var availableBackends: [GitBackendDescriptor] { [] }
-
-    func registerBackend(_ backend: any GitBackendProviding) throws {
-        lock.lock(); defer { lock.unlock() }
-        storage[backend.descriptor.id] = backend
-    }
-
-    func unregisterBackend(id: String) {
-        lock.lock(); defer { lock.unlock() }
-        storage[id] = nil
-    }
-
-    func currentBranch(in repository: URL) -> String? {
-        currentBranch(in: repository, cancellation: nil)
-    }
-
-    func currentBranch(
-        in repository: URL,
-        cancellation: GitProcessCancellation?
-    ) -> String? {
-        records.record(cancellation)
-        guard !respectsCancellation else {
-            return cancellation?.isCancelled == true ? nil : branchValue
-        }
-        return branchValue
-    }
-
-    func loadCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] { [] }
-    func loadAllCommits(in repository: URL, limit: Int, offset: Int) throws -> [GitCommit] { [] }
-    func countCommits(in repository: URL) throws -> Int { 0 }
-    func unpushedCommitHashes(in repository: URL) throws -> Set<String> { [] }
-    func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
-        GitWorktreeStatus(isClean: true, changeCount: 0, branch: nil)
-    }
-    func loadEntries(in repository: URL) throws -> [GitStatusEntry] { [] }
-    func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
-        GitWorktreeSnapshot(entries: [], branch: nil)
-    }
-    func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot? { nil }
-    func invalidateWorktreeSnapshot(in repository: URL) {}
-    func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange] { [] }
-    func countCommitChanges(commit hash: String, in repository: URL) throws -> Int { 0 }
-    func loadCommitChangesPage(commit hash: String, limit: Int, offset: Int, in repository: URL) throws -> GitFileChangePage {
-        GitFileChangePage(offset: offset, changes: [], hasMore: false)
-    }
-    func loadDiff(commit hash: String, filePath: String, in repository: URL) throws -> String { "" }
-    func loadWorktreeDiff(filePath: String, in repository: URL) throws -> String { "" }
-    func loadBlobData(commit: String, filePath: String, in repository: URL) throws -> Data { Data() }
-    func loadWorktreeFileData(filePath: String, in repository: URL) throws -> Data { Data() }
-    func latestTag(in repository: URL) -> String? { nil }
-    func firstCommitDate(in repository: URL) -> Date? { nil }
-    func unpushedCount(in repository: URL) -> Int? { 0 }
-    func unpushedCount(in repository: URL, cancellation: GitProcessCancellation?) -> Int? { 0 }
-    func hasRemotes(in repository: URL) -> Bool { false }
-    func unpulledCount(in repository: URL) -> Int? { nil }
-    func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus {
-        GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
-    }
-    func listBranches(in repository: URL) throws -> [GitBranchSummary] { [] }
-    func createBranch(named name: String, in repository: URL) throws {}
-    func checkoutBranch(named name: String, in repository: URL) throws {}
-    func checkoutRemoteBranch(named remoteBranch: String, as localBranch: String?, in repository: URL) throws {}
-    func deleteBranch(named name: String, in repository: URL) throws {}
-    func renameBranch(from currentName: String, to newName: String, in repository: URL) throws {}
-    func setUpstream(localBranch: String, upstreamBranch: String, in repository: URL) throws {}
-    func unsetUpstream(localBranch: String, in repository: URL) throws {}
-    func publishBranch(localBranch: String, remote: String, remoteBranch: String?, in repository: URL) throws {}
-    func deleteRemoteBranch(named branchName: String, remote: String, in repository: URL) throws {}
-    func compareBranches(base: String, head: String, in repository: URL) throws -> GitBranchCompare {
-        GitBranchCompare(base: base, head: head, ahead: 0, behind: 0, commits: [], files: [])
-    }
-    func undoCommit(_ commitHash: String, parentHash: String, in repository: URL) throws -> String { "" }
-    func revertCommit(_ commitHash: String, in repository: URL) throws -> String { "" }
-    func softReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String { "" }
-    func mixedReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String { "" }
-    func hardReset(to targetHash: String, expectedHead: String, in repository: URL) throws -> String { "" }
-    func squash(to targetHash: String, parentHash: String, expectedHead: String, message: String, in repository: URL) throws -> String { "" }
-    func createLightweightTag(named name: String, at commitHash: String, in repository: URL) throws -> String { "" }
-    func createAnnotatedTag(named name: String, at commitHash: String, message: String, in repository: URL) throws -> String { "" }
-    func deleteLocalTag(named name: String, in repository: URL) throws -> String { "" }
-    func pushTag(named name: String, remote: String, in repository: URL) throws -> String { "" }
-    func deleteRemoteTag(named name: String, remote: String, in repository: URL) throws -> String { "" }
-    func listStashes(in repository: URL) -> [GitStashEntry] { [] }
-    func hasChangesToStash(in repository: URL) -> Bool { false }
-    func saveStash(message: String?, in repository: URL) throws {}
-    func applyStash(_ entry: GitStashEntry, in repository: URL) throws {}
-    func popStash(_ entry: GitStashEntry, in repository: URL) throws {}
-    func dropStash(_ entry: GitStashEntry, in repository: URL) throws {}
-    func cherryPickStatus(in repository: URL) -> GitCherryPickStatus { .inactive }
-    func cherryPick(commits: [String], onto branch: String?, in repository: URL) throws -> String { "" }
-    func continueCherryPick(in repository: URL) throws -> String { "" }
-    func abortCherryPick(in repository: URL) throws -> String { "" }
-    func listSubmodules(in repository: URL) -> [GitSubmoduleSummary] { [] }
-    func updateSubmodules(in repository: URL) throws {}
-    func validateCloneDestination(_ destination: URL) throws {}
-    func defaultRepositoryName(from remoteURL: String) -> String? { nil }
-    func clone(remoteURL: String, destination: URL) throws -> URL { destination }
-    func hasStagedChanges(in repository: URL) throws -> Bool { false }
-    func addAll(in repository: URL) throws {}
-    func stageFiles(_ filePaths: [String], in repository: URL) throws {}
-    func unstageFiles(_ filePaths: [String], in repository: URL) throws {}
-    func discardFileChanges(_ filePath: String, in repository: URL) throws {}
-    func discardFiles(_ filePaths: [String], in repository: URL) throws {}
-    func discardAllChanges(in repository: URL) throws {}
-    func commit(message: String, in repository: URL) throws -> String { "" }
-    func push(in repository: URL) throws -> String { "" }
-    func listRemotes(in repository: URL) -> [GitRemoteSummary] { [] }
-    func addRemote(name: String, url: String, in repository: URL) throws {}
-    func removeRemote(name: String, in repository: URL) throws {}
-    func fetch(in repository: URL) throws {}
-    func pull(in repository: URL) throws {}
-    func pull(in repository: URL, strategy: GitRemoteOperation.PullStrategy) throws {}
-    func synchronize(in repository: URL) throws -> GitRefReader.RemoteTrackingStatus {
-        GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
-    }
-    func webLink(for url: String) -> URL? { nil }
-    func isMerging(in repository: URL) -> Bool { false }
-    func hasConflictOperation(in repository: URL) -> Bool { false }
-    func conflictFiles(in repository: URL) -> [String] { [] }
-    func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String { "" }
-    func mergeFileContent(path: String, version: GitMergeFileVersion, in repository: URL) throws -> String { "" }
-    func mergeFileDiff(path: String, in repository: URL) throws -> String { "" }
-    func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion, in repository: URL) throws {}
-    func continueMerge(in repository: URL) throws -> String { "" }
-    func abortMerge(in repository: URL) throws -> String { "" }
-    func finalizeMergeIfNeeded(in repository: URL) throws -> String? { nil }
-}
-
-/// 项目事件源：记录订阅者，可手动派发事件。
+/// `GitBranchStatusCapability` 的可控替身。
 @MainActor
-private final class StubProjects: ProjectProviding {
-    var projects: [Project] = []
+final class BranchStatusCapabilityMock: GitBranchStatusCapability {
     var currentProject: Project?
-    var currentCommit: GitCommit?
-    var currentFile: String?
-    var currentCommitFiles: [GitFileChange]?
-    var isLoadingCommitFiles = false
-    var currentCommitFilesLoadError: String?
-    private var callbacks: [UUID: (ProjectProvidingEvent) -> Void] = [:]
+    var supportsRepositoryObservers = true
 
-    func addObserver(
+    private(set) var projectHandles: [BranchStatusMockHandle] = []
+    private(set) var repositoryHandles: [BranchStatusMockHandle] = []
+    private var projectCallbacks: [(handle: BranchStatusMockHandle, callback: (ProjectProvidingEvent) -> Void)] = []
+    private var repositoryCallbacks: [(handle: BranchStatusMockHandle, callback: (GitRepositoryWatchingEvent) -> Void)] = []
+
+    func addProjectObserver(
         _ callback: @escaping (ProjectProvidingEvent) -> Void
     ) -> any ProjectProvidingObserverHandle {
-        let token = UUID()
-        callbacks[token] = callback
-        return ProjectHandle { [weak self] in
-            self?.callbacks[token] = nil
-        }
+        let handle = BranchStatusMockHandle()
+        projectHandles.append(handle)
+        projectCallbacks.append((handle: handle, callback: callback))
+        return handle
     }
 
-    func emit(_ event: ProjectProvidingEvent) {
-        callbacks.values.forEach { $0(event) }
-    }
-
-    func openProject(at url: URL) {}
-    func closeCurrentProject() {}
-    func addProject(at url: URL) {}
-    func removeProject(id: UUID) {}
-    func renameProject(id: UUID, newName: String) throws {}
-    func pinProject(id: UUID, isPinned: Bool) {}
-    func moveProject(id: UUID, beforeID: UUID?) {}
-    func setCurrentProject(id: UUID?) {}
-    func selectCommit(_ commit: GitCommit) { currentCommit = commit }
-    func selectFile(_ file: String?) { currentFile = file }
-    func clearCommitSelection() { currentCommit = nil; currentFile = nil }
-    func refresh() {}
-    func notifyDataChanged() {}
-    func persist() {}
-}
-
-@MainActor
-private final class ProjectHandle: ProjectProvidingObserverHandle {
-    private var cancelAction: (() -> Void)?
-
-    init(cancel: @escaping () -> Void) { self.cancelAction = cancel }
-
-    func cancel() {
-        cancelAction?()
-        cancelAction = nil
-    }
-}
-
-/// 仓库监听事件源。
-@MainActor
-private final class StubRepositoryWatch: GitRepositoryWatching {
-    private var callbacks: [UUID: (GitRepositoryWatchingEvent) -> Void] = [:]
-    private(set) var watchingRepositoryURL: URL?
-
-    func addObserver(
+    func addRepositoryObserver(
         _ callback: @escaping (GitRepositoryWatchingEvent) -> Void
-    ) -> any GitRepositoryWatchingObserverHandle {
-        let token = UUID()
-        callbacks[token] = callback
-        return RepositoryHandle { [weak self] in
-            self?.callbacks[token] = nil
+    ) -> (any GitRepositoryWatchingObserverHandle)? {
+        guard supportsRepositoryObservers else { return nil }
+        let handle = BranchStatusMockHandle()
+        repositoryHandles.append(handle)
+        repositoryCallbacks.append((handle: handle, callback: callback))
+        return handle
+    }
+
+    func sendProjectEvent(_ event: ProjectProvidingEvent) {
+        for entry in projectCallbacks where !entry.handle.isCancelled {
+            entry.callback(event)
         }
     }
 
-    func emit(_ event: GitRepositoryWatchingEvent) {
-        callbacks.values.forEach { $0(event) }
-    }
-
-    func startWatching(repositoryURL: URL) {
-        watchingRepositoryURL = repositoryURL
-        emit(.started(repositoryURL: repositoryURL))
-    }
-
-    func stopWatching() {
-        watchingRepositoryURL = nil
-        emit(.stopped)
+    func sendRepositoryEvent(_ event: GitRepositoryWatchingEvent) {
+        for entry in repositoryCallbacks where !entry.handle.isCancelled {
+            entry.callback(event)
+        }
     }
 }
 
+/// 记录 `cancel()` 是否被调用的观察句柄。
 @MainActor
-private final class RepositoryHandle: GitRepositoryWatchingObserverHandle {
-    private var cancelAction: (() -> Void)?
-
-    init(cancel: @escaping () -> Void) { self.cancelAction = cancel }
-
-    func cancel() {
-        cancelAction?()
-        cancelAction = nil
-    }
+final class BranchStatusMockHandle: ProjectProvidingObserverHandle, GitRepositoryWatchingObserverHandle {
+    private(set) var isCancelled = false
+    func cancel() { isCancelled = true }
 }
 
-// MARK: - Tests
-
+/// `GitBranchStatusObserver` 的行为测试。
+@MainActor
 @Suite("GitBranchStatusObserver")
-@MainActor
 struct GitBranchStatusObserverTests {
 
-    /// 构造一个可用的临时仓库目录（observer 要求路径在磁盘上存在）。
-    private func makeRepositoryDirectory() throws -> URL {
+    private func makeDirectory() throws -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("gitok-branch-observer-\(UUID().uuidString)")
-        try FileManager.default.createDirectory(
-            at: url,
-            withIntermediateDirectories: true
-        )
+            .appendingPathComponent("GitBranchStatusObserverTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
 
-    /// 轮询等待条件成立：分支读取跑在 detached task 上，完成时机不由测试控制。
-    @discardableResult
-    private func waitUntil(
-        timeout: TimeInterval = 5,
-        _ condition: () -> Bool
-    ) async -> Bool {
+    private func waitUntil(timeout: TimeInterval = 5, _ condition: () -> Bool) async -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             if condition() { return true }
@@ -317,65 +77,260 @@ struct GitBranchStatusObserverTests {
         return condition()
     }
 
-    @Test("重新加载会取消上一次仍在进行中的分支读取")
-    func reloadCancelsPreviousBranchRead() async throws {
-        let repositoryURL = try makeRepositoryDirectory()
-        defer { try? FileManager.default.removeItem(at: repositoryURL) }
-
-        let projects = StubProjects()
-        projects.currentProject = Project(url: repositoryURL)
-
-        let watch = StubRepositoryWatch()
-        let git = StubGit()
-        git.branchValue = "main"
-        // 让读取保持在途，直到被显式取消，才能断言取消行为。
-        git.records.blocksUntilCancelled = true
-
+    private func makeObserver(
+        projectURL: URL?,
+        git: BranchStatusGitProviding
+    ) -> (
+        observer: GitBranchStatusObserver,
+        viewModel: GitBranchStatusViewModel,
+        capability: BranchStatusCapabilityMock
+    ) {
+        let capability = BranchStatusCapabilityMock()
+        capability.currentProject = projectURL.map { Project(url: $0) }
         let viewModel = GitBranchStatusViewModel()
         let observer = GitBranchStatusObserver(
-            capability: GitBranchStatusCapabilityAdapter(projects: projects, gitWatch: watch),
+            capability: capability,
+            git: git,
+            viewModel: viewModel
+        )
+        return (observer, viewModel, capability)
+    }
+
+    // MARK: - 初始加载
+
+    @Test("没有当前项目时清空状态")
+    func noProjectClearsState() async {
+        let git = BranchStatusGitProviding()
+        let (observer, viewModel, _) = makeObserver(projectURL: nil, git: git)
+        defer { observer.cancel() }
+
+        #expect(viewModel.currentProjectURL == nil)
+        #expect(viewModel.currentBranch == nil)
+        #expect(!viewModel.isLoading)
+    }
+
+    @Test("项目路径不存在时清空状态")
+    func missingProjectDirectoryClearsState() async {
+        let git = BranchStatusGitProviding()
+        let missing = URL(fileURLWithPath: "/tmp/branch-status-missing-\(UUID().uuidString)")
+        let (observer, viewModel, _) = makeObserver(projectURL: missing, git: git)
+        defer { observer.cancel() }
+
+        #expect(viewModel.currentProjectURL == nil)
+        #expect(viewModel.currentBranch == nil)
+        #expect(!viewModel.isLoading)
+    }
+
+    @Test("项目存在时读取当前分支")
+    func readsCurrentBranch() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "feature/login"
+        let (observer, viewModel, _) = makeObserver(projectURL: directory, git: git)
+        defer { observer.cancel() }
+
+        let loaded = await waitUntil { viewModel.currentBranch != nil }
+        #expect(loaded)
+        #expect(viewModel.currentBranch == "feature/login")
+        #expect(viewModel.currentProjectURL == directory)
+        #expect(!viewModel.isLoading)
+    }
+
+    @Test("仓库没有分支时保持 nil")
+    func branchlessRepositoryHasNoBranch() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = nil
+        let (observer, viewModel, _) = makeObserver(projectURL: directory, git: git)
+        defer { observer.cancel() }
+
+        let settled = await waitUntil { viewModel.currentProjectURL != nil }
+        #expect(settled)
+        #expect(viewModel.currentBranch == nil)
+    }
+
+    // MARK: - 事件触发
+
+    @Test("项目选择变化会切到新仓库")
+    func projectChangeReloadsBranch() async throws {
+        let first = try makeDirectory()
+        let second = try makeDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: first)
+            try? FileManager.default.removeItem(at: second)
+        }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        let (observer, viewModel, capability) = makeObserver(projectURL: first, git: git)
+        defer { observer.cancel() }
+        _ = await waitUntil { viewModel.currentBranch == "main" }
+
+        git.currentBranchStub = "develop"
+        capability.currentProject = Project(url: second)
+        capability.sendProjectEvent(.selectionChanged(projectID: UUID()))
+
+        let switched = await waitUntil { viewModel.currentBranch == "develop" }
+        #expect(switched)
+        #expect(viewModel.currentProjectURL == second)
+    }
+
+    @Test("项目数据变化会重新读取分支")
+    func dataChangeReloadsBranch() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        let (observer, viewModel, capability) = makeObserver(projectURL: directory, git: git)
+        defer { observer.cancel() }
+        _ = await waitUntil { viewModel.currentBranch == "main" }
+
+        git.currentBranchStub = "release"
+        capability.sendProjectEvent(.dataChanged)
+
+        let reloaded = await waitUntil { viewModel.currentBranch == "release" }
+        #expect(reloaded)
+    }
+
+    @Test("会话级项目事件不触发刷新")
+    func sessionScopedProjectEventDoesNotReload() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        let (observer, viewModel, capability) = makeObserver(projectURL: directory, git: git)
+        defer { observer.cancel() }
+        _ = await waitUntil { viewModel.currentBranch == "main" }
+
+        git.currentBranchStub = "never-applied"
+        capability.sendProjectEvent(.commitSelectionChanged)
+        capability.sendProjectEvent(.currentFileChanged)
+        await Task.yield()
+
+        #expect(viewModel.currentBranch == "main")
+    }
+
+    @Test("仓库 HEAD 与 refs 变化会重新读取分支")
+    func repositoryEventsReloadBranch() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        let (observer, viewModel, capability) = makeObserver(projectURL: directory, git: git)
+        defer { observer.cancel() }
+        _ = await waitUntil { viewModel.currentBranch == "main" }
+
+        git.currentBranchStub = "hotfix"
+        capability.sendRepositoryEvent(.headChanged(previousHead: "a", head: "b"))
+
+        let reloaded = await waitUntil { viewModel.currentBranch == "hotfix" }
+        #expect(reloaded)
+    }
+
+    @Test("与分支无关的仓库事件不触发刷新")
+    func unrelatedRepositoryEventDoesNotReload() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        let (observer, viewModel, capability) = makeObserver(projectURL: directory, git: git)
+        defer { observer.cancel() }
+        _ = await waitUntil { viewModel.currentBranch == "main" }
+
+        git.currentBranchStub = "never-applied"
+        capability.sendRepositoryEvent(.indexChanged)
+        capability.sendRepositoryEvent(.stashChanged)
+        capability.sendRepositoryEvent(.workingTreeChanged)
+        await Task.yield()
+
+        #expect(viewModel.currentBranch == "main")
+    }
+
+    @Test("没有注册仓库监听时仍可工作")
+    func worksWithoutRepositoryObserver() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        let capability = BranchStatusCapabilityMock()
+        capability.supportsRepositoryObservers = false
+        capability.currentProject = Project(url: directory)
+        let viewModel = GitBranchStatusViewModel()
+        let observer = GitBranchStatusObserver(
+            capability: capability,
             git: git,
             viewModel: viewModel
         )
         defer { observer.cancel() }
 
+        #expect(capability.repositoryHandles.isEmpty)
+        let loaded = await waitUntil { viewModel.currentBranch == "main" }
+        #expect(loaded)
+    }
+
+    // MARK: - 生命周期
+
+    @Test("cancel 会解除观察")
+    func cancelReleasesObservers() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        let (observer, viewModel, capability) = makeObserver(projectURL: directory, git: git)
+        _ = await waitUntil { viewModel.currentBranch == "main" }
+
+        observer.cancel()
+
+        #expect(capability.projectHandles.allSatisfy { $0.isCancelled })
+        #expect(capability.repositoryHandles.allSatisfy { $0.isCancelled })
+
+        // 取消后事件不再触发刷新。
+        git.currentBranchStub = "never-applied"
+        capability.sendProjectEvent(.dataChanged)
+        await Task.yield()
+        #expect(viewModel.currentBranch == "main")
+    }
+
+    // MARK: - 在途读取的取消
+
+    @Test("重新加载会取消上一次仍在进行中的分支读取")
+    func reloadCancelsPreviousBranchRead() async throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        // 让读取保持在途，直到被显式取消，才能断言取消行为。
+        git.blocksBranchReadUntilCancelled = true
+        let (observer, _, capability) = makeObserver(projectURL: directory, git: git)
+        defer { observer.cancel() }
+
         // 首次读取（init 时触发）跑在 detached task 上，需等待它真正开始。
-        await waitUntil { git.records.readCount >= 1 }
-        #expect(git.records.readCount == 1)
-        let firstCancellation = try #require(git.records.recordedCancellations.first)
+        let started = await waitUntil { git.branchReadCount >= 1 }
+        #expect(started)
+        let firstCancellation = try #require(git.recordedBranchReadCancellations.first)
 
         // 触发第二次 reload：第一次的读取必须被取消，
         // 否则旧 git 读取会一直占用线程池，最终让 loading 永远无法结束。
-        projects.emit(.dataChanged)
+        capability.sendProjectEvent(.dataChanged)
 
-        await waitUntil { git.records.readCount >= 2 }
-        #expect(git.records.readCount == 2)
+        let reloaded = await waitUntil { git.branchReadCount >= 2 }
+        #expect(reloaded)
         #expect(firstCancellation.isCancelled, "旧分支读取应在下一次 reload 时被取消")
     }
 
     @Test("取消 Observer 会取消正在进行的分支读取")
     func cancelObserverCancelsBranchRead() async throws {
-        let repositoryURL = try makeRepositoryDirectory()
-        defer { try? FileManager.default.removeItem(at: repositoryURL) }
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        git.blocksBranchReadUntilCancelled = true
+        let (observer, _, _) = makeObserver(projectURL: directory, git: git)
 
-        let projects = StubProjects()
-        projects.currentProject = Project(url: repositoryURL)
-
-        let watch = StubRepositoryWatch()
-        let git = StubGit()
-        git.branchValue = "main"
-        // 让读取保持在途，直到被显式取消，才能断言取消行为。
-        git.records.blocksUntilCancelled = true
-
-        let viewModel = GitBranchStatusViewModel()
-        let observer = GitBranchStatusObserver(
-            capability: GitBranchStatusCapabilityAdapter(projects: projects, gitWatch: watch),
-            git: git,
-            viewModel: viewModel
-        )
-
-        await waitUntil { git.records.readCount >= 1 }
-        let cancellation = try #require(git.records.recordedCancellations.first)
+        let started = await waitUntil { git.branchReadCount >= 1 }
+        #expect(started)
+        let cancellation = try #require(git.recordedBranchReadCancellations.first)
         observer.cancel()
 
         #expect(cancellation.isCancelled, "Observer 取消时应终止在途的分支读取")
@@ -383,41 +338,29 @@ struct GitBranchStatusObserverTests {
 
     @Test("项目切换触发两次事件时只保留一次进行中的分支读取")
     func projectSwitchDoesNotDuplicateInFlightReads() async throws {
-        let repositoryURL = try makeRepositoryDirectory()
-        defer { try? FileManager.default.removeItem(at: repositoryURL) }
-
-        let projects = StubProjects()
-        projects.currentProject = Project(url: repositoryURL)
-
-        let watch = StubRepositoryWatch()
-        let git = StubGit()
-        git.branchValue = "main"
-        // 让读取保持在途，直到被显式取消，才能断言取消行为。
-        git.records.blocksUntilCancelled = true
-
-        let viewModel = GitBranchStatusViewModel()
-        let observer = GitBranchStatusObserver(
-            capability: GitBranchStatusCapabilityAdapter(projects: projects, gitWatch: watch),
-            git: git,
-            viewModel: viewModel
-        )
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let git = BranchStatusGitProviding()
+        git.currentBranchStub = "main"
+        git.blocksBranchReadUntilCancelled = true
+        let (observer, _, capability) = makeObserver(projectURL: directory, git: git)
         defer { observer.cancel() }
 
-        await waitUntil { git.records.readCount >= 1 }
-        let initialReadCount = git.records.readCount
+        let started = await waitUntil { git.branchReadCount >= 1 }
+        #expect(started)
+        let initialReadCount = git.branchReadCount
 
         // 真实场景：切换项目时 `.selectionChanged` 与仓库监听的 `.started`
         // 会连续触发，两次事件指向同一个项目。
-        projects.emit(.selectionChanged(projectID: nil))
-        watch.emit(.started(repositoryURL: repositoryURL))
+        capability.sendProjectEvent(.selectionChanged(projectID: UUID()))
+        capability.sendRepositoryEvent(.started(repositoryURL: directory))
 
         // 等待两次事件各自派发的读取都真正开始。
-        await waitUntil { git.records.readCount >= initialReadCount + 2 }
-        #expect(git.records.readCount == initialReadCount + 2)
+        let bothStarted = await waitUntil { git.branchReadCount >= initialReadCount + 2 }
+        #expect(bothStarted)
 
         // 前一次读取必须已被取消，只留下最新一次在途。
-        let cancellations = git.records.recordedCancellations
-        let inFlight = cancellations.filter { !$0.isCancelled }
+        let inFlight = git.recordedBranchReadCancellations.filter { !$0.isCancelled }
         #expect(
             inFlight.count == 1,
             "同一项目的重复事件不应留下多个在途读取，实际在途数：\(inFlight.count)"
