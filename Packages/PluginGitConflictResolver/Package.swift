@@ -56,10 +56,16 @@ let package = Package(
             name: "PluginGitConflictResolverTests",
             dependencies: [
                 "PluginGitConflictResolver",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
+                .product(name: "ProviderGitConflictResolver", package: "ProviderGitConflictResolver"),
+                .product(name: "ProviderRootView", package: "ProviderRootView"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Tests/PluginGitConflictResolverTests"
         ),
