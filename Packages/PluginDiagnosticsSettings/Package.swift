@@ -41,7 +41,9 @@ let package = Package(
             name: "PluginDiagnosticsSettingsTests",
             dependencies: [
                 "PluginDiagnosticsSettings",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Tests/PluginDiagnosticsSettingsTests"
         ),
