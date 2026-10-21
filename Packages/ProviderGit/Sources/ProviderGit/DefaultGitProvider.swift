@@ -330,6 +330,14 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         primaryBackendOrNil()?.currentBranch(in: repository)
     }
 
+    public func currentBranch(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String? {
+        guard cancellation?.isCancelled != true else { return nil }
+        return primaryBackendOrNil()?.currentBranch(in: repository, cancellation: cancellation)
+    }
+
     public func latestTag(in repository: URL) -> String? {
         primaryBackendOrNil()?.latestTag(in: repository)
     }

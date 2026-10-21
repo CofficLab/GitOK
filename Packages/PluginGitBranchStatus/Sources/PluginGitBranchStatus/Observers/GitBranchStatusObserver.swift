@@ -1,4 +1,5 @@
 import Foundation
+import KitGit
 import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
@@ -12,6 +13,14 @@ final class GitBranchStatusObserver {
     private var projectHandle: (any ProjectProvidingObserverHandle)?
     private var repositoryHandle: (any GitRepositoryWatchingObserverHandle)?
     private var reloadGeneration = 0
+
+    /// 当前在途的分支读取。
+    ///
+    /// 切换项目时 `.selectionChanged` 与仓库监听的 `.started` 会连续到达，
+    /// 因此这里必须持有并在下次 reload 前终止上一次读取；否则失效的 git
+    /// 读取会继续占用线程池工作线程，最终让 loading 状态永远无法结束。
+    private var branchTask: Task<String?, Never>?
+    private var branchCancellation: GitProcessCancellation?
 
     init(
         capability: any GitBranchStatusCapability,
@@ -42,6 +51,7 @@ final class GitBranchStatusObserver {
 
     func cancel() {
         reloadGeneration += 1
+        cancelBranchRead()
         projectHandle?.cancel()
         projectHandle = nil
         repositoryHandle?.cancel()
@@ -52,6 +62,10 @@ final class GitBranchStatusObserver {
     private func reload() {
         reloadGeneration += 1
         let generation = reloadGeneration
+
+        // 先终止上一次读取：新事件已经到达，旧结果对 UI 已无意义。
+        cancelBranchRead()
+
         guard let url = capability.currentProject?.url,
               FileManager.default.fileExists(atPath: url.path) else {
             viewModel?.update(projectURL: nil, branch: nil)
@@ -60,13 +74,26 @@ final class GitBranchStatusObserver {
 
         viewModel?.beginLoading(projectURL: url)
         let git = self.git
-        let branchTask = Task.detached(priority: .utility) {
-            git.currentBranch(in: url)
+        let cancellation = GitProcessCancellation()
+        let task = Task.detached(priority: .utility) {
+            git.currentBranch(in: url, cancellation: cancellation)
         }
+        branchCancellation = cancellation
+        branchTask = task
         Task { @MainActor [weak self] in
-            let branch = await branchTask.value
+            let branch = await task.value
             guard let self, self.reloadGeneration == generation else { return }
+            self.branchTask = nil
+            self.branchCancellation = nil
             self.viewModel?.update(projectURL: url, branch: branch)
         }
+    }
+
+    /// 终止在途的分支读取并清除引用。
+    private func cancelBranchRead() {
+        branchTask?.cancel()
+        branchTask = nil
+        branchCancellation?.cancel()
+        branchCancellation = nil
     }
 }
