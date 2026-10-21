@@ -150,6 +150,10 @@ struct GitDiffContentLoader: Sendable {
     }
 
     /// 加载二进制内容。
+    ///
+    /// 文件被删除时当前 commit 没有该 blob，`git cat-file` 会以退出码 128
+    /// 失败。此时应回退到父提交读取，展示被删掉的内容，而不是把 git 的
+    /// 错误冒泡成「Unable to Load Diff」。
     private func loadBinaryData(
         path: String,
         commit: GitCommit?,
@@ -157,12 +161,28 @@ struct GitDiffContentLoader: Sendable {
         cancellation: GitProcessCancellation?
     ) throws -> Data {
         if let commit {
-            return try capability.loadBlobData(
-                commit: commit.hash,
-                filePath: path,
-                in: repository,
-                cancellation: cancellation
-            )
+            do {
+                return try capability.loadBlobData(
+                    commit: commit.hash,
+                    filePath: path,
+                    in: repository,
+                    cancellation: cancellation
+                )
+            } catch {
+                if cancellation?.isCancelled == true { throw error }
+                guard
+                    let parentHash = commit.parentHashes.first,
+                    let fallbackData = try? capability.loadBlobData(
+                        commit: parentHash,
+                        filePath: path,
+                        in: repository,
+                        cancellation: cancellation
+                    )
+                else {
+                    throw error
+                }
+                return fallbackData
+            }
         }
         return try capability.loadWorktreeFileData(
             filePath: path,
