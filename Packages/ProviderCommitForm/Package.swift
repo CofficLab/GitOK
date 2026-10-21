@@ -39,6 +39,9 @@ let package = Package(
             name: "ProviderCommitFormTests",
             dependencies: [
                 "ProviderCommitForm",
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderCoAuthor", package: "ProviderCoAuthor"),
                 .product(name: "ProviderStorage", package: "LumiProviders"),
             ],
             path: "Tests/ProviderCommitFormTests"
