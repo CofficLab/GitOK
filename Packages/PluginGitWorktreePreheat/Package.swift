@@ -37,7 +37,10 @@ let package = Package(
             name: "PluginGitWorktreePreheatTests",
             dependencies: [
                 "PluginGitWorktreePreheat",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
             path: "Tests/PluginGitWorktreePreheatTests"

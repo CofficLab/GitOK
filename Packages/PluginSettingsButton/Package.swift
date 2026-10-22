@@ -42,7 +42,9 @@ let package = Package(
             name: "PluginSettingsButtonTests",
             dependencies: [
                 "PluginSettingsButton",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderToolbar", package: "LumiProviders"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Tests/PluginSettingsButtonTests"
         ),

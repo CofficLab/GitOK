@@ -37,4 +37,23 @@ struct GitLFSLargeFileScannerTests {
 
         #expect(files == ["large.bin"])
     }
+
+    @Test("scan skips common build directories instead of descending into them")
+    func skipsBuildDirectories() throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let nodeModules = root.appendingPathComponent("node_modules", isDirectory: true)
+        try FileManager.default.createDirectory(at: nodeModules, withIntermediateDirectories: true)
+        try Data("large".utf8).write(to: nodeModules.appendingPathComponent("large.bin"))
+
+        let files = GitLFSLargeFileScanner.scan(
+            in: root,
+            thresholdBytes: 0,
+            shouldCancel: { false }
+        )
+
+        #expect(files.isEmpty)
+    }
 }

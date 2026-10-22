@@ -122,8 +122,21 @@ struct GitPDFComparisonPreview: View {
     let currentData: Data?
     let previousData: Data?
     let path: String
-    @State private var showingPrevious = false
+    @State private var showingPrevious: Bool
     @LumiTheme private var theme
+
+    init(currentData: Data?, previousData: Data?, path: String) {
+        self.currentData = currentData
+        self.previousData = previousData
+        self.path = path
+        // 只有「删除前」一个版本时，默认就该展示它，否则正文恒为空。
+        let state = GitPDFComparisonState(current: currentData, previous: previousData)
+        _showingPrevious = State(initialValue: state.showsPreviousByDefault)
+    }
+
+    private var state: GitPDFComparisonState {
+        GitPDFComparisonState(current: currentData, previous: previousData)
+    }
 
     private var displayedData: Data? {
         showingPrevious ? previousData : currentData
@@ -152,10 +165,15 @@ struct GitPDFComparisonPreview: View {
                         .foregroundStyle(theme.textSecondary)
                 }
                 Spacer()
-            if currentData != nil, previousData != nil {
+            if state.showsVersionSwitcher {
+                    // 删除场景下当前版本不存在，"New" 不可选。
                     Picker("Version", selection: $showingPrevious) {
-                        Text("New").tag(false)
-                        Text("Previous").tag(true)
+                        if currentData != nil {
+                            Text("New").tag(false)
+                        }
+                        if previousData != nil {
+                            Text("Previous").tag(true)
+                        }
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 150)

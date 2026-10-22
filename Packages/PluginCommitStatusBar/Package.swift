@@ -40,8 +40,11 @@ let package = Package(
             dependencies: [
                 "PluginCommitStatusBar",
                 .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Tests/PluginCommitStatusBarTests"
         ),

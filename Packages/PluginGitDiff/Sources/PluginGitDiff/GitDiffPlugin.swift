@@ -77,6 +77,11 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
         let capability = GitDiffProjectCapabilityAdapter(projects: projects)
         let viewModel = GitDiffViewModel()
         self.viewModel = viewModel
+        // 内容加载只依赖窄能力（4 个读取方法），视图与加载器不直接接触
+        // 上百个成员的 `GitProviding`。
+        let contentLoader = GitDiffContentLoader(
+            capability: GitDiffContentCapabilityAdapter(git: git)
+        )
 
         let pane = RootTrailingPane(
             id: "\(id).trailing",
@@ -93,7 +98,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
                 projects?.selectFile(nil)
             },
             content: AnyView(
-                GitDiffPaneView(viewModel: viewModel, git: git)
+                GitDiffPaneView(viewModel: viewModel, contentLoader: contentLoader)
                     // Debug 构建下左下角叠加插件名 badge，便于识别视图来源。
                     .debugPluginBadge(metadata.name)
             )

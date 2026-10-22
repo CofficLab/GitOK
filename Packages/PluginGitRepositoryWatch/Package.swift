@@ -18,6 +18,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
+        .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
@@ -42,8 +43,11 @@ let package = Package(
             name: "PluginGitRepositoryWatchTests",
             dependencies: [
                 "PluginGitRepositoryWatch",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Tests/PluginGitRepositoryWatchTests"
         ),

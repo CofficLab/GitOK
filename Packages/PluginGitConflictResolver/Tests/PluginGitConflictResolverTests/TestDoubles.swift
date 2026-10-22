@@ -26,15 +26,15 @@ final class TestConflictResolverCapability: GitConflictResolverCapability {
     /// `true` 表示宿主没有注册仓库监听（如未安装 Git 监听插件）。
     var supportsRepositoryObservers = true
 
-    private var projectCallbacks: [(ProjectProvidingEvent) -> Void] = []
-    private var repositoryCallbacks: [(GitRepositoryWatchingEvent) -> Void] = []
+    private var projectCallbacks: [(handle: TestObserverHandle, callback: (ProjectProvidingEvent) -> Void)] = []
+    private var repositoryCallbacks: [(handle: TestObserverHandle, callback: (GitRepositoryWatchingEvent) -> Void)] = []
 
     func addProjectObserver(
         _ callback: @escaping (ProjectProvidingEvent) -> Void
     ) -> any ProjectProvidingObserverHandle {
-        projectCallbacks.append(callback)
         let handle = TestObserverHandle()
         projectHandles.append(handle)
+        projectCallbacks.append((handle: handle, callback: callback))
         return handle
     }
 
@@ -42,18 +42,24 @@ final class TestConflictResolverCapability: GitConflictResolverCapability {
         _ callback: @escaping (GitRepositoryWatchingEvent) -> Void
     ) -> (any GitRepositoryWatchingObserverHandle)? {
         guard supportsRepositoryObservers else { return nil }
-        repositoryCallbacks.append(callback)
         let handle = TestObserverHandle()
         repositoryHandles.append(handle)
+        repositoryCallbacks.append((handle: handle, callback: callback))
         return handle
     }
 
+    // 真实的 Provider 在 `handle.cancel()` 之后会注销回调；替身必须保持同样
+    // 的语义，否则「取消后不再收到事件」的断言会被替身的残留回调破坏。
     func sendProjectEvent(_ event: ProjectProvidingEvent) {
-        projectCallbacks.forEach { $0(event) }
+        for entry in projectCallbacks where !entry.handle.isCancelled {
+            entry.callback(event)
+        }
     }
 
     func sendRepositoryEvent(_ event: GitRepositoryWatchingEvent) {
-        repositoryCallbacks.forEach { $0(event) }
+        for entry in repositoryCallbacks where !entry.handle.isCancelled {
+            entry.callback(event)
+        }
     }
 }
 

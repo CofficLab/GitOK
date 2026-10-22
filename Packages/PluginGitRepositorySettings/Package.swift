@@ -45,7 +45,15 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitRepositorySettingsTests",
-            dependencies: ["PluginGitRepositorySettings"],
+            dependencies: [
+                "PluginGitRepositorySettings",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderSettingView", package: "LumiSettings"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
+            ],
             path: "Tests/PluginGitRepositorySettingsTests"
         ),
     ]

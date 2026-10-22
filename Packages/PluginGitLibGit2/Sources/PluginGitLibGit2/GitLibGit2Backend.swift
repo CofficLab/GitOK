@@ -303,6 +303,15 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         try? LibGit2.getCurrentBranchInfo(at: repository.path)?.name
     }
 
+    func currentBranch(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String? {
+        guard cancellation?.isCancelled != true else { return nil }
+        let branch = try? LibGit2.getCurrentBranchInfo(at: repository.path)?.name
+        return cancellation?.isCancelled == true ? nil : branch
+    }
+
     func latestTag(in repository: URL) -> String? {
         guard let description = try? LibGit2.describe(path: repository.path) else { return nil }
         return Self.tagName(from: description)

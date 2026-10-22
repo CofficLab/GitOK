@@ -182,6 +182,10 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     ) throws -> Data
 
     func currentBranch(in repository: URL) -> String?
+    func currentBranch(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String?
     func latestTag(in repository: URL) -> String?
     func latestTag(
         in repository: URL,
@@ -330,6 +334,15 @@ public extension GitOperationProviding {
         guard cancellation?.isCancelled != true else { return nil }
         let count = unpushedCount(in: repository)
         return cancellation?.isCancelled == true ? nil : count
+    }
+
+    func currentBranch(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) -> String? {
+        guard cancellation?.isCancelled != true else { return nil }
+        let branch = currentBranch(in: repository)
+        return cancellation?.isCancelled == true ? nil : branch
     }
 
     func latestTag(
