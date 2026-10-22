@@ -43,7 +43,7 @@ final class GitDiffDeletedFileTests: XCTestCase {
         XCTAssertEqual(
             content,
             .noTextDiff,
-            "空文件被删除时没有 hunk，应显示 No Text Diff 空状态而不是空白面板"
+            "a deleted empty file has no hunk and should show the No Text Diff state"
         )
     }
 
@@ -70,7 +70,7 @@ final class GitDiffDeletedFileTests: XCTestCase {
         )
 
         guard case let .text(diffText) = content else {
-            return XCTFail("非空文本文件被删除时应返回文本 diff，实际为 \(content)")
+            return XCTFail("a deleted non-empty text file should yield a text diff, got \(content)")
         }
         XCTAssertTrue(diffText.contains("@@ -1,3 +0,0 @@"))
         XCTAssertTrue(diffText.contains("-alpha"))
@@ -95,7 +95,7 @@ final class GitDiffDeletedFileTests: XCTestCase {
         )
 
         guard case let .binary(kind, data) = content else {
-            return XCTFail("被删除的图片应回退到父提交 blob 展示，实际为 \(content)")
+            return XCTFail("a deleted image should fall back to the parent commit blob, got \(content)")
         }
         XCTAssertEqual(kind, .image)
         XCTAssertEqual(data, Data([0x89, 0x50, 0x4E, 0x47]))
@@ -114,7 +114,7 @@ final class GitDiffDeletedFileTests: XCTestCase {
         )
 
         guard case let .binary(_, data) = content else {
-            return XCTFail("实际为 \(content)")
+            return XCTFail("got \(content)")
         }
         XCTAssertEqual(data, Data([0x01, 0x02]))
     }
@@ -137,10 +137,10 @@ final class GitDiffDeletedFileTests: XCTestCase {
         )
 
         guard case let .pdfComparison(current, previous) = content else {
-            return XCTFail("被删除的 PDF 应进入对比预览分支，实际为 \(content)")
+            return XCTFail("a deleted PDF should use the comparison preview, got \(content)")
         }
-        XCTAssertNil(current, "被删除的 PDF 在当前 commit 没有内容")
-        XCTAssertEqual(previous, pdfData, "应带上父提交版本供展示")
+        XCTAssertNil(current, "a deleted PDF has no content in the current commit")
+        XCTAssertEqual(previous, pdfData, "the parent version must be carried for display")
     }
 
     /// 只有「删除前」一个版本时，PDF 预览的默认展示版本必须是它。
@@ -153,11 +153,11 @@ final class GitDiffDeletedFileTests: XCTestCase {
 
         XCTAssertTrue(
             state.showsPreviousByDefault,
-            "只有父提交版本时，默认应展示该版本"
+            "with only the parent version, that version should be shown by default"
         )
         XCTAssertTrue(
             state.showsVersionSwitcher,
-            "只有一个版本时也应提供切换控件（至少可切到该版本）"
+            "the switcher should be available even with a single version"
         )
     }
 
