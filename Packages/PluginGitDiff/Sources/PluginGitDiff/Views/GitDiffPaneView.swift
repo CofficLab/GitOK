@@ -111,6 +111,11 @@ struct GitDiffPaneView: View {
                     previousData: previous,
                     path: filePath ?? ""
                 )
+                // identity 绑定到「文件 + 两个版本是否存在」：切换文件时
+                // 视图被重建，`showingPrevious` 才会按新内容重新取默认值。
+                // 否则先看「被删除的 PDF」再切到「修改过的 PDF」时，
+                // 新文件会沿用旧文件的 `showingPrevious = true`。
+                .id(PDFPreviewIdentity(path: filePath ?? "", hasCurrent: current != nil, hasPrevious: previous != nil))
             case .noTextDiff?, nil:
                 AppEmptyState(
                     icon: "text.alignleft",

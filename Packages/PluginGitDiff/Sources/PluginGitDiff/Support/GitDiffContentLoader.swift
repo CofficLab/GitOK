@@ -103,10 +103,32 @@ struct GitDiffContentLoader: Sendable {
     /// 面板会渲染成一块什么都没有的空白区域。此时应返回 `noTextDiff`，
     /// 让视图显示明确的空状态，而不是一个看起来像加载失败的面板。
     private func textDiffContent(_ diffText: String) -> GitDiffLoadedContent {
-        guard diffText.contains("@@") else {
+        guard Self.containsHunkHeader(diffText) else {
             return .noTextDiff
         }
         return .text(diffText)
+    }
+
+    /// 补丁里是否存在 hunk 头。
+    ///
+    /// 不能只用 `contains("@@")`：diff 文本会带上文件路径，路径本身含 `@@`
+    /// 时（如 `notes@@draft.md`）会被误判成 hunk，导致本该显示空状态的
+    /// 场景重新变成空白面板。hunk 头必须形如 `@@ -1,3 +1,4 @@`，
+    /// 即以 `@@ ` 开头并带行号区间。
+    private static func containsHunkHeader(_ diffText: String) -> Bool {
+        diffText
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .contains { line in
+                guard line.hasPrefix("@@ ") else { return false }
+                // 形如 "@@ -oldStart,oldCount +newStart,newCount @@"
+                let ranges = line.dropFirst(3).split(separator: "@@", maxSplits: 1, omittingEmptySubsequences: false)
+                guard let spec = ranges.first else { return false }
+                let parts = spec.split(separator: " ", omittingEmptySubsequences: true)
+                guard parts.count == 2 else { return false }
+                return parts.allSatisfy { part in
+                    part.hasPrefix("-") || part.hasPrefix("+")
+                }
+            }
     }
 
     /// 加载 PDF 的「当前版本 vs 父提交版本」两份数据。
