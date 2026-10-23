@@ -134,6 +134,25 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     /// `loadWorktreeSnapshot` before treating it as current.
     func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot?
     func invalidateWorktreeSnapshot(in repository: URL)
+    /// Forces a fresh worktree snapshot.
+    ///
+    /// Unlike `invalidateWorktreeSnapshot` + `loadWorktreeSnapshot`, a refresh
+    /// keeps the previously cached snapshot available for immediate display, so
+    /// sibling consumers (status bar, clean-state view) do not lose their data
+    /// and do not have to start their own scan.
+    func refreshWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot
+    /// 当前工作区内容的归属方（变更列表 / 干净概览 / 待定）。
+    ///
+    /// 变更列表与干净概览必须使用同一份判定，否则两块同时「不占布局」会让
+    /// 主内容区塌陷。
+    func worktreeContentOwner(for repository: URL) -> WorktreeContentOwner
+    /// 订阅工作区内容归属变化。
+    func addWorktreeContentOwnerObserver(
+        _ callback: @escaping @MainActor @Sendable (URL, WorktreeContentOwner) -> Void
+    ) -> any WorktreeContentOwnerObserverHandle
     func loadChanges(commit hash: String, in repository: URL) throws -> [GitFileChange]
     func countCommitChanges(commit hash: String, in repository: URL) throws -> Int
     func countCommitChanges(
@@ -314,6 +333,30 @@ public extension GitOperationProviding {
 
     func invalidateWorktreeSnapshot(in repository: URL) {}
     func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot? { nil }
+
+    /// Compatibility default for backends that do not implement a dedicated
+    /// refresh: invalidate first so the next load actually re-scans.
+    func refreshWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot {
+        invalidateWorktreeSnapshot(in: repository)
+        return try loadWorktreeSnapshot(in: repository, cancellation: cancellation)
+    }
+
+    /// Compatibility default: derive the owner from the cached snapshot.
+    func worktreeContentOwner(for repository: URL) -> WorktreeContentOwner {
+        guard let snapshot = cachedWorktreeSnapshot(in: repository) else { return .pending }
+        return WorktreeContentOwner.resolve(entriesCount: snapshot.entries.count)
+    }
+
+    /// Compatibility default: providers without a shared ownership store never
+    /// broadcast owner changes.
+    func addWorktreeContentOwnerObserver(
+        _ callback: @escaping @MainActor @Sendable (URL, WorktreeContentOwner) -> Void
+    ) -> any WorktreeContentOwnerObserverHandle {
+        NoopWorktreeContentOwnerObserverHandle()
+    }
 
     func listStashes(in repository: URL, cancellation: GitProcessCancellation?) -> [GitStashEntry] {
         guard cancellation?.isCancelled != true else { return [] }

@@ -141,8 +141,21 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
     private var observers: [ObserverHandle] = []
     private var workers: [UUID: Task<URL, Error>] = [:]
     private var cancellations: [UUID: GitProcessCancellation] = [:]
-    private var destinationExistedBeforeTask: [UUID: Bool] = [:]
+    private var destinationStateBeforeTask: [UUID: CloneDestinationState] = [:]
     private var lastPersistAt = Date.distantPast
+
+    /// 克隆目标目录在任务开始前的状态。
+    ///
+    /// 决定克隆失败时能清理什么：**只清理克隆自己写入的内容**，
+    /// 绝不删除用户本来就放在目标目录里的文件。
+    private enum CloneDestinationState {
+        /// 目标目录不存在：目录是克隆创建的，失败时整体删除。
+        case absent
+        /// 目标目录存在且为空：失败时清空克隆写入的残留，保留目录本身。
+        case emptyDirectory
+        /// 目标目录已存在且非空：克隆在写入前就会被拒绝，失败时保持原样。
+        case nonEmptyDirectory
+    }
 
     var onTaskFinished: ((CloneTask) -> Void)?
 
@@ -189,7 +202,7 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
             repositoryName: repositoryName
         )
         taskStore[task.id] = task
-        destinationExistedBeforeTask[task.id] = FileManager.default.fileExists(atPath: task.destination.path)
+        destinationStateBeforeTask[task.id] = Self.destinationState(at: task.destination)
         persist()
         notify(.tasksChanged)
         start(taskID: task.id)
@@ -224,7 +237,7 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
         task.startedAt = nil
         task.finishedAt = nil
         taskStore[taskID] = task
-        destinationExistedBeforeTask[taskID] = FileManager.default.fileExists(atPath: task.destination.path)
+        destinationStateBeforeTask[taskID] = Self.destinationState(at: task.destination)
         persist()
         notify(.taskUpdated(taskID))
         start(taskID: taskID)
@@ -364,18 +377,38 @@ private final class CloneRepositoryService: CloneRepositoryProviding {
     private func cleanupWorker(taskID: UUID) {
         workers.removeValue(forKey: taskID)
         cancellations.removeValue(forKey: taskID)
-        destinationExistedBeforeTask.removeValue(forKey: taskID)
+        destinationStateBeforeTask.removeValue(forKey: taskID)
     }
 
+    /// 读取目标目录在克隆开始前的状态，用于决定失败时能清理什么。
+    private static func destinationState(at destination: URL) -> CloneDestinationState {
+        var isDirectory: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: destination.path, isDirectory: &isDirectory)
+        guard exists else { return .absent }
+        guard isDirectory.boolValue else { return .nonEmptyDirectory }
+        let contents = (try? FileManager.default.contentsOfDirectory(atPath: destination.path)) ?? []
+        return contents.isEmpty ? .emptyDirectory : .nonEmptyDirectory
+    }
+
+    /// 清理克隆失败后残留的目标目录内容。
+    ///
+    /// 只删除克隆自己写入的东西：目标目录原本不存在时整体删除；
+    /// 原本是空目录时清空残留但保留目录本身；
+    /// 原本就有用户文件时保持原样（克隆在写入前就会被拒绝）。
     private func cleanupPartialDestination(taskID: UUID) {
         guard let task = taskStore[taskID],
               FileManager.default.fileExists(atPath: task.destination.path) else { return }
-        let existedBefore = destinationExistedBeforeTask[taskID] ?? false
-        if existedBefore {
+        switch destinationStateBeforeTask[taskID] ?? .absent {
+        case .absent:
             try? FileManager.default.removeItem(at: task.destination)
-            try? FileManager.default.createDirectory(at: task.destination, withIntermediateDirectories: true)
-        } else {
-            try? FileManager.default.removeItem(at: task.destination)
+        case .emptyDirectory:
+            let entries = (try? FileManager.default.contentsOfDirectory(atPath: task.destination.path)) ?? []
+            for entry in entries {
+                try? FileManager.default.removeItem(at: task.destination.appendingPathComponent(entry))
+            }
+        case .nonEmptyDirectory:
+            // 目录里本来就有用户文件：克隆从未写入过，保持原样。
+            break
         }
     }
 

@@ -26,7 +26,12 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginProjectReadmeTests",
-            dependencies: ["PluginProjectReadme"],
+            dependencies: [
+                "PluginProjectReadme",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "ProviderDocsView", package: "LumiProviders"),
+                .product(name: "ProviderProjectReadme", package: "ProviderProjectReadme"),
+            ],
             path: "Tests/PluginProjectReadmeTests"
         ),
     ]

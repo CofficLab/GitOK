@@ -61,7 +61,6 @@ struct WorktreeChangesView: View {
     @LumiTheme private var theme
 
     @State private var entries: [GitStatusEntry] = []
-    @State private var isLoading = false
     @State private var loadError: String?
     @State private var actionError: String?
     @State private var stagingPath: String?
@@ -84,7 +83,8 @@ struct WorktreeChangesView: View {
 
     var body: some View {
         Group {
-            if isLoading && entries.isEmpty && !hasLoadedSnapshot {
+            switch content {
+            case .loading:
                 ScrollView(.vertical, showsIndicators: false) {
                     WorktreeChangesSkeletonView()
                         .frame(maxWidth: .infinity)
@@ -93,21 +93,22 @@ struct WorktreeChangesView: View {
                     .background {
                         theme.surface
                     }
-            } else if let loadError {
+                    .accessibilityIdentifier("gitok.worktree.loading")
+            case .failed(let message):
                 AppEmptyState(
                     icon: "exclamationmark.triangle",
                     title: loc("Unable to Load Changes"),
-                    description: loadError
+                    description: message
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background {
                     theme.surface
                 }
-            } else if entries.isEmpty {
-                // 工作区干净（或未打开项目）：不渲染任何内容、不占布局，
-                // 干净状态视图由 PluginWorktreeClean 插件独立展示。
+            case .clean:
+                // 工作区确认干净（与干净概览共用同一份判定）：变更列表不占布局，
+                // 由 PluginWorktreeClean 展示仓库信息。
                 EmptyView()
-            } else {
+            case .changes(let loaded):
                 VStack(spacing: 0) {
                     header
                     if let actionError {
@@ -124,9 +125,9 @@ struct WorktreeChangesView: View {
                     // 行间用 AppDivider 分隔。
                     ScrollView(.vertical, showsIndicators: false) {
                         LazyVStack(spacing: 0) {
-                            ForEach(entries) { entry in
+                            ForEach(loaded) { entry in
                                 fileRow(entry)
-                                if entry.id != entries.last?.id {
+                                if entry.id != loaded.last?.id {
                                     AppDivider()
                                 }
                             }
@@ -151,9 +152,9 @@ struct WorktreeChangesView: View {
             resetProjectScopedActionState()
         }
         .onReceive(viewModel.$worktreeRevision) { _ in
-            if let url = viewModel.selectedProjectURL {
-                git.invalidateWorktreeSnapshot(in: url)
-            }
+            // 仓库数据变化 → 强制重扫。刷新而不是作废共享快照：
+            // 作废会让状态条 / 干净概览一起丢掉数据并各自重扫，
+            // 刷新则保留上一份快照供立即展示，同时把新结果写回共享缓存。
             reloadIfNeeded(force: true)
         }
         .alert(
@@ -217,6 +218,9 @@ struct WorktreeChangesView: View {
                 Text("\(entries.count)")
                     .font(.appMicro)
                     .foregroundStyle(theme.textTertiary)
+                    .accessibilityElement()
+                    .accessibilityLabel("\(entries.count)")
+                    .accessibilityIdentifier("gitok.worktree.count")
                 if isPreparingDiscardAll || isDiscardingAll {
                     ContentLoadingIndicator(
                         isDiscardingAll ? loc("Discarding all changes...") : loc("Preparing changes..."),
@@ -673,6 +677,15 @@ struct WorktreeChangesView: View {
 
     // MARK: - Loading
 
+    /// 当前内容状态：共享归属 + 本地条目 + 错误信息推导。
+    private var content: WorktreeChangesContent {
+        WorktreeChangesContentPolicy.resolve(
+            owner: viewModel.worktreeOwner,
+            entries: entries,
+            loadError: loadError
+        )
+    }
+
     private func reloadIfNeeded(force: Bool = false) {
         guard let projectURL = viewModel.selectedProjectURL else {
             activeReadCancellation?.cancel()
@@ -684,7 +697,6 @@ struct WorktreeChangesView: View {
             loadedProjectURL = nil
             hasLoadedSnapshot = false
             entries = []
-            isLoading = false
             reloadRequestedWhileReading = false
             actionError = nil
             stagingPath = nil
@@ -715,7 +727,6 @@ struct WorktreeChangesView: View {
         loadToken &+= 1
         let token = loadToken
         loadedProjectURL = projectURL
-        isLoading = cachedSnapshot == nil
         if isProjectSwitch {
             reloadRequestedWhileReading = false
             cancelDiscardPreparation()
@@ -732,7 +743,6 @@ struct WorktreeChangesView: View {
 
         let url = projectURL
         guard FileManager.default.fileExists(atPath: url.path) else {
-            isLoading = false
             hasLoadedSnapshot = false
             entries = []
             loadError = "Repository path no longer exists: \(url.path)"
@@ -744,14 +754,18 @@ struct WorktreeChangesView: View {
         // 工作区变更是后台快照读取，不应以 userInitiated 优先级占用并发线程。
         Task.detached(priority: .utility) {
             let result = Result {
-                try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).entries
+                // 强制刷新跳过快照的新鲜度窗口（数据可能已经变了），
+                // 普通读取则尽量复用共享缓存，避免同一仓库重复扫描。
+                if force {
+                    return try git.refreshWorktreeSnapshot(in: url, cancellation: cancellation).entries
+                }
+                return try git.loadWorktreeSnapshot(in: url, cancellation: cancellation).entries
             }
             await MainActor.run {
                 guard token == loadToken, loadedProjectURL == url else { return }
                 let shouldReload = reloadRequestedWhileReading
                 reloadRequestedWhileReading = false
                 activeReadCancellation = nil
-                isLoading = false
                 switch result {
                 case .success(let loaded):
                     hasLoadedSnapshot = true
@@ -774,7 +788,6 @@ struct WorktreeChangesView: View {
         activeReadCancellation?.cancel()
         activeReadCancellation = nil
         loadToken &+= 1
-        isLoading = false
         reloadRequestedWhileReading = false
     }
 

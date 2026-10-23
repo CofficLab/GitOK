@@ -51,7 +51,18 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginGitAutoPushTests",
-            dependencies: ["PluginGitAutoPush"],
+            dependencies: [
+                "PluginGitAutoPush",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderAutoPush", package: "ProviderAutoPush"),
+                .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+            ],
             path: "Tests/PluginGitAutoPushTests"
         ),
     ]

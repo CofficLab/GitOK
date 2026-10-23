@@ -118,6 +118,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
         observer = WorktreeCleanObserver(
             capability: capability,
             gitWatch: gitWatch,
+            git: git,
             userPresets: userPresets,
             collaborators: collaborators,
             onProjectChanged: { [weak viewModel, capability] in
@@ -137,6 +138,11 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
             },
             onCollaboratorsChanged: { [weak viewModel] collaborators in
                 viewModel?.handleCollaboratorsChanged(collaborators)
+            },
+            onWorktreeOwnerChanged: { [weak viewModel] url, owner in
+                // 只接受当前项目的归属变化，避免切换项目瞬间串台。
+                guard let viewModel, viewModel.project?.url == url else { return }
+                viewModel.handleWorktreeOwnerChanged(owner)
             }
         )
         viewModel.handleProjectChanged(

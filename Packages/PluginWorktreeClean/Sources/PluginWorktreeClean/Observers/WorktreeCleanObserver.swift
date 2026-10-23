@@ -1,4 +1,5 @@
 import Foundation
+import ProviderGit
 import ProviderGitUser
 import ProviderGitRepositoryWatch
 import ProviderProjects
@@ -20,17 +21,20 @@ final class WorktreeCleanObserver {
     private var gitWatchHandle: (any GitRepositoryWatchingObserverHandle)?
     private var userPresetsHandle: (any GitUserPresetProvidingObserverHandle)?
     private var collaboratorsHandle: (any CollaboratorProvidingObserverHandle)?
+    private var worktreeOwnerHandle: (any WorktreeContentOwnerObserverHandle)?
 
     init(
         capability: any WorktreeCleanProjectCapability,
         gitWatch: (any GitRepositoryWatching)?,
+        git: (any GitProviding)? = nil,
         userPresets: (any GitUserPresetProviding)?,
         collaborators: (any CollaboratorProviding)?,
         onProjectChanged: @escaping () -> Void,
         onDataChanged: @escaping () -> Void,
         onRepositoryInfoChanged: @escaping () -> Void,
         onUserPresetsChanged: @escaping ([GitUserPreset]) -> Void,
-        onCollaboratorsChanged: @escaping ([Collaborator]) -> Void
+        onCollaboratorsChanged: @escaping ([Collaborator]) -> Void,
+        onWorktreeOwnerChanged: @escaping (URL, WorktreeContentOwner) -> Void = { _, _ in }
     ) {
         projectsHandle = capability.addObserver { event in
             switch event {
@@ -42,6 +46,12 @@ final class WorktreeCleanObserver {
             default:
                 break
             }
+        }
+
+        // 工作区内容归属由 Provider 统一广播：干净概览与变更列表共用同一份
+        // 判定，两块内容不会同时「不占布局」把主内容区掏空。
+        worktreeOwnerHandle = git?.addWorktreeContentOwnerObserver { url, owner in
+            onWorktreeOwnerChanged(url, owner)
         }
 
         gitWatchHandle = gitWatch?.addObserver { event in
@@ -113,5 +123,7 @@ final class WorktreeCleanObserver {
         userPresetsHandle = nil
         collaboratorsHandle?.cancel()
         collaboratorsHandle = nil
+        worktreeOwnerHandle?.cancel()
+        worktreeOwnerHandle = nil
     }
 }
