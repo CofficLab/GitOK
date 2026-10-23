@@ -346,7 +346,7 @@ struct CloneRepositoryServiceTests {
     }
 
     @Test("目标目录校验失败时不会重试")
-    func retryValidatesDestination() throws {
+    func retryValidatesDestination() async throws {
         let harness = try makeHarness()
         defer { cleanUp(harness) }
         harness.git.cloneGate = DispatchSemaphore(value: 0)
@@ -363,11 +363,17 @@ struct CloneRepositoryServiceTests {
         )
         harness.git.releaseClone()
 
+        let failed = await waitUntil {
+            service.task(for: harness.destination)?.status == .failed
+        }
+        #expect(failed)
+
+        // 目标目录校验失败时，重试必须直接失败，任务保持失败状态。
+        harness.git.validateCloneDestinationError = CloneRepositoryTestError("destination is not empty")
         #expect(throws: (any Error).self) {
             _ = try service.retry(taskID: task.id)
         }
-
-        harness.git.releaseClone()
+        #expect(service.task(for: harness.destination)?.status == .failed)
     }
 
     // MARK: - 观察者
