@@ -47,7 +47,13 @@ let package = Package(
             name: "PluginCloneRepositoryTests",
             dependencies: [
                 "PluginCloneRepository",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderActivity", package: "ProviderActivity"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
+                .product(name: "ProviderToast", package: "LumiProviders"),
             ],
             path: "Tests/PluginCloneRepositoryTests"
         ),
