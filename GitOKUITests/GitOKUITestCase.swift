@@ -13,6 +13,8 @@ class GitOKUITestCase: XCTestCase {
     var uiTestLanguage: String { "en" }
     var uiTestLocale: String { "en_US" }
     var expectsReadyGitWorkbench: Bool { true }
+    /// 额外的启动环境变量（供子类注入 UI 测试专用的运行时钩子）。
+    var additionalLaunchEnvironment: [String: String] { [:] }
     /// setUp 前的系统键盘输入源，tearDown 时恢复，避免测试污染用户输入法。
     private var previousKeyboardInputSource: TISInputSource?
 
@@ -41,7 +43,12 @@ class GitOKUITestCase: XCTestCase {
         app.launchEnvironment["GITOK_UI_TEST_DATA_ROOT"] = fixtureRoot
             .appendingPathComponent("Data", isDirectory: true).path
         app.launchEnvironment["GITOK_UI_TEST_CLONE_DESTINATION"] = fixtureRoot.path
+        app.launchEnvironment.merge(additionalLaunchEnvironment) { _, new in new }
         app.launch()
+
+        // 启动过程中的中间态钩子：在等待「就绪」之前调用，供子类断言
+        // 扫描尚未完成等中间态（例如加载占位是否存在）。
+        try afterLaunch()
 
         XCTAssertTrue(
             element(identifier: "gitok.main.ready").waitForExistence(timeout: 30),
@@ -213,6 +220,9 @@ class GitOKUITestCase: XCTestCase {
     func additionalProjectFixtures() throws -> [UITestProject] { [] }
 
     func seedAdditionalUIState() throws {}
+
+    /// 应用启动后、等待「就绪」之前的钩子（默认不做任何事）。
+    func afterLaunch() throws {}
 
     private func seedProjectStore() throws {
         let projectID = UUID()
