@@ -20,6 +20,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderWorkspaceScene"),
+        .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
     ],
     targets: [
@@ -42,7 +43,14 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginFileInfoTests",
-            dependencies: ["PluginFileInfo"],
+            dependencies: [
+                "PluginFileInfo",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderStatusBar", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+            ],
             path: "Tests/PluginFileInfoTests"
         ),
     ]

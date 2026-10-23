@@ -51,7 +51,15 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginWorktreeStatusTests",
-            dependencies: ["PluginWorktreeStatus"],
+            dependencies: [
+                "PluginWorktreeStatus",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderRailView", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+            ],
             path: "Tests/PluginWorktreeStatusTests"
         ),
     ]
