@@ -58,8 +58,10 @@ final class GitOKCommitHistoryUITests: GitOKUITestCase {
         XCTAssertTrue(diffPanel.waitForExistence(timeout: 15), "Selecting the changed file did not open its diff")
 
         // diff 面板应渲染出新增行与被删除行的内容，而不只是空面板。
+        // 注意：MagicDiffView 里的行内容是 SwiftUI Text，在辅助功能树上以
+        // `value`（而非 `label`）暴露，与工作区状态行一致。
         let added = app.staticTexts
-            .matching(NSPredicate(format: "label CONTAINS %@", "modified by the UI test"))
+            .matching(NSPredicate(format: "value CONTAINS %@", "modified by the UI test"))
             .firstMatch
         XCTAssertTrue(
             added.waitForExistence(timeout: 20),
@@ -67,7 +69,7 @@ final class GitOKCommitHistoryUITests: GitOKUITestCase {
         )
 
         let removed = app.staticTexts
-            .matching(NSPredicate(format: "label CONTAINS %@", "initial content"))
+            .matching(NSPredicate(format: "value CONTAINS %@", "initial content"))
             .firstMatch
         XCTAssertTrue(
             removed.waitForExistence(timeout: 10),
