@@ -69,7 +69,7 @@ let package = Package(
         .package(path: "../PluginSidebarToggle"),
         .package(path: "../PluginStatusBar"),
         .package(url: "https://github.com/CofficLab/LumiPluginStorage.git", from: "1.1.1"),
-        .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.2.0"),
+        .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.2.1"),
         .package(path: "../ProviderActivity"),
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../ProviderActivityHeatmap"),
