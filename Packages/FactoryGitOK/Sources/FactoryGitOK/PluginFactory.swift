@@ -158,7 +158,16 @@ public struct DefaultPluginFactory: PluginFactory {
             PluginSettingView(id: "com.coffic.gitok.plugin.setting-view"),
             PluginLogoManager(),
             LogoCofficPlugin(),
-            ThemePackPlugin(id: "com.coffic.gitok.plugin.theme-pack"),
+            ThemePackPlugin(
+                id: "com.coffic.gitok.plugin.theme-pack",
+                themeIDs: [
+                    "lumi",          // 森林墨：低饱和暖色，跟随系统明暗（默认）
+                    "sky",           // 清朗天蓝：通透浅底，跟随系统明暗
+                    "one-dark",      // One Dark：经典开发者暗色
+                    "dracula",       // Dracula：经典开发者暗色
+                    "vscode-light",  // 固定亮色：低干扰底色
+                ]
+            ),
             SettingGeneralPlugin(),
             PluginPluginManager(),
         ]
