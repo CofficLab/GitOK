@@ -68,8 +68,8 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/CofficLab/LumiPluginThemePack.git",
       "state": {
-        "revision": "d1309c02faffc9910189557972bc87a120391721",
-        "version": "1.2.0"
+        "revision": "edbea8d186f804b1ffb6a2569fd2a00a074d7dfc",
+        "version": "1.2.1"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind": "remoteSourceControl",
       "location": "https://github.com/CofficLab/LumiThemePack.git",
       "state": {
-        "revision": "dd9d2e5dfc37d2b0b836fb51e921bb0e2db05525",
-        "version": "1.0.10"
+        "revision": "7024a835a4ff46b9b2eaef82529f9c0b06070d37",
+        "version": "1.0.12"
       }
     },
     {

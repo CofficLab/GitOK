@@ -4,10 +4,11 @@ import ProviderDocsView
 import ProviderPluginManaging
 import SwiftUI
 
-/// 插件管理设置页（完美复刻 Lumi）。
+/// 插件管理设置页（与 Lumi 对齐）。
 ///
 /// 两栏布局：左侧为插件列表（搜索 + 分类筛选），右侧为选中插件的详情
-/// 与启用状态。UI 与旧版 `PluginManagerPlugin.PluginManagementView` 几乎一致。
+/// 与启用状态。布局与 Lumi 的「插件管理」页一致：主体内容贴到窗口左右与底边，
+/// 头部行自带 24 的左右留白并用一条 `AppDivider()` 与主体分开，列表栏固定 300 宽。
 ///
 /// 数据源：`PluginManaging` Provider。列表与详情直接读取 Provider 的状态，
 /// 并通过其精准观察事件刷新。
@@ -38,29 +39,45 @@ struct PluginManagementView: View {
 
     var body: some View {
         AppSettingsContentScaffold(scrollsContent: false, maxContentWidth: nil) {
-            VStack(alignment: .leading, spacing: 14) {
-                PluginManagementHeader(totalCount: plugins.count, enabledCount: enabledCount)
+            GeometryReader { proxy in
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 10) {
+                        PluginManagementHeader(
+                            totalCount: plugins.count,
+                            enabledCount: enabledCount
+                        )
+                        Spacer()
+                    }
+                    .font(.appCaption)
+                    .foregroundStyle(theme.textSecondary)
+                    // 主体内容贴边后，用一条顶部分隔线把头部行与主从容器分开。
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 12)
 
-                HStack(spacing: 0) {
-                    pluginListPane
-                        .frame(width: 300)
-                        .frame(maxHeight: .infinity)
+                    AppDivider()
 
-                    AppDivider(.vertical)
+                    HStack(spacing: 0) {
+                        pluginListPane
+                            .frame(width: 300)
+                            .frame(maxHeight: .infinity)
 
-                    pluginDetailPane
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        AppDivider(.vertical)
+
+                        pluginDetailPane
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    }
+                    .frame(maxHeight: .infinity)
                 }
-                .frame(minHeight: 520, maxHeight: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .strokeBorder(theme.divider, lineWidth: 1)
-                }
+                // 共享 scaffold 给内容留了左右 24，这里把整列加宽 48 并左移 24，
+                // 使主从容器正好贴到窗口左右边缘；标题行再自行补回 24 留白。
+                .frame(width: proxy.size.width + 48, alignment: .topLeading)
+                .offset(x: -24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .padding(.bottom, 16)
+        // 插件贡献的「关于 / 详情」内容里也可能出现 AppCard，统一按 .subtle 渲染，
+        // 避免插件管理页里的卡片与其它设置页外观不一致。
+        .environment(\.appSettingsCardStyleOverride, .subtle)
         .onAppear {
             if selectedPluginID == nil {
                 selectedPluginID = selectedPlugin?.id
