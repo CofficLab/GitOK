@@ -69,41 +69,6 @@
         }
       }
     },
-    "Exit Full Screen Diff" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exit Full Screen Diff"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "退出 Diff 全屏"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "退出 Diff 全螢幕"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "退出 Diff 全螢幕"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "退出 Diff 全螢幕"
-          }
-        }
-      }
-    },
     "Maximize Right Panel" : {
       "localizations" : {
         "en" : {

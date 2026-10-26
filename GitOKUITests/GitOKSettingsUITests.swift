@@ -11,7 +11,7 @@ final class GitOKSettingsUITests: GitOKUITestCase {
         "General",
         "Projects",
         "Appearance",
-        "Plugin Management",
+        "Plugin Manager",
         "User Info",
         "Commit Style",
     ]

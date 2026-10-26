@@ -2,7 +2,6 @@ import KernelCore
 import LumiUI
 import ProviderCommand
 import ProviderDocsView
-import ProviderGit
 import ProviderSettingView
 import SwiftUI
 import LumiLoggingKit
@@ -77,7 +76,6 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
 
         // 捕获 docs provider 引用，供详情视图读取。
         let docsProvider = kernel.resolveProvider((any DocsViewProviding).self)
-        let gitBackends = kernel.resolveProvider((any GitProviding).self)?.availableBackends ?? []
 
         let entry = SettingEntryItem(
             id: "general",
@@ -85,10 +83,7 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
             systemImage: "gearshape",
             order: 1
         ) { [docsProvider] in
-            GeneralSettingsDetailView(
-                docsProvider: docsProvider,
-                gitBackends: gitBackends
-            )
+            GeneralSettingsDetailView(docsProvider: docsProvider)
         }
 
         settings.addEntries([entry])

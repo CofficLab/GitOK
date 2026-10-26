@@ -5,7 +5,14 @@ import SwiftUI
 
 /// 设置窗口「项目」标签页 —— 双栏布局：左侧项目列表，右侧项目详情。
 ///
-/// 从 `ProjectProviding` 读取项目列表，左侧列表面板支持搜索过滤和选中，
+/// 布局与 Lumi 的「项目」设置页一致（贴边分栏 + 原生 `AppSettingSection` 卡片）：
+/// - 主体内容贴到窗口左右与底边，没有外框描边，也没有底部留白；
+/// - 头部行自行保留 24 的左右内边距，与主体之间用一条 `AppDivider()` 分开；
+/// - 左侧列表栏固定 300 宽，右侧详情栏内容内边距 22；
+/// - 主从容器只写 `.frame(maxHeight: .infinity)`，不写死下限，避免整页超出
+///   窗口后被居中裁切（顶部与底部同时被切掉）。
+///
+/// 数据从 `ProjectProviding` 读取，左侧列表面板支持搜索过滤和选中，
 /// 右侧详情面板展示选中项目的完整信息（路径、置顶状态、最近打开时间）和操作按钮。
 /// 数据变化时通过 `ProjectObservationModel` 触发重算。
 struct ProjectsSettingsDetailView: View {
@@ -42,25 +49,35 @@ struct ProjectsSettingsDetailView: View {
 
     var body: some View {
         AppSettingsContentScaffold(scrollsContent: false, maxContentWidth: nil) {
-            VStack(alignment: .leading, spacing: 14) {
-                headerStats
+            GeometryReader { proxy in
+                VStack(alignment: .leading, spacing: 0) {
+                    header
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 12)
 
-                HStack(spacing: 0) {
-                    projectListPane.frame(width: 300)
-                    AppDivider(.vertical)
-                    projectDetailPane
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    // 主体内容贴边后，用一条顶部分隔线把头部行与主从容器分开。
+                    AppDivider()
+
+                    HStack(spacing: 0) {
+                        projectListPane
+                            .frame(width: 300)
+                            .frame(maxHeight: .infinity)
+
+                        AppDivider(.vertical)
+
+                        projectDetailPane
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    }
+                    .frame(maxHeight: .infinity)
                 }
-                .frame(minHeight: 520, maxHeight: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .strokeBorder(uiTheme.divider, lineWidth: 1)
-                }
+                // 共享 scaffold 给内容留了左右 24，这里把整列加宽 48 并左移 24，
+                // 使主从容器正好贴到窗口左右边缘；标题行再自行补回 24 留白。
+                .frame(width: proxy.size.width + 48, alignment: .topLeading)
+                .offset(x: -24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .padding(.bottom, 16)
+        .environment(\.appSettingsCardStyleOverride, .subtle)
         .onAppear { selectedID = selectedProject?.id }
         .onReceive(observation.$revision) { _ in
             // 项目数据变化时重算 body，读取最新项目列表
@@ -73,9 +90,12 @@ struct ProjectsSettingsDetailView: View {
         }
     }
 
-    // MARK: - Header Stats
+    // MARK: - Header
 
-    private var headerStats: some View {
+    /// 头部行：项目数量 + 当前项目 + 添加项目按钮。
+    ///
+    /// 头部内容自行保留 24 的左右内边距，不贴到窗口边缘。
+    private var header: some View {
         HStack(spacing: 10) {
             Label(
                 String(
@@ -85,32 +105,18 @@ struct ProjectsSettingsDetailView: View {
                 systemImage: "folder"
             )
             if let current = projects.currentProject {
-                Text(
-                    String(
-                        format: pluginLocalization.string("Current: %@"),
-                        current.title
-                    )
-                )
+                Text("·")
+                Text(current.title)
             }
             Spacer()
             AppButton(
                 pluginLocalization.string("Add Project"),
                 systemImage: "plus",
-                style: .primary,
+                style: .secondary,
                 size: .small
             ) {
                 addProject()
             }
-#if DEBUG
-            AppButton(
-                pluginLocalization.string("Open Data Directory"),
-                systemImage: "folder",
-                style: .warning,
-                size: .small
-            ) {
-                openDataDirectory()
-            }
-#endif
         }
         .font(.appCaption)
         .foregroundStyle(uiTheme.textSecondary)
@@ -165,29 +171,38 @@ struct ProjectsSettingsDetailView: View {
         return AppListRow(isSelected: isSelected, action: {
             withAnimation(.easeInOut(duration: 0.2)) { selectedID = project.id }
         }) {
-            HStack(alignment: .top, spacing: 10) {
-                VStack(spacing: 6) {
-                    Image(systemName: project.isPinned ? "pin.fill" : "folder")
-                        .font(.appBody)
-                        .foregroundStyle(project.isPinned ? uiTheme.primary : uiTheme.textSecondary)
-                        .frame(width: 22, height: 22)
-                    Circle()
-                        .fill(isCurrent ? uiTheme.success : uiTheme.textTertiary.opacity(0.45))
-                        .frame(width: 6, height: 6)
-                }
-                .frame(width: 22)
+            HStack(spacing: 10) {
+                Image(systemName: project.isPinned ? "pin.fill" : "folder")
+                    .font(.appCaptionEmphasized)
+                    .foregroundStyle(isSelected ? uiTheme.primary : uiTheme.textSecondary)
+                    .frame(width: 24, height: 24)
+                    .background(
+                        Color.primary.opacity(0.06),
+                        in: RoundedRectangle(cornerRadius: 6)
+                    )
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(project.title)
-                        .font(.appCaptionEmphasized)
-                        .foregroundStyle(uiTheme.textPrimary)
-                        .lineLimit(1)
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        Text(project.title)
+                            .font(.appCaptionEmphasized)
+                            .lineLimit(1)
+                        if isCurrent {
+                            Text(pluginLocalization.string("Current"))
+                                .font(.appMicroEmphasized)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1)
+                                .background(uiTheme.primary, in: Capsule())
+                        }
+                    }
                     Text(project.url.path)
                         .font(.appMicro)
-                        .foregroundStyle(uiTheme.textSecondary)
-                        .lineLimit(2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Spacer(minLength: 0)
             }
         }
     }
@@ -197,31 +212,212 @@ struct ProjectsSettingsDetailView: View {
     @ViewBuilder
     private var projectDetailPane: some View {
         if let project = selectedProject {
-            ProjectPreviewPane(
-                project: project,
-                isCurrent: projects.currentProject?.id == project.id,
-                containerBackground: uiTheme.surface,
-                onOpen: { projects.openProject(at: project.url) },
-                onOpenInFinder: {
-                    NSWorkspace.shared.activateFileViewerSelecting([project.url])
-                },
-                onTogglePin: {
-                    projects.pinProject(id: project.id, isPinned: !project.isPinned)
-                },
-                onRemove: {
-                    projects.removeProject(id: project.id)
-                },
-                onCopyPath: {
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(project.url.path, forType: .string)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    overviewSection(project)
+                    infoSection(project)
+                    actionsSection(project)
                 }
-            )
+                .padding(22)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .appSurface(style: .panel, cornerRadius: 0)
         } else {
             AppEmptyState(
                 icon: "folder",
                 title: pluginLocalization.string("Select a Project")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .appSurface(style: .panel, cornerRadius: 0)
+        }
+    }
+
+    // MARK: - 概览
+
+    /// 概览卡片：项目图标、名称、路径与状态标签。
+    private func overviewSection(_ project: Project) -> some View {
+        AppSettingSection(
+            title: pluginLocalization.string("Overview"),
+            titleAlignment: .leading
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .top, spacing: 16) {
+                    Image(systemName: project.isPinned ? "pin.fill" : "folder.fill")
+                        .font(.system(size: 38, weight: .semibold))
+                        .foregroundStyle(project.isPinned ? uiTheme.primary : uiTheme.textSecondary)
+                        .frame(width: 64, height: 64)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(uiTheme.appAccentSoftFill)
+                        )
+
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(project.title)
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(uiTheme.textPrimary)
+                            .lineLimit(2)
+                        Text(project.url.path)
+                            .font(.callout)
+                            .foregroundStyle(uiTheme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .textSelection(.enabled)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                HStack(spacing: 6) {
+                    if projects.currentProject?.id == project.id {
+                        AppTag(
+                            pluginLocalization.string("Currently Open"),
+                            style: .accent
+                        )
+                    }
+                    if project.isPinned {
+                        AppTag(
+                            pluginLocalization.string("Pinned"),
+                            systemImage: "pin.fill",
+                            style: .subtle
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - 基本信息
+
+    /// 基本信息卡片：名称 / 路径 / 置顶状态 / 最近打开时间。
+    private func infoSection(_ project: Project) -> some View {
+        AppSettingSection(
+            title: pluginLocalization.string("Project Information"),
+            titleAlignment: .leading
+        ) {
+            VStack(spacing: 0) {
+                infoRow(
+                    icon: "text.cursor",
+                    title: pluginLocalization.string("Name"),
+                    value: project.title
+                )
+                Divider().padding(.vertical, 8)
+                infoRow(
+                    icon: "folder",
+                    title: pluginLocalization.string("Path"),
+                    value: project.url.path,
+                    monospaced: true
+                )
+                Divider().padding(.vertical, 8)
+                infoRow(
+                    icon: "pin",
+                    title: pluginLocalization.string("Pinned"),
+                    value: project.isPinned
+                        ? pluginLocalization.string("Yes")
+                        : pluginLocalization.string("No")
+                )
+                if let lastOpened = project.lastOpenedAt {
+                    Divider().padding(.vertical, 8)
+                    infoRow(
+                        icon: "calendar",
+                        title: pluginLocalization.string("Last Opened"),
+                        value: Self.dateFormatter.string(from: lastOpened)
+                    )
+                }
+            }
+        }
+    }
+
+    private func infoRow(icon: String, title: String, value: String, monospaced: Bool = false) -> some View {
+        AppSettingRow(title: title, icon: icon) {
+            Text(value)
+                .font(monospaced ? .system(.callout, design: .monospaced) : .callout)
+                .foregroundStyle(uiTheme.textSecondary)
+                .multilineTextAlignment(.trailing)
+                .lineLimit(3)
+                .textSelection(.enabled)
+        }
+    }
+
+    // MARK: - 操作
+
+    /// 操作卡片：打开 / 在 Finder 中显示 / 置顶 / 复制路径 / 移除。
+    private func actionsSection(_ project: Project) -> some View {
+        AppSettingSection(
+            title: pluginLocalization.string("Actions"),
+            titleAlignment: .leading
+        ) {
+            VStack(spacing: 0) {
+                actionRow(
+                    icon: "arrow.up.forward.app",
+                    title: projects.currentProject?.id == project.id
+                        ? pluginLocalization.string("Reopen Project")
+                        : pluginLocalization.string("Open Project"),
+                    buttonTitle: pluginLocalization.string("Open"),
+                    style: .primary
+                ) {
+                    projects.openProject(at: project.url)
+                }
+                Divider().padding(.vertical, 8)
+                actionRow(
+                    icon: "folder",
+                    title: pluginLocalization.string("Open in Finder"),
+                    buttonTitle: pluginLocalization.string("Open in Finder")
+                ) {
+                    NSWorkspace.shared.activateFileViewerSelecting([project.url])
+                }
+                Divider().padding(.vertical, 8)
+                actionRow(
+                    icon: project.isPinned ? "pin.slash" : "pin",
+                    title: project.isPinned
+                        ? pluginLocalization.string("Unpin")
+                        : pluginLocalization.string("Pin to Top"),
+                    buttonTitle: project.isPinned
+                        ? pluginLocalization.string("Unpin")
+                        : pluginLocalization.string("Pin to Top")
+                ) {
+                    projects.pinProject(id: project.id, isPinned: !project.isPinned)
+                }
+                Divider().padding(.vertical, 8)
+                actionRow(
+                    icon: "doc.on.doc",
+                    title: pluginLocalization.string("Copy Path"),
+                    buttonTitle: pluginLocalization.string("Copy Path")
+                ) {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(project.url.path, forType: .string)
+                }
+                Divider().padding(.vertical, 8)
+                actionRow(
+                    icon: "trash",
+                    title: pluginLocalization.string("Remove Project"),
+                    buttonTitle: pluginLocalization.string("Remove Project"),
+                    style: .destructive
+                ) {
+                    projects.removeProject(id: project.id)
+                }
+#if DEBUG
+                Divider().padding(.vertical, 8)
+                actionRow(
+                    icon: "folder.badge.gearshape",
+                    title: pluginLocalization.string("Open Data Directory"),
+                    buttonTitle: pluginLocalization.string("Open Data Directory")
+                ) {
+                    openDataDirectory()
+                }
+#endif
+            }
+        }
+    }
+
+    /// 操作行：左侧图标 + 标题，右侧按钮。
+    private func actionRow(
+        icon: String,
+        title: String,
+        buttonTitle: String,
+        style: AppButton.Style = .secondary,
+        action: @escaping () -> Void
+    ) -> some View {
+        AppSettingRow(title: title, icon: icon) {
+            AppButton(buttonTitle, style: style, size: .small, action: action)
         }
     }
 
@@ -249,242 +445,6 @@ struct ProjectsSettingsDetailView: View {
         NSWorkspace.shared.open(url)
     }
     #endif
-}
-
-// MARK: - 项目详情预览面板
-
-private struct ProjectPreviewPane: View {
-    let project: Project
-    let isCurrent: Bool
-    let containerBackground: Color
-    let onOpen: () -> Void
-    let onOpenInFinder: () -> Void
-    let onTogglePin: () -> Void
-    let onRemove: () -> Void
-    let onCopyPath: () -> Void
-
-    @LumiUI.LumiTheme private var uiTheme: any LumiUI.LumiUITheme
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 22) {
-                header
-                AppDivider()
-                infoSection
-                AppDivider()
-                actionsSection
-            }
-            .padding(22)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-        }
-        .background(containerBackground)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack(alignment: .top, spacing: 16) {
-            Image(systemName: project.isPinned ? "pin.fill" : "folder.fill")
-                .font(.system(size: 38, weight: .semibold))
-                .foregroundStyle(project.isPinned ? uiTheme.primary : uiTheme.textSecondary)
-                .frame(width: 64, height: 64)
-                .background(
-                    (project.isPinned ? uiTheme.primary : uiTheme.textSecondary).opacity(0.14)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-            VStack(alignment: .leading, spacing: 7) {
-                Text(project.title)
-                    .font(.title2.weight(.semibold))
-                    .foregroundStyle(uiTheme.textPrimary)
-                Text(project.url.path)
-                    .font(.appCaption)
-                    .foregroundStyle(uiTheme.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 6) {
-                    if isCurrent {
-                        AppTag(
-                            pluginLocalization.string("Currently Open"),
-                            style: .accent
-                        )
-                    }
-                    if project.isPinned {
-                        AppTag(
-                            pluginLocalization.string("Pinned"),
-                            systemImage: "pin.fill",
-                            style: .subtle
-                        )
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
-    // MARK: - Info Section
-
-    private var infoSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 7) {
-                Image(systemName: "info.circle")
-                    .font(.appCaptionEmphasized)
-                    .foregroundStyle(uiTheme.primary)
-                Text(pluginLocalization.string("Project Information"))
-                    .font(.appCaptionEmphasized)
-                    .foregroundStyle(uiTheme.textPrimary)
-            }
-
-            VStack(spacing: 0) {
-                infoRow(
-                    icon: "folder",
-                    title: pluginLocalization.string("Name"),
-                    value: project.title
-                )
-                Divider().padding(.vertical, 8)
-                infoRow(
-                    icon: "link",
-                    title: pluginLocalization.string("Path"),
-                    value: project.url.path,
-                    monospaced: true
-                )
-                Divider().padding(.vertical, 8)
-                infoRow(
-                    icon: "pin",
-                    title: pluginLocalization.string("Pinned"),
-                    value: project.isPinned
-                        ? pluginLocalization.string("Yes")
-                        : pluginLocalization.string("No")
-                )
-                if let lastOpened = project.lastOpenedAt {
-                    Divider().padding(.vertical, 8)
-                    infoRow(
-                        icon: "clock",
-                        title: pluginLocalization.string("Last Opened"),
-                        value: Self.dateFormatter.string(from: lastOpened)
-                    )
-                }
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .background(uiTheme.elevatedSurface.opacity(0.72))
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(uiTheme.textSecondary.opacity(0.14), lineWidth: 1)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        }
-    }
-
-    private func infoRow(icon: String, title: String, value: String, monospaced: Bool = false) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: icon)
-                .font(.appMicro)
-                .foregroundStyle(uiTheme.textSecondary)
-                .frame(width: 16)
-            Text(title)
-                .font(.appCaptionEmphasized)
-                .foregroundStyle(uiTheme.textPrimary)
-                .frame(width: 100, alignment: .leading)
-            Text(value)
-                .font(monospaced ? .appMicro.monospaced() : .appMicro)
-                .foregroundStyle(uiTheme.textSecondary)
-                .textSelection(.enabled)
-                .lineLimit(3)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
-    // MARK: - Actions Section
-
-    private var actionsSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 7) {
-                Image(systemName: "lightbulb")
-                    .font(.appCaptionEmphasized)
-                    .foregroundStyle(uiTheme.primary)
-                Text(pluginLocalization.string("Actions"))
-                    .font(.appCaptionEmphasized)
-                    .foregroundStyle(uiTheme.textPrimary)
-            }
-
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible(), spacing: 12),
-                    GridItem(.flexible(), spacing: 12),
-                ],
-                spacing: 12
-            ) {
-                actionCard(
-                    title: isCurrent
-                        ? pluginLocalization.string("Reopen Project")
-                        : pluginLocalization.string("Open Project"),
-                    systemImage: "arrow.up.forward.app",
-                    color: uiTheme.success
-                ) {
-                    onOpen()
-                }
-                actionCard(
-                    title: pluginLocalization.string("Open in Finder"),
-                    systemImage: "folder",
-                    color: uiTheme.info
-                ) {
-                    onOpenInFinder()
-                }
-                actionCard(
-                    title: project.isPinned
-                        ? pluginLocalization.string("Unpin")
-                        : pluginLocalization.string("Pin to Top"),
-                    systemImage: project.isPinned ? "pin.slash" : "pin",
-                    color: uiTheme.warning
-                ) {
-                    onTogglePin()
-                }
-                actionCard(
-                    title: pluginLocalization.string("Copy Path"),
-                    systemImage: "doc.on.doc",
-                    color: uiTheme.textSecondary
-                ) {
-                    onCopyPath()
-                }
-            }
-
-            AppDivider().padding(.vertical, 4)
-
-            AppButton(
-                pluginLocalization.string("Remove Project"),
-                systemImage: "trash",
-                style: .destructive,
-                size: .small,
-                action: onRemove
-            )
-        }
-    }
-
-    private func actionCard(title: String, systemImage: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 10) {
-                Image(systemName: systemImage)
-                    .font(.appBody)
-                    .foregroundStyle(color)
-                    .frame(width: 28, height: 28)
-                    .background(color.opacity(0.14))
-                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
-                Text(title)
-                    .font(.appCaptionEmphasized)
-                    .foregroundStyle(uiTheme.textPrimary)
-                    .lineLimit(1)
-            }
-            .padding(14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(uiTheme.elevatedSurface.opacity(0.72))
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(uiTheme.textSecondary.opacity(0.14), lineWidth: 1)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        }
-        .buttonStyle(.plain)
-    }
 
     // MARK: - Helpers
 
