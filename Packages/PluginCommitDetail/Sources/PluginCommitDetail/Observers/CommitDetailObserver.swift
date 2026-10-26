@@ -46,8 +46,16 @@ final class CommitDetailObserver {
 
         // 工作区内容归属由 Provider 统一广播：变更列表与干净概览共用同一份判定，
         // 避免两个内容块同时「不占布局」让主内容区塌陷。
+        //
+        // 归属结论按**仓库**发布，但推送给所有订阅者：后台预热插件会依次扫描
+        // 侧边栏里的每一个项目。订阅方必须自己过滤出「说的是当前项目」的那一条，
+        // 否则别的项目的结论会串台覆盖当前项目——当前项目明明有未提交改动却
+        // 被判定成干净，变更列表随之塌陷成 EmptyView，主内容区只剩提交表单，
+        // 表单被垂直居中漂到面板中间。
         worktreeOwnerHandle = git?.addWorktreeContentOwnerObserver { [weak self] url, owner in
             guard let self else { return }
+            guard self.viewModel.selectedProjectURL?.standardizedFileURL == url.standardizedFileURL
+            else { return }
             self.viewModel.handleWorktreeOwnerChanged(owner)
         }
         syncWorktreeOwner(from: capability)
