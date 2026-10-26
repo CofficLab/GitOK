@@ -1,7 +1,6 @@
 import AppKit
 import LumiUI
 import ProviderDocsView
-import ProviderGit
 import SwiftUI
 
 /// 通用设置详情视图 —— 设置窗口「通用」标签页。
@@ -16,7 +15,6 @@ struct GeneralSettingsDetailView: View {
     private static let websiteURL = URL(string: "https://\(websiteURLString)")
 
     let docsProvider: (any DocsViewProviding)?
-    let gitBackends: [GitBackendDescriptor]
 
     /// 是否展示说明书浏览器。
     @State private var isPresentingManuals = false
@@ -35,9 +33,6 @@ struct GeneralSettingsDetailView: View {
 #if DEBUG
                 debugHeader
 #endif
-                if !gitBackends.isEmpty {
-                    GitBackendSectionView(backends: gitBackends)
-                }
                 websiteSection
                 updatesSection
                 if !manuals.isEmpty {
