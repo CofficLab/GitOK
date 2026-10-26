@@ -58,6 +58,10 @@ struct SettingsStyleConformanceTests {
     /// 「外观」页所在的远程包，以及 Lumi 对齐所用的版本下限。
     private static let appearancePackageIdentity = "lumithemepack"
     private static let appearanceMinimumVersion = "1.0.12"
+    /// 「插件管理」页所在的远程包，支持宿主注入插件 id 的版本下限。
+    ///
+    /// 1.3.0 起提供 `init(id:)`；此前版本把插件 id 写死为上游品牌。
+    private static let pluginManagerMinimumVersion = "1.3.0"
 
     // MARK: - 受审页面
 
@@ -100,15 +104,6 @@ struct SettingsStyleConformanceTests {
             path: "Packages/PluginProjects/Sources/PluginProjects/Views/ProjectsSettingsDetailView.swift",
             detailPaddingPath: "Packages/PluginProjects/Sources/PluginProjects/Views/ProjectsSettingsDetailView.swift",
             requiresNativeSection: true
-        ),
-        // 插件管理页：容器页与右侧详情面板分属两个文件。
-        AuditedPage(
-            viewTypeNames: ["PluginManagementView"],
-            path: "Packages/PluginPluginManager/Sources/PluginPluginManager/Views/PluginManagementView.swift",
-            relatedPaths: [
-                "Packages/PluginPluginManager/Sources/PluginPluginManager/Views/PluginSettingsDetailView.swift",
-            ],
-            detailPaddingPath: "Packages/PluginPluginManager/Sources/PluginPluginManager/Views/PluginSettingsDetailView.swift"
         ),
     ]
 
@@ -230,6 +225,58 @@ struct SettingsStyleConformanceTests {
             Issue.record(
                 Comment(rawValue: """
                 设置入口详情页仍在使用自绘新卡片体系：
+
+                \(failures.joined(separator: "\n"))
+                """)
+            )
+        }
+    }
+
+    @Test("插件管理页锁定在支持宿主 id 注入的 LumiPluginPluginManager 版本")
+    func pluginManagerPageUsesHostInjectableRemotePackage() throws {
+        let root = try Self.repositoryRoot()
+        var failures: [String] = []
+
+        // 依赖声明：FactoryGitOK 声明的版本下限不得低于支持 `init(id:)` 的版本。
+        //
+        // 1.2.0 之前的远程包把插件 id 写死为 `com.coffic.lumi.plugin.plugin-manager`，
+        // GitOK 复用后会在插件管理页与内核注册表里残留上游品牌；1.3.0 才提供
+        // `init(id:)` 让宿主注入自己的品牌 id。
+        let manifestPath = root.appendingPathComponent("Packages/FactoryGitOK/Package.swift")
+        let manifest = try String(contentsOf: manifestPath, encoding: .utf8)
+        let declarationPattern = #"LumiPluginPluginManager\.git"\s*,\s*from:\s*"([^"]+)""#
+        guard let declarationRange = manifest.range(of: declarationPattern, options: .regularExpression) else {
+            Issue.record(Comment(rawValue: "未能在 \(manifestPath.path) 中找到 LumiPluginPluginManager 的版本声明"))
+            return
+        }
+        guard let declarationVersion = Self.capture(in: manifest, range: declarationRange, pattern: declarationPattern) else {
+            Issue.record(Comment(rawValue: "未能解析 LumiPluginPluginManager 的版本声明"))
+            return
+        }
+        if Self.compareVersions(declarationVersion, Self.pluginManagerMinimumVersion) < 0 {
+            failures.append(
+                "- Packages/FactoryGitOK/Package.swift：LumiPluginPluginManager 声明为 \(declarationVersion)，"
+                + "低于 \(Self.pluginManagerMinimumVersion)（该版本才支持宿主注入插件 id）"
+            )
+        }
+
+        // 宿主必须真的注入自己的品牌 id，否则界面与内核注册表仍是上游品牌。
+        if !manifest.contains("PluginPluginManager") {
+            failures.append("- Packages/FactoryGitOK/Package.swift：未引用 PluginPluginManager 远程包")
+        }
+        let factoryPath = root.appendingPathComponent("Packages/FactoryGitOK/Sources/FactoryGitOK/PluginFactory.swift")
+        let factory = try String(contentsOf: factoryPath, encoding: .utf8)
+        if !factory.contains(#"PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager")"#) {
+            failures.append(
+                "- Packages/FactoryGitOK/Sources/FactoryGitOK/PluginFactory.swift："
+                + "插件管理插件未注入 GitOK 品牌 id（会残留 com.coffic.lumi 上游品牌）"
+            )
+        }
+
+        if !failures.isEmpty {
+            Issue.record(
+                Comment(rawValue: """
+                插件管理页未锁定在支持宿主 id 注入的远程包版本：
 
                 \(failures.joined(separator: "\n"))
                 """)
