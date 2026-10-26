@@ -2,12 +2,12 @@ import Foundation
 import KitGit
 import ProviderGit
 import ProviderProjects
-import XCTest
+import Testing
 @testable import PluginCommitDetail
 
 /// 复现「右侧详情区整块留白、提交表单漂到面板中间」的成因。
 ///
-/// 用户可见的症状（见 `GitOKWorktreeContentUITests`）：
+/// 用户可见的症状（见 `GitOKWorktreeOwnerIsolationUITests`）：
 /// 左侧状态条显示「有未提交的…(18) 未提交」，右侧详情区却整块留白，
 /// 提交表单漂在面板中间。
 ///
@@ -27,42 +27,54 @@ import XCTest
 ///   → 整个内容区被垂直居中 → 提交表单漂到面板中间。
 ///
 /// 这组测试锁定「归属广播必须按仓库隔离」这条约束。
+@Suite("CommitDetail worktree owner isolation")
 @MainActor
-final class CommitDetailWorktreeOwnerIsolationTests: XCTestCase {
+struct CommitDetailWorktreeOwnerIsolationTests {
     private let currentProjectURL = URL(fileURLWithPath: "/tmp/current-project")
     private let otherProjectURL = URL(fileURLWithPath: "/tmp/other-project")
 
-    // MARK: - Reproduction
-
-    /// 核心复现：当前项目是脏的，但后台扫描另一个干净项目时，
-    /// 当前项目的归属结论被覆盖成 `.clean`。
-    ///
-    /// 这条断言在修复前必然失败——`CommitDetailObserver` 缺少 `url` 过滤。
-    func testOwnerBroadcastForAnotherRepositoryDoesNotOverwriteCurrentProject() {
-        let git = WorktreeOwnerGitDouble()
-        let projects = WorktreeOwnerProjectsDouble()
-        projects.currentProject = Project(url: currentProjectURL, lastOpenedAt: Date())
-
-        let viewModel = CommitDetailViewModel()
-        let observer = CommitDetailObserver(
+    /// 组装与插件 onBoot 一致的 Observer→ViewModel 链路。
+    private func makeObserver(
+        git: WorktreeOwnerTestDoubles.Git,
+        projects: WorktreeOwnerTestDoubles.Projects,
+        viewModel: CommitDetailViewModel
+    ) -> CommitDetailObserver {
+        CommitDetailObserver(
             capability: CommitDetailProjectCapabilityAdapter(projects: projects),
             gitWatch: nil,
             git: git,
             viewModel: viewModel
         )
+    }
+
+    private func makeProjects() -> WorktreeOwnerTestDoubles.Projects {
+        let projects = WorktreeOwnerTestDoubles.Projects()
+        projects.currentProject = Project(url: currentProjectURL, lastOpenedAt: Date())
+        return projects
+    }
+
+    /// 核心复现：当前项目是脏的，但后台扫描另一个干净项目时，
+    /// 当前项目的归属结论被覆盖成 `.clean`。
+    ///
+    /// 这条断言在修复前必然失败——`CommitDetailObserver` 缺少 `url` 过滤。
+    @Test("A verdict about another repository does not overwrite the current project")
+    func ownerBroadcastForAnotherRepositoryDoesNotOverwriteCurrentProject() {
+        let git = WorktreeOwnerTestDoubles.Git()
+        let projects = makeProjects()
+        let viewModel = CommitDetailViewModel()
+        let observer = makeObserver(git: git, projects: projects, viewModel: viewModel)
         defer { observer.cancel() }
 
         // 当前项目扫描完毕：工作区有改动 → 归属为 .changes。
         git.simulateScan(publishing: .changes, for: currentProjectURL)
-        XCTAssertEqual(viewModel.worktreeOwner, .changes)
+        #expect(viewModel.worktreeOwner == .changes)
 
         // 后台预热扫描了另一个**干净**项目，并广播了它的结论。
         git.simulateScan(publishing: .clean, for: otherProjectURL)
 
         // 当前项目的结论必须保持不变。
-        XCTAssertEqual(
-            viewModel.worktreeOwner,
-            .changes,
+        #expect(
+            viewModel.worktreeOwner == .changes,
             "另一个仓库的归属结论串台覆盖了当前项目，导致变更列表塌陷成 EmptyView"
         )
     }
@@ -70,70 +82,51 @@ final class CommitDetailWorktreeOwnerIsolationTests: XCTestCase {
     /// 反向：当前项目干净时，别的**脏**项目也不能把它改成 `.changes`。
     ///
     /// 否则变更列表会突然在干净项目上冒出来（与上面是同一个 bug 的镜像）。
-    func testDirtyBroadcastForAnotherRepositoryDoesNotOverwriteCleanCurrentProject() {
-        let git = WorktreeOwnerGitDouble()
-        let projects = WorktreeOwnerProjectsDouble()
-        projects.currentProject = Project(url: currentProjectURL, lastOpenedAt: Date())
-
+    @Test("A dirty verdict about another repository does not mark a clean project dirty")
+    func dirtyBroadcastForAnotherRepositoryDoesNotOverwriteCleanCurrentProject() {
+        let git = WorktreeOwnerTestDoubles.Git()
+        let projects = makeProjects()
         let viewModel = CommitDetailViewModel()
-        let observer = CommitDetailObserver(
-            capability: CommitDetailProjectCapabilityAdapter(projects: projects),
-            gitWatch: nil,
-            git: git,
-            viewModel: viewModel
-        )
+        let observer = makeObserver(git: git, projects: projects, viewModel: viewModel)
         defer { observer.cancel() }
 
         git.simulateScan(publishing: .clean, for: currentProjectURL)
-        XCTAssertEqual(viewModel.worktreeOwner, .clean)
+        #expect(viewModel.worktreeOwner == .clean)
 
         git.simulateScan(publishing: .changes, for: otherProjectURL)
 
-        XCTAssertEqual(
-            viewModel.worktreeOwner,
-            .clean,
+        #expect(
+            viewModel.worktreeOwner == .clean,
             "另一个仓库的归属结论串台覆盖了当前项目"
         )
     }
 
     /// 当前项目自己的结论仍然必须能正常生效（过滤不能过头）。
-    func testOwnerBroadcastForCurrentProjectStillApplies() {
-        let git = WorktreeOwnerGitDouble()
-        let projects = WorktreeOwnerProjectsDouble()
-        projects.currentProject = Project(url: currentProjectURL, lastOpenedAt: Date())
-
+    @Test("A verdict about the current project still applies")
+    func ownerBroadcastForCurrentProjectStillApplies() {
+        let git = WorktreeOwnerTestDoubles.Git()
+        let projects = makeProjects()
         let viewModel = CommitDetailViewModel()
-        let observer = CommitDetailObserver(
-            capability: CommitDetailProjectCapabilityAdapter(projects: projects),
-            gitWatch: nil,
-            git: git,
-            viewModel: viewModel
-        )
+        let observer = makeObserver(git: git, projects: projects, viewModel: viewModel)
         defer { observer.cancel() }
 
         git.simulateScan(publishing: .changes, for: currentProjectURL)
-        XCTAssertEqual(viewModel.worktreeOwner, .changes)
+        #expect(viewModel.worktreeOwner == .changes)
 
         git.simulateScan(publishing: .clean, for: currentProjectURL)
-        XCTAssertEqual(viewModel.worktreeOwner, .clean)
+        #expect(viewModel.worktreeOwner == .clean)
     }
 
     /// 串台的直接后果：变更列表塌陷成 `EmptyView`（不占布局）。
     ///
     /// 这个断言把「归属被串台」翻译成用户真正看到的症状，
     /// 让失败信息直接指向问题本身而不是内部状态。
-    func testCrossTalkCollapsesTheChangesListIntoAnEmptyBlock() {
-        let git = WorktreeOwnerGitDouble()
-        let projects = WorktreeOwnerProjectsDouble()
-        projects.currentProject = Project(url: currentProjectURL, lastOpenedAt: Date())
-
+    @Test("Cross talk collapses the changes list into a block that takes no layout")
+    func crossTalkCollapsesTheChangesListIntoAnEmptyBlock() {
+        let git = WorktreeOwnerTestDoubles.Git()
+        let projects = makeProjects()
         let viewModel = CommitDetailViewModel()
-        let observer = CommitDetailObserver(
-            capability: CommitDetailProjectCapabilityAdapter(projects: projects),
-            gitWatch: nil,
-            git: git,
-            viewModel: viewModel
-        )
+        let observer = makeObserver(git: git, projects: projects, viewModel: viewModel)
         defer { observer.cancel() }
 
         git.simulateScan(publishing: .changes, for: currentProjectURL)
@@ -147,7 +140,7 @@ final class CommitDetailWorktreeOwnerIsolationTests: XCTestCase {
             entries: entries,
             loadError: nil
         )
-        XCTAssertEqual(before, .changes(entries), "归属正确时变更列表必须展示文件列表")
+        #expect(before == .changes(entries), "归属正确时变更列表必须展示文件列表")
 
         // 另一个干净项目被扫描，结论串台。
         git.simulateScan(publishing: .clean, for: otherProjectURL)
@@ -157,9 +150,8 @@ final class CommitDetailWorktreeOwnerIsolationTests: XCTestCase {
             entries: entries,
             loadError: nil
         )
-        XCTAssertNotEqual(
-            after,
-            .clean,
+        #expect(
+            after != .clean,
             "归属被串台成 .clean 后，变更列表会渲染 EmptyView 不占布局，主内容区随之塌陷"
         )
     }
