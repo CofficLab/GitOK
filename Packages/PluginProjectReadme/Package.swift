@@ -12,7 +12,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../ProviderProjectReadme"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.13.0")
     ],
     targets: [
         .target(
