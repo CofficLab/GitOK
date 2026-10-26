@@ -30,9 +30,6 @@ struct GeneralSettingsDetailView: View {
     var body: some View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
             VStack(alignment: .leading, spacing: 24) {
-#if DEBUG
-                debugHeader
-#endif
                 websiteSection
                 updatesSection
                 if !manuals.isEmpty {
@@ -99,20 +96,6 @@ struct GeneralSettingsDetailView: View {
             }
         }
     }
-
-    // MARK: - Debug Header
-
-    #if DEBUG
-    private var debugHeader: some View {
-        HStack(spacing: 10) {
-            Spacer()
-            AppButton(pluginLocalization.string("Open Data Directory"), systemImage: "folder", style: .warning, size: .small) {
-                openDataDirectory()
-            }
-        }
-        .font(.appCaption)
-    }
-    #endif
 
     // MARK: - 说明书
 
@@ -191,16 +174,4 @@ struct GeneralSettingsDetailView: View {
         guard let url = Self.websiteURL else { return }
         NSWorkspace.shared.open(url)
     }
-
-    // MARK: - Debug Helpers
-
-    #if DEBUG
-    private func openDataDirectory() {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
-            .appendingPathComponent("com.yueyi.GitOK", isDirectory: true)
-        guard let url = appSupport else { return }
-        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-        NSWorkspace.shared.open(url)
-    }
-    #endif
 }
