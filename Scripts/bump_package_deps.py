@@ -15,6 +15,7 @@ BUMPS = {
     "https://github.com/CofficLab/LumiUI.git": "1.11.1",
     "https://github.com/CofficLab/LumiSettings.git": "1.1.0",
     "https://github.com/CofficLab/LumiPluginSettingView.git": "1.0.3",
+    "https://github.com/CofficLab/LumiPluginPluginManager.git": "1.3.0",
     "https://github.com/sparkle-project/Sparkle": "2.10.1",
 }
 
