@@ -273,41 +273,6 @@
         }
       }
     },
-    "Choose a project from the sidebar to see its commits." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose a project from the sidebar to see its commits."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "从侧边栏选择项目以查看其提交。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從側邊欄選擇專案以查看其提交。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從側邊欄選擇專案以查看其提交。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從側邊欄選擇專案以查看其提交。"
-          }
-        }
-      }
-    },
     "Click to push to remote" : {
       "localizations" : {
         "en" : {
@@ -2208,41 +2173,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "選擇並查看"
-          }
-        }
-      }
-    },
-    "Select a Project" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select a Project"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择一个项目"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇一個專案"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇一個專案"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇一個專案"
           }
         }
       }
