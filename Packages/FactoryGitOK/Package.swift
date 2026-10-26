@@ -61,7 +61,7 @@ let package = Package(
         .package(path: "../PluginOpenTrae"),
         .package(path: "../PluginOpenVSCode"),
         .package(path: "../PluginOpenXcode"),
-        .package(url: "https://github.com/CofficLab/LumiPluginPluginManager.git", from: "1.2.0"),
+        .package(url: "https://github.com/CofficLab/LumiPluginPluginManager.git", from: "1.3.0"),
         .package(path: "../PluginProjects"),
         .package(path: "../PluginSettingGeneral"),
         .package(url: "https://github.com/CofficLab/LumiPluginSettingView.git", from: "1.0.3"),

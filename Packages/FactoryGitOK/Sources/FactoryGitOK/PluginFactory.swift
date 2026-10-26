@@ -169,7 +169,7 @@ public struct DefaultPluginFactory: PluginFactory {
                 ]
             ),
             SettingGeneralPlugin(),
-            PluginPluginManager(),
+            PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager"),
         ]
     }
 }
