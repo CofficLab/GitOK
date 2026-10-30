@@ -98,6 +98,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
         observer = CommitDetailObserver(
             capability: capability,
             gitWatch: gitWatch,
+            git: git,
             viewModel: viewModel
         )
 

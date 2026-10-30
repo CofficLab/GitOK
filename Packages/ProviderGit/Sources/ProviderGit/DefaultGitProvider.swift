@@ -9,7 +9,11 @@ import KitGit
 public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
     private let lock = NSLock()
     private var backends: [String: any GitBackendProviding] = [:]
+    /// 是否已经注入过一次 UI 测试扫描延迟（全局只延迟一次）。
+    private var didDelayWorktreeScan = false
     private let worktreeSnapshots = WorktreeSnapshotStore()
+    /// 工作区内容归属的共享状态：变更列表与干净概览据此使用同一份判定。
+    private let worktreeOwnership = WorktreeContentOwnership()
 
     public init() {}
 
@@ -188,20 +192,82 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
     }
 
     public func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
-        try worktreeSnapshots.load(repository: repository) {
-            try execute("loadWorktreeSnapshot") { try $0.loadWorktreeSnapshot(in: repository) }
+        let snapshot = try worktreeSnapshots.load(repository: repository) {
+            applyWorktreeScanDelay(for: repository)
+            return try execute("loadWorktreeSnapshot") { try $0.loadWorktreeSnapshot(in: repository) }
         }
+        publishWorktreeOwner(snapshot, for: repository)
+        return snapshot
     }
 
     public func loadWorktreeSnapshot(
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeSnapshot {
-        try worktreeSnapshots.load(repository: repository, cancellation: cancellation) {
-            try execute("loadWorktreeSnapshot") {
+        let snapshot = try worktreeSnapshots.load(repository: repository, cancellation: cancellation) {
+            applyWorktreeScanDelay(for: repository)
+            return try execute("loadWorktreeSnapshot") {
                 try $0.loadWorktreeSnapshot(in: repository, cancellation: cancellation)
             }
         }
+        publishWorktreeOwner(snapshot, for: repository)
+        return snapshot
+    }
+
+    /// Forces a new scan without dropping the cached snapshot.
+    ///
+    /// The cached snapshot stays available through `cachedWorktreeSnapshot`, so
+    /// the UI can keep rendering the previous state while the new scan runs.
+    public func refreshWorktreeSnapshot(
+        in repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> GitWorktreeSnapshot {
+        let snapshot = try worktreeSnapshots.load(
+            repository: repository,
+            force: true,
+            cancellation: cancellation
+        ) {
+            applyWorktreeScanDelay(for: repository)
+            return try execute("refreshWorktreeSnapshot") {
+                try $0.loadWorktreeSnapshot(in: repository, cancellation: cancellation)
+            }
+        }
+        publishWorktreeOwner(snapshot, for: repository)
+        return snapshot
+    }
+
+    public func worktreeContentOwner(for repository: URL) -> WorktreeContentOwner {
+        worktreeOwnership.owner(for: repository)
+    }
+
+    public func addWorktreeContentOwnerObserver(
+        _ callback: @escaping @MainActor @Sendable (URL, WorktreeContentOwner) -> Void
+    ) -> any WorktreeContentOwnerObserverHandle {
+        worktreeOwnership.addObserver(callback)
+    }
+
+    /// 把扫描结果广播为「工作区内容归属」，让变更列表与干净概览始终同进同退。
+    private func publishWorktreeOwner(_ snapshot: GitWorktreeSnapshot, for repository: URL) {
+        worktreeOwnership.publish(
+            owner: WorktreeContentOwner.resolve(entriesCount: snapshot.entries.count),
+            for: repository
+        )
+    }
+
+    /// UI 测试钩子：给工作区扫描注入可控延迟，让「扫描尚未完成」的中间态可被
+    /// UI 测试稳定观察。
+    ///
+    /// 全局只延迟一次：预热插件会依次扫描侧边栏里的每个项目，逐个延迟会把启动
+    /// 拖成长时间，反而让 UI 测试无法稳定观察中间态。
+    private func applyWorktreeScanDelay(for repository: URL) {
+        let milliseconds = UITestSupport.worktreeScanDelayMilliseconds
+        guard milliseconds > 0 else { return }
+        lock.lock()
+        let alreadyDelayed = didDelayWorktreeScan
+        didDelayWorktreeScan = true
+        lock.unlock()
+        guard !alreadyDelayed else { return }
+        Thread.sleep(forTimeInterval: Double(milliseconds) / 1000)
     }
 
     public func cachedWorktreeSnapshot(in repository: URL) -> GitWorktreeSnapshot? {

@@ -40,11 +40,15 @@ struct WorktreeCleanView: View {
 
     var body: some View {
         Group {
-            if viewModel.isClean, let project = viewModel.project {
+            if viewModel.showsCleanState, let project = viewModel.project {
                 cleanStateView(project: project)
             } else {
                 // 不占布局：EmptyView 本身零尺寸，避免与 CommitDetail 的内容块
                 // 在 VStack 中同时弹性拉伸。
+                //
+                // 归属判定与 CommitDetail 的变更列表共用同一份（Provider 广播），
+                // 因此「工作区干净」时一定是本块展示、「有变更」时一定是变更列表
+                // 展示，不会出现两块同时 EmptyView 把主内容区掏空的情况。
                 EmptyView()
             }
         }
@@ -79,5 +83,6 @@ struct WorktreeCleanView: View {
         .background {
             theme.surface
         }
+        .accessibilityIdentifier("gitok.worktree.clean.overview")
     }
 }

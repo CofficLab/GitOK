@@ -12,7 +12,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.13.0"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
@@ -21,7 +21,7 @@ let package = Package(
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderProjects"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.8.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
     ],
     targets: [
         .target(
@@ -47,7 +47,13 @@ let package = Package(
             name: "PluginCloneRepositoryTests",
             dependencies: [
                 "PluginCloneRepository",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderActivity", package: "ProviderActivity"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
+                .product(name: "ProviderToast", package: "LumiProviders"),
             ],
             path: "Tests/PluginCloneRepositoryTests"
         ),

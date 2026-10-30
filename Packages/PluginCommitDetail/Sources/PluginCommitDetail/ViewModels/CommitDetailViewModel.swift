@@ -59,6 +59,12 @@ final class CommitDetailViewModel: ObservableObject {
     /// 工作区变动列表据此强制重载；commit 详情内容不可变，无需重载。
     @Published private(set) var worktreeRevision = 0
 
+    /// 工作区内容归属（变更列表 / 干净概览 / 待定）。
+    ///
+    /// 由 Provider 统一广播：变更列表与干净概览共用同一份判定，避免两个内容块
+    /// 同时「不占布局」导致主内容区塌陷。
+    @Published private(set) var worktreeOwner: WorktreeContentOwner = .pending
+
     /// 外部项目 / 选中状态变化 → 同步最新值。
     func handleSelectionChanged(commit: GitCommit?, projectURL: URL?, file: String?) {
         let previousHash = selectedCommit?.hash
@@ -135,6 +141,12 @@ final class CommitDetailViewModel: ObservableObject {
     /// 外部仓库数据变化（提交 / 推送 / 分支切换）→ 通知工作区视图重载。
     func handleProjectDataChanged() {
         worktreeRevision &+= 1
+    }
+
+    /// 工作区内容归属变化（Provider 广播）。
+    func handleWorktreeOwnerChanged(_ owner: WorktreeContentOwner) {
+        guard worktreeOwner != owner else { return }
+        worktreeOwner = owner
     }
 }
 

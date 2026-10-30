@@ -35,12 +35,23 @@ final class FactoryGitOKEntryTests: XCTestCase {
         XCTAssertNotNil(view)
     }
 
-    func testRemoteThemeCatalogHasCanonicalCount() throws {
+    /// GitOK 只加载白名单内的主题，加上 ProviderTheme 的 4 个内置基础外观。
+    ///
+    /// 断言具体 id 集合而非仅断言数量：数量断言挡不住「白名单被悄悄改成全量」
+    /// 这类回归，id 集合能同时锁住白名单内容与裁剪结果。
+    func testThemeCatalogIsRestrictedToWhitelist() throws {
         let kernel = try FactoryGitOK.makeKernel()
         let theme = try XCTUnwrap(kernel.resolveProvider((any ThemeProviding).self))
 
-        XCTAssertEqual(theme.themes.count, 22)
-        XCTAssertEqual(Set(theme.themes.map(\.id)).count, 22)
+        let expectedIDs: Set<String> = [
+            // 白名单主题
+            "lumi", "sky", "one-dark", "dracula", "vscode-light",
+            // ProviderTheme 内置基础外观（不受白名单约束）
+            "lumi-system", "lumi-dark", "lumi-light",
+        ]
+
+        XCTAssertEqual(Set(theme.themes.map(\.id)), expectedIDs)
+        XCTAssertEqual(theme.themes.count, expectedIDs.count)
     }
 }
 

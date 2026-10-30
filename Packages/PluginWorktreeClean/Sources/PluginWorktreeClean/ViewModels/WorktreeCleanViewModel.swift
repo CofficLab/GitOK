@@ -31,8 +31,32 @@ final class WorktreeCleanViewModel: ObservableObject {
     /// 当前项目工作区是否干净（无未提交变更）。
     @Published private(set) var isClean = false
 
+    /// 工作区内容归属（变更列表 / 干净概览 / 待定）。
+    ///
+    /// 由 Provider 统一广播：干净概览与变更列表必须使用同一份判定，否则两块
+    /// 内容同时「不占布局」会让主内容区整块塌陷（提交表单漂到面板中间）。
+    @Published private(set) var worktreeOwner: WorktreeContentOwner = .pending
+
+    /// 干净概览是否应该展示。
+    ///
+    /// 需要同时满足：工作区确认干净、未选中 commit、已打开项目。
+    /// 归属判定本身与 commit 选择无关，因此选中 commit 时归属保持不变，
+    /// 只由本属性决定干净概览是否让位给 commit 详情。
+    var showsCleanState: Bool {
+        worktreeOwner == .clean && !hasSelectedCommit && project != nil
+    }
+
     /// 是否正在首次检查工作区状态。
     @Published private(set) var isLoading = false
+
+    /// 工作区内容归属变化（Provider 广播）。
+    ///
+    /// 与变更列表共用同一份判定：任何时刻两边的结论一致，
+    /// 不会同时「不占布局」把主内容区掏空。
+    func handleWorktreeOwnerChanged(_ owner: WorktreeContentOwner) {
+        guard worktreeOwner != owner else { return }
+        worktreeOwner = owner
+    }
 
     /// 当前是否选中了 commit。
     ///
@@ -89,6 +113,13 @@ final class WorktreeCleanViewModel: ObservableObject {
             loadUserConfiguration(for: project)
             if isClean {
                 isClean = false
+            }
+            // 切换项目时归属回到该仓库当前结论：预热插件可能已经扫过这个仓库，
+            // 直接沿用它的判定，避免明明有结论却先闪一帧「待定」。
+            if let git, let url = project?.url {
+                worktreeOwner = git.worktreeContentOwner(for: url)
+            } else {
+                worktreeOwner = .pending
             }
         }
         guard project != nil, !hasSelectedCommit else {
@@ -298,6 +329,13 @@ final class WorktreeCleanViewModel: ObservableObject {
                     self.lastStatus = status
                     if didChange, self.isClean != status.isClean {
                         self.isClean = status.isClean
+                    }
+                    // 归属方统一取自 Provider：干净概览与变更列表共用同一份判定，
+                    // 两块内容不会同时「不占布局」把主内容区塌陷掉。
+                    if let git {
+                        self.worktreeOwner = git.worktreeContentOwner(for: url)
+                    } else {
+                        self.worktreeOwner = status.isClean ? .clean : .changes
                     }
                     if self.isLoading {
                         self.isLoading = false

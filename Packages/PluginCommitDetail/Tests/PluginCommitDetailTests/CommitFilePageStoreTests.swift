@@ -27,6 +27,7 @@ final class CommitFilePageStoreTests: XCTestCase {
         private var _pageLoadCounts: [Int: Int] = [:]
         private var _countCalls = 0
         private var _countWaitsForCancellation = false
+        private var _countWaitsForPageFailure = false
         private var _lastCountCancellation: GitProcessCancellation?
 
         var changes: [GitFileChange] {
@@ -49,6 +50,15 @@ final class CommitFilePageStoreTests: XCTestCase {
             set { lock.lock(); defer { lock.unlock() }; _countWaitsForCancellation = newValue }
         }
 
+        /// 让总数读取等到第 0 页的失败落地后再返回。
+        ///
+        /// 用来把「第 0 页失败」与「总数读回后补发第 0 页请求」两步的先后顺序
+        /// 固定下来，避免两条并发读取的完成顺序随机决定测试走哪条分支。
+        var countWaitsForPageFailure: Bool {
+            get { lock.lock(); defer { lock.unlock() }; return _countWaitsForPageFailure }
+            set { lock.lock(); defer { lock.unlock() }; _countWaitsForPageFailure = newValue }
+        }
+
         var lastCountCancellation: GitProcessCancellation? {
             lock.lock(); defer { lock.unlock() }; return _lastCountCancellation
         }
@@ -67,6 +77,7 @@ final class CommitFilePageStoreTests: XCTestCase {
             lock.lock()
             _lastCountCancellation = cancellation
             let waitForCancellation = _countWaitsForCancellation
+            let waitForPageFailure = _countWaitsForPageFailure
             lock.unlock()
 
             if waitForCancellation, let cancellation {
@@ -74,6 +85,15 @@ final class CommitFilePageStoreTests: XCTestCase {
                     Thread.sleep(forTimeInterval: 0.005)
                 }
                 throw CancellationError()
+            }
+            if waitForPageFailure {
+                // 等第 0 页的首次加载发起后再返回总数，固定「第 0 页先失败、
+                // 总数后读回」的顺序。否则总数先到时，第 0 页的自愈重试会把
+                // 刚记录的错误清掉，本用例便观察不到「失败 → 重试」这条路径。
+                let deadline = Date().addingTimeInterval(5)
+                while Date() < deadline, pageLoadCounts[0] ?? 0 == 0 {
+                    Thread.sleep(forTimeInterval: 0.005)
+                }
             }
             if cancellation?.isCancelled == true { throw CancellationError() }
             return try countCommitChanges(commit: hash, in: repository)
@@ -327,11 +347,17 @@ final class CommitFilePageStoreTests: XCTestCase {
     }
 
     /// 失败重试：某页首次失败后记录错误，retry 成功后清空错误并可读。
+    ///
+    /// 总数读回会补发一次第 0 页请求（总数到位后重新拉首屏），因此这里让
+    /// 总数读取等到第 0 页的失败落地后再返回，把「第 0 页失败」与「总数读回」
+    /// 两步的先后顺序固定下来。否则总数先到时，第 0 页的自愈重试会把刚记录
+    /// 的错误清掉，本用例便观察不到「失败 → 重试」这条路径。
     func testRetriesFailedPage() async {
         let store = CommitFilePageStore()
         let mock = MockGitProviding()
         mock.changes = makeChanges(count: 500)
         mock.failCounts = [0: 1] // 第 0 页首次失败
+        mock.countWaitsForPageFailure = true
         store.reset(commitHash: "c1", repositoryURL: repoURL("a"), git: mock)
 
         await waitUntil { store.pageErrors[0] != nil }

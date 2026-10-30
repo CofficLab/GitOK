@@ -145,11 +145,14 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func loadStatus(in repository: URL) throws -> GitWorktreeStatus {
-        let status = try LibGit2.getRepositoryStatus(
-            at: repository.path,
-            detectRenames: false
+        // 基于**已修正**的条目派生摘要：直接调用 `getRepositoryStatus` 会绕过
+        // 大小写冲突修正，导致摘要的变更条数与文件列表不一致。
+        let entries = try loadEntries(in: repository)
+        return GitWorktreeStatus(
+            isClean: entries.isEmpty,
+            changeCount: entries.count,
+            branch: branchName(for: repository)
         )
-        return GitWorktreeStatus(isClean: status.isClean, changeCount: status.changeCount, branch: status.branch)
     }
 
     func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
@@ -181,26 +184,23 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         in repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitWorktreeStatus {
-        try withLibGit2Cancellation(cancellation) { libCancellation in
-            let status = try LibGit2.getRepositoryStatus(
-                at: repository.path,
-                cancellation: libCancellation,
-                detectRenames: false
-            )
-            try checkCancellation(cancellation)
-            return GitWorktreeStatus(
-                isClean: status.isClean,
-                changeCount: status.changeCount,
-                branch: status.branch
-            )
-        }
+        // 与无取消版本保持同一口径：基于已修正的条目派生摘要。
+        let entries = try loadEntries(in: repository, cancellation: cancellation)
+        return GitWorktreeStatus(
+            isClean: entries.isEmpty,
+            changeCount: entries.count,
+            branch: branchName(for: repository)
+        )
     }
 
     func loadEntries(in repository: URL) throws -> [GitStatusEntry] {
-        try LibGit2.getStatusEntries(
-            at: repository.path,
-            detectRenames: false
-        ).map(Self.mapStatusEntry)
+        try Self.reconcilingCaseConflictDeletions(
+            try LibGit2.getStatusEntries(
+                at: repository.path,
+                detectRenames: false
+            ).map(Self.mapStatusEntry),
+            in: repository
+        )
     }
 
     func loadEntries(
@@ -208,11 +208,53 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         cancellation: GitProcessCancellation?
     ) throws -> [GitStatusEntry] {
         try withLibGit2Cancellation(cancellation) { libCancellation in
-            try LibGit2.getStatusEntries(
-                at: repository.path,
-                cancellation: libCancellation,
-                detectRenames: false
-            ).map(Self.mapStatusEntry)
+            try Self.reconcilingCaseConflictDeletions(
+                try LibGit2.getStatusEntries(
+                    at: repository.path,
+                    cancellation: libCancellation,
+                    detectRenames: false
+                ).map(Self.mapStatusEntry),
+                in: repository
+            )
+        }
+    }
+
+    /// 修正 libgit2 因大小写冲突而误报的「工作区已删除」。
+    ///
+    /// 当 index 中同时存在仅大小写不同的同名条目时（例如 `BANGCHONG.php` 与
+    /// `BangChong.php`），磁盘上只能存在一份文件。libgit2 逐条比对 index 与
+    /// 工作区时，后一个变体会命中前一个变体对应的文件，于是必然有一个条目
+    /// 失配并被判成「已删除」——即使该文件在磁盘上真实存在。
+    ///
+    /// `git status`（CLI）在同样场景下不会报这条假删除，GitOK 需要与 CLI 结论
+    /// 一致，否则变更列表会多出一批并不存在的「未暂存」改动。
+    ///
+    /// 真实删除（文件确实不在磁盘上）必须原样保留，因此这里只剔除「被报成删除
+    /// 但路径在磁盘上实际存在」的条目。
+    private static func reconcilingCaseConflictDeletions(
+        _ entries: [GitStatusEntry],
+        in repository: URL
+    ) -> [GitStatusEntry] {
+        let resolverEntries = entries.map {
+            GitCaseConflictResolver.Entry(
+                path: $0.path,
+                stagedStatus: $0.stagedStatus,
+                worktreeStatus: $0.worktreeStatus
+            )
+        }
+        let indexPaths = GitIndexPathReader.allPaths(in: repository)
+        let reconciled = GitCaseConflictResolver.removingFalseDeletions(
+            entries: resolverEntries,
+            indexPaths: indexPaths,
+            worktreeRoot: repository
+        )
+        guard reconciled.count != resolverEntries.count else { return entries }
+        return reconciled.map {
+            GitStatusEntry(
+                path: $0.path,
+                stagedStatus: $0.stagedStatus,
+                worktreeStatus: $0.worktreeStatus
+            )
         }
     }
 

@@ -19,12 +19,12 @@ let package = Package(
         .package(path: "../ProviderGit"),
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.8.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderGitConflictResolver"),
         .package(path: "../ProviderWorkspaceScene"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.13.0")
     ],
     targets: [
         .target(
@@ -51,7 +51,15 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginWorktreeStatusTests",
-            dependencies: ["PluginWorktreeStatus"],
+            dependencies: [
+                "PluginWorktreeStatus",
+                .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "KitGit", package: "KitGit"),
+                .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderProjects", package: "ProviderProjects"),
+                .product(name: "ProviderRailView", package: "LumiProviders"),
+                .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
+            ],
             path: "Tests/PluginWorktreeStatusTests"
         ),
     ]

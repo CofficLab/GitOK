@@ -1,5 +1,6 @@
 import Foundation
 import KitGit
+import ProviderGit
 import ProviderGitRepositoryWatch
 import ProviderProjects
 
@@ -22,15 +23,19 @@ import ProviderProjects
 @MainActor
 final class CommitDetailObserver {
     private let viewModel: CommitDetailViewModel
+    private let git: (any GitProviding)?
     private var projectsHandle: (any ProjectProvidingObserverHandle)?
     private var gitWatchHandle: (any GitRepositoryWatchingObserverHandle)?
+    private var worktreeOwnerHandle: (any WorktreeContentOwnerObserverHandle)?
 
     init(
         capability: any CommitDetailProjectCapability,
         gitWatch: (any GitRepositoryWatching)?,
+        git: (any GitProviding)? = nil,
         viewModel: CommitDetailViewModel
     ) {
         self.viewModel = viewModel
+        self.git = git
 
         projectsHandle = capability.addObserver { [weak self] event in
             self?.handle(event, capability: capability)
@@ -38,6 +43,22 @@ final class CommitDetailObserver {
 
         syncSelection(from: capability)
         syncCommitFiles(from: capability)
+
+        // 工作区内容归属由 Provider 统一广播：变更列表与干净概览共用同一份判定，
+        // 避免两个内容块同时「不占布局」让主内容区塌陷。
+        //
+        // 归属结论按**仓库**发布，但推送给所有订阅者：后台预热插件会依次扫描
+        // 侧边栏里的每一个项目。订阅方必须自己过滤出「说的是当前项目」的那一条，
+        // 否则别的项目的结论会串台覆盖当前项目——当前项目明明有未提交改动却
+        // 被判定成干净，变更列表随之塌陷成 EmptyView，主内容区只剩提交表单，
+        // 表单被垂直居中漂到面板中间。
+        worktreeOwnerHandle = git?.addWorktreeContentOwnerObserver { [weak self] url, owner in
+            guard let self else { return }
+            guard self.viewModel.selectedProjectURL?.standardizedFileURL == url.standardizedFileURL
+            else { return }
+            self.viewModel.handleWorktreeOwnerChanged(owner)
+        }
+        syncWorktreeOwner(from: capability)
 
         gitWatchHandle = gitWatch?.addObserver { [weak self] event in
             guard let self else { return }
@@ -76,6 +97,7 @@ final class CommitDetailObserver {
             // 项目切换时同步完整快照，尤其是没有 commit 选择时的项目路径。
             syncSelection(from: capability)
             syncCommitFiles(from: capability)
+            syncWorktreeOwner(from: capability)
             viewModel.handleProjectDataChanged()
         case .dataChanged:
             viewModel.handleProjectDataChanged()
@@ -101,11 +123,19 @@ final class CommitDetailObserver {
         )
     }
 
+    /// 同步当前项目的工作区内容归属（切换项目时读取该仓库最新结论）。
+    private func syncWorktreeOwner(from capability: any CommitDetailProjectCapability) {
+        guard let git, let url = capability.currentProjectURL else { return }
+        viewModel.handleWorktreeOwnerChanged(git.worktreeContentOwner(for: url))
+    }
+
     /// 取消全部订阅；插件卸载后不再有任何回调。
     func cancel() {
         projectsHandle?.cancel()
         projectsHandle = nil
         gitWatchHandle?.cancel()
         gitWatchHandle = nil
+        worktreeOwnerHandle?.cancel()
+        worktreeOwnerHandle = nil
     }
 }

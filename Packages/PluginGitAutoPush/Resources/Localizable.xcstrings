@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "A new local commit is created." : {
       "localizations" : {
         "en" : {
@@ -511,6 +514,40 @@
         }
       }
     },
+    "manual pushes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "manual pushes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动推送"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手動推送"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手動推送"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手動推送"
+          }
+        }
+      }
+    },
     "New commits are pushed to the tracked remote automatically." : {
       "localizations" : {
         "en" : {
@@ -749,6 +786,40 @@
         }
       }
     },
+    "sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步"
+          }
+        }
+      }
+    },
     "The remote ref is confirmed and status updates." : {
       "localizations" : {
         "en" : {
@@ -881,74 +952,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你的提交自動前往遠程。"
-          }
-        }
-      }
-    },
-    "manual pushes" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "manual pushes"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "手动推送"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "手動推送"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "手動推送"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "手動推送"
-          }
-        }
-      }
-    },
-    "sync" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sync"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步"
           }
         }
       }

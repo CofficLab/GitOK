@@ -556,7 +556,12 @@ struct CommitRailView: View {
                     Spacer(minLength: 8)
                     if !commit.tags.isEmpty {
                         ForEach(commit.tags.prefix(2), id: \.self) { tag in
-                            AppTag(tag, systemImage: "tag", style: .accent)
+                            CommitTagChip(
+                                tag: tag,
+                                siblingTags: commit.tags,
+                                commit: commit,
+                                repository: projects.currentProject?.url
+                            )
                         }
                     }
                     // 未推送 commit 显示 push 按钮
