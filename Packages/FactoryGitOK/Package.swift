@@ -86,7 +86,7 @@ let package = Package(
         .package(path: "../ProviderWorkspaceScene"),
         .package(path: "../PluginRootView"),
         .package(path: "../PluginRailView"),
-        .package(url: "https://github.com/CofficLab/LumiPluginToast.git", from: "1.2.1"),
+        .package(url: "https://github.com/CofficLab/LumiPluginToast.git", from: "1.2.2"),
         .package(path: "../PluginWorktreeStatus"),
         .package(path: "../PluginProjectReadme"),
         .package(path: "../PluginWorktreeClean"),
