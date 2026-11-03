@@ -18,6 +18,32 @@ GitOK is a comprehensive project management tool.
 
 <https://github.com/CofficLab/GitOK/releases>
 
+## Command Line
+
+Open the current directory in GitOK — it is added to the project list and
+becomes the current project:
+
+```sh
+gitok .
+```
+
+`gitok <path>` opens any directory. GitOK registers the `gitok://` URL scheme,
+so the CLI script simply hands the path to Launch Services.
+
+### Install
+
+Open **Settings → General → Command Line Tool** and click **Install**. GitOK
+writes the `gitok` command to a directory that is already on your `PATH`
+(so no administrator password is needed), and reports where it was installed.
+Use **Uninstall** to remove it again.
+
+Set `GITOK_APP` to target a specific build (useful when a debug build is
+running alongside the installed app):
+
+```sh
+GITOK_APP=/path/to/GitOK.app gitok .
+```
+
 ## Why
 
 There are many ways to ensure a clean, efficient, and standardized workflow, such as:

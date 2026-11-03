@@ -7,6 +7,8 @@ import SwiftUI
 
 @main
 struct GitOKApp: App {
+    /// 接收 Launch Services 投递的 `gitok://` URL 与文件打开事件。
+    @NSApplicationDelegateAdaptor private var appDelegate: GitOKAppDelegate
     private let kernel: KernelCoreContainer
     private let mainView: AnyView
     private let settingsView: AnyView
@@ -35,6 +37,9 @@ struct GitOKApp: App {
             mainView = AnyView(Text("Failed to assemble main view").accessibilityIdentifier("gitok.startup-error"))
             settingsView = AnyView(Text("Failed to assemble settings view"))
         }
+        // 把内核交给应用代理：CLI 脚本 `gitok <path>` 的 URL 事件由代理
+        // 直接调用内核处理，不依赖主窗口的 SwiftUI 订阅时序。
+        appDelegate.attach(kernel: kernel)
     }
 
     var body: some Scene {

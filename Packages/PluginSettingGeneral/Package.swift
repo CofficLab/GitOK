@@ -21,6 +21,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.13.0"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
         .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
+        .package(path: "../KitGitOKCLI"),
     ],
     targets: [
         .target(
@@ -29,6 +30,7 @@ let package = Package(
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiUI", package: "LumiUI"),
+                .product(name: "KitGitOKCLI", package: "KitGitOKCLI"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "ProviderCommand", package: "LumiProviders"),
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
