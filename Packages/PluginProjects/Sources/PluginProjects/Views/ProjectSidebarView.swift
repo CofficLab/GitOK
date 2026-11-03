@@ -1,6 +1,7 @@
 import AppKit
 import Combine
 import Foundation
+import KitOpenIn
 import LumiUI
 import ProviderProjects
 import ProviderToast
@@ -329,6 +330,16 @@ struct ProjectSidebarView: View {
                 )
             }
 
+            Button {
+                openProjectInTerminal(project)
+            } label: {
+                Label(
+                    pluginLocalization.string("Open in Terminal"),
+                    systemImage: "terminal"
+                )
+            }
+            .disabled(!isTerminalAvailable)
+
             Divider()
 
             Button {
@@ -419,5 +430,18 @@ struct ProjectSidebarView: View {
 
     private func openProjectInFinder(_ project: Project) {
         NSWorkspace.shared.activateFileViewerSelecting([project.url])
+    }
+
+    /// 在终端中打开项目目录。
+    ///
+    /// 复用 `KitOpenIn` 的 `AppLauncher`（与工具栏「Open Terminal」按钮同一条链路），
+    /// 由系统 Terminal 负责在新窗口中定位到项目目录。
+    private func openProjectInTerminal(_ project: Project) {
+        AppLauncher.open(.terminal, projectURL: project.url)
+    }
+
+    /// 终端应用是否可用；未安装时右键菜单项置灰。
+    private var isTerminalAvailable: Bool {
+        AppLauncher.isInstalled(.terminal)
     }
 }
