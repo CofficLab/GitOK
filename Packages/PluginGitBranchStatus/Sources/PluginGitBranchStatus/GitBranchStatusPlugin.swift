@@ -25,7 +25,7 @@ public final class GitBranchStatusPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-branch-status",
         name: "Git Branch Status",
-        description: "Switch branches from the toolbar",
+        description: pluginLocalization.string("Switch branches from the toolbar"),
         category: .project,
         stage: .stable,
         policy: .alwaysOn

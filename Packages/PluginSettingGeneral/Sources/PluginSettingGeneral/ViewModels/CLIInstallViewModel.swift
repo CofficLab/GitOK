@@ -1,5 +1,6 @@
 import Foundation
 import KitGitOKCLI
+import KitGitOKLocalization
 import LumiLoggingKit
 import os
 
@@ -77,18 +78,18 @@ final class CLIInstallViewModel: ObservableObject {
         switch installer.install() {
         case .installed:
             if Self.verbose {
-                Self.logger.info("命令行工具安装完成")
+                Self.logger.info("Command line tool installation completed")
             }
             refresh()
         case .installedButNotOnPath(let target):
             if Self.verbose {
                 Self.logger.info(
-                    "命令行工具已安装到 \(target.directory.path, privacy: .public)，但该目录不在 PATH 中"
+                    "Command line tool installed at \(target.directory.path, privacy: .public), but that directory is not in PATH"
                 )
             }
             refresh()
         case .failed(let reason):
-            Self.logger.error("命令行工具安装失败：\(reason, privacy: .public)")
+            Self.logger.error("Command line tool installation failed: \(reason, privacy: .public)")
             lastError = reason
         }
     }
@@ -98,11 +99,11 @@ final class CLIInstallViewModel: ObservableObject {
         lastError = nil
         if installer.uninstall() {
             if Self.verbose {
-                Self.logger.info("命令行工具已卸载")
+                Self.logger.info("Command line tool uninstalled")
             }
             refresh()
         } else {
-            Self.logger.error("命令行工具卸载失败")
+            Self.logger.error("Command line tool uninstall failed")
             lastError = "uninstallFailed"
         }
     }
@@ -122,7 +123,11 @@ final class LiveCLIInstaller: CLIInstalling {
     }
 
     func install() -> CLIInstallOutcome {
-        CLIInstaller.install()
+        // 脚本文案跟随应用内界面语言，未覆盖时跟随系统语言。
+        let language = CLIScriptLanguage.language(
+            for: GitOKLanguageOverride.shared.languageCode
+        )
+        return CLIInstaller.install(language: language)
     }
 
     func uninstall() -> Bool {

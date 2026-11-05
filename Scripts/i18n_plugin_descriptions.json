@@ -1,0 +1,266 @@
+{
+  "PluginAboutSettings": {
+    "App version and information": {
+      "zh-Hans": "应用版本与信息",
+      "zh-Hant": "應用版本與資訊"
+    }
+  },
+  "PluginActivityHeatmap": {
+    "Provides cached local Git activity data for workspace views": {
+      "zh-Hans": "为工作区视图提供缓存的本地 Git 活动数据",
+      "zh-Hant": "為工作區檢視提供快取的本地 Git 活動資料"
+    }
+  },
+  "PluginActivityStatus": {
+    "Show current long-running activity (commit/push) in the status bar": {
+      "zh-Hans": "在状态栏显示当前长时间运行的操作（提交/推送）",
+      "zh-Hant": "在狀態列顯示目前長時間執行的操作（提交/推送）"
+    }
+  },
+  "PluginBanner": {
+    "Create and edit project banners": {
+      "zh-Hans": "创建和编辑项目横幅",
+      "zh-Hant": "建立和編輯專案橫幅"
+    }
+  },
+  "PluginCloneRepository": {
+    "Runs clone jobs in the background and keeps their progress available": {
+      "zh-Hans": "在后台运行克隆任务并保留其进度",
+      "zh-Hant": "在背景執行複製工作並保留其進度"
+    }
+  },
+  "PluginCommitDetail": {
+    "Main content view showing the changes of the selected commit": {
+      "zh-Hans": "显示所选提交更改的主内容视图",
+      "zh-Hant": "顯示所選提交變更的主內容檢視"
+    }
+  },
+  "PluginCommitForm": {
+    "Commit workflow: staged message, category, style and commit & push": {
+      "zh-Hans": "提交流程：暂存信息、分类、风格以及提交与推送",
+      "zh-Hant": "提交流程：暫存訊息、分類、風格以及提交與推送"
+    }
+  },
+  "PluginCommitList": {
+    "Rail section showing the commit history of the current project": {
+      "zh-Hans": "显示当前项目提交历史的侧边栏分区",
+      "zh-Hant": "顯示目前專案提交歷史的側邊欄分區"
+    }
+  },
+  "PluginCommitStatusBar": {
+    "Show the selected commit id in the status bar": {
+      "zh-Hans": "在状态栏显示所选提交的 ID",
+      "zh-Hant": "在狀態列顯示所選提交的 ID"
+    }
+  },
+  "PluginCommitToast": {
+    "Notify via toast when the selected commit changes": {
+      "zh-Hans": "所选提交变化时通过轻提示通知",
+      "zh-Hant": "所選提交變化時透過輕提示通知"
+    }
+  },
+  "PluginDiagnosticsSettings": {
+    "App diagnostic information and logs": {
+      "zh-Hans": "应用诊断信息与日志",
+      "zh-Hant": "應用診斷資訊與記錄"
+    }
+  },
+  "PluginFileInfo": {
+    "Show the selected file path and file actions in the status bar": {
+      "zh-Hans": "在状态栏显示所选文件路径与文件操作",
+      "zh-Hant": "在狀態列顯示所選檔案路徑與檔案操作"
+    }
+  },
+  "PluginGitAutoPush": {
+    "Automatically push after each commit": {
+      "zh-Hans": "每次提交后自动推送",
+      "zh-Hant": "每次提交後自動推送"
+    }
+  },
+  "PluginGitBranchStatus": {
+    "Switch branches from the toolbar": {
+      "zh-Hans": "从工具栏切换分支",
+      "zh-Hant": "從工具列切換分支"
+    }
+  },
+  "PluginGitCommitStyleSettings": {
+    "Choose the global default commit message style": {
+      "zh-Hans": "选择全局默认的提交信息风格",
+      "zh-Hant": "選擇全域預設的提交訊息風格"
+    }
+  },
+  "PluginGitConflictResolver": {
+    "Show and list merge conflicts from the status bar": {
+      "zh-Hans": "从状态栏显示并列出合并冲突",
+      "zh-Hant": "從狀態列顯示並列出合併衝突"
+    }
+  },
+  "PluginGitDiff": {
+    "Trailing pane showing the diff of the selected file in the selected commit": {
+      "zh-Hans": "显示所选提交中所选文件差异的尾部面板",
+      "zh-Hant": "顯示所選提交中所選檔案差異的尾部面板"
+    }
+  },
+  "PluginGitIgnore": {
+    "View the .gitignore file from the status bar": {
+      "zh-Hans": "从状态栏查看 .gitignore 文件",
+      "zh-Hant": "從狀態列檢視 .gitignore 檔案"
+    }
+  },
+  "PluginGitLFS": {
+    "Git LFS status and large file recommendations": {
+      "zh-Hans": "Git LFS 状态与大文件建议",
+      "zh-Hant": "Git LFS 狀態與大檔案建議"
+    }
+  },
+  "PluginGitLibGit2": {
+    "Provides Git operations through LibGit2Swift.": {
+      "zh-Hans": "通过 LibGit2Swift 提供 Git 操作。",
+      "zh-Hant": "透過 LibGit2Swift 提供 Git 操作。"
+    }
+  },
+  "PluginGitNetworkSettings": {
+    "Configure git proxy and SSL settings": {
+      "zh-Hans": "配置 git 代理与 SSL 设置",
+      "zh-Hant": "設定 git 代理與 SSL 設定"
+    }
+  },
+  "PluginGitRemoteRepository": {
+    "Manage remote repositories from the status bar": {
+      "zh-Hans": "从状态栏管理远程仓库",
+      "zh-Hant": "從狀態列管理遠端儲存庫"
+    }
+  },
+  "PluginGitRepositorySettings": {
+    "Inspect the current repository and manage remotes": {
+      "zh-Hans": "检查当前仓库并管理远程仓库",
+      "zh-Hant": "檢查目前儲存庫並管理遠端儲存庫"
+    }
+  },
+  "PluginGitRepositoryWatch": {
+    "Watch .git directory changes and broadcast per-dimension events": {
+      "zh-Hans": "监视 .git 目录变化并按维度广播事件",
+      "zh-Hant": "監視 .git 目錄變化並按維度廣播事件"
+    }
+  },
+  "PluginGitSmartMerge": {
+    "Merge branches from the status bar": {
+      "zh-Hans": "从状态栏合并分支",
+      "zh-Hant": "從狀態列合併分支"
+    }
+  },
+  "PluginGitStash": {
+    "Manage git stashes from the status bar": {
+      "zh-Hans": "从状态栏管理 git 储藏",
+      "zh-Hant": "從狀態列管理 git 儲藏"
+    }
+  },
+  "PluginGitSubmodule": {
+    "Git submodule status and updates": {
+      "zh-Hans": "Git 子模块状态与更新",
+      "zh-Hant": "Git 子模組狀態與更新"
+    }
+  },
+  "PluginGitUnpushedStatus": {
+    "Show the unpushed commit count in the status bar": {
+      "zh-Hans": "在状态栏显示未推送的提交数量",
+      "zh-Hant": "在狀態列顯示未推送的提交數量"
+    }
+  },
+  "PluginGitUserSettings": {
+    "Manage Git user presets and apply them to the current project": {
+      "zh-Hans": "管理 Git 用户预设并应用到当前项目",
+      "zh-Hant": "管理 Git 使用者預設並套用到目前專案"
+    }
+  },
+  "PluginGitWorktreePreheat": {
+    "Preloads working tree snapshots for saved projects": {
+      "zh-Hans": "为已保存的项目预加载工作区快照",
+      "zh-Hant": "為已儲存的專案預先載入工作區快照"
+    }
+  },
+  "PluginIcon": {
+    "Create project icons and export Xcode AppIcon sets": {
+      "zh-Hans": "创建项目图标并导出 Xcode AppIcon 集合",
+      "zh-Hant": "建立專案圖示並匯出 Xcode AppIcon 集合"
+    }
+  },
+  "PluginLicense": {
+    "View or create the LICENSE file": {
+      "zh-Hans": "查看或创建 LICENSE 文件",
+      "zh-Hant": "檢視或建立 LICENSE 檔案"
+    }
+  },
+  "PluginLogoCoffic": {
+    "Contributes the Coffic coffee-themed logo with an animated coffee cup icon.": {
+      "zh-Hans": "提供带动画咖啡杯图标的 Coffic 咖啡主题标志。",
+      "zh-Hant": "提供帶動畫咖啡杯圖示的 Coffic 咖啡主題標誌。"
+    }
+  },
+  "PluginProjectLanguages": {
+    "Provides local programming language statistics for the current project": {
+      "zh-Hans": "为当前项目提供本地编程语言统计",
+      "zh-Hant": "為目前專案提供本地程式設計語言統計"
+    }
+  },
+  "PluginProjectReadme": {
+    "Render the current project's README in the worktree overview": {
+      "zh-Hans": "在工作区概览中渲染当前项目的 README",
+      "zh-Hant": "在工作區概覽中算繪目前專案的 README"
+    }
+  },
+  "PluginProjects": {
+    "GitOK project management (list / open / persist) and project sidebar": {
+      "zh-Hans": "GitOK 项目管理（列表 / 打开 / 持久化）与项目侧边栏",
+      "zh-Hant": "GitOK 專案管理（清單 / 開啟 / 持久化）與專案側邊欄"
+    }
+  },
+  "PluginRailView": {
+    "Provides the rail view layout, replacing the default provider": {
+      "zh-Hans": "提供侧边栏视图布局，替换默认实现",
+      "zh-Hant": "提供側邊欄檢視版面，取代預設實作"
+    }
+  },
+  "PluginRootView": {
+    "Provides the root view layout, replacing the default provider": {
+      "zh-Hans": "提供根视图布局，替换默认实现",
+      "zh-Hant": "提供根檢視版面，取代預設實作"
+    }
+  },
+  "PluginSettingGeneral": {
+    "Registers the General entry in the settings view with app info, official website, and user manual.": {
+      "zh-Hans": "在设置视图中注册「通用」条目，包含应用信息、官网与用户手册。",
+      "zh-Hant": "在設定檢視中註冊「一般」項目，包含應用資訊、官網與使用者手冊。"
+    }
+  },
+  "PluginSettingsButton": {
+    "Toolbar button that opens the settings window": {
+      "zh-Hans": "打开设置窗口的工具栏按钮",
+      "zh-Hant": "開啟設定視窗的工具列按鈕"
+    }
+  },
+  "PluginSidebarToggle": {
+    "Toolbar button that toggles the left sidebar visibility": {
+      "zh-Hans": "切换左侧边栏显示的工具栏按钮",
+      "zh-Hant": "切換左側邊欄顯示的工具列按鈕"
+    }
+  },
+  "PluginStatusBar": {
+    "Window bottom status bar: current project + theme switch": {
+      "zh-Hans": "窗口底部状态栏：当前项目与主题切换",
+      "zh-Hant": "視窗底部狀態列：目前專案與主題切換"
+    }
+  },
+  "PluginWorktreeClean": {
+    "Show working-tree clean state and local commit activity when there are no uncommitted changes": {
+      "zh-Hans": "在没有未提交更改时显示工作区干净状态与本地提交活动",
+      "zh-Hant": "在沒有未提交變更時顯示工作區乾淨狀態與本地提交活動"
+    }
+  },
+  "PluginWorktreeStatus": {
+    "Rail section showing the working tree status of the current project": {
+      "zh-Hans": "显示当前项目工作区状态的侧边栏分区",
+      "zh-Hant": "顯示目前專案工作區狀態的側邊欄分區"
+    }
+  }
+}

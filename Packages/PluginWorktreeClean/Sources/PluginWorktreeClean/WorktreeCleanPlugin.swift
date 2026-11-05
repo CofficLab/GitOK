@@ -39,7 +39,7 @@ public final class WorktreeCleanPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.worktree-clean",
         name: "Worktree Clean",
-        description: "Show working-tree clean state and local commit activity when there are no uncommitted changes",
+        description: pluginLocalization.string("Show working-tree clean state and local commit activity when there are no uncommitted changes"),
         category: .project,
         stage: .stable,
         policy: .required

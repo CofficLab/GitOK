@@ -731,7 +731,7 @@ public struct BranchRowView: View {
                 .foregroundStyle(branch.isCurrent ? theme.textPrimary : theme.textSecondary)
             Spacer()
             if branch.isCurrent {
-                Text("current")
+                Text(pluginLocalization.string("current"))
                     .font(.appCaption)
                     .foregroundStyle(theme.textTertiary)
             } else {

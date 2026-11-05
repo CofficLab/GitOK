@@ -28,7 +28,7 @@ struct GitBinaryPreviewView: View {
                 Button {
                     openInDefaultApp()
                 } label: {
-                    Label("Open", systemImage: "arrow.up.right.square")
+                    Label(GitDiffLocalization.string("Open", bundle: .module), systemImage: "arrow.up.right.square")
                 }
                 .buttonStyle(.bordered)
             }
@@ -69,12 +69,12 @@ struct GitBinaryPreviewView: View {
                 .foregroundStyle(theme.textSecondary)
             Text(kind.title)
                 .font(.appBodyEmphasized)
-            Text("This binary file cannot be rendered inline yet. Open it in its default macOS app to inspect the contents.")
+            Text(GitDiffLocalization.string("This binary file cannot be rendered inline yet. Open it in its default macOS app to inspect the contents.", bundle: .module))
                 .font(.appBody)
                 .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
-            Button("Open in Default App") {
+            Button(GitDiffLocalization.string("Open in Default App", bundle: .module)) {
                 openInDefaultApp()
             }
             .buttonStyle(.borderedProminent)
@@ -167,12 +167,12 @@ struct GitPDFComparisonPreview: View {
                 Spacer()
             if state.showsVersionSwitcher {
                     // 删除场景下当前版本不存在，"New" 不可选。
-                    Picker("Version", selection: $showingPrevious) {
+                    Picker(GitDiffLocalization.string("Version", bundle: .module), selection: $showingPrevious) {
                         if currentData != nil {
-                            Text("New").tag(false)
+                            Text(GitDiffLocalization.string("New", bundle: .module)).tag(false)
                         }
                         if previousData != nil {
-                            Text("Previous").tag(true)
+                            Text(GitDiffLocalization.string("Previous", bundle: .module)).tag(true)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -181,7 +181,7 @@ struct GitPDFComparisonPreview: View {
                 Button {
                     openInDefaultApp()
                 } label: {
-                    Label("Open", systemImage: "arrow.up.right.square")
+                    Label(GitDiffLocalization.string("Open", bundle: .module), systemImage: "arrow.up.right.square")
                 }
                 .buttonStyle(.bordered)
             }

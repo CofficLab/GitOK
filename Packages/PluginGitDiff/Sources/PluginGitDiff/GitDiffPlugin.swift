@@ -34,7 +34,7 @@ public final class GitDiffPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-diff",
         name: "Git Diff",
-        description: "Trailing pane showing the diff of the selected file in the selected commit",
+        description: pluginLocalization.string("Trailing pane showing the diff of the selected file in the selected commit"),
         category: .project,
         stage: .stable,
         policy: .required

@@ -9,10 +9,11 @@ let package = Package(
         .library(name: "PluginProjectReadme", targets: ["PluginProjectReadme"]),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../ProviderProjectReadme"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0"),
     ],
     targets: [
         .target(
@@ -22,6 +23,10 @@ let package = Package(
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "ProviderProjectReadme", package: "ProviderProjectReadme"),
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
+            ],
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
             ]
         ),
         .testTarget(

@@ -24,7 +24,7 @@ public final class GitStashPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-stash",
         name: "Stash",
-        description: "Manage git stashes from the status bar",
+        description: pluginLocalization.string("Manage git stashes from the status bar"),
         category: .project,
         stage: .stable,
         policy: .disabled

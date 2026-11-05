@@ -726,13 +726,13 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在浏览器打开"
+            "value": "在浏览器中打开"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "在瀏覽器開啟"
+            "value": "在瀏覽器中開啟"
           }
         },
         "zh-HK": {
@@ -998,13 +998,13 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "远程"
+            "value": "远程仓库"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠端"
+            "value": "遠程倉庫"
           }
         },
         "zh-HK": {

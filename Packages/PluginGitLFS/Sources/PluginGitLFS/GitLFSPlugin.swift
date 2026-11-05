@@ -24,7 +24,7 @@ public final class GitLFSPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-lfs",
         name: "Git LFS",
-        description: "Git LFS status and large file recommendations",
+        description: pluginLocalization.string("Git LFS status and large file recommendations"),
         category: .project,
         stage: .stable,
         policy: .disabled

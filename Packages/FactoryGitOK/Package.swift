@@ -9,9 +9,9 @@ let package = Package(
         .library(name: "FactoryGitOK", targets: ["FactoryGitOK"]),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.12"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
         .package(path: "../PluginActivityStatus"),
         .package(url: "https://github.com/CofficLab/LumiPluginCommand.git", from: "1.0.1"),
@@ -95,9 +95,9 @@ let package = Package(
         .target(
             name: "FactoryGitOK",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "LumiThemePack", package: "LumiThemePack"),
                 .product(name: "KernelCore", package: "LumiKernel"),
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderContentView", package: "LumiProviders"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),

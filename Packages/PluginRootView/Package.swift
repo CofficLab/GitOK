@@ -7,12 +7,12 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [.library(name: "PluginRootView", targets: ["PluginRootView"])],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderCloneRepository"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0")
     ],
@@ -20,13 +20,13 @@ let package = Package(
         .target(
             name: "PluginRootView",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "ProviderToolbar", package: "LumiProviders"),
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],

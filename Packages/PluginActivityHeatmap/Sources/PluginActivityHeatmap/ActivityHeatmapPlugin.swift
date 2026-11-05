@@ -19,7 +19,7 @@ public final class ActivityHeatmapPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.activity-heatmap",
         name: "Activity Heatmap Data",
-        description: "Provides cached local Git activity data for workspace views",
+        description: pluginLocalization.string("Provides cached local Git activity data for workspace views"),
         category: .project,
         stage: .stable,
         policy: .required

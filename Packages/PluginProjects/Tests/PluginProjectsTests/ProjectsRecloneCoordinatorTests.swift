@@ -1,6 +1,6 @@
 import Foundation
 import KitGit
-import LumiLocalizationKit
+import KitGitOKLocalization
 import ProviderCloneRepository
 import ProviderProjects
 import Testing

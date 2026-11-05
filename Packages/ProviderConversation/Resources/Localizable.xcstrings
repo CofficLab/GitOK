@@ -12,13 +12,13 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "对话"
+            "value": "聊天"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "對話"
+            "value": "聊天"
           }
         },
         "zh-HK": {
@@ -52,7 +52,7 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "構建"
+            "value": "建置"
           }
         },
         "zh-HK": {

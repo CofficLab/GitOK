@@ -1,0 +1,112 @@
+{
+  "PluginGitConflictResolver": {
+    "Cancel": {
+      "en": "Cancel",
+      "zh-Hans": "取消",
+      "zh-Hant": "取消",
+      "zh-TW": "取消",
+      "zh-HK": "取消"
+    },
+    "Close": {
+      "en": "Close",
+      "zh-Hans": "关闭",
+      "zh-Hant": "關閉",
+      "zh-TW": "關閉",
+      "zh-HK": "關閉"
+    },
+    "Reading the current Git operation.": {
+      "en": "Reading the current Git operation.",
+      "zh-Hans": "正在读取当前 Git 操作。",
+      "zh-Hant": "正在讀取目前 Git 操作。",
+      "zh-TW": "正在讀取目前 Git 操作。",
+      "zh-HK": "正在讀取目前 Git 操作。"
+    }
+  },
+  "PluginCommitForm": {
+    "Commit Style": {
+      "en": "Commit Style",
+      "zh-Hans": "提交信息风格",
+      "zh-Hant": "提交訊息風格",
+      "zh-TW": "提交訊息風格",
+      "zh-HK": "提交訊息風格"
+    },
+    "Commit Category": {
+      "en": "Commit Category",
+      "zh-Hans": "提交分类",
+      "zh-Hant": "提交分類",
+      "zh-TW": "提交分類",
+      "zh-HK": "提交分類"
+    },
+    "Git User": {
+      "en": "Git User",
+      "zh-Hans": "Git 用户",
+      "zh-Hant": "Git 使用者",
+      "zh-TW": "Git 使用者",
+      "zh-HK": "Git 使用者"
+    }
+  },
+  "PluginGitBranchStatus": {
+    "Delete Local Branch": {
+      "en": "Delete Local Branch",
+      "zh-Hans": "删除本地分支",
+      "zh-Hant": "刪除本機分支",
+      "zh-TW": "刪除本機分支",
+      "zh-HK": "刪除本機分支"
+    },
+    "Delete": {
+      "en": "Delete",
+      "zh-Hans": "删除",
+      "zh-Hant": "刪除",
+      "zh-TW": "刪除",
+      "zh-HK": "刪除"
+    }
+  },
+  "PluginProjects": {
+    "Clone repository is unavailable.": {
+      "en": "Clone repository is unavailable.",
+      "zh-Hans": "克隆仓库不可用。",
+      "zh-Hant": "複製儲存庫不可用。",
+      "zh-TW": "複製儲存庫不可用。",
+      "zh-HK": "複製儲存庫不可用。"
+    }
+  },
+  "KitGit": {
+    "A remote branch must include a remote name.": {
+      "en": "A remote branch must include a remote name.",
+      "zh-Hans": "远程分支必须包含远程仓库名称。",
+      "zh-Hant": "遠端分支必須包含遠端儲存庫名稱。",
+      "zh-TW": "遠端分支必須包含遠端儲存庫名稱。",
+      "zh-HK": "遠端分支必須包含遠端儲存庫名稱。"
+    },
+    "A local branch name is required.": {
+      "en": "A local branch name is required.",
+      "zh-Hans": "必须提供本地分支名称。",
+      "zh-Hant": "必須提供本機分支名稱。",
+      "zh-TW": "必須提供本機分支名稱。",
+      "zh-HK": "必須提供本機分支名稱。"
+    }
+  },
+  "PluginSettingGeneral": {
+    "Language": {
+      "en": "Language",
+      "zh-Hans": "语言",
+      "zh-Hant": "語言",
+      "zh-TW": "語言",
+      "zh-HK": "語言"
+    },
+    "Interface Language": {
+      "en": "Interface Language",
+      "zh-Hans": "界面语言",
+      "zh-Hant": "介面語言",
+      "zh-TW": "介面語言",
+      "zh-HK": "介面語言"
+    },
+    "Choose the language used in GitOK.": {
+      "en": "Choose the language used in GitOK.",
+      "zh-Hans": "选择 GitOK 界面使用的语言。",
+      "zh-Hant": "選擇 GitOK 介面使用的語言。",
+      "zh-TW": "選擇 GitOK 介面使用的語言。",
+      "zh-HK": "選擇 GitOK 介面使用的語言。"
+    }
+  }
+}

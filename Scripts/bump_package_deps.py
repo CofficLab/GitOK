@@ -11,11 +11,12 @@ import sys
 from pathlib import Path
 
 BUMPS = {
-    "https://github.com/CofficLab/LumiProviders.git": "1.13.0",
+    "https://github.com/CofficLab/LumiProviders.git": "1.18.0",
     "https://github.com/CofficLab/LumiUI.git": "1.11.1",
     "https://github.com/CofficLab/LumiSettings.git": "1.1.0",
     "https://github.com/CofficLab/LumiPluginSettingView.git": "1.0.3",
-    "https://github.com/CofficLab/LumiPluginPluginManager.git": "1.3.0",
+    "https://github.com/CofficLab/LumiPluginPluginManager.git": "1.7.0",
+    "https://github.com/CofficLab/LumiPluginToast.git": "1.2.3",
     "https://github.com/sparkle-project/Sparkle": "2.10.1",
 }
 

@@ -1,0 +1,108 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Project README": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project README"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目 README"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案 README"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案 README"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "專案 README"
+          }
+        }
+      }
+    },
+    "When the current project contains a Markdown README, its formatted content appears at the bottom of the clean worktree overview.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When the current project contains a Markdown README, its formatted content appears at the bottom of the clean worktree overview."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前项目包含 Markdown README 时，其格式化内容会显示在干净工作区概览的底部。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案包含 Markdown README 時，其格式化內容會顯示在乾淨工作區概覽的底部。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案包含 Markdown README 時，其格式化內容會顯示在乾淨工作區概覽的底部。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前專案包含 Markdown README 時，其格式化內容會顯示在乾淨工作區概覽的底部。"
+          }
+        }
+      }
+    },
+    "Render the current project's README in the worktree overview": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在工作区概览中渲染当前项目的 README"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在工作區概覽中算繪目前專案的 README"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Render the current project's README in the worktree overview"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在工作區概覽中算繪目前專案的 README"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在工作區概覽中算繪目前專案的 README"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

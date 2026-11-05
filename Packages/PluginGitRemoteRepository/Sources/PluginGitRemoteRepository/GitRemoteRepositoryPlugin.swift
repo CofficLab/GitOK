@@ -24,7 +24,7 @@ public final class GitRemoteRepositoryPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-remote-repository",
         name: "Remote Repository",
-        description: "Manage remote repositories from the status bar",
+        description: pluginLocalization.string("Manage remote repositories from the status bar"),
         category: .project,
         stage: .stable,
         policy: .disabled

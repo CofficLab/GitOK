@@ -23,7 +23,7 @@ public final class GitRepositorySettingsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-repository-settings",
         name: "Repository Settings",
-        description: "Inspect the current repository and manage remotes",
+        description: pluginLocalization.string("Inspect the current repository and manage remotes"),
         category: .project,
         stage: .stable,
         policy: .disabled

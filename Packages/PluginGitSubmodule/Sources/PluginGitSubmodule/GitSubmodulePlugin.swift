@@ -25,7 +25,7 @@ public final class GitSubmodulePlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-submodule",
         name: "Submodule",
-        description: "Git submodule status and updates",
+        description: pluginLocalization.string("Git submodule status and updates"),
         category: .project,
         stage: .stable,
         policy: .disabled
