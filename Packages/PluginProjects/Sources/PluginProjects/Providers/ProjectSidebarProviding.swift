@@ -16,6 +16,9 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     /// 项目数据源（已收窄的插件能力）。
     private let projects: any ProjectSidebarCapability
 
+    /// 读取仓库最近提交时间的能力（供「最近更新」展示方式使用）。
+    private let activityCapability: (any ProjectActivityCapability)?
+
     /// 克隆所需的 remote 解析、克隆登记与反馈能力。缺任一项时隐藏克隆入口。
     private let remoteCapability: (any GitRemoteCapability)?
     private let toast: (any ToastProviding)?
@@ -25,12 +28,14 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
         projects: any ProjectSidebarCapability,
         remoteCapability: (any GitRemoteCapability)? = nil,
         toast: (any ToastProviding)? = nil,
-        clone: ProjectCloneCapability? = nil
+        clone: ProjectCloneCapability? = nil,
+        activityCapability: (any ProjectActivityCapability)? = nil
     ) {
         self.projects = projects
         self.remoteCapability = remoteCapability
         self.toast = toast
         self.clone = clone
+        self.activityCapability = activityCapability
     }
 
     func registerItems(_ items: [SidebarItem]) {
@@ -46,7 +51,8 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
                 projects: projects,
                 toast: toast,
                 clone: clone,
-                remoteCapability: remoteCapability
+                remoteCapability: remoteCapability,
+                activityCapability: activityCapability
             )
         )
     }
