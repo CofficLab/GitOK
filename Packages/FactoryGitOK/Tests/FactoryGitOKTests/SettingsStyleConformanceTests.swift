@@ -266,7 +266,10 @@ struct SettingsStyleConformanceTests {
         }
         let factoryPath = root.appendingPathComponent("Packages/FactoryGitOK/Sources/FactoryGitOK/PluginFactory.swift")
         let factory = try String(contentsOf: factoryPath, encoding: .utf8)
-        if !factory.contains(#"PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager")"#) {
+        // 用正则而不是精确字面量：调用形态（单行 / 多行、是否附带
+        // entryVisibility 等其它参数）不应影响「是否注入了品牌 id」这一判定。
+        let brandIDPattern = #"PluginPluginManager\s*\(\s*id:\s*"com\.coffic\.gitok\.plugin\.plugin-manager""#
+        if factory.range(of: brandIDPattern, options: .regularExpression) == nil {
             failures.append(
                 "- Packages/FactoryGitOK/Sources/FactoryGitOK/PluginFactory.swift："
                 + "插件管理插件未注入 GitOK 品牌 id（会残留 com.coffic.lumi 上游品牌）"
