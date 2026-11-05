@@ -50,7 +50,7 @@ final class GitOKAppDelegate: NSObject, NSApplicationDelegate {
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
             guard let path = Self.resolveOpenPath(from: url) else {
-                Self.logger.warning("忽略不支持的 URL：\(url.absoluteString, privacy: .public)")
+                Self.logger.warning("Ignoring unsupported URL: \(url.absoluteString, privacy: .public)")
                 continue
             }
             enqueue(path)
@@ -71,7 +71,7 @@ final class GitOKAppDelegate: NSObject, NSApplicationDelegate {
     /// 记录一条路径请求；内核就绪时立即处理。
     private func enqueue(_ path: String) {
         if Self.verbose {
-            Self.logger.info("收到目录打开请求：\(path, privacy: .public)")
+            Self.logger.info("Received directory open request: \(path, privacy: .public)")
         }
         pendingOpenPaths.append(path)
         drainPendingPaths()
@@ -84,7 +84,7 @@ final class GitOKAppDelegate: NSObject, NSApplicationDelegate {
             let path = pendingOpenPaths.removeFirst()
             let opened = FactoryGitOK.openExternalPath(path, kernel: kernel)
             if !opened {
-                Self.logger.error("打开目录失败：\(path, privacy: .public)")
+                Self.logger.error("Failed to open directory: \(path, privacy: .public)")
             }
         }
     }

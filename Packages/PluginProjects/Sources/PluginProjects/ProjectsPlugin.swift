@@ -39,7 +39,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.projects",
         name: "Projects",
-        description: "GitOK project management (list / open / persist) and project sidebar",
+        description: pluginLocalization.string("GitOK project management (list / open / persist) and project sidebar"),
         category: .project,
         stage: .stable,
         policy: .required

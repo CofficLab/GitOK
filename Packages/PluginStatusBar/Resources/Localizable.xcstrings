@@ -850,6 +850,40 @@
           }
         }
       }
+    },
+    "Window bottom status bar: current project + theme switch": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗口底部状态栏：当前项目与主题切换"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "視窗底部狀態列：目前專案與主題切換"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window bottom status bar: current project + theme switch"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "視窗底部狀態列：目前專案與主題切換"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "視窗底部狀態列：目前專案與主題切換"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

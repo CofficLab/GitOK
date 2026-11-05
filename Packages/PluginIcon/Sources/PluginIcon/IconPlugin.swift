@@ -14,7 +14,7 @@ public final class IconPlugin: SuperPlugin {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.icon",
         name: "Icon",
-        description: "Create project icons and export Xcode AppIcon sets",
+        description: pluginLocalization.string("Create project icons and export Xcode AppIcon sets"),
         category: .project,
         stage: .stable,
         policy: .required

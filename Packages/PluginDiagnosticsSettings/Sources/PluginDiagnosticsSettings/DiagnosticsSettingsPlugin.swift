@@ -21,7 +21,7 @@ public final class DiagnosticsSettingsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.diagnostics-settings",
         name: "Diagnostics",
-        description: "App diagnostic information and logs",
+        description: pluginLocalization.string("App diagnostic information and logs"),
         category: .system,
         stage: .stable,
         policy: .disabled

@@ -1,1469 +1,1503 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "%lld%%" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%%"
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld%%": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%%"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%%"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%%"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%%"
-          }
-        }
-      }
-    },
-    "Add" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
           }
         }
       }
     },
-    "Add Project" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add Project"
+    "Add": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加项目"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增專案"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增專案"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增專案"
-          }
-        }
-      }
-    },
-    "Add an existing Git repository, or clone a new one to get started." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add an existing Git repository, or clone a new one to get started."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加现有 Git 仓库，或克隆一个新仓库以开始使用。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增現有 Git 儲存庫，或複製一個新儲存庫以開始使用。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增現有 Git 儲存庫，或複製一個新儲存庫以開始使用。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增現有 Git 儲存庫，或複製一個新儲存庫以開始使用。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增"
           }
         }
       }
     },
-    "Branch, worktree, and activity indicators sit at the bottom." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Branch, worktree, and activity indicators sit at the bottom."
+    "Add Project": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Project"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分支、工作树与活动指示器位于底部。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加项目"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分支、工作樹與活動指示器位於底部。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增專案"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分支、工作樹與活動指示器位於底部。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增專案"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分支、工作樹與活動指示器位於底部。"
-          }
-        }
-      }
-    },
-    "Choose a Git repository folder to add to GitOK" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose a Git repository folder to add to GitOK"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择一个 Git 仓库文件夹添加到 GitOK"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇一個 Git 儲存庫資料夾加入 GitOK"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇一個 Git 儲存庫資料夾加入 GitOK"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇一個 Git 儲存庫資料夾加入 GitOK"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增專案"
           }
         }
       }
     },
-    "Clone cancelled" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clone cancelled"
+    "Add an existing Git repository, or clone a new one to get started.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add an existing Git repository, or clone a new one to get started."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已取消克隆"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加现有 Git 仓库，或克隆一个新仓库以开始使用。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已取消克隆"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增現有 Git 儲存庫，或複製一個新儲存庫以開始使用。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已取消克隆"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增現有 Git 儲存庫，或複製一個新儲存庫以開始使用。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已取消克隆"
-          }
-        }
-      }
-    },
-    "Clone failed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clone failed"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆失败"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆失敗"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆失敗"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆失敗"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增現有 Git 儲存庫，或複製一個新儲存庫以開始使用。"
           }
         }
       }
     },
-    "Cloning repository" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cloning repository"
+    "Branch, worktree, and activity indicators sit at the bottom.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Branch, worktree, and activity indicators sit at the bottom."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在克隆仓库"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分支、工作树与活动指示器位于底部。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在克隆倉庫"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分支、工作樹與活動指示器位於底部。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在克隆倉庫"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分支、工作樹與活動指示器位於底部。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在克隆倉庫"
-          }
-        }
-      }
-    },
-    "Commits, diffs, worktrees, and settings render in the main pane." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commits, diffs, worktrees, and settings render in the main pane."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "提交、差异、工作树与设置渲染在主面板。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "提交、差異、工作樹與設置渲染在主面板。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "提交、差異、工作樹與設置渲染在主面板。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "提交、差異、工作樹與設置渲染在主面板。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分支、工作樹與活動指示器位於底部。"
           }
         }
       }
     },
-    "Compose the window" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compose the window"
+    "Choose a Git repository folder to add to GitOK": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a Git repository folder to add to GitOK"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "组装窗口"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个 Git 仓库文件夹添加到 GitOK"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "組裝窗口"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇一個 Git 儲存庫資料夾加入 GitOK"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "組裝窗口"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇一個 Git 儲存庫資料夾加入 GitOK"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "組裝窗口"
-          }
-        }
-      }
-    },
-    "Content" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Content"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "内容"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "內容"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "內容"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "內容"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇一個 Git 儲存庫資料夾加入 GitOK"
           }
         }
       }
     },
-    "Content Area" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Content Area"
+    "Clone cancelled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clone cancelled"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "内容区"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消克隆"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "內容區"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消克隆"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "內容區"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消克隆"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "內容區"
-          }
-        }
-      }
-    },
-    "Core Capabilities" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Core Capabilities"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消克隆"
           }
         }
       }
     },
-    "Current operation" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current operation"
+    "Clone failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clone failed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前操作"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆失败"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "當前操作"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆失敗"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "當前操作"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆失敗"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "當前操作"
-          }
-        }
-      }
-    },
-    "Destination" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Destination"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目标位置"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標位置"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標位置"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標位置"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆失敗"
           }
         }
       }
     },
-    "Each feature registers its toolbar, sidebar, or content views." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Each feature registers its toolbar, sidebar, or content views."
+    "Cloning repository": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cloning repository"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每个功能注册自己的工具栏、侧边栏或内容视图。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在克隆仓库"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每個功能註冊自己的工具欄、側邊欄或內容視圖。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在克隆倉庫"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每個功能註冊自己的工具欄、側邊欄或內容視圖。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在克隆倉庫"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每個功能註冊自己的工具欄、側邊欄或內容視圖。"
-          }
-        }
-      }
-    },
-    "GitOK is cloning this repository in the background." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitOK is cloning this repository in the background."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitOK 正在后台克隆此仓库。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitOK 正在後台克隆此倉庫。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitOK 正在後台克隆此倉庫。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitOK 正在後台克隆此倉庫。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在克隆倉庫"
           }
         }
       }
     },
-    "How It Works" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How It Works"
+    "Commits, diffs, worktrees, and settings render in the main pane.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commits, diffs, worktrees, and settings render in the main pane."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交、差异、工作树与设置渲染在主面板。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交、差異、工作樹與設置渲染在主面板。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交、差異、工作樹與設置渲染在主面板。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
-          }
-        }
-      }
-    },
-    "Last update" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last update"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最后更新"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最後更新"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最後更新"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最後更新"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交、差異、工作樹與設置渲染在主面板。"
           }
         }
       }
     },
-    "Not a Git Repository" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not a Git Repository"
+    "Compose the window": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compose the window"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不是 Git 项目"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "组装窗口"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不是 Git 專案"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "組裝窗口"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不是 Git 專案"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "組裝窗口"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不是 Git 專案"
-          }
-        }
-      }
-    },
-    "Opening a project re-renders the workspace around it." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opening a project re-renders the workspace around it."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开项目即围绕它重新渲染工作区。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打開項目即圍繞它重新渲染工作區。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打開項目即圍繞它重新渲染工作區。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打開項目即圍繞它重新渲染工作區。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "組裝窗口"
           }
         }
       }
     },
-    "Project Not Found" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Project Not Found"
+    "Content": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到项目"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内容"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到項目"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "內容"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到項目"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "內容"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到項目"
-          }
-        }
-      }
-    },
-    "Project Path" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Project Path"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "项目路径"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目路徑"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目路徑"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目路徑"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "內容"
           }
         }
       }
     },
-    "Project list, repository tree, and navigation live on the left." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Project list, repository tree, and navigation live on the left."
+    "Content Area": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content Area"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "项目列表、仓库树与导航位于左侧。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内容区域"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目列表、倉庫樹與導航位於左側。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "內容區域"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目列表、倉庫樹與導航位於左側。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "內容區"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目列表、倉庫樹與導航位於左側。"
-          }
-        }
-      }
-    },
-    "Register regions" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Register regions"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "注册区域"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "註冊區域"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "註冊區域"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "註冊區域"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "內容區"
           }
         }
       }
     },
-    "Remote" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remote"
+    "Core Capabilities": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core Capabilities"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "远程仓库"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "遠程倉庫"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "遠程倉庫"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "遠程倉庫"
-          }
-        }
-      }
-    },
-    "Remove from Project List" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove from Project List"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "从项目列表中移除"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從項目列表中移除"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從項目列表中移除"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從項目列表中移除"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         }
       }
     },
-    "Retry" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retry"
+    "Current operation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current operation"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重试"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前操作"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重試"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當前操作"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重試"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當前操作"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重試"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當前操作"
           }
         }
       }
     },
-    "Sidebar" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sidebar"
+    "Destination": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destination"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "侧边栏"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标位置"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "側邊欄"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目標位置"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "側邊欄"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目標位置"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "側邊欄"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目標位置"
           }
         }
       }
     },
-    "Started" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Started"
+    "Each feature registers its toolbar, sidebar, or content views.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each feature registers its toolbar, sidebar, or content views."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开始时间"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每个功能注册自己的工具栏、侧边栏或内容视图。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開始時間"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每個功能註冊自己的工具欄、側邊欄或內容視圖。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開始時間"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每個功能註冊自己的工具欄、側邊欄或內容視圖。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開始時間"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每個功能註冊自己的工具欄、側邊欄或內容視圖。"
           }
         }
       }
     },
-    "Status Bar" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Status Bar"
+    "GitOK is cloning this repository in the background.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK is cloning this repository in the background."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "状态栏"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 正在后台克隆此仓库。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "狀態欄"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 正在後台克隆此倉庫。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "狀態欄"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 正在後台克隆此倉庫。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "狀態欄"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitOK 正在後台克隆此倉庫。"
           }
         }
       }
     },
-    "Switch projects" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Switch projects"
+    "How It Works": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How It Works"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "切换项目"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "切換項目"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "切換項目"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "切換項目"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         }
       }
     },
-    "Switch to a Git project from the sidebar, or remove this folder from the project list." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Switch to a Git project from the sidebar, or remove this folder from the project list."
+    "Last update": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last update"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "从侧边栏切换到一个 Git 项目，或从项目列表中移除这个文件夹。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最后更新"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最後更新"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最後更新"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最後更新"
           }
         }
       }
     },
-    "The clone task is no longer available." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The clone task is no longer available."
+    "Not a Git Repository": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not a Git Repository"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆任务已不可用。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不是 Git 项目"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆任務已不可用。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不是 Git 專案"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆任務已不可用。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不是 Git 專案"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "克隆任務已不可用。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不是 Git 專案"
           }
         }
       }
     },
-    "The project directory no longer exists on disk." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The project directory no longer exists on disk."
+    "Opening a project re-renders the workspace around it.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opening a project re-renders the workspace around it."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "项目目录已不存在于磁盘上。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开项目即围绕它重新渲染工作区。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目目錄已不存在於磁盤上。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開項目即圍繞它重新渲染工作區。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目目錄已不存在於磁盤上。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開項目即圍繞它重新渲染工作區。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目目錄已不存在於磁盤上。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開項目即圍繞它重新渲染工作區。"
           }
         }
       }
     },
-    "The root view assembles all registered regions into one layout." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The root view assembles all registered regions into one layout."
+    "Project Not Found": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project Not Found"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "根视图把所有注册区域组装为一个布局。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到项目"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "根視圖把所有註冊區域組裝爲一個佈局。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到項目"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "根視圖把所有註冊區域組裝爲一個佈局。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到項目"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "根視圖把所有註冊區域組裝爲一個佈局。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到項目"
           }
         }
       }
     },
-    "The selected folder is not a Git repository." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The selected folder is not a Git repository."
+    "Project Path": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project Path"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所选文件夹不是 Git 项目。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目路径"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所選資料夾不是 Git 專案。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目路徑"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所選資料夾不是 Git 專案。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目路徑"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所選資料夾不是 Git 專案。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目路徑"
           }
         }
       }
     },
-    "The window that hosts the entire GitOK workspace." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The window that hosts the entire GitOK workspace."
+    "Project list, repository tree, and navigation live on the left.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project list, repository tree, and navigation live on the left."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "承载整个 GitOK 工作区的窗口。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目列表、仓库树与导航位于左侧。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "承載整個 GitOK 工作區的窗口。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目列表、倉庫樹與導航位於左側。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "承載整個 GitOK 工作區的窗口。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目列表、倉庫樹與導航位於左側。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "承載整個 GitOK 工作區的窗口。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目列表、倉庫樹與導航位於左側。"
           }
         }
       }
     },
-    "Welcome to GitOK" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome to GitOK"
+    "Register regions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Register regions"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "欢迎使用 GitOK"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "注册区域"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "歡迎使用 GitOK"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "註冊區域"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "歡迎使用 GitOK"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "註冊區域"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "歡迎使用 GitOK"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "註冊區域"
           }
         }
       }
     },
-    "You can remove this project from the project list, or move the directory back to the original location." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You can remove this project from the project list, or move the directory back to the original location."
+    "Remote": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "您可以从项目列表中移除此项目，或将目录移回原始位置。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "远程仓库"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "您可以從項目列表中移除此項目，或將目錄移回原始位置。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠程倉庫"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "您可以從項目列表中移除此項目，或將目錄移回原始位置。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠程倉庫"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "您可以從項目列表中移除此項目，或將目錄移回原始位置。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遠程倉庫"
           }
         }
       }
     },
-    "core regions" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "core regions"
+    "Remove from Project List": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from Project List"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心区域"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从项目列表中移除"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心區域"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從項目列表中移除"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心區域"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從項目列表中移除"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心區域"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從項目列表中移除"
           }
         }
       }
     },
-    "window" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "window"
+    "Retry": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "窗口"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "窗口"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "窗口"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "窗口"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試"
+          }
+        }
+      }
+    },
+    "Sidebar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sidebar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "侧边栏"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "側邊欄"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "側邊欄"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "側邊欄"
+          }
+        }
+      }
+    },
+    "Started": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Started"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始时间"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始時間"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始時間"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始時間"
+          }
+        }
+      }
+    },
+    "Status Bar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status Bar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "状态栏"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "狀態列"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "狀態欄"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "狀態欄"
+          }
+        }
+      }
+    },
+    "Switch projects": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch projects"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换项目"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換項目"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換項目"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換項目"
+          }
+        }
+      }
+    },
+    "Switch to a Git project from the sidebar, or remove this folder from the project list.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to a Git project from the sidebar, or remove this folder from the project list."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从侧边栏切换到一个 Git 项目，或从项目列表中移除这个文件夹。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從側邊欄切換到一個 Git 專案，或從項目列表中移除這個資料夾。"
+          }
+        }
+      }
+    },
+    "The clone task is no longer available.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The clone task is no longer available."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆任务已不可用。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆任務已不可用。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆任務已不可用。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "克隆任務已不可用。"
+          }
+        }
+      }
+    },
+    "The project directory no longer exists on disk.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The project directory no longer exists on disk."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目目录已不存在于磁盘上。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目目錄已不存在於磁盤上。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目目錄已不存在於磁盤上。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目目錄已不存在於磁盤上。"
+          }
+        }
+      }
+    },
+    "The root view assembles all registered regions into one layout.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The root view assembles all registered regions into one layout."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根视图把所有注册区域组装为一个布局。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根視圖把所有註冊區域組裝爲一個佈局。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根視圖把所有註冊區域組裝爲一個佈局。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根視圖把所有註冊區域組裝爲一個佈局。"
+          }
+        }
+      }
+    },
+    "The selected folder is not a Git repository.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected folder is not a Git repository."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所选文件夹不是 Git 项目。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所選資料夾不是 Git 專案。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所選資料夾不是 Git 專案。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所選資料夾不是 Git 專案。"
+          }
+        }
+      }
+    },
+    "The window that hosts the entire GitOK workspace.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The window that hosts the entire GitOK workspace."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承载整个 GitOK 工作区的窗口。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承載整個 GitOK 工作區的窗口。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承載整個 GitOK 工作區的窗口。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承載整個 GitOK 工作區的窗口。"
+          }
+        }
+      }
+    },
+    "Welcome to GitOK": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to GitOK"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎使用 GitOK"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歡迎使用 GitOK"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歡迎使用 GitOK"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歡迎使用 GitOK"
+          }
+        }
+      }
+    },
+    "You can remove this project from the project list, or move the directory back to the original location.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can remove this project from the project list, or move the directory back to the original location."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您可以从项目列表中移除此项目，或将目录移回原始位置。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您可以從項目列表中移除此項目，或將目錄移回原始位置。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您可以從項目列表中移除此項目，或將目錄移回原始位置。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您可以從項目列表中移除此項目，或將目錄移回原始位置。"
+          }
+        }
+      }
+    },
+    "core regions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "core regions"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心区域"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心區域"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心區域"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心區域"
+          }
+        }
+      }
+    },
+    "window": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "window"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗口"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗口"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗口"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗口"
+          }
+        }
+      }
+    },
+    "Provides the root view layout, replacing the default provider": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提供根视图布局，替换默认实现"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提供根檢視版面，取代預設實作"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provides the root view layout, replacing the default provider"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提供根檢視版面，取代預設實作"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提供根檢視版面，取代預設實作"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

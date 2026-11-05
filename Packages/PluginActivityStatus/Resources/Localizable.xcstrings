@@ -748,6 +748,40 @@
           }
         }
       }
+    },
+    "Show current long-running activity (commit/push) in the status bar": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏显示当前长时间运行的操作（提交/推送）"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列顯示目前長時間執行的操作（提交/推送）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show current long-running activity (commit/push) in the status bar"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列顯示目前長時間執行的操作（提交/推送）"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列顯示目前長時間執行的操作（提交/推送）"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

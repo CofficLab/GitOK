@@ -24,7 +24,7 @@ public final class SettingGeneralPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.setting-general",
         name: "General Settings",
-        description: "Registers the General entry in the settings view with app info, official website, and user manual.",
+        description: pluginLocalization.string("Registers the General entry in the settings view with app info, official website, and user manual."),
         category: .system,
         stage: .stable,
         policy: .required

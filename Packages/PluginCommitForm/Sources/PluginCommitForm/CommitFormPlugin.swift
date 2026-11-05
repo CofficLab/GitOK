@@ -37,7 +37,7 @@ public final class CommitFormPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-form",
         name: "Commit Form",
-        description: "Commit workflow: staged message, category, style and commit & push",
+        description: pluginLocalization.string("Commit workflow: staged message, category, style and commit & push"),
         category: .project,
         stage: .stable,
         policy: .required

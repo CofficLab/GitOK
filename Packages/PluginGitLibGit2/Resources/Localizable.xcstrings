@@ -680,6 +680,40 @@
           }
         }
       }
+    },
+    "Provides Git operations through LibGit2Swift.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过 LibGit2Swift 提供 Git 操作。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "透過 LibGit2Swift 提供 Git 操作。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provides Git operations through LibGit2Swift."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "透過 LibGit2Swift 提供 Git 操作。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "透過 LibGit2Swift 提供 Git 操作。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

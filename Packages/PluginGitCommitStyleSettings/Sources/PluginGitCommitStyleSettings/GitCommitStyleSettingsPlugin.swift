@@ -21,7 +21,7 @@ public final class GitCommitStyleSettingsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-commit-style-settings",
         name: "Commit Style",
-        description: "Choose the global default commit message style",
+        description: pluginLocalization.string("Choose the global default commit message style"),
         category: .project,
         stage: .stable,
         policy: .alwaysOn

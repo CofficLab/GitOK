@@ -31,7 +31,7 @@ public final class CommitStatusBarPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-status-bar",
         name: "Commit Status Bar",
-        description: "Show the selected commit id in the status bar",
+        description: pluginLocalization.string("Show the selected commit id in the status bar"),
         category: .project,
         stage: .stable,
         policy: .disabled

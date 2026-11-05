@@ -902,7 +902,7 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "重命名"
+            "value": "重新命名"
           }
         },
         "zh-HK": {
@@ -1085,6 +1085,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "遠程數"
+          }
+        }
+      }
+    },
+    "Manage remote repositories from the status bar": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从状态栏管理远程仓库"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從狀態列管理遠端儲存庫"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage remote repositories from the status bar"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從狀態列管理遠端儲存庫"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從狀態列管理遠端儲存庫"
           }
         }
       }

@@ -24,7 +24,7 @@ public final class LogoCofficPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.lumi.plugin.logo-coffic",
         name: "Coffic Logo",
-        description: "Contributes the Coffic coffee-themed logo with an animated coffee cup icon.",
+        description: pluginLocalization.string("Contributes the Coffic coffee-themed logo with an animated coffee cup icon."),
         category: .design,
         stage: .stable,
         policy: .disabled
@@ -44,7 +44,7 @@ public final class LogoCofficPlugin: SuperPlugin, SuperLog {
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         guard let logo = kernel.resolveProvider((any LogoProviding).self) else {
-            Self.logger.info("\(Self.t)未装配 LogoProviding，跳过 Coffic Logo 注册")
+            Self.logger.info("\(Self.t)LogoProviding not configured, skipping Coffic Logo registration")
             return
         }
 
@@ -58,14 +58,14 @@ public final class LogoCofficPlugin: SuperPlugin, SuperLog {
             )
         )
         if Self.verbose {
-            Self.logger.info("\(Self.t)已注册 Coffic Logo 项: \(self.id)")
+            Self.logger.info("\(Self.t)Registered Coffic Logo item: \(self.id)")
         }
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
         kernel.resolveProvider((any LogoProviding).self)?.unregisterLogoItem(id: id)
         if Self.verbose {
-            Self.logger.info("\(Self.t)已注销 Coffic Logo 项: \(self.id)")
+            Self.logger.info("\(Self.t)Unregistered Coffic Logo item: \(self.id)")
         }
     }
 }

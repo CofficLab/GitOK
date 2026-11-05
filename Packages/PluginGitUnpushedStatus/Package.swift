@@ -14,10 +14,10 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderWorkspaceScene"),
@@ -28,10 +28,10 @@ let package = Package(
         .target(
             name: "PluginGitUnpushedStatus",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderStatusBar", package: "LumiProviders"),

@@ -28,7 +28,7 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-auto-push",
         name: "Auto Push",
-        description: "Automatically push after each commit",
+        description: pluginLocalization.string("Automatically push after each commit"),
         category: .project,
         stage: .stable,
         policy: .alwaysOn

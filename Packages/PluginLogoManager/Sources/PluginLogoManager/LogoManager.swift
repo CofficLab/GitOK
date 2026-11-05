@@ -34,7 +34,7 @@ public final class LogoManager: LogoProviding, SuperLog {
 
     public func registerLogoItem(_ item: LogoItem) {
         if Self.verbose {
-            Self.logger.info("\(Self.t)注册 Logo：\(item.id, privacy: .public)（order=\(item.order)）")
+            Self.logger.info("\(Self.t)Registering Logo: \(item.id, privacy: .public) (order=\(item.order))")
         }
         if logoItems[item.id] == nil {
             logoItemOrder.append(item.id)
@@ -45,7 +45,7 @@ public final class LogoManager: LogoProviding, SuperLog {
 
     public func unregisterLogoItem(id: String) {
         if Self.verbose {
-            Self.logger.info("\(Self.t)注销 Logo：\(id, privacy: .public)")
+            Self.logger.info("\(Self.t)Unregistering Logo: \(id, privacy: .public)")
         }
         logoItems.removeValue(forKey: id)
         logoItemOrder.removeAll { $0 == id }
@@ -54,7 +54,7 @@ public final class LogoManager: LogoProviding, SuperLog {
 
     public func clearAllContributions() {
         if Self.verbose {
-            Self.logger.info("\(Self.t)清空全部 Logo 贡献（\(self.logoItems.count) 项）")
+            Self.logger.info("\(Self.t)Cleared all Logo contributions (\(self.logoItems.count) items)")
         }
         logoItems.removeAll()
         logoItemOrder.removeAll()

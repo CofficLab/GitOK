@@ -27,7 +27,7 @@ public final class CommitToastPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-toast",
         name: "Commit Toast",
-        description: "Notify via toast when the selected commit changes",
+        description: pluginLocalization.string("Notify via toast when the selected commit changes"),
         category: .project,
         stage: .stable,
         policy: .disabled

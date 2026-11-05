@@ -1,5 +1,5 @@
 import Foundation
-import LumiLocalizationKit
+import KitGitOKLocalization
 
 /// 插件作用域的本地化服务（绑定本模块资源 bundle）。
 ///

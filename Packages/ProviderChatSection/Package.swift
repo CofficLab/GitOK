@@ -9,17 +9,17 @@ let package = Package(
         .library(name: "ProviderChatSection", targets: ["ProviderChatSection"]),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
         .package(path: "../ProviderConversation"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
     ],
     targets: [
         .target(
             name: "ProviderChatSection",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderConversation", package: "ProviderConversation"),
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
             ],
             path: "Sources/ProviderChatSection",
             resources: [

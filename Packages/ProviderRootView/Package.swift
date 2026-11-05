@@ -15,8 +15,8 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(path: "../ProviderChatSection"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0")
@@ -25,8 +25,8 @@ let package = Package(
         .target(
             name: "GitOKProviderRootView",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderChatSection", package: "ProviderChatSection"),
                 .product(name: "ProviderRailView", package: "LumiProviders"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
