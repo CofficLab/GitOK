@@ -81,8 +81,10 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)GitProviding not registered; commit file loading will be unavailable")
         }
         // 1) 项目数据目录遵循 Lumi 规律：<root>/<插件 id>/
+        var pluginDirectory: URL?
         if let storage = kernel.resolveProvider((any StorageProviding).self) {
             let directory = storage.pluginDataDirectory(for: id)
+            pluginDirectory = directory
             let storeURL = directory.appendingPathComponent("projects.json", isDirectory: false)
 
             // 用真实目录替换占位目录并重新加载磁盘上的项目列表。
@@ -109,7 +111,11 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
                 )
             },
             // 「最近更新」展示方式需要读取各仓库的最近提交时间。
-            activityCapability: git.map { ProjectActivityCapabilityAdapter(git: $0) }
+            activityCapability: git.map { ProjectActivityCapabilityAdapter(git: $0) },
+            // 排序偏好落盘在插件数据目录下的 settings.plist（与 projects.json 同级）。
+            sortModeStore: pluginDirectory.map {
+                PluginDataProjectSortModeStore(directory: $0)
+            }
         )
         self.sidebarService = sidebar
         kernel.unregisterProvider((any SidebarProviding).self)

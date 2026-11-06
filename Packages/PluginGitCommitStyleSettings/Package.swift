@@ -32,6 +32,7 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderCommitForm", package: "ProviderCommitForm"),
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
+                .product(name: "ProviderStorage", package: "LumiProviders"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
             path: "Sources/PluginGitCommitStyleSettings",
