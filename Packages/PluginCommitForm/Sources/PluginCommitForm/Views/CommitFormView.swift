@@ -637,8 +637,8 @@ private struct CoAuthorEditorSheet: View {
             AppDivider()
 
             HStack(spacing: 8) {
-                AppInputField(LocalizedStringKey(loc("Name")), text: $newName)
-                AppInputField(LocalizedStringKey(loc("Email")), text: $newEmail)
+                AppInputField(LocalizedStringKey(loc("Co-author Name")), text: $newName)
+                AppInputField(LocalizedStringKey(loc("Co-author Email")), text: $newEmail)
                 AppButton(loc("Add"), style: .secondary, size: .small, action: {
                     let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
                     let trimmedEmail = newEmail.trimmingCharacters(in: .whitespacesAndNewlines)

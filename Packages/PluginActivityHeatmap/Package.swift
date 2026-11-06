@@ -9,6 +9,7 @@ let package = Package(
         .library(name: "PluginActivityHeatmap", targets: ["PluginActivityHeatmap"]),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
@@ -22,6 +23,7 @@ let package = Package(
         .target(
             name: "PluginActivityHeatmap",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
@@ -31,7 +33,10 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderStorage", package: "LumiProviders"),
             ],
-            path: "Sources/PluginActivityHeatmap"
+            path: "Sources/PluginActivityHeatmap",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginActivityHeatmapTests",

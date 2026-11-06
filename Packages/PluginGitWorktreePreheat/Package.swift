@@ -13,6 +13,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
@@ -24,6 +25,7 @@ let package = Package(
         .target(
             name: "PluginGitWorktreePreheat",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
@@ -31,7 +33,10 @@ let package = Package(
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
             ],
-            path: "Sources/PluginGitWorktreePreheat"
+            path: "Sources/PluginGitWorktreePreheat",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginGitWorktreePreheatTests",

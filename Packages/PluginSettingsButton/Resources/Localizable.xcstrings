@@ -460,7 +460,7 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "設置"
+            "value": "設定"
           }
         },
         "zh-HK": {
@@ -596,7 +596,7 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "工具欄"
+            "value": "工具列"
           }
         },
         "zh-HK": {
@@ -711,6 +711,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "齒輪"
+          }
+        }
+      }
+    },
+    "Toolbar entry that opens the settings window": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toolbar entry that opens the settings window"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toolbar entry that opens the settings window"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toolbar entry that opens the settings window"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toolbar entry that opens the settings window"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toolbar entry that opens the settings window"
           }
         }
       }

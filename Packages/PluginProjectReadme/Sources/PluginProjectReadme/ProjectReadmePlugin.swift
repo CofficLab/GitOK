@@ -11,7 +11,7 @@ public final class ProjectReadmePlugin: SuperPlugin {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.project-readme",
         name: "Project README",
-        description: "Render the current project's README in the worktree overview",
+        description: pluginLocalization.string("Render the current project's README in the worktree overview"),
         category: .project,
         stage: .stable,
         policy: .required
@@ -51,9 +51,9 @@ private final class ProjectReadmeRenderer: ProjectReadmeProviding {
 private struct ProjectReadmeAboutView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Project README", systemImage: "doc.text")
+            Label(ProjectReadmeLocalization.string("Project README", bundle: .module), systemImage: "doc.text")
                 .font(.title2.weight(.semibold))
-            Text("When the current project contains a Markdown README, its formatted content appears at the bottom of the clean worktree overview.")
+            Text(ProjectReadmeLocalization.string("When the current project contains a Markdown README, its formatted content appears at the bottom of the clean worktree overview.", bundle: .module))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }

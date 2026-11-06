@@ -14,7 +14,7 @@ public final class BannerPlugin: SuperPlugin {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.banner",
         name: "Banner",
-        description: "Create and edit project banners",
+        description: pluginLocalization.string("Create and edit project banners"),
         category: .project,
         stage: .stable,
         policy: .required

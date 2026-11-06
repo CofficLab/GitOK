@@ -33,7 +33,7 @@ public final class GitUserSettingsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-user-settings",
         name: "Git User Settings",
-        description: "Manage Git user presets and apply them to the current project",
+        description: pluginLocalization.string("Manage Git user presets and apply them to the current project"),
         category: .project,
         stage: .stable,
         policy: .required

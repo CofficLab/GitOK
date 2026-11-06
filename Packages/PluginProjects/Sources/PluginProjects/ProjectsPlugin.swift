@@ -39,7 +39,7 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.projects",
         name: "Projects",
-        description: "GitOK project management (list / open / persist) and project sidebar",
+        description: pluginLocalization.string("GitOK project management (list / open / persist) and project sidebar"),
         category: .project,
         stage: .stable,
         policy: .required
@@ -107,7 +107,9 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
                     git: $0,
                     cloneRepository: kernel.resolveProvider((any CloneRepositoryProviding).self)
                 )
-            }
+            },
+            // 「最近更新」展示方式需要读取各仓库的最近提交时间。
+            activityCapability: git.map { ProjectActivityCapabilityAdapter(git: $0) }
         )
         self.sidebarService = sidebar
         kernel.unregisterProvider((any SidebarProviding).self)

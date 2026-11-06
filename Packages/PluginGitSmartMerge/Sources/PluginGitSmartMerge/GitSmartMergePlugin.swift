@@ -25,7 +25,7 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-smart-merge",
         name: "Smart Merge",
-        description: "Merge branches from the status bar",
+        description: pluginLocalization.string("Merge branches from the status bar"),
         category: .project,
         stage: .stable,
         policy: .required

@@ -19,7 +19,7 @@ public final class AboutSettingsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.about-settings",
         name: "About",
-        description: "App version and information",
+        description: pluginLocalization.string("App version and information"),
         category: .system,
         stage: .stable,
         policy: .disabled

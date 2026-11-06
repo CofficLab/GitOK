@@ -21,7 +21,7 @@ public final class ProjectLanguagesPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.project-languages",
         name: "Project Languages",
-        description: "Provides local programming language statistics for the current project",
+        description: pluginLocalization.string("Provides local programming language statistics for the current project"),
         category: .project,
         stage: .stable,
         policy: .required

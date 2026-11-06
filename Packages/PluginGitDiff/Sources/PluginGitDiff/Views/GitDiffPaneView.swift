@@ -45,7 +45,7 @@ struct GitDiffPaneView: View {
             Color.clear
                 .frame(width: 1, height: 1)
                 .accessibilityElement()
-                .accessibilityLabel("Git diff panel")
+                .accessibilityLabel(GitDiffLocalization.string("Git diff panel", bundle: .module))
                 .accessibilityIdentifier("gitok.git.diff.panel")
         }
         .onReceive(viewModel.$revision) { _ in loadIfNeeded() }

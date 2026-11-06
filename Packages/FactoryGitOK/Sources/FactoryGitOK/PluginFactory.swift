@@ -169,7 +169,10 @@ public struct DefaultPluginFactory: PluginFactory {
                 ]
             ),
             SettingGeneralPlugin(),
-            PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager"),
+            // GitOK 的插件策略全是 required / alwaysOn / disabled，没有用户可配置的
+            // 插件；按默认策略入口会被隐藏。这里显式保留入口，设置页 UI 测试也
+            // 依赖它存在。
+            PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager", entryVisibility: .always),
         ]
     }
 }

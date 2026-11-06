@@ -24,7 +24,7 @@ public final class GitUnpushedStatusPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-unpushed-status",
         name: "Unpushed Status",
-        description: "Show the unpushed commit count in the status bar",
+        description: pluginLocalization.string("Show the unpushed commit count in the status bar"),
         category: .project,
         stage: .stable,
         policy: .disabled

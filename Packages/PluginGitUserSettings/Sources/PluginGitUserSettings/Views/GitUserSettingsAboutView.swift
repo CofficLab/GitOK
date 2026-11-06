@@ -11,7 +11,7 @@ struct GitUserSettingsAboutView: View {
                 icon: "person.crop.circle.badge.checkmark",
                 accent: theme.primary,
                 tagline: L("Your Git identity, set once, used everywhere."),
-                chips: [L("Name"), L("Email"), L("Signing")],
+                chips: [L("Git User Name"), L("Git User Email"), L("Signing")],
                 metrics: [
                     .init(value: "2", label: L("fields")),
                     .init(value: "1", label: L("identity"))

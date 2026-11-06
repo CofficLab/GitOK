@@ -748,6 +748,40 @@
           }
         }
       }
+    },
+    "Show the selected commit id in the status bar": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在状态栏显示所选提交的 ID"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列顯示所選提交的 ID"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show the selected commit id in the status bar"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列顯示所選提交的 ID"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在狀態列顯示所選提交的 ID"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

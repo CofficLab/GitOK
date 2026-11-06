@@ -176,7 +176,12 @@ public enum GitCommitOperation {
             throw NSError(
                 domain: "KitGit.GitCommitOperation",
                 code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "非法文件路径: \(filePath)"]
+                userInfo: [
+                    NSLocalizedDescriptionKey: String(
+                        format: pluginLocalization.string("Illegal file path: %@"),
+                        filePath
+                    )
+                ]
             )
         }
 

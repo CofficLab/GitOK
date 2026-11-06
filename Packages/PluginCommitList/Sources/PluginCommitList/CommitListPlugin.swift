@@ -37,7 +37,7 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-list",
         name: "Commit List",
-        description: "Rail section showing the commit history of the current project",
+        description: pluginLocalization.string("Rail section showing the commit history of the current project"),
         category: .project,
         stage: .stable,
         policy: .required

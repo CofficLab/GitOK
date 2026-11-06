@@ -28,14 +28,14 @@ struct GitOKApp: App {
         if let assembledKernel = try? FactoryGitOK.makeKernel() {
             kernel = assembledKernel
             mainView = (try? FactoryGitOK.makeMainView(kernel: assembledKernel))
-                ?? AnyView(Text("Failed to assemble main view").accessibilityIdentifier("gitok.startup-error"))
+                ?? AnyView(Text(GitOKAppLocalization.string("Failed to assemble main view")).accessibilityIdentifier("gitok.startup-error"))
             settingsView = (try? FactoryGitOK.makeSettingsView(kernel: assembledKernel))
-                ?? AnyView(Text("Failed to assemble settings view"))
+                ?? AnyView(Text(GitOKAppLocalization.string("Failed to assemble settings view")))
         } else {
             let fallbackKernel = KernelCoreContainer()
             kernel = fallbackKernel
-            mainView = AnyView(Text("Failed to assemble main view").accessibilityIdentifier("gitok.startup-error"))
-            settingsView = AnyView(Text("Failed to assemble settings view"))
+            mainView = AnyView(Text(GitOKAppLocalization.string("Failed to assemble main view")).accessibilityIdentifier("gitok.startup-error"))
+            settingsView = AnyView(Text(GitOKAppLocalization.string("Failed to assemble settings view")))
         }
         // 把内核交给应用代理：CLI 脚本 `gitok <path>` 的 URL 事件由代理
         // 直接调用内核处理，不依赖主窗口的 SwiftUI 订阅时序。
@@ -55,7 +55,7 @@ struct GitOKApp: App {
                     Color.clear
                         .frame(width: 1, height: 1)
                         .accessibilityElement()
-                        .accessibilityLabel("GitOK main window ready")
+                        .accessibilityLabel(GitOKAppLocalization.string("GitOK main window ready"))
                         .accessibilityIdentifier("gitok.main.ready")
                 }
                 .onReceive(NotificationCenter.default.publisher(
@@ -80,13 +80,13 @@ struct GitOKApp: App {
 
         // 与 Lumi 使用相同的普通 Window Scene，避免 macOS Settings 容器
         // 额外注入边距/安全区域，导致共享设置视图被裁切。
-        Window("设置", id: "gitok.settings") {
+        Window(GitOKAppLocalization.string("Settings"), id: "gitok.settings") {
             settingsView
                 .overlay(alignment: .topLeading) {
                     Color.clear
                         .frame(width: 1, height: 1)
                         .accessibilityElement()
-                        .accessibilityLabel("GitOK settings window ready")
+                        .accessibilityLabel(GitOKAppLocalization.string("GitOK settings window ready"))
                         .accessibilityIdentifier("gitok.settings.ready")
                 }
         }

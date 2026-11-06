@@ -20,6 +20,8 @@ struct ProjectSidebarView: View {
     let remoteCapability: (any GitRemoteCapability)?
 
     @StateObject private var observation: ProjectObservationModel
+    /// 项目活跃度模型：仅在「最近更新」展示方式下读取仓库提交时间。
+    @StateObject private var activity: ProjectActivityModel
     @State private var searchText = ""
     @State private var isPresentingClone = false
     /// 待重命名的项目（非 nil 时弹出重命名输入框）。
@@ -31,6 +33,10 @@ struct ProjectSidebarView: View {
     /// `prepare` 阶段的前置校验失败（无 remote / 目标非法）。
     @State private var preparationErrorMessage: String?
     @State private var isPresentingPreparationError = false
+    /// 当前项目列表的展示方式（排序规则）。
+    @State private var sortMode: ProjectSortMode = .manual
+    /// 展示方式的持久化存储。
+    private let sortModeStore: any ProjectSortModeStoring
 
     /// re-clone 状态机；仅在 Git 与克隆 Provider 都可用时创建。
     @State private var reclone: ProjectsRecloneCoordinator?
@@ -39,13 +45,19 @@ struct ProjectSidebarView: View {
         projects: any ProjectSidebarCapability,
         toast: (any ToastProviding)?,
         clone: ProjectCloneCapability?,
-        remoteCapability: (any GitRemoteCapability)?
+        remoteCapability: (any GitRemoteCapability)?,
+        activityCapability: (any ProjectActivityCapability)? = nil,
+        sortModeStore: any ProjectSortModeStoring = UserDefaultsProjectSortModeStore()
     ) {
         self.projects = projects
         self.toast = toast
         self.clone = clone
         self.remoteCapability = remoteCapability
+        self.sortModeStore = sortModeStore
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+        _activity = StateObject(wrappedValue: ProjectActivityModel(capability: activityCapability))
+        // 恢复上次选择的展示方式；读不到时回落到手动排序。
+        _sortMode = State(initialValue: sortModeStore.loadSortMode() ?? .manual)
     }
 
     // MARK: - Derived State
@@ -54,8 +66,19 @@ struct ProjectSidebarView: View {
     private var filteredProjects: [Project] {
         let list = projects.projects
         let needle = searchText.trimmingCharacters(in: .whitespaces)
-        guard !needle.isEmpty else { return list }
-        return list.filter { $0.title.localizedCaseInsensitiveContains(needle) }
+        guard !needle.isEmpty else {
+            return sortMode.sorted(list, commitDates: activity.commitDates)
+        }
+        let matched = list.filter { $0.title.localizedCaseInsensitiveContains(needle) }
+        return sortMode.sorted(matched, commitDates: activity.commitDates)
+    }
+
+    /// 当前展示方式是否允许拖拽调整顺序。
+    ///
+    /// 只有手动排序下拖拽才有意义：其他展示方式里列表顺序由规则决定，
+    /// 拖拽改变的是「手动顺序」而不会立刻反映到界面上，容易让用户困惑。
+    private var supportsManualReordering: Bool {
+        sortMode == .manual
     }
 
     /// 置顶项目与未置顶项目的分界索引（用于插入分隔线）。
@@ -108,9 +131,19 @@ struct ProjectSidebarView: View {
         layout
             .onReceive(observation.$revision) { _ in
                 // 项目状态变化时重算 body，读取最新项目列表。
+                // 新增 / 移除项目后，「最近更新」需要为新项目补读提交时间。
+                refreshActivityIfNeeded()
             }
             .onAppear {
                 ensureRecloneCoordinator()
+            }
+            .onChange(of: sortMode) { _, newMode in
+                sortModeStore.saveSortMode(newMode)
+                // 切换到「最近更新」时按需读取仓库提交时间；其他方式不需要。
+                refreshActivityIfNeeded()
+            }
+            .task(id: sortMode) {
+                refreshActivityIfNeeded()
             }
             .task(id: recloneTaskID) {
                 guard let reclone, let recloneTaskID else { return }
@@ -212,6 +245,14 @@ struct ProjectSidebarView: View {
                 }
             }
             .frame(maxHeight: .infinity)
+
+            // 底部展示方式切换栏：项目变多后用于快速切换列表的排列规则。
+            ProjectSortBarView(
+                mode: $sortMode,
+                projectCount: projects.projects.count,
+                isLoadingActivity: sortMode.requiresCommitActivity
+                    && !activity.loadingProjectIDs.isEmpty
+            )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.background.opacity(0.6))
@@ -254,18 +295,21 @@ struct ProjectSidebarView: View {
 
                 // 允许把项目拖到分组末尾；项目管理器会根据置顶状态
                 // 将其插入对应分组末尾，不会破坏置顶区边界。
-                Color.clear
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 16)
-                    .contentShape(Rectangle())
-                    .onDrop(
-                        of: [.text],
-                        delegate: ProjectDropDelegate(
-                            draggedProjectID: draggedProjectID,
-                            targetProjectID: nil,
-                            onMove: moveProject
+                // 仅在手动排序下启用拖拽：其他展示方式的顺序由规则决定。
+                if supportsManualReordering {
+                    Color.clear
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 16)
+                        .contentShape(Rectangle())
+                        .onDrop(
+                            of: [.text],
+                            delegate: ProjectDropDelegate(
+                                draggedProjectID: draggedProjectID,
+                                targetProjectID: nil,
+                                onMove: moveProject
+                            )
                         )
-                    )
+                }
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 8)
@@ -273,6 +317,17 @@ struct ProjectSidebarView: View {
     }
 
     private func projectRow(_ project: Project) -> some View {
+        projectRowContent(project)
+            .modifier(ProjectDragModifier(
+                isEnabled: supportsManualReordering,
+                projectID: project.id,
+                draggedProjectID: $draggedProjectID,
+                onMove: moveProject
+            ))
+    }
+
+    /// 项目行内容（不含拖拽）。
+    private func projectRowContent(_ project: Project) -> some View {
         AppSettingsSidebarItem(
             title: project.title,
             systemImage: project.isPinned ? "pin.fill" : "folder",
@@ -364,18 +419,6 @@ struct ProjectSidebarView: View {
                 Label(pluginLocalization.string("Remove Project"), systemImage: "trash")
             }
         }
-        .onDrag {
-            draggedProjectID = project.id
-            return NSItemProvider(object: NSString(string: project.id.uuidString))
-        }
-        .onDrop(
-            of: [.text],
-            delegate: ProjectDropDelegate(
-                draggedProjectID: draggedProjectID,
-                targetProjectID: project.id,
-                onMove: moveProject
-            )
-        )
     }
 
     private func moveProject(_ draggedID: UUID, before targetID: UUID?) {
@@ -387,6 +430,20 @@ struct ProjectSidebarView: View {
         for project in projects.projects where project.isPinned {
             projects.pinProject(id: project.id, isPinned: false)
         }
+    }
+
+    // MARK: - Activity
+
+    /// 按当前展示方式决定是否读取仓库提交时间。
+    ///
+    /// 只有「最近更新」需要提交时间；其余展示方式不启动任何 git 进程。
+    /// 已缓存的结果会被复用，重复切换不会重复读取。
+    private func refreshActivityIfNeeded() {
+        guard sortMode.requiresCommitActivity else {
+            activity.cancel()
+            return
+        }
+        activity.refresh(for: projects.projects)
     }
 
     // MARK: - Re-clone

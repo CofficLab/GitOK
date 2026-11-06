@@ -15,18 +15,19 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(path: "../KitGitOKCLI"),
     ],
     targets: [
         .target(
             name: "PluginSettingGeneral",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiUI", package: "LumiUI"),
@@ -34,7 +35,6 @@ let package = Package(
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
                 .product(name: "ProviderCommand", package: "LumiProviders"),
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
             ],
             path: "Sources/PluginSettingGeneral",
             resources: [.process("../../Resources/Localizable.xcstrings")]

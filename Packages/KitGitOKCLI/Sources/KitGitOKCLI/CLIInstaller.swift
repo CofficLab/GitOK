@@ -104,7 +104,8 @@ public enum CLIInstaller {
         commandName: String = CLIScriptBuilder.commandName,
         target: CLIInstallTarget? = nil,
         environment: [String: String] = ProcessInfo.processInfo.environment,
-        fileManager: FileManager = .default
+        fileManager: FileManager = .default,
+        language: CLIScriptLanguage = .current
     ) -> CLIInstallOutcome {
         let resolvedTarget: CLIInstallTarget
         if let target {
@@ -151,7 +152,10 @@ public enum CLIInstaller {
         }
 
         let scriptURL = resolvedTarget.scriptURL(for: commandName)
-        let contents = CLIScriptBuilder.scriptContents(commandName: commandName)
+        let contents = CLIScriptBuilder.scriptContents(
+            commandName: commandName,
+            language: language
+        )
         do {
             try contents.write(to: scriptURL, atomically: true, encoding: .utf8)
             try fileManager.setAttributes(

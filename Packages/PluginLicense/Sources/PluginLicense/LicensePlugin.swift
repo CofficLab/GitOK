@@ -22,7 +22,7 @@ public final class LicensePlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.license",
         name: "License",
-        description: "View or create the LICENSE file",
+        description: pluginLocalization.string("View or create the LICENSE file"),
         category: .project,
         stage: .stable,
         policy: .disabled
