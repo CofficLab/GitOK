@@ -94,6 +94,11 @@ struct ProjectSidebarView: View {
     /// 是否具备克隆能力（克隆 Provider 已注册）。
     private var canClone: Bool { clone != nil }
 
+    /// 置顶项目数量（仅在 2 个以上时才展示「取消全部置顶」）。
+    private var pinnedProjectCount: Int {
+        projects.projects.filter(\.isPinned).count
+    }
+
     /// 当前进行中的 re-clone 任务；驱动 `.task(id:)` 启停轮询。
     private var recloneTaskID: UUID? {
         guard case let .running(taskID) = reclone?.state else { return nil }
@@ -341,6 +346,17 @@ struct ProjectSidebarView: View {
                 )
             }
 
+            if pinnedProjectCount > 1 {
+                Button {
+                    unpinAllProjects()
+                } label: {
+                    Label(
+                        pluginLocalization.string("Unpin All"),
+                        systemImage: "pin.slash"
+                    )
+                }
+            }
+
             if canClone {
                 Divider()
 
@@ -407,6 +423,13 @@ struct ProjectSidebarView: View {
 
     private func moveProject(_ draggedID: UUID, before targetID: UUID?) {
         projects.moveProject(id: draggedID, beforeID: targetID)
+    }
+
+    /// 取消全部置顶（保留项目原有相对顺序）。
+    private func unpinAllProjects() {
+        for project in projects.projects where project.isPinned {
+            projects.pinProject(id: project.id, isPinned: false)
+        }
     }
 
     // MARK: - Activity
