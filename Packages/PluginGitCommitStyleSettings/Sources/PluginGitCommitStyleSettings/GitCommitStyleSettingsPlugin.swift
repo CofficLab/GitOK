@@ -2,6 +2,8 @@ import Foundation
 import KernelCore
 import LumiLoggingKit
 import os
+import ProviderCommitForm
+import ProviderStorage
 import ProviderSettingView
 import SwiftUI
 import ProviderDocsView
@@ -44,6 +46,20 @@ public final class GitCommitStyleSettingsPlugin: SuperPlugin, SuperLog {
             Self.logger.error("\(self.t)SettingViewProviding not registered; skip commit style entry")
             return
         }
+
+        // 全局默认风格落在插件数据目录（不再用 UserDefaults）；
+        // 注入目录时会一次性导入旧版 UserDefaults 中的全局风格。
+        // 该值与提交表单共享，因此使用 GlobalCommitStyleStore 约定的目录 id。
+        if let storage = kernel.resolveProvider((any StorageProviding).self) {
+            CommitStyleStore.configure(
+                directory: storage.pluginDataDirectory(
+                    for: GlobalCommitStyleStore.pluginDataDirectoryID
+                )
+            )
+        } else {
+            Self.logger.error("\(self.t)StorageProviding not registered; commit style falls back to in-memory store")
+        }
+
         settings.addEntries([
             SettingEntryItem(
                 id: "commitStyle",

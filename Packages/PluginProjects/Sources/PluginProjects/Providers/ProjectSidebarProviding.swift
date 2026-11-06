@@ -24,18 +24,23 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     private let toast: (any ToastProviding)?
     private let clone: ProjectCloneCapability?
 
+    /// 排序偏好的持久化存储；缺省时由视图退化为纯内存模式。
+    private let sortModeStore: (any ProjectSortModeStoring)?
+
     init(
         projects: any ProjectSidebarCapability,
         remoteCapability: (any GitRemoteCapability)? = nil,
         toast: (any ToastProviding)? = nil,
         clone: ProjectCloneCapability? = nil,
-        activityCapability: (any ProjectActivityCapability)? = nil
+        activityCapability: (any ProjectActivityCapability)? = nil,
+        sortModeStore: (any ProjectSortModeStoring)? = nil
     ) {
         self.projects = projects
         self.remoteCapability = remoteCapability
         self.toast = toast
         self.clone = clone
         self.activityCapability = activityCapability
+        self.sortModeStore = sortModeStore
     }
 
     func registerItems(_ items: [SidebarItem]) {
@@ -52,7 +57,8 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
                 toast: toast,
                 clone: clone,
                 remoteCapability: remoteCapability,
-                activityCapability: activityCapability
+                activityCapability: activityCapability,
+                sortModeStore: sortModeStore
             )
         )
     }

@@ -47,17 +47,19 @@ struct ProjectSidebarView: View {
         clone: ProjectCloneCapability?,
         remoteCapability: (any GitRemoteCapability)?,
         activityCapability: (any ProjectActivityCapability)? = nil,
-        sortModeStore: any ProjectSortModeStoring = UserDefaultsProjectSortModeStore()
+        sortModeStore: (any ProjectSortModeStoring)? = nil
     ) {
         self.projects = projects
         self.toast = toast
         self.clone = clone
         self.remoteCapability = remoteCapability
-        self.sortModeStore = sortModeStore
+        // 未注入存储时退化为纯内存模式（预览 / 测试场景）：排序偏好可读可写，
+        // 只是不落盘。
+        self.sortModeStore = sortModeStore ?? InMemoryProjectSortModeStore()
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _activity = StateObject(wrappedValue: ProjectActivityModel(capability: activityCapability))
         // 恢复上次选择的展示方式；读不到时回落到手动排序。
-        _sortMode = State(initialValue: sortModeStore.loadSortMode() ?? .manual)
+        _sortMode = State(initialValue: self.sortModeStore.loadSortMode() ?? .manual)
     }
 
     // MARK: - Derived State

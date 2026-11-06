@@ -210,8 +210,13 @@ extension ProviderCommitFormTests {
 
     @Test("CoAuthorStore add/remove/update round-trip")
     func coAuthorStoreRoundTrip() {
-        let defaults = UserDefaults(suiteName: "ProviderCommitFormTests-\(UUID().uuidString)")!
-        let store = CoAuthorStore(userDefaults: defaults, userDefaultsKey: "test-key")
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProviderCommitFormTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = CoAuthorStore(
+            legacyDefaults: UserDefaults(suiteName: "ProviderCommitFormTests-\(UUID().uuidString)")!
+        )
+        store.configure(directory: directory)
 
         let a = CoAuthor(name: "Alice", email: "alice@t.com")
         let b = CoAuthor(name: "Bob", email: "bob@t.com")
@@ -237,8 +242,84 @@ extension ProviderCommitFormTests {
 
     @Test("CoAuthorStore empty when no data")
     func coAuthorStoreEmpty() {
-        let defaults = UserDefaults(suiteName: "ProviderCommitFormTests-empty-\(UUID().uuidString)")!
-        let store = CoAuthorStore(userDefaults: defaults, userDefaultsKey: "missing-key")
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProviderCommitFormTests-empty-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = CoAuthorStore(
+            legacyDefaults: UserDefaults(suiteName: "ProviderCommitFormTests-empty-\(UUID().uuidString)")!
+        )
+        store.configure(directory: directory)
         #expect(store.loadCoAuthors().isEmpty)
+    }
+
+    @Test("CoAuthorStore 落盘到插件数据目录下的 co-authors.json")
+    func coAuthorStorePersistsToJSON() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProviderCommitFormTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = CoAuthorStore(
+            legacyDefaults: UserDefaults(suiteName: "ProviderCommitFormTests-\(UUID().uuidString)")!
+        )
+        store.configure(directory: directory)
+
+        store.addCoAuthor(CoAuthor(name: "Alice", email: "alice@t.com"))
+
+        let fileURL = directory.appendingPathComponent("co-authors.json")
+        #expect(FileManager.default.fileExists(atPath: fileURL.path))
+        let data = try? Data(contentsOf: fileURL)
+        let decoded = data.flatMap { try? JSONDecoder().decode([CoAuthor].self, from: $0) }
+        #expect(decoded?.count == 1)
+        #expect(decoded?.first?.email == "alice@t.com")
+    }
+
+    @Test("CoAuthorStore 旧 UserDefaults 值被一次性导入")
+    func coAuthorStoreImportsLegacyUserDefaultsValue() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProviderCommitFormTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "ProviderCommitFormTests-\(UUID().uuidString)")!
+        let legacy = [CoAuthor(name: "Jane", email: "jane@t.com")]
+        defaults.set(try? JSONEncoder().encode(legacy), forKey: CoAuthorStore.legacyDefaultsKey)
+
+        let store = CoAuthorStore(legacyDefaults: defaults)
+        store.configure(directory: directory)
+
+        #expect(store.loadCoAuthors().count == 1)
+        #expect(store.loadCoAuthors().first?.email == "jane@t.com")
+    }
+
+    @Test("CoAuthorStore 导入后移除旧 UserDefaults key")
+    func coAuthorStoreLegacyImportRemovesOldDefaultsKey() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProviderCommitFormTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "ProviderCommitFormTests-\(UUID().uuidString)")!
+        let legacy = [CoAuthor(name: "Jane", email: "jane@t.com")]
+        defaults.set(try? JSONEncoder().encode(legacy), forKey: CoAuthorStore.legacyDefaultsKey)
+
+        let store = CoAuthorStore(legacyDefaults: defaults)
+        store.configure(directory: directory)
+
+        #expect(defaults.object(forKey: CoAuthorStore.legacyDefaultsKey) == nil)
+    }
+
+    @Test("CoAuthorStore 磁盘已有记录时不被旧值覆盖")
+    func coAuthorStoreLegacyImportDoesNotOverwriteExistingDiskValue() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProviderCommitFormTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "ProviderCommitFormTests-\(UUID().uuidString)")!
+
+        let first = CoAuthorStore(legacyDefaults: defaults)
+        first.configure(directory: directory)
+        first.addCoAuthor(CoAuthor(name: "Alice", email: "alice@t.com"))
+
+        let legacy = [CoAuthor(name: "Jane", email: "jane@t.com")]
+        defaults.set(try? JSONEncoder().encode(legacy), forKey: CoAuthorStore.legacyDefaultsKey)
+        let second = CoAuthorStore(legacyDefaults: defaults)
+        second.configure(directory: directory)
+
+        #expect(second.loadCoAuthors().count == 1)
+        #expect(second.loadCoAuthors().first?.email == "alice@t.com")
     }
 }

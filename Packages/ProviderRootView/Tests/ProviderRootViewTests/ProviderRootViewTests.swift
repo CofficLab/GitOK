@@ -122,8 +122,13 @@ struct ProviderRootViewTests {
 
     @Test("Sidebar 宽度支持拖拽结果保存与恢复")
     func sidebarWidthSavesAndRestores() {
-        let defaults = UserDefaults(suiteName: "ProviderRootViewTests-\(UUID().uuidString)")!
-        let store = UserDefaultsSidebarWidthStore(defaults: defaults, key: "sidebar-width")
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProviderRootViewTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = PluginDataSidebarWidthStore(
+            directory: directory,
+            legacyDefaults: UserDefaults(suiteName: "ProviderRootViewTests-\(UUID().uuidString)")!
+        )
         let provider = DefaultRootViewProvider(sidebarWidthStore: store)
 
         #expect(provider.sidebarWidth == .standard)
