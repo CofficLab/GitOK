@@ -24,7 +24,7 @@ import PluginGitCommitStyleSettings
 import PluginGitStash
 import PluginGitConflictResolver
 import PluginFileInfo
-import PluginAboutSettings
+import PluginAbout
 import PluginBanner
 import PluginIcon
 import PluginGitIgnore
@@ -125,7 +125,15 @@ public struct DefaultPluginFactory: PluginFactory {
             FileInfoPlugin(),
             BannerPlugin(),
             IconPlugin(),
-            AboutSettingsPlugin(),
+            // 「关于」入口（共享远程包 LumiPluginAbout，注入 GitOK 品牌配置）。
+            AboutPlugin(
+                id: "com.coffic.gitok.plugin.about",
+                configuration: AboutConfiguration(
+                    officialWebsiteURLString: "https://coffic.cn/gitok",
+                    privacyPolicyURLString: "https://coffic.cn/privacy",
+                    termsOfServiceURLString: "https://coffic.cn/terms"
+                )
+            ),
             GitIgnorePlugin(),
             GitAutoPushPlugin(),
             LicensePlugin(),

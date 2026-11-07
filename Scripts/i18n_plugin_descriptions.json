@@ -1,10 +1,4 @@
 {
-  "PluginAboutSettings": {
-    "App version and information": {
-      "zh-Hans": "应用版本与信息",
-      "zh-Hant": "應用版本與資訊"
-    }
-  },
   "PluginActivityHeatmap": {
     "Provides cached local Git activity data for workspace views": {
       "zh-Hans": "为工作区视图提供缓存的本地 Git 活动数据",
