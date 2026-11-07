@@ -62,7 +62,7 @@ let package = Package(
         .package(path: "../PluginOpenXcode"),
         .package(url: "https://github.com/CofficLab/LumiPluginPluginManager.git", from: "1.7.0"),
         // 共享远程包：Coffic「关于」页（我们的应用 + 官网 / 隐私政策 / 服务条款）。
-        .package(url: "https://github.com/CofficLab/LumiPluginAbout.git", from: "2.0.0"),
+        .package(url: "https://github.com/CofficLab/LumiPluginAbout.git", from: "3.0.0"),
         .package(path: "../PluginProjects"),
         .package(path: "../PluginSettingGeneral"),
         .package(url: "https://github.com/CofficLab/LumiPluginSettingView.git", from: "1.0.3"),
