@@ -3,18 +3,18 @@ import KitGit
 import LumiUI
 import ProviderGit
 import ProviderProjects
-import ProviderStatusBar
 import SwiftUI
 
-/// 合并状态图标：点击弹出分支合并表单（对齐旧版 MergeStatusTile）。
-public struct MergeStatusTile: View {
+/// 工具栏右侧的合并入口按钮：点击弹出分支合并表单（对齐旧版 MergeStatusTile）。
+///
+/// 视觉与工具栏其它按钮一致（`AppIconButton(.regular)` 外壳），图标使用
+/// `arrow.trianglehead.merge`，hover 时由 `AppIconButton` 统一处理。
+public struct MergeToolbarButton: View {
     let projects: any ProjectProviding
     let git: any GitProviding
     let storageDirectory: URL?
     @StateObject private var observation: ProjectObservationModel
     @State private var isPresented = false
-
-    @LumiTheme private var theme: LumiUITheme
 
     public init(
         projects: any ProjectProviding,
@@ -30,17 +30,16 @@ public struct MergeStatusTile: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                AppStatusBarTile(
+                AppIconButton(
                     systemImage: "arrow.trianglehead.merge",
                     tint: theme.info,
-                    iconSize: 11,
-                    hoverScale: LumiMotion.hoverScale,
+                    size: .regular,
                     action: { isPresented.toggle() }
                 )
                 .accessibilityLabel(
                     GitSmartMergeLocalization.string("Merge branches", bundle: .module)
                 )
-                .popover(isPresented: $isPresented) {
+                .popover(isPresented: $isPresented, arrowEdge: .bottom) {
                     MergeForm(
                         projects: projects,
                         git: git,
@@ -53,6 +52,8 @@ public struct MergeStatusTile: View {
         }
         .onReceive(observation.$revision) { _ in }
     }
+
+    @LumiTheme private var theme: LumiUITheme
 }
 
 /// 分支合并表单：选择源/目标分支并执行合并。

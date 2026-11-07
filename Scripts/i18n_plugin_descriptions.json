@@ -138,9 +138,9 @@
     }
   },
   "PluginGitSmartMerge": {
-    "Merge branches from the status bar": {
-      "zh-Hans": "从状态栏合并分支",
-      "zh-Hant": "從狀態列合併分支"
+    "Merge branches from the toolbar": {
+      "zh-Hans": "从工具栏合并分支",
+      "zh-Hant": "從工具列合併分支"
     }
   },
   "PluginGitStash": {
