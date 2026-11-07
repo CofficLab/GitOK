@@ -1,11 +1,14 @@
 import LumiUI
 import ProviderAutoPush
 import ProviderProjects
-import ProviderStatusBar
 import SwiftUI
 
-/// 自动推送状态图标：绿=启用，灰=关闭；点击弹配置（对齐旧版 AutoPushStatusIcon）。
-public struct AutoPushStatusIcon: View {
+/// 工具栏右侧的自动推送开关按钮：填充=启用，空心=关闭；点击弹配置
+/// （对齐旧版 AutoPushStatusIcon）。
+///
+/// 视觉与工具栏其它按钮一致（`AppIconButton(.regular)` 外壳），启用态用
+/// `theme.success` 着色，关闭态用 `theme.textTertiary`。
+public struct AutoPushToolbarButton: View {
     let projects: any ProjectProviding
     let autoPush: any AutoPushProviding
     @StateObject private var observation: ProjectObservationModel
@@ -25,9 +28,10 @@ public struct AutoPushStatusIcon: View {
     public var body: some View {
         Group {
             if projects.currentProject != nil {
-                AppStatusBarTile(
+                AppIconButton(
                     systemImage: isEnabled ? "arrow.up.circle.fill" : "arrow.up.circle",
                     tint: isEnabled ? theme.success : theme.textTertiary,
+                    size: .regular,
                     action: {
                         isSheetPresented.toggle()
                     }
