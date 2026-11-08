@@ -28,7 +28,7 @@ public final class SettingsButtonPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.settings-button",
         name: "Settings Button",
-        description: "Toolbar entry that opens the settings window",
+        description: pluginLocalization.string("Toolbar entry that opens the settings window"),
         category: .system,
         stage: .stable,
         policy: .required

@@ -3,28 +3,29 @@ import KernelCore
 import KitGit
 import ProviderGit
 import ProviderProjects
-import ProviderStatusBar
+import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
 
 /// Reusable test doubles for plugin lifecycle suites.
 ///
-/// Several GitOK plugins share the same `onBoot` shape: resolve a status bar,
+/// Several GitOK plugins share the same `onBoot` shape: resolve a toolbar,
 /// a project store, a Git backend and a scene provider, then register one
-/// status bar item. These doubles cover that shared surface so each plugin
+/// toolbar item. These doubles cover that shared surface so each plugin
 /// suite only has to describe its own expectations.
 enum GitSmartMergeDoubles {
 
-    /// Records the status bar items a plugin registers.
+    /// Records the toolbar items a plugin registers.
     @MainActor
-    final class StatusBar: StatusBarProviding, ObservableObject {
-        var statusBarItems: [StatusBarItem] = []
+    final class Toolbar: ToolbarProviding {
+        // `SwiftUI` 也有 `ToolbarItem`，此处需显式限定到 ProviderToolbar。
+        var toolbarItems: [ProviderToolbar.ToolbarItem] = []
 
-        func registerStatusBarItems(_ items: [StatusBarItem]) {
-            statusBarItems = items
+        func registerToolbarItems(_ items: [ProviderToolbar.ToolbarItem]) {
+            toolbarItems = items
         }
 
-        func makeStatusBarView() -> AnyView { AnyView(EmptyView()) }
+        func makeToolbarView() -> AnyView { AnyView(EmptyView()) }
     }
 
     /// Dispatches scene changes on demand so visibility wiring can be asserted.

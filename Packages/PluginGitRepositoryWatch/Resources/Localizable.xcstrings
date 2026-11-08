@@ -680,6 +680,40 @@
           }
         }
       }
+    },
+    "Watch .git directory changes and broadcast per-dimension events": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "监视 .git 目录变化并按维度广播事件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "監視 .git 目錄變化並按維度廣播事件"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Watch .git directory changes and broadcast per-dimension events"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "監視 .git 目錄變化並按維度廣播事件"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "監視 .git 目錄變化並按維度廣播事件"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

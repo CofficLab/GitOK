@@ -14,9 +14,9 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.13.0"),
+        .package(path: "../KitGitOKLocalization"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0"),
         .package(path: "../KitGit"),
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderCoAuthor"),
     ],
@@ -24,8 +24,8 @@ let package = Package(
         .target(
             name: "ProviderCommitForm",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "KitGit", package: "KitGit"),
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderCoAuthor", package: "ProviderCoAuthor"),
                 .product(name: "ProviderStorage", package: "LumiProviders"),

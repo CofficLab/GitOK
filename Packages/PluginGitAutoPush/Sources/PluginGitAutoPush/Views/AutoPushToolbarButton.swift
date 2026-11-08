@@ -1,0 +1,139 @@
+import LumiUI
+import ProviderAutoPush
+import ProviderProjects
+import SwiftUI
+
+/// 工具栏右侧的自动推送开关按钮：填充=启用，空心=关闭；点击弹配置
+/// （对齐旧版 AutoPushStatusIcon）。
+///
+/// 视觉与工具栏其它按钮一致（`AppIconButton(.regular)` 外壳），启用态用
+/// `theme.success` 着色，关闭态用 `theme.textTertiary`。
+public struct AutoPushToolbarButton: View {
+    let projects: any ProjectProviding
+    let autoPush: any AutoPushProviding
+    @StateObject private var observation: ProjectObservationModel
+    @State private var isSheetPresented = false
+
+    public init(projects: any ProjectProviding, autoPush: any AutoPushProviding) {
+        self.projects = projects
+        self.autoPush = autoPush
+        _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
+    }
+
+    private var isEnabled: Bool {
+        guard let project = projects.currentProject else { return false }
+        return autoPush.isEnabled(for: project.url)
+    }
+
+    public var body: some View {
+        Group {
+            if projects.currentProject != nil {
+                AppIconButton(
+                    systemImage: isEnabled ? "arrow.up.circle.fill" : "arrow.up.circle",
+                    tint: isEnabled ? theme.success : theme.textTertiary,
+                    size: .regular,
+                    action: {
+                        isSheetPresented.toggle()
+                    }
+                )
+                    .help(isEnabled
+                        ? pluginLocalization.string("Auto-push is enabled - Click to manage")
+                        : pluginLocalization.string("Auto-push is disabled - Click to configure"))
+                    .sheet(isPresented: $isSheetPresented) {
+                        AutoPushConfigView(projects: projects, autoPush: autoPush)
+                            .frame(minWidth: 460, minHeight: 260)
+                    }
+            }
+        }
+        .onReceive(observation.$revision) { _ in }
+        .onReceive(observation.$lastEvent) { event in
+            if case .dataChanged = event {
+                isSheetPresented = false
+            }
+        }
+    }
+
+    @LumiTheme private var theme: LumiUITheme
+}
+
+/// 自动推送配置视图：当前项目/分支开关。
+public struct AutoPushConfigView: View {
+    let projects: any ProjectProviding
+    let autoPush: any AutoPushProviding
+    @Environment(\.dismiss) private var dismiss
+    @State private var isEnabled = false
+
+    public init(projects: any ProjectProviding, autoPush: any AutoPushProviding) {
+        self.projects = projects
+        self.autoPush = autoPush
+    }
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(pluginLocalization.string("Auto Push"))
+                .font(.headline)
+
+            if let project = projects.currentProject {
+                AppSettingRow(
+                    title: pluginLocalization.string("Auto-push after commit"),
+                    description: project.title,
+                    icon: "arrow.up.circle"
+                ) {
+                    Toggle("", isOn: $isEnabled)
+                        .labelsHidden()
+                }
+                Text(pluginLocalization.string("When enabled, GitOK pushes the current branch after every successful commit."))
+                    .font(.caption)
+                    .foregroundStyle(theme.textSecondary)
+            } else {
+                Text(pluginLocalization.string("Please select a project first"))
+                    .font(.system(size: 13))
+                    .foregroundStyle(theme.textSecondary)
+            }
+
+            HStack {
+                Spacer()
+                AppButton(pluginLocalization.string("Cancel"), style: .secondary, size: .small) {
+                    dismiss()
+                }
+                AppButton(
+                    pluginLocalization.string("Save"),
+                    systemImage: "square.and.arrow.down",
+                    style: .primary,
+                    size: .small
+                ) {
+                    if let project = projects.currentProject {
+                        autoPush.setEnabled(isEnabled, for: project.url)
+                    }
+                    dismiss()
+                }
+            }
+        }
+        .padding(20)
+        .frame(width: 460)
+        .onAppear {
+            if let project = projects.currentProject {
+                isEnabled = autoPush.isEnabled(for: project.url)
+            }
+        }
+    }
+
+    @LumiTheme private var theme: LumiUITheme
+}
+
+/// 项目观察模型：订阅 `ProjectProviding` 事件。
+@MainActor
+final class ProjectObservationModel: ObservableObject {
+    @Published private(set) var revision = 0
+    @Published private(set) var lastEvent: ProjectProvidingEvent?
+    private var handle: (any ProjectProvidingObserverHandle)?
+
+    init(projects: any ProjectProviding) {
+        handle = projects.addObserver { [weak self] event in
+            // 自动推送状态只依赖仓库数据；会话级选择（commit / 文件）不改变 .git。
+            guard event.isRepositoryScoped else { return }
+            self?.lastEvent = event
+            self?.revision += 1
+        }
+    }
+}

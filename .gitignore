@@ -20,6 +20,8 @@ Packages/LibGit2Swift/build_result.txt
 Backup/
 
 # Swift Package Manager local artifacts
+.build/
+.swiftpm/
 Packages/*/.build/
 Packages/*/.swiftpm/
 Packages/*/Package.resolved

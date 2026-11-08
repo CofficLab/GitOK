@@ -242,6 +242,40 @@
         }
       }
     },
+    "Configure git proxy and SSL settings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configure git proxy and SSL settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置 git 代理与 SSL 设置"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定 git 代理與 SSL 設定"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定 git 代理與 SSL 設定"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定 git 代理與 SSL 設定"
+          }
+        }
+      }
+    },
     "Configure proxy, SSL, and timeout values." : {
       "localizations" : {
         "en" : {

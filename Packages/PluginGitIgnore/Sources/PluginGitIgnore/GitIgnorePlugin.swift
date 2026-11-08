@@ -23,7 +23,7 @@ public final class GitIgnorePlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-ignore",
         name: "Git Ignore",
-        description: "View the .gitignore file from the status bar",
+        description: pluginLocalization.string("View the .gitignore file from the status bar"),
         category: .project,
         stage: .stable,
         policy: .disabled

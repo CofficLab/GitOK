@@ -1,7 +1,7 @@
 import Foundation
 import KernelCore
 import KitGit
-import LumiLocalizationKit
+import KitGitOKLocalization
 import LumiLoggingKit
 import LumiUI
 import os
@@ -15,7 +15,7 @@ import ProviderToast
 import SwiftUI
 
 private func cloneLocalized(_ key: String) -> String {
-    LumiLocalization.string(key, bundle: .module)
+    GitOKLocalization.string(key, bundle: .module)
 }
 
 @MainActor
@@ -30,7 +30,7 @@ public final class CloneRepositoryPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.clone-repository",
         name: "Clone Repository",
-        description: "Runs clone jobs in the background and keeps their progress available",
+        description: pluginLocalization.string("Runs clone jobs in the background and keeps their progress available"),
         category: .project,
         stage: .stable,
         policy: .required

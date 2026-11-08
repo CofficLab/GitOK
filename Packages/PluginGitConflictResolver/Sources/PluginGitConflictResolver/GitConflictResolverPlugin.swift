@@ -27,7 +27,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-conflict-resolver",
         name: "Conflict Resolver",
-        description: "Show and list merge conflicts from the status bar",
+        description: pluginLocalization.string("Show and list merge conflicts from the status bar"),
         category: .project,
         stage: .stable,
         policy: .alwaysOn

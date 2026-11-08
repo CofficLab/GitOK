@@ -11,7 +11,7 @@ public final class GitLibGit2Plugin: SuperPlugin {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-libgit2",
         name: "LibGit2 Backend",
-        description: "Provides Git operations through LibGit2Swift.",
+        description: pluginLocalization.string("Provides Git operations through LibGit2Swift."),
         category: .core,
         stage: .stable,
         policy: .required

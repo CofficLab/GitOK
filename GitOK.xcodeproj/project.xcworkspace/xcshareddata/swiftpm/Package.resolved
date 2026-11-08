@@ -1,5 +1,5 @@
 {
-  "originHash" : "71d8b7bbd26dbfacce9b3ffc4801de3e8720791323c8961d0737b4e57a60e053",
+  "originHash" : "b34921436e3f5e4576c44bb3af5d652482e54b96a90a59d729361d1fa01b8adb",
   "pins" : [
     {
       "identity" : "libgit2swift",
@@ -37,6 +37,15 @@
       }
     },
     {
+      "identity" : "lumipluginabout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiPluginAbout.git",
+      "state" : {
+        "revision" : "419abd51827febdc97689742aa573f4850fa2ae6",
+        "version" : "3.0.1"
+      }
+    },
+    {
       "identity" : "lumiplugincommand",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginCommand.git",
@@ -50,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginPluginManager.git",
       "state" : {
-        "revision" : "7ba4cd3d0b6ed6ed841f79cfbd8bdf1baae6f85e",
-        "version" : "1.3.0"
+        "revision" : "7c0fb64e524ef3423efd422d98ea8a5425f623eb",
+        "version" : "1.7.0"
       }
     },
     {
@@ -86,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginToast.git",
       "state" : {
-        "revision" : "923f9a84262958b3cc1fde33bfb0bd53cc38b401",
-        "version" : "1.2.2"
+        "revision" : "b2f06c5d519f4ab5772e7b01152d4aca78f8968c",
+        "version" : "1.2.3"
       }
     },
     {
@@ -95,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiProviders.git",
       "state" : {
-        "revision" : "52c05931d1d455670075437853786137250d6dcc",
-        "version" : "1.13.0"
+        "revision" : "822c4c7fd75ee8af46f483515bc34ad54968f683",
+        "version" : "1.21.0"
       }
     },
     {
@@ -122,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiUI.git",
       "state" : {
-        "revision" : "cafd284e4cb9b026c32f9a09dc9b8baa3c039c46",
-        "version" : "1.11.1"
+        "revision" : "6786ab3b708f4ffe5b8412b95ac4d932936364b7",
+        "version" : "1.12.0"
       }
     },
     {

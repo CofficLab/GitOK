@@ -748,6 +748,40 @@
           }
         }
       }
+    },
+    "Notify via toast when the selected commit changes": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所选提交变化时通过轻提示通知"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所選提交變化時透過輕提示通知"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notify via toast when the selected commit changes"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所選提交變化時透過輕提示通知"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所選提交變化時透過輕提示通知"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

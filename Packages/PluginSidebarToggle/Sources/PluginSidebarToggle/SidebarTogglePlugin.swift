@@ -29,7 +29,7 @@ public final class SidebarTogglePlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.sidebar-toggle",
         name: "Sidebar Toggle",
-        description: "Toolbar button that toggles the left sidebar visibility",
+        description: pluginLocalization.string("Toolbar button that toggles the left sidebar visibility"),
         category: .system,
         stage: .stable,
         policy: .required

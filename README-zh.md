@@ -18,6 +18,29 @@ GitOK 是一个综合性的项目管理工具。
 
 <https://github.com/CofficLab/GitOK/releases>
 
+## 命令行
+
+在 GitOK 中打开当前目录 —— 该目录会被加入项目列表并成为当前项目：
+
+```sh
+gitok .
+```
+
+`gitok <路径>` 可以打开任意目录。GitOK 注册了 `gitok://` URL scheme，
+CLI 脚本只需把路径交给 Launch Services 即可。
+
+### 安装
+
+打开 **设置 → 通用 → 命令行工具**，点击「安装」。GitOK 会把 `gitok` 命令
+写入一个**已经在你 PATH 中**的目录（因此不需要管理员密码），并显示安装位置。
+点击「卸载」即可移除。
+
+设置 `GITOK_APP` 可以指定打开哪一个构建版本（例如调试版与正式版同时运行时）：
+
+```sh
+GITOK_APP=/path/to/GitOK.app gitok .
+```
+
 ## Why
 
 有很多方式来保证工作流程简洁、高效、规范，比如：

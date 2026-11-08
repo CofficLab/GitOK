@@ -9,6 +9,7 @@ let package = Package(
         .library(name: "PluginProjectLanguages", targets: ["PluginProjectLanguages"]),
     ],
     dependencies: [
+        .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
@@ -25,6 +26,7 @@ let package = Package(
         .target(
             name: "PluginProjectLanguages",
             dependencies: [
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
@@ -34,7 +36,10 @@ let package = Package(
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "LibGit2Swift", package: "libgit2swift"),
             ],
-            path: "Sources/PluginProjectLanguages"
+            path: "Sources/PluginProjectLanguages",
+            resources: [
+                .process("../../Resources/Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "PluginProjectLanguagesTests",

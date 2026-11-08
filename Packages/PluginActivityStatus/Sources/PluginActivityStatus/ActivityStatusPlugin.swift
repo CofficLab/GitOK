@@ -25,7 +25,7 @@ public final class ActivityStatusPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.activity-status",
         name: "Activity Status",
-        description: "Show current long-running activity (commit/push) in the status bar",
+        description: pluginLocalization.string("Show current long-running activity (commit/push) in the status bar"),
         category: .project,
         stage: .stable,
         policy: .disabled

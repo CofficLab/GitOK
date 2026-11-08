@@ -21,8 +21,8 @@ struct ConflictResolverOverlayHost: View {
 
             if viewModel.isPresented {
                 Color.black
-                    // Keep the workspace readable while still establishing modal focus.
-                    .opacity(0.12)
+                    // Dark UIs need a deep dim to establish modal focus.
+                    .opacity(0.4)
                     .ignoresSafeArea()
                     .transition(.opacity)
 
@@ -35,16 +35,18 @@ struct ConflictResolverOverlayHost: View {
                 .frame(width: 680, height: 560)
                 // A modal needs a stable surface. Using regularMaterial here made
                 // the dialog inherit the dimmed workspace and appear gray.
+                // elevatedSurface keeps the panel visibly above the window
+                // background (surface), which plain .panel cannot.
                 .appSurface(
-                    style: .panel,
+                    style: .custom(theme.elevatedSurface),
                     cornerRadius: 12,
-                    borderColor: theme.textTertiary.opacity(0.12)
+                    borderColor: theme.textSecondary.opacity(0.3)
                 )
                 .appClipRounded(12)
                 .shadow(
-                    color: Color.black.opacity(0.14),
-                    radius: 20,
-                    y: 8
+                    color: Color.black.opacity(0.5),
+                    radius: 32,
+                    y: 12
                 )
                 .transition(.scale(scale: 0.96).combined(with: .opacity))
                 .zIndex(1)

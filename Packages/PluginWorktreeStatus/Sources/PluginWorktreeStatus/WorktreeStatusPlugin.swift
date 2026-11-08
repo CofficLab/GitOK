@@ -34,7 +34,7 @@ public final class WorktreeStatusPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.worktree-status",
         name: "Worktree Status",
-        description: "Rail section showing the working tree status of the current project",
+        description: pluginLocalization.string("Rail section showing the working tree status of the current project"),
         category: .project,
         stage: .stable,
         policy: .required

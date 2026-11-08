@@ -24,7 +24,7 @@ import PluginGitCommitStyleSettings
 import PluginGitStash
 import PluginGitConflictResolver
 import PluginFileInfo
-import PluginAboutSettings
+import PluginAbout
 import PluginBanner
 import PluginIcon
 import PluginGitIgnore
@@ -125,7 +125,15 @@ public struct DefaultPluginFactory: PluginFactory {
             FileInfoPlugin(),
             BannerPlugin(),
             IconPlugin(),
-            AboutSettingsPlugin(),
+            // 「关于」入口（共享远程包 LumiPluginAbout，注入 GitOK 品牌配置）。
+            AboutPlugin(
+                id: "com.coffic.gitok.plugin.about",
+                configuration: AboutConfiguration(
+                    officialWebsiteURLString: "https://coffic.cn/gitok",
+                    privacyPolicyURLString: "https://coffic.cn/privacy",
+                    termsOfServiceURLString: "https://coffic.cn/terms"
+                )
+            ),
             GitIgnorePlugin(),
             GitAutoPushPlugin(),
             LicensePlugin(),
@@ -169,7 +177,10 @@ public struct DefaultPluginFactory: PluginFactory {
                 ]
             ),
             SettingGeneralPlugin(),
-            PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager"),
+            // GitOK 的插件策略全是 required / alwaysOn / disabled，没有用户可配置的
+            // 插件；按默认策略入口会被隐藏。这里显式保留入口，设置页 UI 测试也
+            // 依赖它存在。
+            PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager", entryVisibility: .always),
         ]
     }
 }

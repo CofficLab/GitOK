@@ -7,15 +7,15 @@ import ProviderAutoPush
 import ProviderCommitForm
 import ProviderGit
 import ProviderProjects
-import ProviderStatusBar
 import ProviderStorage
+import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
 import ProviderDocsView
 
 // MARK: - Git Auto Push SuperPlugin
 
-/// 自动推送插件：状态栏图标显示开关状态，点击配置；提交成功后自动推送
+/// 自动推送插件：工具栏右侧图标显示开关状态，点击配置；提交成功后自动推送
 /// （对齐旧版 PluginGitAutoPush）。
 @MainActor
 public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
@@ -28,13 +28,14 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-auto-push",
         name: "Auto Push",
-        description: "Automatically push after each commit",
+        description: pluginLocalization.string("Automatically push after each commit"),
         category: .project,
         stage: .stable,
         policy: .alwaysOn
     )
 
-    static let itemID = "com.coffic.gitok.plugin.git-auto-push.id"
+    /// 工具栏项 id（onShutdown 时按 id 撤回）。
+    public static let toolbarItemID = "com.coffic.gitok.plugin.git-auto-push.toolbar"
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: GitAutoPushSceneObserver?
@@ -52,8 +53,8 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
-            Self.logger.error("\(self.t)StatusBarProviding not registered; skip auto push item")
+        guard let toolbar = kernel.resolveProvider((any ToolbarProviding).self) else {
+            Self.logger.error("\(self.t)ToolbarProviding not registered; skip auto push item")
             return
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
@@ -92,29 +93,34 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
             }
         }
 
-        statusBar.addStatusBarItems([
-            StatusBarItem(
-                id: Self.itemID,
+        // 工具栏右侧：自动推送开关入口（排在 OpenIn 按钮之前、设置齿轮之后）。
+        toolbar.addToolbarItems([
+            ToolbarItem(
+                id: Self.toolbarItemID,
                 title: pluginLocalization.string("Auto Push"),
-                placement: .leading,
-                order: 21
+                placement: .trailing,
+                category: .project,
+                order: 130
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    AutoPushStatusIcon(
+                    AutoPushToolbarButton(
                         projects: projects,
                         autoPush: autoPushProvider
                     )
                 }
             },
         ])
+        if Self.verbose {
+            Self.logger.debug("\(self.t)injected auto push button into toolbar")
+        }
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
-        kernel.resolveProvider((any StatusBarProviding).self)?
-            .removeStatusBarItems(ids: [Self.itemID])
+        kernel.resolveProvider((any ToolbarProviding).self)?
+            .removeToolbarItems(ids: [Self.toolbarItemID])
     }
 
     private nonisolated static func autoPush(projectURL: URL, git: any GitProviding) {

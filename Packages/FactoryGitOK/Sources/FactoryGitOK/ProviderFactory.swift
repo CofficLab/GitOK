@@ -116,7 +116,16 @@ public struct DefaultProviderFactory: ProviderFactory {
 
         let statusBar = makeStatusBarProvider()
         try kernel.registerProvider((any StatusBarProviding).self, statusBar)
-        try kernel.registerProvider((any RootViewProviding).self, makeRootViewProvider())
+
+        // 根视图的 sidebar 宽度偏好改由磁盘承载（不再用 UserDefaults）：
+        // 与主题选择器一致，宿主在装配阶段注入插件数据目录。
+        let rootView = makeRootViewProvider()
+        if let defaultRootView = rootView as? DefaultRootViewProvider {
+            defaultRootView.setStorageDirectory(
+                storage.pluginDataDirectory(for: "com.coffic.gitok.plugin.root-view")
+            )
+        }
+        try kernel.registerProvider((any RootViewProviding).self, rootView)
         try kernel.registerProvider((any SettingViewProviding).self, makeSettingViewProvider())
 
         #if os(macOS)

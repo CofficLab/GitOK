@@ -43,11 +43,14 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
     private var railVisibilitySubscription: AnyCancellable?
     private var railWidthSubscription: AnyCancellable?
     private var railWidthResizeHandler: (@MainActor (CGFloat) -> Void)?
-    private let sidebarWidthStore: (any SidebarWidthStoring)?
+    private var sidebarWidthStore: (any SidebarWidthStoring)?
     private var activeContentFooterHeightStore: (any ContentFooterHeightStoring)?
     private var activeContentFooterHeightOwnerID: String?
     private var lastRailViewVisibility = true
-    public init(sidebarWidthStore: (any SidebarWidthStoring)? = UserDefaultsSidebarWidthStore()) {
+    /// - Parameter sidebarWidthStore: sidebar 宽度偏好的持久化存储。
+    ///   传 `nil` 时退化为纯内存模式（预览 / 测试场景）：宽度可读可写，只是不落盘。
+    ///   生产环境由宿主注入插件数据目录对应的磁盘实现。
+    public init(sidebarWidthStore: (any SidebarWidthStoring)? = nil) {
         self.sidebarWidthStore = sidebarWidthStore
         let restoredWidth = sidebarWidthStore?.loadWidth() ?? SidebarWidth.standard.idealWidth
         self.sidebarWidth = SidebarWidth.standard.withIdealWidth(
@@ -161,6 +164,23 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
         let resolvedWidth = sidebarWidth.clamped(width)
         sidebarWidthStore?.saveWidth(resolvedWidth)
         let updatedWidth = sidebarWidth.withIdealWidth(resolvedWidth)
+        if sidebarWidth != updatedWidth {
+            sidebarWidth = updatedWidth
+        }
+    }
+
+    /// 注入 sidebar 宽度的持久化目录。
+    ///
+    /// 由宿主在装配阶段调用（对齐 `DefaultThemeProviding.setStorageDirectory`
+    /// 的做法）：宽度偏好改由插件数据目录下的 `settings.plist` 承载，
+    /// 不再依赖 `UserDefaults`。
+    ///
+    /// - Parameter directory: 插件数据目录；不存在会自动创建。
+    public func setStorageDirectory(_ directory: URL) {
+        let store = PluginDataSidebarWidthStore(directory: directory)
+        sidebarWidthStore = store
+        let restoredWidth = store.loadWidth() ?? sidebarWidth.idealWidth
+        let updatedWidth = sidebarWidth.withIdealWidth(sidebarWidth.clamped(restoredWidth))
         if sidebarWidth != updatedWidth {
             sidebarWidth = updatedWidth
         }
