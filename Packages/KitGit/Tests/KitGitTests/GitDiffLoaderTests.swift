@@ -310,6 +310,12 @@ final class GitDiffLoaderTests: XCTestCase {
         XCTAssertTrue(untrackedDiff.contains("new file mode"), "untracked 文件应以新增展示")
         XCTAssertTrue(untrackedDiff.contains("untracked.json"))
 
+        // 非 ASCII 路径：状态列表必须保留原始路径，才能命中未跟踪分支。
+        try Data("内容\n".utf8).write(to: repo.appendingPathComponent("中文.txt"))
+        let nonASCIIPathDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "中文.txt", in: repo)
+        XCTAssertTrue(nonASCIIPathDiff.contains("new file mode"), "非 ASCII 文件应以新增展示")
+        XCTAssertTrue(nonASCIIPathDiff.contains("+内容"))
+
         // 未跟踪目录：git 无法生成文本 diff → 返回空串。
         try FileManager.default.createDirectory(
             at: repo.appendingPathComponent("newdir"),
