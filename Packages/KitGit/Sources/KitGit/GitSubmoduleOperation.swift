@@ -24,15 +24,21 @@ public enum GitSubmoduleOperation {
         var result: [GitSubmoduleSummary] = []
         for line in out.split(separator: "\n") {
             guard cancellation?.isCancelled != true else { return [] }
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            guard trimmed.count > 42 else { continue }
-            // 格式: <status> <sha> <path> (rev)
-            let sha = String(trimmed.prefix(40))
-            let rest = trimmed.dropFirst(42)
-            let path = rest
-                .split(separator: " ", maxSplits: 1, omittingEmptySubsequences: true)
-                .first
-                .map(String.init) ?? ""
+            // 格式: <status><sha> <path> (rev)
+            // 状态字符可能是空格 / '+' / '-' / 'U'，不能先 trim，否则固定偏移
+            // 会把路径首字符一起吃掉。先去掉 1 个状态字符，再按 SHA 长度切分。
+            let rest = line.dropFirst()
+            guard rest.count >= 41 else { continue }
+            let sha = String(rest.prefix(40))
+            let afterSHA = rest.dropFirst(40)
+            guard afterSHA.first == " " else { continue }
+            var pathAndDescription = afterSHA.dropFirst()
+            // 末尾可选描述形如 " (heads/main)"；从后往前截断，保留路径内的空格。
+            if let descriptionStart = pathAndDescription.range(of: " (", options: .backwards) {
+                pathAndDescription = pathAndDescription[..<descriptionStart.lowerBound]
+            }
+            let path = String(pathAndDescription)
+            guard !path.isEmpty else { continue }
             result.append(GitSubmoduleSummary(
                 path: path,
                 commit: sha,
@@ -64,15 +70,21 @@ public enum GitSubmoduleOperation {
             guard cancellation?.isCancelled != true else { return "" }
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.hasPrefix("[submodule") {
-                // 提取 path = "xxx"
-                if let range = trimmed.range(of: #"path\s*=\s*"([^"]+)""#, options: .regularExpression) {
-                    let capture = trimmed[range]
-                    currentPath = capture
-                        .replacingOccurrences(of: #"path\s*=\s*""#, with: "", options: .regularExpression)
-                        .replacingOccurrences(of: "\"", with: "")
-                }
-            } else if currentPath == path, trimmed.hasPrefix("url = ") {
-                url = String(trimmed.dropFirst(6))
+                currentPath = nil
+                continue
+            }
+            guard let separator = trimmed.firstIndex(of: "=") else { continue }
+            let key = trimmed[..<separator].trimmingCharacters(in: .whitespaces)
+            var value = trimmed[trimmed.index(after: separator)...]
+                .trimmingCharacters(in: .whitespaces)
+            // git config 仅对含特殊字符的值加引号；普通路径/URL 是裸值。
+            if value.count >= 2, value.hasPrefix("\""), value.hasSuffix("\"") {
+                value = String(value.dropFirst().dropLast())
+            }
+            if key == "path" {
+                currentPath = value
+            } else if key == "url", currentPath == path {
+                url = value
                 break
             }
         }
