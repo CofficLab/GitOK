@@ -97,6 +97,24 @@ final class GitMergeOperationTests: XCTestCase {
         XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
     }
 
+    func testCheckoutMergeFileVersionBaseReplacesConflictedFileAndStagesIt() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try createConflict(in: repo)
+
+        XCTAssertThrowsError(
+            try GitMergeOperation.mergeBranches(repository: repo, sourceBranch: "feature", targetBranch: "dev")
+        )
+
+        // “Use Base” 必须覆盖工作区里已存在的冲突文件，而不是因文件存在而失败。
+        try GitMergeOperation.checkoutMergeFileVersion(path: "shared.txt", version: .base, in: repo)
+        XCTAssertEqual(
+            try String(contentsOf: repo.appendingPathComponent("shared.txt"), encoding: .utf8),
+            "base\n"
+        )
+        XCTAssertTrue(GitMergeOperation.conflictFiles(in: repo).isEmpty)
+    }
+
     func testAbortMergeRestoresPreMergeWorktree() throws {
         let repo = try makeRepo()
         defer { try? FileManager.default.removeItem(at: repo) }
