@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "A new local commit is created." : {
       "localizations" : {
         "en" : {

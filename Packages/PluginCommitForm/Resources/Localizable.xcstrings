@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%lld" : {
+      "comment" : "Runtime-assembled format string: referenced through format APIs rather than a literal call site; keep in sync with code.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -852,7 +853,6 @@
       }
     },
     "Email" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1159,7 +1159,6 @@
       }
     },
     "Name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

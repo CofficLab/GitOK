@@ -2,6 +2,7 @@
   "sourceLanguage": "en",
   "strings": {
     "%lld%%": {
+      "comment" : "Runtime-assembled format string: referenced through format APIs rather than a literal call site; keep in sync with code.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -104,7 +105,6 @@
       }
     },
     "Add an existing Git repository, or clone a new one to get started.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {

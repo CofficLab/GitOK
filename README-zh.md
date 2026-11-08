@@ -60,6 +60,12 @@ GITOK_APP=/path/to/GitOK.app gitok .
 - 辅助人类提交良好格式的 `commit message`
 - 快速生成 APP 的多个平台的图标
 
+## 本地化
+
+界面文案存放在各 package 的 String Catalog：`Packages/<Package>/Resources/Localizable.xcstrings`，需覆盖 `en`、`zh-Hans`、`zh-Hant`、`zh-HK`、`zh-TW` 五种语言。调用时使用 `pluginLocalization.string(...)`（应用 target 使用 `GitOKAppLocalization`），不要直接写裸 `Text("...")` 字面量。
+
+本地运行 `python3 Scripts/check_localization.py` 校验；`Localization` GitHub workflow 会在每个 PR 以及推送到 `dev` / `pre` / `main` 时自动执行。检查项包括 catalog JSON、五语言完整性、stale/孤儿 key、运行时格式串标注与裸 UI 字面量。详见 [.agent/rules/plugin-i18n-rules.md](.agent/rules/plugin-i18n-rules.md)。
+
 ## Our Other Projects
 
 * [Cisum](https://github.com/CofficLab/Cisum_SwiftUI) - Apple 平台音频播放器

@@ -63,6 +63,12 @@ We need a tool to improve our work efficiency, and we'd like it to have the foll
 - Assisting users in writing well-formatted `commit messages`
 - Quickly generating app icons for multiple platforms
 
+## Localization
+
+UI strings live in per-package String Catalogs at `Packages/<Package>/Resources/Localizable.xcstrings`, with `en`, `zh-Hans`, `zh-Hant`, `zh-HK`, and `zh-TW` translations. Resolve them through `pluginLocalization.string(...)` (or `GitOKAppLocalization` in the app), never through bare `Text("...")` literals.
+
+Run `python3 Scripts/check_localization.py` locally. The `Localization` GitHub workflow runs it on every pull request and on pushes to `dev` / `pre` / `main`. It validates catalog JSON, the five-language coverage, stale/orphan keys, runtime-assembled format strings, and bare UI literals. See [.agent/rules/plugin-i18n-rules.md](.agent/rules/plugin-i18n-rules.md) for details.
+
 ## Our Other Projects
 
 * [Cisum](https://github.com/CofficLab/Cisum_SwiftUI) - A player for Apple platform
