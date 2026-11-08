@@ -26,6 +26,7 @@ struct ConflictResolverPluginLifecycleTests {
         let kernel: KernelCoreContainer
         let statusBar: TestStatusBarProviding
         let projects: TestProjectsProviding
+        let git: TestGitProviding
         let scene: TestSceneProviding
         let rootView: DefaultRootViewProvider
         let docs: DefaultDocsViewProviding
@@ -42,6 +43,7 @@ struct ConflictResolverPluginLifecycleTests {
         let kernel = KernelCoreContainer()
         let statusBar = TestStatusBarProviding()
         let projects = TestProjectsProviding()
+        let git = TestGitProviding()
         let scene = TestSceneProviding()
         let rootView = DefaultRootViewProvider()
         let docs = DefaultDocsViewProviding()
@@ -52,7 +54,7 @@ struct ConflictResolverPluginLifecycleTests {
             try kernel.registerProvider((any ProjectProviding).self, projects)
         }
         if withGit {
-            try kernel.registerProvider((any GitProviding).self, TestGitProviding())
+            try kernel.registerProvider((any GitProviding).self, git)
         }
         if withScene {
             try kernel.registerProvider((any WorkspaceSceneProviding).self, scene)
@@ -67,6 +69,7 @@ struct ConflictResolverPluginLifecycleTests {
             kernel: kernel,
             statusBar: statusBar,
             projects: projects,
+            git: git,
             scene: scene,
             rootView: rootView,
             docs: docs
@@ -74,6 +77,16 @@ struct ConflictResolverPluginLifecycleTests {
     }
 
     // MARK: - 守卫链
+
+    /// 等待状态栏贡献完成异步刷新。
+    private func waitUntil(
+        _ condition: @escaping @MainActor () -> Bool
+    ) async {
+        let deadline = Date().addingTimeInterval(5)
+        while Date() < deadline, !condition() {
+            await Task.yield()
+        }
+    }
 
     @Test("缺少状态栏时不注册任何贡献")
     func bootWithoutStatusBar() throws {
@@ -136,15 +149,16 @@ struct ConflictResolverPluginLifecycleTests {
 
     // MARK: - 成功接线
 
-    @Test("依赖齐备时注册状态栏项、根视图叠层与展示 provider")
+    @Test("依赖齐备时注册根视图叠层与展示 provider；无进行中操作时不贡献状态栏项")
     func bootRegistersContributions() throws {
         let harness = try makeHarness()
         let plugin = GitConflictResolverPlugin()
 
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.count == 1)
-        #expect(harness.statusBar.statusBarItems.first?.id == GitConflictResolverPlugin.itemID)
+        // 状态栏项按冲突状态动态增删：没有进行中的合并 / cherry-pick 时
+        // 不应留下一个渲染为空的贡献项。
+        #expect(harness.statusBar.statusBarItems.isEmpty)
         #expect(harness.rootView.overlays.count == 1)
         #expect(harness.rootView.overlays.first?.id == GitConflictResolverPlugin.overlayID)
         #expect(harness.kernel.resolveProvider((any GitConflictResolutionProviding).self) != nil)
@@ -173,16 +187,21 @@ struct ConflictResolverPluginLifecycleTests {
         try plugin.onBoot(kernel: harness.kernel)
 
         #expect(harness.kernel.resolveProvider((any GitConflictResolutionProviding).self) != nil)
-        #expect(harness.statusBar.statusBarItems.count == 1)
+        #expect(harness.statusBar.statusBarItems.isEmpty)
     }
 
     // MARK: - 卸载
 
     @Test("onShutdown 撤回状态栏项、叠层与 provider")
-    func shutdownRemovesContributions() throws {
+    func shutdownRemovesContributions() async throws {
         let harness = try makeHarness()
+        let harnessProjectURL = URL(fileURLWithPath: "/tmp/conflict-shutdown-project")
+        harness.projects.currentProject = Project(url: harnessProjectURL)
+        harness.git.isMergingStub = true
+
         let plugin = GitConflictResolverPlugin()
         try plugin.onBoot(kernel: harness.kernel)
+        await waitUntil { !harness.statusBar.statusBarItems.isEmpty }
         #expect(harness.statusBar.statusBarItems.count == 1)
 
         try plugin.onShutdown(kernel: harness.kernel)
@@ -215,7 +234,7 @@ struct ConflictResolverPluginLifecycleTests {
 
         #expect(harness.kernel.isPluginRegistered(id: plugin.id))
         #expect(harness.kernel.resolveProvider((any GitConflictResolutionProviding).self) != nil)
-        #expect(harness.statusBar.statusBarItems.count == 1)
+        #expect(harness.statusBar.statusBarItems.isEmpty)
         try harness.kernel.stop()
     }
 
