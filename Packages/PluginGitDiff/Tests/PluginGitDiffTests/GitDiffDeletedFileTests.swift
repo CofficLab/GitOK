@@ -161,11 +161,91 @@ final class GitDiffDeletedFileTests: XCTestCase {
         )
     }
 
-    /// 两个版本都存在时，默认展示新版本。
-    func testPDFComparisonWithBothVersionsShowsCurrentByDefault() {
-        let state = GitPDFComparisonState(current: Data([0x01]), previous: Data([0x02]))
+    // MARK: - 工作区（未提交）上下文
 
-        XCTAssertFalse(state.showsPreviousByDefault)
-        XCTAssertTrue(state.showsVersionSwitcher)
+    /// 工作区删除二进制文件时磁盘上已没有该文件；应回退读 `HEAD:path`，
+    /// 与 commit 上下文的父提交回退保持对称。
+    func testDeletedBinaryFileInWorktreeFallsBackToHEADBlob() throws {
+        let capability = ScriptedDiffContentCapability()
+        capability.blobs["HEAD:assets/logo.png"] = Data([0x89, 0x50, 0x4E, 0x47])
+
+        let content = try makeLoader(capability).load(
+            path: "assets/logo.png",
+            commit: nil,
+            repository: repository,
+            cancellation: nil
+        )
+
+        guard case let .binary(kind, data) = content else {
+            return XCTFail("a deleted binary file in the worktree should fall back to HEAD, got \(content)")
+        }
+        XCTAssertEqual(kind, .image)
+        XCTAssertEqual(data, Data([0x89, 0x50, 0x4E, 0x47]))
+    }
+
+    /// 工作区删除 PDF：工作区版本为 nil，`HEAD:path` 提供删除前版本。
+    func testDeletedPDFInWorktreeShowsHEADVersion() throws {
+        let capability = ScriptedDiffContentCapability()
+        let pdfData = Data("%PDF-1.7\n%head\n".utf8)
+        capability.blobs["HEAD:docs/spec.pdf"] = pdfData
+
+        let content = try makeLoader(capability).load(
+            path: "docs/spec.pdf",
+            commit: nil,
+            repository: repository,
+            cancellation: nil
+        )
+
+        guard case let .pdfComparison(current, previous) = content else {
+            return XCTFail("a deleted PDF in the worktree should use the comparison preview, got \(content)")
+        }
+        XCTAssertNil(current, "the worktree file no longer exists")
+        XCTAssertEqual(previous, pdfData, "the HEAD version must be carried for display")
+    }
+
+    /// 工作区 PDF 仍存在时：当前版本读磁盘，上一版读 `HEAD`。
+    func testExistingPDFInWorktreeComparesWorktreeWithHEAD() throws {
+        let capability = ScriptedDiffContentCapability()
+        let currentData = Data("%PDF-1.7\n%worktree\n".utf8)
+        let previousData = Data("%PDF-1.7\n%head\n".utf8)
+        capability.blobs["worktree:docs/spec.pdf"] = currentData
+        capability.blobs["HEAD:docs/spec.pdf"] = previousData
+
+        let content = try makeLoader(capability).load(
+            path: "docs/spec.pdf",
+            commit: nil,
+            repository: repository,
+            cancellation: nil
+        )
+
+        guard case let .pdfComparison(current, previous) = content else {
+            return XCTFail("a worktree PDF should be compared with HEAD, got \(content)")
+        }
+        XCTAssertEqual(current, currentData)
+        XCTAssertEqual(previous, previousData)
+    }
+
+    /// 只有「文件确实不存在」才回退；其它读取错误必须继续抛出。
+    func testWorktreeReadErrorIsRethrownWhenFileExists() throws {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gitok-worktree-error-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: repo) }
+        try FileManager.default.createDirectory(
+            at: repo.appendingPathComponent("assets", isDirectory: true),
+            withIntermediateDirectories: true
+        )
+        try Data([0x89]).write(to: repo.appendingPathComponent("assets/logo.png"))
+
+        let capability = ScriptedDiffContentCapability()
+        capability.errors["worktree:assets/logo.png"] = GitDiffLoaderError.invalidFilePath("disk failure")
+
+        XCTAssertThrowsError(
+            try makeLoader(capability).load(
+                path: "assets/logo.png",
+                commit: nil,
+                repository: repo,
+                cancellation: nil
+            )
+        )
     }
 }

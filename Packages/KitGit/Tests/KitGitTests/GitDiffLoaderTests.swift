@@ -324,6 +324,11 @@ final class GitDiffLoaderTests: XCTestCase {
         try Data("icon".utf8).write(to: repo.appendingPathComponent("newdir/a.txt"))
         let dirDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "newdir/", in: repo)
         XCTAssertTrue(dirDiff.isEmpty, "未跟踪目录应返回空 diff")
+
+        // 已跟踪文件在工作区被删除（未暂存）：应给出删除补丁。
+        try FileManager.default.removeItem(at: repo.appendingPathComponent("tracked.txt"))
+        let deletedDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "tracked.txt", in: repo)
+        XCTAssertTrue(deletedDiff.contains("deleted file mode"), "工作区删除应展示删除补丁")
     }
 
     /// 工作区状态：干净与有变更两种场景。

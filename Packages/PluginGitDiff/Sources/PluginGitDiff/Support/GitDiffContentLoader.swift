@@ -68,7 +68,7 @@ struct GitDiffContentLoader: Sendable {
             return textDiffContent(try loadTextDiff())
         }
 
-        if previewKind == .pdf, let commit {
+        if previewKind == .pdf {
             return try loadPDFComparison(
                 path: path,
                 commit: commit,
@@ -131,10 +131,13 @@ struct GitDiffContentLoader: Sendable {
             }
     }
 
-    /// 加载 PDF 的「当前版本 vs 父提交版本」两份数据。
+    /// 加载 PDF 的「当前版本 vs 上一版本」两份数据。
+    ///
+    /// 工作区上下文没有 commit：当前版本直接读磁盘（文件已被删除时为 nil），
+    /// 上一版本读 `HEAD:path`。这样已删除的 PDF 仍能展示删除前的内容。
     private func loadPDFComparison(
         path: String,
-        commit: GitCommit,
+        commit: GitCommit?,
         repository: URL,
         cancellation: GitProcessCancellation?
     ) throws -> GitDiffLoadedContent {
@@ -152,12 +155,31 @@ struct GitDiffContentLoader: Sendable {
             }
         }
 
-        let currentData = try loadOptionalBlob(commit.hash)
+        func loadOptionalWorktreeData() throws -> Data? {
+            do {
+                return try capability.loadWorktreeFileData(
+                    filePath: path,
+                    in: repository,
+                    cancellation: cancellation
+                )
+            } catch {
+                if cancellation?.isCancelled == true { throw error }
+                return nil
+            }
+        }
+
+        let currentData: Data?
         let previousData: Data?
-        if let parentHash = commit.parentHashes.first {
-            previousData = try loadOptionalBlob(parentHash)
+        if let commit {
+            currentData = try loadOptionalBlob(commit.hash)
+            if let parentHash = commit.parentHashes.first {
+                previousData = try loadOptionalBlob(parentHash)
+            } else {
+                previousData = nil
+            }
         } else {
-            previousData = nil
+            currentData = try loadOptionalWorktreeData()
+            previousData = try loadOptionalBlob("HEAD")
         }
         if let currentData, currentData.count > Self.maxInlinePreviewBytes {
             throw GitDiffPreviewError.fileTooLarge(currentData.count)
@@ -206,10 +228,43 @@ struct GitDiffContentLoader: Sendable {
                 return fallbackData
             }
         }
-        return try capability.loadWorktreeFileData(
-            filePath: path,
-            in: repository,
+        return try loadWorktreeData(
+            path: path,
+            repository: repository,
             cancellation: cancellation
         )
+    }
+
+    /// 读取工作区文件内容。
+    ///
+    /// 工作区删除（未提交的 `rm`）时磁盘上已没有文件，直接读会失败。只有
+    /// 「文件确实不存在」才回退到 `HEAD:path`，展示删除前的版本；其它读取错误
+    /// （权限、非法路径等）必须原样抛出，避免把真实故障伪装成正常内容。
+    private func loadWorktreeData(
+        path: String,
+        repository: URL,
+        cancellation: GitProcessCancellation?
+    ) throws -> Data {
+        do {
+            return try capability.loadWorktreeFileData(
+                filePath: path,
+                in: repository,
+                cancellation: cancellation
+            )
+        } catch {
+            if cancellation?.isCancelled == true { throw error }
+            let fileURL = repository.standardizedFileURL
+                .appendingPathComponent(path)
+                .standardizedFileURL
+            guard !FileManager.default.fileExists(atPath: fileURL.path) else {
+                throw error
+            }
+            return try capability.loadBlobData(
+                commit: "HEAD",
+                filePath: path,
+                in: repository,
+                cancellation: cancellation
+            )
+        }
     }
 }
