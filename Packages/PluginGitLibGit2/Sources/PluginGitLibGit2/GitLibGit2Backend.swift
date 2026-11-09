@@ -607,7 +607,9 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func pushTag(named name: String, remote: String, in repository: URL) throws -> String {
-        try LibGit2.pushTag(named: name, remote: remote, at: repository.path, verbose: false)
+        try LibGit2PushRecovery.pushTag(named: name, remote: remote, in: repository) {
+            try LibGit2.pushTag(named: name, remote: remote, at: repository.path, verbose: false)
+        }
         return "Tag pushed."
     }
 
@@ -838,7 +840,9 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func push(in repository: URL) throws -> String {
-        try LibGit2.push(at: repository.path, verbose: false)
+        try LibGit2PushRecovery.push(in: repository) {
+            try LibGit2.push(at: repository.path, verbose: false)
+        }
         return "Push completed."
     }
 

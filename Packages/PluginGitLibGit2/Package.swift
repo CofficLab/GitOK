@@ -41,6 +41,7 @@ let package = Package(
             dependencies: [
                 "PluginGitLibGit2",
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "LibGit2Swift", package: "libgit2swift"),
             ],
             path: "Tests/PluginGitLibGit2Tests"
         ),

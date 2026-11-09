@@ -136,23 +136,49 @@ public enum GitProcessRunner {
         gitExecutableURL != nil
     }
 
-    private static var gitExecutableURL: URL? {
+    private static let gitExecutableURL: URL? = resolveGitExecutable()
+
+    /// 解析可用的 git。`/usr/bin/git` 在未安装 Command Line Tools 时只是
+    /// 一个会弹安装框的 shim，直接执行会把后台操作变成系统弹窗，因此只有
+    /// `xcode-select -p` 成功时才接受它。
+    private static func resolveGitExecutable() -> URL? {
         let candidates = [
             "/usr/bin/git",
             "/opt/homebrew/bin/git",
             "/usr/local/bin/git",
             "/usr/local/git/bin/git",
         ]
-        if let bundled = candidates.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) {
-            return URL(fileURLWithPath: bundled)
+        for path in candidates where isUsable(path) {
+            return URL(fileURLWithPath: path)
         }
 
         let pathEntries = ProcessInfo.processInfo.environment["PATH"]?.split(separator: ":") ?? []
         return pathEntries
             .map { String($0) }
             .map { URL(fileURLWithPath: $0).appendingPathComponent("git") }
-            .first(where: { FileManager.default.isExecutableFile(atPath: $0.path) })
+            .first(where: { isUsable($0.path) })
     }
+
+    private static func isUsable(_ path: String) -> Bool {
+        guard FileManager.default.isExecutableFile(atPath: path) else { return false }
+        guard path == "/usr/bin/git" else { return true }
+        return hasCommandLineTools
+    }
+
+    private static let hasCommandLineTools: Bool = {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/xcode-select")
+        process.arguments = ["-p"]
+        process.standardOutput = Pipe()
+        process.standardError = Pipe()
+        do {
+            try process.run()
+        } catch {
+            return false
+        }
+        process.waitUntilExit()
+        return process.terminationStatus == 0
+    }()
 
     /// 在指定仓库目录执行 git 命令并返回标准输出（UTF-8）。
     /// 非零退出码抛 `gitFailed`，输出与 stderr 一并带出。
@@ -164,7 +190,8 @@ public enum GitProcessRunner {
         in repository: URL,
         successExitCodes: Set<Int32> = [0],
         cancellation: GitProcessCancellation? = nil,
-        timeout: TimeInterval? = nil
+        timeout: TimeInterval? = nil,
+        environment: [String: String]? = nil
     ) throws -> String {
         Self.decode(
             try runData(
@@ -172,7 +199,8 @@ public enum GitProcessRunner {
                 in: repository,
                 successExitCodes: successExitCodes,
                 cancellation: cancellation,
-                timeout: timeout
+                timeout: timeout,
+                environment: environment
             )
         )
     }
@@ -183,7 +211,8 @@ public enum GitProcessRunner {
         in repository: URL,
         successExitCodes: Set<Int32> = [0],
         cancellation: GitProcessCancellation? = nil,
-        timeout: TimeInterval? = nil
+        timeout: TimeInterval? = nil,
+        environment: [String: String]? = nil
     ) throws -> Data {
         var outputData = Data()
         try stream(
@@ -191,7 +220,8 @@ public enum GitProcessRunner {
             in: repository,
             successExitCodes: successExitCodes,
             cancellation: cancellation,
-            timeout: timeout
+            timeout: timeout,
+            environment: environment
         ) { data in
             outputData.append(data)
             return true
@@ -208,6 +238,7 @@ public enum GitProcessRunner {
         chunkSize: Int = 64 * 1024,
         cancellation: GitProcessCancellation? = nil,
         timeout: TimeInterval? = nil,
+        environment: [String: String]? = nil,
         onOutput: (Data) -> Bool,
         onErrorOutput: (@Sendable (Data) -> Void)? = nil
     ) throws {
@@ -218,6 +249,11 @@ public enum GitProcessRunner {
         process.executableURL = gitExecutableURL
         process.arguments = arguments
         process.currentDirectoryURL = repository
+        if let environment {
+            process.environment = ProcessInfo.processInfo.environment.merging(environment) { _, override in
+                override
+            }
+        }
 
         let cancelBeforeRun = cancellation?.attach(process) ?? false
 
