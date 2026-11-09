@@ -862,7 +862,7 @@ struct CommitRailView: View {
             }
         }
         .padding(16)
-        .frame(width: 280, height: pushError != nil ? 200 : (isPushing ? 120 : 180))
+        .frame(width: 280, height: pushError != nil ? 240 : (isPushing ? 120 : 180))
     }
 
     private func performPush() {

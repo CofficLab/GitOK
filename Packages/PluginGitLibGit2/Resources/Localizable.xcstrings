@@ -714,6 +714,40 @@
           }
         }
       }
+    },
+    "Check your credentials, proxy or VPN settings, or switch the remote to SSH, then try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your credentials, proxy or VPN settings, or switch the remote to SSH, then try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请检查凭据、代理或 VPN 设置，或将远程地址切换为 SSH 后重试。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請檢查憑證、代理或 VPN 設定，或將遠端位址切換為 SSH 後重試。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請檢查憑證、代理或 VPN 設定，或將遠端位址切換為 SSH 後重試。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請檢查憑證、代理或 VPN 設定，或將遠端位址切換為 SSH 後重試。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
