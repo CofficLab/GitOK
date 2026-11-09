@@ -72,24 +72,54 @@ final class ProjectSortModeTests: XCTestCase {
         XCTAssertEqual(sorted.map(\.title), ["Newest", "Middle", "Oldest"])
     }
 
-    func testRecentModeFallsBackToLastOpenedWhenNoCommitDate() {
-        let neverOpened = project("NeverOpened")
-        let openedEarlier = project("OpenedEarlier", lastOpenedAt: Date(timeIntervalSince1970: 100))
-        let openedLater = project("OpenedLater", lastOpenedAt: Date(timeIntervalSince1970: 200))
+    func testRecentModeRanksProjectsWithoutCommitDateLast() {
+        let dated = project("Dated", lastOpenedAt: Date(timeIntervalSince1970: 1))
+        let missing = project("Missing", lastOpenedAt: Date(timeIntervalSince1970: 9_999))
 
         let sorted = ProjectSortMode.recent.sorted(
-            [neverOpened, openedEarlier, openedLater],
-            commitDates: [:]
+            [missing, dated],
+            commitDates: [dated.id: Date(timeIntervalSince1970: 100)]
         )
 
         XCTAssertEqual(
             sorted.map(\.title),
-            ["OpenedLater", "OpenedEarlier", "NeverOpened"],
-            "没有提交时间时回退到最近打开时间"
+            ["Dated", "Missing"],
+            "没有提交时间的项目排在最后，即使刚刚打开过"
         )
     }
 
-    func testRecentModePrefersCommitDateOverLastOpened() {
+    func testOpeningAProjectDoesNotChangeRecentOrder() {
+        let alpha = project("Alpha", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let beta = project("Beta", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let gamma = project("Gamma", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let dates: [UUID: Date] = [
+            alpha.id: Date(timeIntervalSince1970: 300),
+            beta.id: Date(timeIntervalSince1970: 200),
+            gamma.id: Date(timeIntervalSince1970: 100),
+        ]
+
+        let before = ProjectSortMode.recent.sorted([alpha, beta, gamma], commitDates: dates)
+        var openedBeta = beta
+        openedBeta.lastOpenedAt = Date(timeIntervalSince1970: 9_999)
+        let after = ProjectSortMode.recent.sorted([alpha, openedBeta, gamma], commitDates: dates)
+
+        XCTAssertEqual(before.map(\.title), ["Alpha", "Beta", "Gamma"])
+        XCTAssertEqual(after.map(\.title), before.map(\.title), "点击项目不应改变「最近更新」顺序")
+    }
+
+    func testOpeningProjectsWithoutCommitDatesDoesNotChangeOrder() {
+        let zeta = project("Zeta", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let alpha = project("Alpha", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let mid = project("Mid", lastOpenedAt: Date(timeIntervalSince1970: 100))
+
+        let before = ProjectSortMode.recent.sorted([zeta, alpha, mid], commitDates: [:])
+        let openedZeta = project("Zeta", lastOpenedAt: Date(timeIntervalSince1970: 9_999))
+        let after = ProjectSortMode.recent.sorted([openedZeta, alpha, mid], commitDates: [:])
+
+        XCTAssertEqual(before.map(\.title), after.map(\.title), "提交时间缺失时点击也不应改变顺序")
+    }
+
+    func testRecentModeUsesCommitDateInsteadOfLastOpened() {
         let project = project("Repo", lastOpenedAt: Date(timeIntervalSince1970: 999))
         let dates = [project.id: Date(timeIntervalSince1970: 100)]
 
@@ -111,15 +141,15 @@ final class ProjectSortModeTests: XCTestCase {
         XCTAssertEqual(sorted.map(\.title), ["Pinned", "Normal"], "置顶项目始终在最前")
     }
 
-    func testRecentModeIsStableForEqualDates() {
-        let first = project("First")
-        let second = project("Second")
+    func testRecentModeBreaksEqualDatesByName() {
+        let beta = project("Beta")
+        let alpha = project("Alpha")
         let date = Date(timeIntervalSince1970: 100)
-        let dates = [first.id: date, second.id: date]
+        let dates = [beta.id: date, alpha.id: date]
 
-        let sorted = ProjectSortMode.recent.sorted([first, second], commitDates: dates)
+        let sorted = ProjectSortMode.recent.sorted([beta, alpha], commitDates: dates)
 
-        XCTAssertEqual(sorted.map(\.title), ["First", "Second"], "时间相同时保持原有顺序")
+        XCTAssertEqual(sorted.map(\.title), ["Alpha", "Beta"], "时间相同时按名称排列")
     }
 
     // MARK: - Metadata
