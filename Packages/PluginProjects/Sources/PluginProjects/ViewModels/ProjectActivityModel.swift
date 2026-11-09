@@ -10,6 +10,9 @@ import ProviderProjects
 ///   不重复读取；项目被移除时缓存同步清理。
 /// - **并发受限**：项目很多时同时启动几十个 git 进程会拖慢机器，因此按
 ///   固定并发度分批读取。
+/// - **一次性生效**：整轮读取结束后统一写入缓存，避免列表边读边反复换位。
+/// - **强制刷新有冷却**：外部改动只在应用回到前台时触发全量重读，冷却期内
+///   忽略重复请求，防止频繁切换窗口时同一批仓库被反复读取。
 @MainActor
 final class ProjectActivityModel: ObservableObject {
     /// 各项目的最近提交时间。
@@ -25,12 +28,23 @@ final class ProjectActivityModel: ObservableObject {
     /// 单批并发读取数。
     private let maxConcurrentLoads: Int
 
+    /// 两次强制刷新之间的最小间隔（秒）。
+    private let minimumForceInterval: TimeInterval
+
+    /// 上一次发起强制刷新的时间；用于冷却判定。
+    private var lastForceRefresh: Date?
+
     /// 正在进行的读取任务；切换展示方式或项目列表变化时取消旧任务。
     private var loadTask: Task<Void, Never>?
 
-    init(capability: (any ProjectActivityCapability)?, maxConcurrentLoads: Int = 4) {
+    init(
+        capability: (any ProjectActivityCapability)?,
+        maxConcurrentLoads: Int = 4,
+        minimumForceInterval: TimeInterval = 2
+    ) {
         self.capability = capability
         self.maxConcurrentLoads = max(1, maxConcurrentLoads)
+        self.minimumForceInterval = max(0, minimumForceInterval)
     }
 
     deinit {
@@ -43,8 +57,14 @@ final class ProjectActivityModel: ObservableObject {
     ///
     /// - Parameters:
     ///   - projects: 需要读取的项目列表。
-    ///   - force: 为 true 时忽略缓存重新读取。
+    ///   - force: 为 true 时忽略缓存重新读取，用于感知在 GitOK 之外发生的提交；
+    ///     冷却期内的强制刷新会被忽略。
     func refresh(for projects: [Project], force: Bool = false) {
+        if force {
+            guard isForceRefreshAllowed(at: Date()) else { return }
+            lastForceRefresh = Date()
+        }
+
         loadTask?.cancel()
         loadTask = nil
 
@@ -87,23 +107,29 @@ final class ProjectActivityModel: ObservableObject {
     ) async {
         // 分批读取：每批最多 maxConcurrentLoads 个项目，批与批之间让出
         // 主线程，避免大批量项目时长时间占用 UI。
+        var settled: [UUID: Date] = [:]
         var batch: [Project] = []
         for project in pending {
             guard !Task.isCancelled else { return }
             batch.append(project)
             if batch.count >= maxConcurrentLoads {
-                await loadBatch(batch, capability: capability)
+                await loadBatch(batch, capability: capability, into: &settled)
                 batch.removeAll(keepingCapacity: true)
             }
         }
         if !batch.isEmpty {
-            await loadBatch(batch, capability: capability)
+            await loadBatch(batch, capability: capability, into: &settled)
         }
+
+        // 被取消的轮次结果已经过期，不能再覆盖缓存。
+        guard !Task.isCancelled else { return }
+        publish(settled)
     }
 
     private func loadBatch(
         _ batch: [Project],
-        capability: any ProjectActivityCapability
+        capability: any ProjectActivityCapability,
+        into settled: inout [UUID: Date]
     ) async {
         await withTaskGroup(of: (UUID, Date?).self) { group in
             for project in batch {
@@ -114,17 +140,24 @@ final class ProjectActivityModel: ObservableObject {
             }
             for await (id, date) in group {
                 guard !Task.isCancelled else { return }
-                apply(date: date, for: id)
+                loadingProjectIDs.remove(id)
+                // 读取失败或仓库没有提交：不写入缓存，下次刷新会重试。
+                if let date {
+                    settled[id] = date
+                }
             }
         }
     }
 
-    private func apply(date: Date?, for id: UUID) {
-        loadingProjectIDs.remove(id)
-        guard let date else {
-            // 读取失败或仓库没有提交：不写入缓存，下次刷新会重试。
-            return
-        }
-        commitDates[id] = date
+    /// 整轮读取结束后一次性生效，避免列表随读取进度反复换位。
+    private func publish(_ settled: [UUID: Date]) {
+        guard !settled.isEmpty else { return }
+        commitDates.merge(settled) { _, latest in latest }
+    }
+
+    /// 强制刷新冷却判定。
+    private func isForceRefreshAllowed(at now: Date) -> Bool {
+        guard let lastForceRefresh else { return true }
+        return now.timeIntervalSince(lastForceRefresh) >= minimumForceInterval
     }
 }

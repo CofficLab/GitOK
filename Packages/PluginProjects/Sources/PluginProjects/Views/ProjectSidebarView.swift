@@ -144,6 +144,9 @@ struct ProjectSidebarView: View {
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
                 // 应用回到前台：卷可能已被插拔，重新判定一次。
                 volume.refresh(for: projects.projects, force: true)
+                // 在 GitOK 之外提交的仓库不会触发项目事件，排序键只能靠
+                // 回到前台时强制重读才会跟上。
+                refreshActivityIfNeeded(force: true)
             }
             .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didMountNotification)) { _ in
                 volume.refresh(for: projects.projects, force: true)
@@ -511,12 +514,14 @@ struct ProjectSidebarView: View {
     ///
     /// 只有「最近更新」需要提交时间；其余展示方式不启动任何 git 进程。
     /// 已缓存的结果会被复用，重复切换不会重复读取。
-    private func refreshActivityIfNeeded() {
+    ///
+    /// - Parameter force: 忽略缓存重新读取全部项目，用于感知外部提交。
+    private func refreshActivityIfNeeded(force: Bool = false) {
         guard sortMode.requiresCommitActivity else {
             activity.cancel()
             return
         }
-        activity.refresh(for: projects.projects)
+        activity.refresh(for: projects.projects, force: force)
     }
 
     // MARK: - Re-clone
