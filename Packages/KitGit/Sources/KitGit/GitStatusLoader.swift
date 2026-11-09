@@ -125,8 +125,12 @@ public enum GitStatusLoader {
 
     /// 读取工作区变动文件列表。
     ///
-    /// 使用 `git status --porcelain=v1 --untracked-files=all`，解析每一行的
-    /// XY 状态码和路径。未跟踪目录会展开为其中的文件；重命名/复制（R/C）只取目标路径。
+    /// 使用 `git status --porcelain=v1 -z --untracked-files=all`，以 NUL 分隔记录。
+    /// 不用默认的换行格式是因为 git 会对「非 ASCII / 含引号或转义字符」的路径
+    /// 做 C 风格引号转义，且重命名用 `old -> new` 文本连接；-z 既不转义路径，
+    /// 也让记录边界（含路径内的换行）无歧义。
+    /// 未跟踪目录会展开为其中的文件；重命名/复制（R/C）只取目标路径，
+    /// 其后的原始路径记录会被跳过。
     public static func loadEntries(
         in repository: URL,
         cancellation: GitProcessCancellation? = nil
@@ -134,29 +138,28 @@ public enum GitStatusLoader {
         if cancellation?.isCancelled == true { throw CancellationError() }
         try validateRepository(repository)
         let output = try GitProcessRunner.run(
-            ["status", "--porcelain=v1", "--untracked-files=all"],
+            ["status", "--porcelain=v1", "-z", "--untracked-files=all"],
             in: repository,
             cancellation: cancellation,
             timeout: commandTimeout
         )
         if cancellation?.isCancelled == true { throw CancellationError() }
+        let records = output.split(separator: "\0", omittingEmptySubsequences: true)
         var entries: [GitStatusEntry] = []
-        for line in output.split(separator: "\n") {
-            let s = String(line)
-            guard s.count >= 4 else { continue }
-            let x = s[s.startIndex]
-            let y = s[s.index(after: s.startIndex)]
-            // XY 后是一个空格，然后是路径。
-            let pathStart = s.index(s.startIndex, offsetBy: 3)
-            let rawPath = String(s[pathStart...])
-            // 重命名/复制格式：old -> new，取目标路径。
-            let path: String
-            if let arrowRange = rawPath.range(of: " -> ") {
-                path = String(rawPath[arrowRange.upperBound...])
-            } else {
-                path = rawPath
-            }
+        var index = 0
+        while index < records.count {
+            let record = String(records[index])
+            index += 1
+            guard record.count >= 4 else { continue }
+            let x = record[record.startIndex]
+            let y = record[record.index(after: record.startIndex)]
+            // XY 后是一个空格，然后是路径。-z 下第一段就是目标路径。
+            let path = String(record.dropFirst(3))
             entries.append(GitStatusEntry(path: path, stagedStatus: x, worktreeStatus: y))
+            if x == "R" || x == "C" || y == "R" || y == "C" {
+                // `-z` 的重命名/复制输出为 `<to>\0<from>`，跳过紧随其后的原路径。
+                index += 1
+            }
         }
         return entries
     }

@@ -274,7 +274,6 @@
       }
     },
     "At least one commit is required for cherry-pick.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -411,7 +410,6 @@
       }
     },
     "Cherry-pick operation failed: %@": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -684,7 +682,6 @@
       }
     },
     "No cherry-pick is currently in progress.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -889,7 +886,6 @@
       }
     },
     "Resolve all conflicts before continuing the cherry-pick.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {

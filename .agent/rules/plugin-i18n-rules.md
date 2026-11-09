@@ -1,390 +1,113 @@
 # 插件国际化（i18n）规范
 
-> 本规范定义了 GitOK 项目中所有插件的多语言（国际化）实现方式和最佳实践。
+> 本规范定义 GitOK 项目中插件与应用界面的多语言实现方式与静态校验规则。
 
 ---
 
-## 核心原则
+## 1. 资源文件位置
 
-**每个插件独立管理国际化资源，使用统一的 `.xcstrings` 格式，支持动态多语言切换。**
-
-所有用户可见的文本都必须进行国际化，禁止在代码中硬编码用户可见字符串。
-
----
-
-## 文件格式
-
-### 文件扩展名
+每个需要本地化文案的 package 使用 **String Catalog**（`.xcstrings`）：
 
 ```
-<PluginName>.xcstrings
+Packages/<PackageName>/Resources/Localizable.xcstrings
 ```
 
-### 文件结构
+- 文件名固定为 `Localizable.xcstrings`，表名（table）保持默认的 `Localizable`；
+  不要自行改成 `<PluginName>.xcstrings`，也不要在调用处传入自定义 `table:`。
+- 在 `Package.swift` 中用 `.process("Resources")` 声明资源。不要为空 catalog
+  保留资源声明：没有文案的 package 不应创建 catalog。
+- 应用级文案位于 `GitOKApp/Resources/Localizable.xcstrings`。
 
-```json
-{
-  "sourceLanguage": "en",
-  "version": "1.0",
-  "strings": {
-    "Key String": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Key String"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "键字符串"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "鍵字符串"
-          }
-        }
-      }
-    }
-  }
-}
-```
+## 2. 语言集合
 
-### 字段说明
+catalog 的 `sourceLanguage` 固定为 `en`，key 直接使用英文原文。每个 key 必须
+同时具备以下五种语言的非空翻译：
 
-| 字段 | 说明 | 必填 | 示例 |
-|------|------|------|------|
-| `sourceLanguage` | 源语言代码 | ✅ | `"en"` |
-| `version` | 文件格式版本 | ✅ | `"1.0"` |
-| `strings` | 字符串字典 | ✅ | - |
-| `localizations` | 语言列表 | ✅ | - |
-| `state` | 翻译状态 | ✅ | `"translated"` |
-| `value` | 翻译后的文本 | ✅ | `"键字符串"` |
+| 语言 | 说明 |
+| --- | --- |
+| `en` | 源语言 |
+| `zh-Hans` | 简体中文 |
+| `zh-Hant` | 繁体中文（通用） |
+| `zh-HK` | 繁体中文（香港） |
+| `zh-TW` | 繁体中文（台湾） |
 
-### 翻译状态
+应用内的语言切换与系统语言回退由 `KitGitOKLocalization` 统一处理，catalog
+条目不参与硬编码语言白名单。
 
-| 状态 | 说明 |
-|------|------|
-| `translated` | 已完成翻译 |
-| `needsReview` | 需要审查 |
-| `notTranslated` | 未翻译 |
+## 3. 调用方式
 
----
-
-## 支持语言
-
-| 语言代码 | 语言 | 优先级 |
-|---------|------|--------|
-| `en` | 英语 | 必须（源语言） |
-| `zh-Hans` | 简体中文 | 必须 |
-| `zh-HK` | 繁体中文 | 推荐 |
-
----
-
-## 文件命名
-
-### 标准命名
-
-```
-<PluginName>.xcstrings
-```
-
-**示例**：
-```
-AppManager.xcstrings
-ClipboardManager.xcstrings
-MemoryManager.xcstrings
-```
-
-### 文件位置
-
-```
-APP/Plugins/<PluginName>/<PluginName>.xcstrings
-```
-
----
-
-## 使用方式
-
-### 基础用法
+### 插件 package
 
 ```swift
-// 视图中使用
-Text(String(localized: "Hello World", table: "PluginName"))
-
-// 属性定义
-static let displayName = String(localized: "Plugin Name", table: "PluginName")
-
-// 动态消息
-let message = String(localized: "Hello, %@", table: "PluginName", arguments: userName)
+Text(pluginLocalization.string("Commit"))
 ```
 
-### 完整示例
+`pluginLocalization` 绑定 `Bundle.module`，未命中时回退为 key 原文。package
+若已有自己的 `enum <Name>Localization` 包装（如 `GitDiffLocalization`），优先使用它。
 
-`SuperPlugin` 定义在 LumiApp；`SuperLog` 由 `Global.swift` 的 `@_exported import SuperLogKit` 提供，LumiApp 内无需单独 import。
+### 应用 target
 
 ```swift
-import SwiftUI
-
-struct MemoryManagerPlugin: SuperPlugin {
-    static let displayName = String(localized: "Memory Monitor", table: "MemoryManager")
-    static let description = String(localized: "Real-time monitoring of system memory usage", table: "MemoryManager")
-    
-    var body: some View {
-        VStack {
-            Text(String(localized: "Memory Usage", table: "MemoryManager"))
-                .font(.headline)
-            
-            Text(String(localized: "Total: %@", table: "MemoryManager", arguments: totalMemory))
-            
-            Button(String(localized: "Refresh", table: "MemoryManager")) {
-                // ...
-            }
-        }
-    }
-}
+Text(GitOKAppLocalization.string("Settings"))
 ```
 
-### 带参数的字符串
+### 禁止的写法
 
-**xcstrings 文件**：
-```json
-{
-  "Selected: %@": {
-    "localizations": {
-      "en": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "Selected: %@"
-        }
-      },
-      "zh-Hans": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "已选：%@"
-        }
-      }
-    }
-  },
-  "%lld Apps": {
-    "localizations": {
-      "en": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "%lld Apps"
-        }
-      },
-      "zh-Hans": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "%lld 个应用"
-        }
-      }
-    }
-  }
-}
-```
+- **禁止**把裸字符串直接传给 SwiftUI 文本类初始化器：
+  `Text("Commit")`、`Button("Save")`、`Label("Name", ...)`、`Toggle("...")`、
+  `TextField("...")`、`SecureField("...")`。
+  裸字面量按 `Bundle.main` 解析，插件包内的翻译位于 `Bundle.module`，永远取不到。
+- **禁止**在插件里使用 `String(localized:table:)` 或 `NSLocalizedString` 直接查表。
+- 纯符号、文件名等不参与翻译的内容使用显式非本地化写法：
+  `Text(verbatim: "·")`、`Text(verbatim: "LICENSE")`。
 
-**Swift 代码**：
+## 4. 格式化字符串
+
+带占位符的文案使用标准格式说明符（`%@`、`%lld`、`%1$@` 等），key 与翻译保持
+相同的占位符顺序：
+
 ```swift
-Text(String(localized: "Selected: %@", table: "AppManager", arguments: selectedCount))
-Text(String(localized: "%lld Apps", table: "AppManager", arguments: appCount))
+Text(String(format: pluginLocalization.string("Deleted %lld files"), count))
 ```
 
-### 带命名参数的字符串
+少数格式串只在运行时拼接、源码中没有字面量调用点（例如 `%lld` 本身）。这类
+key 允许保留，但必须在 catalog 条目上加 `comment`，且包含
+`Runtime-assembled` 标记，说明它由运行时组装：
 
-**xcstrings 文件**：
 ```json
-{
-  "Switched {type} registry to {name}": {
-    "localizations": {
-      "en": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "Switched {type} registry to {name}"
-        }
-      },
-      "zh-Hans": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "已切换 {type} 源为 {name}"
-        }
-      }
-    }
-  }
+"stash@{%lld}" : {
+  "comment" : "Runtime-assembled format string: referenced through format APIs rather than a literal call site; keep in sync with code.",
+  ...
 }
 ```
 
-**Swift 代码**：
-```swift
-let message = String(
-    localized: "Switched {type} registry to {name}",
-    table: "RegistryManager",
-    arguments: ["type": registryType, "name": registryName]
-)
+## 5. 静态校验
+
+校验脚本：`Scripts/check_localization.py`
+CI：`.github/workflows/localization.yaml`（PR 及 `dev` / `pre` / `main` 推送时运行）
+
+本地执行：
+
+```bash
+python3 Scripts/check_localization.py
 ```
 
----
+脚本检查以下内容，任一失败即非零退出：
 
-## 创建 xcstrings 文件
+1. 每个 `Packages/<Package>/Resources/Localizable.xcstrings`（及历史遗留的
+   `Sources/Localizable.xcstrings`）是合法 JSON，`sourceLanguage == "en"`，
+   且 catalog 非空。
+2. 每个 key 非空、未标记 `extractionState: "stale"`，并且五种语言的
+   `stringUnit.value` 都非空。
+3. 每个 key 都能在 `Packages/<Package>/Sources` 或 `GitOKApp` 的 Swift 源码中
+   找到字面量引用；找不到时，必须含 `%` 且带 `Runtime-assembled` 注释。
+4. `Packages/*/Sources` 与 `GitOKApp` 中不得出现传给 `Text` / `Label` /
+   `Button` / `Toggle` / `TextField` / `SecureField` 的裸字符串字面量
+   （`Text(verbatim:)` 不计入）。
 
-### 步骤 1：创建文件
+## 6. 新增文案流程
 
-在插件目录下创建 `<PluginName>.xcstrings` 文件
-
-### 步骤 2：添加基础结构
-
-```json
-{
-  "sourceLanguage": "en",
-  "version": "1.0",
-  "strings": {}
-}
-```
-
-### 步骤 3：添加字符串
-
-手动添加或使用 Xcode 的本地化导出功能。
-
-### 步骤 4：翻译
-
-为每种支持的语言添加翻译。
-
----
-
-## 最佳实践
-
-### ✅ 推荐
-
-1. **所有用户可见文本都国际化**
-   - 按钮标题、标签、提示信息
-   - 错误消息、成功提示
-   - 菜单项、工具提示
-
-2. **使用有意义的键**
-
-   ```swift
-   // ✅ 好：使用完整句子作为键
-   String(localized: "Confirm Uninstall", table: "AppManager")
-   
-   // ❌ 避免：使用无意义的键
-   String(localized: "btn_confirm_1", table: "AppManager")
-   ```
-
-3. **保持翻译文件同步**
-   - 添加新字符串时同时提供所有语言的翻译
-   - 定期审查 `needsReview` 状态的字符串
-
-4. **使用 Xcode 本地化编辑器**
-   - 在 Xcode 中打开 `.xcstrings` 文件
-   - 使用可视化编辑器管理翻译
-
-5. **注释复杂字符串**
-
-   ```json
-   {
-     "Switched {type} registry to {name}": {
-       "comment": "{type} = registry type (npm, pypi, etc.), {name} = registry name",
-       "localizations": { ... }
-     }
-   }
-   ```
-
-### ❌ 避免
-
-1. **硬编码用户可见文本**
-
-   ```swift
-   // ❌ 错误
-   Text("Click here to refresh")
-   
-   // ✅ 正确
-   Text(String(localized: "Click here to refresh", table: "PluginName"))
-   ```
-
-2. **混合语言**
-
-   ```swift
-   // ❌ 错误：中文硬编码
-   Text(String(localized: "点击刷新", table: "PluginName"))
-   
-   // ✅ 正确：使用英文键
-   Text(String(localized: "Click to refresh", table: "PluginName"))
-   ```
-
-3. **过长的字符串**
-   - 将长文本拆分为多个可重用的片段
-
-4. **忽略占位符顺序**
-   - 不同语言的语法顺序可能不同，使用命名参数
-
----
-
-## 现有实现参考
-
-| 插件 | 文件 | 字符串数量 | 特点 |
-|-----|------|-----------|------|
-| RClickPlugin | `RClick.xcstrings` | 603 行 | 最完整 |
-| BrewManagerPlugin | `BrewManager.xcstrings` | 389 行 | 完整 |
-| PortManagerPlugin | `PortManager.xcstrings` | 327 行 | 完整 |
-| AppManagerPlugin | `AppManager.xcstrings` | 326 行 | 标准实现 |
-| TextActionsPlugin | `TextActions.xcstrings` | 304 行 | 完整 |
-| CaffeinatePlugin | `Caffeinate.xcstrings` | 165 行 | 完整 |
-| RegistryManagerPlugin | `RegistryManager.xcstrings` | 117 行 | 含动态参数 |
-| DiskManagerPlugin | `DiskManager.xcstrings` | 117 行 | 完整 |
-| SettingsButtonPlugin | `SettingsButton.xcstrings` | 57 行 | 简洁 |
-| NettoPlugin | `Netto.xcstrings` | 57 行 | 简洁 |
-
----
-
-## 检查清单
-
-创建新插件时，确保：
-
-- [ ] 创建 `<PluginName>.xcstrings` 文件
-- [ ] 设置 `sourceLanguage` 为 `"en"`
-- [ ] 提供英文 (`en`) 翻译
-- [ ] 提供简体中文 (`zh-Hans`) 翻译
-- [ ] 提供繁体中文 (`zh-HK`) 翻译（推荐）
-- [ ] 所有用户可见文本使用 `String(localized:table:)`
-- [ ] 动态消息使用占位符 (`%@` 或 `{name}`)
-- [ ] 在 Xcode 中验证本地化文件
-
----
-
-## 附录
-
-### A. 常见占位符
-
-| 占位符 | 类型 | 示例 |
-|--------|------|------|
-| `%@` | 字符串 | `"Hello, %@"` → `"Hello, World"` |
-| `%d` | 整数 | `"%d items"` → `"5 items"` |
-| `%lld` | 长整数 | `"%lld Apps"` → `"100 Apps"` |
-| `%.2f` | 浮点数 | `"%.2f MB"` → `"12.34 MB"` |
-| `{name}` | 命名参数 | `"Hello, {name}"` |
-
-### B. 语言代码参考
-
-| 代码 | 语言 | 地区 |
-|------|------|------|
-| `en` | 英语 | - |
-| `zh-Hans` | 简体中文 | 中国大陆 |
-| `zh-HK` | 繁体中文 | 中国香港 |
-| `zh-TW` | 繁体中文 | 中国台湾 |
-| `ja` | 日语 | 日本 |
-| `ko` | 韩语 | 韩国 |
-
-### C. Xcode 本地化导出
-
-1. 在 Xcode 中选择项目
-2. 选择 **Editor** → **Export Localizations**
-3. 选择导出格式为 `.xcstrings`
-4. 选择要导出的语言
-
-### D. 相关文档
-
-- [Apple Localization 文档](https://developer.apple.com/documentation/xcode/localization)
+1. 在所属 package 的 `Localizable.xcstrings` 中添加 key（英文原文）。
+2. 补全 `en` / `zh-Hans` / `zh-Hant` / `zh-HK` / `zh-TW` 五种翻译。
+3. 用 `pluginLocalization.string(...)` 或对应包装替换界面字面量。
+4. 运行 `python3 Scripts/check_localization.py`，确认无新增问题。

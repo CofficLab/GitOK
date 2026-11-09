@@ -341,6 +341,40 @@
         }
       }
     },
+    "Merge branches from the toolbar": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从工具栏合并分支"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從工具列合併分支"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge branches from the toolbar"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從工具列合併分支"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從工具列合併分支"
+          }
+        }
+      }
+    },
     "Merge paused with %ld conflict file(s)": {
       "localizations": {
         "en": {
@@ -949,40 +983,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "合併到"
-          }
-        }
-      }
-    },
-    "Merge branches from the status bar": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "从状态栏合并分支"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "從狀態列合併分支"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Merge branches from the status bar"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "從狀態列合併分支"
-          }
-        },
-        "zh-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "從狀態列合併分支"
           }
         }
       }

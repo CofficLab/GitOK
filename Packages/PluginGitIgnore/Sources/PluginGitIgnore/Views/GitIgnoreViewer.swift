@@ -46,7 +46,7 @@ public struct GitIgnoreViewer: View {
                 Image(systemName: "doc.text.fill")
                     .font(.title2)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(".gitignore")
+                    Text(verbatim: ".gitignore")
                         .font(.headline)
                         .fontWeight(.semibold)
                     Text(projects.currentProject?.title ?? "")

@@ -22,6 +22,9 @@ struct ProjectSidebarView: View {
     @StateObject private var observation: ProjectObservationModel
     /// 项目活跃度模型：仅在「最近更新」展示方式下读取仓库提交时间。
     @StateObject private var activity: ProjectActivityModel
+    /// 项目所在卷模型：缓存外接卷 / 不可访问状态，供行内徽标使用。
+    @StateObject private var volume: ProjectVolumeModel
+    @LumiTheme private var theme
     @State private var searchText = ""
     @State private var isPresentingClone = false
     /// 待重命名的项目（非 nil 时弹出重命名输入框）。
@@ -58,6 +61,7 @@ struct ProjectSidebarView: View {
         self.sortModeStore = sortModeStore ?? InMemoryProjectSortModeStore()
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _activity = StateObject(wrappedValue: ProjectActivityModel(capability: activityCapability))
+        _volume = StateObject(wrappedValue: ProjectVolumeModel())
         // 恢复上次选择的展示方式；读不到时回落到手动排序。
         _sortMode = State(initialValue: self.sortModeStore.loadSortMode() ?? .manual)
     }
@@ -135,9 +139,24 @@ struct ProjectSidebarView: View {
                 // 项目状态变化时重算 body，读取最新项目列表。
                 // 新增 / 移除项目后，「最近更新」需要为新项目补读提交时间。
                 refreshActivityIfNeeded()
+                volume.refresh(for: projects.projects)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                // 应用回到前台：卷可能已被插拔，重新判定一次。
+                volume.refresh(for: projects.projects, force: true)
+            }
+            .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didMountNotification)) { _ in
+                volume.refresh(for: projects.projects, force: true)
+            }
+            .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didUnmountNotification)) { _ in
+                volume.refresh(for: projects.projects, force: true)
             }
             .onAppear {
                 ensureRecloneCoordinator()
+                volume.refresh(for: projects.projects)
+            }
+            .onDisappear {
+                volume.cancel()
             }
             .onChange(of: sortMode) { _, newMode in
                 sortModeStore.saveSortMode(newMode)
@@ -329,14 +348,38 @@ struct ProjectSidebarView: View {
     }
 
     /// 项目行内容（不含拖拽）。
+    ///
+    /// 与 `AppSettingsSidebarItem` 保持相同的行高、图标尺寸和选中样式，
+    /// 额外在标题尾部预留卷状态徽标的位置。
     private func projectRowContent(_ project: Project) -> some View {
-        AppSettingsSidebarItem(
-            title: project.title,
-            systemImage: project.isPinned ? "pin.fill" : "folder",
-            isSelected: projects.currentProject?.id == project.id
-        ) {
+        Button {
             projects.openProject(at: project.url)
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: project.isPinned ? "pin.fill" : "folder")
+                    .frame(width: 18, alignment: .center)
+                Text(project.title)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                Spacer(minLength: 4)
+                if let badge = volumeBadge(for: project) {
+                    projectVolumeBadge(badge)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, minHeight: 32, alignment: .leading)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .appSurface(
+            style: .custom(
+                projects.currentProject?.id == project.id
+                    ? Color.secondary.opacity(0.25)
+                    : Color.clear
+            ),
+            cornerRadius: 6
+        )
         .id(project.id)
         .contextMenu {
             Button {
@@ -425,6 +468,34 @@ struct ProjectSidebarView: View {
 
     private func moveProject(_ draggedID: UUID, before targetID: UUID?) {
         projects.moveProject(id: draggedID, beforeID: targetID)
+    }
+
+    // MARK: - Volume Badge
+
+    /// 非本机卷或不可访问时才返回徽标，避免本机项目出现多余装饰。
+    private func volumeBadge(for project: Project) -> ProjectVolumeBadge? {
+        let badge = volume.badge(for: project.id)
+        return badge == .none ? nil : badge
+    }
+
+    @ViewBuilder
+    private func projectVolumeBadge(_ badge: ProjectVolumeBadge) -> some View {
+        switch badge {
+        case .none:
+            EmptyView()
+        case .external:
+            Image(systemName: "externaldrive.fill")
+                .font(.appMicro)
+                .foregroundStyle(theme.textSecondary)
+                .help(pluginLocalization.string("Stored on an external drive"))
+                .accessibilityLabel(pluginLocalization.string("External Drive"))
+        case .unavailable:
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.appMicroEmphasized)
+                .foregroundStyle(theme.warning)
+                .help(pluginLocalization.string("This project is on a volume that is not currently available."))
+                .accessibilityLabel(pluginLocalization.string("Volume not available"))
+        }
     }
 
     /// 取消全部置顶（保留项目原有相对顺序）。

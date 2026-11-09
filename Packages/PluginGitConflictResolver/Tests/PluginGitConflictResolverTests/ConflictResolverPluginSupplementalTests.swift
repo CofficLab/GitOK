@@ -25,20 +25,22 @@ struct ConflictResolverPluginSupplementalTests {
         kernel: KernelCoreContainer,
         statusBar: TestStatusBarProviding,
         projects: TestProjectsProviding,
+        git: TestGitProviding,
         scene: TestSceneProviding,
         rootView: DefaultRootViewProvider
     ) {
         let kernel = KernelCoreContainer()
         let statusBar = TestStatusBarProviding()
         let projects = TestProjectsProviding()
+        let git = TestGitProviding()
         let scene = TestSceneProviding()
         let rootView = DefaultRootViewProvider()
         try kernel.registerProvider((any StatusBarProviding).self, statusBar)
         try kernel.registerProvider((any ProjectProviding).self, projects)
-        try kernel.registerProvider((any GitProviding).self, TestGitProviding())
+        try kernel.registerProvider((any GitProviding).self, git)
         try kernel.registerProvider((any WorkspaceSceneProviding).self, scene)
         try kernel.registerProvider((any RootViewProviding).self, rootView)
-        return (kernel, statusBar, projects, scene, rootView)
+        return (kernel, statusBar, projects, git, scene, rootView)
     }
 
     private func makeDirectory() throws -> URL {
@@ -51,11 +53,19 @@ struct ConflictResolverPluginSupplementalTests {
     // MARK: - 贡献内容可构造
 
     @Test("状态栏项与根视图叠层的视图可以被构造")
-    func contributedViewsCanBeConstructed() throws {
-        let (kernel, statusBar, _, _, rootView) = try makeKernel()
+    func contributedViewsCanBeConstructed() async throws {
+        let (kernel, statusBar, projects, git, _, rootView) = try makeKernel()
+        projects.currentProject = Project(url: URL(fileURLWithPath: "/tmp/conflict-construct-project"))
+        git.isMergingStub = true
+
         let plugin = GitConflictResolverPlugin()
         try plugin.onBoot(kernel: kernel)
         defer { try? plugin.onShutdown(kernel: kernel) }
+
+        let deadline = Date().addingTimeInterval(5)
+        while Date() < deadline, statusBar.statusBarItems.isEmpty {
+            await Task.yield()
+        }
 
         let item = try #require(statusBar.statusBarItems.first)
         let statusBarView = item.makeView()

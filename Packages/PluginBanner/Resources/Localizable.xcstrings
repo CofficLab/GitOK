@@ -1668,6 +1668,7 @@
       }
     },
     "• %@": {
+      "comment" : "Runtime-assembled format string: referenced through format APIs rather than a literal call site; keep in sync with code.",
       "localizations": {
         "en": {
           "stringUnit": {

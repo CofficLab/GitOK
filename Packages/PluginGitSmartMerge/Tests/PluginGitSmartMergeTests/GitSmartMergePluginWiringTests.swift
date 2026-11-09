@@ -4,8 +4,8 @@ import KitGit
 import ProviderDocsView
 import ProviderGit
 import ProviderProjects
-import ProviderStatusBar
 import ProviderStorage
+import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
 import Testing
@@ -19,7 +19,7 @@ import Testing
 struct GitSmartMergePluginWiringTests {
 
     private func makeKernel(
-        withStatusBar: Bool = true,
+        withToolbar: Bool = true,
         withProjects: Bool = true,
         withGit: Bool = true,
         withScene: Bool = true,
@@ -27,16 +27,16 @@ struct GitSmartMergePluginWiringTests {
         withDocs: Bool = false
     ) throws -> (
         kernel: KernelCoreContainer,
-        statusBar: GitSmartMergeDoubles.StatusBar,
+        toolbar: GitSmartMergeDoubles.Toolbar,
         scene: GitSmartMergeDoubles.Scene,
         docs: DefaultDocsViewProviding
     ) {
         let kernel = KernelCoreContainer()
-        let statusBar = GitSmartMergeDoubles.StatusBar()
+        let toolbar = GitSmartMergeDoubles.Toolbar()
         let scene = GitSmartMergeDoubles.Scene()
         let docs = DefaultDocsViewProviding()
-        if withStatusBar {
-            try kernel.registerProvider((any StatusBarProviding).self, statusBar)
+        if withToolbar {
+            try kernel.registerProvider((any ToolbarProviding).self, toolbar)
         }
         if withProjects {
             try kernel.registerProvider((any ProjectProviding).self, GitSmartMergeDoubles.Projects())
@@ -57,101 +57,101 @@ struct GitSmartMergePluginWiringTests {
         if withDocs {
             try kernel.registerProvider((any DocsViewProviding).self, docs)
         }
-        return (kernel, statusBar, scene, docs)
+        return (kernel, toolbar, scene, docs)
     }
 
     // MARK: - 守卫链
 
-    @Test("缺少状态栏时不注册状态栏项")
-    func bootWithoutStatusBar() throws {
-        let (kernel, _, _, _) = try makeKernel(withStatusBar: false)
+    @Test("缺少工具栏时不注册工具栏项")
+    func bootWithoutToolbar() throws {
+        let (kernel, _, _, _) = try makeKernel(withToolbar: false)
         let plugin = GitSmartMergePlugin()
 
         try plugin.onBoot(kernel: kernel)
 
-        #expect(kernel.resolveProvider((any StatusBarProviding).self) == nil)
+        #expect(kernel.resolveProvider((any ToolbarProviding).self) == nil)
     }
 
-    @Test("缺少项目提供方时不注册状态栏项")
+    @Test("缺少项目提供方时不注册工具栏项")
     func bootWithoutProjects() throws {
-        let (kernel, statusBar, _, _) = try makeKernel(withProjects: false)
+        let (kernel, toolbar, _, _) = try makeKernel(withProjects: false)
         let plugin = GitSmartMergePlugin()
 
         try plugin.onBoot(kernel: kernel)
 
-        #expect(statusBar.statusBarItems.isEmpty)
+        #expect(toolbar.toolbarItems.isEmpty)
     }
 
-    @Test("缺少 Git 提供方时不注册状态栏项")
+    @Test("缺少 Git 提供方时不注册工具栏项")
     func bootWithoutGit() throws {
-        let (kernel, statusBar, _, _) = try makeKernel(withGit: false)
+        let (kernel, toolbar, _, _) = try makeKernel(withGit: false)
         let plugin = GitSmartMergePlugin()
 
         try plugin.onBoot(kernel: kernel)
 
-        #expect(statusBar.statusBarItems.isEmpty)
+        #expect(toolbar.toolbarItems.isEmpty)
     }
 
-    @Test("缺少场景提供方时不注册状态栏项")
+    @Test("缺少场景提供方时不注册工具栏项")
     func bootWithoutScene() throws {
-        let (kernel, statusBar, _, _) = try makeKernel(withScene: false)
+        let (kernel, toolbar, _, _) = try makeKernel(withScene: false)
         let plugin = GitSmartMergePlugin()
 
         try plugin.onBoot(kernel: kernel)
 
-        #expect(statusBar.statusBarItems.isEmpty)
+        #expect(toolbar.toolbarItems.isEmpty)
     }
 
     // MARK: - 注入与撤回
 
-    @Test("依赖齐备时注册 trailing 状态栏项并订阅场景")
-    func bootRegistersStatusBarItem() throws {
-        let (kernel, statusBar, scene, _) = try makeKernel()
+    @Test("依赖齐备时注册 trailing 工具栏项并订阅场景")
+    func bootRegistersToolbarItem() throws {
+        let (kernel, toolbar, scene, _) = try makeKernel()
         let plugin = GitSmartMergePlugin()
 
         try plugin.onBoot(kernel: kernel)
 
-        #expect(statusBar.statusBarItems.count == 1)
-        let item = try #require(statusBar.statusBarItems.first)
-        #expect(item.id == GitSmartMergePlugin.itemID)
+        #expect(toolbar.toolbarItems.count == 1)
+        let item = try #require(toolbar.toolbarItems.first)
+        #expect(item.id == GitSmartMergePlugin.toolbarItemID)
         #expect(item.placement == .trailing)
-        #expect(item.order == 24)
+        #expect(item.order == 120)
         #expect(item.title.isEmpty == false)
         #expect(scene.observerCount == 1)
     }
 
-    @Test("状态栏项可以构造出贡献视图")
-    func statusBarItemBuildsView() throws {
-        let (kernel, statusBar, _, _) = try makeKernel()
+    @Test("工具栏项可以构造出贡献视图")
+    func toolbarItemBuildsView() throws {
+        let (kernel, toolbar, _, _) = try makeKernel()
         let plugin = GitSmartMergePlugin()
 
         try plugin.onBoot(kernel: kernel)
 
-        let item = try #require(statusBar.statusBarItems.first)
+        let item = try #require(toolbar.toolbarItems.first)
         let view = item.makeView()
         #expect(type(of: view) == AnyView.self)
     }
 
-    @Test("onShutdown 撤回状态栏项并取消场景订阅")
-    func shutdownRemovesStatusBarItem() throws {
-        let (kernel, statusBar, scene, _) = try makeKernel()
+    @Test("onShutdown 撤回工具栏项并取消场景订阅")
+    func shutdownRemovesToolbarItem() throws {
+        let (kernel, toolbar, scene, _) = try makeKernel()
         let plugin = GitSmartMergePlugin()
         try plugin.onBoot(kernel: kernel)
 
         try plugin.onShutdown(kernel: kernel)
 
-        #expect(statusBar.statusBarItems.isEmpty)
+        #expect(toolbar.toolbarItems.isEmpty)
         #expect(scene.observerCount == 0)
     }
 
     @Test("未启动就卸载是安全的")
     func shutdownWithoutBoot() throws {
-        let (kernel, statusBar, _, _) = try makeKernel()
+        let (kernel, toolbar, _, _) = try makeKernel()
         let plugin = GitSmartMergePlugin()
 
         try plugin.onShutdown(kernel: kernel)
 
-        #expect(statusBar.statusBarItems.isEmpty)
+        #expect(toolbar.toolbarItems.isEmpty)
     }
 
     // MARK: - onRegister / onUnregister
@@ -191,15 +191,15 @@ struct GitSmartMergePluginWiringTests {
 
     // MARK: - kernel.start
 
-    @Test("可通过 kernel.start 启动并注册状态栏项")
+    @Test("可通过 kernel.start 启动并注册工具栏项")
     func startViaKernel() throws {
-        let (kernel, statusBar, _, _) = try makeKernel()
+        let (kernel, toolbar, _, _) = try makeKernel()
         let plugin = GitSmartMergePlugin()
 
         try kernel.start(plugins: [plugin])
 
         #expect(kernel.isPluginRegistered(id: plugin.id))
-        #expect(statusBar.statusBarItems.count == 1)
+        #expect(toolbar.toolbarItems.count == 1)
         try kernel.stop()
     }
 

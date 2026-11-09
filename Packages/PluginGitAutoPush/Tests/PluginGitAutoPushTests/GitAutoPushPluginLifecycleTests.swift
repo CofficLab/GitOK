@@ -5,14 +5,14 @@ import ProviderAutoPush
 import ProviderCommitForm
 import ProviderGit
 import ProviderProjects
-import ProviderStatusBar
 import ProviderStorage
+import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
 import Testing
 @testable import PluginGitAutoPush
 
-/// 覆盖 `GitAutoPushPlugin` 的依赖守卫链、状态栏项注入，以及
+/// 覆盖 `GitAutoPushPlugin` 的依赖守卫链、工具栏项注入，以及
 /// 「提交成功后自动推送」这一核心行为。
 @MainActor
 @Suite("PluginGitAutoPush 生命周期")
@@ -25,14 +25,14 @@ struct GitAutoPushPluginLifecycleTests {
         let git: AutoPushTestGit
         let projects: AutoPushTestProjects
         let commitForm: AutoPushTestCommitForm
-        let statusBar: DefaultStatusBarProviding
+        let toolbar: DefaultToolbarProviding
         let scene: DefaultWorkspaceSceneProvider
         let projectURL: URL
         let root: URL
     }
 
     private func makeHarness(
-        withStatusBar: Bool = true,
+        withToolbar: Bool = true,
         withProjects: Bool = true,
         withGit: Bool = true,
         withScene: Bool = true,
@@ -47,14 +47,14 @@ struct GitAutoPushPluginLifecycleTests {
         let git = AutoPushTestGit()
         let projects = AutoPushTestProjects()
         let commitForm = AutoPushTestCommitForm()
-        let statusBar = DefaultStatusBarProviding()
+        let toolbar = DefaultToolbarProviding()
         let scene = DefaultWorkspaceSceneProvider()
         let projectURL = root.appendingPathComponent("project", isDirectory: true)
 
         projects.currentProject = Project(id: UUID(), url: projectURL, title: "project")
 
-        if withStatusBar {
-            try kernel.registerProvider((any StatusBarProviding).self, statusBar)
+        if withToolbar {
+            try kernel.registerProvider((any ToolbarProviding).self, toolbar)
         }
         if withProjects {
             try kernel.registerProvider((any ProjectProviding).self, projects)
@@ -80,7 +80,7 @@ struct GitAutoPushPluginLifecycleTests {
             git: git,
             projects: projects,
             commitForm: commitForm,
-            statusBar: statusBar,
+            toolbar: toolbar,
             scene: scene,
             projectURL: projectURL,
             root: root
@@ -93,18 +93,18 @@ struct GitAutoPushPluginLifecycleTests {
 
     // MARK: - 守卫链
 
-    @Test("缺少 StatusBarProviding 时不注入状态栏项")
-    func onBootWithoutStatusBarInjectsNothing() throws {
-        let harness = try makeHarness(withStatusBar: false)
+    @Test("缺少 ToolbarProviding 时不注入工具栏项")
+    func onBootWithoutToolbarInjectsNothing() throws {
+        let harness = try makeHarness(withToolbar: false)
         defer { cleanUp(harness) }
 
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.kernel.resolveProvider((any StatusBarProviding).self) == nil)
+        #expect(harness.kernel.resolveProvider((any ToolbarProviding).self) == nil)
     }
 
-    @Test("缺少 ProjectProviding 时不注入状态栏项")
+    @Test("缺少 ProjectProviding 时不注入工具栏项")
     func onBootWithoutProjectsInjectsNothing() throws {
         let harness = try makeHarness(withProjects: false)
         defer { cleanUp(harness) }
@@ -112,10 +112,10 @@ struct GitAutoPushPluginLifecycleTests {
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.isEmpty)
+        #expect(harness.toolbar.toolbarItems.isEmpty)
     }
 
-    @Test("缺少 GitProviding 时不注入状态栏项")
+    @Test("缺少 GitProviding 时不注入工具栏项")
     func onBootWithoutGitInjectsNothing() throws {
         let harness = try makeHarness(withGit: false)
         defer { cleanUp(harness) }
@@ -123,10 +123,10 @@ struct GitAutoPushPluginLifecycleTests {
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.isEmpty)
+        #expect(harness.toolbar.toolbarItems.isEmpty)
     }
 
-    @Test("缺少 WorkspaceSceneProviding 时不注入状态栏项")
+    @Test("缺少 WorkspaceSceneProviding 时不注入工具栏项")
     func onBootWithoutSceneInjectsNothing() throws {
         let harness = try makeHarness(withScene: false)
         defer { cleanUp(harness) }
@@ -134,10 +134,10 @@ struct GitAutoPushPluginLifecycleTests {
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.isEmpty)
+        #expect(harness.toolbar.toolbarItems.isEmpty)
     }
 
-    @Test("缺少 StorageProviding 时不注入状态栏项")
+    @Test("缺少 StorageProviding 时不注入工具栏项")
     func onBootWithoutStorageInjectsNothing() throws {
         let harness = try makeHarness(withStorage: false)
         defer { cleanUp(harness) }
@@ -145,10 +145,10 @@ struct GitAutoPushPluginLifecycleTests {
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.isEmpty)
+        #expect(harness.toolbar.toolbarItems.isEmpty)
     }
 
-    @Test("缺少 CommitFormProviding 时仍注入状态栏项")
+    @Test("缺少 CommitFormProviding 时仍注入工具栏项")
     func onBootWithoutCommitFormStillInjectsItem() throws {
         let harness = try makeHarness(withCommitForm: false)
         defer { cleanUp(harness) }
@@ -156,12 +156,12 @@ struct GitAutoPushPluginLifecycleTests {
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.count == 1)
+        #expect(harness.toolbar.toolbarItems.count == 1)
     }
 
     // MARK: - 注入与撤回
 
-    @Test("依赖齐备时注入 leading 状态栏项并注册 AutoPushProviding")
+    @Test("依赖齐备时注入 trailing 工具栏项并注册 AutoPushProviding")
     func onBootInjectsItemAndRegistersProvider() throws {
         let harness = try makeHarness()
         defer { cleanUp(harness) }
@@ -169,26 +169,26 @@ struct GitAutoPushPluginLifecycleTests {
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.count == 1)
-        let item = harness.statusBar.statusBarItems.first
-        #expect(item?.id == GitAutoPushPlugin.itemID)
-        #expect(item?.placement == .leading)
-        #expect(item?.order == 21)
+        #expect(harness.toolbar.toolbarItems.count == 1)
+        let item = harness.toolbar.toolbarItems.first
+        #expect(item?.id == GitAutoPushPlugin.toolbarItemID)
+        #expect(item?.placement == .trailing)
+        #expect(item?.order == 130)
         #expect(harness.kernel.isProviderRegistered((any AutoPushProviding).self))
     }
 
-    @Test("onShutdown 撤回状态栏项")
-    func onShutdownRemovesStatusBarItem() throws {
+    @Test("onShutdown 撤回工具栏项")
+    func onShutdownRemovesToolbarItem() throws {
         let harness = try makeHarness()
         defer { cleanUp(harness) }
 
         let plugin = GitAutoPushPlugin()
         try plugin.onBoot(kernel: harness.kernel)
-        #expect(harness.statusBar.statusBarItems.count == 1)
+        #expect(harness.toolbar.toolbarItems.count == 1)
 
         try plugin.onShutdown(kernel: harness.kernel)
 
-        #expect(harness.statusBar.statusBarItems.isEmpty)
+        #expect(harness.toolbar.toolbarItems.isEmpty)
     }
 
     // MARK: - 自动推送

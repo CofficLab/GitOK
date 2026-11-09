@@ -72,12 +72,12 @@ final class GitSubmoduleOperationTests: XCTestCase {
         let summaries = GitSubmoduleOperation.list(in: parent)
         XCTAssertEqual(summaries.count, 1)
         let summary = try XCTUnwrap(summaries.first)
-        // 源码按"状态字符 + 40 SHA + 空格"前缀切分；实际 git 输出在 trim 后
-        // 前导状态空格被裁掉，path 会少首字符。这里只校验 commit 长度与路径非空，
-        // 不锁定该 off-by-one 行为。
+        // 状态字符（空格 / '+' / '-' / 'U'）不能影响路径与 SHA 的切分；
+        // 路径必须完整，且 .gitmodules 的 url 必须能按路径匹配到。
         XCTAssertEqual(summary.commit.count, 40)
-        XCTAssertTrue(summary.path.contains("sub"), "actual path=\(summary.path)")
+        XCTAssertEqual(summary.path, "vendor/sub")
         XCTAssertEqual(summary.id, summary.path)
+        XCTAssertEqual(summary.url, child.path)
     }
 
     func testUpdateAllIsNoOpWithoutSubmodules() throws {

@@ -308,7 +308,6 @@
       }
     },
     "Check for Updates": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -989,7 +988,6 @@
       }
     },
     "Updates": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {

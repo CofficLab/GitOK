@@ -40,7 +40,7 @@ public struct FileInfoTile: View {
                     .foregroundStyle(index == components.count - 1 ? theme.textPrimary : theme.textSecondary)
                     .lineLimit(1)
                 if index < components.count - 1 {
-                    Text(">")
+                    Text(verbatim: ">")
                         .foregroundStyle(theme.textTertiary)
                 }
             }

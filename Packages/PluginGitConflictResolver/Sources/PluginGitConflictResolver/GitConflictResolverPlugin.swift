@@ -41,6 +41,7 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
     private var conflictViewModel: GitConflictResolverViewModel?
     private var conflictObserver: GitConflictResolverObserver?
     private var presentationProvider: GitConflictResolutionProviding?
+    private var statusBarContribution: ConflictStatusBarContribution?
 
     public init() {}
 
@@ -111,21 +112,17 @@ public final class GitConflictResolverPlugin: SuperPlugin, SuperLog {
             },
         ])
 
-        statusBar.addStatusBarItems([
-            StatusBarItem(
-                id: Self.itemID,
-                title: pluginLocalization.string("Conflict Resolver"),
-                placement: .leading,
-                order: 18
-            ) {
-                WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    ConflictStatusTile(projects: projects, viewModel: conflictViewModel)
-                }
-            },
-        ])
+        statusBarContribution = ConflictStatusBarContribution(
+            statusBar: statusBar,
+            projects: projects,
+            conflictViewModel: conflictViewModel,
+            sceneViewModel: sceneViewModel
+        )
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        statusBarContribution?.cancel()
+        statusBarContribution = nil
         conflictViewModel?.dismiss()
         sceneObserver?.cancel()
         sceneObserver = nil
