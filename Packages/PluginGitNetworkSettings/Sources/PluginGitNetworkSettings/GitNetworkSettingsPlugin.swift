@@ -20,7 +20,7 @@ public final class GitNetworkSettingsPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-network-settings",
         name: "Git Network Settings",
-        description: "Configure git proxy and SSL settings",
+        description: pluginLocalization.string("Configure git proxy and SSL settings"),
         category: .project,
         stage: .stable,
         policy: .disabled

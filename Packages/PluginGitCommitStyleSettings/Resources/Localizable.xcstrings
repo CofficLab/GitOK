@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "Choose Conventional Commits or a custom style." : {
       "localizations" : {
         "en" : {
@@ -34,6 +31,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "選擇 Conventional Commits 或自定義風格。"
+          }
+        }
+      }
+    },
+    "Choose the global default commit message style" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the global default commit message style"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择全局默认的提交信息风格"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇全域預設的提交訊息風格"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇全域預設的提交訊息風格"
+          }
+        },
+        "zh-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇全域預設的提交訊息風格"
           }
         }
       }
@@ -117,13 +148,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "提交风格"
+            "value" : "提交信息风格"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "提交風格"
+            "value" : "提交訊息風格"
           }
         },
         "zh-HK" : {

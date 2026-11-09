@@ -11,13 +11,13 @@ let package = Package(
         .library(name: "KitGit", targets: ["KitGit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiLocalization.git", from: "1.0.1"),
+        .package(path: "../KitGitOKLocalization"),
     ],
     targets: [
         .target(
             name: "KitGit",
             dependencies: [
-                .product(name: "LumiLocalizationKit", package: "LumiLocalization"),
+                .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
             ],
             path: "Sources/KitGit",
             resources: [

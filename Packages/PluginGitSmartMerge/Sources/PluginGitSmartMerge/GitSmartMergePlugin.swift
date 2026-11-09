@@ -4,15 +4,15 @@ import LumiLoggingKit
 import os
 import ProviderGit
 import ProviderProjects
-import ProviderStatusBar
 import ProviderStorage
+import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
 import ProviderDocsView
 
 // MARK: - Git Smart Merge SuperPlugin
 
-/// 智能合并插件：状态栏箭头图标，弹出分支合并表单
+/// 智能合并插件：工具栏右侧箭头图标，弹出分支合并表单
 /// （对齐旧版 PluginGitSmartMerge）。
 @MainActor
 public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
@@ -25,13 +25,14 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-smart-merge",
         name: "Smart Merge",
-        description: "Merge branches from the status bar",
+        description: pluginLocalization.string("Merge branches from the toolbar"),
         category: .project,
         stage: .stable,
         policy: .required
     )
 
-    static let itemID = "com.coffic.gitok.plugin.git-smart-merge.id"
+    /// 工具栏项 id（onShutdown 时按 id 撤回）。
+    public static let toolbarItemID = "com.coffic.gitok.plugin.git-smart-merge.toolbar"
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: GitSmartMergeSceneObserver?
@@ -49,8 +50,8 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        guard let statusBar = kernel.resolveProvider((any StatusBarProviding).self) else {
-            Self.logger.error("\(self.t)StatusBarProviding not registered; skip merge item")
+        guard let toolbar = kernel.resolveProvider((any ToolbarProviding).self) else {
+            Self.logger.error("\(self.t)ToolbarProviding not registered; skip merge item")
             return
         }
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
@@ -73,15 +74,17 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
         let sceneCapability = GitSmartMergeSceneCapabilityAdapter(scene: scene)
         self.sceneObserver = GitSmartMergeSceneObserver(capability: sceneCapability, viewModel: sceneViewModel)
 
-        statusBar.addStatusBarItems([
-            StatusBarItem(
-                id: Self.itemID,
-                title: GitSmartMergeLocalization.string("Merge", bundle: .module),
+        // 工具栏右侧：合并入口（排在 OpenIn 按钮之前、设置齿轮之后）。
+        toolbar.addToolbarItems([
+            ToolbarItem(
+                id: Self.toolbarItemID,
+                title: GitSmartMergeLocalization.string("Merge branches", bundle: .module),
                 placement: .trailing,
-                order: 24
+                category: .project,
+                order: 120
             ) {
                 WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                    MergeStatusTile(
+                    MergeToolbarButton(
                         projects: projects,
                         git: git,
                         storageDirectory: storageDirectory
@@ -89,13 +92,16 @@ public final class GitSmartMergePlugin: SuperPlugin, SuperLog {
                 }
             },
         ])
+        if Self.verbose {
+            Self.logger.debug("\(self.t)injected merge button into toolbar")
+        }
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
-        kernel.resolveProvider((any StatusBarProviding).self)?
-            .removeStatusBarItems(ids: [Self.itemID])
+        kernel.resolveProvider((any ToolbarProviding).self)?
+            .removeToolbarItems(ids: [Self.toolbarItemID])
     }
 }

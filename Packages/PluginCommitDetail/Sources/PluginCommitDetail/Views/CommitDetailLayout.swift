@@ -85,7 +85,7 @@ struct CommitDetailLayout: View {
                     title: loc("Unable to Load Changes"),
                     description: loadError
                 )
-                Button("Retry") {
+                Button(loc("Retry")) {
                     filePageStore.retry(pageIndex: -1)
                 }
                 .buttonStyle(.borderless)
@@ -106,13 +106,13 @@ struct CommitDetailLayout: View {
                             .foregroundStyle(theme.error)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         if let failedPage = filePageStore.firstFailedPageIndex {
-                            Button("Retry") {
+                            Button(loc("Retry")) {
                                 filePageStore.retry(pageIndex: failedPage)
                             }
                             .buttonStyle(.borderless)
                             .font(.appCaptionEmphasized)
                         } else if filePageStore.totalCount == nil {
-                            Button("Retry") {
+                            Button(loc("Retry")) {
                                 filePageStore.retry(pageIndex: -1)
                             }
                             .buttonStyle(.borderless)

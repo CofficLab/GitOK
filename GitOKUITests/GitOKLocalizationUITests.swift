@@ -120,7 +120,7 @@ final class GitOKChineseLocalizationUITests: GitOKLocalizationUITestCase {
             clone: "克隆",
             cloneHeading: "克隆仓库",
             cloneDescription: "克隆远程仓库并将其添加到项目中。",
-            remoteURL: "远程 URL",
+            remoteURL: "远程地址",
             destination: "目标位置",
             chooseDestination: "选择…",
             repositoryName: "仓库名称",
@@ -138,5 +138,32 @@ final class GitOKChineseLocalizationUITests: GitOKLocalizationUITestCase {
         assertKeySurfacesUseExpectedLocalization()
     }
 }
-import Foundation
-import XCTest
+
+final class GitOKTraditionalChineseLocalizationUITests: GitOKLocalizationUITestCase {
+    override var uiTestLanguage: String { "zh-Hant" }
+    override var uiTestLocale: String { "zh_TW" }
+    override var expectedLocalization: GitOKLocalizationExpectation {
+        GitOKLocalizationExpectation(
+            addProject: "新增專案",
+            cloneRepository: "複製儲存庫",
+            clone: "複製",
+            cloneHeading: "複製儲存庫",
+            cloneDescription: "複製遠端儲存庫並將其新增到專案中。",
+            remoteURL: "遠端網址",
+            destination: "目標位置",
+            chooseDestination: "選擇…",
+            repositoryName: "儲存庫名稱",
+            untracked: "未跟蹤",
+            search: "搜尋",
+            newBranchName: "新分支名稱",
+            createBranch: "建立",
+            openSettings: "開啟設定",
+            general: "通用",
+            cancel: "取消"
+        )
+    }
+
+    func testTraditionalChineseLocaleShowsTraditionalChineseAcrossMainGitCloneAndSettings() {
+        assertKeySurfacesUseExpectedLocalization()
+    }
+}

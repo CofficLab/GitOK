@@ -36,7 +36,7 @@ public final class GitRepositoryWatchPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-repository-watch",
         name: "Git Repository Watch",
-        description: "Watch .git directory changes and broadcast per-dimension events",
+        description: pluginLocalization.string("Watch .git directory changes and broadcast per-dimension events"),
         category: .project,
         stage: .stable,
         policy: .required

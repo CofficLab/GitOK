@@ -40,7 +40,7 @@ public final class CommitDetailPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.commit-detail",
         name: "Commit Detail",
-        description: "Main content view showing the changes of the selected commit",
+        description: pluginLocalization.string("Main content view showing the changes of the selected commit"),
         category: .project,
         stage: .stable,
         policy: .required

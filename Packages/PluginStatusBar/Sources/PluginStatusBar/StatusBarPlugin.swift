@@ -28,7 +28,7 @@ public final class StatusBarPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.status-bar",
         name: "Status Bar",
-        description: "Window bottom status bar: current project + theme switch",
+        description: pluginLocalization.string("Window bottom status bar: current project + theme switch"),
         category: .system,
         stage: .stable,
         policy: .disabled

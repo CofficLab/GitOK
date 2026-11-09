@@ -16,6 +16,6 @@ struct PluginGitAutoPushTests {
         #expect(plugin.metadata.policy == .alwaysOn)
         #expect(plugin.metadata.stage == .stable)
         #expect(plugin.order == 39)
-        #expect(GitAutoPushPlugin.itemID == "com.coffic.gitok.plugin.git-auto-push.id")
+        #expect(GitAutoPushPlugin.toolbarItemID == "com.coffic.gitok.plugin.git-auto-push.toolbar")
     }
 }

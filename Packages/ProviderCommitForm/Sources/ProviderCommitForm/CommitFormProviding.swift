@@ -137,9 +137,22 @@ public final class DefaultCommitFormProvider: CommitFormProviding {
         self.style = style
         self.coAuthors = coAuthors
         self.git = git
-        self.styleStore = CommitStylePerProjectStore(
-            directory: storage?.pluginDataDirectory(for: "com.coffic.gitok.plugin.commit-form")
-        )
+        let directory = storage?.pluginDataDirectory(for: "com.coffic.gitok.plugin.commit-form")
+        self.styleStore = CommitStylePerProjectStore(directory: directory)
+        // 全局默认风格与共同作者列表同样落在插件数据目录（不再用 UserDefaults）。
+        if let storage {
+            // 全局默认风格是共享设置：提交表单与「Commit Style」设置页共用同一目录，
+            // 因此这里用 GlobalCommitStyleStore 约定的目录 id，而不是本插件的 id。
+            CommitStyleStore.configure(
+                directory: storage.pluginDataDirectory(
+                    for: GlobalCommitStyleStore.pluginDataDirectoryID
+                )
+            )
+            // 共同作者列表属于提交表单插件自身数据。
+            CoAuthorStore.shared.configure(
+                directory: storage.pluginDataDirectory(for: "com.coffic.gitok.plugin.commit-form")
+            )
+        }
     }
 
     public func setSubject(_ newSubject: String) {

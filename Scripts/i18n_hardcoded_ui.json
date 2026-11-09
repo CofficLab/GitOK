@@ -1,0 +1,112 @@
+{
+  "PluginGitDiff": {
+    "Open": {
+      "en": "Open",
+      "zh-Hans": "打开",
+      "zh-Hant": "打開",
+      "zh-TW": "打開",
+      "zh-HK": "打開"
+    },
+    "Open in Default App": {
+      "en": "Open in Default App",
+      "zh-Hans": "在默认应用中打开",
+      "zh-Hant": "在預設應用程式中打開",
+      "zh-TW": "在預設應用程式中打開",
+      "zh-HK": "在預設應用程式中打開"
+    },
+    "This binary file cannot be rendered inline yet. Open it in its default macOS app to inspect the contents.": {
+      "en": "This binary file cannot be rendered inline yet. Open it in its default macOS app to inspect the contents.",
+      "zh-Hans": "暂时无法内联预览该二进制文件。请在默认的 macOS 应用中打开以查看内容。",
+      "zh-Hant": "暫時無法內嵌預覽此二進位檔案。請在預設的 macOS 應用程式中打開以檢視內容。",
+      "zh-TW": "暫時無法內嵌預覽此二進位檔案。請在預設的 macOS 應用程式中打開以檢視內容。",
+      "zh-HK": "暫時無法內嵌預覽此二進位檔案。請在預設的 macOS 應用程式中打開以檢視內容。"
+    },
+    "Version": {
+      "en": "Version",
+      "zh-Hans": "版本",
+      "zh-Hant": "版本",
+      "zh-TW": "版本",
+      "zh-HK": "版本"
+    },
+    "New": {
+      "en": "New",
+      "zh-Hans": "新版",
+      "zh-Hant": "新版",
+      "zh-TW": "新版",
+      "zh-HK": "新版"
+    },
+    "Previous": {
+      "en": "Previous",
+      "zh-Hans": "上一版",
+      "zh-Hant": "上一版",
+      "zh-TW": "上一版",
+      "zh-HK": "上一版"
+    }
+  },
+  "PluginCommitDetail": {
+    "Retry": {
+      "en": "Retry",
+      "zh-Hans": "重试",
+      "zh-Hant": "重試",
+      "zh-TW": "重試",
+      "zh-HK": "重試"
+    }
+  },
+  "PluginProjectReadme": {
+    "Project README": {
+      "en": "Project README",
+      "zh-Hans": "项目 README",
+      "zh-Hant": "專案 README",
+      "zh-TW": "專案 README",
+      "zh-HK": "專案 README"
+    },
+    "When the current project contains a Markdown README, its formatted content appears at the bottom of the clean worktree overview.": {
+      "en": "When the current project contains a Markdown README, its formatted content appears at the bottom of the clean worktree overview.",
+      "zh-Hans": "当前项目包含 Markdown README 时，其格式化内容会显示在干净工作区概览的底部。",
+      "zh-Hant": "目前專案包含 Markdown README 時，其格式化內容會顯示在乾淨工作區概覽的底部。",
+      "zh-TW": "目前專案包含 Markdown README 時，其格式化內容會顯示在乾淨工作區概覽的底部。",
+      "zh-HK": "目前專案包含 Markdown README 時，其格式化內容會顯示在乾淨工作區概覽的底部。"
+    }
+  },
+  "PluginIcon": {
+    "PNG": {
+      "en": "PNG",
+      "zh-Hans": "PNG",
+      "zh-Hant": "PNG",
+      "zh-TW": "PNG",
+      "zh-HK": "PNG"
+    },
+    "ImageSet": {
+      "en": "ImageSet",
+      "zh-Hans": "ImageSet",
+      "zh-Hant": "ImageSet",
+      "zh-TW": "ImageSet",
+      "zh-HK": "ImageSet"
+    },
+    "Favicon": {
+      "en": "Favicon",
+      "zh-Hans": "Favicon",
+      "zh-Hant": "Favicon",
+      "zh-TW": "Favicon",
+      "zh-HK": "Favicon"
+    }
+  },
+  "PluginSidebarToggle": {
+    "Toggle Sidebar": {
+      "en": "Toggle Sidebar",
+      "zh-Hans": "切换侧边栏",
+      "zh-Hant": "切換側邊欄",
+      "zh-TW": "切換側邊欄",
+      "zh-HK": "切換側邊欄"
+    }
+  },
+  "PluginGitBranchStatus": {
+    "current": {
+      "en": "current",
+      "zh-Hans": "当前",
+      "zh-Hant": "目前",
+      "zh-TW": "目前",
+      "zh-HK": "目前"
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "Add": {
+    "zh-Hans": "添加",
+    "zh-Hant": "添加"
+  },
+  "App Info": {
+    "zh-Hans": "应用信息",
+    "zh-Hant": "應用資訊"
+  },
+  "Apply": {
+    "zh-Hans": "应用",
+    "zh-Hant": "套用"
+  },
+  "Build": {
+    "zh-Hans": "构建",
+    "zh-Hant": "建置"
+  },
+  "Bundle ID": {
+    "zh-Hans": "包标识符",
+    "zh-Hant": "套件識別碼"
+  },
+  "Changes": {
+    "zh-Hans": "更改",
+    "zh-Hant": "更改"
+  },
+  "Chat": {
+    "zh-Hans": "聊天",
+    "zh-Hant": "聊天"
+  },
+  "Commit Style": {
+    "zh-Hans": "提交信息风格",
+    "zh-Hant": "提交訊息風格"
+  },
+  "Commits": {
+    "zh-Hans": "提交数",
+    "zh-Hant": "提交數"
+  },
+  "Content Area": {
+    "zh-Hans": "内容区域",
+    "zh-Hant": "內容區域"
+  },
+  "Current Branch": {
+    "zh-Hans": "当前分支",
+    "zh-Hant": "目前分支"
+  },
+  "Email": {
+    "zh-Hans": "电子邮箱",
+    "zh-Hant": "電子郵件"
+  },
+  "Files": {
+    "zh-Hans": "文件",
+    "zh-Hant": "檔案"
+  },
+  "Name": {
+    "zh-Hans": "名称",
+    "zh-Hant": "名稱"
+  },
+  "Open": {
+    "zh-Hans": "打开",
+    "zh-Hant": "開啟"
+  },
+  "Open in Browser": {
+    "zh-Hans": "在浏览器中打开",
+    "zh-Hant": "在瀏覽器中開啟"
+  },
+  "Remote": {
+    "zh-Hans": "远程仓库",
+    "zh-Hant": "遠程倉庫"
+  },
+  "Remote name (e.g. origin)": {
+    "zh-Hans": "远程名称（例如 origin）",
+    "zh-Hant": "遠端名稱（例如 origin）"
+  },
+  "Rename": {
+    "zh-Hans": "重命名",
+    "zh-Hant": "重新命名"
+  },
+  "Settings": {
+    "zh-Hans": "设置",
+    "zh-Hant": "設定"
+  },
+  "Status Bar": {
+    "zh-Hans": "状态栏",
+    "zh-Hant": "狀態列"
+  },
+  "Toolbar": {
+    "zh-Hans": "工具栏",
+    "zh-Hant": "工具列"
+  }
+}

@@ -22,6 +22,10 @@ PRODUCT_NAME = GitOK
 INFOPLIST_FILE = GitOKApp/GitOK-Info.plist
 INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.developer-tools
 
+// URL Scheme：CLI 脚本 `gitok <path>` 通过 `gitok://open?path=...`
+// 把目录交给 GitOK 打开并加入项目列表。
+GITOK_URL_SCHEME = gitok
+
 // 图标
 ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
 
@@ -35,5 +39,5 @@ ENABLE_APP_SANDBOX = NO
 CODE_SIGN_ENTITLEMENTS = GitOKApp/App.entitlements
 
 // 版本号
-MARKETING_VERSION = 4.0.59
-CURRENT_PROJECT_VERSION = 459
+MARKETING_VERSION = 4.0.67
+CURRENT_PROJECT_VERSION = 467

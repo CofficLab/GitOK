@@ -30,7 +30,7 @@ public final class RailViewPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.rail-view",
         name: "Rail View",
-        description: "Provides the rail view layout, replacing the default provider",
+        description: pluginLocalization.string("Provides the rail view layout, replacing the default provider"),
         category: .core,
         stage: .stable,
         policy: .required

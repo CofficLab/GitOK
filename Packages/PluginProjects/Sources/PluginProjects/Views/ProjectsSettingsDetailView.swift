@@ -105,7 +105,7 @@ struct ProjectsSettingsDetailView: View {
                 systemImage: "folder"
             )
             if let current = projects.currentProject {
-                Text("·")
+                Text(verbatim: "·")
                 Text(current.title)
             }
             Spacer()

@@ -310,6 +310,12 @@ final class GitDiffLoaderTests: XCTestCase {
         XCTAssertTrue(untrackedDiff.contains("new file mode"), "untracked 文件应以新增展示")
         XCTAssertTrue(untrackedDiff.contains("untracked.json"))
 
+        // 非 ASCII 路径：状态列表必须保留原始路径，才能命中未跟踪分支。
+        try Data("内容\n".utf8).write(to: repo.appendingPathComponent("中文.txt"))
+        let nonASCIIPathDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "中文.txt", in: repo)
+        XCTAssertTrue(nonASCIIPathDiff.contains("new file mode"), "非 ASCII 文件应以新增展示")
+        XCTAssertTrue(nonASCIIPathDiff.contains("+内容"))
+
         // 未跟踪目录：git 无法生成文本 diff → 返回空串。
         try FileManager.default.createDirectory(
             at: repo.appendingPathComponent("newdir"),
@@ -318,6 +324,11 @@ final class GitDiffLoaderTests: XCTestCase {
         try Data("icon".utf8).write(to: repo.appendingPathComponent("newdir/a.txt"))
         let dirDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "newdir/", in: repo)
         XCTAssertTrue(dirDiff.isEmpty, "未跟踪目录应返回空 diff")
+
+        // 已跟踪文件在工作区被删除（未暂存）：应给出删除补丁。
+        try FileManager.default.removeItem(at: repo.appendingPathComponent("tracked.txt"))
+        let deletedDiff = try GitDiffLoader.loadWorktreeDiff(filePath: "tracked.txt", in: repo)
+        XCTAssertTrue(deletedDiff.contains("deleted file mode"), "工作区删除应展示删除补丁")
     }
 
     /// 工作区状态：干净与有变更两种场景。

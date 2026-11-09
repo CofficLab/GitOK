@@ -24,7 +24,7 @@ public final class GitWorktreePreheatPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.git-worktree-preheat",
         name: "Git Worktree Preheat",
-        description: "Preloads working tree snapshots for saved projects",
+        description: pluginLocalization.string("Preloads working tree snapshots for saved projects"),
         category: .project,
         stage: .stable,
         policy: .required

@@ -26,7 +26,7 @@ struct SidebarToggleButtonView: View {
                 rootView.setSidebarViewHidden(!rootView.isSidebarViewHidden)
             }
         }
-        .help("Toggle Sidebar")
+        .help(pluginLocalization.string("Toggle Sidebar"))
         .contentTransition(.symbolEffect(.replace))
         .onAppear {
             isSidebarHidden = rootView.isSidebarViewHidden

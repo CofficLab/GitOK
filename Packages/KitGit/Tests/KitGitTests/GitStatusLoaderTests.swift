@@ -35,6 +35,44 @@ struct GitStatusLoaderTests {
         }
     }
 
+    @Test("keeps non-ASCII untracked paths without Git's C-style quoting")
+    func keepsNonASCIIUntrackedPath() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("content\n".utf8).write(to: repo.appendingPathComponent("中文.txt"))
+
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        #expect(entries.map(\.path) == ["中文.txt"])
+        #expect(entries.first?.isUntracked == true)
+    }
+
+    @Test("uses the target path for renamed non-ASCII files and skips the source record")
+    func usesRenameTargetPath() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        try Data("content\n".utf8).write(to: repo.appendingPathComponent("旧名.txt"))
+        try runGit(["add", "."], in: repo)
+        try runGit(["commit", "-qm", "initial"], in: repo)
+        try runGit(["mv", "旧名.txt", "新名.txt"], in: repo)
+
+        let entries = try GitStatusLoader.loadEntries(in: repo)
+        #expect(entries.count == 1)
+        #expect(entries.first?.path == "新名.txt")
+        #expect(entries.first?.stagedStatus == "R")
+    }
+
+    private func makeRepo() throws -> URL {
+        let repo = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GitStatusLoaderTests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: repo, withIntermediateDirectories: true)
+        try runGit(["init", "-q"], in: repo)
+        try runGit(["config", "user.email", "t@t.com"], in: repo)
+        try runGit(["config", "user.name", "t"], in: repo)
+        return repo
+    }
+
     @discardableResult
     private func runGit(_ arguments: [String], in directory: URL) throws -> String {
         let process = Process()

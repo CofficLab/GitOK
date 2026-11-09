@@ -133,7 +133,9 @@ public enum GitMergeOperation {
         do {
             switch version {
             case .base:
-                _ = try GitProcessRunner.run(["checkout-index", "--stage=1", "--", path], in: repository)
+                // `checkout-index` 默认拒绝覆盖工作区已存在的文件，而冲突文件
+                // 必然存在。缺省行为会让 “Use Base” 永远失败，因此必须 --force。
+                _ = try GitProcessRunner.run(["checkout-index", "--force", "--stage=1", "--", path], in: repository)
             case .ours:
                 _ = try GitProcessRunner.run(["checkout", "--ours", "--", path], in: repository)
             case .theirs:

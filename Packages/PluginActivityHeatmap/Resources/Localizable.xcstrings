@@ -1,0 +1,40 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Provides cached local Git activity data for workspace views": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为工作区视图提供缓存的本地 Git 活动数据"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "為工作區檢視提供快取的本地 Git 活動資料"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provides cached local Git activity data for workspace views"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "為工作區檢視提供快取的本地 Git 活動資料"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "為工作區檢視提供快取的本地 Git 活動資料"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

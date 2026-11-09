@@ -31,6 +31,8 @@ struct GeneralSettingsDetailView: View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
             VStack(alignment: .leading, spacing: 24) {
                 websiteSection
+                languageSection
+                commandLineToolSection
                 updatesSection
                 if !manuals.isEmpty {
                     manualsSection
@@ -44,6 +46,23 @@ struct GeneralSettingsDetailView: View {
                 ManualsBrowserView(manuals: manuals)
             }
         }
+    }
+
+    // MARK: - 语言
+
+    /// 界面语言选择：跟随系统或显式指定，切换后立即生效。
+    private var languageSection: some View {
+        LanguageSelectionDetailView()
+    }
+
+    // MARK: - 命令行工具
+
+    /// `gitok` 命令行工具：安装 / 卸载入口。
+    ///
+    /// 放在「网站」之后、「更新」之前：这是开发者高频会用到的能力，
+    /// 位置比「更新」更常用。
+    private var commandLineToolSection: some View {
+        CLIInstallDetailView()
     }
 
     // MARK: - 网站

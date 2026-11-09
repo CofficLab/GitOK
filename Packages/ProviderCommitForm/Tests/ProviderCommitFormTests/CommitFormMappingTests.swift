@@ -86,51 +86,163 @@ struct CommitStyleMappingTests {
     }
 }
 
-/// `CommitStyleStore` 的全局默认风格读写。
+/// `GlobalCommitStyleStore` 的全局默认风格读写。
 ///
-/// 该 store 固定使用 `UserDefaults.standard` 的同一个 key，
-/// 因此相关用例必须串行执行，避免并行用例互相覆盖。
-@Suite("CommitStyleStore", .serialized)
-struct CommitStyleStoreTests {
+/// 该 store 固定落盘到注入的插件数据目录，相关用例必须串行执行，
+/// 避免并行用例互相覆盖磁盘状态。
+@Suite("GlobalCommitStyleStore", .serialized)
+struct GlobalCommitStyleStoreTests {
 
-    private func withRestoredGlobalStyle(_ body: () -> Void) {
-        let key = "GitOK_GlobalCommitStyle"
-        let original = UserDefaults.standard.string(forKey: key)
-        defer {
-            if let original {
-                UserDefaults.standard.set(original, forKey: key)
-            } else {
-                UserDefaults.standard.removeObject(forKey: key)
-            }
-        }
-        body()
+    private func makeStore() -> (GlobalCommitStyleStore, URL, UserDefaults) {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GlobalCommitStyleStoreTests-\(UUID().uuidString)", isDirectory: true)
+        let defaults = UserDefaults(suiteName: "GlobalCommitStyleStoreTests-\(UUID().uuidString)")!
+        let store = GlobalCommitStyleStore(legacyDefaults: defaults)
+        store.configure(directory: directory)
+        return (store, directory, defaults)
     }
 
     @Test("未设置过时回退 emoji 风格")
     func defaultsToEmoji() {
-        withRestoredGlobalStyle {
-            UserDefaults.standard.removeObject(forKey: "GitOK_GlobalCommitStyle")
-            #expect(CommitStyleStore.current == .emoji)
-        }
+        let (store, directory, _) = makeStore()
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        #expect(store.current == .emoji)
     }
 
     @Test("写入后能读回")
     func setAndReadRoundTrip() {
-        withRestoredGlobalStyle {
-            CommitStyleStore.set(.plain)
-            #expect(CommitStyleStore.current == .plain)
+        let (store, directory, _) = makeStore()
+        defer { try? FileManager.default.removeItem(at: directory) }
 
-            CommitStyleStore.set(.lowercase)
-            #expect(CommitStyleStore.current == .lowercase)
+        store.set(.plain)
+        #expect(store.current == .plain)
+
+        store.set(.lowercase)
+        #expect(store.current == .lowercase)
+    }
+
+    @Test("风格落盘到插件数据目录下的 settings.plist")
+    func persistsToSettingsPlist() {
+        let (store, directory, _) = makeStore()
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        store.set(.lowercase)
+
+        let fileURL = directory.appendingPathComponent("settings.plist")
+        #expect(FileManager.default.fileExists(atPath: fileURL.path))
+        let data = try? Data(contentsOf: fileURL)
+        let plist = data.flatMap {
+            try? PropertyListSerialization.propertyList(from: $0, options: [], format: nil)
         }
+        let dict = plist as? [String: Any]
+        #expect(dict?[GlobalCommitStyleStore.styleKey] as? String == CommitStyle.lowercase.rawValue)
+    }
+
+    @Test("重建 store 后仍能读到磁盘上的风格")
+    func valueSurvivesReconfiguration() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GlobalCommitStyleStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "GlobalCommitStyleStoreTests-\(UUID().uuidString)")!
+
+        let first = GlobalCommitStyleStore(legacyDefaults: defaults)
+        first.configure(directory: directory)
+        first.set(.plain)
+
+        let second = GlobalCommitStyleStore(legacyDefaults: defaults)
+        second.configure(directory: directory)
+
+        #expect(second.current == .plain)
     }
 
     @Test("非法存储值回退到 emoji 风格")
     func invalidStoredValueFallsBackToEmoji() {
-        withRestoredGlobalStyle {
-            UserDefaults.standard.set("not-a-style", forKey: "GitOK_GlobalCommitStyle")
-            #expect(CommitStyleStore.current == .emoji)
-        }
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GlobalCommitStyleStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "GlobalCommitStyleStoreTests-\(UUID().uuidString)")!
+
+        // 手工写入一个无法识别的值，模拟存档损坏 / 版本演进。
+        let fileURL = directory.appendingPathComponent("settings.plist")
+        try? FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true
+        )
+        let data = try? PropertyListSerialization.data(
+            fromPropertyList: [GlobalCommitStyleStore.styleKey: "not-a-style"],
+            format: .binary,
+            options: 0
+        )
+        try? data?.write(to: fileURL, options: .atomic)
+
+        let store = GlobalCommitStyleStore(legacyDefaults: defaults)
+        store.configure(directory: directory)
+
+        #expect(store.current == .emoji)
+    }
+
+    // MARK: - Legacy Import
+
+    @Test("旧 UserDefaults 值被一次性导入")
+    func importsLegacyUserDefaultsValue() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GlobalCommitStyleStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "GlobalCommitStyleStoreTests-\(UUID().uuidString)")!
+        defaults.set(CommitStyle.plain.rawValue, forKey: GlobalCommitStyleStore.legacyDefaultsKey)
+
+        let store = GlobalCommitStyleStore(legacyDefaults: defaults)
+        store.configure(directory: directory)
+
+        #expect(store.current == .plain)
+    }
+
+    @Test("导入后移除旧 UserDefaults key")
+    func legacyImportRemovesOldDefaultsKey() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GlobalCommitStyleStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "GlobalCommitStyleStoreTests-\(UUID().uuidString)")!
+        defaults.set(CommitStyle.plain.rawValue, forKey: GlobalCommitStyleStore.legacyDefaultsKey)
+
+        let store = GlobalCommitStyleStore(legacyDefaults: defaults)
+        store.configure(directory: directory)
+
+        #expect(defaults.object(forKey: GlobalCommitStyleStore.legacyDefaultsKey) == nil)
+    }
+
+    @Test("磁盘已有记录时不被旧值覆盖")
+    func legacyImportDoesNotOverwriteExistingDiskValue() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GlobalCommitStyleStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "GlobalCommitStyleStoreTests-\(UUID().uuidString)")!
+
+        let first = GlobalCommitStyleStore(legacyDefaults: defaults)
+        first.configure(directory: directory)
+        first.set(.lowercase)
+
+        defaults.set(CommitStyle.plain.rawValue, forKey: GlobalCommitStyleStore.legacyDefaultsKey)
+        let second = GlobalCommitStyleStore(legacyDefaults: defaults)
+        second.configure(directory: directory)
+
+        #expect(second.current == .lowercase)
+    }
+
+    @Test("非法的旧值被丢弃")
+    func legacyImportDiscardsInvalidValue() {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("GlobalCommitStyleStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let defaults = UserDefaults(suiteName: "GlobalCommitStyleStoreTests-\(UUID().uuidString)")!
+        defaults.set("not-a-style", forKey: GlobalCommitStyleStore.legacyDefaultsKey)
+
+        let store = GlobalCommitStyleStore(legacyDefaults: defaults)
+        store.configure(directory: directory)
+
+        #expect(store.current == .emoji)
+        #expect(defaults.object(forKey: GlobalCommitStyleStore.legacyDefaultsKey) == nil)
     }
 }
 

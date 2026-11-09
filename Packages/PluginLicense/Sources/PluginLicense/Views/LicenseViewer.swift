@@ -44,7 +44,7 @@ public struct LicenseViewer: View {
                 Image(systemName: "doc.plaintext")
                     .font(.title2)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("LICENSE")
+                    Text(verbatim: "LICENSE")
                         .font(.headline)
                         .fontWeight(.semibold)
                     Text(projects.currentProject?.title ?? "")

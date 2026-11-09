@@ -23,7 +23,7 @@ public final class FileInfoPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.file-info",
         name: "File Info",
-        description: "Show the selected file path and file actions in the status bar",
+        description: pluginLocalization.string("Show the selected file path and file actions in the status bar"),
         category: .project,
         stage: .stable,
         policy: .disabled

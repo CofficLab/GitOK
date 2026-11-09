@@ -1,1232 +1,1264 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "%lld remote commits available to pull" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld remote commits available to pull"
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld remote commits available to pull": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld remote commits available to pull"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个远程提交可拉取"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个远程提交可拉取"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 個遠程提交可拉取"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個遠程提交可拉取"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 個遠程提交可拉取"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個遠程提交可拉取"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 個遠程提交可拉取"
-          }
-        }
-      }
-    },
-    "(%lld) Uncommitted" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(%lld) Uncommitted"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(%lld) 未提交"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(%lld) 未提交"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(%lld) 未提交"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(%lld) 未提交"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個遠程提交可拉取"
           }
         }
       }
     },
-    "All Changes Committed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All Changes Committed"
+    "(%lld) Uncommitted": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld) Uncommitted"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所有更改已提交"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld) 未提交"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所有更改已提交"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld) 未提交"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所有更改已提交"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld) 未提交"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所有更改已提交"
-          }
-        }
-      }
-    },
-    "Categorize" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Categorize"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分类"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分類"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分類"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分類"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld) 未提交"
           }
         }
       }
     },
-    "Changed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Changed"
+    "All Changes Committed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All Changes Committed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有更改已提交"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有更改已提交"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有更改已提交"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改"
-          }
-        }
-      }
-    },
-    "Changes Pending" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Changes Pending"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "有未提交的更改"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "有未提交的更改"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "有未提交的更改"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "有未提交的更改"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有更改已提交"
           }
         }
       }
     },
-    "Core Capabilities" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Core Capabilities"
+    "Categorize": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categorize"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分类"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分類"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分類"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "核心能力"
-          }
-        }
-      }
-    },
-    "Fetch failed" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fetch failed"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "获取失败"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "獲取失敗"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "獲取失敗"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "獲取失敗"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分類"
           }
         }
       }
     },
-    "File events re-scan the tree and update the list." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "File events re-scan the tree and update the list."
+    "Changed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件事件重新扫描工作树并更新列表。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件事件重新掃描工作樹並更新列表。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件事件重新掃描工作樹並更新列表。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件事件重新掃描工作樹並更新列表。"
-          }
-        }
-      }
-    },
-    "Files are grouped by modified, staged, or untracked." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Files are grouped by modified, staged, or untracked."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件按已修改、已暂存或未跟踪分组。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件按已修改、已暫存或未跟蹤分組。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件按已修改、已暫存或未跟蹤分組。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件按已修改、已暫存或未跟蹤分組。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改"
           }
         }
       }
     },
-    "Git compares working tree and index against HEAD." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git compares working tree and index against HEAD."
+    "Changes Pending": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes Pending"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "git 将工作树与索引对比 HEAD。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有未提交的更改"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "git 將工作樹與索引對比 HEAD。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有未提交的更改"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "git 將工作樹與索引對比 HEAD。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有未提交的更改"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "git 將工作樹與索引對比 HEAD。"
-          }
-        }
-      }
-    },
-    "How It Works" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How It Works"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作原理"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有未提交的更改"
           }
         }
       }
     },
-    "Loading" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading"
+    "Core Capabilities": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core Capabilities"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加載"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加載"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加載"
-          }
-        }
-      }
-    },
-    "Merge failed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merge failed"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合并失败"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併失敗"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併失敗"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合併失敗"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核心能力"
           }
         }
       }
     },
-    "Modified Files" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modified Files"
+    "Fetch failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetch failed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改文件"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获取失败"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改文件"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "獲取失敗"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改文件"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "獲取失敗"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已修改文件"
-          }
-        }
-      }
-    },
-    "New files show up until you decide to track or ignore them." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New files show up until you decide to track or ignore them."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新文件持续显示，直到你决定跟踪或忽略。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新文件持續顯示，直到你決定跟蹤或忽略。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新文件持續顯示，直到你決定跟蹤或忽略。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新文件持續顯示，直到你決定跟蹤或忽略。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "獲取失敗"
           }
         }
       }
     },
-    "Publish branch" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Publish branch"
+    "File events re-scan the tree and update the list.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File events re-scan the tree and update the list."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "发布分支"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件事件重新扫描工作树并更新列表。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "發佈分支"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件事件重新掃描工作樹並更新列表。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "發佈分支"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件事件重新掃描工作樹並更新列表。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "發佈分支"
-          }
-        }
-      }
-    },
-    "Push failed" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Push failed"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送失败"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送失敗"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送失敗"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推送失敗"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件事件重新掃描工作樹並更新列表。"
           }
         }
       }
     },
-    "Pushing" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pushing"
+    "Files are grouped by modified, staged, or untracked.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Files are grouped by modified, staged, or untracked."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在推送"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件按已修改、已暂存或未跟踪分组。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在推送"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件按已修改、已暫存或未跟蹤分組。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在推送"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件按已修改、已暫存或未跟蹤分組。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在推送"
-          }
-        }
-      }
-    },
-    "Refresh live" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Refresh live"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "实时刷新"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "實時刷新"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "實時刷新"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "實時刷新"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件按已修改、已暫存或未跟蹤分組。"
           }
         }
       }
     },
-    "Scan the tree" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scan the tree"
+    "Git compares working tree and index against HEAD.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git compares working tree and index against HEAD."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "扫描工作树"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 将工作树与索引对比 HEAD。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "掃描工作樹"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 將工作樹與索引對比 HEAD。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "掃描工作樹"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 將工作樹與索引對比 HEAD。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "掃描工作樹"
-          }
-        }
-      }
-    },
-    "See exactly what changed in your working tree." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "See exactly what changed in your working tree."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "精确看到工作树发生了什么变化。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "精確看到工作樹發生了什麼變化。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "精確看到工作樹發生了什麼變化。"
-          }
-        },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "精確看到工作樹發生了什麼變化。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git 將工作樹與索引對比 HEAD。"
           }
         }
       }
     },
-    "Staged" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Staged"
+    "How It Works": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How It Works"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暂存"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暫存"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暫存"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暫存"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作原理"
           }
         }
       }
     },
-    "Staged Changes" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Staged Changes"
+    "Loading": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暂存改动"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暫存改動"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加載"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暫存改動"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加載"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已暫存改動"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加載"
           }
         }
       }
     },
-    "Sync completed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sync completed"
+    "Merge failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge failed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步完成"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并失败"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步完成"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併失敗"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步完成"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併失敗"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步完成"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合併失敗"
           }
         }
       }
     },
-    "Sync failed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sync failed"
+    "Modified Files": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modified Files"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步失败"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改文件"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步失敗"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改文件"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步失敗"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改文件"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同步失敗"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已修改文件"
           }
         }
       }
     },
-    "Synchronize with remote" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Synchronize with remote"
+    "New files show up until you decide to track or ignore them.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New files show up until you decide to track or ignore them."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "与远程同步"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新文件持续显示，直到你决定跟踪或忽略。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "與遠程同步"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新文件持續顯示，直到你決定跟蹤或忽略。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "與遠程同步"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新文件持續顯示，直到你決定跟蹤或忽略。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "與遠程同步"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新文件持續顯示，直到你決定跟蹤或忽略。"
           }
         }
       }
     },
-    "Synchronizing" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Synchronizing"
+    "Publish branch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publish branch"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在同步"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发布分支"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在同步"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "發佈分支"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在同步"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "發佈分支"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在同步"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "發佈分支"
           }
         }
       }
     },
-    "The index state is shown separately from working-tree edits." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The index state is shown separately from working-tree edits."
+    "Push failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Push failed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "索引状态与工作树编辑分开显示。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失败"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "索引狀態與工作樹編輯分開顯示。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失敗"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "索引狀態與工作樹編輯分開顯示。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失敗"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "索引狀態與工作樹編輯分開顯示。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推送失敗"
           }
         }
       }
     },
-    "Tracked files with uncommitted changes appear instantly." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tracked files with uncommitted changes appear instantly."
+    "Pushing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pushing"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "带未提交改动的已跟踪文件立即出现。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在推送"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "帶未提交改動的已跟蹤文件立即出現。"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在推送"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "帶未提交改動的已跟蹤文件立即出現。"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在推送"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "帶未提交改動的已跟蹤文件立即出現。"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在推送"
           }
         }
       }
     },
-    "Unable to Load Git Status" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unable to Load Git Status"
+    "Refresh live": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh live"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法加载 Git 状态"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实时刷新"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無法加載 Git 狀態"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "實時刷新"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無法加載 Git 狀態"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "實時刷新"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無法加載 Git 狀態"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "實時刷新"
           }
         }
       }
     },
-    "Untracked" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Untracked"
+    "Scan the tree": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan the tree"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟踪"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扫描工作树"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟蹤"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "掃描工作樹"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟蹤"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "掃描工作樹"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟蹤"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "掃描工作樹"
           }
         }
       }
     },
-    "Untracked Files" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Untracked Files"
+    "See exactly what changed in your working tree.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See exactly what changed in your working tree."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟踪文件"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "精确看到工作树发生了什么变化。"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟蹤文件"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "精確看到工作樹發生了什麼變化。"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟蹤文件"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "精確看到工作樹發生了什麼變化。"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未跟蹤文件"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "精確看到工作樹發生了什麼變化。"
           }
         }
       }
     },
-    "Working Tree Clean" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Working Tree Clean"
+    "Staged": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staged"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作区干净"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暂存"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作區乾淨"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫存"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作區乾淨"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫存"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作區乾淨"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫存"
           }
         }
       }
     },
-    "change kinds" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "change kinds"
+    "Staged Changes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staged Changes"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "变更种类"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暂存改动"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "變更種類"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫存改動"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "變更種類"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫存改動"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "變更種類"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫存改動"
           }
         }
       }
     },
-    "refresh" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "refresh"
+    "Sync completed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync completed"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刷新"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步完成"
           }
         },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刷新"
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步完成"
           }
         },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刷新"
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步完成"
           }
         },
-        "zh-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刷新"
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步完成"
+          }
+        }
+      }
+    },
+    "Sync failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步失败"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步失敗"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步失敗"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步失敗"
+          }
+        }
+      }
+    },
+    "Synchronize with remote": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronize with remote"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "与远程同步"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "與遠程同步"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "與遠程同步"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "與遠程同步"
+          }
+        }
+      }
+    },
+    "Synchronizing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronizing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在同步"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在同步"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在同步"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在同步"
+          }
+        }
+      }
+    },
+    "The index state is shown separately from working-tree edits.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The index state is shown separately from working-tree edits."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "索引状态与工作树编辑分开显示。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "索引狀態與工作樹編輯分開顯示。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "索引狀態與工作樹編輯分開顯示。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "索引狀態與工作樹編輯分開顯示。"
+          }
+        }
+      }
+    },
+    "Tracked files with uncommitted changes appear instantly.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tracked files with uncommitted changes appear instantly."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "带未提交改动的已跟踪文件立即出现。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "帶未提交改動的已跟蹤文件立即出現。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "帶未提交改動的已跟蹤文件立即出現。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "帶未提交改動的已跟蹤文件立即出現。"
+          }
+        }
+      }
+    },
+    "Unable to Load Git Status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unable to Load Git Status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法加载 Git 状态"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法加載 Git 狀態"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法加載 Git 狀態"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法加載 Git 狀態"
+          }
+        }
+      }
+    },
+    "Untracked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untracked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟踪"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤"
+          }
+        }
+      }
+    },
+    "Untracked Files": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untracked Files"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟踪文件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤文件"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤文件"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未跟蹤文件"
+          }
+        }
+      }
+    },
+    "Working Tree Clean": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working Tree Clean"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作区干净"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作區乾淨"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作區乾淨"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作區乾淨"
+          }
+        }
+      }
+    },
+    "change kinds": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "change kinds"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "变更种类"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "變更種類"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "變更種類"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "變更種類"
+          }
+        }
+      }
+    },
+    "refresh": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "refresh"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新"
+          }
+        }
+      }
+    },
+    "Rail section showing the working tree status of the current project": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示当前项目工作区状态的侧边栏分区"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顯示目前專案工作區狀態的側邊欄分區"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rail section showing the working tree status of the current project"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顯示目前專案工作區狀態的側邊欄分區"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顯示目前專案工作區狀態的側邊欄分區"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
