@@ -13,10 +13,7 @@ let package = Package(
         .package(path: "../KitGit"),
         .package(path: "../ProviderGit"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
-        .package(
-            url: "https://github.com/nookery/LibGit2Swift.git",
-            revision: "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
-        ),
+        .package(url: "https://github.com/nookery/LibGit2Swift.git", exact: "1.0.4"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0")
     ],
     targets: [

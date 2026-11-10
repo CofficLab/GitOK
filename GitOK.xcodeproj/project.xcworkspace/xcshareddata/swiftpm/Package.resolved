@@ -6,7 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/LibGit2Swift.git",
       "state" : {
-        "revision" : "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
+        "revision" : "4f9de852b59ecdcbe5ea3d21a21ccab134ec8dd5",
+        "version" : "1.0.4"
       }
     },
     {
@@ -149,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicLog.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5"
+        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5",
+        "version" : "1.0.0"
       }
     },
     {
