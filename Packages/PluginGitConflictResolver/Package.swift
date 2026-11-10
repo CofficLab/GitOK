@@ -19,14 +19,14 @@ let package = Package(
         .package(path: "../KitGit"),
         .package(path: "../KitOpenIn"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.12.0"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
         .package(path: "../ProviderGitConflictResolver"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.21.0")
     ],
     targets: [
         .target(

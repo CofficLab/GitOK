@@ -15,7 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitGitOKLocalization"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.21.0"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(path: "../KitOpenIn"),
@@ -23,7 +23,7 @@ let package = Package(
         .package(path: "../ProviderActivity"),
         .package(path: "../ProviderCloneRepository"),
         .package(path: "../ProviderGit"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.12.0"),
         .package(path: "../ProviderProjects"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
         .package(path: "../ProviderSidebar"),

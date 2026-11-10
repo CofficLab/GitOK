@@ -12,7 +12,8 @@ import ProviderProjects
 enum ProjectSortMode: String, CaseIterable, Identifiable, Sendable {
     /// 手动排序：沿用项目列表中保存的顺序（置顶在前，其余按用户调整的顺序）。
     case manual
-    /// 最近更新：按仓库最近一次提交时间倒序；没有提交信息时回退到最近打开时间。
+    /// 最近更新：按仓库最近一次提交时间倒序；没有提交时间的项目排在最后。
+    /// 排序只依赖仓库提交时间，点击项目（更新最近打开时间）不会改变顺序。
     case recent
     /// 按名称：按项目名称升序。
     case name
@@ -46,7 +47,7 @@ enum ProjectSortMode: String, CaseIterable, Identifiable, Sendable {
     ///
     /// - Parameters:
     ///   - projects: 原始项目列表（通常已按置顶 + 手动顺序排列）。
-    ///   - commitDates: 各项目的最近提交时间；缺失时回退到 `lastOpenedAt`。
+    ///   - commitDates: 各项目的最近提交时间；缺失时该项目排在最后。
     /// - Returns: 重排后的列表，置顶项目仍在最前。
     func sorted(_ projects: [Project], commitDates: [UUID: Date] = [:]) -> [Project] {
         switch self {
@@ -70,12 +71,11 @@ enum ProjectSortMode: String, CaseIterable, Identifiable, Sendable {
 
     // MARK: - Helpers
 
-    /// 项目用于「最近更新」排序的时间：优先提交时间，回退到最近打开时间。
+    /// 项目用于「最近更新」排序的时间：只认仓库提交时间。
+    /// 读取中、读取失败或没有提交的项目统一按最旧处理，避免点击项目
+    /// （刷新 `lastOpenedAt`）把列表顺序打乱。
     static func activityDate(for project: Project, commitDates: [UUID: Date]) -> Date {
-        if let commitDate = commitDates[project.id] {
-            return commitDate
-        }
-        return project.lastOpenedAt ?? .distantPast
+        commitDates[project.id] ?? .distantPast
     }
 
     /// 置顶组与普通组分别排序后拼接，保持置顶项目始终在最前。

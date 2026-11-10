@@ -1,12 +1,13 @@
 {
-  "originHash" : "b34921436e3f5e4576c44bb3af5d652482e54b96a90a59d729361d1fa01b8adb",
+  "originHash" : "38fd6399aac8667b542e8dc9b9607b5cf3343b6e02f729962e35566a761a9f24",
   "pins" : [
     {
       "identity" : "libgit2swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/LibGit2Swift.git",
       "state" : {
-        "revision" : "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
+        "revision" : "547bbc76a08f24018560fea13543500713d157b6",
+        "version" : "1.0.7"
       }
     },
     {
@@ -41,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginAbout.git",
       "state" : {
-        "revision" : "419abd51827febdc97689742aa573f4850fa2ae6",
-        "version" : "3.0.1"
+        "revision" : "747aa4fdb52becc2b9f92e652859f1d65be7c5ca",
+        "version" : "3.0.3"
       }
     },
     {
@@ -149,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicLog.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5"
+        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5",
+        "version" : "1.0.0"
       }
     },
     {

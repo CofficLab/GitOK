@@ -22,7 +22,7 @@ final class ProjectActivityModel: ObservableObject {
     @Published private(set) var loadingProjectIDs: Set<UUID> = []
 
     /// 读取仓库提交时间的底层能力；为 nil 时（例如 Git Provider 未注册）
-    /// 全部项目回退到「最近打开时间」排序。
+    /// 没有提交时间的项目统一排在「最近更新」列表末尾。
     private let capability: (any ProjectActivityCapability)?
 
     /// 单批并发读取数。
