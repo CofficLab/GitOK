@@ -17,7 +17,7 @@ let package = Package(
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderGitRepositoryWatch"),
-        .package(url: "https://github.com/nookery/LibGit2Swift.git", exact: "1.0.4"),
+        .package(url: "https://github.com/nookery/LibGit2Swift.git", exact: "1.0.7"),
     ],
     targets: [
         .target(
