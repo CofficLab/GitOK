@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/CofficLab/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.12.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.13.1"),
         .package(path: "../ProviderActivityHeatmap"),
         .package(path: "../ProviderProjectLanguages"),
         .package(path: "../ProviderGit"),
@@ -25,7 +25,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
         .package(path: "../ProviderWorkspaceScene"),
         .package(path: "../ProviderProjectReadme"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.21.0")
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.22.0")
     ],
     targets: [
         .target(
