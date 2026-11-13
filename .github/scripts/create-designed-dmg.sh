@@ -295,11 +295,34 @@ else
 fi
 
 sync
-detach_volume "$MOUNT_POINT"
-MOUNT_POINT=""
+
+# Detach the working volume and compress it into the final DMG.
+#
+# If the volume cannot be detached (Finder or a stale diskimages-helper keeps
+# the disk busy) we must not abort the release: a functional DMG matters far
+# more than the cosmetic Finder layout. In that case we rebuild a fresh image
+# straight from the staging folder, skipping the Finder automation entirely.
+FINAL_SOURCE_DMG="$READ_WRITE_DMG"
+if detach_volume "$MOUNT_POINT"; then
+  MOUNT_POINT=""
+else
+  echo "::warning::DMG 卷无法卸载，已降级为无自定义排版的 DMG（功能与公证不受影响）。" >&2
+  FALLBACK_DMG="$WORK_DIR/$VOLUME_NAME-fallback.dmg"
+  rm -f "$FALLBACK_DMG"
+  hdiutil create \
+    -size 200m \
+    -fs HFS+ \
+    -volname "$VOLUME_NAME" \
+    -srcfolder "$STAGING_DIR" \
+    -ov \
+    -format UDRW \
+    "$FALLBACK_DMG" >/dev/null
+  FINAL_SOURCE_DMG="$FALLBACK_DMG"
+  LAYOUT_APPLIED=0
+fi
 
 rm -f "$OUTPUT_PATH"
-hdiutil convert "$READ_WRITE_DMG" \
+hdiutil convert "$FINAL_SOURCE_DMG" \
   -format UDZO \
   -imagekey zlib-level=9 \
   -o "$OUTPUT_PATH" >/dev/null
