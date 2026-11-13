@@ -98,40 +98,80 @@ fi
 
 # Detach a mounted DMG volume reliably.
 #
-# After the Finder layout step the volume may still be held open by Finder,
-# which makes a plain `hdiutil detach` fail with
-# "couldn't eject <disk> - Resource busy" (exit code 16). We therefore close
-# the Finder windows first, then retry the detach a few times and finally fall
-# back to a forced detach.
+# The Finder layout step reopens the volume window on purpose (so the window
+# size is persisted in the volume), which leaves the disk held by Finder. A
+# plain `hdiutil detach` then fails with "couldn't eject <disk> - Resource
+# busy" (exit code 16) and aborts the release.
+#
+# We therefore quit Finder first, then retry the detach and finally fall back
+# to a forced detach. The command output is kept so failures are diagnosable.
 detach_volume() {
   local mount_point="$1"
-  local attempt exit_code
+  local attempt exit_code output device
 
   [[ -n "$mount_point" ]] || return 0
 
-  # Ask Finder to close any window showing the volume so it releases the disk.
+  # Finder keeps the volume busy; closing its windows is not enough because the
+  # layout script reopens the disk. Quitting Finder releases every handle.
   osascript -e "tell application \"Finder\" to close every window of disk \"$mount_point\"" >/dev/null 2>&1 || true
-  # Make sure no process keeps a file handle inside the volume.
-  diskutil unmount "$mount_point" >/dev/null 2>&1 || true
+  osascript -e "tell application \"Finder\" to quit" >/dev/null 2>&1 || true
+  sleep 2
+
+  # Spotlight indexing keeps file handles inside the volume open, which also
+  # makes the eject fail. Disable indexing on the volume before detaching.
+  mdutil -i off "$mount_point" >/dev/null 2>&1 || true
+
+  # Resolve the backing device so we can detach by device as a last resort.
+  device="$(diskutil info "$mount_point" 2>/dev/null | awk -F': ' '/Device Node/ {print $2; exit}')"
 
   for (( attempt = 1; attempt <= 5; attempt++ )); do
     set +e
-    hdiutil detach "$mount_point" >/dev/null 2>&1
+    output="$(hdiutil detach "$mount_point" 2>&1)"
     exit_code=$?
     set -e
     if [[ "$exit_code" -eq 0 ]]; then
       return 0
     fi
-    echo "   ⚠️  卸载卷失败（尝试 ${attempt}/5），稍后重试" >&2
+    echo "   ⚠️  卸载卷失败（尝试 ${attempt}/5）: ${output}" >&2
     sleep $(( attempt * 2 ))
   done
 
   echo "   ⚠️  强制卸载卷: $mount_point" >&2
-  hdiutil detach "$mount_point" -force >/dev/null 2>&1 || {
-    echo "❌ 无法卸载 DMG 卷: $mount_point" >&2
-    return 1
-  }
-  return 0
+  # diskimages-helper can keep a stale handle on the device and block the eject.
+  killall -9 diskimages-helper >/dev/null 2>&1 || true
+  set +e
+  output="$(hdiutil detach "$mount_point" -force 2>&1)"
+  exit_code=$?
+  set -e
+  if [[ "$exit_code" -eq 0 ]]; then
+    return 0
+  fi
+  echo "   ⚠️  强制卸载也失败: ${output}" >&2
+
+  # Last resort: force unmount through diskutil, then detach by device.
+  set +e
+  output="$(diskutil unmount force "$mount_point" 2>&1)"
+  exit_code=$?
+  set -e
+  if [[ "$exit_code" -eq 0 ]]; then
+    return 0
+  fi
+  echo "   ⚠️  diskutil 强制卸载失败: ${output}" >&2
+
+  if [[ -n "$device" ]]; then
+    echo "   ⚠️  尝试按设备卸载: $device" >&2
+    set +e
+    output="$(hdiutil detach "$device" -force 2>&1)"
+    exit_code=$?
+    set -e
+    if [[ "$exit_code" -eq 0 ]]; then
+      return 0
+    fi
+    echo "   ⚠️  按设备卸载也失败: ${output}" >&2
+  fi
+
+  echo "❌ 无法卸载 DMG 卷: $mount_point" >&2
+  return 1
 }
 
 # ---------------------------------------------------------------------------
@@ -255,11 +295,34 @@ else
 fi
 
 sync
-detach_volume "$MOUNT_POINT"
-MOUNT_POINT=""
+
+# Detach the working volume and compress it into the final DMG.
+#
+# If the volume cannot be detached (Finder or a stale diskimages-helper keeps
+# the disk busy) we must not abort the release: a functional DMG matters far
+# more than the cosmetic Finder layout. In that case we rebuild a fresh image
+# straight from the staging folder, skipping the Finder automation entirely.
+FINAL_SOURCE_DMG="$READ_WRITE_DMG"
+if detach_volume "$MOUNT_POINT"; then
+  MOUNT_POINT=""
+else
+  echo "::warning::DMG 卷无法卸载，已降级为无自定义排版的 DMG（功能与公证不受影响）。" >&2
+  FALLBACK_DMG="$WORK_DIR/$VOLUME_NAME-fallback.dmg"
+  rm -f "$FALLBACK_DMG"
+  hdiutil create \
+    -size 200m \
+    -fs HFS+ \
+    -volname "$VOLUME_NAME" \
+    -srcfolder "$STAGING_DIR" \
+    -ov \
+    -format UDRW \
+    "$FALLBACK_DMG" >/dev/null
+  FINAL_SOURCE_DMG="$FALLBACK_DMG"
+  LAYOUT_APPLIED=0
+fi
 
 rm -f "$OUTPUT_PATH"
-hdiutil convert "$READ_WRITE_DMG" \
+hdiutil convert "$FINAL_SOURCE_DMG" \
   -format UDZO \
   -imagekey zlib-level=9 \
   -o "$OUTPUT_PATH" >/dev/null
