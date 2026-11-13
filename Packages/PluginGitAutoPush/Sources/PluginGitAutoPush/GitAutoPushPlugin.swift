@@ -8,6 +8,7 @@ import ProviderCommitForm
 import ProviderGit
 import ProviderProjects
 import ProviderStorage
+import ProviderToast
 import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
@@ -39,6 +40,10 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: GitAutoPushSceneObserver?
+    /// 提交表单观察句柄；`DefaultCommitFormProvider` 只弱持有它，插件必须自己保留，
+    /// 否则句柄随表达式释放，`committed` 事件永远不会回调。
+    private var commitFormHandle: (any CommitFormObserverHandle)?
+    private var toast: (any ToastProviding)?
 
     public init() {}
 
@@ -82,14 +87,20 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         try kernel.registerProvider((any AutoPushProviding).self, autoPushProvider)
         Self.logger.info("\(self.t)Registered AutoPushProviding")
 
+        toast = kernel.resolveProvider((any ToastProviding).self)
+        if toast == nil {
+            Self.logger.error("\(self.t)ToastProviding not registered; auto push feedback will be silent")
+        }
+
         // 提交成功后自动推送。
         if let form = kernel.resolveProvider((any CommitFormProviding).self) {
-            form.addObserver { [weak autoPushProvider] event in
+            commitFormHandle = form.addObserver { [weak self, weak autoPushProvider] event in
                 guard case .committed = event,
+                      let self,
                       let autoPushProvider,
                       let project = projects.currentProject,
                       autoPushProvider.isEnabled(for: project.url) else { return }
-                Self.autoPush(projectURL: project.url, git: git)
+                self.autoPush(projectURL: project.url, git: git)
             }
         }
 
@@ -119,18 +130,61 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        commitFormHandle?.cancel()
+        commitFormHandle = nil
         kernel.resolveProvider((any ToolbarProviding).self)?
             .removeToolbarItems(ids: [Self.toolbarItemID])
     }
 
-    private nonisolated static func autoPush(projectURL: URL, git: any GitProviding) {
-        Task.detached(priority: .userInitiated) {
-            do {
-                guard git.currentBranch(in: projectURL) != nil else { return }
-                _ = try git.push(in: projectURL)
-            } catch {
-                Self.logger.error("Auto push failed: \(error.localizedDescription, privacy: .public)")
+    private func autoPush(projectURL: URL, git: any GitProviding) {
+        Task { [weak self] in
+            let outcome = await Self.pushOutcome(projectURL: projectURL, git: git)
+            guard let self else { return }
+            switch outcome {
+            case let .pushed(branch):
+                toast?.show(
+                    pluginLocalization.string("Auto-pushed"),
+                    detail: branch,
+                    style: .success
+                )
+            case let .failed(message):
+                toast?.show(
+                    pluginLocalization.string("Auto push failed"),
+                    detail: message,
+                    style: .error
+                )
+            case .skipped:
+                break
             }
         }
     }
+
+    /// 后台执行推送，结果回到主 actor 后再提示。
+    ///
+    /// 没有待推提交时直接跳过：「Commit & Push」已经推过一遍，此时再推只会
+    /// 产生空推和重复提示。
+    private nonisolated static func pushOutcome(
+        projectURL: URL,
+        git: any GitProviding
+    ) async -> AutoPushOutcome {
+        await Task.detached(priority: .userInitiated) {
+            guard let branch = git.currentBranch(in: projectURL) else { return AutoPushOutcome.skipped }
+            let status = git.remoteTrackingStatus(in: projectURL)
+            guard !(status.hasUpstream && status.ahead == 0) else { return .skipped }
+            do {
+                _ = try git.push(in: projectURL)
+                return .pushed(branch: branch)
+            } catch {
+                Self.logger.error("Auto push failed: \(error.localizedDescription, privacy: .public)")
+                return .failed(error.localizedDescription)
+            }
+        }.value
+    }
+}
+
+/// 自动推送结果：成功时带分支名用于提示，跳过时不打扰用户。
+private enum AutoPushOutcome: Sendable {
+    case pushed(branch: String)
+    case failed(String)
+    case skipped
 }

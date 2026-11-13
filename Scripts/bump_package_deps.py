@@ -11,14 +11,16 @@ import sys
 from pathlib import Path
 
 BUMPS = {
-    "https://github.com/CofficLab/LumiProviders.git": "1.21.0",
-    "https://github.com/CofficLab/LumiUI.git": "1.12.0",
+    "https://github.com/CofficLab/LumiProviders.git": "1.22.0",
+    "https://github.com/CofficLab/LumiUI.git": "1.13.1",
     "https://github.com/CofficLab/LumiSettings.git": "1.1.0",
     "https://github.com/CofficLab/LumiPluginSettingView.git": "1.0.3",
     "https://github.com/CofficLab/LumiPluginPluginManager.git": "1.7.0",
     "https://github.com/CofficLab/LumiPluginToast.git": "1.2.3",
     "https://github.com/CofficLab/LumiPluginAbout.git": "3.0.3",
+    "https://github.com/CofficLab/LumiPluginStorage.git": "1.2.0",
     "https://github.com/sparkle-project/Sparkle": "2.10.1",
+    "https://github.com/nookery/LibGit2Swift.git": "1.1.1",
 }
 
 PKG_RE = re.compile(
