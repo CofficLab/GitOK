@@ -37,9 +37,13 @@ struct ProjectSidebarView: View {
     @State private var preparationErrorMessage: String?
     @State private var isPresentingPreparationError = false
     /// 当前项目列表的展示方式（排序规则）。
-    @State private var sortMode: ProjectSortMode = .manual
-    /// 展示方式的持久化存储。
-    private let sortModeStore: any ProjectSortModeStoring
+    ///
+    /// 状态由 Provider 持有的 `ProjectSortModeModel` 统一管理：根布局在工作区
+    /// 状态变化时会重建本视图，视图本地状态会被丢弃，排序选择必须放在视图之外。
+    @ObservedObject var sortModeModel: ProjectSortModeModel
+
+    /// 当前排序方式（只读投影，写入统一走 `sortModeModel.setMode(_:)`）。
+    private var sortMode: ProjectSortMode { sortModeModel.mode }
 
     /// re-clone 状态机；仅在 Git 与克隆 Provider 都可用时创建。
     @State private var reclone: ProjectsRecloneCoordinator?
@@ -50,20 +54,16 @@ struct ProjectSidebarView: View {
         clone: ProjectCloneCapability?,
         remoteCapability: (any GitRemoteCapability)?,
         activityCapability: (any ProjectActivityCapability)? = nil,
-        sortModeStore: (any ProjectSortModeStoring)? = nil
+        sortModeModel: ProjectSortModeModel
     ) {
         self.projects = projects
         self.toast = toast
         self.clone = clone
         self.remoteCapability = remoteCapability
-        // 未注入存储时退化为纯内存模式（预览 / 测试场景）：排序偏好可读可写，
-        // 只是不落盘。
-        self.sortModeStore = sortModeStore ?? InMemoryProjectSortModeStore()
+        self.sortModeModel = sortModeModel
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _activity = StateObject(wrappedValue: ProjectActivityModel(capability: activityCapability))
         _volume = StateObject(wrappedValue: ProjectVolumeModel())
-        // 恢复上次选择的展示方式；读不到时回落到手动排序。
-        _sortMode = State(initialValue: self.sortModeStore.loadSortMode() ?? .manual)
     }
 
     // MARK: - Derived State
@@ -161,8 +161,7 @@ struct ProjectSidebarView: View {
             .onDisappear {
                 volume.cancel()
             }
-            .onChange(of: sortMode) { _, newMode in
-                sortModeStore.saveSortMode(newMode)
+            .onChange(of: sortModeModel.mode) { _, _ in
                 // 切换到「最近更新」时按需读取仓库提交时间；其他方式不需要。
                 refreshActivityIfNeeded()
             }
@@ -272,7 +271,10 @@ struct ProjectSidebarView: View {
 
             // 底部展示方式切换栏：项目变多后用于快速切换列表的排列规则。
             ProjectSortBarView(
-                mode: $sortMode,
+                mode: Binding(
+                    get: { sortModeModel.mode },
+                    set: { sortModeModel.setMode($0) }
+                ),
                 projectCount: projects.projects.count,
                 isLoadingActivity: sortMode.requiresCommitActivity
                     && !activity.loadingProjectIDs.isEmpty
