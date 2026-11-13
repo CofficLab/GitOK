@@ -47,7 +47,7 @@ let package = Package(
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderGitConflictResolver"),
         .package(path: "../PluginGitLibGit2"),
-        .package(url: "https://github.com/CofficLab/LumiPluginLogos.git", from: "1.0.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiPluginLogos.git", from: "1.0.0"),
         .package(path: "../PluginOpenAntigravity"),
         .package(path: "../PluginOpenCursor"),
         .package(path: "../PluginOpenFinder"),
