@@ -27,6 +27,11 @@ struct ProjectSidebarView: View {
     @ObservedObject private var activity: ProjectActivityModel
     /// 项目所在卷模型：由 Provider 持有，重建视图不会让卷徽标重新判定。
     @ObservedObject private var volume: ProjectVolumeModel
+    /// 项目列表派生状态模型：缓存「过滤 + 排序」结果与置顶分隔线位置。
+    ///
+    /// 由 Provider 持有（与活跃度 / 卷模型一致）：根布局重建本视图时缓存不丢失，
+    /// 也不会因为每次 body 求值都重新过滤 + 重新排序全量项目。
+    @ObservedObject private var list: ProjectListModel
     @LumiTheme private var theme
     @State private var searchText = ""
     @State private var isPresentingClone = false
@@ -58,7 +63,8 @@ struct ProjectSidebarView: View {
         remoteCapability: (any GitRemoteCapability)?,
         sortModeModel: ProjectSortModeModel,
         activity: ProjectActivityModel,
-        volume: ProjectVolumeModel
+        volume: ProjectVolumeModel,
+        list: ProjectListModel
     ) {
         self.projects = projects
         self.toast = toast
@@ -67,21 +73,17 @@ struct ProjectSidebarView: View {
         self.sortModeModel = sortModeModel
         self.activity = activity
         self.volume = volume
+        self.list = list
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
     // MARK: - Derived State
 
-    /// 过滤后的项目（仅在有搜索词时过滤）。
-    private var filteredProjects: [Project] {
-        let list = projects.projects
-        let needle = searchText.trimmingCharacters(in: .whitespaces)
-        guard !needle.isEmpty else {
-            return sortMode.sorted(list, commitDates: activity.commitDates)
-        }
-        let matched = list.filter { $0.title.localizedCaseInsensitiveContains(needle) }
-        return sortMode.sorted(matched, commitDates: activity.commitDates)
-    }
+    /// 过滤 + 排序后的项目列表。
+    ///
+    /// 结果由 `ProjectListModel` 缓存：输入（项目列表 / 排序规则 / 提交时间 /
+    /// 搜索词）未变化时直接复用，不会在每次 body 求值时重排全量项目。
+    private var filteredProjects: [Project] { list.filteredProjects }
 
     /// 当前展示方式是否允许拖拽调整顺序。
     ///
@@ -91,23 +93,18 @@ struct ProjectSidebarView: View {
         sortMode == .manual
     }
 
-    /// 置顶项目与未置顶项目的分界索引（用于插入分隔线）。
-    private var pinnedDividerIndex: Int? {
-        let list = filteredProjects
-        guard !list.isEmpty else { return nil }
-        let hasPinned = list.contains(where: \.isPinned)
-        let hasUnpinned = list.contains(where: { !$0.isPinned })
-        guard hasPinned && hasUnpinned else { return nil }
-        return list.firstIndex(where: { !$0.isPinned })
-    }
+    /// 分隔线应绘制在哪个项目之后（`nil` 表示不需要分隔线）。
+    ///
+    /// 位置在 `ProjectListModel` 里一次算好，视图只做一次 id 比较——
+    /// 此前这里是 computed property，会在 `ForEach` 里被每个可见行各访问一次，
+    /// 等于每个可见行都把整份列表重新过滤 + 重新排序。
+    private var pinnedDividerAfterID: UUID? { list.pinnedDividerAfterID }
 
     /// 是否具备克隆能力（克隆 Provider 已注册）。
     private var canClone: Bool { clone != nil }
 
     /// 置顶项目数量（仅在 2 个以上时才展示「取消全部置顶」）。
-    private var pinnedProjectCount: Int {
-        projects.projects.filter(\.isPinned).count
-    }
+    private var pinnedProjectCount: Int { list.pinnedProjectCount }
 
     /// 当前进行中的 re-clone 任务；驱动 `.task(id:)` 启停轮询。
     private var recloneTaskID: UUID? {
@@ -144,6 +141,15 @@ struct ProjectSidebarView: View {
                 // 新增 / 移除项目后，「最近更新」需要为新项目补读提交时间。
                 refreshActivityIfNeeded()
                 volume.refresh(for: projects.projects)
+                syncListModel()
+            }
+            .onChange(of: activity.commitDates) { _, _ in
+                // 提交时间就绪后需要重排「最近更新」列表。
+                syncListModel()
+            }
+            .onChange(of: searchText) { _, newValue in
+                // 搜索词防抖：连续输入只在停顿后过滤一次。
+                list.setSearchText(newValue)
             }
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
                 // 应用回到前台：卷可能已被插拔，重新判定一次。
@@ -161,6 +167,7 @@ struct ProjectSidebarView: View {
             .onAppear {
                 ensureRecloneCoordinator()
                 volume.refresh(for: projects.projects)
+                syncListModel()
             }
             .onDisappear {
                 volume.cancel()
@@ -168,6 +175,7 @@ struct ProjectSidebarView: View {
             .onChange(of: sortModeModel.mode) { _, _ in
                 // 切换到「最近更新」时按需读取仓库提交时间；其他方式不需要。
                 refreshActivityIfNeeded()
+                syncListModel()
             }
             .task(id: sortMode) {
                 refreshActivityIfNeeded()
@@ -255,7 +263,7 @@ struct ProjectSidebarView: View {
             toolbar
             Group {
                 if filteredProjects.isEmpty {
-                    if projects.projects.isEmpty {
+                    if !list.hasProjects {
                         EmptyProjectsPlaceholder(projects: projects)
                     } else {
                         AppEmptyState(
@@ -279,7 +287,7 @@ struct ProjectSidebarView: View {
                     get: { sortModeModel.mode },
                     set: { sortModeModel.setMode($0) }
                 ),
-                projectCount: projects.projects.count,
+                projectCount: list.totalCount,
                 isLoadingActivity: sortMode.requiresCommitActivity
                     && !activity.loadingProjectIDs.isEmpty
             )
@@ -316,9 +324,9 @@ struct ProjectSidebarView: View {
     private var projectList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 2) {
-                ForEach(Array(filteredProjects.enumerated()), id: \.element.id) { index, project in
+                ForEach(filteredProjects) { project in
                     projectRow(project)
-                    if index == (pinnedDividerIndex ?? Int.max) - 1 {
+                    if project.id == pinnedDividerAfterID {
                         AppDivider().padding(.horizontal, 8)
                     }
                 }
@@ -512,6 +520,22 @@ struct ProjectSidebarView: View {
         for project in projects.projects where project.isPinned {
             projects.pinProject(id: project.id, isPinned: false)
         }
+    }
+
+    // MARK: - List
+
+    /// 把当前输入同步到项目列表模型（过滤 + 排序 + 分隔线）。
+    ///
+    /// 模型内部做等值比较，输入没变就不重算，因此重复调用是廉价的。
+    private func syncListModel() {
+        // 视图重建时搜索框会回到空串，而列表模型由 Provider 持有、可能仍保留
+        // 旧的搜索结果——这里把搜索词一起对齐，避免「框是空的、列表是过滤过的」。
+        list.applySearchTextImmediately(searchText)
+        list.update(
+            projects: projects.projects,
+            sortMode: sortMode,
+            commitDates: activity.commitDates
+        )
     }
 
     // MARK: - Activity

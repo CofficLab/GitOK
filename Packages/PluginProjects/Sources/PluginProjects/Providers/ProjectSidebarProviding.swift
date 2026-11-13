@@ -30,6 +30,10 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     /// 卷状态缓存；由 Provider 持有，重建视图不会让卷徽标重新闪一遍。
     let volumeModel: ProjectVolumeModel
 
+    /// 项目列表派生状态缓存；由 Provider 持有，重建视图不会丢失已算好的
+    /// 过滤 / 排序结果，也不会因为每次 body 求值都重排全量项目。
+    let listModel: ProjectListModel
+
     init(
         projects: any ProjectSidebarCapability,
         remoteCapability: (any GitRemoteCapability)? = nil,
@@ -49,6 +53,7 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
         )
         self.activityModel = ProjectActivityModel(capability: activityCapability)
         self.volumeModel = ProjectVolumeModel(resolver: volumeResolver)
+        self.listModel = ProjectListModel()
     }
 
     func registerItems(_ items: [SidebarItem]) {
@@ -67,7 +72,8 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
                 remoteCapability: remoteCapability,
                 sortModeModel: sortModeModel,
                 activity: activityModel,
-                volume: volumeModel
+                volume: volumeModel,
+                list: listModel
             )
         )
     }
