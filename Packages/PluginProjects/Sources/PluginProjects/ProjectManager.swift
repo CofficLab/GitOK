@@ -42,11 +42,15 @@ public final class ProjectManager: ProjectProviding, SuperLog {
     /// 项目列表 JSON 文件的 URL。
     public private(set) var storeURL: URL
 
+    /// 后台持久化写入器：合并短时间内的重复写入，避免每次变更都重编码整份列表。
+    private var storeWriter: ProjectStoreWriter
+
     /// 观察者集合（弱引用，自动清理失联者）。
     private var observers: [WeakObserver] = []
 
     public init(storeURL: URL) {
         self.storeURL = storeURL
+        self.storeWriter = ProjectStoreWriter.writer(for: storeURL)
         if Self.verbose {
             Self.logger.info("\(self.t)ProjectManager initialized, store: \(storeURL.path, privacy: .public)")
         }
@@ -65,7 +69,10 @@ public final class ProjectManager: ProjectProviding, SuperLog {
     /// 并重新从磁盘加载。
     public func setStoreURL(_ url: URL) {
         guard storeURL != url else { return }
+        // 旧路径上挂起的写入先冲刷出去，保证旧文件是完整的；随后切到新路径。
+        storeWriter.flushBlocking()
         storeURL = url
+        storeWriter = ProjectStoreWriter.writer(for: url)
         loadFromDisk()
     }
 
@@ -91,7 +98,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         if oldProject?.id != currentProject?.id {
             clearCommitSelection()
         }
-        persist()
+        writeToDisk()
         notify(.projectsChanged)
         notify(.selectionChanged(projectID: openedID))
     }
@@ -104,7 +111,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         if Self.verbose {
             Self.logger.debug("\(self.t)closed current project")
         }
-        persist()
+        writeToDisk()
         notify(.selectionChanged(projectID: nil))
     }
 
@@ -119,7 +126,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         // 新项目插入非置顶区最前（对齐旧版新建项目 order=-1 排最前）。
         insertToFront(Project(url: standardized))
         resortPinned()
-        persist()
+        writeToDisk()
         notify(.projectsChanged)
     }
 
@@ -133,7 +140,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
             // 移除的是当前项目 → 联动清空 commit 选择。
             clearCommitSelection()
         }
-        persist()
+        writeToDisk()
         notify(.projectsChanged)
         if removedCurrent {
             notify(.selectionChanged(projectID: nil))
@@ -168,7 +175,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         if currentProject?.id == project.id {
             currentProject = project
         }
-        persist()
+        writeToDisk()
         notify(.projectsChanged)
     }
 
@@ -179,7 +186,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         project.isPinned = isPinned
         projects[index] = project
         resortPinned()
-        persist()
+        writeToDisk()
         notify(.projectsChanged)
     }
 
@@ -211,7 +218,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
 
         guard reordered != projects else { return }
         projects = reordered
-        persist()
+        writeToDisk()
         notify(.projectsChanged)
     }
 
@@ -224,7 +231,7 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         }
         // 当前项目变化 → 联动清空 commit 选择。
         clearCommitSelection()
-        persist()
+        writeToDisk()
         notify(.selectionChanged(projectID: id))
     }
 
@@ -236,8 +243,19 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         notify(.dataChanged)
     }
 
+    /// 立即把项目列表写入磁盘。
+    ///
+    /// 这是 `ProjectProviding` 契约里的公开入口，语义是「此刻数据已在盘上」，
+    /// 因此会同步等待挂起的写入完成。内部变更走 `writeToDisk()` 的合并写入，
+    /// 不阻塞主线程。
     public func persist() {
         writeToDisk()
+        storeWriter.flushBlocking()
+    }
+
+    /// 把挂起的项目列表写入冲刷到磁盘（应用退出等时机调用）。
+    public func flushPersistence() {
+        storeWriter.flushBlocking()
     }
 
     // MARK: - Commit 选择
@@ -303,17 +321,10 @@ public final class ProjectManager: ProjectProviding, SuperLog {
 
     // MARK: - Persistence
 
-    /// 磁盘存储容器：项目列表 + 上次会话的当前项目。
-    ///
-    /// `currentProjectID` 记录上次打开/选中的项目，下次启动时恢复为
-    /// `currentProject`（若该 id 在列表中仍存在）。
-    private struct ProjectStore: Codable {
-        var projects: [Project]
-        var currentProjectID: UUID?
-    }
-
     /// 重新从磁盘加载项目列表，并恢复上次会话的当前项目。
     private func loadFromDisk() {
+        // 先把挂起的写入落盘，保证读到的是最新状态。
+        storeWriter.flushBlocking()
         guard let data = try? Data(contentsOf: storeURL) else {
             if Self.verbose {
                 Self.logger.debug("\(self.t)no store at \(self.storeURL.path, privacy: .public), start empty")
@@ -352,17 +363,14 @@ public final class ProjectManager: ProjectProviding, SuperLog {
         }
     }
 
-    /// 写入项目列表到磁盘（原子写入，失败仅记录日志）。
+    /// 安排把项目列表写入磁盘。
+    ///
+    /// 写入被推迟到后台队列，并合并防抖窗口内的重复变更
+    /// （例如拖拽排序过程中的连续 `moveProject`），避免每次变更都在主线程
+    /// 上重新编码整份列表。
     private func writeToDisk() {
-        do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-            let store = ProjectStore(projects: projects, currentProjectID: currentProject?.id)
-            let data = try encoder.encode(store)
-            try data.write(to: storeURL, options: .atomic)
-        } catch {
-            Self.logger.error("\(self.t)failed to persist projects: \(error.localizedDescription, privacy: .public)")
-        }
+        let store = ProjectStore(projects: projects, currentProjectID: currentProject?.id)
+        storeWriter.schedule(store)
     }
 
     // MARK: - Ordering

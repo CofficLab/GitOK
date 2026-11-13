@@ -151,6 +151,8 @@ public final class ProjectsPlugin: SuperPlugin, SuperLog {
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
+        // 退出前把挂起的项目列表写入冲刷到磁盘，避免最后一次变更丢失。
+        projectService.flushPersistence()
         kernel.unregisterProvider((any ProjectProviding).self)
         kernel.unregisterProvider((any SidebarProviding).self)
         kernel.resolveProvider((any SettingViewProviding).self)?
