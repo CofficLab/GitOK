@@ -16,9 +16,6 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     /// 项目数据源（已收窄的插件能力）。
     private let projects: any ProjectSidebarCapability
 
-    /// 读取仓库最近提交时间的能力（供「最近更新」展示方式使用）。
-    private let activityCapability: (any ProjectActivityCapability)?
-
     /// 克隆所需的 remote 解析、克隆登记与反馈能力。缺任一项时隐藏克隆入口。
     private let remoteCapability: (any GitRemoteCapability)?
     private let toast: (any ToastProviding)?
@@ -27,23 +24,31 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     /// 排序方式状态；由 Provider 持有，侧边栏视图重建不会丢失用户选择。
     let sortModeModel: ProjectSortModeModel
 
+    /// 提交时间缓存；由 Provider 持有，重建视图不会清空缓存、重新读取。
+    let activityModel: ProjectActivityModel
+
+    /// 卷状态缓存；由 Provider 持有，重建视图不会让卷徽标重新闪一遍。
+    let volumeModel: ProjectVolumeModel
+
     init(
         projects: any ProjectSidebarCapability,
         remoteCapability: (any GitRemoteCapability)? = nil,
         toast: (any ToastProviding)? = nil,
         clone: ProjectCloneCapability? = nil,
         activityCapability: (any ProjectActivityCapability)? = nil,
-        sortModeStore: (any ProjectSortModeStoring)? = nil
+        sortModeStore: (any ProjectSortModeStoring)? = nil,
+        volumeResolver: any ProjectVolumeResolving = FileSystemProjectVolumeResolver()
     ) {
         self.projects = projects
         self.remoteCapability = remoteCapability
         self.toast = toast
         self.clone = clone
-        self.activityCapability = activityCapability
         // 未注入存储时退化为纯内存模式（预览 / 测试场景）：偏好可读可写，但不落盘。
         self.sortModeModel = ProjectSortModeModel(
             store: sortModeStore ?? InMemoryProjectSortModeStore()
         )
+        self.activityModel = ProjectActivityModel(capability: activityCapability)
+        self.volumeModel = ProjectVolumeModel(resolver: volumeResolver)
     }
 
     func registerItems(_ items: [SidebarItem]) {
@@ -60,8 +65,9 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
                 toast: toast,
                 clone: clone,
                 remoteCapability: remoteCapability,
-                activityCapability: activityCapability,
-                sortModeModel: sortModeModel
+                sortModeModel: sortModeModel,
+                activity: activityModel,
+                volume: volumeModel
             )
         )
     }

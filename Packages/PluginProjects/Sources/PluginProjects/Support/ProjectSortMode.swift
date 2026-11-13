@@ -61,22 +61,26 @@ enum ProjectSortMode: String, CaseIterable, Identifiable, Sendable {
             }
         case .recent:
             return Self.sortedByGroups(projects) { lhs, rhs in
-                let left = Self.activityDate(for: lhs, commitDates: commitDates)
-                let right = Self.activityDate(for: rhs, commitDates: commitDates)
-                if left != right { return left > right }
-                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                let left = commitDates[lhs.id]
+                let right = commitDates[rhs.id]
+                switch (left, right) {
+                case let (left?, right?):
+                    if left != right { return left > right }
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                case (_?, nil):
+                    return true
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    // 两边的提交时间都未知（缓存冷）：保持原始顺序。
+                    // 用标题兜底会把列表退化成字母序，缓存就绪后又跳回来。
+                    return false
+                }
             }
         }
     }
 
     // MARK: - Helpers
-
-    /// 项目用于「最近更新」排序的时间：只认仓库提交时间。
-    /// 读取中、读取失败或没有提交的项目统一按最旧处理，避免点击项目
-    /// （刷新 `lastOpenedAt`）把列表顺序打乱。
-    static func activityDate(for project: Project, commitDates: [UUID: Date]) -> Date {
-        commitDates[project.id] ?? .distantPast
-    }
 
     /// 置顶组与普通组分别排序后拼接，保持置顶项目始终在最前。
     private static func sortedByGroups(

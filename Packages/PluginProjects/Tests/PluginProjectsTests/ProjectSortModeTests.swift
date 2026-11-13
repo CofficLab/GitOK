@@ -120,12 +120,16 @@ final class ProjectSortModeTests: XCTestCase {
     }
 
     func testRecentModeUsesCommitDateInsteadOfLastOpened() {
-        let project = project("Repo", lastOpenedAt: Date(timeIntervalSince1970: 999))
-        let dates = [project.id: Date(timeIntervalSince1970: 100)]
+        let a = project("A", lastOpenedAt: Date(timeIntervalSince1970: 999))
+        let b = project("B", lastOpenedAt: Date(timeIntervalSince1970: 1))
+        let dates: [UUID: Date] = [
+            a.id: Date(timeIntervalSince1970: 100),
+            b.id: Date(timeIntervalSince1970: 200),
+        ]
 
-        let date = ProjectSortMode.activityDate(for: project, commitDates: dates)
+        let sorted = ProjectSortMode.recent.sorted([a, b], commitDates: dates)
 
-        XCTAssertEqual(date, Date(timeIntervalSince1970: 100))
+        XCTAssertEqual(sorted.map(\.title), ["B", "A"], "按提交时间排序，不看最近打开时间")
     }
 
     func testRecentModeKeepsPinnedProjectsFirst() {
@@ -139,6 +143,23 @@ final class ProjectSortModeTests: XCTestCase {
         let sorted = ProjectSortMode.recent.sorted([normal, pinned], commitDates: dates)
 
         XCTAssertEqual(sorted.map(\.title), ["Pinned", "Normal"], "置顶项目始终在最前")
+    }
+
+    /// 回归：提交时间缓存被清空（例如侧边栏因工作区状态变化被重建）时，
+    /// 「最近更新」不能退化成按名称排列——否则用户会看到列表瞬间变成
+    /// 字母序，几秒后再跳回提交时间序。
+    func testRecentModeKeepsInputOrderWhenCommitDatesAreMissing() {
+        let zeta = project("Zeta")
+        let alpha = project("Alpha")
+        let mid = project("Mid")
+
+        let sorted = ProjectSortMode.recent.sorted([zeta, alpha, mid], commitDates: [:])
+
+        XCTAssertEqual(
+            sorted.map(\.title),
+            ["Zeta", "Alpha", "Mid"],
+            "提交时间缺失时应保持原始（手动）顺序，而不是按名称重排"
+        )
     }
 
     func testRecentModeBreaksEqualDatesByName() {

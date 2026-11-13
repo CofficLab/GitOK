@@ -21,9 +21,12 @@ struct ProjectSidebarView: View {
 
     @StateObject private var observation: ProjectObservationModel
     /// 项目活跃度模型：仅在「最近更新」展示方式下读取仓库提交时间。
-    @StateObject private var activity: ProjectActivityModel
-    /// 项目所在卷模型：缓存外接卷 / 不可访问状态，供行内徽标使用。
-    @StateObject private var volume: ProjectVolumeModel
+    ///
+    /// 由 Provider 持有：根布局重建本视图时缓存必须保留下来，否则列表会先
+    /// 退化成字母序、再跳回提交时间序。
+    @ObservedObject private var activity: ProjectActivityModel
+    /// 项目所在卷模型：由 Provider 持有，重建视图不会让卷徽标重新判定。
+    @ObservedObject private var volume: ProjectVolumeModel
     @LumiTheme private var theme
     @State private var searchText = ""
     @State private var isPresentingClone = false
@@ -53,17 +56,18 @@ struct ProjectSidebarView: View {
         toast: (any ToastProviding)?,
         clone: ProjectCloneCapability?,
         remoteCapability: (any GitRemoteCapability)?,
-        activityCapability: (any ProjectActivityCapability)? = nil,
-        sortModeModel: ProjectSortModeModel
+        sortModeModel: ProjectSortModeModel,
+        activity: ProjectActivityModel,
+        volume: ProjectVolumeModel
     ) {
         self.projects = projects
         self.toast = toast
         self.clone = clone
         self.remoteCapability = remoteCapability
         self.sortModeModel = sortModeModel
+        self.activity = activity
+        self.volume = volume
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
-        _activity = StateObject(wrappedValue: ProjectActivityModel(capability: activityCapability))
-        _volume = StateObject(wrappedValue: ProjectVolumeModel())
     }
 
     // MARK: - Derived State
