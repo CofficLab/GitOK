@@ -40,6 +40,9 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
 
     private var sceneViewModel: WorkspaceSceneVisibilityViewModel?
     private var sceneObserver: GitAutoPushSceneObserver?
+    /// 提交表单观察句柄；`DefaultCommitFormProvider` 只弱持有它，插件必须自己保留，
+    /// 否则句柄随表达式释放，`committed` 事件永远不会回调。
+    private var commitFormHandle: (any CommitFormObserverHandle)?
     private var toast: (any ToastProviding)?
 
     public init() {}
@@ -91,7 +94,7 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
 
         // 提交成功后自动推送。
         if let form = kernel.resolveProvider((any CommitFormProviding).self) {
-            form.addObserver { [weak self, weak autoPushProvider] event in
+            commitFormHandle = form.addObserver { [weak self, weak autoPushProvider] event in
                 guard case .committed = event,
                       let self,
                       let autoPushProvider,
@@ -127,6 +130,8 @@ public final class GitAutoPushPlugin: SuperPlugin, SuperLog {
         sceneObserver?.cancel()
         sceneObserver = nil
         sceneViewModel = nil
+        commitFormHandle?.cancel()
+        commitFormHandle = nil
         kernel.resolveProvider((any ToolbarProviding).self)?
             .removeToolbarItems(ids: [Self.toolbarItemID])
     }

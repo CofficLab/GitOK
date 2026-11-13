@@ -291,6 +291,28 @@ struct GitAutoPushPluginLifecycleTests {
         #expect(toast.detail == "network down")
     }
 
+    @Test("真实 CommitFormProviding 的提交成功事件能触发自动推送")
+    func realCommitFormCommittedEventTriggersAutoPush() async throws {
+        let harness = try makeHarness(withCommitForm: false)
+        defer { cleanUp(harness) }
+
+        // 真实实现只弱持有观察者句柄：插件必须自己持有 addObserver 的返回值，
+        // 否则句柄立即释放，事件永远不会回调（测试替身强持有回调，掩盖这个问题）。
+        let form = DefaultCommitFormProvider(git: harness.git)
+        try harness.kernel.registerProvider((any CommitFormProviding).self, form)
+
+        let plugin = GitAutoPushPlugin()
+        try plugin.onBoot(kernel: harness.kernel)
+
+        harness.kernel.resolveProvider((any AutoPushProviding).self)?
+            .setEnabled(true, for: harness.projectURL)
+
+        try await form.submit(commitOnly: true, in: harness.projectURL)
+
+        let pushed = await waitUntil { harness.git.pushCount == 1 }
+        #expect(pushed, "提交仅（不推送）后应由自动推送补推")
+    }
+
     @Test("未启用自动推送的项目在提交成功后不推送")
     func committedEventDoesNotPushWhenDisabled() async throws {
         let harness = try makeHarness()
