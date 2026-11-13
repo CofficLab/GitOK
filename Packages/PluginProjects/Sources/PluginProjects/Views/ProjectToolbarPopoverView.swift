@@ -8,17 +8,26 @@ struct ProjectToolbarPopoverView: View {
     @StateObject private var observation: ProjectObservationModel
     @State private var searchText = ""
 
+    /// 搜索防抖：连续输入只在停顿后过滤一次，避免每个字符都全量过滤。
+    @State private var debounceTask: Task<Void, Never>?
+
+    /// 已生效的搜索词（防抖后的结果）。
+    @State private var appliedSearchText = ""
+
     init(projects: any ProjectSidebarCapability, requestImporter: @escaping () -> Void) {
         self.projects = projects
         self.requestImporter = requestImporter
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
+    /// 过滤后的项目列表。
+    ///
+    /// 结果缓存在 `appliedSearchText` 对应的状态里：只有搜索词真正变化
+    /// 才会重新过滤，视图的其它重算不会重复遍历全量项目。
     private var filteredProjects: [Project] {
-        let list = projects.projects
-        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else { return list }
-        let needle = searchText.trimmingCharacters(in: .whitespaces)
-        return list.filter { $0.title.localizedCaseInsensitiveContains(needle) }
+        let needle = appliedSearchText.trimmingCharacters(in: .whitespaces)
+        guard !needle.isEmpty else { return projects.projects }
+        return projects.projects.filter { $0.title.localizedCaseInsensitiveContains(needle) }
     }
 
     var body: some View {
@@ -29,12 +38,19 @@ struct ProjectToolbarPopoverView: View {
         }
         .frame(width: 320)
         .frame(minHeight: 220, maxHeight: 420)
+        .onDisappear {
+            debounceTask?.cancel()
+            debounceTask = nil
+        }
     }
 
     private var header: some View {
         HStack(spacing: 8) {
             TextField(pluginLocalization.string("Search"), text: $searchText)
                 .textFieldStyle(.roundedBorder)
+                .onChange(of: searchText) { _, newValue in
+                    scheduleSearch(newValue)
+                }
 
             Button {
                 requestImporter()
@@ -47,13 +63,24 @@ struct ProjectToolbarPopoverView: View {
         .padding(.vertical, 10)
     }
 
+    /// 防抖应用搜索词。
+    private func scheduleSearch(_ text: String) {
+        debounceTask?.cancel()
+        debounceTask = Task {
+            try? await Task.sleep(for: .milliseconds(150))
+            guard !Task.isCancelled else { return }
+            appliedSearchText = text
+        }
+    }
+
     @ViewBuilder
     private var listContent: some View {
         if filteredProjects.isEmpty {
             emptyState
         } else {
             ScrollView {
-                VStack(spacing: 2) {
+                // 懒加载：项目很多时只构建可见行的视图，而不是一次铺满全部。
+                LazyVStack(spacing: 2) {
                     ForEach(filteredProjects) { project in
                         row(for: project)
                     }

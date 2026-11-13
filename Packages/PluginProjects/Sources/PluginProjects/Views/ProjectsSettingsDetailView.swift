@@ -30,15 +30,32 @@ struct ProjectsSettingsDetailView: View {
 
     // MARK: - Filtered & Selected
 
+    /// 过滤后的项目列表。
+    ///
+    /// 结果带缓存：输入（项目列表 / 搜索词）未变化时复用上一次的过滤结果，
+    /// 不在每次 body 求值时重新遍历全量项目。
     private var filteredProjects: [Project] {
-        let list = projects.projects
-        let keyword = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !keyword.isEmpty else { return list }
-        return list.filter {
-            $0.title.localizedCaseInsensitiveContains(keyword)
-                || $0.url.path.localizedCaseInsensitiveContains(keyword)
-        }
+        filterCache.projects
     }
+
+    /// 过滤结果的缓存键：项目列表 + 搜索词。
+    private struct FilterCacheKey: Equatable {
+        let projects: [Project]
+        let keyword: String
+    }
+
+    private struct FilterCache {
+        let key: FilterCacheKey
+        let projects: [Project]
+        /// 过滤结果的 id 列表，供选择状态校验使用（避免每次 body 都重新构造）。
+        let ids: [UUID]
+    }
+
+    @State private var filterCache: FilterCache = FilterCache(
+        key: FilterCacheKey(projects: [], keyword: ""),
+        projects: [],
+        ids: []
+    )
 
     private var selectedProject: Project? {
         if let selectedID, let project = projects.projects.first(where: { $0.id == selectedID }) {
@@ -82,7 +99,7 @@ struct ProjectsSettingsDetailView: View {
         .onReceive(observation.$revision) { _ in
             // 项目数据变化时重算 body，读取最新项目列表
         }
-        .onChange(of: filteredProjects.map(\.id)) { _, ids in
+        .onChange(of: filterCache.ids) { _, ids in
             guard let selectedID, ids.contains(selectedID) else {
                 self.selectedID = ids.first
                 return
