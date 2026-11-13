@@ -6,6 +6,7 @@ import ProviderCommitForm
 import ProviderGit
 import ProviderProjects
 import ProviderStorage
+import ProviderToast
 import ProviderToolbar
 import ProviderWorkspaceScene
 import SwiftUI
@@ -27,6 +28,7 @@ struct GitAutoPushPluginLifecycleTests {
         let commitForm: AutoPushTestCommitForm
         let toolbar: DefaultToolbarProviding
         let scene: DefaultWorkspaceSceneProvider
+        let toast: AutoPushTestToast
         let projectURL: URL
         let root: URL
     }
@@ -37,7 +39,8 @@ struct GitAutoPushPluginLifecycleTests {
         withGit: Bool = true,
         withScene: Bool = true,
         withStorage: Bool = true,
-        withCommitForm: Bool = true
+        withCommitForm: Bool = true,
+        withToast: Bool = true
     ) throws -> Harness {
         let root = FileManager.default.temporaryDirectory
             .appendingPathComponent("GitOKAutoPushTests-\(UUID().uuidString)", isDirectory: true)
@@ -49,6 +52,7 @@ struct GitAutoPushPluginLifecycleTests {
         let commitForm = AutoPushTestCommitForm()
         let toolbar = DefaultToolbarProviding()
         let scene = DefaultWorkspaceSceneProvider()
+        let toast = AutoPushTestToast()
         let projectURL = root.appendingPathComponent("project", isDirectory: true)
 
         projects.currentProject = Project(id: UUID(), url: projectURL, title: "project")
@@ -74,6 +78,9 @@ struct GitAutoPushPluginLifecycleTests {
         if withCommitForm {
             try kernel.registerProvider((any CommitFormProviding).self, commitForm)
         }
+        if withToast {
+            try kernel.registerProvider((any ToastProviding).self, toast)
+        }
 
         return Harness(
             kernel: kernel,
@@ -82,6 +89,7 @@ struct GitAutoPushPluginLifecycleTests {
             commitForm: commitForm,
             toolbar: toolbar,
             scene: scene,
+            toast: toast,
             projectURL: projectURL,
             root: root
         )
@@ -210,6 +218,77 @@ struct GitAutoPushPluginLifecycleTests {
         let pushed = await waitUntil { harness.git.pushCount == 1 }
         #expect(pushed, "提交成功后应自动推送")
         #expect(harness.git.pushedRepositories == [harness.projectURL.path])
+    }
+
+    @Test("自动推送成功后弹出成功 toast 并带上分支名")
+    func successfulAutoPushShowsSuccessToast() async throws {
+        let harness = try makeHarness()
+        defer { cleanUp(harness) }
+
+        let plugin = GitAutoPushPlugin()
+        try plugin.onBoot(kernel: harness.kernel)
+
+        harness.kernel.resolveProvider((any AutoPushProviding).self)?
+            .setEnabled(true, for: harness.projectURL)
+
+        harness.commitForm.emitCommitted()
+
+        let notified = await waitUntil {
+            harness.git.pushCount == 1 && harness.toast.shownToasts.count == 1
+        }
+        #expect(notified, "推送成功后应弹出 toast")
+        let toast = try #require(harness.toast.shownToasts.first)
+        #expect(toast.style == .success)
+        #expect(toast.detail == "main")
+    }
+
+    @Test("没有待推提交时不重复推送也不提示")
+    func noAheadCommitsSkipsPushAndToast() async throws {
+        let harness = try makeHarness()
+        defer { cleanUp(harness) }
+
+        let plugin = GitAutoPushPlugin()
+        try plugin.onBoot(kernel: harness.kernel)
+
+        harness.kernel.resolveProvider((any AutoPushProviding).self)?
+            .setEnabled(true, for: harness.projectURL)
+        // 「Commit & Push」已经推过：本地没有领先远端的提交。
+        harness.git.trackingStatus = GitRefReader.RemoteTrackingStatus(
+            ahead: 0,
+            behind: 0,
+            hasUpstream: true
+        )
+
+        harness.commitForm.emitCommitted()
+
+        try? await Task.sleep(for: .milliseconds(200))
+        #expect(harness.git.pushCount == 0)
+        #expect(harness.toast.shownToasts.isEmpty)
+    }
+
+    @Test("自动推送失败时弹出错误 toast")
+    func failedAutoPushShowsErrorToast() async throws {
+        let harness = try makeHarness()
+        defer { cleanUp(harness) }
+
+        let plugin = GitAutoPushPlugin()
+        try plugin.onBoot(kernel: harness.kernel)
+
+        harness.kernel.resolveProvider((any AutoPushProviding).self)?
+            .setEnabled(true, for: harness.projectURL)
+        harness.git.pushError = NSError(
+            domain: "test",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "network down"]
+        )
+
+        harness.commitForm.emitCommitted()
+
+        let notified = await waitUntil { harness.toast.shownToasts.count == 1 }
+        #expect(notified, "推送失败后应弹出 toast")
+        let toast = try #require(harness.toast.shownToasts.first)
+        #expect(toast.style == .error)
+        #expect(toast.detail == "network down")
     }
 
     @Test("未启用自动推送的项目在提交成功后不推送")

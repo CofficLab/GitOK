@@ -41,6 +41,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToolbar", package: "LumiProviders"),
                 .product(name: "ProviderStorage", package: "LumiProviders"),
+                .product(name: "ProviderToast", package: "LumiProviders"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
@@ -61,6 +62,7 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderToolbar", package: "LumiProviders"),
                 .product(name: "ProviderStorage", package: "LumiProviders"),
+                .product(name: "ProviderToast", package: "LumiProviders"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
             ],
             path: "Tests/PluginGitAutoPushTests"
