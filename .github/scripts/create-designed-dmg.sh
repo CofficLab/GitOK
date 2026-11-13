@@ -93,6 +93,48 @@ if [[ -z "$MOUNT_POINT" || ! -d "$MOUNT_POINT" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
+# Volume detaching
+# ---------------------------------------------------------------------------
+
+# Detach a mounted DMG volume reliably.
+#
+# After the Finder layout step the volume may still be held open by Finder,
+# which makes a plain `hdiutil detach` fail with
+# "couldn't eject <disk> - Resource busy" (exit code 16). We therefore close
+# the Finder windows first, then retry the detach a few times and finally fall
+# back to a forced detach.
+detach_volume() {
+  local mount_point="$1"
+  local attempt exit_code
+
+  [[ -n "$mount_point" ]] || return 0
+
+  # Ask Finder to close any window showing the volume so it releases the disk.
+  osascript -e "tell application \"Finder\" to close every window of disk \"$mount_point\"" >/dev/null 2>&1 || true
+  # Make sure no process keeps a file handle inside the volume.
+  diskutil unmount "$mount_point" >/dev/null 2>&1 || true
+
+  for (( attempt = 1; attempt <= 5; attempt++ )); do
+    set +e
+    hdiutil detach "$mount_point" >/dev/null 2>&1
+    exit_code=$?
+    set -e
+    if [[ "$exit_code" -eq 0 ]]; then
+      return 0
+    fi
+    echo "   ⚠️  卸载卷失败（尝试 ${attempt}/5），稍后重试" >&2
+    sleep $(( attempt * 2 ))
+  done
+
+  echo "   ⚠️  强制卸载卷: $mount_point" >&2
+  hdiutil detach "$mount_point" -force >/dev/null 2>&1 || {
+    echo "❌ 无法卸载 DMG 卷: $mount_point" >&2
+    return 1
+  }
+  return 0
+}
+
+# ---------------------------------------------------------------------------
 # AppleScript layout helpers
 # ---------------------------------------------------------------------------
 
@@ -213,7 +255,7 @@ else
 fi
 
 sync
-hdiutil detach "$MOUNT_POINT" >/dev/null
+detach_volume "$MOUNT_POINT"
 MOUNT_POINT=""
 
 rm -f "$OUTPUT_PATH"
