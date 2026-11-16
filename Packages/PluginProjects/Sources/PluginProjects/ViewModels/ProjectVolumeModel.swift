@@ -8,6 +8,8 @@ import ProviderProjects
 ///   渲染过程不触碰文件系统。
 /// - **结果缓存**：以项目 id 为键缓存卷类型；项目路径变化时自动重新判定。
 /// - **异步读取**：卷属性查询可能因网络卷而阻塞，放到后台执行后回到主线程更新。
+/// - **并发受限**：项目很多时串行查询会明显拖慢徽标出现，因此按固定并发度
+///   分批读取（与 `ProjectActivityModel` 的策略一致）。
 @MainActor
 final class ProjectVolumeModel: ObservableObject {
     /// 各项目的卷类型。
@@ -18,10 +20,17 @@ final class ProjectVolumeModel: ObservableObject {
     /// 缓存对应的项目路径；路径变化时使缓存失效。
     private var cachedURLs: [UUID: URL] = [:]
 
+    /// 单批并发查询数。
+    private let maxConcurrentLoads: Int
+
     private var refreshTask: Task<Void, Never>?
 
-    init(resolver: any ProjectVolumeResolving = FileSystemProjectVolumeResolver()) {
+    init(
+        resolver: any ProjectVolumeResolving = FileSystemProjectVolumeResolver(),
+        maxConcurrentLoads: Int = 4
+    ) {
         self.resolver = resolver
+        self.maxConcurrentLoads = max(1, maxConcurrentLoads)
     }
 
     deinit {
@@ -83,12 +92,46 @@ final class ProjectVolumeModel: ObservableObject {
 
     // MARK: - Loading
 
+    /// 分批并发查询卷属性。
+    ///
+    /// 每批最多 `maxConcurrentLoads` 个项目，批内并发执行（网络卷的查询可以
+    /// 彼此重叠，不必排队等待），批与批之间让出主线程。
     private func load(pending: [Project]) async {
+        var settled: [UUID: ProjectVolumeStatus] = [:]
+        var batch: [Project] = []
         for project in pending {
             guard !Task.isCancelled else { return }
-            let status = await resolver.status(forProjectURL: project.url)
-            guard !Task.isCancelled else { return }
-            statuses[project.id] = status
+            batch.append(project)
+            if batch.count >= maxConcurrentLoads {
+                await loadBatch(batch, into: &settled)
+                batch.removeAll(keepingCapacity: true)
+            }
+        }
+        if !batch.isEmpty {
+            await loadBatch(batch, into: &settled)
+        }
+
+        // 被取消的轮次结果已经过期，不能再覆盖缓存。
+        guard !Task.isCancelled else { return }
+        statuses.merge(settled) { _, latest in latest }
+    }
+
+    private func loadBatch(
+        _ batch: [Project],
+        into settled: inout [UUID: ProjectVolumeStatus]
+    ) async {
+        let resolver = self.resolver
+        await withTaskGroup(of: (UUID, ProjectVolumeStatus).self) { group in
+            for project in batch {
+                group.addTask {
+                    let status = await resolver.status(forProjectURL: project.url)
+                    return (project.id, status)
+                }
+            }
+            for await (id, status) in group {
+                guard !Task.isCancelled else { return }
+                settled[id] = status
+            }
         }
     }
 }
