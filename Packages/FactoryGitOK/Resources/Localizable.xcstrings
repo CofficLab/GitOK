@@ -36,6 +36,7 @@
       }
     },
     "Failed to assemble main view" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -70,6 +71,7 @@
       }
     },
     "Failed to assemble settings view" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -104,6 +106,7 @@
       }
     },
     "GitOK main window ready" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -138,6 +141,7 @@
       }
     },
     "GitOK settings window ready" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -206,6 +210,7 @@
       }
     },
     "Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

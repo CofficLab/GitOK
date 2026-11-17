@@ -1498,6 +1498,7 @@
       }
     },
     "Open Data Directory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
