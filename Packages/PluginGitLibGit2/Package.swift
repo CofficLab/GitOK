@@ -12,12 +12,9 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../KitGit"),
         .package(path: "../ProviderGit"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
-        .package(
-            url: "https://github.com/nookery/LibGit2Swift.git",
-            revision: "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
-        ),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0")
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.13.1"),
+        .package(url: "https://github.com/nookery/LibGit2Swift.git", from: "1.1.1"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.22.0")
     ],
     targets: [
         .target(
@@ -41,6 +38,7 @@ let package = Package(
             dependencies: [
                 "PluginGitLibGit2",
                 .product(name: "KitGit", package: "KitGit"),
+                .product(name: "LibGit2Swift", package: "libgit2swift"),
             ],
             path: "Tests/PluginGitLibGit2Tests"
         ),

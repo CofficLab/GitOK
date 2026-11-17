@@ -72,30 +72,64 @@ final class ProjectSortModeTests: XCTestCase {
         XCTAssertEqual(sorted.map(\.title), ["Newest", "Middle", "Oldest"])
     }
 
-    func testRecentModeFallsBackToLastOpenedWhenNoCommitDate() {
-        let neverOpened = project("NeverOpened")
-        let openedEarlier = project("OpenedEarlier", lastOpenedAt: Date(timeIntervalSince1970: 100))
-        let openedLater = project("OpenedLater", lastOpenedAt: Date(timeIntervalSince1970: 200))
+    func testRecentModeRanksProjectsWithoutCommitDateLast() {
+        let dated = project("Dated", lastOpenedAt: Date(timeIntervalSince1970: 1))
+        let missing = project("Missing", lastOpenedAt: Date(timeIntervalSince1970: 9_999))
 
         let sorted = ProjectSortMode.recent.sorted(
-            [neverOpened, openedEarlier, openedLater],
-            commitDates: [:]
+            [missing, dated],
+            commitDates: [dated.id: Date(timeIntervalSince1970: 100)]
         )
 
         XCTAssertEqual(
             sorted.map(\.title),
-            ["OpenedLater", "OpenedEarlier", "NeverOpened"],
-            "没有提交时间时回退到最近打开时间"
+            ["Dated", "Missing"],
+            "没有提交时间的项目排在最后，即使刚刚打开过"
         )
     }
 
-    func testRecentModePrefersCommitDateOverLastOpened() {
-        let project = project("Repo", lastOpenedAt: Date(timeIntervalSince1970: 999))
-        let dates = [project.id: Date(timeIntervalSince1970: 100)]
+    func testOpeningAProjectDoesNotChangeRecentOrder() {
+        let alpha = project("Alpha", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let beta = project("Beta", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let gamma = project("Gamma", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let dates: [UUID: Date] = [
+            alpha.id: Date(timeIntervalSince1970: 300),
+            beta.id: Date(timeIntervalSince1970: 200),
+            gamma.id: Date(timeIntervalSince1970: 100),
+        ]
 
-        let date = ProjectSortMode.activityDate(for: project, commitDates: dates)
+        let before = ProjectSortMode.recent.sorted([alpha, beta, gamma], commitDates: dates)
+        var openedBeta = beta
+        openedBeta.lastOpenedAt = Date(timeIntervalSince1970: 9_999)
+        let after = ProjectSortMode.recent.sorted([alpha, openedBeta, gamma], commitDates: dates)
 
-        XCTAssertEqual(date, Date(timeIntervalSince1970: 100))
+        XCTAssertEqual(before.map(\.title), ["Alpha", "Beta", "Gamma"])
+        XCTAssertEqual(after.map(\.title), before.map(\.title), "点击项目不应改变「最近更新」顺序")
+    }
+
+    func testOpeningProjectsWithoutCommitDatesDoesNotChangeOrder() {
+        let zeta = project("Zeta", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let alpha = project("Alpha", lastOpenedAt: Date(timeIntervalSince1970: 100))
+        let mid = project("Mid", lastOpenedAt: Date(timeIntervalSince1970: 100))
+
+        let before = ProjectSortMode.recent.sorted([zeta, alpha, mid], commitDates: [:])
+        let openedZeta = project("Zeta", lastOpenedAt: Date(timeIntervalSince1970: 9_999))
+        let after = ProjectSortMode.recent.sorted([openedZeta, alpha, mid], commitDates: [:])
+
+        XCTAssertEqual(before.map(\.title), after.map(\.title), "提交时间缺失时点击也不应改变顺序")
+    }
+
+    func testRecentModeUsesCommitDateInsteadOfLastOpened() {
+        let a = project("A", lastOpenedAt: Date(timeIntervalSince1970: 999))
+        let b = project("B", lastOpenedAt: Date(timeIntervalSince1970: 1))
+        let dates: [UUID: Date] = [
+            a.id: Date(timeIntervalSince1970: 100),
+            b.id: Date(timeIntervalSince1970: 200),
+        ]
+
+        let sorted = ProjectSortMode.recent.sorted([a, b], commitDates: dates)
+
+        XCTAssertEqual(sorted.map(\.title), ["B", "A"], "按提交时间排序，不看最近打开时间")
     }
 
     func testRecentModeKeepsPinnedProjectsFirst() {
@@ -111,15 +145,32 @@ final class ProjectSortModeTests: XCTestCase {
         XCTAssertEqual(sorted.map(\.title), ["Pinned", "Normal"], "置顶项目始终在最前")
     }
 
-    func testRecentModeIsStableForEqualDates() {
-        let first = project("First")
-        let second = project("Second")
+    /// 回归：提交时间缓存被清空（例如侧边栏因工作区状态变化被重建）时，
+    /// 「最近更新」不能退化成按名称排列——否则用户会看到列表瞬间变成
+    /// 字母序，几秒后再跳回提交时间序。
+    func testRecentModeKeepsInputOrderWhenCommitDatesAreMissing() {
+        let zeta = project("Zeta")
+        let alpha = project("Alpha")
+        let mid = project("Mid")
+
+        let sorted = ProjectSortMode.recent.sorted([zeta, alpha, mid], commitDates: [:])
+
+        XCTAssertEqual(
+            sorted.map(\.title),
+            ["Zeta", "Alpha", "Mid"],
+            "提交时间缺失时应保持原始（手动）顺序，而不是按名称重排"
+        )
+    }
+
+    func testRecentModeBreaksEqualDatesByName() {
+        let beta = project("Beta")
+        let alpha = project("Alpha")
         let date = Date(timeIntervalSince1970: 100)
-        let dates = [first.id: date, second.id: date]
+        let dates = [beta.id: date, alpha.id: date]
 
-        let sorted = ProjectSortMode.recent.sorted([first, second], commitDates: dates)
+        let sorted = ProjectSortMode.recent.sorted([beta, alpha], commitDates: dates)
 
-        XCTAssertEqual(sorted.map(\.title), ["First", "Second"], "时间相同时保持原有顺序")
+        XCTAssertEqual(sorted.map(\.title), ["Alpha", "Beta"], "时间相同时按名称排列")
     }
 
     // MARK: - Metadata

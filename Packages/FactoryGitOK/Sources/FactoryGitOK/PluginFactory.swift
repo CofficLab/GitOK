@@ -164,8 +164,24 @@ public struct DefaultPluginFactory: PluginFactory {
             OpenLumiPlugin(),
             OpenRemotePlugin(),
             PluginSettingView(id: "com.coffic.gitok.plugin.setting-view"),
-            PluginLogoManager(),
-            LogoCofficPlugin(),
+            // Logo 插件来自共享包 LumiPluginLogos：注入 GitOK 品牌配置。
+            // 插件 id 与历史一致，用户已保存的启用状态继续有效。
+            PluginLogoManager(
+                configuration: LogoManagerConfiguration(
+                    pluginID: "com.coffic.gitok.plugin.logo-manager",
+                    loggerSubsystem: "com.coffic.gitok.plugin.logo-manager",
+                    policy: .disabled,
+                    contributesAboutEntry: true,
+                    appDisplayName: "GitOK"
+                )
+            ),
+            LogoCofficPlugin(
+                configuration: LogoCofficConfiguration(
+                    policy: .disabled,
+                    contributesAboutEntry: true,
+                    appDisplayName: "GitOK"
+                )
+            ),
             ThemePackPlugin(
                 id: "com.coffic.gitok.plugin.theme-pack",
                 themeIDs: [

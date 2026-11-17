@@ -7,6 +7,8 @@ public final class GitConflictResolverViewModel: ObservableObject {
     @Published public private(set) var currentProjectURL: URL?
     @Published public private(set) var conflictedFiles: [String] = []
     @Published public private(set) var resolvedConflictFiles: [String] = []
+    @Published public private(set) var autoResolvableConflictFiles: [String] = []
+    @Published public private(set) var bothDeletedConflictFiles: [String] = []
     @Published public private(set) var isOperationInProgress = false
     @Published public private(set) var isCherryPicking = false
     @Published public private(set) var isLoading = false
@@ -14,6 +16,7 @@ public final class GitConflictResolverViewModel: ObservableObject {
     @Published public private(set) var isPresented = false
 
     private var lastReportedOperationInProgress = false
+    private var resolvedFileSet: Set<String> = []
 
     public init() {}
 
@@ -26,6 +29,9 @@ public final class GitConflictResolverViewModel: ObservableObject {
             // visible and actionable until the new snapshot is ready.
             conflictedFiles = []
             resolvedConflictFiles = []
+            resolvedFileSet = []
+            autoResolvableConflictFiles = []
+            bothDeletedConflictFiles = []
             isOperationInProgress = false
             isCherryPicking = false
             lastReportedOperationInProgress = false
@@ -39,10 +45,15 @@ public final class GitConflictResolverViewModel: ObservableObject {
         conflictedFiles: [String],
         isOperationInProgress: Bool,
         isCherryPicking: Bool,
-        resolvedFiles: [String] = []
+        resolvedFiles: [String] = [],
+        autoResolvableFiles: [String] = [],
+        bothDeletedFiles: [String] = []
     ) {
         let projectChanged = currentProjectURL != projectURL
-        let previousDisplayedFiles = Set(self.conflictedFiles).union(resolvedConflictFiles)
+        // Only rows the user actually saw count as "staged"; mechanically
+        // resolvable conflicts never enter the list and must not reappear as
+        // phantom staged entries once they are gone from the index.
+        let previousDisplayedFiles = Set(displayedConflictFiles)
         // A merge can remain in progress after every conflict has been staged.
         // That state still needs the resolver surface: the next action is to
         // continue the merge and create the merge commit, not to sync again.
@@ -51,13 +62,18 @@ public final class GitConflictResolverViewModel: ObservableObject {
 
         currentProjectURL = projectURL
         self.conflictedFiles = conflictedFiles
+        self.autoResolvableConflictFiles = autoResolvableFiles.sorted()
+        self.bothDeletedConflictFiles = bothDeletedFiles.sorted()
         if isOperationInProgress {
             let currentConflictedFiles = Set(conflictedFiles)
             let resolvedByContent = Set(resolvedFiles)
             let resolvedAfterStaging = previousDisplayedFiles.subtracting(currentConflictedFiles)
-            resolvedConflictFiles = Array(resolvedByContent.union(resolvedAfterStaging)).sorted()
+            let resolved = resolvedByContent.union(resolvedAfterStaging).sorted()
+            resolvedConflictFiles = resolved
+            resolvedFileSet = Set(resolved)
         } else {
             resolvedConflictFiles = []
+            resolvedFileSet = []
         }
         self.isOperationInProgress = isOperationInProgress
         self.isCherryPicking = isCherryPicking
@@ -84,15 +100,33 @@ public final class GitConflictResolverViewModel: ObservableObject {
     }
 
     public var displayedConflictFiles: [String] {
-        var files = conflictedFiles
-        for file in resolvedConflictFiles where !files.contains(file) {
+        // Files whose conflicts resolve mechanically stay out of the list; a
+        // hundreds-of-rows merge should only show rows that need a decision.
+        let autoFiles = Set(autoResolvableConflictFiles)
+        var files = conflictedFiles.filter { !autoFiles.contains($0) }
+        for file in resolvedConflictFiles where !files.contains(file) && !autoFiles.contains(file) {
             files.append(file)
         }
         return files
     }
 
+    /// Files that can be staged without a manual edit: one-sided changes keep
+    /// the surviving side, both-deleted entries just drop out of the index.
+    public var autoStageFiles: [String] {
+        let deletions = Set(bothDeletedConflictFiles)
+        return autoResolvableConflictFiles.filter { !deletions.contains($0) }
+    }
+
+    public var autoDeletionFiles: [String] {
+        bothDeletedConflictFiles
+    }
+
+    public var hasAutoResolvableConflicts: Bool {
+        !autoResolvableConflictFiles.isEmpty
+    }
+
     public func isConflictFileResolved(_ file: String) -> Bool {
-        resolvedConflictFiles.contains(file)
+        resolvedFileSet.contains(file)
     }
 
     /// 弹层正文区是否存在可展示的文件行。

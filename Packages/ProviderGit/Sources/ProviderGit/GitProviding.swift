@@ -304,6 +304,7 @@ public protocol GitOperationProviding: AnyObject, Sendable {
     func isMerging(in repository: URL) -> Bool
     func hasConflictOperation(in repository: URL) -> Bool
     func conflictFiles(in repository: URL) -> [String]
+    func conflictEntries(in repository: URL) -> [GitConflictEntry]
     func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String
     func mergeFileContent(path: String, version: GitMergeFileVersion, in repository: URL) throws -> String
     func mergeFileDiff(path: String, in repository: URL) throws -> String
@@ -314,6 +315,13 @@ public protocol GitOperationProviding: AnyObject, Sendable {
 }
 
 public extension GitOperationProviding {
+    /// Backends that cannot report index stages treat every conflict as
+    /// content-level, which is the conservative behaviour the resolver had
+    /// before entries existed.
+    func conflictEntries(in repository: URL) -> [GitConflictEntry] {
+        conflictFiles(in: repository).map { GitConflictEntry(path: $0, kind: .unknown) }
+    }
+
     func loadWorktreeSnapshot(in repository: URL) throws -> GitWorktreeSnapshot {
         let entries = try loadEntries(in: repository)
         let status = try loadStatus(in: repository)

@@ -1,12 +1,13 @@
 {
-  "originHash" : "b34921436e3f5e4576c44bb3af5d652482e54b96a90a59d729361d1fa01b8adb",
+  "originHash" : "38fd6399aac8667b542e8dc9b9607b5cf3343b6e02f729962e35566a761a9f24",
   "pins" : [
     {
       "identity" : "libgit2swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/LibGit2Swift.git",
       "state" : {
-        "revision" : "8a80b9e33c7e45a3123d0b98c9e0f29e70b30433"
+        "revision" : "5cc1b96e18c39ad1bd0e81c9b5d80865dd8038f7",
+        "version" : "1.1.1"
       }
     },
     {
@@ -41,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginAbout.git",
       "state" : {
-        "revision" : "419abd51827febdc97689742aa573f4850fa2ae6",
-        "version" : "3.0.1"
+        "revision" : "747aa4fdb52becc2b9f92e652859f1d65be7c5ca",
+        "version" : "3.0.3"
       }
     },
     {
@@ -51,6 +52,15 @@
       "location" : "https://github.com/CofficLab/LumiPluginCommand.git",
       "state" : {
         "revision" : "b0254d3c543efb2e32edeaefe0ea4d4e8a1033da",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "lumipluginlogos",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lumi-softworks/LumiPluginLogos.git",
+      "state" : {
+        "revision" : "76d2c7a01f54b03e5fb6ae9af33d7baec7c1e37c",
         "version" : "1.0.1"
       }
     },
@@ -77,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiPluginStorage.git",
       "state" : {
-        "revision" : "521d3ed40f374a03cd2aea5b9bfd5ed13375ee12",
-        "version" : "1.1.1"
+        "revision" : "6e2ed6d68fe76b6776d2aaa65578c0e4a56efd2b",
+        "version" : "1.2.0"
       }
     },
     {
@@ -104,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiProviders.git",
       "state" : {
-        "revision" : "822c4c7fd75ee8af46f483515bc34ad54968f683",
-        "version" : "1.21.0"
+        "revision" : "9707d72e7747ebc3caff88e22d724e4752e2d06f",
+        "version" : "1.22.0"
       }
     },
     {
@@ -131,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/LumiUI.git",
       "state" : {
-        "revision" : "6786ab3b708f4ffe5b8412b95ac4d932936364b7",
-        "version" : "1.12.0"
+        "revision" : "82f3fa6fd362107ae2201d240d5f0ebf1117fd95",
+        "version" : "1.13.1"
       }
     },
     {
@@ -149,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicLog.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5"
+        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5",
+        "version" : "1.0.0"
       }
     },
     {

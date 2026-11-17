@@ -7,6 +7,8 @@ import ProviderProjects
 private struct GitConflictResolverSnapshot: Sendable {
     let conflictedFiles: [String]
     let resolvedFiles: [String]
+    let autoResolvableFiles: [String]
+    let bothDeletedFiles: [String]
     let isOperationInProgress: Bool
     let isCherryPicking: Bool
 }
@@ -87,7 +89,9 @@ final class GitConflictResolverObserver {
                 conflictedFiles: [],
                 isOperationInProgress: false,
                 isCherryPicking: false,
-                resolvedFiles: []
+                resolvedFiles: [],
+                autoResolvableFiles: [],
+                bothDeletedFiles: []
             )
             return
         }
@@ -96,12 +100,35 @@ final class GitConflictResolverObserver {
         let git = self.git
         snapshotTask = Task { @MainActor [weak self] in
             let snapshot = await Task.detached(priority: .utility) {
-                let conflictedFiles = git.conflictFiles(in: url)
+                let entries = git.conflictEntries(in: url)
+                // Index shape decides what still needs a decision: both-deleted
+                // entries resolve by dropping them and one-sided additions keep
+                // the surviving side. A one-sided entry whose file is not on
+                // disk cannot be staged safely, so it stays in the manual list.
+                let autoResolvable = entries.filter { entry in
+                    switch entry.kind {
+                    case .bothDeleted:
+                        return true
+                    case .oneSided:
+                        return FileManager.default.fileExists(
+                            atPath: url.appendingPathComponent(entry.path).path
+                        )
+                    case .content, .deleteModify, .unknown:
+                        return false
+                    }
+                }
+                let autoPaths = Set(autoResolvable.map(\.path))
+                // Only two-sided entries are worth reading for conflict markers.
+                let contentCandidates = entries.filter {
+                    !autoPaths.contains($0.path) && $0.kind != .deleteModify
+                }
                 return GitConflictResolverSnapshot(
-                    conflictedFiles: conflictedFiles,
-                    resolvedFiles: conflictedFiles.filter {
-                        !Self.containsConflictMarkers(path: $0, in: url)
-                    },
+                    conflictedFiles: entries.map(\.path),
+                    resolvedFiles: contentCandidates
+                        .filter { !Self.containsConflictMarkers(path: $0.path, in: url) }
+                        .map(\.path),
+                    autoResolvableFiles: autoResolvable.map(\.path),
+                    bothDeletedFiles: autoResolvable.filter { $0.kind == .bothDeleted }.map(\.path),
                     isOperationInProgress: git.isMerging(in: url),
                     isCherryPicking: git.cherryPickStatus(in: url).isCherryPicking
                 )
@@ -116,7 +143,9 @@ final class GitConflictResolverObserver {
                     conflictedFiles: snapshot.conflictedFiles,
                     isOperationInProgress: operationInProgress,
                     isCherryPicking: snapshot.isCherryPicking,
-                    resolvedFiles: snapshot.resolvedFiles
+                    resolvedFiles: snapshot.resolvedFiles,
+                    autoResolvableFiles: snapshot.autoResolvableFiles,
+                    bothDeletedFiles: snapshot.bothDeletedFiles
                 )
                 if self.presentationRequested {
                     self.presentationRequested = false

@@ -607,7 +607,9 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func pushTag(named name: String, remote: String, in repository: URL) throws -> String {
-        try LibGit2.pushTag(named: name, remote: remote, at: repository.path, verbose: false)
+        try LibGit2PushRecovery.pushTag(named: name, remote: remote, in: repository) {
+            try LibGit2.pushTag(named: name, remote: remote, at: repository.path, verbose: false)
+        }
         return "Tag pushed."
     }
 
@@ -804,12 +806,22 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func unstageFiles(_ filePaths: [String], in repository: URL) throws {
+        // An unmerged path has several index entries; applying a staged diff
+        // cannot collapse them. A single path reset restores the HEAD entry (or
+        // removes it when HEAD never had the path), which is exactly what
+        // "unstage" means for a conflicted path.
+        let conflicted = Set((try? LibGit2.getConflictedPaths(at: repository.path)) ?? [])
+        let conflictedPaths = filePaths.filter(conflicted.contains)
+        if !conflictedPaths.isEmpty {
+            _ = try GitProcessRunner.run(["reset", "--"] + conflictedPaths, in: repository)
+        }
+
         let stagedAdditions = Set(
             try GitStatusLoader.loadEntries(in: repository)
                 .filter { $0.stagedStatus == "A" }
                 .map(\.path)
         )
-        for filePath in filePaths {
+        for filePath in filePaths where !conflicted.contains(filePath) {
             if stagedAdditions.contains(filePath) {
                 // Reversing an added-file patch leaves an empty blob staged in the index.
                 // Git's path reset removes the index entry and preserves the working file.
@@ -838,7 +850,9 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
     }
 
     func push(in repository: URL) throws -> String {
-        try LibGit2.push(at: repository.path, verbose: false)
+        try LibGit2PushRecovery.push(in: repository) {
+            try LibGit2.push(at: repository.path, verbose: false)
+        }
         return "Push completed."
     }
 
@@ -909,6 +923,44 @@ final class GitLibGit2Backend: @unchecked Sendable, GitBackendProviding {
         // mapped GIT_STATUS_CONFLICTED to two spaces, hiding every conflicted
         // file from the conflict resolver.
         (try? LibGit2.getConflictedPaths(at: repository.path)) ?? []
+    }
+
+    func conflictEntries(in repository: URL) -> [GitConflictEntry] {
+        // LibGit2Swift does not expose per-stage index entries, but the unmerged
+        // shape decides whether the resolver may act without asking the user, so
+        // read the exact stages through the system Git capability when it exists.
+        if GitProcessRunner.isAvailable {
+            return GitMergeOperation.conflictEntries(in: repository)
+        }
+
+        guard let paths = try? LibGit2.getConflictedPaths(at: repository.path) else { return [] }
+        // Without the stage listing, only shapes that cannot be confused with a
+        // delete/modify conflict are safe to classify:
+        // - absent from HEAD and disk → the merged result deletes the file;
+        // - present on disk and in HEAD → at least both sides kept it;
+        // anything else (notably "deleted by us, modified by them") needs a
+        // decision, so it stays unclassified and is shown as a manual row.
+        let headPaths = Set((try? LibGit2.getTrackedFilePaths(at: repository.path)) ?? [])
+        return paths.map { path in
+            let worktreeExists = FileManager.default.fileExists(
+                atPath: repository.appendingPathComponent(path).path
+            )
+            return GitConflictEntry(
+                path: path,
+                kind: Self.conflictKind(worktreeExists: worktreeExists, trackedInHead: headPaths.contains(path))
+            )
+        }
+    }
+
+    private static func conflictKind(worktreeExists: Bool, trackedInHead: Bool) -> GitConflictEntry.Kind {
+        switch (worktreeExists, trackedInHead) {
+        case (false, false):
+            return .bothDeleted
+        case (true, true):
+            return .content
+        default:
+            return .unknown
+        }
     }
 
     func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String {

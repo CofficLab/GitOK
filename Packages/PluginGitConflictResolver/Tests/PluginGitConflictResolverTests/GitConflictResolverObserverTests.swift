@@ -107,6 +107,34 @@ struct GitConflictResolverObserverTests {
         #expect(viewModel.isPresented)
     }
 
+    @Test("按索引形状挑出可自动解决的冲突，缺失工作区文件的一侧仍留给人工")
+    func autoResolvableConflictsFollowIndexShape() async throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("obs-auto-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        try Data("theirs\n".utf8).write(to: root.appendingPathComponent("added.txt"))
+
+        let git = TestGitProviding()
+        git.isMergingStub = true
+        git.conflictEntriesStub = [
+            GitConflictEntry(path: "added.txt", kind: .oneSided),
+            GitConflictEntry(path: "missing-added.txt", kind: .oneSided),
+            GitConflictEntry(path: "deleted.txt", kind: .bothDeleted),
+            GitConflictEntry(path: "manual.txt", kind: .content),
+            GitConflictEntry(path: "renamed.txt", kind: .deleteModify),
+        ]
+
+        let (observer, viewModel, _) = makeObserver(projectURL: root, git: git)
+        defer { observer.cancel() }
+
+        let loaded = await waitUntil { viewModel.hasLoadedSnapshot }
+        #expect(loaded)
+        #expect(viewModel.autoStageFiles == ["added.txt"])
+        #expect(viewModel.autoDeletionFiles == ["deleted.txt"])
+        #expect(viewModel.displayedConflictFiles == ["missing-added.txt", "manual.txt", "renamed.txt"])
+    }
+
     // MARK: - 事件触发
 
     @Test("工作区变化事件会触发重新读取")

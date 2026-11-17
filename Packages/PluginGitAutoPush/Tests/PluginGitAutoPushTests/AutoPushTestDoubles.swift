@@ -4,6 +4,7 @@ import ProviderCommitForm
 import ProviderGit
 import ProviderProjects
 import ProviderStorage
+import ProviderToast
 
 /// Test doubles for the auto-push plugin suite.
 ///
@@ -17,6 +18,12 @@ final class AutoPushTestGit: GitProviding, @unchecked Sendable {
     private var _pushCount = 0
     private var _pushedRepositories: [String] = []
     private var _branch: String? = "main"
+    private var _pushError: Error?
+    private var _trackingStatus = GitRefReader.RemoteTrackingStatus(
+        ahead: 1,
+        behind: 0,
+        hasUpstream: true
+    )
 
     var descriptor = GitBackendDescriptor(
         id: "com.coffic.gitok.test.autopush.git",
@@ -40,6 +47,18 @@ final class AutoPushTestGit: GitProviding, @unchecked Sendable {
     var currentBranchName: String? {
         get { lock.lock(); defer { lock.unlock() }; return _branch }
         set { lock.lock(); defer { lock.unlock() }; _branch = newValue }
+    }
+
+    /// 当前分支相对 upstream 的状态；默认有一条待推提交。
+    var trackingStatus: GitRefReader.RemoteTrackingStatus {
+        get { lock.lock(); defer { lock.unlock() }; return _trackingStatus }
+        set { lock.lock(); defer { lock.unlock() }; _trackingStatus = newValue }
+    }
+
+    /// 设置后 push 抛出该错误。
+    var pushError: Error? {
+        get { lock.lock(); defer { lock.unlock() }; return _pushError }
+        set { lock.lock(); defer { lock.unlock() }; _pushError = newValue }
     }
 
     func registerBackend(_ backend: any GitBackendProviding) throws {}
@@ -85,7 +104,7 @@ final class AutoPushTestGit: GitProviding, @unchecked Sendable {
     func hasRemotes(in repository: URL) -> Bool { true }
     func unpulledCount(in repository: URL) -> Int? { nil }
     func remoteTrackingStatus(in repository: URL) -> GitRefReader.RemoteTrackingStatus {
-        GitRefReader.RemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: true)
+        trackingStatus
     }
     func undoCommit(_ commitHash: String, parentHash: String, in repository: URL) throws -> String { "" }
     func revertCommit(_ commitHash: String, in repository: URL) throws -> String { "" }
@@ -127,9 +146,12 @@ final class AutoPushTestGit: GitProviding, @unchecked Sendable {
     func commit(message: String, in repository: URL) throws -> String { "commit-hash" }
 
     func push(in repository: URL) throws -> String {
-        lock.lock(); defer { lock.unlock() }
+        lock.lock()
         _pushCount += 1
-        _pushedRepositories.append(repository.path)
+        let error = _pushError
+        if error == nil { _pushedRepositories.append(repository.path) }
+        lock.unlock()
+        if let error { throw error }
         return "pushed"
     }
 
@@ -255,4 +277,26 @@ final class AutoPushTestStorage: StorageProviding {
     func coreDataDirectory() -> URL {
         dataRootDirectory.appendingPathComponent("CoreData", isDirectory: true)
     }
+}
+
+/// 记录展示过的 Toast，用于断言自动推送的 UI 反馈。
+@MainActor
+final class AutoPushTestToast: ToastProviding {
+    private(set) var shownToasts: [LumiToast] = []
+
+    var currentToast: LumiToast? { shownToasts.last }
+
+    func addObserver(
+        _ callback: @escaping (ToastProvidingEvent) -> Void
+    ) -> any ToastProvidingObserverHandle {
+        NoopToastProvidingObserverHandle()
+    }
+
+    func show(_ toast: LumiToast) {
+        shownToasts.append(toast)
+    }
+
+    func presentError(title: String, message: String, sourceWindowID: String?) {}
+
+    func dismissError() {}
 }

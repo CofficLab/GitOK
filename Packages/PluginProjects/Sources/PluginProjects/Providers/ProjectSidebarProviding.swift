@@ -16,16 +16,23 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
     /// 项目数据源（已收窄的插件能力）。
     private let projects: any ProjectSidebarCapability
 
-    /// 读取仓库最近提交时间的能力（供「最近更新」展示方式使用）。
-    private let activityCapability: (any ProjectActivityCapability)?
-
     /// 克隆所需的 remote 解析、克隆登记与反馈能力。缺任一项时隐藏克隆入口。
     private let remoteCapability: (any GitRemoteCapability)?
     private let toast: (any ToastProviding)?
     private let clone: ProjectCloneCapability?
 
-    /// 排序偏好的持久化存储；缺省时由视图退化为纯内存模式。
-    private let sortModeStore: (any ProjectSortModeStoring)?
+    /// 排序方式状态；由 Provider 持有，侧边栏视图重建不会丢失用户选择。
+    let sortModeModel: ProjectSortModeModel
+
+    /// 提交时间缓存；由 Provider 持有，重建视图不会清空缓存、重新读取。
+    let activityModel: ProjectActivityModel
+
+    /// 卷状态缓存；由 Provider 持有，重建视图不会让卷徽标重新闪一遍。
+    let volumeModel: ProjectVolumeModel
+
+    /// 项目列表派生状态缓存；由 Provider 持有，重建视图不会丢失已算好的
+    /// 过滤 / 排序结果，也不会因为每次 body 求值都重排全量项目。
+    let listModel: ProjectListModel
 
     init(
         projects: any ProjectSidebarCapability,
@@ -33,14 +40,20 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
         toast: (any ToastProviding)? = nil,
         clone: ProjectCloneCapability? = nil,
         activityCapability: (any ProjectActivityCapability)? = nil,
-        sortModeStore: (any ProjectSortModeStoring)? = nil
+        sortModeStore: (any ProjectSortModeStoring)? = nil,
+        volumeResolver: any ProjectVolumeResolving = FileSystemProjectVolumeResolver()
     ) {
         self.projects = projects
         self.remoteCapability = remoteCapability
         self.toast = toast
         self.clone = clone
-        self.activityCapability = activityCapability
-        self.sortModeStore = sortModeStore
+        // 未注入存储时退化为纯内存模式（预览 / 测试场景）：偏好可读可写，但不落盘。
+        self.sortModeModel = ProjectSortModeModel(
+            store: sortModeStore ?? InMemoryProjectSortModeStore()
+        )
+        self.activityModel = ProjectActivityModel(capability: activityCapability)
+        self.volumeModel = ProjectVolumeModel(resolver: volumeResolver)
+        self.listModel = ProjectListModel()
     }
 
     func registerItems(_ items: [SidebarItem]) {
@@ -57,8 +70,10 @@ final class ProjectSidebarProviding: SidebarProviding, ObservableObject {
                 toast: toast,
                 clone: clone,
                 remoteCapability: remoteCapability,
-                activityCapability: activityCapability,
-                sortModeStore: sortModeStore
+                sortModeModel: sortModeModel,
+                activity: activityModel,
+                volume: volumeModel,
+                list: listModel
             )
         )
     }
