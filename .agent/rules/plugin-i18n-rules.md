@@ -97,8 +97,10 @@ python3 Scripts/check_localization.py
 1. 每个 `Packages/<Package>/Resources/Localizable.xcstrings`（及历史遗留的
    `Sources/Localizable.xcstrings`）是合法 JSON，`sourceLanguage == "en"`，
    且 catalog 非空。
-2. 每个 key 非空、未标记 `extractionState: "stale"`，并且五种语言的
-   `stringUnit.value` 都非空。
+2. 每个 key 的五种语言 `stringUnit.value` 都非空。Xcode 在构建/同步时自动
+   写入的 `extractionState`（如 `"stale"`）与空 key `""` 不纳入校验：Xcode
+   不认识本项目使用的本地化 shim，会把仍在使用的 key 误标为 stale，空 key
+   则是无害的提取副产物。判断 key 是否仍在使用以第 3 条的源码扫描为准。
 3. 每个 key 都能在 `Packages/<Package>/Sources` 或 `GitOKApp` 的 Swift 源码中
    找到字面量引用；找不到时，必须含 `%` 且带 `Runtime-assembled` 注释。
 4. `Packages/*/Sources` 与 `GitOKApp` 中不得出现传给 `Text` / `Label` /
