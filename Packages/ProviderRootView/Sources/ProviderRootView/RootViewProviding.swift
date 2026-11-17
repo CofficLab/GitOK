@@ -259,8 +259,8 @@ public final class RootTrailingPane: ObservableObject {
     /// Consumers can use this callback to clear the selection that caused
     /// the pane to be shown.
     public var onDismiss: (@MainActor () -> Void)?
-    private var visibilitySubscription: AnyCancellable?
-    private var widthSubscription: AnyCancellable?
+    private var visibilityObserver: (any ChatSectionProvidingObserverHandle)?
+    private var widthObserver: (any ChatSectionProvidingObserverHandle)?
     private var widthResizeHandler: (@MainActor (CGFloat) -> Void)?
 
     public init(
@@ -322,9 +322,11 @@ public final class RootTrailingPane: ObservableObject {
     @MainActor
     public func bindVisibility(to provider: any ChatSectionProviding) {
         isVisible = provider.isVisible
-        visibilitySubscription = provider.objectWillChange.sink { [weak self, weak provider] _ in
-            Task { @MainActor [weak self, weak provider] in
-                self?.isVisible = provider?.isVisible ?? false
+        visibilityObserver?.cancel()
+        visibilityObserver = provider.addObserver { [weak self] event in
+            guard case let .visibilityChanged(visible) = event else { return }
+            Task { @MainActor [weak self] in
+                self?.isVisible = visible
             }
         }
     }
@@ -332,11 +334,14 @@ public final class RootTrailingPane: ObservableObject {
     /// 将面板宽度绑定到 ChatSection provider，并接收用户拖拽完成后的宽度。
     @MainActor
     public func bindWidth(
-        to publisher: AnyPublisher<ChatSectionWidth, Never>,
+        to provider: any ChatSectionProviding,
         onResize: @escaping @MainActor (CGFloat) -> Void
     ) {
+        width = provider.chatSectionWidth
         widthResizeHandler = onResize
-        widthSubscription = publisher.sink { [weak self] width in
+        widthObserver?.cancel()
+        widthObserver = provider.addObserver { [weak self] event in
+            guard case let .widthChanged(width) = event else { return }
             Task { @MainActor [weak self] in
                 self?.width = width
             }

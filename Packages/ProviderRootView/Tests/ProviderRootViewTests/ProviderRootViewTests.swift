@@ -60,7 +60,7 @@ struct ProviderRootViewTests {
         )
         var resizedWidth: CGFloat?
         pane.bindWidth(
-            to: chat.chatSectionWidthPublisher,
+            to: chat,
             onResize: { resizedWidth = $0 }
         )
 
