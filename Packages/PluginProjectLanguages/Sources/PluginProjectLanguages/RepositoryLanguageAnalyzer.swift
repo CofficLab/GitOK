@@ -115,9 +115,12 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
     }()
 
     private static let excludedDirectories: Set<String> = [
-        ".build", "build", "carthage", "coverage", "deriveddata", "dist",
-        "node_modules", "pods", "target", "vendor", "vendors"
+        ".build", ".git", ".swiftpm", "build", "carthage", "coverage", "deriveddata",
+        "dist", "node_modules", "pods", "target", "vendor", "vendors",
     ]
+
+    /// 非 Git 目录的文件数上限，避免对超大文件夹做无界扫描。
+    static let maximumFallbackFileCount = 200_000
 
     func context(for repository: URL) throws -> RepositoryLanguageAnalysisContext {
         try context(for: repository, cancellation: nil)
@@ -154,7 +157,9 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
         cancellation: GitProcessCancellation?
     ) throws -> ProjectLanguagesSnapshot {
         if cancellation?.isCancelled == true { throw CancellationError() }
-        let trackedPaths = try LibGit2.getTrackedFilePaths(at: repository.path)
+        // Git 目录用索引里的文件；普通文件夹退化为遍历文件系统。
+        let trackedPaths = (try? LibGit2.getTrackedFilePaths(at: repository.path))
+            ?? Self.filePaths(in: repository, cancellation: cancellation)
         if cancellation?.isCancelled == true { throw CancellationError() }
         let fileManager = FileManager.default
         var byteCounts: [String: (name: String, bytes: Int64)] = [:]
@@ -181,6 +186,36 @@ struct RepositoryLanguageAnalyzer: RepositoryLanguageAnalyzing {
                 ProjectLanguage(id: id, name: value.name, byteCount: value.bytes)
             }
         )
+    }
+
+    private static func filePaths(
+        in folder: URL,
+        cancellation: GitProcessCancellation?
+    ) -> [String] {
+        guard let enumerator = FileManager.default.enumerator(
+            at: folder,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles, .skipsPackageDescendants]
+        ) else { return [] }
+
+        var paths: [String] = []
+        let prefix = folder.standardizedFileURL.path + "/"
+        for case let url as URL in enumerator {
+            if cancellation?.isCancelled == true { return paths }
+            guard paths.count < maximumFallbackFileCount else { break }
+
+            let values = try? url.resourceValues(forKeys: [.isDirectoryKey])
+            if values?.isDirectory == true {
+                if excludedDirectories.contains(url.lastPathComponent.lowercased()) {
+                    enumerator.skipDescendants()
+                }
+                continue
+            }
+
+            let path = url.standardizedFileURL.path
+            paths.append(path.hasPrefix(prefix) ? String(path.dropFirst(prefix.count)) : url.lastPathComponent)
+        }
+        return paths
     }
 
     private static func definition(for path: String) -> Definition? {

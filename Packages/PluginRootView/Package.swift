@@ -13,6 +13,8 @@ let package = Package(
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderProjects"),
         .package(path: "../ProviderCloneRepository"),
+        .package(path: "../ProviderProjectReadme"),
+        .package(path: "../ProviderProjectLanguages"),
         .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.13.1"),
         .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0")
     ],
@@ -26,6 +28,8 @@ let package = Package(
                 .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
+                .product(name: "ProviderProjectReadme", package: "ProviderProjectReadme"),
+                .product(name: "ProviderProjectLanguages", package: "ProviderProjectLanguages"),
                 .product(name: "ProviderToolbar", package: "LumiProviders"),
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),

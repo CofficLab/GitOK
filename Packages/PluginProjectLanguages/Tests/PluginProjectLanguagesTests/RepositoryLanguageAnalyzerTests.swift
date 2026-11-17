@@ -47,6 +47,22 @@ struct RepositoryLanguageAnalyzerTests {
         #expect(snapshot.languages.map(\.id) == ["swift"])
     }
 
+    @Test("scans a folder that is not a Git repository")
+    func scansNonGitFolder() throws {
+        let folder = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ProjectLanguagesNonGit-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        try write("let value = 1\n", to: folder.appendingPathComponent("Sources/App.swift"))
+        try write("# Title\n", to: folder.appendingPathComponent("README.md"))
+        try write("generated", to: folder.appendingPathComponent("node_modules/package.js"))
+        try write("hidden", to: folder.appendingPathComponent(".hidden.swift"))
+
+        let snapshot = try RepositoryLanguageAnalyzer().analyze(repository: folder)
+
+        #expect(snapshot.languages.map(\.id) == ["swift", "markdown"])
+    }
+
     private func makeRepository() throws -> URL {
         let repository = FileManager.default.temporaryDirectory
             .appendingPathComponent("ProjectLanguagesTests-\(UUID().uuidString)")

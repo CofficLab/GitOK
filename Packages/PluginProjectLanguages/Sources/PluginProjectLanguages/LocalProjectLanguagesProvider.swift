@@ -3,7 +3,7 @@ import KitGit
 import os
 import ProviderProjectLanguages
 
-/// Concrete provider that publishes local Git language statistics.
+/// Concrete provider that publishes local project language statistics.
 @MainActor
 final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
     private nonisolated static let logger = Logger(
@@ -61,21 +61,23 @@ final class LocalProjectLanguagesProvider: ProjectLanguagesProviding {
         analysisTask = Task.detached(priority: .utility) { [weak self] in
             if !Task.isCancelled, !cancellation.isCancelled {
                 do {
-                    let context = try analyzer.context(for: repository, cancellation: cancellation)
-                    // 工作区是否有未提交变更不影响语言统计：有变更时同样分析。
+                    // 普通文件夹没有 HEAD 可用于缓存键；直接分析，不读缓存。
+                    let context = try? analyzer.context(for: repository, cancellation: cancellation)
                     guard !Task.isCancelled, !cancellation.isCancelled else {
                         await self?.finishLoading(token: token)
                         return
                     }
 
-                    if let snapshot = cache.load(for: context.cacheKey) {
+                    if let context, let snapshot = cache.load(for: context.cacheKey) {
                         await self?.apply(snapshot, token: token)
                         return
                     }
 
                     let snapshot = try analyzer.analyze(repository: repository, cancellation: cancellation)
                     guard !Task.isCancelled, !cancellation.isCancelled else { return }
-                    cache.store(snapshot, for: context.cacheKey)
+                    if let context {
+                        cache.store(snapshot, for: context.cacheKey)
+                    }
                     await self?.apply(snapshot, token: token)
                 } catch is CancellationError {
                     // Cancellation is expected when switching projects or refreshing.
