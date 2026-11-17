@@ -29,6 +29,7 @@ struct ConflictResolverPresentation: Equatable {
 
     let conflictedFiles: [String]
     let resolvedFiles: [String]
+    let autoResolvableCount: Int
     let isOperationInProgress: Bool
     let isCherryPicking: Bool
     let isActionRunning: Bool
@@ -36,12 +37,14 @@ struct ConflictResolverPresentation: Equatable {
     init(
         conflictedFiles: [String],
         resolvedFiles: [String],
+        autoResolvableCount: Int = 0,
         isOperationInProgress: Bool,
         isCherryPicking: Bool,
         isActionRunning: Bool
     ) {
         self.conflictedFiles = conflictedFiles
         self.resolvedFiles = resolvedFiles
+        self.autoResolvableCount = autoResolvableCount
         self.isOperationInProgress = isOperationInProgress
         self.isCherryPicking = isCherryPicking
         self.isActionRunning = isActionRunning
@@ -53,6 +56,7 @@ struct ConflictResolverPresentation: Equatable {
         self.init(
             conflictedFiles: viewModel.conflictedFiles,
             resolvedFiles: viewModel.resolvedConflictFiles,
+            autoResolvableCount: viewModel.autoResolvableConflictFiles.count,
             isOperationInProgress: viewModel.isOperationInProgress,
             isCherryPicking: viewModel.isCherryPicking,
             isActionRunning: isActionRunning
@@ -84,6 +88,11 @@ struct ConflictResolverPresentation: Equatable {
     /// 是否可以暂存已解决的文件。
     var canStage: Bool {
         !pendingStageFiles.isEmpty && !isActionRunning
+    }
+
+    /// 是否存在可按索引形态机械解决的冲突（单侧修改 / 双方删除）。
+    var canAutoResolve: Bool {
+        autoResolvableCount > 0 && isActionRunning == false
     }
 
     /// 是否可以中止当前的合并 / cherry-pick。
@@ -132,36 +141,43 @@ struct ConflictResolverPresentation: Equatable {
     }
 
     var localizedSummary: String {
+        let base: String
         switch summary {
         case .resolvedPendingStage(let count):
-            return String(
+            base = String(
                 format: pluginLocalization.string("%lld resolved; stage to continue"),
                 count
             )
         case .unresolvedAndPendingStage(let unresolved, let resolved):
-            return unresolvedDescription(unresolved) + " · " + String(
+            base = unresolvedDescription(unresolved) + " · " + String(
                 format: pluginLocalization.string("%lld resolved; stage to continue"),
                 resolved
             )
         case .unresolvedAndStaged(let unresolved, let staged):
-            return unresolvedDescription(unresolved) + " · " + String(
+            base = unresolvedDescription(unresolved) + " · " + String(
                 format: pluginLocalization.string("%lld staged"),
                 staged
             )
         case .conflicted(let total):
-            return unresolvedDescription(total)
+            base = unresolvedDescription(total)
         case .stagedReadyToContinue(let staged):
-            return String(
+            base = String(
                 format: pluginLocalization.string("%lld resolved; ready to continue"),
                 staged
             )
         case .operationReadyToContinue(let isCherryPicking):
-            return pluginLocalization.string(
+            base = pluginLocalization.string(
                 isCherryPicking ? "Cherry-pick is ready to continue" : "Merge is ready to continue"
             )
         case .noConflicts:
-            return pluginLocalization.string("No conflicted files")
+            base = pluginLocalization.string("No conflicted files")
         }
+
+        guard autoResolvableCount > 0 else { return base }
+        return base + " · " + String(
+            format: pluginLocalization.string("%lld can be resolved automatically"),
+            autoResolvableCount
+        )
     }
 
     private func unresolvedDescription(_ count: Int) -> String {

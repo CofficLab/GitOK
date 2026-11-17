@@ -87,7 +87,7 @@ public struct ConflictResolverList: View {
     /// 水平内边距由内层 VStack 自行保留，所以文件行不会贴到面板圆角上。
     private var conflictList: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 4) {
+            LazyVStack(alignment: .leading, spacing: 4) {
                 if viewModel.isLoading && !viewModel.hasLoadedSnapshot {
                     AppStatusBanner(
                         kind: .loading,
@@ -102,6 +102,30 @@ public struct ConflictResolverList: View {
                             isResolved: viewModel.isConflictFileResolved(file)
                         )
                     }
+                } else if viewModel.isOperationInProgress && viewModel.hasAutoResolvableConflicts {
+                    // 只剩可自动解决的冲突时不展示「可以继续」：继续按钮此刻
+                    // 仍被禁用，需要先让用户执行一次自动解决。
+                    VStack(spacing: DesignTokens.Spacing.md) {
+                        AppStatusBanner(
+                            kind: .info,
+                            title: pluginLocalization.string("Conflicts Can Be Resolved Automatically"),
+                            message: pluginLocalization.string(
+                                "Only one-sided or deleted-on-both-sides entries remain. Resolving them stages the merge result without editing files."
+                            )
+                        )
+                        .frame(maxWidth: .infinity, minHeight: 120)
+
+                        AppButton(
+                            pluginLocalization.string("Resolve Automatically"),
+                            systemImage: "wand.and.stars",
+                            style: .primary,
+                            size: .small,
+                            action: resolveAutomatically
+                        )
+                        .disabled(isActionRunning)
+                        .accessibilityIdentifier("gitok.git.conflict.resolve-automatically-card")
+                    }
+                    .frame(maxWidth: .infinity)
                 } else if viewModel.isOperationInProgress {
                     // 正文区没有文件行可展示时才使用这里的圆形「继续」按钮；
                     // 正文区有文件行（含已解决/已暂存的文件）时，该入口位于顶部操作栏。
@@ -169,6 +193,20 @@ public struct ConflictResolverList: View {
 
     private var actionBar: some View {
         HStack(spacing: 8) {
+            // 正文区还有人工文件行时由顶部操作栏提供自动解决入口；
+            // 只剩自动冲突时入口在正文区，避免同一弹层出现两个相同按钮。
+            if presentation.canAutoResolve && viewModel.hasContentRows {
+                AppButton(
+                    pluginLocalization.string("Resolve Automatically"),
+                    systemImage: "wand.and.stars",
+                    style: .primary,
+                    size: .small,
+                    action: resolveAutomatically
+                )
+                .disabled(isActionRunning)
+                .accessibilityIdentifier("gitok.git.conflict.resolve-automatically")
+            }
+
             // 有待暂存文件就保留按钮，执行动作时置灰而非消失：
             // 按钮在操作过程中忽隐忽现会让用户以为状态变了。
             if !presentation.pendingStageFiles.isEmpty {
@@ -324,6 +362,36 @@ public struct ConflictResolverList: View {
         Task.detached(priority: .userInitiated) {
             do {
                 try git.stageFiles(files, in: url)
+                await MainActor.run {
+                    isActionRunning = false
+                    projects.notifyDataChanged()
+                }
+            } catch {
+                await MainActor.run {
+                    isActionRunning = false
+                    actionError = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    /// 一次性解决不需要人工判断的冲突：单侧新增按工作区内容暂存，
+    /// 双方删除则把索引条目还原到 HEAD（路径不在 HEAD 时即移除条目）。
+    private func resolveAutomatically() {
+        let stageFiles = viewModel.autoStageFiles
+        let deletionFiles = viewModel.autoDeletionFiles
+        guard let url = projects.currentProject?.url,
+              !stageFiles.isEmpty || !deletionFiles.isEmpty else { return }
+        isActionRunning = true
+        actionError = nil
+        Task.detached(priority: .userInitiated) {
+            do {
+                if !stageFiles.isEmpty {
+                    try git.stageFiles(stageFiles, in: url)
+                }
+                if !deletionFiles.isEmpty {
+                    try git.unstageFiles(deletionFiles, in: url)
+                }
                 await MainActor.run {
                     isActionRunning = false
                     projects.notifyDataChanged()
