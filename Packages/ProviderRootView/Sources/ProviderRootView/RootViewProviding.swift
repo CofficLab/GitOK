@@ -15,24 +15,6 @@ public enum RootWorkspaceState: Equatable, Sendable {
     case cloning
     case cloneFailed
     case ready
-
-    /// 用于 macOS 原生分栏层级变化时生成稳定的布局 identity。
-    public var layoutID: String {
-        switch self {
-        case .noProject:
-            return "no-project"
-        case let .projectMissing(path):
-            return "project-missing:\(path)"
-        case let .notGitRepository(path):
-            return "not-git-repository:\(path)"
-        case .cloning:
-            return "cloning"
-        case .cloneFailed:
-            return "clone-failed"
-        case .ready:
-            return "ready"
-        }
-    }
 }
 
 /// 根视图提供能力协议
