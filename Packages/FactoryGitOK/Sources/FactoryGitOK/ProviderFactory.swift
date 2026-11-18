@@ -1,6 +1,7 @@
 import Foundation
 import KernelCore
 import ProviderContentView
+import ProviderDiskCache
 import ProviderDocsView
 import ProviderGit
 import GitOKProviderRootView
@@ -39,6 +40,11 @@ public struct DefaultProviderFactory: ProviderFactory {
         return DefaultStorageProvider(dataRootDirectory: testDataRoot)
     }
 
+    /// 产出 `DiskCacheProviding` 实现（默认 ~/Library/Caches 磁盘缓存）。
+    public func makeDiskCacheProvider() -> any DiskCacheProviding {
+        DefaultDiskCacheProvider()
+    }
+
     public func makeWorkspaceSceneProvider() -> any WorkspaceSceneProviding {
         DefaultWorkspaceSceneProvider()
     }
@@ -74,6 +80,7 @@ public struct DefaultProviderFactory: ProviderFactory {
     public func registerProviders(into kernel: KernelCoreContainer) throws {
         let storage = makeStorageProvider()
         try kernel.registerProvider((any StorageProviding).self, storage)
+        try kernel.registerProvider((any DiskCacheProviding).self, makeDiskCacheProvider())
 
         let workspaceScene = makeWorkspaceSceneProvider()
         try kernel.registerProvider((any WorkspaceSceneProviding).self, workspaceScene)

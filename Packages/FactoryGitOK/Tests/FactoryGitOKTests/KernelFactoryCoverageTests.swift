@@ -7,6 +7,7 @@ import KernelCore
 import ProviderTheme
 import LumiUI
 import ProviderStorage
+import ProviderDiskCache
 import ProviderSettingView
 import ProviderLogo
 import ProviderSidebar
@@ -59,6 +60,7 @@ final class KernelFactoryTests: XCTestCase {
             let inner = DefaultProviderFactory()
 
             func makeStorageProvider() -> any StorageProviding { inner.makeStorageProvider() }
+            func makeDiskCacheProvider() -> any DiskCacheProviding { inner.makeDiskCacheProvider() }
             func makeWorkspaceSceneProvider() -> any WorkspaceSceneProviding { inner.makeWorkspaceSceneProvider() }
             func makeThemeProvider() -> any ThemeProviding { inner.makeThemeProvider() }
             func makeContentViewProvider() -> any ContentViewProviding { inner.makeContentViewProvider() }
