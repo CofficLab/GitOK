@@ -4,9 +4,10 @@ import KitGit
 import ProviderCloneRepository
 import ProviderProjects
 import GitOKProviderRootView
+import ProviderRootView
 import SwiftUI
 import XCTest
-@testable import PluginRootView
+@testable import GitOKPluginRootView
 
 @MainActor
 final class PluginRootViewTests: XCTestCase {
@@ -169,53 +170,68 @@ final class PluginRootViewTests: XCTestCase {
         XCTAssertFalse(plugin.metadata.description.isEmpty)
     }
 
-    // MARK: - 替换式注册
+    // MARK: - 宿主 Provider 接管
 
-    func testOnBootReplacesDefaultProvider() throws {
+    func testOnBootAdoptsHostRegisteredProvider() throws {
         let kernel = KernelCoreContainer()
-        let defaultProvider = DefaultRootViewProvider()
-        try kernel.registerProvider((any RootViewProviding).self, defaultProvider)
+        let hostProvider = GitOKRootViewProvider()
+        try kernel.registerProvider((any RootViewProviding).self, hostProvider)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
         let resolved = kernel.resolveProvider((any RootViewProviding).self)
-        XCTAssertTrue(resolved is GitOKRootViewProvider)
-        XCTAssertFalse(resolved === defaultProvider)
-        XCTAssertTrue(resolved === plugin.provider)
+        XCTAssertTrue(resolved === hostProvider)
+        XCTAssertTrue(plugin.provider === hostProvider)
     }
 
-    func testOnShutdownRestoresDefaultProvider() throws {
+    func testOnShutdownKeepsHostProviderRegistered() throws {
         let kernel = KernelCoreContainer()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        let hostProvider = GitOKRootViewProvider()
+        try kernel.registerProvider((any RootViewProviding).self, hostProvider)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
-        XCTAssertTrue(kernel.resolveProvider((any RootViewProviding).self) is GitOKRootViewProvider)
-
         try plugin.onShutdown(kernel: kernel)
+
+        // 根视图归宿主所有：插件卸载不注销、不替换。
         let resolved = kernel.resolveProvider((any RootViewProviding).self)
-        XCTAssertFalse(resolved is GitOKRootViewProvider)
-        XCTAssertNotNil(resolved)
+        XCTAssertTrue(resolved === hostProvider)
+        XCTAssertNil(plugin.provider)
+    }
+
+    func testOnBootWithoutHostProviderSkipsGating() throws {
+        let kernel = KernelCoreContainer()
+        // 宿主注册的是基类而非 GitOKRootViewProvider：插件优雅降级。
+        try kernel.registerProvider(
+            (any RootViewProviding).self,
+            GitOKProviderRootView.DefaultRootViewProvider()
+        )
+
+        let plugin = RootViewPlugin()
+        try plugin.onBoot(kernel: kernel)
+
+        XCTAssertNil(plugin.provider)
     }
 
     // MARK: - 委托链路
 
     func testProviderDelegatesSetViews() throws {
         let kernel = KernelCoreContainer()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
+        let provider = try XCTUnwrap(plugin.provider)
 
-        plugin.provider.setToolbarView(AnyView(Text("Toolbar")))
-        plugin.provider.setSidebarView(AnyView(Text("Sidebar")))
-        plugin.provider.setContentView(AnyView(Text("Content")))
-        plugin.provider.setStatusBarView(AnyView(Text("Status")))
-        plugin.provider.setContentHeaderView(AnyView(Text("Header")))
-        plugin.provider.setContentFooterView(AnyView(Text("Footer")))
+        provider.setToolbarView(AnyView(Text("Toolbar")))
+        provider.setSidebarView(AnyView(Text("Sidebar")))
+        provider.setContentView(AnyView(Text("Content")))
+        provider.setStatusBarView(AnyView(Text("Status")))
+        provider.setContentHeaderView(AnyView(Text("Header")))
+        provider.setContentFooterView(AnyView(Text("Footer")))
 
-        let rootView = plugin.provider.makeRootView()
+        let rootView = provider.makeRootView()
         XCTAssertNotNil(rootView)
     }
 
@@ -224,54 +240,57 @@ final class PluginRootViewTests: XCTestCase {
     func testProviderOverlayOperations() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
+        let provider = try XCTUnwrap(plugin.provider)
 
         // 手动添加额外 overlay。
-        plugin.provider.addOverlays([
+        provider.addOverlays([
             RootOverlayItem(id: "test-overlay", order: 100) { content in content },
         ])
-        XCTAssertEqual(plugin.provider.overlays.count, 1)
+        XCTAssertEqual(provider.overlays.count, 1)
 
         // 同 id 不重复注册。
-        plugin.provider.addOverlays([
+        provider.addOverlays([
             RootOverlayItem(id: "test-overlay", order: 200) { content in content },
         ])
-        XCTAssertEqual(plugin.provider.overlays.count, 1)
+        XCTAssertEqual(provider.overlays.count, 1)
 
-        plugin.provider.removeOverlays(ids: ["test-overlay"])
-        XCTAssertEqual(plugin.provider.overlays.count, 0)
+        provider.removeOverlays(ids: ["test-overlay"])
+        XCTAssertEqual(provider.overlays.count, 0)
     }
 
     // MARK: - Rail / Content 显隐
 
     func testProviderRailViewOperations() throws {
         let kernel = KernelCoreContainer()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
+        let provider = try XCTUnwrap(plugin.provider)
 
-        XCTAssertTrue(plugin.provider.isRailViewVisible)
-        plugin.provider.setRailViewVisible(false)
-        XCTAssertFalse(plugin.provider.isRailViewVisible)
-        plugin.provider.setRailViewVisible(true)
-        XCTAssertTrue(plugin.provider.isRailViewVisible)
+        XCTAssertTrue(provider.isRailViewVisible)
+        provider.setRailViewVisible(false)
+        XCTAssertFalse(provider.isRailViewVisible)
+        provider.setRailViewVisible(true)
+        XCTAssertTrue(provider.isRailViewVisible)
     }
 
     func testProviderContentViewHidden() throws {
         let kernel = KernelCoreContainer()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
+        let provider = try XCTUnwrap(plugin.provider)
 
-        XCTAssertFalse(plugin.provider.isContentViewHidden)
-        plugin.provider.setContentViewHidden(true)
-        XCTAssertTrue(plugin.provider.isContentViewHidden)
+        XCTAssertFalse(provider.isContentViewHidden)
+        provider.setContentViewHidden(true)
+        XCTAssertTrue(provider.isContentViewHidden)
     }
 
     // MARK: - 工作区状态门控
@@ -280,13 +299,13 @@ final class PluginRootViewTests: XCTestCase {
     func testOnBootSetsNoProjectWorkspaceState() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        XCTAssertEqual(plugin.provider.workspaceState, .noProject)
+        XCTAssertEqual(try XCTUnwrap(plugin.provider).workspaceState, .noProject)
     }
 
     /// 当前项目目录不存在 → 根布局进入 projectMissing 状态。
@@ -297,14 +316,14 @@ final class PluginRootViewTests: XCTestCase {
             Project(url: URL(fileURLWithPath: "/definitely/missing/repo"), title: "Missing"),
         ]
         mockProjects.currentProject = mockProjects.projects[0]
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
         XCTAssertEqual(
-            plugin.provider.workspaceState,
+            try XCTUnwrap(plugin.provider).workspaceState,
             .projectMissing(path: "/definitely/missing/repo")
         )
     }
@@ -322,14 +341,14 @@ final class PluginRootViewTests: XCTestCase {
         let mockCloneRepository = MockCloneRepository()
         mockCloneRepository.activeDestinations = [project.url]
 
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
         try kernel.registerProvider((any CloneRepositoryProviding).self, mockCloneRepository)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        XCTAssertEqual(plugin.provider.workspaceState, .cloning)
+        XCTAssertEqual(try XCTUnwrap(plugin.provider).workspaceState, .cloning)
     }
 
     /// clone 结束后任务事件驱动根布局重新判断目录状态。
@@ -345,19 +364,20 @@ final class PluginRootViewTests: XCTestCase {
         let mockCloneRepository = MockCloneRepository()
         mockCloneRepository.activeDestinations = [project.url]
 
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
         try kernel.registerProvider((any CloneRepositoryProviding).self, mockCloneRepository)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
-        XCTAssertEqual(plugin.provider.workspaceState, .cloning)
+        let provider = try XCTUnwrap(plugin.provider)
+        XCTAssertEqual(provider.workspaceState, .cloning)
 
         mockCloneRepository.activeDestinations.removeAll()
         mockCloneRepository.notify(.tasksChanged)
 
         XCTAssertEqual(
-            plugin.provider.workspaceState,
+            provider.workspaceState,
             .projectMissing(path: project.url.path)
         )
     }
@@ -369,13 +389,13 @@ final class PluginRootViewTests: XCTestCase {
         let project = Project(url: try makeTempGitRepository(), title: "Temp")
         mockProjects.projects = [project]
         mockProjects.currentProject = project
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        XCTAssertEqual(plugin.provider.workspaceState, .ready)
+        XCTAssertEqual(try XCTUnwrap(plugin.provider).workspaceState, .ready)
     }
 
     /// 失败任务即使留下 `.git` 目录，也必须阻止 Git 工作区挂载。
@@ -388,7 +408,7 @@ final class PluginRootViewTests: XCTestCase {
         let mockCloneRepository = MockCloneRepository()
         mockCloneRepository.failedDestinations = [project.url]
 
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
         try kernel.registerProvider((any CloneRepositoryProviding).self, mockCloneRepository)
 
@@ -396,7 +416,7 @@ final class PluginRootViewTests: XCTestCase {
         try plugin.onBoot(kernel: kernel)
 
         XCTAssertEqual(
-            plugin.provider.workspaceState,
+            try XCTUnwrap(plugin.provider).workspaceState,
             .cloneFailed
         )
     }
@@ -414,14 +434,14 @@ final class PluginRootViewTests: XCTestCase {
         let project = Project(url: url, title: "Not Git")
         mockProjects.projects = [project]
         mockProjects.currentProject = project
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
         XCTAssertEqual(
-            plugin.provider.workspaceState,
+            try XCTUnwrap(plugin.provider).workspaceState,
             .notGitRepository(path: url.path)
         )
     }
@@ -430,18 +450,19 @@ final class PluginRootViewTests: XCTestCase {
     func testWorkspaceStateUpdatesOnProjectSelectionChange() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKRootViewProvider())
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
-        XCTAssertEqual(plugin.provider.workspaceState, .noProject)
+        let provider = try XCTUnwrap(plugin.provider)
+        XCTAssertEqual(provider.workspaceState, .noProject)
 
         let project = Project(url: try makeTempGitRepository(), title: "Temp")
         mockProjects.projects = [project]
         mockProjects.currentProject = project
         mockProjects.notifySelectionChanged()
-        XCTAssertEqual(plugin.provider.workspaceState, .ready)
+        XCTAssertEqual(provider.workspaceState, .ready)
 
         mockProjects.currentProject = Project(
             url: URL(fileURLWithPath: "/definitely/missing/repo"),
@@ -449,37 +470,44 @@ final class PluginRootViewTests: XCTestCase {
         )
         mockProjects.notifySelectionChanged()
         XCTAssertEqual(
-            plugin.provider.workspaceState,
+            provider.workspaceState,
             .projectMissing(path: "/definitely/missing/repo")
         )
     }
 
-    /// onShutdown 后 observer 被取消，工作区占位视图被清理。
+    /// onShutdown 后 observer 被取消，项目事件不再驱动工作区状态。
     func testOnShutdownCancelsObserverAndResetsWorkspace() throws {
         let kernel = KernelCoreContainer()
         let mockProjects = MockProjects()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        let hostProvider = GitOKRootViewProvider()
+        try kernel.registerProvider((any RootViewProviding).self, hostProvider)
         try kernel.registerProvider((any ProjectProviding).self, mockProjects)
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
-        XCTAssertEqual(plugin.provider.workspaceState, .noProject)
+        XCTAssertEqual(hostProvider.workspaceState, .noProject)
 
         try plugin.onShutdown(kernel: kernel)
 
-        XCTAssertNil(kernel.resolveProvider((any RootViewProviding).self).flatMap { $0 as? GitOKRootViewProvider })
+        let project = Project(url: try makeTempGitRepository(), title: "Temp")
+        mockProjects.projects = [project]
+        mockProjects.currentProject = project
+        mockProjects.notifySelectionChanged()
+        XCTAssertEqual(hostProvider.workspaceState, .noProject)
     }
 
     /// 无 ProjectProviding 时 onBoot 不崩溃（优雅降级）。
     func testOnBootWithoutProjectProvidingDoesNotCrash() throws {
         let kernel = KernelCoreContainer()
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        let hostProvider = GitOKRootViewProvider()
+        try kernel.registerProvider((any RootViewProviding).self, hostProvider)
         // 不注册 ProjectProviding。
 
         let plugin = RootViewPlugin()
         try plugin.onBoot(kernel: kernel)
 
-        // 即使没有 ProjectProviding，provider 替换仍然成功。
-        XCTAssertTrue(kernel.resolveProvider((any RootViewProviding).self) is GitOKRootViewProvider)
+        // 即使没有 ProjectProviding，宿主 Provider 接管仍然成功。
+        XCTAssertTrue(plugin.provider === hostProvider)
+        XCTAssertTrue(kernel.resolveProvider((any RootViewProviding).self) === hostProvider)
     }
 }

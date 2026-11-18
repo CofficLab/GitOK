@@ -1,4 +1,5 @@
 import KernelCore
+import ProviderRootView
 
 #if os(macOS)
 import PluginActivityStatus
@@ -11,7 +12,7 @@ import PluginCommitForm
 import PluginCommitStatusBar
 import PluginCommitToast
 import PluginCommitList
-import PluginRootView
+import GitOKPluginRootView
 import PluginRailView
 import PluginGitDiff
 import PluginGitLibGit2
@@ -64,38 +65,16 @@ import PluginToolbar
 import PluginWorktreeClean
 import PluginWorktreeStatus
 import PluginProjectReadme
-import GitOKProviderRootView
 #endif
 
-/// GitOK 的专用插件目录。
+/// GitOK 的插件目录：稳定顺序的显式数组（禁止 ObjC 运行时扫描）。
 ///
-/// 只装配 GitOK 宿主 UI 所需的基础插件（与 BookletMaker 同款基础目录，
-/// 不含任何业务插件）。Lumi 的 LLM、Agent、项目、聊天等实验性插件
-/// 不会进入这个应用的进程。
+/// 只装配 GitOK 宿主 UI 所需的插件。Lumi 的 LLM、Agent、聊天等实验性
+/// 插件不会进入这个应用的进程。
 @MainActor
-public struct DefaultPluginFactory: PluginFactory {
-    public init() {}
+enum GitOKPluginCatalog {
 
-    private func makeToastPlugin() -> ToastSuperPlugin {
-        ToastSuperPlugin(
-            overlayInstaller: { kernel, center in
-                guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
-                    return
-                }
-                rootView.addOverlays([
-                    RootOverlayItem(id: ToastSuperPlugin.overlayID, order: 10_000) { content in
-                        ToastOverlay(content: content, center: center)
-                    },
-                ])
-            },
-            overlayUninstaller: { kernel in
-                kernel.resolveProvider((any RootViewProviding).self)?
-                    .removeOverlays(ids: [ToastSuperPlugin.overlayID])
-            }
-        )
-    }
-
-    public func makePlugins() -> [any SuperPlugin] {
+    static func makePlugins() -> [any SuperPlugin] {
         [
             // 基础服务必须先于业务插件启动。
             GitLibGit2Plugin(),
@@ -198,5 +177,24 @@ public struct DefaultPluginFactory: PluginFactory {
             // 依赖它存在。
             PluginPluginManager(id: "com.coffic.gitok.plugin.plugin-manager", entryVisibility: .always),
         ]
+    }
+
+    private static func makeToastPlugin() -> ToastSuperPlugin {
+        ToastSuperPlugin(
+            overlayInstaller: { kernel, center in
+                guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else {
+                    return
+                }
+                rootView.addOverlays([
+                    RootOverlayItem(id: ToastSuperPlugin.overlayID, order: 10_000) { content in
+                        ToastOverlay(content: content, center: center)
+                    },
+                ])
+            },
+            overlayUninstaller: { kernel in
+                kernel.resolveProvider((any RootViewProviding).self)?
+                    .removeOverlays(ids: [ToastSuperPlugin.overlayID])
+            }
+        )
     }
 }

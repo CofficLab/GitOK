@@ -5,7 +5,7 @@ let package = Package(
     name: "PluginRootView",
     defaultLocalization: "en",
     platforms: [.macOS(.v14)],
-    products: [.library(name: "PluginRootView", targets: ["PluginRootView"])],
+    products: [.library(name: "GitOKPluginRootView", targets: ["GitOKPluginRootView"])],
     dependencies: [
         .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.1"),
@@ -16,16 +16,17 @@ let package = Package(
         .package(path: "../ProviderProjectReadme"),
         .package(path: "../ProviderProjectLanguages"),
         .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.13.1"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0")
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.26.0")
     ],
     targets: [
         .target(
-            name: "PluginRootView",
+            name: "GitOKPluginRootView",
             dependencies: [
                 .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "KernelCore", package: "LumiKernel"),
-                .product(name: "ProviderRootView", package: "ProviderRootView"),
+                .product(name: "GitOKProviderRootView", package: "ProviderRootView"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
                 .product(name: "ProviderProjectReadme", package: "ProviderProjectReadme"),
@@ -40,9 +41,10 @@ let package = Package(
         .testTarget(
             name: "PluginRootViewTests",
             dependencies: [
-                "PluginRootView",
+                "GitOKPluginRootView",
                 .product(name: "KernelCore", package: "LumiKernel"),
-                .product(name: "ProviderRootView", package: "ProviderRootView"),
+                .product(name: "GitOKProviderRootView", package: "ProviderRootView"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderCloneRepository", package: "ProviderCloneRepository"),
             ],

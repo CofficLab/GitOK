@@ -22,9 +22,8 @@ let package = Package(
         .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.13.1"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
-        .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0")
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.26.0")
     ],
     targets: [
         .target(
@@ -39,7 +38,6 @@ let package = Package(
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderRailView", package: "LumiProviders"),
-                .product(name: "ProviderRootView", package: "ProviderRootView"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],

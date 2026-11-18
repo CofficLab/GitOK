@@ -20,7 +20,7 @@ let package = Package(
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderRootView"),
         .package(url: "https://github.com/nookery/MagicDiffView", branch: "main"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0")
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.26.0")
     ],
     targets: [
         .target(
@@ -33,7 +33,8 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
-                .product(name: "ProviderRootView", package: "ProviderRootView"),
+                .product(name: "GitOKProviderRootView", package: "ProviderRootView"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
                 .product(name: "MagicDiffView", package: "MagicDiffView"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],
@@ -47,6 +48,7 @@ let package = Package(
             dependencies: [
                 "PluginGitDiff",
                 .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
             ],
             path: "Tests/PluginGitDiffTests"
         ),

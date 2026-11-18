@@ -25,11 +25,23 @@
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
+      codeCoverageEnabled = "NO"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GK0000000000000000000013"
+               BuildableName = "GitOKTests.xctest"
+               BlueprintName = "GitOKTests"
+               ReferencedContainer = "container:GitOK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
          <TestableReference
             skipped = "NO"
             parallelizable = "NO">

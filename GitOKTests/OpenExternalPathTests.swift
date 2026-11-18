@@ -2,9 +2,9 @@ import KernelCore
 import KitGit
 import ProviderProjects
 import XCTest
-@testable import FactoryGitOK
+@testable import GitOK
 
-/// `FactoryGitOK.openExternalPath` 的行为测试。
+/// `GitOKExternalOpen.open` 的行为测试。
 ///
 /// 该入口承载 CLI 脚本 `gitok <path>` 的核心语义：把外部目录加入项目列表
 /// 并切换为当前项目。
@@ -69,7 +69,7 @@ final class OpenExternalPathTests: XCTestCase {
         let projects = RecordingProjects()
         let kernel = try makeKernel(with: projects)
 
-        XCTAssertTrue(FactoryGitOK.openExternalPath(directory.path, kernel: kernel))
+        XCTAssertTrue(GitOKExternalOpen.open(directory.path, kernel: kernel))
         XCTAssertEqual(projects.openedPaths.count, 1)
         XCTAssertEqual(
             projects.openedPaths.first,
@@ -83,7 +83,7 @@ final class OpenExternalPathTests: XCTestCase {
 
         let missing = FileManager.default.temporaryDirectory
             .appendingPathComponent("gitok-missing-\(UUID().uuidString)", isDirectory: true)
-        XCTAssertFalse(FactoryGitOK.openExternalPath(missing.path, kernel: kernel))
+        XCTAssertFalse(GitOKExternalOpen.open(missing.path, kernel: kernel))
         XCTAssertTrue(projects.openedPaths.isEmpty)
     }
 
@@ -96,7 +96,7 @@ final class OpenExternalPathTests: XCTestCase {
         let projects = RecordingProjects()
         let kernel = try makeKernel(with: projects)
 
-        XCTAssertFalse(FactoryGitOK.openExternalPath(file.path, kernel: kernel))
+        XCTAssertFalse(GitOKExternalOpen.open(file.path, kernel: kernel))
         XCTAssertTrue(projects.openedPaths.isEmpty)
     }
 
@@ -105,6 +105,6 @@ final class OpenExternalPathTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: directory) }
 
         let kernel = KernelCoreContainer()
-        XCTAssertFalse(FactoryGitOK.openExternalPath(directory.path, kernel: kernel))
+        XCTAssertFalse(GitOKExternalOpen.open(directory.path, kernel: kernel))
     }
 }

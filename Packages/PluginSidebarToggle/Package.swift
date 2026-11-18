@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.1"),
         .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.13.1"),
         .package(path: "../ProviderRootView"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0")
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.26.0")
     ],
     targets: [
         .target(
@@ -29,7 +29,8 @@ let package = Package(
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
                 .product(name: "LumiUI", package: "LumiUI"),
-                .product(name: "ProviderRootView", package: "ProviderRootView"),
+                .product(name: "GitOKProviderRootView", package: "ProviderRootView"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
                 .product(name: "ProviderToolbar", package: "LumiProviders"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
             ],

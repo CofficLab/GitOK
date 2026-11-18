@@ -9,6 +9,7 @@ import ProviderGitRepositoryWatch
 import ProviderGitUser
 import ProviderProjects
 import GitOKProviderRootView
+import ProviderRootView
 import ProviderWorkspaceScene
 import SwiftUI
 import ProviderDocsView

@@ -3,50 +3,36 @@ import LumiUI
 import LumiLoggingKit
 import os
 import ProviderRailView
+import ProviderRootView
 import SwiftUI
 
-/// `RootViewProviding` 的默认实现：持有注入的工具栏、侧边栏、Rail、内容 Header、
-/// 主内容视图与 Footer，组合成「顶部工具栏 + 内容区（左侧侧边栏，右侧 Rail）」
-/// 的根布局（与旧版 `AppLayoutView` 完全一致）。
+/// GitOK 的根视图 Provider：继承共享 `DefaultRootViewProviding` 的区域存储、
+/// 叠层、trailing pane 与 Content Footer 高度 profile 契约，叠加 GitOK 宿主
+/// 专属能力：
 ///
-/// 与旧版 `AppLayoutView` 对齐的行为：
-/// - 主内容未注入、且无活跃内容时显示 `WelcomeView` 风格的欢迎占位；
-/// - 侧边栏在存在至少两个入口时显示；
-/// - Rail 由宿主统一注入后常驻显示，不受当前插件容器影响；
-/// - 根视图应用主题背景、`appThemedAppearance`、`ThemeWindowAppearanceBridge`
-///   与 `AppThemeVM` 环境对象（复刻旧版主题链）。
+/// - 工作区状态门控（`workspaceState` / `workspaceUnavailableView`）；
+/// - sidebar 宽度磁盘持久化（`SidebarWidthStoring`）；
+/// - 注入守卫（nil 态相同则跳过赋值，避免视图更新期间发布 objectWillChange）；
+/// - Rail 移除 / 恢复时保留最近的可见状态；
+/// - Rail 显隐 / 宽度绑定走 provider 的 publisher（GitOK 的 Rail provider
+///   以 sections 为主，observer 事件不覆盖 sections 变化）；
+/// - `makeRootView()` 组合 GitOK 的 macOS workbench 布局。
 @MainActor
-public final class DefaultRootViewProvider: RootViewProviding, ObservableObject, SuperLog {
+open class DefaultRootViewProvider: DefaultRootViewProviding, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.lumi.provider-root-view", category: "ProviderRootView")
     nonisolated public static let emoji = "🏠"
     nonisolated static let verbose = false
 
-    @Published var toolbarView: AnyView?
-    @Published var statusBarView: AnyView?
-    @Published var sidebarView: AnyView?
-    @Published var railView: AnyView?
-    @Published var contentHeaderView: AnyView?
-    @Published var contentView: AnyView?
-    @Published var contentFooterView: AnyView?
-    @Published var trailingPane: RootTrailingPane?
-    @Published public private(set) var isRailViewVisible = true
-    @Published public private(set) var railWidth: RailViewWidth = .standard
     @Published public private(set) var workspaceState: RootWorkspaceState = .ready
     @Published private(set) var workspaceUnavailableView: AnyView?
     @Published public private(set) var sidebarWidth: SidebarWidth
-    @Published public private(set) var contentFooterHeight: ContentFooterHeight = .standard
-    @Published public private(set) var overlays: [RootOverlayItem] = []
-    @Published public private(set) var isContentViewHidden: Bool = false
-    @Published public private(set) var isContentHeaderViewHidden: Bool = false
-    @Published public private(set) var isContentFooterViewHidden: Bool = false
-    @Published public private(set) var isSidebarViewHidden: Bool = false
+
     private var railVisibilitySubscription: AnyCancellable?
     private var railWidthSubscription: AnyCancellable?
     private var railWidthResizeHandler: (@MainActor (CGFloat) -> Void)?
     private var sidebarWidthStore: (any SidebarWidthStoring)?
-    private var activeContentFooterHeightStore: (any ContentFooterHeightStoring)?
-    private var activeContentFooterHeightOwnerID: String?
     private var lastRailViewVisibility = true
+
     /// - Parameter sidebarWidthStore: sidebar 宽度偏好的持久化存储。
     ///   传 `nil` 时退化为纯内存模式（预览 / 测试场景）：宽度可读可写，只是不落盘。
     ///   生产环境由宿主注入插件数据目录对应的磁盘实现。
@@ -56,51 +42,67 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
         self.sidebarWidth = SidebarWidth.standard.withIdealWidth(
             SidebarWidth.standard.clamped(restoredWidth)
         )
+        super.init()
         if Self.verbose {
-            Self.logger.info("\(self.t)DefaultRootViewProviding initialized")
+            Self.logger.info("\(self.t)DefaultRootViewProvider initialized")
         }
     }
 
-    public func setToolbarView(_ view: AnyView?) {
+    // MARK: - 注入守卫（值相同则跳过赋值）
+
+    /// 判断两次注入的视图是否「相同」：仅比较有值/无值状态。
+    ///
+    /// `AnyView` 不遵循 `Equatable`，SwiftUI 也未公开 unerase API（反射内部
+    /// storage 在 Release 下不可靠）。因此这里采用保守且可预测的判定：
+    /// - 状态相同（均为 nil 或均为非 nil）→ 视为相同，跳过赋值；
+    /// - 状态不同（nil ↔ 非 nil）→ 视为变化，正常更新。
+    ///
+    /// 目的：装配流程可能重复调用注入方法（如宿主重建视图树时）
+    /// 导致 App body 重求值后再次装配），重复赋值 `@Published` 会在视图更新期间
+    /// 发布变更，触发 SwiftUI 的 "Publishing changes from within view updates
+    /// is not allowed" 并可能形成循环。状态相同即跳过，避免无意义发布。
+    ///
+    /// 注意：这是保守近似 —— 已注入非 nil 视图后，再次注入任意新视图（含不同
+    /// 类型）都会被跳过。Lumi 架构下视图内容更新由视图内部状态驱动（Provider
+    /// 的 `@Published`/`objectWillChange`），无需重新注入新 `AnyView`；若确有
+    /// Provider 需要强制替换，可先传 nil 再传新值。
+    private func isSameView(_ lhs: AnyView?, _ rhs: AnyView?) -> Bool {
+        (lhs == nil) == (rhs == nil)
+    }
+
+    override open func setView(_ view: AnyView?, for region: RootViewRegion) {
+        guard !isSameView(self.view(for: region), view) else { return }
+        super.setView(view, for: region)
+    }
+
+    override open func setToolbarView(_ view: AnyView?) {
         guard !isSameView(toolbarView, view) else { return }
-        toolbarView = view
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set toolbar view: \(view == nil ? "nil" : "injected")")
-        }
+        super.setToolbarView(view)
     }
 
-    public func setStatusBarView(_ view: AnyView?) {
-        guard !isSameView(statusBarView, view) else { return }
-        statusBarView = view
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set status bar view: \(view == nil ? "nil" : "injected")")
-        }
+    override open func setContentHeaderView(_ view: AnyView?) {
+        guard !isSameView(contentHeaderView, view) else { return }
+        super.setContentHeaderView(view)
     }
 
-    public func addOverlays(_ newOverlays: [RootOverlayItem]) {
-        for overlay in newOverlays where !overlays.contains(where: { $0.id == overlay.id }) { overlays.append(overlay) }
-        overlays.sort { $0.order < $1.order }
+    override open func setContentView(_ view: AnyView?) {
+        guard !isSameView(contentView, view) else { return }
+        super.setContentView(view)
     }
 
-    public func removeOverlays(ids: Set<String>) { overlays.removeAll { ids.contains($0.id) } }
-
-    public func setSidebarView(_ view: AnyView?) {
-        guard !isSameView(sidebarView, view) else { return }
-        sidebarView = view
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set sidebar view: \(view == nil ? "nil" : "injected")")
-        }
+    override open func setContentFooterView(_ view: AnyView?) {
+        guard !isSameView(contentFooterView, view) else { return }
+        super.setContentFooterView(view)
     }
 
-    public func setSidebarViewHidden(_ hidden: Bool) {
-        guard isSidebarViewHidden != hidden else { return }
-        isSidebarViewHidden = hidden
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set sidebar view hidden: \(hidden)")
-        }
+    override open func setRegionHidden(_ hidden: Bool, for region: RootViewRegion) {
+        guard isRegionHidden(region) != hidden else { return }
+        super.setRegionHidden(hidden, for: region)
     }
 
-    public func setRailView(_ view: AnyView?) {
+    // MARK: - Rail
+
+    override open func setRailView(_ view: AnyView?) {
         guard !isSameView(railView, view) else { return }
         if view == nil {
             // `setRailView(nil)` can be a temporary host-level replacement. Keep
@@ -112,20 +114,17 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
         } else if railView == nil {
             setRailViewVisible(lastRailViewVisibility)
         }
-        railView = view
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set rail view: \(view == nil ? "nil" : "injected")")
-        }
+        super.setRailView(view)
     }
 
-    public func setRailViewVisible(_ visible: Bool) {
+    override open func setRailViewVisible(_ visible: Bool) {
         guard isRailViewVisible != visible else { return }
-        isRailViewVisible = visible
         lastRailViewVisibility = visible
+        super.setRailViewVisible(visible)
     }
 
-    public func bindRailViewVisibility(to publisher: AnyPublisher<Bool, Never>) {
-        railVisibilitySubscription = publisher.sink { [weak self] visible in
+    override open func bindRailViewVisibility(to provider: any RailViewProviding) {
+        railVisibilitySubscription = provider.railVisibilityPublisher.sink { [weak self] visible in
             // Rail 的可见性来自主线程上的 provider 状态快照（例如当前项目
             // 是否仍存在于磁盘），必须在同一轮状态传播中更新根布局。异步再
             // hop 到 MainActor 会让 Rail 先挂载一帧，CommitRailView 也就会
@@ -133,6 +132,24 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
             self?.setRailViewVisible(visible)
         }
     }
+
+    override open func bindRailViewWidth(
+        to provider: any RailViewProviding,
+        onResize: @escaping @MainActor (CGFloat) -> Void
+    ) {
+        railWidthResizeHandler = onResize
+        railWidthSubscription = provider.railWidthPublisher.sink { [weak self] width in
+            Task { @MainActor [weak self] in
+                self?.railWidth = width
+            }
+        }
+    }
+
+    override open func saveRailViewWidth(_ width: CGFloat) {
+        railWidthResizeHandler?(width)
+    }
+
+    // MARK: - 工作区状态
 
     public func setWorkspaceState(_ state: RootWorkspaceState) {
         guard workspaceState != state else { return }
@@ -144,21 +161,7 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
         workspaceUnavailableView = view
     }
 
-    public func bindRailViewWidth(
-        to publisher: AnyPublisher<RailViewWidth, Never>,
-        onResize: @escaping @MainActor (CGFloat) -> Void
-    ) {
-        railWidthResizeHandler = onResize
-        railWidthSubscription = publisher.sink { [weak self] width in
-            Task { @MainActor [weak self] in
-                self?.railWidth = width
-            }
-        }
-    }
-
-    func saveRailViewWidth(_ width: CGFloat) {
-        railWidthResizeHandler?(width)
-    }
+    // MARK: - Sidebar 宽度
 
     func saveSidebarWidth(_ width: CGFloat) {
         let resolvedWidth = sidebarWidth.clamped(width)
@@ -186,123 +189,29 @@ public final class DefaultRootViewProvider: RootViewProviding, ObservableObject,
         }
     }
 
+    // MARK: - Content Footer
+
     public var contentFooterHeightPublisher: AnyPublisher<ContentFooterHeight, Never> {
         $contentFooterHeight.eraseToAnyPublisher()
     }
 
-    public func activateContentFooterHeightProfile(
-        ownerID: String,
-        recommended: ContentFooterHeight,
-        store: (any ContentFooterHeightStoring)?
-    ) {
-        guard !ownerID.isEmpty else { return }
-        activeContentFooterHeightOwnerID = ownerID
-        activeContentFooterHeightStore = store
-        let restoredHeight = store?.loadHeight(ownerID: ownerID) ?? recommended.idealHeight
-        let resolvedHeight = recommended.withIdealHeight(recommended.clamped(restoredHeight))
-        if contentFooterHeight != resolvedHeight {
-            contentFooterHeight = resolvedHeight
-        }
+    // MARK: - Trailing Pane
+
+    /// 类型化的 trailing pane 访问器：GitOK 的面板都是 `RootTrailingPane`。
+    /// 基类 `trailingPane` 是 public 非 open 的可变属性，无法协变 override，
+    /// 故以异名只读访问器提供类型收窄。
+    public var rootTrailingPane: RootTrailingPane? {
+        trailingPane as? RootTrailingPane
     }
 
-    public func deactivateContentFooterHeightProfile(ownerID: String) {
-        guard activeContentFooterHeightOwnerID == ownerID else { return }
-        activeContentFooterHeightOwnerID = nil
-        activeContentFooterHeightStore = nil
-        if contentFooterHeight != .standard {
-            contentFooterHeight = .standard
-        }
-    }
-
-    public func saveCurrentContentFooterHeight(_ height: CGFloat) {
-        guard let activeContentFooterHeightOwnerID else { return }
-        let resolvedHeight = contentFooterHeight.clamped(height)
-        activeContentFooterHeightStore?.saveHeight(resolvedHeight, ownerID: activeContentFooterHeightOwnerID)
-        let updatedHeight = contentFooterHeight.withIdealHeight(resolvedHeight)
-        if contentFooterHeight != updatedHeight {
-            contentFooterHeight = updatedHeight
-        }
-    }
-
-    public func setContentHeaderView(_ view: AnyView?) {
-        guard !isSameView(contentHeaderView, view) else { return }
-        contentHeaderView = view
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set content header view: \(view == nil ? "nil" : "injected")")
-        }
-    }
-
-    public func setContentView(_ view: AnyView?) {
-        guard !isSameView(contentView, view) else { return }
-        contentView = view
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set content view: \(view == nil ? "nil" : "injected")")
-        }
-    }
-
-    public func setContentFooterView(_ view: AnyView?) {
-        guard !isSameView(contentFooterView, view) else { return }
-        contentFooterView = view
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set content footer view: \(view == nil ? "nil" : "injected")")
-        }
-    }
-
-    public func setContentFooterViewHidden(_ hidden: Bool) {
-        guard isContentFooterViewHidden != hidden else { return }
-        isContentFooterViewHidden = hidden
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set content footer hidden: \(hidden)")
-        }
-    }
-
-    public func setContentViewHidden(_ hidden: Bool) {
-        guard isContentViewHidden != hidden else { return }
-        isContentViewHidden = hidden
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set content view hidden: \(hidden)")
-        }
-    }
-
-    public func setContentHeaderViewHidden(_ hidden: Bool) {
-        guard isContentHeaderViewHidden != hidden else { return }
-        isContentHeaderViewHidden = hidden
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set content header hidden: \(hidden)")
-        }
-    }
-
-    public func setTrailingPane(_ pane: RootTrailingPane?) {
+    override open func setTrailingPane(_ pane: RootViewPane?) {
         guard pane !== trailingPane else { return }
-        trailingPane = pane
-        if Self.verbose {
-            Self.logger.debug("\(self.t)set trailing pane: \(pane.map { $0.id } ?? "nil")")
-        }
+        super.setTrailingPane(pane)
     }
 
-    // MARK: - 注入守卫（值相同则跳过赋值）
+    // MARK: - Root View
 
-    /// 判断两次注入的视图是否「相同」：仅比较有值/无值状态。
-    ///
-    /// `AnyView` 不遵循 `Equatable`，SwiftUI 也未公开 unerase API（反射内部
-    /// storage 在 Release 下不可靠）。因此这里采用保守且可预测的判定：
-    /// - 状态相同（均为 nil 或均为非 nil）→ 视为相同，跳过赋值；
-    /// - 状态不同（nil ↔ 非 nil）→ 视为变化，正常更新。
-    ///
-    /// 目的：装配流程可能重复调用注入方法（如宿主重建视图树时）
-    /// 导致 App body 重求值后再次装配），重复赋值 `@Published` 会在视图更新期间
-    /// 发布变更，触发 SwiftUI 的 "Publishing changes from within view updates
-    /// is not allowed" 并可能形成循环。状态相同即跳过，避免无意义发布。
-    ///
-    /// 注意：这是保守近似 —— 已注入非 nil 视图后，再次注入任意新视图（含不同
-    /// 类型）都会被跳过。Lumi 架构下视图内容更新由视图内部状态驱动（Provider
-    /// 的 `@Published`/`objectWillChange`），无需重新注入新 `AnyView`；若确有
-    /// Provider 需要强制替换，可先传 nil 再传新值。
-    private func isSameView(_ lhs: AnyView?, _ rhs: AnyView?) -> Bool {
-        (lhs == nil) == (rhs == nil)
-    }
-
-    public func makeRootView() -> AnyView {
+    override open func makeRootView() -> AnyView {
         if Self.verbose {
             Self.logger.debug("\(self.t)make root view: toolbar=\(self.toolbarView == nil ? "nil" : "set"), sidebar=\(self.sidebarView == nil ? "nil" : "set"), rail=\(self.railView == nil ? "nil" : "set"), content=\(self.contentView == nil ? "nil" : "set"), footer=\(self.contentFooterView == nil ? "nil" : "set")")
         }

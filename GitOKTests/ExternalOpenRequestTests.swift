@@ -1,5 +1,5 @@
 import XCTest
-@testable import FactoryGitOK
+@testable import GitOK
 
 /// `ExternalOpenRequest` 的 URL 编解码测试。
 ///

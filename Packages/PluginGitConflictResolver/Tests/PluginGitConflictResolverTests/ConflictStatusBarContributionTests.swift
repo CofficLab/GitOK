@@ -1,5 +1,6 @@
 import Foundation
 import GitOKProviderRootView
+import ProviderRootView
 import KernelCore
 import ProviderGit
 import ProviderProjects
@@ -41,7 +42,7 @@ struct ConflictStatusBarContributionTests {
         try kernel.registerProvider((any ProjectProviding).self, projects)
         try kernel.registerProvider((any GitProviding).self, git)
         try kernel.registerProvider((any WorkspaceSceneProviding).self, scene)
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
+        try kernel.registerProvider((any RootViewProviding).self, GitOKProviderRootView.DefaultRootViewProvider())
 
         projects.currentProject = projectURL.map { Project(url: $0) }
         git.isMergingStub = isMerging

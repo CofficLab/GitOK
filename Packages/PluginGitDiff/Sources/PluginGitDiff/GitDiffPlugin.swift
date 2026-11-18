@@ -5,6 +5,7 @@ import os
 import ProviderProjects
 import ProviderGit
 import GitOKProviderRootView
+import ProviderRootView
 import SwiftUI
 import ProviderDocsView
 

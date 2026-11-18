@@ -62,6 +62,10 @@ struct SettingsStyleConformanceTests {
     ///
     /// 1.3.0 起提供 `init(id:)`；此前版本把插件 id 写死为上游品牌。
     private static let pluginManagerMinimumVersion = "1.3.0"
+    /// 工程文件（Xcode 26 project.xcproj）：远程包版本下限的声明处。
+    private static let projectManifestPath = "GitOK.xcodeproj/project.xcproj"
+    /// 插件目录：品牌 id 注入的声明处。
+    private static let pluginCatalogPath = "GitOKApp/GitOKPluginCatalog.swift"
 
     // MARK: - 受审页面
 
@@ -237,14 +241,14 @@ struct SettingsStyleConformanceTests {
         let root = try Self.repositoryRoot()
         var failures: [String] = []
 
-        // 依赖声明：FactoryGitOK 声明的版本下限不得低于支持 `init(id:)` 的版本。
+        // 依赖声明：工程声明的版本下限不得低于支持 `init(id:)` 的版本。
         //
         // 1.2.0 之前的远程包把插件 id 写死为 `com.coffic.lumi.plugin.plugin-manager`，
         // GitOK 复用后会在插件管理页与内核注册表里残留上游品牌；1.3.0 才提供
         // `init(id:)` 让宿主注入自己的品牌 id。
-        let manifestPath = root.appendingPathComponent("Packages/FactoryGitOK/Package.swift")
+        let manifestPath = root.appendingPathComponent(Self.projectManifestPath)
         let manifest = try String(contentsOf: manifestPath, encoding: .utf8)
-        let declarationPattern = #"LumiPluginPluginManager\.git"\s*,\s*from:\s*"([^"]+)""#
+        let declarationPattern = #"LumiPluginPluginManager\.git"\s*,\s*"version"\s*:\s*\{\s*"up-to-next-major-version"\s*:\s*"([^"]+)""#
         guard let declarationRange = manifest.range(of: declarationPattern, options: .regularExpression) else {
             Issue.record(Comment(rawValue: "未能在 \(manifestPath.path) 中找到 LumiPluginPluginManager 的版本声明"))
             return
@@ -255,23 +259,23 @@ struct SettingsStyleConformanceTests {
         }
         if Self.compareVersions(declarationVersion, Self.pluginManagerMinimumVersion) < 0 {
             failures.append(
-                "- Packages/FactoryGitOK/Package.swift：LumiPluginPluginManager 声明为 \(declarationVersion)，"
+                "- \(Self.projectManifestPath)：LumiPluginPluginManager 声明为 \(declarationVersion)，"
                 + "低于 \(Self.pluginManagerMinimumVersion)（该版本才支持宿主注入插件 id）"
             )
         }
 
         // 宿主必须真的注入自己的品牌 id，否则界面与内核注册表仍是上游品牌。
         if !manifest.contains("PluginPluginManager") {
-            failures.append("- Packages/FactoryGitOK/Package.swift：未引用 PluginPluginManager 远程包")
+            failures.append("- \(Self.projectManifestPath)：未引用 PluginPluginManager 远程包")
         }
-        let factoryPath = root.appendingPathComponent("Packages/FactoryGitOK/Sources/FactoryGitOK/PluginFactory.swift")
-        let factory = try String(contentsOf: factoryPath, encoding: .utf8)
+        let catalogPath = root.appendingPathComponent(Self.pluginCatalogPath)
+        let catalog = try String(contentsOf: catalogPath, encoding: .utf8)
         // 用正则而不是精确字面量：调用形态（单行 / 多行、是否附带
         // entryVisibility 等其它参数）不应影响「是否注入了品牌 id」这一判定。
         let brandIDPattern = #"PluginPluginManager\s*\(\s*id:\s*"com\.coffic\.gitok\.plugin\.plugin-manager""#
-        if factory.range(of: brandIDPattern, options: .regularExpression) == nil {
+        if catalog.range(of: brandIDPattern, options: .regularExpression) == nil {
             failures.append(
-                "- Packages/FactoryGitOK/Sources/FactoryGitOK/PluginFactory.swift："
+                "- \(Self.pluginCatalogPath)："
                 + "插件管理插件未注入 GitOK 品牌 id（会残留 com.coffic.lumi 上游品牌）"
             )
         }
@@ -292,10 +296,10 @@ struct SettingsStyleConformanceTests {
         let root = try Self.repositoryRoot()
         var failures: [String] = []
 
-        // 依赖声明：FactoryGitOK 声明的版本下限不得低于对齐版本。
-        let manifestPath = root.appendingPathComponent("Packages/FactoryGitOK/Package.swift")
+        // 依赖声明：工程声明的版本下限不得低于对齐版本。
+        let manifestPath = root.appendingPathComponent(Self.projectManifestPath)
         let manifest = try String(contentsOf: manifestPath, encoding: .utf8)
-        let declarationPattern = #"LumiThemePack\.git"\s*,\s*from:\s*"([^"]+)""#
+        let declarationPattern = #"LumiThemePack\.git"\s*,\s*"version"\s*:\s*\{\s*"up-to-next-major-version"\s*:\s*"([^"]+)""#
         guard let declarationRange = manifest.range(of: declarationPattern, options: .regularExpression) else {
             Issue.record(Comment(rawValue: "未能在 \(manifestPath.path) 中找到 LumiThemePack 的版本声明"))
             return
@@ -306,7 +310,7 @@ struct SettingsStyleConformanceTests {
         }
         if Self.compareVersions(declarationVersion, Self.appearanceMinimumVersion) < 0 {
             failures.append(
-                "- Packages/FactoryGitOK/Package.swift：LumiThemePack 声明为 \(declarationVersion)，"
+                "- \(Self.projectManifestPath)：LumiThemePack 声明为 \(declarationVersion)，"
                 + "低于 \(Self.appearanceMinimumVersion)（该版本才把外观页改成贴边分栏）"
             )
         }

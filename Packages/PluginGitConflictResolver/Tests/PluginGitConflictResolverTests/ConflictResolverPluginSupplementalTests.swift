@@ -1,5 +1,6 @@
 import Foundation
 import GitOKProviderRootView
+import ProviderRootView
 import KernelCore
 import KitGit
 import ProviderGit
@@ -27,14 +28,14 @@ struct ConflictResolverPluginSupplementalTests {
         projects: TestProjectsProviding,
         git: TestGitProviding,
         scene: TestSceneProviding,
-        rootView: DefaultRootViewProvider
+        rootView: GitOKProviderRootView.DefaultRootViewProvider
     ) {
         let kernel = KernelCoreContainer()
         let statusBar = TestStatusBarProviding()
         let projects = TestProjectsProviding()
         let git = TestGitProviding()
         let scene = TestSceneProviding()
-        let rootView = DefaultRootViewProvider()
+        let rootView = GitOKProviderRootView.DefaultRootViewProvider()
         try kernel.registerProvider((any StatusBarProviding).self, statusBar)
         try kernel.registerProvider((any ProjectProviding).self, projects)
         try kernel.registerProvider((any GitProviding).self, git)

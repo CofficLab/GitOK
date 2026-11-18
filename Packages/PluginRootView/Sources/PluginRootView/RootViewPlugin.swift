@@ -9,26 +9,24 @@ import ProviderProjectReadme
 import ProviderProjects
 import ProviderRailView
 import GitOKProviderRootView
+import ProviderRootView
 import ProviderToolbar
 import SwiftUI
 import ProviderDocsView
 
 // MARK: - RootViewPlugin
 
-/// 根视图插件：实现 `RootViewProviding` 能力，替换宿主的默认实现。
+/// 根视图插件：为宿主注册的根视图提供工作区门控。
 ///
-/// 在 `onBoot` 中注销 `ProviderFactory` 注册的 `DefaultRootViewProvider`，
-/// 替换为插件自有的 `GitOKRootViewProvider`；其他插件（Toast、GitDiff 等）
-/// 通过 `kernel.resolveProvider(RootViewProviding.self)` 解析到的是本插件
-/// 注册的实现，行为与默认实现完全兼容（所有 setter / overlay / trailing pane
-/// 语义不变）。
+/// 根视图 Provider 由宿主拥有（`GitOKHostManifest.makeRootViewProvider`
+/// 注册 `GitOKRootViewProvider`），本插件在 `onBoot` 中解析并接管它，
+/// 不再做替换式注册——基础设施的所有权归宿主，插件只贡献行为。
 ///
-/// 同时监听 `ProjectProviding` 的项目列表与当前项目：统一决定工作区是无项目、
+/// 监听 `ProjectProviding` 的项目列表与当前项目：统一决定工作区是无项目、
 /// 项目已从磁盘消失，还是可以挂载业务插件视图。不可用时由根布局直接替换工作区，
 /// 避免业务插件先挂载并启动 Git loading。
 ///
-/// 替换式注册模式与 `ToastSuperPlugin` 一致：尽早完成替换（`order = 5`），
-/// 保证后续插件在 `onBoot` 中 resolve 到的是真实实现。
+/// `order = 5` 保证在所有消费 RootViewProviding 的插件之前完成门控接线。
 @MainActor
 public final class RootViewPlugin: SuperPlugin, SuperLog {
     nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.root-view", category: "RootView")
@@ -41,14 +39,14 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
     public let metadata = PluginMetadata(
         id: "com.coffic.gitok.plugin.root-view",
         name: "Root View",
-        description: pluginLocalization.string("Provides the root view layout, replacing the default provider"),
+        description: pluginLocalization.string("Provides workspace gating for the host root view"),
         category: .core,
         stage: .stable,
         policy: .required
     )
 
-    /// 插件自有的根视图 Provider，替换默认实现。
-    public let provider: GitOKRootViewProvider
+    /// 宿主注册的根视图 Provider；onBoot 接管，onShutdown 释放。
+    public private(set) var provider: GitOKRootViewProvider?
 
     /// 项目监听者：装配阶段创建，卸载时取消。
     private var observer: RootViewProjectObserver?
@@ -60,9 +58,7 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
 
     private let workspaceModel = RootWorkspaceModel()
 
-    public init() {
-        self.provider = GitOKRootViewProvider()
-    }
+    public init() {}
 
     public func onRegister(kernel: KernelCoreContainer) throws {
         kernel.resolveProvider((any DocsViewProviding).self)?.addAbout(
@@ -75,12 +71,12 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
     }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        // 替换宿主的默认实现为插件自有实现。
-        kernel.unregisterProvider((any RootViewProviding).self)
-        try kernel.registerProvider((any RootViewProviding).self, provider)
-        if Self.verbose {
-            Self.logger.info("\(self.t)Replaced default RootViewProviding with GitOKRootViewProvider")
+        // 接管宿主注册的根视图 Provider（不做替换式注册）。
+        guard let provider = kernel.resolveProvider((any RootViewProviding).self) as? GitOKRootViewProvider else {
+            Self.logger.error("\(self.t)GitOKRootViewProvider not registered by host; skip workspace gating")
+            return
         }
+        self.provider = provider
 
         // 解析项目服务。
         guard let projects = kernel.resolveProvider((any ProjectProviding).self) else {
@@ -132,15 +128,9 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
         cloneCapability = nil
         toolbarProvider?.setHiddenCategories([], for: id)
         toolbarProvider = nil
-        provider.setWorkspaceUnavailableView(nil)
+        provider?.setWorkspaceUnavailableView(nil)
+        provider = nil
         workspaceModel.reset()
-
-        // 恢复默认实现，保证后续流程仍可解析 RootViewProviding。
-        kernel.unregisterProvider((any RootViewProviding).self)
-        try kernel.registerProvider((any RootViewProviding).self, DefaultRootViewProvider())
-        if Self.verbose {
-            Self.logger.info("\(self.t)Restored default RootViewProviding")
-        }
     }
 
     private func updateWorkspaceState() {
@@ -165,7 +155,7 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
             state = .noProject
         }
         workspaceModel.update(state: state, project: projects.currentProject)
-        provider.setWorkspaceState(state)
+        provider?.setWorkspaceState(state)
         toolbarProvider?.setHiddenCategories(
             state == .cloning || state == .cloneFailed ? [.project] : [],
             for: id
@@ -186,166 +176,9 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
 
 // MARK: - GitOKRootViewProvider
 
-/// `RootViewProviding` 的 GitOK 实现：持有注入的工具栏、侧边栏、Rail、内容 Header、
-/// 主内容视图与 Footer，组合成「顶部工具栏 + 内容区（左侧侧边栏，右侧 Rail）」
-/// 的根布局。
-///
-/// 与 `DefaultRootViewProvider` 行为完全兼容，所有 setter / overlay /
-/// trailing pane / rail visibility / content footer height 语义一致；
-/// 视图组合委托给 `DefaultRootViewProvider` 完成。
+/// `RootViewProviding` 的 GitOK 实现：直接继承 GitOK 的 `DefaultRootViewProvider`
+/// （共享 `DefaultRootViewProviding` 的子类），所有 setter / overlay /
+/// trailing pane / rail visibility / content footer height / 工作区门控
+/// 语义与默认实现一致。
 @MainActor
-public final class GitOKRootViewProvider: RootViewProviding, ObservableObject, SuperLog {
-    nonisolated static let logger = Logger(subsystem: "com.coffic.gitok.plugin.root-view", category: "GitOKRootViewProvider")
-    nonisolated public static let emoji = "🏠"
-    nonisolated static let verbose = false
-
-    /// 内部委托的默认实现，负责实际的视图组合与渲染。
-    private let inner = DefaultRootViewProvider()
-
-    public init() {
-        if Self.verbose {
-            Self.logger.info("\(self.t)GitOKRootViewProvider initialized")
-        }
-    }
-
-    // MARK: - Overlays
-
-    public var overlays: [RootOverlayItem] { inner.overlays }
-
-    public func addOverlays(_ overlays: [RootOverlayItem]) {
-        inner.addOverlays(overlays)
-    }
-
-    public func removeOverlays(ids: Set<String>) {
-        inner.removeOverlays(ids: ids)
-    }
-
-    // MARK: - Toolbar
-
-    public func setToolbarView(_ view: AnyView?) {
-        inner.setToolbarView(view)
-    }
-
-    // MARK: - Status Bar
-
-    public func setStatusBarView(_ view: AnyView?) {
-        inner.setStatusBarView(view)
-    }
-
-    // MARK: - Sidebar
-
-    public func setSidebarView(_ view: AnyView?) {
-        inner.setSidebarView(view)
-    }
-
-    public var isSidebarViewHidden: Bool { inner.isSidebarViewHidden }
-
-    public func setSidebarViewHidden(_ hidden: Bool) {
-        inner.setSidebarViewHidden(hidden)
-    }
-
-    // MARK: - Rail
-
-    public func setRailView(_ view: AnyView?) {
-        inner.setRailView(view)
-    }
-
-    public var isRailViewVisible: Bool { inner.isRailViewVisible }
-
-    public func setRailViewVisible(_ visible: Bool) {
-        inner.setRailViewVisible(visible)
-    }
-
-    public func bindRailViewVisibility(to publisher: AnyPublisher<Bool, Never>) {
-        inner.bindRailViewVisibility(to: publisher)
-    }
-
-    public var workspaceState: RootWorkspaceState { inner.workspaceState }
-
-    public func setWorkspaceState(_ state: RootWorkspaceState) {
-        inner.setWorkspaceState(state)
-    }
-
-    public func setWorkspaceUnavailableView(_ view: AnyView?) {
-        inner.setWorkspaceUnavailableView(view)
-    }
-
-    public var railWidth: RailViewWidth { inner.railWidth }
-
-    public func bindRailViewWidth(
-        to publisher: AnyPublisher<RailViewWidth, Never>,
-        onResize: @escaping @MainActor (CGFloat) -> Void
-    ) {
-        inner.bindRailViewWidth(to: publisher, onResize: onResize)
-    }
-
-    // MARK: - Content Header
-
-    public func setContentHeaderView(_ view: AnyView?) {
-        inner.setContentHeaderView(view)
-    }
-
-    public var isContentHeaderViewHidden: Bool { inner.isContentHeaderViewHidden }
-
-    public func setContentHeaderViewHidden(_ hidden: Bool) {
-        inner.setContentHeaderViewHidden(hidden)
-    }
-
-    // MARK: - Content View
-
-    public func setContentView(_ view: AnyView?) {
-        inner.setContentView(view)
-    }
-
-    public var isContentViewHidden: Bool { inner.isContentViewHidden }
-
-    public func setContentViewHidden(_ hidden: Bool) {
-        inner.setContentViewHidden(hidden)
-    }
-
-    // MARK: - Content Footer
-
-    public func setContentFooterView(_ view: AnyView?) {
-        inner.setContentFooterView(view)
-    }
-
-    public var isContentFooterViewHidden: Bool { inner.isContentFooterViewHidden }
-
-    public func setContentFooterViewHidden(_ hidden: Bool) {
-        inner.setContentFooterViewHidden(hidden)
-    }
-
-    public var contentFooterHeight: ContentFooterHeight { inner.contentFooterHeight }
-
-    public var contentFooterHeightPublisher: AnyPublisher<ContentFooterHeight, Never> {
-        inner.contentFooterHeightPublisher
-    }
-
-    public func activateContentFooterHeightProfile(
-        ownerID: String,
-        recommended: ContentFooterHeight,
-        store: (any ContentFooterHeightStoring)?
-    ) {
-        inner.activateContentFooterHeightProfile(ownerID: ownerID, recommended: recommended, store: store)
-    }
-
-    public func deactivateContentFooterHeightProfile(ownerID: String) {
-        inner.deactivateContentFooterHeightProfile(ownerID: ownerID)
-    }
-
-    public func saveCurrentContentFooterHeight(_ height: CGFloat) {
-        inner.saveCurrentContentFooterHeight(height)
-    }
-
-    // MARK: - Trailing Pane
-
-    public func setTrailingPane(_ pane: RootTrailingPane?) {
-        inner.setTrailingPane(pane)
-    }
-
-    // MARK: - Root View
-
-    public func makeRootView() -> AnyView {
-        inner.makeRootView()
-    }
-}
+public final class GitOKRootViewProvider: GitOKProviderRootView.DefaultRootViewProvider {}

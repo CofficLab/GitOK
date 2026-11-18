@@ -1,5 +1,6 @@
 import Foundation
 import GitOKProviderRootView
+import ProviderRootView
 import KernelCore
 import ProviderDocsView
 import ProviderGit
@@ -28,7 +29,7 @@ struct ConflictResolverPluginLifecycleTests {
         let projects: TestProjectsProviding
         let git: TestGitProviding
         let scene: TestSceneProviding
-        let rootView: DefaultRootViewProvider
+        let rootView: GitOKProviderRootView.DefaultRootViewProvider
         let docs: DefaultDocsViewProviding
     }
 
@@ -45,7 +46,7 @@ struct ConflictResolverPluginLifecycleTests {
         let projects = TestProjectsProviding()
         let git = TestGitProviding()
         let scene = TestSceneProviding()
-        let rootView = DefaultRootViewProvider()
+        let rootView = GitOKProviderRootView.DefaultRootViewProvider()
         let docs = DefaultDocsViewProviding()
         if withStatusBar {
             try kernel.registerProvider((any StatusBarProviding).self, statusBar)

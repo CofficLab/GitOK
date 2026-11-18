@@ -3,7 +3,7 @@ import KernelCore
 import KitGit
 import ProviderProjects
 import ProviderGit
-import GitOKProviderRootView
+import ProviderRootView
 import XCTest
 @testable import PluginGitDiff
 @testable import GitOKProviderRootView
@@ -93,7 +93,7 @@ final class GitDiffPluginTests: XCTestCase {
 
     func testOnBootRegistersTrailingPaneThroughRootViewProviding() throws {
         let kernel = KernelCoreContainer()
-        let rootView = DefaultRootViewProvider()
+        let rootView = GitOKProviderRootView.DefaultRootViewProvider()
         try kernel.registerProvider((any RootViewProviding).self, rootView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
         try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
@@ -102,23 +102,23 @@ final class GitDiffPluginTests: XCTestCase {
         try plugin.onBoot(kernel: kernel)
 
         // RootViewProviding 已注入 trailing pane（id 为插件面板 id）。
-        XCTAssertEqual(rootView.trailingPane?.id, "\(plugin.id).trailing")
-        XCTAssertTrue(rootView.trailingPane?.supportsFullScreen == true)
+        XCTAssertEqual(rootView.rootTrailingPane?.id, "\(plugin.id).trailing")
+        XCTAssertTrue(rootView.rootTrailingPane?.supportsFullScreen == true)
     }
 
     func testOnShutdownClearsTrailingPane() throws {
         let kernel = KernelCoreContainer()
-        let rootView = DefaultRootViewProvider()
+        let rootView = GitOKProviderRootView.DefaultRootViewProvider()
         try kernel.registerProvider((any RootViewProviding).self, rootView)
         try kernel.registerProvider((any ProjectProviding).self, MockProjects())
         try kernel.registerProvider((any GitProviding).self, DefaultGitProvider())
 
         let plugin = GitDiffPlugin()
         try plugin.onBoot(kernel: kernel)
-        XCTAssertNotNil(rootView.trailingPane)
+        XCTAssertNotNil(rootView.rootTrailingPane)
 
         try plugin.onShutdown(kernel: kernel)
-        XCTAssertNil(rootView.trailingPane)
+        XCTAssertNil(rootView.rootTrailingPane)
     }
 
     // MARK: - Trailing pane 显隐联动（observer 监听当前文件）
@@ -127,7 +127,7 @@ final class GitDiffPluginTests: XCTestCase {
     /// 清除文件选择（切换 commit / 清空选择）后面板再次隐藏。
     func testTrailingPaneVisibilityFollowsSelectedFile() throws {
         let kernel = KernelCoreContainer()
-        let rootView = DefaultRootViewProvider()
+        let rootView = GitOKProviderRootView.DefaultRootViewProvider()
         let projects = MockProjects()
         try kernel.registerProvider((any RootViewProviding).self, rootView)
         try kernel.registerProvider((any ProjectProviding).self, projects)
@@ -136,24 +136,24 @@ final class GitDiffPluginTests: XCTestCase {
         let plugin = GitDiffPlugin()
         // 初始无选中文件 → 面板应隐藏，不再渲染空占位。
         try plugin.onBoot(kernel: kernel)
-        XCTAssertEqual(rootView.trailingPane?.id, "\(plugin.id).trailing")
-        XCTAssertFalse(rootView.trailingPane?.isVisible ?? true, "无选中文件时 diff 面板应隐藏")
+        XCTAssertEqual(rootView.rootTrailingPane?.id, "\(plugin.id).trailing")
+        XCTAssertFalse(rootView.rootTrailingPane?.isVisible ?? true, "无选中文件时 diff 面板应隐藏")
 
         // 选中文件 → 面板显示并加载该文件 diff。
         projects.selectFile("src/a.swift")
         projects.notifySelectionChanged()
-        XCTAssertTrue(rootView.trailingPane?.isVisible ?? false, "选中文件后 diff 面板应显示")
+        XCTAssertTrue(rootView.rootTrailingPane?.isVisible ?? false, "选中文件后 diff 面板应显示")
 
         // 用户关闭面板 → 插件清除文件选择，面板隐藏。
-        rootView.trailingPane?.onDismiss?()
+        rootView.rootTrailingPane?.onDismiss?()
         projects.notifySelectionChanged()
-        XCTAssertFalse(rootView.trailingPane?.isVisible ?? true, "清除文件选择后 diff 面板应隐藏")
+        XCTAssertFalse(rootView.rootTrailingPane?.isVisible ?? true, "清除文件选择后 diff 面板应隐藏")
         XCTAssertNil(projects.currentFile)
 
         // 再次点击同一个文件 → currentFile 从 nil 变回路径，面板重新显示。
         projects.selectFile("src/a.swift")
         projects.notifySelectionChanged()
-        XCTAssertTrue(rootView.trailingPane?.isVisible ?? false, "关闭后重新选择同一文件时面板应显示")
+        XCTAssertTrue(rootView.rootTrailingPane?.isVisible ?? false, "关闭后重新选择同一文件时面板应显示")
 
         try plugin.onShutdown(kernel: kernel)
     }

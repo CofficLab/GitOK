@@ -8,11 +8,10 @@
     "development": "en",
     "supported": [
       "Base",
-      "en",
+      "zh-HK",
       "zh-Hans",
       "zh-Hant",
       "zh-TW",
-      "zh-HK",
     ],
   },
   "packages": [
@@ -22,13 +21,421 @@
       "version": {
         "up-to-next-major-version": "1.0.1",
       },
-    }, {
-      "kind": "local",
-      "path": "Packages/FactoryGitOK",
-    }, {
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiFactory.git",
+      "version": {
+        "up-to-next-major-version": "1.2.0",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginRootView.git",
+      "version": {
+        "up-to-next-major-version": "1.2.0",
+      },
+    },
+    {
       "kind": "local",
       "path": "Packages/KitGitOKUpdate",
     },
+    {
+      "kind": "local",
+      "path": "Packages/BannerCoreKit",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/KitGitOKCLI",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/KitGitOKSupport",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/KitOpenIn",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProjectRulesKit",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderCoAuthor",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderGitRepositoryWatch",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderGitUser",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderProjectReadme",
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiThemePack.git",
+      "version": {
+        "up-to-next-major-version": "1.0.12",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiKernel.git",
+      "version": {
+        "up-to-next-major-version": "1.1.0",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiUI.git",
+      "version": {
+        "up-to-next-major-version": "1.13.1",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginCommand.git",
+      "version": {
+        "up-to-next-major-version": "1.0.1",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginLogos.git",
+      "version": {
+        "up-to-next-major-version": "1.0.0",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginPluginManager.git",
+      "version": {
+        "up-to-next-major-version": "1.7.0",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginAbout.git",
+      "version": {
+        "up-to-next-major-version": "3.0.3",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginSettingView.git",
+      "version": {
+        "up-to-next-major-version": "1.0.3",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginStorage.git",
+      "version": {
+        "up-to-next-major-version": "1.2.0",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginThemePack.git",
+      "version": {
+        "up-to-next-major-version": "1.2.1",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiProviders.git",
+      "version": {
+        "up-to-next-major-version": "1.26.0",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiSettings.git",
+      "version": {
+        "up-to-next-major-version": "1.1.0",
+      },
+    },
+    {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginToast.git",
+      "version": {
+        "up-to-next-major-version": "1.2.3",
+      },
+    },
+    {
+      "kind": "local",
+      "path": "Packages/KitGitOKLocalization",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginActivityStatus",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginCloneRepository",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginCommitDetail",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginActivityHeatmap",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginProjectLanguages",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginCommitForm",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginCommitList",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitDiff",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitBranchStatus",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitUnpushedStatus",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitUserSettings",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitNetworkSettings",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitRepositorySettings",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitCommitStyleSettings",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitStash",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitConflictResolver",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginFileInfo",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginBanner",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginIcon",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitIgnore",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitAutoPush",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginLicense",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitRemoteRepository",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginDiagnosticsSettings",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitSmartMerge",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitLFS",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitSubmodule",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitRepositoryWatch",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitWorktreePreheat",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderAutoPush",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderGit",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderGitConflictResolver",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginGitLibGit2",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenAntigravity",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenCursor",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenFinder",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenGitHubDesktop",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenKiro",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenLumi",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenRemote",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenTerminal",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenTrae",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenVSCode",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginOpenXcode",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginProjects",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginSettingGeneral",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginSettingsButton",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginSidebarToggle",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginStatusBar",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderActivity",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderCloneRepository",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderActivityHeatmap",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderProjectLanguages",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/KitGit",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderCommitForm",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginCommitToast",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginCommitStatusBar",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderRootView",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderProjects",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderSidebar",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/ProviderWorkspaceScene",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginRootView",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginRailView",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginWorktreeStatus",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginProjectReadme",
+    },
+    {
+      "kind": "local",
+      "path": "Packages/PluginWorktreeClean",
+    },
+
   ],
   "files": [
     {
@@ -49,6 +456,8 @@
     { "path": "<PRODUCTS>/GitOK.app", "id": "GK0000000000000000000002", "type": "wrapper.application", "index": false },
     { "path": "<PRODUCTS>/GitOKUITests.xctest", "id": "GK0000000000000000000010", "type": "wrapper.cfbundle", "index": false },
     { "kind": "folder", "path": "GitOKUITests", "target-membership": [ "GitOKUITests" ] },
+    { "kind": "folder", "path": "GitOKTests", "target-membership": [ "GitOKTests" ] },
+    { "path": "<PRODUCTS>/GitOKTests.xctest", "id": "GK0000000000000000000014", "type": "wrapper.cfbundle", "index": false },
     { "kind": "group", "name": "Frameworks" },
     { "path": "GitOKApp/Config/Project-Debug.xcconfig", "index": true },
     { "path": "GitOKApp/Config/Project-Release.xcconfig", "index": true },
@@ -71,14 +480,541 @@
       ],
       "package-product-members": [
         {
-          "package": "FactoryGitOK",
-          "product-name": "FactoryGitOK",
+          "package": "BannerCoreKit",
+          "product-name": "BannerCoreKit",
           "build-phase": { "build-phase": "frameworks" },
-        }, {
+        },
+        {
+          "package": "KitGitOKCLI",
+          "product-name": "KitGitOKCLI",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitGitOKSupport",
+          "product-name": "KitGitOKSupport",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitOpenIn",
+          "product-name": "KitOpenIn",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProjectRulesKit",
+          "product-name": "ProjectRulesKit",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderCoAuthor",
+          "product-name": "ProviderCoAuthor",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGitConflictResolver",
+          "product-name": "ProviderGitConflictResolver",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGitRepositoryWatch",
+          "product-name": "ProviderGitRepositoryWatch",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGitUser",
+          "product-name": "ProviderGitUser",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderProjectReadme",
+          "product-name": "ProviderProjectReadme",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiFactory",
+          "product-name": "LumiFactory",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
           "package": "KitGitOKUpdate",
           "product-name": "KitGitOKUpdate",
           "build-phase": { "build-phase": "frameworks" },
         },
+        {
+          "package": "KitGitOKLocalization",
+          "product-name": "KitGitOKLocalization",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiThemePack",
+          "product-name": "LumiThemePack",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiKernel",
+          "product-name": "KernelCore",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiUI",
+          "product-name": "LumiUI",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderContentView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderDiskCache",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderCloneRepository",
+          "product-name": "ProviderCloneRepository",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderDocsView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderRootView",
+          "product-name": "GitOKProviderRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiSettings",
+          "product-name": "ProviderSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderProjects",
+          "product-name": "ProviderProjects",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderSidebar",
+          "product-name": "ProviderSidebar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderStorage",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderStatusBar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderWorkspaceScene",
+          "product-name": "ProviderWorkspaceScene",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGit",
+          "product-name": "ProviderGit",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderTheme",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderToast",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginRootView",
+          "product-name": "GitOKPluginRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginRootView",
+          "product-name": "PluginRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCloneRepository",
+          "product-name": "PluginCloneRepository",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginRailView",
+          "product-name": "PluginRailView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginToast",
+          "product-name": "PluginToast",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginWorktreeStatus",
+          "product-name": "PluginWorktreeStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginProjectReadme",
+          "product-name": "PluginProjectReadme",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginWorktreeClean",
+          "product-name": "PluginWorktreeClean",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderToolbar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "PluginToolbar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginActivityStatus",
+          "product-name": "PluginActivityStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginCommand",
+          "product-name": "PluginCommand",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitDetail",
+          "product-name": "PluginCommitDetail",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginActivityHeatmap",
+          "product-name": "PluginActivityHeatmap",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginProjectLanguages",
+          "product-name": "PluginProjectLanguages",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitForm",
+          "product-name": "PluginCommitForm",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitList",
+          "product-name": "PluginCommitList",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitDiff",
+          "product-name": "PluginGitDiff",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitBranchStatus",
+          "product-name": "PluginGitBranchStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitUnpushedStatus",
+          "product-name": "PluginGitUnpushedStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitUserSettings",
+          "product-name": "PluginGitUserSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitNetworkSettings",
+          "product-name": "PluginGitNetworkSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitRepositorySettings",
+          "product-name": "PluginGitRepositorySettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitCommitStyleSettings",
+          "product-name": "PluginGitCommitStyleSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitStash",
+          "product-name": "PluginGitStash",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitConflictResolver",
+          "product-name": "PluginGitConflictResolver",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginFileInfo",
+          "product-name": "PluginFileInfo",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginAbout",
+          "product-name": "PluginAbout",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginBanner",
+          "product-name": "PluginBanner",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginIcon",
+          "product-name": "PluginIcon",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitIgnore",
+          "product-name": "PluginGitIgnore",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitAutoPush",
+          "product-name": "PluginGitAutoPush",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginLicense",
+          "product-name": "PluginLicense",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitRemoteRepository",
+          "product-name": "PluginGitRemoteRepository",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginDiagnosticsSettings",
+          "product-name": "PluginDiagnosticsSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitSmartMerge",
+          "product-name": "PluginGitSmartMerge",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitLFS",
+          "product-name": "PluginGitLFS",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitSubmodule",
+          "product-name": "PluginGitSubmodule",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitRepositoryWatch",
+          "product-name": "PluginGitRepositoryWatch",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitWorktreePreheat",
+          "product-name": "PluginGitWorktreePreheat",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderAutoPush",
+          "product-name": "ProviderAutoPush",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitLibGit2",
+          "product-name": "PluginGitLibGit2",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginLogos",
+          "product-name": "PluginLogoCoffic",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginLogos",
+          "product-name": "PluginLogoManager",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenAntigravity",
+          "product-name": "PluginOpenAntigravity",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenCursor",
+          "product-name": "PluginOpenCursor",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenFinder",
+          "product-name": "PluginOpenFinder",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenGitHubDesktop",
+          "product-name": "PluginOpenGitHubDesktop",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenKiro",
+          "product-name": "PluginOpenKiro",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenLumi",
+          "product-name": "PluginOpenLumi",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenRemote",
+          "product-name": "PluginOpenRemote",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenTerminal",
+          "product-name": "PluginOpenTerminal",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenTrae",
+          "product-name": "PluginOpenTrae",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenVSCode",
+          "product-name": "PluginOpenVSCode",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenXcode",
+          "product-name": "PluginOpenXcode",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginPluginManager",
+          "product-name": "PluginPluginManager",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginProjects",
+          "product-name": "PluginProjects",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginSettingGeneral",
+          "product-name": "PluginSettingGeneral",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginSettingView",
+          "product-name": "PluginSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginSettingsButton",
+          "product-name": "PluginSettingsButton",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginSidebarToggle",
+          "product-name": "PluginSidebarToggle",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginStatusBar",
+          "product-name": "PluginStatusBar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginStorage",
+          "product-name": "PluginStorage",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginThemePack",
+          "product-name": "PluginThemePack",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderCommand",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderActivity",
+          "product-name": "ProviderActivity",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderActivityHeatmap",
+          "product-name": "ProviderActivityHeatmap",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderProjectLanguages",
+          "product-name": "ProviderProjectLanguages",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitGit",
+          "product-name": "KitGit",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderCommitForm",
+          "product-name": "ProviderCommitForm",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitToast",
+          "product-name": "PluginCommitToast",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitStatusBar",
+          "product-name": "PluginCommitStatusBar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderLogo",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderPluginControl",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderPluginManaging",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderRailView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+
       ],
     }, {
       "name": "GitOKUITests",
@@ -99,6 +1035,570 @@
         "SDKROOT": "macosx",
         "SUPPORTED_PLATFORMS": "macosx",
         "SWIFT_VERSION": "5.0",
+        "TEST_TARGET_NAME": "GitOK",
+      },
+    }, {
+      "name": "GitOKTests",
+      "id": "GK0000000000000000000013",
+      "product": "GitOKTests.xctest",
+      "product-type": "bundle.unit-test",
+      "test-host-target": "GitOK",
+      "dependencies": [
+        "GitOK",
+      ],
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "package-product-members": [
+        {
+          "package": "BannerCoreKit",
+          "product-name": "BannerCoreKit",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitGitOKCLI",
+          "product-name": "KitGitOKCLI",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitGitOKSupport",
+          "product-name": "KitGitOKSupport",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitOpenIn",
+          "product-name": "KitOpenIn",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProjectRulesKit",
+          "product-name": "ProjectRulesKit",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderCoAuthor",
+          "product-name": "ProviderCoAuthor",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGitConflictResolver",
+          "product-name": "ProviderGitConflictResolver",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGitRepositoryWatch",
+          "product-name": "ProviderGitRepositoryWatch",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGitUser",
+          "product-name": "ProviderGitUser",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderProjectReadme",
+          "product-name": "ProviderProjectReadme",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiFactory",
+          "product-name": "LumiFactory",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitGitOKUpdate",
+          "product-name": "KitGitOKUpdate",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitGitOKLocalization",
+          "product-name": "KitGitOKLocalization",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiThemePack",
+          "product-name": "LumiThemePack",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiKernel",
+          "product-name": "KernelCore",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiUI",
+          "product-name": "LumiUI",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderContentView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderDiskCache",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderCloneRepository",
+          "product-name": "ProviderCloneRepository",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderDocsView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderRootView",
+          "product-name": "GitOKProviderRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiSettings",
+          "product-name": "ProviderSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderProjects",
+          "product-name": "ProviderProjects",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderSidebar",
+          "product-name": "ProviderSidebar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderStorage",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderStatusBar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderWorkspaceScene",
+          "product-name": "ProviderWorkspaceScene",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderGit",
+          "product-name": "ProviderGit",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderTheme",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderToast",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginRootView",
+          "product-name": "GitOKPluginRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginRootView",
+          "product-name": "PluginRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCloneRepository",
+          "product-name": "PluginCloneRepository",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginRailView",
+          "product-name": "PluginRailView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginToast",
+          "product-name": "PluginToast",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginWorktreeStatus",
+          "product-name": "PluginWorktreeStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginProjectReadme",
+          "product-name": "PluginProjectReadme",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginWorktreeClean",
+          "product-name": "PluginWorktreeClean",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderToolbar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "PluginToolbar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginActivityStatus",
+          "product-name": "PluginActivityStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginCommand",
+          "product-name": "PluginCommand",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitDetail",
+          "product-name": "PluginCommitDetail",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginActivityHeatmap",
+          "product-name": "PluginActivityHeatmap",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginProjectLanguages",
+          "product-name": "PluginProjectLanguages",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitForm",
+          "product-name": "PluginCommitForm",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitList",
+          "product-name": "PluginCommitList",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitDiff",
+          "product-name": "PluginGitDiff",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitBranchStatus",
+          "product-name": "PluginGitBranchStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitUnpushedStatus",
+          "product-name": "PluginGitUnpushedStatus",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitUserSettings",
+          "product-name": "PluginGitUserSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitNetworkSettings",
+          "product-name": "PluginGitNetworkSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitRepositorySettings",
+          "product-name": "PluginGitRepositorySettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitCommitStyleSettings",
+          "product-name": "PluginGitCommitStyleSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitStash",
+          "product-name": "PluginGitStash",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitConflictResolver",
+          "product-name": "PluginGitConflictResolver",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginFileInfo",
+          "product-name": "PluginFileInfo",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginAbout",
+          "product-name": "PluginAbout",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginBanner",
+          "product-name": "PluginBanner",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginIcon",
+          "product-name": "PluginIcon",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitIgnore",
+          "product-name": "PluginGitIgnore",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitAutoPush",
+          "product-name": "PluginGitAutoPush",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginLicense",
+          "product-name": "PluginLicense",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitRemoteRepository",
+          "product-name": "PluginGitRemoteRepository",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginDiagnosticsSettings",
+          "product-name": "PluginDiagnosticsSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitSmartMerge",
+          "product-name": "PluginGitSmartMerge",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitLFS",
+          "product-name": "PluginGitLFS",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitSubmodule",
+          "product-name": "PluginGitSubmodule",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitRepositoryWatch",
+          "product-name": "PluginGitRepositoryWatch",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitWorktreePreheat",
+          "product-name": "PluginGitWorktreePreheat",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderAutoPush",
+          "product-name": "ProviderAutoPush",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginGitLibGit2",
+          "product-name": "PluginGitLibGit2",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginLogos",
+          "product-name": "PluginLogoCoffic",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginLogos",
+          "product-name": "PluginLogoManager",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenAntigravity",
+          "product-name": "PluginOpenAntigravity",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenCursor",
+          "product-name": "PluginOpenCursor",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenFinder",
+          "product-name": "PluginOpenFinder",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenGitHubDesktop",
+          "product-name": "PluginOpenGitHubDesktop",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenKiro",
+          "product-name": "PluginOpenKiro",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenLumi",
+          "product-name": "PluginOpenLumi",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenRemote",
+          "product-name": "PluginOpenRemote",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenTerminal",
+          "product-name": "PluginOpenTerminal",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenTrae",
+          "product-name": "PluginOpenTrae",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenVSCode",
+          "product-name": "PluginOpenVSCode",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginOpenXcode",
+          "product-name": "PluginOpenXcode",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginPluginManager",
+          "product-name": "PluginPluginManager",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginProjects",
+          "product-name": "PluginProjects",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginSettingGeneral",
+          "product-name": "PluginSettingGeneral",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginSettingView",
+          "product-name": "PluginSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginSettingsButton",
+          "product-name": "PluginSettingsButton",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginSidebarToggle",
+          "product-name": "PluginSidebarToggle",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginStatusBar",
+          "product-name": "PluginStatusBar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginStorage",
+          "product-name": "PluginStorage",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginThemePack",
+          "product-name": "PluginThemePack",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderCommand",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderActivity",
+          "product-name": "ProviderActivity",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderActivityHeatmap",
+          "product-name": "ProviderActivityHeatmap",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderProjectLanguages",
+          "product-name": "ProviderProjectLanguages",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "KitGit",
+          "product-name": "KitGit",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "ProviderCommitForm",
+          "product-name": "ProviderCommitForm",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitToast",
+          "product-name": "PluginCommitToast",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "PluginCommitStatusBar",
+          "product-name": "PluginCommitStatusBar",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderLogo",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderPluginControl",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderPluginManaging",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiProviders",
+          "product-name": "ProviderRailView",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+      ],
+      "build-settings": {
+        "BUNDLE_LOADER": "$(TEST_HOST)",
+        "CODE_SIGN_STYLE": "Automatic",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "MACOSX_DEPLOYMENT_TARGET": "14.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.coffic.GitOKTests",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "SDKROOT": "macosx",
+        "SUPPORTED_PLATFORMS": "macosx",
+        "SWIFT_VERSION": "5.0",
+        "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/GitOK.app/Contents/MacOS/GitOK",
         "TEST_TARGET_NAME": "GitOK",
       },
     },
