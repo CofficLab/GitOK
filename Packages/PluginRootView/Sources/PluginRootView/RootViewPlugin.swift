@@ -4,6 +4,8 @@ import KernelCore
 import LumiLoggingKit
 import os
 import ProviderCloneRepository
+import ProviderProjectLanguages
+import ProviderProjectReadme
 import ProviderProjects
 import ProviderRailView
 import GitOKProviderRootView
@@ -100,7 +102,13 @@ public final class RootViewPlugin: SuperPlugin, SuperLog {
                 RootWorkspaceUnavailableView(
                     model: workspaceModel,
                     projects: projectCapability,
-                    cloneRepository: cloneCapability
+                    cloneRepository: cloneCapability,
+                    readmeProvider: { [weak kernel] in
+                        kernel?.resolveProvider((any ProjectReadmeProviding).self)
+                    },
+                    languagesProvider: { [weak kernel] in
+                        kernel?.resolveProvider((any ProjectLanguagesProviding).self)
+                    }
                 )
             )
         )

@@ -41,11 +41,6 @@ struct DefaultRootHostView: View {
                             // removed and expand the sidebar to its max width.
                             .frame(minWidth: 0, idealWidth: 0, maxWidth: .infinity)
                     }
-                    // Recreate the native split only when the Rail is shown or
-                    // hidden. This makes its initial position run again and
-                    // restores the user's persisted sidebar width after the
-                    // nested split hierarchy changes.
-                    .id("root-sidebar-split-\(provider.workspaceState.layoutID)-\(provider.isRailViewVisible)")
                 } else {
                     workbenchView
                 }

@@ -133,4 +133,65 @@ final class GitMergeOperationTests: XCTestCase {
         )
         XCTAssertTrue(try GitStatusLoader.loadStatus(in: repo).isClean)
     }
+
+    // MARK: - 冲突条目形状
+
+    func testConflictEntryKindsFollowIndexStages() {
+        let oid = String(repeating: "a", count: 40)
+        let listing = [
+            "100644 \(oid) 1\tdeleted.txt",
+            "100644 \(oid) 2\taAddedByUs.txt",
+            "100644 \(oid) 3\taAddedByThem.txt",
+            "100644 \(oid) 1\tdeletedByUs.txt",
+            "100644 \(oid) 3\tdeletedByUs.txt",
+            "100644 \(oid) 1\tdeletedByThem.txt",
+            "100644 \(oid) 2\tdeletedByThem.txt",
+            "100644 \(oid) 2\tbothModified.txt",
+            "100644 \(oid) 3\tbothModified.txt",
+            "100644 \(oid) 1\tallThree.txt",
+            "100644 \(oid) 2\tallThree.txt",
+            "100644 \(oid) 3\tallThree.txt",
+        ].joined(separator: "\0") + "\0"
+
+        let entries = GitMergeOperation.conflictEntries(fromUnmergedListing: listing)
+        let kinds = Dictionary(uniqueKeysWithValues: entries.map { ($0.path, $0.kind) })
+
+        XCTAssertEqual(kinds["deleted.txt"], .bothDeleted)
+        XCTAssertEqual(kinds["aAddedByUs.txt"], .oneSided)
+        XCTAssertEqual(kinds["aAddedByThem.txt"], .oneSided)
+        XCTAssertEqual(kinds["deletedByUs.txt"], .deleteModify)
+        XCTAssertEqual(kinds["deletedByThem.txt"], .deleteModify)
+        XCTAssertEqual(kinds["bothModified.txt"], .content)
+        XCTAssertEqual(kinds["allThree.txt"], .content)
+        XCTAssertEqual(entries.map(\.path), kinds.keys.sorted())
+    }
+
+    func testModifyDeleteConflictIsNotClassifiedAsAutoResolvable() throws {
+        let repo = try makeRepo()
+        defer { try? FileManager.default.removeItem(at: repo) }
+
+        _ = try runGit(["checkout", "-q", "-b", "feature"], in: repo)
+        try FileManager.default.removeItem(at: repo.appendingPathComponent("shared.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "feature deletes", in: repo)
+
+        _ = try runGit(["checkout", "-q", "dev"], in: repo)
+        try Data("ours\n".utf8).write(to: repo.appendingPathComponent("shared.txt"))
+        try GitCommitOperation.addAll(in: repo)
+        try GitCommitOperation.commit(message: "dev modifies", in: repo)
+
+        XCTAssertThrowsError(
+            try GitMergeOperation.mergeBranches(repository: repo, sourceBranch: "feature", targetBranch: "dev")
+        ) { error in
+            guard case GitMergeError.conflict(_, let files) = error else {
+                return XCTFail("expected conflict, got \(error)")
+            }
+            XCTAssertEqual(files, ["shared.txt"])
+        }
+
+        XCTAssertEqual(
+            GitMergeOperation.conflictEntries(in: repo),
+            [GitConflictEntry(path: "shared.txt", kind: .deleteModify)]
+        )
+    }
 }

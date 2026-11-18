@@ -251,4 +251,36 @@ struct PluginGitConflictResolverTests {
         fresh.update(projectURL: p, conflictedFiles: [], isOperationInProgress: false, isCherryPicking: false)
         #expect(!fresh.showsToolbarContinueAction)
     }
+
+    @Test("可自动解决的冲突不进入人工文件列表")
+    func autoResolvableConflictsStayOutOfTheList() {
+        let viewModel = GitConflictResolverViewModel()
+        let p = URL(fileURLWithPath: "/tmp/p")
+        viewModel.update(
+            projectURL: p,
+            conflictedFiles: ["deleted.txt", "added.txt", "manual.txt"],
+            isOperationInProgress: true,
+            isCherryPicking: false,
+            resolvedFiles: [],
+            autoResolvableFiles: ["added.txt", "deleted.txt"],
+            bothDeletedFiles: ["deleted.txt"]
+        )
+
+        #expect(viewModel.displayedConflictFiles == ["manual.txt"])
+        #expect(viewModel.autoStageFiles == ["added.txt"])
+        #expect(viewModel.autoDeletionFiles == ["deleted.txt"])
+        #expect(viewModel.hasAutoResolvableConflicts)
+        // 自动解决完成前仍不能继续。
+        #expect(!ConflictResolverPresentation(viewModel: viewModel).canContinue)
+
+        // 自动解决后只剩需要人工处理的文件，继续按钮仍然禁用。
+        viewModel.update(projectURL: p, conflictedFiles: ["manual.txt"], isOperationInProgress: true, isCherryPicking: false)
+        #expect(viewModel.displayedConflictFiles == ["manual.txt"])
+        #expect(!viewModel.hasAutoResolvableConflicts)
+        #expect(!ConflictResolverPresentation(viewModel: viewModel).canContinue)
+
+        // 人工解决后冲突列表清空即可继续。
+        viewModel.update(projectURL: p, conflictedFiles: [], isOperationInProgress: true, isCherryPicking: false)
+        #expect(ConflictResolverPresentation(viewModel: viewModel).canContinue)
+    }
 }

@@ -14,6 +14,34 @@ public enum GitMergeFileVersion: String, CaseIterable, Equatable, Sendable {
     }
 }
 
+/// 未合并索引条目的形状。
+///
+/// 冲突弹层需要区分「必须人工做决定」和「合并结果已经确定」两类冲突：
+/// 只保留一边、或两边都不再保留文件的条目，暂存/移除后即可完成合并；
+/// 只有两边都保留文件的条目才需要内容级解决。
+public struct GitConflictEntry: Equatable, Sendable {
+    public enum Kind: Equatable, Sendable {
+        /// 两边都保留了文件，需要内容级解决。
+        case content
+        /// 只有一边新增了文件（index 只有 stage 2 或 3），合并结果由该边决定。
+        case oneSided
+        /// 两边都不再保留文件，只剩 base 阶段（libgit2 合并会留下这种条目）。
+        case bothDeleted
+        /// 一边删除、另一边修改（index 为 1+2 或 1+3），需要用户决定保留删除还是保留修改。
+        case deleteModify
+        /// 后端无法给出形状，调用方应按未解决处理。
+        case unknown
+    }
+
+    public let path: String
+    public let kind: Kind
+
+    public init(path: String, kind: Kind) {
+        self.path = path
+        self.kind = kind
+    }
+}
+
 /// 合并操作与冲突检测（对齐旧版 GitRepositoryCLI 合并能力）。
 public enum GitMergeOperation {
     public enum Error: Swift.Error, LocalizedError {
@@ -48,24 +76,56 @@ public enum GitMergeOperation {
         isMerging(in: repository) || GitCherryPickOperation.status(in: repository).isCherryPicking
     }
 
-    /// 列出冲突文件（`git status --porcelain` 中 index/worktree 为 U 的条目）。
+    /// 列出冲突文件（`git ls-files -u` 中的未合并路径）。
     public static func conflictFiles(in repository: URL) -> [String] {
-        guard let out = try? GitProcessRunner.run(
-            ["status", "--porcelain=v1", "-z", "--untracked-files=all"],
-            in: repository
-        ) else { return [] }
-        var result: [String] = []
-        for entry in out.split(separator: "\0") {
-            let raw = String(entry)
-            guard raw.count >= 4 else { continue }
-            let index = raw[raw.index(raw.startIndex, offsetBy: 0)]
-            let worktree = raw[raw.index(raw.startIndex, offsetBy: 1)]
-            let path = String(raw.dropFirst(3))
-            if index == "U" || worktree == "U" {
-                result.append(path)
-            }
+        conflictEntries(in: repository).map(\.path)
+    }
+
+    /// 列出冲突条目及其形状（按路径排序）。
+    ///
+    /// 未合并条目最多有 stage 1（base）/ 2（ours）/ 3（theirs）三个版本：
+    /// 只有 base 时说明两边都删除了该文件；只有一侧时说明该侧新增了文件；
+    /// 两侧都在时才是内容级冲突。base 加一侧是「一边删除、一边修改」，
+    /// 必须由用户决定，不能自动挑边。
+    public static func conflictEntries(in repository: URL) -> [GitConflictEntry] {
+        guard let out = try? GitProcessRunner.run(["ls-files", "-u", "-z"], in: repository) else {
+            return []
         }
-        return result
+        return conflictEntries(fromUnmergedListing: out)
+    }
+
+    /// 解析 `git ls-files -u -z` 的输出。
+    ///
+    /// 每条记录形如 `100644 <oid> 2\tpath`。暴露给测试，便于用合成输出
+    /// 覆盖 rare 的索引形状。
+    static func conflictEntries(fromUnmergedListing listing: String) -> [GitConflictEntry] {
+        var stagesByPath: [String: Set<Int>] = [:]
+        for record in listing.split(separator: "\0") {
+            let raw = String(record)
+            guard let tab = raw.firstIndex(of: "\t") else { continue }
+            let header = raw[..<tab].split(separator: " ")
+            guard header.count >= 3, let stage = Int(header[2]) else { continue }
+            let path = String(raw[raw.index(after: tab)...])
+            stagesByPath[path, default: []].insert(stage)
+        }
+        return stagesByPath.keys.sorted().map { path in
+            GitConflictEntry(path: path, kind: kind(forStages: stagesByPath[path] ?? []))
+        }
+    }
+
+    private static func kind(forStages stages: Set<Int>) -> GitConflictEntry.Kind {
+        switch stages {
+        case [1]:
+            return .bothDeleted
+        case [2], [3]:
+            return .oneSided
+        case [1, 2], [1, 3]:
+            return .deleteModify
+        case [2, 3], [1, 2, 3]:
+            return .content
+        default:
+            return .unknown
+        }
     }
 
     /// 合并 `sourceBranch` 到 `targetBranch`（先 checkout 目标分支再合并）。

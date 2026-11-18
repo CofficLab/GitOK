@@ -749,6 +749,10 @@ public final class DefaultGitProvider: @unchecked Sendable, GitProviding {
         primaryBackendOrNil()?.conflictFiles(in: repository) ?? []
     }
 
+    public func conflictEntries(in repository: URL) -> [GitConflictEntry] {
+        primaryBackendOrNil()?.conflictEntries(in: repository) ?? []
+    }
+
     public func mergeBranches(repository: URL, sourceBranch: String, targetBranch: String) throws -> String {
         try execute("mergeBranches") { try $0.mergeBranches(
             repository: repository,

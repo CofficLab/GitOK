@@ -75,6 +75,7 @@ final class TestGitProviding: @unchecked Sendable, GitProviding {
     private let lock = NSLock()
 
     private var _conflictFiles: [String] = []
+    private var _conflictEntries: [GitConflictEntry]? = nil
     private var _isMerging = false
     private var _cherryPickStatus: GitCherryPickStatus = .inactive
     private var _conflictFileReadCount = 0
@@ -85,6 +86,12 @@ final class TestGitProviding: @unchecked Sendable, GitProviding {
     var conflictFilesStub: [String] {
         get { lock.lock(); defer { lock.unlock() }; return _conflictFiles }
         set { lock.lock(); defer { lock.unlock() }; _conflictFiles = newValue }
+    }
+
+    /// 需要覆盖冲突形状时设置；为 nil 时按 `conflictFilesStub` 生成 unknown 条目。
+    var conflictEntriesStub: [GitConflictEntry]? {
+        get { lock.lock(); defer { lock.unlock() }; return _conflictEntries }
+        set { lock.lock(); defer { lock.unlock() }; _conflictEntries = newValue }
     }
 
     var isMergingStub: Bool {
@@ -134,6 +141,24 @@ final class TestGitProviding: @unchecked Sendable, GitProviding {
             self.lock.lock(); self._isConflictFileReadBlocked = false; self.lock.unlock()
         }
         return files
+    }
+
+    func conflictEntries(in repository: URL) -> [GitConflictEntry] {
+        lock.lock()
+        _conflictFileReadCount += 1
+        let entries = _conflictEntries
+        let files = _conflictFiles
+        let blocked = _blocksConflictFileRead
+        _isConflictFileReadBlocked = blocked
+        lock.unlock()
+
+        if blocked {
+            while self.blocksConflictFileRead {
+                Thread.sleep(forTimeInterval: 0.002)
+            }
+            self.lock.lock(); self._isConflictFileReadBlocked = false; self.lock.unlock()
+        }
+        return entries ?? files.map { GitConflictEntry(path: $0, kind: .unknown) }
     }
 
     func isMerging(in repository: URL) -> Bool { isMergingStub }

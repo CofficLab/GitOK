@@ -14,6 +14,7 @@ struct ConflictResolverPresentationTests {
     private func make(
         conflicted: [String] = [],
         resolved: [String] = [],
+        autoResolvableCount: Int = 0,
         isOperationInProgress: Bool = false,
         isCherryPicking: Bool = false,
         isActionRunning: Bool = false
@@ -21,6 +22,7 @@ struct ConflictResolverPresentationTests {
         ConflictResolverPresentation(
             conflictedFiles: conflicted,
             resolvedFiles: resolved,
+            autoResolvableCount: autoResolvableCount,
             isOperationInProgress: isOperationInProgress,
             isCherryPicking: isCherryPicking,
             isActionRunning: isActionRunning
@@ -266,5 +268,33 @@ struct ConflictResolverPresentationTests {
         let running = ConflictResolverPresentation(viewModel: viewModel, isActionRunning: true)
         #expect(!running.canContinue)
         #expect(!running.canAbort)
+    }
+
+    // MARK: - 自动解决
+
+    @Test("存在可自动解决的冲突时才提供自动解决入口")
+    func autoResolveRequiresAutoConflicts() {
+        #expect(make(conflicted: ["a.txt"], autoResolvableCount: 12).canAutoResolve)
+        #expect(!make(conflicted: ["a.txt"]).canAutoResolve)
+    }
+
+    @Test("动作执行中禁用自动解决")
+    func autoResolveIsDisabledWhileRunning() {
+        let state = make(
+            conflicted: ["a.txt"],
+            autoResolvableCount: 12,
+            isOperationInProgress: true,
+            isActionRunning: true
+        )
+        #expect(!state.canAutoResolve)
+    }
+
+    @Test("副标题追加可自动解决的数量")
+    func summaryMentionsAutoResolvableCount() {
+        let withAuto = make(conflicted: ["a.txt"], autoResolvableCount: 347)
+        #expect(withAuto.localizedSummary.contains("347"))
+
+        let withoutAuto = make(conflicted: ["a.txt"])
+        #expect(!withoutAuto.localizedSummary.contains("automatically"))
     }
 }

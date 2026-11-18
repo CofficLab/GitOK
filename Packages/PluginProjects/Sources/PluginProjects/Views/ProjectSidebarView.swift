@@ -46,8 +46,8 @@ struct ProjectSidebarView: View {
     @State private var isPresentingPreparationError = false
     /// 当前项目列表的展示方式（排序规则）。
     ///
-    /// 状态由 Provider 持有的 `ProjectSortModeModel` 统一管理：根布局在工作区
-    /// 状态变化时会重建本视图，视图本地状态会被丢弃，排序选择必须放在视图之外。
+    /// 状态由 Provider 持有的 `ProjectSortModeModel` 统一管理：本视图可能随根
+    /// 布局重建被重新创建，视图本地状态会被丢弃，排序选择必须放在视图之外。
     @ObservedObject var sortModeModel: ProjectSortModeModel
 
     /// 当前排序方式（只读投影，写入统一走 `sortModeModel.setMode(_:)`）。

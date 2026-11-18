@@ -2210,6 +2210,142 @@
           }
         }
       }
+    },
+    "%lld can be resolved automatically": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld can be resolved automatically"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其中 %lld 个可自动解决"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其中 %lld 個可自動解決"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其中 %lld 個可自動解決"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其中 %lld 個可自動解決"
+          }
+        }
+      }
+    },
+    "Conflicts Can Be Resolved Automatically": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conflicts Can Be Resolved Automatically"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这些冲突可以自动解决"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "這些衝突可以自動解決"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "這些衝突可以自動解決"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "這些衝突可以自動解決"
+          }
+        }
+      }
+    },
+    "Only one-sided or deleted-on-both-sides entries remain. Resolving them stages the merge result without editing files.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only one-sided or deleted-on-both-sides entries remain. Resolving them stages the merge result without editing files."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "剩余冲突都是单侧新增或双方删除的条目，自动解决会直接暂存合并结果，无需编辑文件。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "剩餘衝突都是單側新增或雙方刪除的條目，自動解決會直接暫存合併結果，無需編輯檔案。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "剩餘衝突都是單側新增或雙方刪除的條目，自動解決會直接暫存合併結果，無需編輯檔案。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "剩餘衝突都是單側新增或雙方刪除的條目，自動解決會直接暫存合併結果，無需編輯檔案。"
+          }
+        }
+      }
+    },
+    "Resolve Automatically": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolve Automatically"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动解决冲突"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動解決衝突"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動解決衝突"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動解決衝突"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
