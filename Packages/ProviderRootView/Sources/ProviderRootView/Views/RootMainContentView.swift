@@ -1,5 +1,6 @@
 import SwiftUI
 import LumiUI
+import ProviderRootView
 
 #if os(macOS)
 import AppKit

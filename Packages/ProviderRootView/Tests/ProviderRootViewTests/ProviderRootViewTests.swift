@@ -1,6 +1,7 @@
 import Combine
 import ProviderChatSection
 import ProviderRailView
+import ProviderRootView
 import SwiftUI
 import Testing
 @testable import GitOKProviderRootView
@@ -12,7 +13,7 @@ struct ProviderRootViewTests {
 
     @Test("根叠层按顺序注册且可独立撤回")
     func rootOverlaysRegisterAndRemoveByID() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         provider.addOverlays([
             RootOverlayItem(id: "later", order: 20) { $0 },
             RootOverlayItem(id: "first", order: 10) { $0 },
@@ -28,7 +29,7 @@ struct ProviderRootViewTests {
 
     @Test("DefaultRootViewProvider 无工具栏时返回根视图")
     func defaultProviderReturnsRootViewWithoutToolbar() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
 
         let view = provider.makeRootView()
 
@@ -73,24 +74,28 @@ struct ProviderRootViewTests {
         #expect(resizedWidth == 460)
     }
 
-    @Test("Rail 可见性同步绑定到根布局")
-    func railVisibilityFollowsPublisherSynchronously() {
-        let provider = DefaultRootViewProvider()
-        let visibility = CurrentValueSubject<Bool, Never>(true)
+    @Test("Rail 可见性通过 provider 绑定同步到根布局")
+    func railVisibilityFollowsProviderSynchronously() {
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
+        let rail = DefaultRailViewProviding()
 
-        provider.bindRailViewVisibility(to: visibility.eraseToAnyPublisher())
-        #expect(provider.isRailViewVisible)
-
-        visibility.send(false)
+        provider.bindRailViewVisibility(to: rail)
         #expect(!provider.isRailViewVisible)
 
-        visibility.send(true)
+        rail.registerTabs([
+            RailTabItem(id: "commits", category: .project, title: "Commits", systemImage: "list.bullet") {
+                Text("commits")
+            },
+        ])
         #expect(provider.isRailViewVisible)
+
+        rail.registerTabs([])
+        #expect(!provider.isRailViewVisible)
     }
 
     @Test("工作区状态支持在根布局中切换")
     func workspaceStateCanBeChanged() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
 
         provider.setWorkspaceState(.projectMissing(path: "/missing/repo"))
         #expect(provider.workspaceState == .projectMissing(path: "/missing/repo"))
@@ -99,20 +104,20 @@ struct ProviderRootViewTests {
         #expect(provider.workspaceState == .ready)
     }
 
-    @Test("Rail 宽度绑定并转发用户拖拽回调")
-    func railWidthFollowsPublisherAndForwardsResize() async {
-        let provider = DefaultRootViewProvider()
-        let width = CurrentValueSubject<RailViewWidth, Never>(.standard)
+    @Test("Rail 宽度绑定 provider 并转发用户拖拽回调")
+    func railWidthFollowsProviderAndForwardsResize() async {
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
+        let rail = DefaultRailViewProviding()
         var resizedWidth: CGFloat?
 
         provider.bindRailViewWidth(
-            to: width.eraseToAnyPublisher(),
+            to: rail,
             onResize: { resizedWidth = $0 }
         )
         #expect(provider.railWidth == .standard)
 
         let customWidth = RailViewWidth(minWidth: 240, idealWidth: 360, maxWidth: 480)
-        width.send(customWidth)
+        rail.activateWidthProfile(ownerID: "plugin.rail", recommended: customWidth, store: nil)
         await Task.yield()
         #expect(provider.railWidth == customWidth)
 
@@ -129,14 +134,14 @@ struct ProviderRootViewTests {
             directory: directory,
             legacyDefaults: UserDefaults(suiteName: "ProviderRootViewTests-\(UUID().uuidString)")!
         )
-        let provider = DefaultRootViewProvider(sidebarWidthStore: store)
+        let provider = GitOKProviderRootView.DefaultRootViewProvider(sidebarWidthStore: store)
 
         #expect(provider.sidebarWidth == .standard)
 
         provider.saveSidebarWidth(360)
         #expect(provider.sidebarWidth.idealWidth == 360)
 
-        let reloadedProvider = DefaultRootViewProvider(sidebarWidthStore: store)
+        let reloadedProvider = GitOKProviderRootView.DefaultRootViewProvider(sidebarWidthStore: store)
         #expect(reloadedProvider.sidebarWidth.idealWidth == 360)
 
         provider.saveSidebarWidth(120)
@@ -145,7 +150,7 @@ struct ProviderRootViewTests {
 
     @Test("Content Footer 高度 profile 支持恢复约束并保存拖拽结果")
     func contentFooterHeightProfileRestoresAndSaves() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         let recommended = ContentFooterHeight(minHeight: 120, idealHeight: 280, maxHeight: 520)
         let fileURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("ProviderRootViewTests-\(UUID().uuidString).plist")
@@ -161,7 +166,7 @@ struct ProviderRootViewTests {
         provider.saveCurrentContentFooterHeight(460)
         #expect(provider.contentFooterHeight.idealHeight == 460)
 
-        let reloadedProvider = DefaultRootViewProvider()
+        let reloadedProvider = GitOKProviderRootView.DefaultRootViewProvider()
         reloadedProvider.activateContentFooterHeightProfile(
             ownerID: "plugin.editor-preview",
             recommended: recommended,
@@ -175,7 +180,7 @@ struct ProviderRootViewTests {
 
     @Test("没有容器时可通过 trailing pane 渲染")
     func visibleTrailingPaneCountsAsActiveContentWithoutContainer() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         let pane = RootTrailingPane(id: "chat", content: AnyView(Text("chat")))
         provider.setTrailingPane(pane)
 
@@ -197,7 +202,7 @@ struct ProviderRootViewTests {
 
     @Test("注入工具栏后返回根视图")
     func defaultProviderReturnsRootViewWithToolbar() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         provider.setToolbarView(AnyView(Text("toolbar")))
 
         let view = provider.makeRootView()
@@ -207,7 +212,7 @@ struct ProviderRootViewTests {
 
     @Test("注入侧边栏后返回根视图")
     func defaultProviderReturnsRootViewWithSidebar() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         provider.setSidebarView(AnyView(Text("sidebar")))
 
         let view = provider.makeRootView()
@@ -217,7 +222,7 @@ struct ProviderRootViewTests {
 
     @Test("同时注入工具栏与侧边栏后返回根视图")
     func defaultProviderReturnsRootViewWithToolbarAndSidebar() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         provider.setToolbarView(AnyView(Text("toolbar")))
         provider.setSidebarView(AnyView(Text("sidebar")))
 
@@ -228,7 +233,7 @@ struct ProviderRootViewTests {
 
     @Test("同时注入工具栏、侧边栏、Rail 与内容后返回根视图")
     func defaultProviderReturnsRootViewWithAllInjections() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         provider.setToolbarView(AnyView(Text("toolbar")))
         provider.setSidebarView(AnyView(Text("sidebar")))
         provider.setRailView(AnyView(Text("rail")))
@@ -244,7 +249,7 @@ struct ProviderRootViewTests {
 
     @Test("RootViewProviding 可作为 any RootViewProviding 使用")
     func providerAccessibleThroughProtocol() {
-        let provider: any RootViewProviding = DefaultRootViewProvider()
+        let provider: any RootViewProviding = GitOKProviderRootView.DefaultRootViewProvider()
         provider.setToolbarView(AnyView(Text("toolbar")))
         provider.setSidebarView(AnyView(Text("sidebar")))
         provider.setRailView(AnyView(Text("rail")))
@@ -253,46 +258,10 @@ struct ProviderRootViewTests {
         #expect(type(of: provider.makeRootView()) == AnyView.self)
     }
 
-    @Test("自定义实现可被协议访问")
+    @Test("自定义子类可被协议访问")
     func customProviderWorks() {
-        @MainActor final class CustomRootView: RootViewProviding {
-            @Published var toolbarView: AnyView?
-            @Published var sidebarView: AnyView?
-            @Published var railView: AnyView?
-            @Published var contentHeaderView: AnyView?
-            @Published var contentView: AnyView?
-            @Published var contentFooterView: AnyView?
-            @Published var trailingPane: RootTrailingPane?
-
-            func setToolbarView(_ view: AnyView?) {
-                toolbarView = view
-            }
-
-            func setSidebarView(_ view: AnyView?) {
-                sidebarView = view
-            }
-
-            func setRailView(_ view: AnyView?) {
-                railView = view
-            }
-
-            func setContentHeaderView(_ view: AnyView?) {
-                contentHeaderView = view
-            }
-
-            func setContentView(_ view: AnyView?) {
-                contentView = view
-            }
-
-            func setContentFooterView(_ view: AnyView?) {
-                contentFooterView = view
-            }
-
-            func setTrailingPane(_ pane: RootTrailingPane?) {
-                trailingPane = pane
-            }
-
-            func makeRootView() -> AnyView {
+        @MainActor final class CustomRootView: DefaultRootViewProviding {
+            override func makeRootView() -> AnyView {
                 AnyView(VStack {
                     if let toolbarView { toolbarView }
                     HStack {
@@ -323,7 +292,7 @@ struct ProviderRootViewTests {
 
     @Test("Footer 注入后被视为主内容并返回根视图")
     func contentFooterCountsAsActiveContent() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         provider.setContentFooterView(AnyView(Text("content footer")))
 
         #expect(provider.hasActiveContent)
@@ -344,7 +313,7 @@ struct ProviderRootViewTests {
     // MARK: - 注入守卫（值相同则跳过赋值，避免视图更新期间发布 objectWillChange）
 
     /// 订阅 objectWillChange 并返回发送次数计数。
-    private func makeChangeCounter(for provider: DefaultRootViewProvider) -> (() -> Int, AnyCancellable) {
+    private func makeChangeCounter(for provider: GitOKProviderRootView.DefaultRootViewProvider) -> (() -> Int, AnyCancellable) {
         var count = 0
         let cancellable = provider.objectWillChange.sink { _ in
             count += 1
@@ -354,7 +323,7 @@ struct ProviderRootViewTests {
 
     @Test("重复注入相同类型视图时跳过赋值（不发布 objectWillChange）")
     func repeatedSameTypeInjectionSkipsPublish() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         let (count, cancellable) = makeChangeCounter(for: provider)
 
         provider.setToolbarView(AnyView(Text("toolbar")))
@@ -370,7 +339,7 @@ struct ProviderRootViewTests {
 
     @Test("注入状态变化（nil ↔ 非 nil）时正常更新（发布 objectWillChange）")
     func valueTransitionStillPublishes() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         let (count, cancellable) = makeChangeCounter(for: provider)
 
         provider.setToolbarView(nil)
@@ -390,7 +359,7 @@ struct ProviderRootViewTests {
 
     @Test("重复注入 nil 时跳过赋值（不发布 objectWillChange）")
     func repeatedNilInjectionSkipsPublish() {
-        let provider = DefaultRootViewProvider()
+        let provider = GitOKProviderRootView.DefaultRootViewProvider()
         let (count, cancellable) = makeChangeCounter(for: provider)
 
         provider.setToolbarView(nil)

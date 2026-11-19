@@ -10,7 +10,7 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "ProviderRootView",
+            name: "GitOKProviderRootView",
             targets: ["GitOKProviderRootView"]
         ),
     ],
@@ -18,7 +18,7 @@ let package = Package(
         .package(path: "../KitGitOKLocalization"),
         .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.13.1"),
         .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.24.0")
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.26.0")
     ],
     targets: [
         .target(
@@ -28,6 +28,7 @@ let package = Package(
                 .product(name: "LumiUI", package: "LumiUI"),
                 .product(name: "ProviderChatSection", package: "LumiProviders"),
                 .product(name: "ProviderRailView", package: "LumiProviders"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),
             ],
             path: "Sources/ProviderRootView",
@@ -39,6 +40,7 @@ let package = Package(
                 "GitOKProviderRootView",
                 .product(name: "ProviderChatSection", package: "LumiProviders"),
                 .product(name: "ProviderRailView", package: "LumiProviders"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
             ]
         )
     ]

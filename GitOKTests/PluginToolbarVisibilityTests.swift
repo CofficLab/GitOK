@@ -1,7 +1,6 @@
 import XCTest
-@testable import FactoryGitOK
+@testable import GitOK
 import ProviderPluginManaging
-import ProviderStorage
 import ProviderToolbar
 
 /// 工具栏可见性回归测试。
@@ -13,17 +12,10 @@ import ProviderToolbar
 /// 此处断言装配后 `PluginManaging.isEnabled` 与内核一致，且插件贡献的
 /// 工具栏项仍可见。
 @MainActor
-final class PluginToolbarVisibilityTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        let stateFile = DefaultStorageProvider.makeDefaultDataRootDirectory()
-            .appendingPathComponent("com.coffic.gitok.plugin.plugin-manager", isDirectory: true)
-            .appendingPathComponent("plugin-enabled-overrides.plist", isDirectory: false)
-        try? FileManager.default.removeItem(at: stateFile)
-    }
+final class PluginToolbarVisibilityTests: GitOKKernelTestCase {
 
-    func testPluginManagingReportsKernelEnabledState() throws {
-        let kernel = try KernelFactory.makeKernel()
+    func testPluginManagingReportsKernelEnabledState() async throws {
+        let kernel = try await makeKernel()
         let manager = try XCTUnwrap(kernel.resolveProvider((any PluginManaging).self))
 
         // alwaysOn 插件必须报告为启用（历史缺陷下这里恒为 false）。
@@ -34,8 +26,8 @@ final class PluginToolbarVisibilityTests: XCTestCase {
         )
     }
 
-    func testPluginToolbarContributionsRemainVisible() throws {
-        let kernel = try KernelFactory.makeKernel()
+    func testPluginToolbarContributionsRemainVisible() async throws {
+        let kernel = try await makeKernel()
         let toolbar = try XCTUnwrap(kernel.resolveProvider((any ToolbarProviding).self))
         let visibleIDs = Set(toolbar.visibleToolbarItems.map(\.id))
 

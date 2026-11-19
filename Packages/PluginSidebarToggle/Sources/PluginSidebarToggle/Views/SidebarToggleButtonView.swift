@@ -1,5 +1,5 @@
 import LumiUI
-import GitOKProviderRootView
+import ProviderRootView
 import SwiftUI
 
 /// Toolbar button that toggles the left sidebar visibility.
@@ -12,6 +12,7 @@ import SwiftUI
 struct SidebarToggleButtonView: View {
     let rootView: any RootViewProviding
     @State private var isSidebarHidden = false
+    @State private var observerHandle: (any RootViewObserverHandle)?
     @LumiMotionPreferenceReader private var motionPreference
 
     var body: some View {
@@ -30,9 +31,15 @@ struct SidebarToggleButtonView: View {
         .contentTransition(.symbolEffect(.replace))
         .onAppear {
             isSidebarHidden = rootView.isSidebarViewHidden
+            observerHandle = rootView.addRootViewObserver { event in
+                if case .regionVisibilityChanged(.sidebar, let hidden) = event {
+                    isSidebarHidden = hidden
+                }
+            }
         }
-        .onReceive(rootView.objectWillChange) { _ in
-            isSidebarHidden = rootView.isSidebarViewHidden
+        .onDisappear {
+            observerHandle?.cancel()
+            observerHandle = nil
         }
     }
 }

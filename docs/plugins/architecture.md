@@ -1,6 +1,6 @@
 # GitOK 插件系统架构
 
-> 状态：SPM 显式注册（`GeneratedPluginRegistry` + `GitOKPluginRuntime`）  
+> 状态：宿主清单 + LumiFactory 装配（`GitOKHostManifest` + `GitOKPluginCatalog`）  
 > App 壳：`GitOKApp/` — 详见 [gitok-app-shell.md](../architecture/gitok-app-shell.md)
 
 ## 系统概览
@@ -8,18 +8,19 @@
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         GitOKApp (thin shell)                        │
-│  KernelCoreContainer → PluginService → ContentView (NavigationSplitView) │
+│  GitOKHostManifest（品牌/存储/主题/接线） + GitOKPluginCatalog（目录） │
 └──────────────────────────────┬──────────────────────────────────────┘
-                               │
+                               │ KernelBootstrapper(manifest:)
                                ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│              FactoryGitOK / GeneratedPluginRegistry           │
-│              显式 import 各 Plugins/* SPM 包                          │
+│        LumiFactory.KernelAssembler（远程共享装配引擎）                 │
+│        基线 Provider → registerProviders → 插件启动 → 视图接线         │
 └──────────────────────────────┬──────────────────────────────────────┘
-                               │
+                               │ kernel.startAsync(plugins:)
                                ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Plugins/*Plugin  →  static GitOKPlugin enum  →  GitOKPluginRuntime   │
+│  Plugins/*Plugin（SuperPlugin）→ 向 Kernel 注册能力 Provider           │
+│  宿主视图（RootView / 工具栏 / 设置 / 状态栏）resolve Provider 渲染     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -29,81 +30,78 @@
 App Launch
     │
     ▼
-GitOKApp.init
-    │
-    ├─► KernelFactory.makeKernel()
-    ├─► ProviderFactory 按能力装配 ProviderGit/Project/Theme/Navigation
-    │   并注册 typed contracts 到 Kernel
-    ├─► 兼容桥同步注册 GitOKPluginDependencies
-    │
-    ├─► GitOKPluginBootstrap.configureRuntimes(projectService:)
+GitOKApp.init → KernelBootstrapper(manifest: GitOKHostManifest.make { … })
     │
     ▼
-PluginService.init()
+KernelAssembler.makeKernel(manifest:)
+    │
+    ├─► ① 基线 Provider（存储/主题/根视图/设置/菜单栏等，跨 App 一致）
+    ├─► ② 存储与基础设施迁移
+    ├─► ③ manifest.registerProviders — GitOK 特有能力（Git/项目/导航等）
+    ├─► ④ manifest.makePlugins() → GitOKPluginCatalog.makePlugins()
+    │       可选 pluginFilter 过滤 + HostPluginMigration 迁移
+    ├─► ⑤ kernel.startAsync(plugins:)
+    │       排除 policy == .disabled → 依赖拓扑 + order 排序
+    │       逐个 onRegister → onBoot → onReady（缺失依赖即抛错）
+    ├─► ⑥ 设置首选项重置为 order 最小入口
+    └─► ⑦ 共享视图接线 + manifest.wireKernel
     │
     ▼
-GeneratedPluginRegistry.registerAll(into: runtime)
-    │
-    ▼
-PluginService.startupPlugins() → GitOKPluginRuntime.startup(kernel:)
-    │
-    ├─► ① onBoot(kernel:dependencies:) — 全部启用插件注册自有 Provider
-    ├─► ② 校验 GitOKRequiredServices — 缺失则抛 missingRequiredServices 并列出清单
-    └─► ③ onReady(context:)       — 依赖其他服务的插件初始化
-    │
-    ▼
-ContentView queries PluginService for toolbar / list / detail / statusbar
-
-主窗口和设置窗口持有同一个 Kernel，不在视图更新期间重复装配；
-`RootContainer.shared` 仅供旧预览/集成代码兼容使用。
+HostMacScenes 渲染 loading / ready / failed 三态
 ```
 
-**注意：** 不再使用 Objective-C Runtime 自动扫描。所有插件必须在 `GeneratedPluginRegistry` 中显式注册。
+**注意：** 不使用 Objective-C Runtime 自动扫描。所有插件必须在
+`GitOKApp/GitOKPluginCatalog.swift` 中显式列出，并在
+`GitOK.xcodeproj/project.xcproj` 声明包与产品依赖。
 
-## 插件协议
+## 插件契约（LumiKernel.SuperPlugin）
 
-- **`GitOKPlugin`** — 静态 enum 协议（`metadata`、`onBoot`、`onReady`、`toolbarTrailingItems` 等）
-- **`GitOKPluginContext`** — 向插件视图注入运行时快照、回调与 `resolve()` DI
-- **`GitOKPluginDependencies`** — 旧版类型键控注册表；新注册会转发到同一个 Kernel
-- **Provider contracts** — `ProviderProject`、`ProviderGit`、`ProviderTheme`、`ProviderNavigation`，插件只依赖能力协议，不依赖 `FactoryCore` 默认实现
+- `id` / `order` / `dependencies` / `metadata`（含 `policy`：alwaysOn / optIn / disabled）
+- 生命周期：`onRegister` → `onBoot` → `onReady` → `onShutdown` → `onUnregister`，
+  启用/禁用回调 `onEnable` / `onDisable`；`AsyncSuperPlugin` 提供 async 变体
+- 插件在 `onBoot` 向 Kernel **注册或替换能力 Provider**，不直接持有视图；
+  宿主视图与其他插件通过 `kernel.resolveProvider(...)` 消费能力
+- 根视图是**宿主 Provider**：`manifest.makeRootViewProvider` 提供
+  `GitOKRootViewProvider`，`RootViewPlugin` 只向其贡献工作区门控
+  （noProject / projectMissing / cloning / cloneFailed / notGitRepository / ready）
 
-菜单导航与 Git 命令通过 `GitOKNavigationServicing` / `GitOKGitCommandServicing` 走 App 服务层。
+## 启动排序
 
-## Order 分带约定
-
-插件 `metadata.order` 决定注册与贡献排序，按 Lumi 内核规范分带：
-
-| 分带 | 含义 | 示例 |
-|------|------|------|
-| `0–99` | 核心（应用骨架，alwaysOn） | ProjectsPlugin(10)、OnboardingPlugin(20)、ProjectPickerPlugin(80) |
-| `100–199` | 基础服务（设置、状态） | GitNetworkSettingsPlugin(110)、ActivityStatusPlugin(160) |
-| `200–299` | Git 功能 | GitDetailPlugin(220)、GitBranchPlugin(230)、GitAutoPushPlugin(235)、GitStashPlugin(240) |
-| `300+` | 可选增强（optIn / 主题 / Open-In） | LicensePlugin(310)、Theme*(330+)、Open*(400+) |
-
-新增插件按归属分带取值；同带内保持 10 的步长便于插入。
+`kernel.startAsync` 先按 `dependencies` 做拓扑校验（缺失即抛
+`pluginDependencyMissing`），再按 `order` 升序启动，同序保持目录数组顺序。
+`order` 是目录内的相对值（当前 0–100，如 ProjectsPlugin(0)、LicensePlugin(45)）；
+新增插件取值时保证依赖方在前、同带留有余量即可。
 
 ## 贡献 ID 纪律
 
 所有贡献项 `id` 必须是插件前缀的稳定标识（如 `metadata.id` 或 `"plugin-id.slot"`），
-禁止裸 UI 文案或临时字符串，保证排序与调试可追溯；由 `FactoryGitOK` 的守护测试负责校验。
+禁止裸 UI 文案或临时字符串，保证排序与调试可追溯；由 `GitOKTests` 守护测试校验。
 
-## 贡献点
+## 贡献面
 
-| 贡献点 | 方法 | 挂载位置 |
-|--------|------|----------|
-| Tab | `tabItems(context:)` | ContentView 标签栏 |
-| List | `listPaneItems(context:tab:)` | NavigationSplitView 左栏 |
-| Detail | `detailPaneItems(context:tab:)` | NavigationSplitView 右栏 |
-| Sidebar | `sidebarPaneItems(context:)` | 侧边栏 |
-| Onboarding | `onboardingPaneItems(context:)` | Detail 空态 |
-| Settings | `settingsPaneItems(context:)` | 设置页 |
-| Toolbar | `toolbarLeadingItems` / `toolbarTrailingItems` | 工具栏 |
-| StatusBar | `statusBar*Items` | 底部状态栏 |
-| Theme | `themeContributions(context:)` | ThemeService |
-| Root | `rootOverlay(context:content:)` | RootView 包裹层 |
+插件通过能力 Provider 贡献 UI，宿主视图统一消费：
+
+| 贡献面 | 载体协议 | 挂载位置 |
+|--------|----------|----------|
+| 侧边栏列表 | `SidebarProviding` / `ProjectSidebarProviding` | NavigationSplitView 左栏 |
+| 设置入口 | `SettingViewProviding` | 设置窗口 |
+| 工具栏 | `ToolbarProviding` | 主窗口工具栏 |
+| 状态栏 | `StatusBarProviding` | 底部状态栏 |
+| 右栏 Rail | `RailViewProviding` | 右侧面板 |
+| 主题 | `ThemeProviding` | 主题目录与选色 |
+| 根视图门控/覆盖层 | `RootViewProviding` | RootView 工作区 |
+| 关于/文档 | `DocsViewProviding` | 关于页 |
+
+菜单导航与 Git 命令通过 `GitOKNavigationServicing` / `GitOKGitCommandServicing` 走 App 服务层。
 
 ## 依赖规则
 
-- `Plugins/*` **不得** `import GitOKApp`
+- `Packages/Plugin*` **不得** `import GitOKApp`
 - `KitGitOKCore` **不得** import 任何 Feature Plugin
-- 唯一源码根：`Plugins/<Name>Plugin/`（`Packages/Plugin*` 镜像已废弃）
+- 一个插件一个 SPM 包：`Packages/Plugin<Name>/`，加入目录的同时必须在
+  `GitOK.xcodeproj/project.xcproj` 的 **GitOK 与 GitOKTests 两个 target**
+  声明同一产品（测试构建按产品生成动态框架；只链入 App 的本地产品会静态
+  合并共享依赖的目标代码，与测试框架产生类型身份分裂，Provider 解析失效）
+- 本地包产品名不得与远程共享包产品重名（测试构建按产品名生成动态框架，
+  重名会触发 "Multiple commands produce"）；本地根视图产品因此命名为
+  `GitOKProviderRootView`（模块同名），与 LumiProviders 的 `ProviderRootView` 区分

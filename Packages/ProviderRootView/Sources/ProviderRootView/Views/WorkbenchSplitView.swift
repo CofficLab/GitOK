@@ -62,7 +62,7 @@ struct WorkbenchSplitView: View {
             contentFooterHeight: provider.contentFooterHeight,
             onContentFooterResize: provider.saveCurrentContentFooterHeight,
             isContentViewHidden: provider.isContentViewHidden,
-            trailingPane: provider.trailingPane
+            trailingPane: provider.rootTrailingPane
         )
     }
 

@@ -1,18 +1,14 @@
 import AppKit
-import FactoryGitOK
 import KitGitOKUpdate
-import KernelCore
-import ProviderSettingView
+import LumiFactory
 import SwiftUI
 
 @main
 struct GitOKApp: App {
-    /// 接收 Launch Services 投递的 `gitok://` URL 与文件打开事件。
-    @NSApplicationDelegateAdaptor private var appDelegate: GitOKAppDelegate
-    private let kernel: KernelCoreContainer
-    private let mainView: AnyView
-    private let settingsView: AnyView
-    @Environment(\.openWindow) private var openWindow
+    /// 共享应用代理：`gitok://` URL / 文件打开事件排队补发、设置深链、
+    /// Dock 重开主窗口，全部由 HostManifest 解释。
+    @NSApplicationDelegateAdaptor(HostAppDelegate.self) private var appDelegate
+    @StateObject private var bootstrapper: KernelBootstrapper
 
     init() {
         // GitOK 是单窗口应用：关闭 macOS 的自动窗口标签页，
@@ -21,77 +17,21 @@ struct GitOKApp: App {
         // 必须早于任何窗口创建，因此放在 App init 中设置。
         NSWindow.allowsAutomaticWindowTabbing = false
 
-        // Ignore a previously persisted no-window state so launching GitOK
-        // always presents its main window, including after UI test runs.
-        UserDefaults.standard.set(true, forKey: "ApplePersistenceIgnoreState")
+        HostAppDelegate.prepareForLaunch()
         AppUpdateBootstrap.start()
-        if let assembledKernel = try? FactoryGitOK.makeKernel() {
-            kernel = assembledKernel
-            mainView = (try? FactoryGitOK.makeMainView(kernel: assembledKernel))
-                ?? AnyView(Text(GitOKAppLocalization.string("Failed to assemble main view")).accessibilityIdentifier("gitok.startup-error"))
-            settingsView = (try? FactoryGitOK.makeSettingsView(kernel: assembledKernel))
-                ?? AnyView(Text(GitOKAppLocalization.string("Failed to assemble settings view")))
-        } else {
-            let fallbackKernel = KernelCoreContainer()
-            kernel = fallbackKernel
-            mainView = AnyView(Text(GitOKAppLocalization.string("Failed to assemble main view")).accessibilityIdentifier("gitok.startup-error"))
-            settingsView = AnyView(Text(GitOKAppLocalization.string("Failed to assemble settings view")))
-        }
-        // 把内核交给应用代理：CLI 脚本 `gitok <path>` 的 URL 事件由代理
-        // 直接调用内核处理，不依赖主窗口的 SwiftUI 订阅时序。
-        appDelegate.attach(kernel: kernel)
+
+        let bootstrapper = KernelBootstrapper(
+            manifest: GitOKHostManifest.make {
+                UpdateService.shared.checkForUpdates()
+            }
+        )
+        _bootstrapper = StateObject(wrappedValue: bootstrapper)
+        appDelegate.bootstrapper = bootstrapper
     }
 
     var body: some Scene {
-        // 使用 Window 而不是 WindowGroup：GitOK 只允许一个主窗口，
-        // 这样 ⌘N「新建窗口」不再出现在「文件」菜单中，
-        // 也无法通过菜单派生出可被合并成标签页的第二个主窗口。
-        Window("GitOK", id: "gitok.main") {
-            mainView
-                // Do not put an accessibility identifier on the root view:
-                // SwiftUI propagates it to toolbar and content descendants,
-                // masking their own stable identifiers from UI automation.
-                .overlay(alignment: .topLeading) {
-                    Color.clear
-                        .frame(width: 1, height: 1)
-                        .accessibilityElement()
-                        .accessibilityLabel(GitOKAppLocalization.string("GitOK main window ready"))
-                        .accessibilityIdentifier("gitok.main.ready")
-                }
-                .onReceive(NotificationCenter.default.publisher(
-                    for: SettingViewNavigation.openSettingsNotification
-                )) { notification in
-                    if let settings = kernel.resolveProvider((any SettingViewProviding).self),
-                       let entryID = notification.userInfo?[SettingViewNavigation.entryIDUserInfoKey] as? String,
-                       settings.entries.contains(where: { $0.id == entryID }) {
-                        settings.selectEntry(id: entryID)
-                    }
-                    openWindow(id: "gitok.settings")
-                }
-        }
-        .windowStyle(.hiddenTitleBar)
-        .windowToolbarStyle(.unified(showsTitle: false))
-        .defaultSize(width: 1100, height: 760)
-        .commands {
-            AppCommands(kernel: kernel) {
-                UpdateService.shared.checkForUpdates()
-            }
-        }
-
-        // 与 Lumi 使用相同的普通 Window Scene，避免 macOS Settings 容器
-        // 额外注入边距/安全区域，导致共享设置视图被裁切。
-        Window(GitOKAppLocalization.string("Settings"), id: "gitok.settings") {
-            settingsView
-                .overlay(alignment: .topLeading) {
-                    Color.clear
-                        .frame(width: 1, height: 1)
-                        .accessibilityElement()
-                        .accessibilityLabel(GitOKAppLocalization.string("GitOK settings window ready"))
-                        .accessibilityIdentifier("gitok.settings.ready")
-                }
-        }
-        .windowStyle(.hiddenTitleBar)
-        .windowToolbarStyle(.unified(showsTitle: false))
-        .defaultSize(width: 1000, height: 600)
+        // Window（而非 WindowGroup）+ 无标题栏 + 统一工具栏 + 设置窗 + 命令，
+        // 全部由共享壳提供；AX 就绪标记走 1×1 overlay（见 GitOKHostManifest）。
+        HostMacScenes(bootstrapper: bootstrapper)
     }
 }

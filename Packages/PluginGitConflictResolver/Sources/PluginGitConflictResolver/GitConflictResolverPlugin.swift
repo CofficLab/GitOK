@@ -7,6 +7,7 @@ import ProviderGit
 import ProviderGitConflictResolver
 import ProviderProjects
 import GitOKProviderRootView
+import ProviderRootView
 import ProviderStatusBar
 import ProviderWorkspaceScene
 import SwiftUI

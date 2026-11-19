@@ -1396,36 +1396,36 @@
         }
       }
     },
-    "Provides the root view layout, replacing the default provider": {
+    "Provides workspace gating for the host root view": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "提供根视图布局，替换默认实现"
+            "value": "为宿主根视图提供工作区状态门控"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "提供根檢視版面，取代預設實作"
+            "value": "為宿主根視圖提供工作區狀態門控"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Provides the root view layout, replacing the default provider"
+            "value": "Provides workspace gating for the host root view"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "提供根檢視版面，取代預設實作"
+            "value": "為宿主根視圖提供工作區狀態門控"
           }
         },
         "zh-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "提供根檢視版面，取代預設實作"
+            "value": "為宿主根視圖提供工作區狀態門控"
           }
         }
       }

@@ -3,6 +3,7 @@ import KernelCore
 import LumiLoggingKit
 import os
 import GitOKProviderRootView
+import ProviderRootView
 import ProviderToolbar
 import SwiftUI
 import ProviderDocsView

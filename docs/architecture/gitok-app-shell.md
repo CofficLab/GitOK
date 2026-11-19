@@ -1,106 +1,87 @@
 # GitOK App Shell Architecture
 
-GitOK uses the same composition-root model as Lumi:
+GitOK shares one assembly engine with Lumi and the sibling apps: the remote
+package **LumiFactory** interprets a host manifest; the app only declares its
+differences. There is no local factory package.
 
 ```text
-GitOKApp/          Thin shell (= LumiApp): @main scenes and one shared
-                  KernelCoreContainer
+GitOKApp/                 Thin shell + host manifest (composition root)
+  GitOKApp.swift            @main: KernelBootstrapper(manifest:) + HostMacScenes
+  GitOKHostManifest.swift   Brand identity, storage/theme config, provider and
+                            view-wiring hooks, feature flags (AX contract)
+  GitOKPluginCatalog.swift  Explicit, ordered plugin array (no runtime scanning)
+  GitOKExternalOpen.swift   gitok:// / Finder directory-open semantics
+  ExternalOpenRequest.swift URL ⇄ path codec shared with the CLI script
+  AppLocalization.swift     App-layer strings via KitGitOKLocalization
 Packages/
-  KernelCore/         Generic typed Provider registry + kernel lifecycle
-  FactoryCore/   Host engine (Lumi FactoryCore equivalent): KernelFactory,
-                      ProviderFactory, ViewFactory, RootContainer compatibility
-                      graph, MacAgent, RootView, layout and commands
-  KitGitOKUpdate/     Sparkle auto-update (Lumi AppUpdatePlugin equivalent):
-                      UpdateManager + UpdateCommand, injected at app layer
-  KitGitOKCore/       GitOK domain contracts and legacy plugin SDK bridge
-  KitGitCore/         Git engine (git CLI wrapper)
-  LumiUI              Shared design system, consumed by feature and provider packages
-  …                   Domain kits
-Plugins/           Feature SPM packages (one plugin per directory)
-FactoryGitOK/  Compile-time plugin catalog + GitOKFactory facade
-                      (Lumi FactoryLumi equivalent: makeKernel() /
-                      makeMainWindow(kernel:) / makeSettingsWindow(kernel:))
+  KitGitOKUpdate/           Sparkle auto-update, injected at app layer
+  KitGitOKLocalization/     Language-override-aware localization resolver
+  KitGit/                   Git domain contracts
+  Provider*/                Capability providers (Git, Projects, RootView, …)
+  Plugin*/                  Feature plugins (one SPM package per plugin)
+Remote (github.com/lumi-softworks):
+  LumiFactory               Assembly engine + shared shell (KernelAssembler,
+                            KernelBootstrapper, HostAppDelegate, HostMacScenes,
+                            HostCommands, theme bridge, window opener)
+  LumiKernel / LumiProviders / LumiUI / LumiSettings / LumiThemePack / …
 ```
 
 ## Dependency rules
 
 | Layer | May import |
 |-------|------------|
-| GitOKApp | FactoryCore, FactoryGitOK, KernelCore, domain kits |
-| KernelCore | Foundation only; no GitOK or feature imports |
-| FactoryCore | KernelCore, GitOKAppCore, KitGitOKCore, LumiUI, domain kits — **no plugins** |
-| FactoryGitOK | FactoryCore + all plugins (composition layer) |
-| Plugins | KitGitOKCore, domain kits |
-| KitGitOKCore | Foundation, LumiUI, KitGitCore (no Plugins) |
-| Plugins | **Must not** import GitOKApp or FactoryCore |
+| GitOKApp | LumiFactory, KernelCore, providers, plugins, domain kits |
+| Plugins | Provider contracts, domain kits — **never** GitOKApp |
+| Providers | KernelCore, domain kits — **never** plugins or GitOKApp |
+| LumiFactory | KernelCore + baseline providers only; host differences arrive via `HostManifest` |
 
-## Provider layer (Lumi-compatible)
-
-`KernelCoreContainer` is the single runtime composition object. Provider
-contracts are split by capability instead of being concentrated in the host:
-
-| Provider package | Contract | Default implementation | Consumers |
-|------------------|----------|------------------------|-----------|
-| `ProviderProject` | `GitOKProjectServicing` | `GitOKProjectService` | project-aware plugins, RootView |
-| `ProviderGit` | repository/activity/command services | `GitCoreService` | Git commands and Git plugins |
-| `ProviderTheme` | theme selection/contribution services | `ThemeService` + `PluginService` | theme UI and theme plugins |
-| `ProviderNavigation` | `GitOKNavigationServicing` | `AppNavigationService` | commands and settings plugins |
-
-`FactoryCore.ProviderFactory` owns the construction hooks for these providers;
-`DefaultProviderFactory` supplies the app defaults. `RootContainer` is now a
-compatibility holder that invokes those hooks and registers the typed contracts
-in Kernel. New code resolves providers from Kernel; the old
-`GitOKPluginDependencies` resolver remains a migration bridge and mirrors
-legacy registrations into the same Kernel.
-
-## Service layer (replaces menu NotificationCenter)
-
-App shell commands and plugins call typed services registered in `RootContainer`:
-
-| Former notification | Service |
-|----------------------|---------|
-| `.gitCommandRefresh` / `.fetch` / `.pull` / `.push` | `GitCoreService.performGitCommand(_:)` via `GitOKGitCommandServicing` |
-| `.openSettings` / plugin/repo/commit-style settings | `AppNavigationService` via `GitOKNavigationServicing` |
-
-`GitOKApp/Events/ProjectEvents.swift` remains for plugin decoupling (project lifecycle + git directory changes). Settings persistence events (`didSaveGitUserConfig`, etc.) also remain until migrated.
-
-## Plugin registration
-
-1. Implement `GitOKPlugin` in `Plugins/<Name>Plugin/`
-2. Add the plugin to `Packages/FactoryGitOK/Sources/GeneratedPluginRegistry.swift`
-3. Declare the package dependency in `FactoryGitOK/Package.swift`
-
-Runtime uses SPM explicit registration (not Objective-C runtime scanning).
+The Xcode project (`GitOK.xcodeproj/project.xcproj`) declares every plugin
+package directly and links the products into the `GitOK` target; `GitOKTests`
+is a hosted unit-test target, `GitOKUITests` drives the app through AX.
 
 ## Runtime bootstrap
 
-`GitOKFactory.makeKernel()` delegates to `KernelFactory`, which creates the
-Kernel first, asks the registry's `PluginFactory` for the compile-time
-composition, and asks the host's `ProviderFactory` to assemble the service
-graph into that exact Kernel. The resulting Kernel is shared by the main
-window, settings window and commands.
+1. `GitOKApp.init` creates `KernelBootstrapper(manifest: GitOKHostManifest.make { … })`
+   and injects it into the shared `HostAppDelegate`.
+2. `KernelAssembler` (LumiFactory) runs the pipeline: baseline providers →
+   storage/infrastructure migration → `registerProviders` hook → plugin catalog
+   validation/sort/atomic start → settings first-entry reset → shared view
+   wiring → `wireKernel` hook.
+3. `HostMacScenes` renders the three boot states (loading / ready / failed)
+   into the main and settings windows; `HostCommands` installs ⌘,, the
+   update check and plugin-contributed menus.
 
-`GitOKPluginBootstrap.configureRuntimes(projectService:)` remains a compatibility
-hook called after services are wired. It registers plugin singleton callbacks
-that need app-side providers (e.g. `AutoPushService` current-project snapshot).
+The root view is host-owned: the manifest supplies `GitOKRootViewProvider`;
+`RootViewPlugin` adopts it on boot and only contributes workspace gating
+(noProject / projectMissing / cloning / cloneFailed / notGitRepository / ready).
 
-Plugins that receive data through `GitOKPluginContext` (GitWatcher, UnpushedStatus callbacks, etc.) do not need separate bootstrap wiring.
+## GitOK-specific manifest points
 
-## App shell responsibilities
+- `appliesWindowContentIdentifiers = false` + `usesReadyMarkerOverlays = true`:
+  UI tests rely on ~60 descendant AX identifiers that container-level ids
+  would shadow; readiness is exposed as 1×1 overlays `gitok.main.ready` /
+  `gitok.settings.ready`.
+- Theme and root-view persistence directories are pointed back at the plugin
+  data directories so existing user selections survive the shared baseline.
+- `openExternalPath` decodes `gitok://open?path=…` (see `ExternalOpenRequest`)
+  and opens the directory through `ProjectProviding`.
+- Debug builds honor `GITOK_UI_TEST_DATA_ROOT` to isolate test data roots.
 
-- Single-file `GitOKApp.swift` (= LumiApp): `@main` scene declarations. It
-  assembles one Kernel in `init`, caches the main/settings views, and calls
-  `GitOKFactory.makeMainWindow(kernel:)` / `makeCommands(kernel:)` /
-  `makeSettingsWindow(kernel:)`, plus channel-specific wiring — the Sparkle launch
-  hook and `UpdateCommand()` from `KitGitOKUpdate` (mirrors Lumi injecting
-  `AppUpdatePlugin` at the `LumiApp` layer; an MAS variant could drop it)
-- `MacAgent` lives in `FactoryCore/Bootstrap/` (as in Lumi FactoryCore)
-  and runs channel-specific launch work through `GitOKFactoryChrome.launchHooks`
-- Plugin composition lives in `FactoryGitOK/GitOKFactory`, which
-  implements `PluginFactory` and hands its composition to `KernelFactory`.
+## Adding a plugin
 
-Feature UI and business logic belong in Plugins or Packages, not GitOKApp.
-The host engine (KernelFactory, RootContainer compatibility graph, RootView,
-layout views, `PluginService`, app services, commands) lives in
-`Packages/FactoryCore`; shell-owned chrome is injected through
-`GitOKFactoryChrome` instead of hard dependencies.
+1. Implement the plugin in `Packages/Plugin<Name>/` (SuperPlugin contract).
+2. Add it to `GitOKApp/GitOKPluginCatalog.swift` at the right order band.
+3. Declare the package + product in `GitOK.xcodeproj/project.xcproj` for
+   **both** the `GitOK` and `GitOKTests` targets. This applies to every
+   local package in the graph, including transitive kits/providers. Test
+   builds turn every test-linked product into a dynamic framework; an
+   app-only local product would statically merge shared dependency code
+   and split provider type identities (see docs/plugins/architecture.md).
+
+Test code coverage is disabled (scheme `codeCoverageEnabled = NO`; scripted
+runs also pass `-enableCodeCoverage NO`): Xcode's default coverage
+instrumentation breaks the C products (swift-cmark) when they are built as
+dynamic package frameworks.
+
+Feature UI and business logic belong in plugin/provider packages, not
+GitOKApp; the app keeps only the manifest, the catalog and shell glue.

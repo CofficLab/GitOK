@@ -26,7 +26,7 @@ let package = Package(
         .package(path: "../ProviderRootView"),
         .package(path: "../ProviderWorkspaceScene"),
         .package(path: "../ProviderGitConflictResolver"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0")
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.26.0")
     ],
     targets: [
         .target(
@@ -41,7 +41,8 @@ let package = Package(
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderGit", package: "ProviderGit"),
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
-                .product(name: "ProviderRootView", package: "ProviderRootView"),
+                .product(name: "GitOKProviderRootView", package: "ProviderRootView"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
                 .product(name: "ProviderStatusBar", package: "LumiProviders"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
@@ -62,7 +63,8 @@ let package = Package(
                 .product(name: "ProviderProjects", package: "ProviderProjects"),
                 .product(name: "ProviderGitRepositoryWatch", package: "ProviderGitRepositoryWatch"),
                 .product(name: "ProviderGitConflictResolver", package: "ProviderGitConflictResolver"),
-                .product(name: "ProviderRootView", package: "ProviderRootView"),
+                .product(name: "GitOKProviderRootView", package: "ProviderRootView"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
                 .product(name: "ProviderStatusBar", package: "LumiProviders"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
