@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "Choose Conventional Commits or a custom style." : {
       "localizations" : {
         "en" : {
