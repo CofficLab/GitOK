@@ -133,10 +133,10 @@ struct CommitDetailLayout: View {
                                     if let change = filePageStore.change(at: index) {
                                         FileChangeRow(
                                             change: change,
-                                            isSelected: selectedFile == change.path
-                                        ) {
-                                            onSelectFile(change.path)
-                                        }
+                                            isSelected: selectedFile == change.path,
+                                            onSelect: { onSelectFile(change.path) },
+                                            projectURL: projectURL
+                                        )
                                         .transition(
                                             animatedFilePaths.contains(change.path)
                                                 ? .asymmetric(
@@ -314,6 +314,8 @@ struct FileChangeRow: View {
     let change: GitFileChange
     let isSelected: Bool
     let onSelect: () -> Void
+    /// 项目仓库根目录，用于在 Finder 中定位文件。
+    let projectURL: URL
 
     var body: some View {
         AppListRow(isSelected: isSelected, action: onSelect) {
@@ -351,6 +353,13 @@ struct FileChangeRow: View {
                 .fill(CommitDetailChangeColors.commitStatus(change.status))
                 .frame(width: 3)
                 .allowsHitTesting(false)
+        }
+        .contextMenu {
+            if FileManager.default.fileExists(atPath: projectURL.appendingPathComponent(change.path).path) {
+                Button(loc("Reveal in Finder")) {
+                    NSWorkspace.shared.activateFileViewerSelecting([projectURL.appendingPathComponent(change.path)])
+                }
+            }
         }
     }
 

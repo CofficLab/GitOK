@@ -26,8 +26,8 @@ import PluginGitStash
 import PluginGitConflictResolver
 import PluginFileInfo
 import PluginAbout
-import PluginBanner
-import PluginIcon
+// import PluginBanner
+// import PluginIcon
 import PluginGitIgnore
 import PluginGitAutoPush
 import PluginLicense
@@ -102,8 +102,8 @@ enum GitOKPluginCatalog {
             GitStashPlugin(),
             GitConflictResolverPlugin(),
             FileInfoPlugin(),
-            BannerPlugin(),
-            IconPlugin(),
+            // BannerPlugin(),
+            // IconPlugin(),
             // 「关于」入口（共享远程包 LumiPluginAbout，注入 GitOK 品牌配置）。
             AboutPlugin(
                 id: "com.coffic.gitok.plugin.about",

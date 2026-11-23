@@ -85,7 +85,7 @@ enum GitOKHostManifest {
     private static func registerAppProviders(kernel: KernelCoreContainer) throws {
         let storage = try kernel.requireProvider((any StorageProviding).self)
 
-        let workspaceScene = DefaultWorkspaceSceneProvider()
+        let workspaceScene = DefaultWorkspaceSceneProvider(availableScenes: [.git])
         try kernel.registerProvider((any WorkspaceSceneProviding).self, workspaceScene)
 
         // Git Provider 是稳定的业务入口；LibGit2Swift 实现由内置后端插件注册。
@@ -109,16 +109,7 @@ enum GitOKHostManifest {
             )
         }
 
-        kernel.resolveProvider((any ToolbarProviding).self)?.addToolbarItems([
-            ToolbarItem(
-                id: "workspace-scene-picker",
-                title: appLocalization.string("Workspace"),
-                placement: .leading,
-                order: 0
-            ) {
-                WorkspaceScenePickerView(provider: workspaceScene)
-            },
-        ])
+        // 仅剩 Git 一个场景，不需要工具栏场景切换器。
 
         try kernel.registerProvider((any StatusBarProviding).self, DefaultStatusBarProviding())
 

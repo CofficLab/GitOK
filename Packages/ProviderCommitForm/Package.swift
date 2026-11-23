@@ -15,7 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitGitOKLocalization"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.27.0"),
         .package(path: "../KitGit"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderCoAuthor"),

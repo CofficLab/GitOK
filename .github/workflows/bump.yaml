@@ -19,22 +19,58 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: 更新版本号
-        run: bash .github/scripts/bump-version.sh
+          # 拉取完整历史，确保 git tag 和 git log 能正确分析 commit
+          fetch-depth: 0
+
+      - name: 计算新版本号
+        id: calc
+        run: |
+          new_version=$(bash .github/scripts/calculate-version.sh)
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "📦 新版本: $new_version"
+
+      - name: 更新 xcconfig 版本号
+        run: |
+          VERSION_FILE="GitOKApp/GitOK.xcconfig"
+          NEW_VERSION="${{ steps.calc.outputs.new_version }}"
+
+          # 读取当前 build 号并 +1
+          CURRENT_BUILD=$(awk '/^[[:space:]]*CURRENT_PROJECT_VERSION[[:space:]]*=/ {
+            value = $2; gsub(/[[:space:];"]+$/, "", value); print value; exit
+          }' FS='=' "$VERSION_FILE")
+          NEW_BUILD=$((CURRENT_BUILD + 1))
+
+          echo "📦 版本: $NEW_VERSION"
+          echo "🔢 构建号: $CURRENT_BUILD -> $NEW_BUILD"
+
+          # 写入 xcconfig
+          MARKETING_VERSION="$NEW_VERSION" CURRENT_PROJECT_VERSION="$NEW_BUILD" \
+            perl -0pi -e '
+              my $marketing = $ENV{MARKETING_VERSION};
+              my $build = $ENV{CURRENT_PROJECT_VERSION};
+              s/^([ \t]*MARKETING_VERSION[ \t]*=[ \t]*)[^\r\n]*/$1$marketing/m;
+              s/^([ \t]*CURRENT_PROJECT_VERSION[ \t]*=[ \t]*)[^\r\n]*/$1$build/m;
+            ' "$VERSION_FILE"
+
+          echo "✅ 已更新 $VERSION_FILE"
+
       - name: 生成标签（pre 分支）
         if: github.ref == 'refs/heads/pre'
         run: |
-          version=$(bash .github/scripts/get-version.sh)
-          echo "版本号->$version"
-          build=$(bash .github/scripts/get-version.sh --build)
-          echo "tag=p$version($build)" >> $GITHUB_ENV
+          version="${{ steps.calc.outputs.new_version }}"
+          build=$(awk '/^[[:space:]]*CURRENT_PROJECT_VERSION[[:space:]]*=/ {
+            value = $2; gsub(/[[:space:];"]+$/, "", value); print value; exit
+          }' FS='=' GitOKApp/GitOK.xcconfig)
+          echo "版本号->$version (build $build)"
+          echo "tag=p${version}(${build})" >> $GITHUB_ENV
+
       - name: 生成标签（main 分支）
         if: github.ref == 'refs/heads/main'
         run: |
-          version=$(bash .github/scripts/get-version.sh)
+          version="${{ steps.calc.outputs.new_version }}"
           echo "版本号->$version"
-          # build=$(agvtool what-version -terse)
           echo "tag=v$version" >> $GITHUB_ENV
+
       - name: 打标签并推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
@@ -43,8 +79,10 @@ jobs:
           tagging_message: ${{ env.tag }}
           push_options: "--tags"
           branch: ${{ github.ref_name }}
+
       - name: 记录发布 commit
         run: git rev-parse HEAD > release-commit.txt
+
       - name: 保存发布 commit
         uses: actions/upload-artifact@v4
         with:

@@ -16,9 +16,9 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitGitOKLocalization"),
-        .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.13.1"),
-        .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.26.0")
+        .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.19.3"),
+        .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.3"),
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.27.0")
     ],
     targets: [
         .target(
