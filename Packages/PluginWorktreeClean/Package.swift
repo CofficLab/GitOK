@@ -12,20 +12,20 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitGitOKLocalization"),
-        .package(url: "https://github.com/lumi-softworks/LumiKernel.git", from: "1.1.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiKernel.git", from: "1.1.2"),
         .package(path: "../KitGit"),
-        .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.1"),
-        .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.13.1"),
+        .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.3"),
+        .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.19.3"),
         .package(path: "../ProviderActivityHeatmap"),
         .package(path: "../ProviderProjectLanguages"),
         .package(path: "../ProviderGit"),
         .package(path: "../ProviderGitUser"),
         .package(path: "../ProviderGitRepositoryWatch"),
         .package(path: "../ProviderProjects"),
-        .package(url: "https://github.com/lumi-softworks/LumiSettings.git", from: "1.1.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiSettings.git", from: "1.1.2"),
         .package(path: "../ProviderWorkspaceScene"),
         .package(path: "../ProviderProjectReadme"),
-        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.22.0")
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.27.0")
     ],
     targets: [
         .target(
