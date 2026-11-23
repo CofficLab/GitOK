@@ -1,60 +1,45 @@
 #!/bin/bash
+#
+# bump-version.sh - 根据 Conventional Commits 计算版本递增级别
+#
+# 分析上次 tag 以来的 commit 消息，按 Semantic Versioning 2.0.0
+# 与 Conventional Commits 规范判断版本递增级别。
+#
+# Usage: ./bump-version.sh
+# Output: major|minor|patch
+#
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-VERSION_FILE="${GITOK_VERSION_FILE:-${ROOT_DIR}/GitOKApp/GitOK.xcconfig}"
-DRY_RUN=false
 
-for argument in "$@"; do
-  case "$argument" in
-    --dry-run)
-      DRY_RUN=true
-      ;;
-    *)
-      echo "❌ 未知参数: $argument" >&2
-      exit 2
-      ;;
-  esac
-done
+# 获取最近的 v* 或 p* tag（GitOK 的 pre 分支用 p 前缀，main 分支用 v 前缀）
+# 使用 sort -V 确保按版本号大小排序，而非 git 历史顺序
+LAST_TAG=$(git tag -l "[vp]*" | grep -vE '[\(\)]' | sort -V | tail -n 1 2>/dev/null || echo "v0.0.0")
 
-if [[ ! -f "$VERSION_FILE" ]]; then
-  echo "❌ 未找到版本配置文件: $VERSION_FILE" >&2
-  exit 1
-fi
+# 获取上次 tag 以来的所有 commit 完整消息（含 body，用于检测 BREAKING CHANGE:）
+COMMITS=$(git log "${LAST_TAG}..HEAD" --pretty=format:%B 2>/dev/null || echo "")
 
-version="$(bash "${SCRIPT_DIR}/get-version.sh" "$VERSION_FILE")"
-build="$(bash "${SCRIPT_DIR}/get-version.sh" --build "$VERSION_FILE")"
-
-IFS='.' read -r major minor patch <<< "$version"
-new_version="${major}.${minor}.$((patch + 1))"
-new_build="$((build + 1))"
-
-echo "📄 配置文件: $VERSION_FILE"
-echo "📦 版本号: $version -> $new_version"
-echo "🔢 构建号: $build -> $new_build"
-
-if [[ "$DRY_RUN" == true ]]; then
-  echo "ℹ️  dry-run：未修改文件"
+# 无 commit 时默认 patch
+if [ -z "$COMMITS" ]; then
+  echo "patch"
   exit 0
 fi
 
-MARKETING_VERSION="$new_version" CURRENT_PROJECT_VERSION="$new_build" \
-  perl -0pi -e '
-    my $marketing = $ENV{MARKETING_VERSION};
-    my $build = $ENV{CURRENT_PROJECT_VERSION};
-    s/^([ \t]*MARKETING_VERSION[ \t]*=[ \t]*)[^\r\n]*/$1$marketing/m;
-    s/^([ \t]*CURRENT_PROJECT_VERSION[ \t]*=[ \t]*)[^\r\n]*/$1$build/m;
-  ' "$VERSION_FILE"
-
-updated_version="$(bash "${SCRIPT_DIR}/get-version.sh" "$VERSION_FILE")"
-updated_build="$(bash "${SCRIPT_DIR}/get-version.sh" --build "$VERSION_FILE")"
-
-if [[ "$updated_version" != "$new_version" || "$updated_build" != "$new_build" ]]; then
-  echo "❌ 版本配置写入校验失败" >&2
-  exit 3
+# 检查破坏性变更
+# - commit body 中的 BREAKING CHANGE:
+# - commit subject 中的 feat!: / feat(scope)!: / fix!: / refactor!: 等
+#   （Conventional Commits 的 ! 标记，scope 可选）
+if echo "$COMMITS" | grep -qE "BREAKING CHANGE|^(feat|fix|refactor)(\([^)]*\))?!"; then
+  echo "major"
+  exit 0
 fi
 
-echo "✅ 已更新版本号: $updated_version"
-echo "✅ 已更新构建号: $updated_build"
+# 检查新功能（feat: 或 feat(scope): 格式）
+if echo "$COMMITS" | grep -qE "^feat(\([^)]*\))?!?:"; then
+  echo "minor"
+  exit 0
+fi
+
+# 其他情况（fix / chore / docs / refactor 等）默认 patch
+echo "patch"
