@@ -12,6 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KitGitOKLocalization"),
+        .package(path: "../KitOpenIn"),
         .package(url: "https://github.com/lumi-softworks/LumiKernel.git", from: "1.1.2"),
         .package(path: "../KitGit"),
         .package(url: "https://github.com/lumi-softworks/LumiLogging.git", from: "1.0.3"),
@@ -27,6 +28,7 @@ let package = Package(
             name: "PluginCommitDetail",
             dependencies: [
                 .product(name: "KitGitOKLocalization", package: "KitGitOKLocalization"),
+                .product(name: "KitOpenIn", package: "KitOpenIn"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "KitGit", package: "KitGit"),
                 .product(name: "LumiLoggingKit", package: "LumiLogging"),

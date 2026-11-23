@@ -1,5 +1,6 @@
 import AppKit
 import KitGit
+import KitOpenIn
 import LumiUI
 import SwiftUI
 
@@ -355,9 +356,13 @@ struct FileChangeRow: View {
                 .allowsHitTesting(false)
         }
         .contextMenu {
-            if FileManager.default.fileExists(atPath: projectURL.appendingPathComponent(change.path).path) {
+            let fileURL = projectURL.appendingPathComponent(change.path)
+            if FileManager.default.fileExists(atPath: fileURL.path) {
                 Button(loc("Reveal in Finder")) {
-                    NSWorkspace.shared.activateFileViewerSelecting([projectURL.appendingPathComponent(change.path)])
+                    NSWorkspace.shared.activateFileViewerSelecting([fileURL])
+                }
+                Button(loc("Open in VS Code")) {
+                    AppLauncher.openFile(fileURL, in: .vscode)
                 }
             }
         }
