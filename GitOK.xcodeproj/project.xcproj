@@ -168,6 +168,13 @@
       },
     },
     {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginCacheManager.git",
+      "version": {
+        "up-to-next-major-version": "1.4.0",
+      },
+    },
+    {
       "kind": "local",
       "path": "Packages/KitGitOKLocalization",
     },
@@ -775,6 +782,11 @@
           "build-phase": { "build-phase": "frameworks" },
         },
         {
+          "package": "LumiPluginCacheManager",
+          "product-name": "PluginCacheManager",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
           "package": "PluginBanner",
           "product-name": "PluginBanner",
           "build-phase": { "build-phase": "frameworks" },
@@ -1345,6 +1357,11 @@
         {
           "package": "LumiPluginAbout",
           "product-name": "PluginAbout",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+        {
+          "package": "LumiPluginCacheManager",
+          "product-name": "PluginCacheManager",
           "build-phase": { "build-phase": "frameworks" },
         },
         {

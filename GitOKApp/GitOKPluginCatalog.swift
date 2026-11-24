@@ -26,6 +26,7 @@ import PluginGitStash
 import PluginGitConflictResolver
 import PluginFileInfo
 import PluginAbout
+import PluginCacheManager
 // import PluginBanner
 // import PluginIcon
 import PluginGitIgnore
@@ -143,6 +144,9 @@ enum GitOKPluginCatalog {
             OpenLumiPlugin(),
             OpenRemotePlugin(),
             PluginSettingView(id: "com.coffic.gitok.plugin.setting-view"),
+            // 磁盘缓存管理：向设置页贡献「缓存」入口（用量明细 / 清理）。
+            // 共享远程包，id 参数化为 GitOK 命名空间。
+            CacheManagerPlugin(id: "com.coffic.gitok.plugin.cache-manager"),
             // Logo 插件来自共享包 LumiPluginLogos：注入 GitOK 品牌配置。
             // 插件 id 与历史一致，用户已保存的启用状态继续有效。
             PluginLogoManager(
