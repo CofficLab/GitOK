@@ -68,6 +68,7 @@ struct CommitRailView: View {
     let projects: any ProjectProviding
     let git: any GitProviding
     let gitWatch: (any GitRepositoryWatching)?
+    let avatarService: CommitAvatarService
     @LumiTheme private var theme
     @StateObject private var projectObservation: ProjectObservationModel
     @StateObject private var gitWatchObservation: GitRepositoryWatchObservationModel
@@ -140,11 +141,13 @@ struct CommitRailView: View {
     init(
         projects: any ProjectProviding,
         git: any GitProviding,
-        gitWatch: (any GitRepositoryWatching)? = nil
+        gitWatch: (any GitRepositoryWatching)? = nil,
+        avatarService: CommitAvatarService = CommitAvatarService()
     ) {
         self.projects = projects
         self.git = git
         self.gitWatch = gitWatch
+        self.avatarService = avatarService
         _projectObservation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
         _gitWatchObservation = StateObject(wrappedValue: GitRepositoryWatchObservationModel(gitWatch: gitWatch))
     }
@@ -570,11 +573,18 @@ struct CommitRailView: View {
                     }
                 }
                 HStack(spacing: 6) {
-                    CommitAuthorAvatarView(author: commit.author, email: commit.authorEmail)
+                    CommitAuthorAvatarView(
+                        author: commit.author,
+                        email: commit.authorEmail,
+                        service: avatarService
+                    )
                     Text(commit.author)
                         .font(DesignTokens.Typography.caption2)
                         .foregroundStyle(theme.textSecondary)
                         .lineLimit(1)
+                    Text(commit.shortHash)
+                        .font(.system(size: 11, weight: .medium, design: .monospaced))
+                        .foregroundStyle(theme.textTertiary)
                     Spacer(minLength: 8)
                     Text(Self.relativeTime(commit.date))
                         .font(DesignTokens.Typography.caption2)

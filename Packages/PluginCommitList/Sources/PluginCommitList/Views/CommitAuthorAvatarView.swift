@@ -1,3 +1,4 @@
+import AppKit
 import KitGit
 import LumiUI
 import SwiftUI
@@ -7,27 +8,23 @@ struct CommitAuthorAvatarView: View {
     let author: String
     let email: String
     let size: CGFloat
+    let service: CommitAvatarService
 
-    @State private var avatarURL: URL?
+    @State private var image: NSImage?
 
-    init(author: String, email: String, size: CGFloat = 18) {
+    init(author: String, email: String, size: CGFloat = 18, service: CommitAvatarService) {
         self.author = author
         self.email = email
         self.size = size
+        self.service = service
     }
 
     var body: some View {
         Group {
-            if let avatarURL {
-                AsyncImage(url: avatarURL) { phase in
-                    if case let .success(image) = phase {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } else {
-                        fallbackAvatar
-                    }
-                }
+            if let image {
+                Image(nsImage: image)
+                    .resizable()
+                    .scaledToFill()
             } else {
                 fallbackAvatar
             }
@@ -35,7 +32,8 @@ struct CommitAuthorAvatarView: View {
         .frame(width: size, height: size)
         .clipShape(Circle())
         .task(id: "\(author)\u{1f}\(email)") {
-            avatarURL = await CommitAvatarService.shared.avatarURL(author: author, email: email)
+            let data = await service.avatarImageData(author: author, email: email)
+            image = data.flatMap(NSImage.init(data:))
         }
     }
 

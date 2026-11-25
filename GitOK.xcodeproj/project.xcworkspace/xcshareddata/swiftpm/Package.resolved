@@ -1,5 +1,5 @@
 {
-  "originHash" : "939e59fdb308e5ef1f8439009a43c9183b4650ec6add3c1b1a62f4cd3e344e69",
+  "originHash" : "ac4a9ac1b799a02b91b391917a4814b495cb356f327d6962ae6e94fd8fcacadb",
   "pins" : [
     {
       "identity" : "libgit2swift",
@@ -89,6 +89,15 @@
       "state" : {
         "revision" : "6b67ef27dcdbedab57a475aff2fe9c86fe26cc83",
         "version" : "3.0.4"
+      }
+    },
+    {
+      "identity" : "lumiplugincachemanager",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lumi-softworks/LumiPluginCacheManager.git",
+      "state" : {
+        "revision" : "fc39d96f257ec13a7f38e580a4d19d61a0c8c8c1",
+        "version" : "1.5.0"
       }
     },
     {

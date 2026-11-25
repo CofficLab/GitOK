@@ -8,6 +8,7 @@ import ProviderProjects
 import ProviderRailView
 import ProviderWorkspaceScene
 import SwiftUI
+import ProviderDiskCache
 import ProviderDocsView
 
 // MARK: - Commit List SuperPlugin
@@ -80,10 +81,19 @@ public final class CommitListPlugin: SuperPlugin, SuperLog {
             return
         }
 
+        // 头像缓存交给宿主的磁盘缓存桶，「缓存」设置页可查看与清理。
+        let avatarService = CommitAvatarService(
+            diskCache: kernel.resolveProvider((any DiskCacheProviding).self)
+        )
         let sceneViewModel = WorkspaceSceneVisibilityViewModel(targetScene: .git)
         let section = RailSectionItem(id: "\(id).section", order: 20) {
             WorkspaceSceneVisibilityView(viewModel: sceneViewModel) {
-                CommitRailView(projects: projects, git: git, gitWatch: gitWatch)
+                CommitRailView(
+                    projects: projects,
+                    git: git,
+                    gitWatch: gitWatch,
+                    avatarService: avatarService
+                )
             }
         }
         self.sceneViewModel = sceneViewModel
