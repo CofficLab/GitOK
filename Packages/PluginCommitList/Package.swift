@@ -40,6 +40,7 @@ let package = Package(
                 .product(name: "ProviderRailView", package: "LumiProviders"),
                 .product(name: "ProviderWorkspaceScene", package: "ProviderWorkspaceScene"),
                 .product(name: "ProviderDocsView", package: "LumiProviders"),
+                .product(name: "ProviderDiskCache", package: "LumiProviders"),
             ],
             path: "Sources/PluginCommitList",
             resources: [
@@ -51,6 +52,7 @@ let package = Package(
             dependencies: [
                 "PluginCommitList",
                 .product(name: "ProviderGit", package: "ProviderGit"),
+                .product(name: "ProviderDiskCache", package: "LumiProviders"),
             ],
             path: "Tests/PluginCommitListTests"
         ),
