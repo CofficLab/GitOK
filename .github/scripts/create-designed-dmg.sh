@@ -96,6 +96,32 @@ fi
 # Volume detaching
 # ---------------------------------------------------------------------------
 
+# Resolve the /dev node of an attached image by its path.
+#
+# `hdiutil detach <mount-point>` fails with ENOENT once the mount point
+# directory has disappeared, even though the image itself stays attached (this
+# happens when Finder drops the volume mid-flight). Detaching by device node is
+# the only reliable way out of that state.
+device_for_image() {
+  local image_path="$1"
+  hdiutil info -plist 2>/dev/null | python3 -c '
+import plistlib, sys
+image_path = sys.argv[1]
+try:
+    info = plistlib.loads(sys.stdin.buffer.read())
+except Exception:
+    sys.exit(0)
+for image in info.get("images", []):
+    if image.get("image-path") != image_path:
+        continue
+    for entity in image.get("system-entities", []):
+        device = entity.get("dev-entry")
+        if device:
+            print(device)
+            sys.exit(0)
+' "$image_path" 2>/dev/null || true
+}
+
 # Detach a mounted DMG volume reliably.
 #
 # The Finder layout step reopens the volume window on purpose (so the window
@@ -103,63 +129,89 @@ fi
 # plain `hdiutil detach` then fails with "couldn't eject <disk> - Resource
 # busy" (exit code 16) and aborts the release.
 #
-# We therefore quit Finder first, then retry the detach and finally fall back
-# to a forced detach. The command output is kept so failures are diagnosable.
+# Quitting Finder is a last resort: the workflow packages several
+# architectures in one job, and quitting Finder on the happy path makes the
+# next architecture's AppleScript lose sight of its freshly mounted disk. We
+# therefore only close Finder windows, retry, and quit Finder only if the
+# volume is still held.
 detach_volume() {
   local mount_point="$1"
+  local image_path="$2"
   local attempt exit_code output device
 
   [[ -n "$mount_point" ]] || return 0
 
-  # Finder keeps the volume busy; closing its windows is not enough because the
-  # layout script reopens the disk. Quitting Finder releases every handle.
   osascript -e "tell application \"Finder\" to close every window of disk \"$mount_point\"" >/dev/null 2>&1 || true
-  osascript -e "tell application \"Finder\" to quit" >/dev/null 2>&1 || true
-  sleep 2
+  if [[ -d "$mount_point" ]]; then
+    # Spotlight indexing keeps file handles inside the volume open, which also
+    # makes the eject fail. Disable indexing on the volume before detaching.
+    mdutil -i off "$mount_point" >/dev/null 2>&1 || true
+    device="$(diskutil info "$mount_point" 2>/dev/null | awk -F': ' '/Device Node/ {print $2; exit}')"
+  else
+    device="$(device_for_image "$image_path")"
+    if [[ -z "$device" ]]; then
+      echo "   ℹ️  卷已不在挂载状态: $mount_point" >&2
+      return 0
+    fi
+  fi
 
-  # Spotlight indexing keeps file handles inside the volume open, which also
-  # makes the eject fail. Disable indexing on the volume before detaching.
-  mdutil -i off "$mount_point" >/dev/null 2>&1 || true
-
-  # Resolve the backing device so we can detach by device as a last resort.
-  device="$(diskutil info "$mount_point" 2>/dev/null | awk -F': ' '/Device Node/ {print $2; exit}')"
-
-  for (( attempt = 1; attempt <= 5; attempt++ )); do
-    set +e
-    output="$(hdiutil detach "$mount_point" 2>&1)"
-    exit_code=$?
-    set -e
+  for (( attempt = 1; attempt <= 3; attempt++ )); do
+    if [[ ! -d "$mount_point" ]]; then
+      device="$(device_for_image "$image_path")"
+      if [[ -z "$device" ]]; then
+        return 0
+      fi
+      set +e
+      output="$(hdiutil detach "$device" 2>&1)"
+      exit_code=$?
+      set -e
+    else
+      set +e
+      output="$(hdiutil detach "$mount_point" 2>&1)"
+      exit_code=$?
+      set -e
+    fi
     if [[ "$exit_code" -eq 0 ]]; then
       return 0
     fi
-    echo "   ⚠️  卸载卷失败（尝试 ${attempt}/5）: ${output}" >&2
+    echo "   ⚠️  卸载卷失败（尝试 ${attempt}/3）: ${output}" >&2
+    sleep $(( attempt * 2 ))
+  done
+
+  # The volume is still held; quitting Finder releases every handle.
+  osascript -e "tell application \"Finder\" to quit" >/dev/null 2>&1 || true
+  sleep 2
+
+  for (( attempt = 1; attempt <= 2; attempt++ )); do
+    if [[ -d "$mount_point" ]]; then
+      set +e
+      output="$(hdiutil detach "$mount_point" 2>&1)"
+      exit_code=$?
+      set -e
+    else
+      device="$(device_for_image "$image_path")"
+      if [[ -z "$device" ]]; then
+        return 0
+      fi
+      set +e
+      output="$(hdiutil detach "$device" 2>&1)"
+      exit_code=$?
+      set -e
+    fi
+    if [[ "$exit_code" -eq 0 ]]; then
+      return 0
+    fi
+    echo "   ⚠️  卸载卷失败（尝试 ${attempt}/2，已退出 Finder）: ${output}" >&2
     sleep $(( attempt * 2 ))
   done
 
   echo "   ⚠️  强制卸载卷: $mount_point" >&2
   # diskimages-helper can keep a stale handle on the device and block the eject.
   killall -9 diskimages-helper >/dev/null 2>&1 || true
-  set +e
-  output="$(hdiutil detach "$mount_point" -force 2>&1)"
-  exit_code=$?
-  set -e
-  if [[ "$exit_code" -eq 0 ]]; then
-    return 0
-  fi
-  echo "   ⚠️  强制卸载也失败: ${output}" >&2
+  sleep 1
 
-  # Last resort: force unmount through diskutil, then detach by device.
-  set +e
-  output="$(diskutil unmount force "$mount_point" 2>&1)"
-  exit_code=$?
-  set -e
-  if [[ "$exit_code" -eq 0 ]]; then
-    return 0
-  fi
-  echo "   ⚠️  diskutil 强制卸载失败: ${output}" >&2
-
+  device="$(device_for_image "$image_path")"
   if [[ -n "$device" ]]; then
-    echo "   ⚠️  尝试按设备卸载: $device" >&2
     set +e
     output="$(hdiutil detach "$device" -force 2>&1)"
     exit_code=$?
@@ -167,7 +219,32 @@ detach_volume() {
     if [[ "$exit_code" -eq 0 ]]; then
       return 0
     fi
-    echo "   ⚠️  按设备卸载也失败: ${output}" >&2
+    echo "   ⚠️  强制卸载设备失败: ${output}" >&2
+  fi
+
+  if [[ -d "$mount_point" ]]; then
+    set +e
+    output="$(diskutil unmount force "$mount_point" 2>&1)"
+    exit_code=$?
+    set -e
+    if [[ "$exit_code" -eq 0 ]]; then
+      return 0
+    fi
+    echo "   ⚠️  diskutil 强制卸载失败: ${output}" >&2
+
+    set +e
+    output="$(hdiutil detach "$mount_point" -force 2>&1)"
+    exit_code=$?
+    set -e
+    if [[ "$exit_code" -eq 0 ]]; then
+      return 0
+    fi
+    echo "   ⚠️  强制卸载也失败: ${output}" >&2
+  else
+    device="$(device_for_image "$image_path")"
+    if [[ -z "$device" ]]; then
+      return 0
+    fi
   fi
 
   echo "❌ 无法卸载 DMG 卷: $mount_point" >&2
@@ -303,20 +380,37 @@ sync
 # more than the cosmetic Finder layout. In that case we rebuild a fresh image
 # straight from the staging folder, skipping the Finder automation entirely.
 FINAL_SOURCE_DMG="$READ_WRITE_DMG"
-if detach_volume "$MOUNT_POINT"; then
+if detach_volume "$MOUNT_POINT" "$READ_WRITE_DMG"; then
   MOUNT_POINT=""
 else
   echo "::warning::DMG 卷无法卸载，已降级为无自定义排版的 DMG（功能与公证不受影响）。" >&2
-  FALLBACK_DMG="$WORK_DIR/$VOLUME_NAME-fallback.dmg"
-  rm -f "$FALLBACK_DMG"
-  hdiutil create \
-    -size 200m \
-    -fs HFS+ \
-    -volname "$VOLUME_NAME" \
-    -srcfolder "$STAGING_DIR" \
-    -ov \
-    -format UDRW \
-    "$FALLBACK_DMG" >/dev/null
+  FALLBACK_DMG="$WORK_DIR/$VOLUME_NAME-plain.dmg"
+  # Rebuild the payload with a distinct volume name: `hdiutil create -srcfolder`
+  # mounts the new image at /Volumes/<volname>, which fails with "Resource
+  # busy" while the stuck volume of the same name is still registered.
+  fallback_created=0
+  for attempt in 1 2 3 4 5; do
+    FALLBACK_VOLUME_NAME="${VOLUME_NAME}-p${attempt}"
+    rm -f "$FALLBACK_DMG"
+    hdiutil detach "/Volumes/$FALLBACK_VOLUME_NAME" -force >/dev/null 2>&1 || true
+    if hdiutil create \
+         -size 200m \
+         -fs HFS+ \
+         -volname "$FALLBACK_VOLUME_NAME" \
+         -srcfolder "$STAGING_DIR" \
+         -ov \
+         -format UDRW \
+         "$FALLBACK_DMG" >/dev/null 2>&1; then
+      fallback_created=1
+      break
+    fi
+    echo "   ⚠️  重建朴素 DMG 失败（尝试 ${attempt}/5），重试…" >&2
+    sleep $(( attempt * 2 ))
+  done
+  if [[ "$fallback_created" -ne 1 ]]; then
+    echo "❌ 无法重建朴素 DMG: $VOLUME_NAME" >&2
+    exit 1
+  fi
   FINAL_SOURCE_DMG="$FALLBACK_DMG"
   LAYOUT_APPLIED=0
 fi
