@@ -9,6 +9,7 @@ import SwiftUI
 /// - header 为搜索框 + 新建分支按钮（+），点击后展开内嵌输入行，回车创建并切换；
 /// - 本地分支列表当前分支高亮打勾，点击其他分支执行 checkout 并关闭弹层；
 /// - 点击远程分支会创建对应的本地跟踪分支并切换过去；
+/// - 打开时先用上次缓存渲染，再后台刷新，避免等 libgit2 队列；
 /// - 无项目 / 加载失败时显示空状态。
 struct BranchPickerPopoverView: View {
     let projects: any ProjectProviding
@@ -16,12 +17,15 @@ struct BranchPickerPopoverView: View {
     let viewModel: GitBranchStatusViewModel
     /// 切换 / 新建成功后由本视图置为 false，关闭工具栏按钮的弹层。
     let isPresented: Binding<Bool>
+    private let reader: BranchListReader
+    private let cacheStore: BranchListCacheStore
     @StateObject private var observation: ProjectObservationModel
     @State private var branches: [GitBranchSummary] = []
     @State private var searchText = ""
     @State private var isCreatingNew = false
     @State private var newBranchName = ""
     @State private var isLoading = false
+    @State private var isRefreshing = false
     @State private var isPerformingAction = false
     @State private var errorMessage: String?
     @State private var loadGeneration = 0
@@ -39,6 +43,8 @@ struct BranchPickerPopoverView: View {
         self.git = git
         self.viewModel = viewModel
         self.isPresented = isPresented
+        self.reader = BranchListReader.live(git: git)
+        self.cacheStore = BranchListCacheStore()
         _observation = StateObject(wrappedValue: ProjectObservationModel(projects: projects))
     }
 
@@ -95,6 +101,12 @@ struct BranchPickerPopoverView: View {
             TextField(pluginLocalization.string("Search"), text: $searchText)
                 .textFieldStyle(.roundedBorder)
                 .accessibilityIdentifier("gitok.git.branch.search")
+
+            if isRefreshing && !isLoading {
+                ProgressView()
+                    .controlSize(.mini)
+                    .accessibilityHidden(true)
+            }
 
             Button {
                 if isCreatingNew {
@@ -249,16 +261,26 @@ struct BranchPickerPopoverView: View {
         guard let url = projects.currentProject?.url else {
             branches = []
             isLoading = false
+            isRefreshing = false
             errorMessage = nil
             return
         }
         let repositoryURL = url.standardizedFileURL
-        isLoading = true
+        let cachedBranches = cacheStore.branches(for: repositoryURL)
+        if !cachedBranches.isEmpty {
+            branches = cachedBranches
+            isLoading = false
+        } else if branches.isEmpty {
+            isLoading = true
+        } else {
+            isLoading = false
+        }
+        isRefreshing = true
         errorMessage = nil
 
         loadTask = Task { @MainActor in
             let result = await Task.detached(priority: .utility) {
-                Result { try git.listBranches(in: repositoryURL) }
+                Result { try reader.loadBranches(in: repositoryURL) }
             }.value
 
             guard !Task.isCancelled,
@@ -269,12 +291,16 @@ struct BranchPickerPopoverView: View {
 
             loadTask = nil
             isLoading = false
+            isRefreshing = false
             switch result {
             case .success(let loaded):
                 branches = loaded
+                cacheStore.save(loaded, for: repositoryURL)
             case .failure(let error):
-                branches = []
-                errorMessage = error.localizedDescription
+                // 读取失败时保留缓存列表，用户仍可基于上次结果切换分支。
+                if branches.isEmpty {
+                    errorMessage = error.localizedDescription
+                }
             }
         }
     }
@@ -284,6 +310,7 @@ struct BranchPickerPopoverView: View {
         loadGeneration += 1
         loadTask?.cancel()
         loadTask = nil
+        isRefreshing = false
     }
 
     @MainActor
