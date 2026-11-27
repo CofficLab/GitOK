@@ -14,17 +14,17 @@ final class MergeSelectionStore {
     private let fileURL: URL
 
     init(storageDirectory: URL? = nil) {
-        let directory = storageDirectory ?? Self.defaultStorageDirectory
+        let directory = storageDirectory ?? MergeStorageLocation.defaultDirectory()
         fileURL = directory.appendingPathComponent("merge-selection.json", isDirectory: false)
     }
 
     func selection(for repository: URL) -> MergeSelection? {
-        loadAll()[repositoryKey(for: repository)]
+        loadAll()[MergeStorageLocation.repositoryKey(for: repository)]
     }
 
     func save(_ selection: MergeSelection, for repository: URL) {
         var selections = loadAll()
-        selections[repositoryKey(for: repository)] = selection
+        selections[MergeStorageLocation.repositoryKey(for: repository)] = selection
 
         do {
             let directory = fileURL.deletingLastPathComponent()
@@ -42,21 +42,5 @@ final class MergeSelectionStore {
             return [:]
         }
         return selections
-    }
-
-    private func repositoryKey(for repository: URL) -> String {
-        repository
-            .standardizedFileURL
-            .resolvingSymlinksInPath()
-            .path
-    }
-
-    private static var defaultStorageDirectory: URL {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-            ?? FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support")
-        let bundleID = Bundle.main.bundleIdentifier ?? "com.coffic.gitok"
-        return appSupport
-            .appendingPathComponent(bundleID, isDirectory: true)
-            .appendingPathComponent("com.coffic.gitok.plugin.git-smart-merge", isDirectory: true)
     }
 }
