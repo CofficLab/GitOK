@@ -60,10 +60,14 @@ public struct MergeToolbarButton: View {
 public struct MergeForm: View {
     let projects: any ProjectProviding
     let git: any GitProviding
+    private let reader: MergeBranchReader
     private let selectionStore: MergeSelectionStore
+    private let branchCacheStore: MergeBranchCacheStore
     @State private var branches: [GitBranchSummary] = []
     @State private var sourceBranch: GitBranchSummary?
     @State private var targetBranch: GitBranchSummary?
+    @State private var isLoadingBranches = false
+    @State private var isRefreshingBranches = false
     @State private var isWorking = false
     @State private var statusMessage: String?
     @State private var errorMessage: String?
@@ -77,67 +81,83 @@ public struct MergeForm: View {
     ) {
         self.projects = projects
         self.git = git
+        self.reader = MergeBranchReader.live(git: git)
         self.selectionStore = MergeSelectionStore(storageDirectory: storageDirectory)
+        self.branchCacheStore = MergeBranchCacheStore(storageDirectory: storageDirectory)
     }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
-                .font(.headline)
-
-            Picker(GitSmartMergeLocalization.string("Source", bundle: .module), selection: $sourceBranch) {
-                Text(GitSmartMergeLocalization.string("Select source", bundle: .module)).tag(nil as GitBranchSummary?)
-                ForEach(branches) { branch in
-                    Text(branch.name).tag(branch as GitBranchSummary?)
-                }
-            }
-            .disabled(isWorking)
-            .labelsHidden()
-            .frame(maxWidth: .infinity)
-
             HStack(spacing: 8) {
-                Text(GitSmartMergeLocalization.string("into", bundle: .module))
-                    .font(.caption)
-                    .foregroundStyle(theme.textSecondary)
+                Text(GitSmartMergeLocalization.string("Merge branches", bundle: .module))
+                    .font(.headline)
 
                 Spacer(minLength: 0)
 
+                if isRefreshingBranches {
+                    ProgressView()
+                        .controlSize(.mini)
+                        .accessibilityHidden(true)
+                }
+            }
+
+            if isLoadingBranches {
+                MergeFormSkeleton()
+            } else {
+                Picker(GitSmartMergeLocalization.string("Source", bundle: .module), selection: $sourceBranch) {
+                    Text(GitSmartMergeLocalization.string("Select source", bundle: .module)).tag(nil as GitBranchSummary?)
+                    ForEach(branches) { branch in
+                        Text(branch.name).tag(branch as GitBranchSummary?)
+                    }
+                }
+                .disabled(isWorking)
+                .labelsHidden()
+                .frame(maxWidth: .infinity)
+
+                HStack(spacing: 8) {
+                    Text(GitSmartMergeLocalization.string("into", bundle: .module))
+                        .font(.caption)
+                        .foregroundStyle(theme.textSecondary)
+
+                    Spacer(minLength: 0)
+
+                    AppButton(
+                        systemImage: "arrow.up.arrow.down",
+                        style: .tonal,
+                        size: .small
+                    ) {
+                        swapBranches()
+                    }
+                    .accessibilityLabel(
+                        GitSmartMergeLocalization.string("Swap branches", bundle: .module)
+                    )
+                    .help(
+                        GitSmartMergeLocalization.string("Swap branches", bundle: .module)
+                    )
+                    .disabled(sourceBranch == nil || targetBranch == nil || isWorking)
+                }
+
+                Picker(GitSmartMergeLocalization.string("Target", bundle: .module), selection: $targetBranch) {
+                    Text(GitSmartMergeLocalization.string("Select target", bundle: .module)).tag(nil as GitBranchSummary?)
+                    ForEach(branches) { branch in
+                        Text(branch.name).tag(branch as GitBranchSummary?)
+                    }
+                }
+                .disabled(isWorking)
+                .labelsHidden()
+                .frame(maxWidth: .infinity)
+
                 AppButton(
-                    systemImage: "arrow.up.arrow.down",
-                    style: .tonal,
-                    size: .small
+                    GitSmartMergeLocalization.string("Merge", bundle: .module),
+                    systemImage: "arrow.trianglehead.merge",
+                    style: .primary,
+                    size: .small,
+                    fillsWidth: true
                 ) {
-                    swapBranches()
+                    merge()
                 }
-                .accessibilityLabel(
-                    GitSmartMergeLocalization.string("Swap branches", bundle: .module)
-                )
-                .help(
-                    GitSmartMergeLocalization.string("Swap branches", bundle: .module)
-                )
-                .disabled(sourceBranch == nil || targetBranch == nil || isWorking)
+                .disabled(sourceBranch == nil || targetBranch == nil || sourceBranch == targetBranch || isWorking)
             }
-
-            Picker(GitSmartMergeLocalization.string("Target", bundle: .module), selection: $targetBranch) {
-                Text(GitSmartMergeLocalization.string("Select target", bundle: .module)).tag(nil as GitBranchSummary?)
-                ForEach(branches) { branch in
-                    Text(branch.name).tag(branch as GitBranchSummary?)
-                }
-            }
-            .disabled(isWorking)
-            .labelsHidden()
-            .frame(maxWidth: .infinity)
-
-            AppButton(
-                GitSmartMergeLocalization.string("Merge", bundle: .module),
-                systemImage: "arrow.trianglehead.merge",
-                style: .primary,
-                size: .small,
-                fillsWidth: true
-            ) {
-                merge()
-            }
-            .disabled(sourceBranch == nil || targetBranch == nil || sourceBranch == targetBranch || isWorking)
 
             if let statusMessage {
                 Label(statusMessage, systemImage: "checkmark.circle")
@@ -169,28 +189,63 @@ public struct MergeForm: View {
         guard let projectURL = projects.currentProject?.url else { return }
         loadToken &+= 1
         let token = loadToken
-        didRestoreSelection = false
-        sourceBranch = nil
-        targetBranch = nil
+        statusMessage = nil
+        errorMessage = nil
+
         let savedSelection = selectionStore.selection(for: projectURL)
+        let cachedBranches = branchCacheStore.branches(for: projectURL)
+        if cachedBranches.isEmpty {
+            branches = []
+            sourceBranch = nil
+            targetBranch = nil
+            didRestoreSelection = false
+            isLoadingBranches = true
+        } else {
+            branches = cachedBranches
+            applyResolvedSelection(
+                MergeBranchSelectionResolver.resolve(branches: cachedBranches, saved: savedSelection)
+            )
+            didRestoreSelection = true
+            isLoadingBranches = false
+        }
+        isRefreshingBranches = true
+
         Task.detached(priority: .userInitiated) {
-            let loaded = ((try? git.listBranches(in: projectURL)) ?? [])
-                .filter { !$0.isRemote }
+            let loaded: [GitBranchSummary]?
+            do {
+                loaded = try reader.loadLocalBranches(in: projectURL)
+            } catch {
+                loaded = nil
+            }
             await MainActor.run {
                 guard token == loadToken,
                       projects.currentProject?.url == projectURL else { return }
+                isRefreshingBranches = false
+                isLoadingBranches = false
+                // 读取失败时保留缓存列表，用户仍可基于上一次结果发起合并。
+                guard let loaded else { return }
+
                 branches = loaded
-                sourceBranch = savedSelection?.sourceBranchName
-                    .flatMap { name in loaded.first(where: { $0.name == name }) }
-                    ?? loaded.first(where: { !$0.isCurrent })
-                    ?? loaded.first
-                targetBranch = savedSelection?.targetBranchName
-                    .flatMap { name in loaded.first(where: { $0.name == name }) }
-                    ?? loaded.first(where: \.isCurrent)
-                    ?? loaded.first
+                branchCacheStore.save(loaded, for: projectURL)
+                applyResolvedSelection(
+                    MergeBranchSelectionResolver.resolve(
+                        branches: loaded,
+                        saved: savedSelection,
+                        keeping: sourceBranch,
+                        currentTarget: targetBranch
+                    )
+                )
                 didRestoreSelection = true
             }
         }
+    }
+
+    @MainActor
+    private func applyResolvedSelection(
+        _ selection: (source: GitBranchSummary?, target: GitBranchSummary?)
+    ) {
+        sourceBranch = selection.source
+        targetBranch = selection.target
     }
 
     @MainActor
@@ -254,6 +309,30 @@ public struct MergeForm: View {
     }
 
     @LumiTheme private var theme: LumiUITheme
+}
+
+/// 首次读取分支（无缓存可用）时的表单骨架，保持弹层高度与结构稳定。
+private struct MergeFormSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            AppSkeletonBlock(height: 22, shape: .roundedRectangle(cornerRadius: 6))
+
+            HStack(spacing: 8) {
+                AppSkeletonBlock(width: 26, height: 10)
+
+                Spacer(minLength: 0)
+
+                AppSkeletonBlock(width: 24, height: 24, shape: .roundedRectangle(cornerRadius: 6))
+            }
+
+            AppSkeletonBlock(height: 22, shape: .roundedRectangle(cornerRadius: 6))
+            AppSkeletonBlock(height: 24, shape: .roundedRectangle(cornerRadius: 6))
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            Text(GitSmartMergeLocalization.string("Loading branches…", bundle: .module))
+        )
+    }
 }
 
 /// 项目观察模型：订阅 `ProjectProviding` 事件。
